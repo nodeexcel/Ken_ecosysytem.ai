@@ -3,11 +3,14 @@ import { FcGoogle } from "react-icons/fc";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { LuUserRound } from "react-icons/lu";
 import { TbLockPassword } from "react-icons/tb";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+
+    const navigate = useNavigate()
 
     const togglePasswordVisibility = () => {
         setShowPassword(prev => !prev);
@@ -25,7 +28,7 @@ export default function Login() {
                         <label className="block text-[16px] font-medium text-[#292D32] mb-1">Email</label>
                         <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
 
-                            <LuUserRound  className="text-gray-400 mr-2 text-xl" />
+                            <LuUserRound className="text-gray-400 mr-2 text-xl" />
                             <input
                                 type="email"
                                 placeholder="Enter Email"
@@ -39,7 +42,7 @@ export default function Login() {
                     <div>
                         <label className="block text-[16px] font-medium text-[#292D32] mb-1">Password</label>
                         <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
-                            <TbLockPassword className="text-gray-400 mr-2 text-lg"  />
+                            <TbLockPassword className="text-gray-400 mr-2 text-lg" />
                             <input
                                 type={showPassword ? "text" : "password"}
                                 placeholder="••••••••"
@@ -85,7 +88,7 @@ export default function Login() {
             </div>
             <p className="text-center mt-6 text-[#5A687C] text-[14px]">
                 Don’t have an account?{' '}
-                <a href="#" className="hover:underline text-[#335BFB] text-[14px] font-semibold ">Sign Up</a>
+                <span onClick={() => navigate("/pricing")} className="hover:underline text-[#335BFB] text-[14px] font-semibold ">Sign Up</span>
             </p>
         </div>
     );

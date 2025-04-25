@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 export const  Pricing = () => {
     const [activeTab, setActiveTab] = useState("annual");
-  
+
     const plans = {
       annual: [
         {
@@ -520,10 +520,10 @@ export const  Pricing = () => {
         },
       ],
     };
-  
+
     return (
       <div className="bg-[#F2F2F7] h-screen flex items-center justify-center z-50 w-full p-4">
-        <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-[90%] h-[80vh] overflow-y-auto relative">
+        <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-[90%] h-[80vh] relative">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-4 mb-6">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-[#335BFB1A] rounded-lg">
