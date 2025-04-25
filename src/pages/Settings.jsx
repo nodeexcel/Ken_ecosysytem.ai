@@ -4,6 +4,7 @@ import { MdOutlineKeyboardArrowLeft } from 'react-icons/md';
 import profile_pic from '../assets/images/profile.png';
 import { LuRefreshCw } from "react-icons/lu";
 import { TbLockPassword } from "react-icons/tb";
+import Plan from "../components/Plan";
 
 
 // User profile data
@@ -87,122 +88,7 @@ const SettingsPage = () => {
     if (activeSidebarItem === "billing") {
       return (
         <div className="flex flex-col w-full gap-6">
-          <div className="flex flex-col gap-2">
-            <h2 className="text-[#1E1E1E] text-2xl font-semibold">Plan & Billing</h2>
-            <p className="text-[#5A687C] text-base">Manage your subscription and billing details</p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-6">
-            {/* Free Plan */}
-            <div className="flex flex-col p-6 border border-[#E1E4EA] rounded-2xl">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1">
-                  <h3 className="text-lg font-semibold text-[#1E1E1E]">Free Plan</h3>
-                  <p className="text-sm text-[#5A687C]">Perfect for getting started</p>
-                </div>
-                <div className="flex items-end gap-1">
-                  <span className="text-3xl font-semibold text-[#1E1E1E]">$0</span>
-                  <span className="text-base text-[#5A687C] mb-1">/month</span>
-                </div>
-                <button className="w-full py-2 px-4 bg-[#F5F7FF] text-[#335BFB] border border-[#335BFB] rounded-lg">
-                  Current Plan
-                </button>
-              </div>
-              <div className="mt-6">
-                <h4 className="text-sm font-medium text-[#1E1E1E] mb-3">What's included:</h4>
-                <ul className="flex flex-col gap-2">
-                  <li className="flex items-center gap-2 text-sm text-[#5A687C]">
-                    <div className="w-1.5 h-1.5 bg-[#335BFB] rounded-full" />
-                    Up to 5 projects
-                  </li>
-                  <li className="flex items-center gap-2 text-sm text-[#5A687C]">
-                    <div className="w-1.5 h-1.5 bg-[#335BFB] rounded-full" />
-                    Up to 10 team members
-                  </li>
-                  <li className="flex items-center gap-2 text-sm text-[#5A687C]">
-                    <div className="w-1.5 h-1.5 bg-[#335BFB] rounded-full" />
-                    Basic analytics
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Pro Plan */}
-            <div className="flex flex-col p-6 border border-[#335BFB] rounded-2xl bg-[#F5F7FF]">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1">
-                  <h3 className="text-lg font-semibold text-[#1E1E1E]">Pro Plan</h3>
-                  <p className="text-sm text-[#5A687C]">Perfect for growing teams</p>
-                </div>
-                <div className="flex items-end gap-1">
-                  <span className="text-3xl font-semibold text-[#1E1E1E]">$49</span>
-                  <span className="text-base text-[#5A687C] mb-1">/month</span>
-                </div>
-                <button className="w-full py-2 px-4 bg-[#335BFB] text-white rounded-lg">
-                  Upgrade Plan
-                </button>
-              </div>
-              <div className="mt-6">
-                <h4 className="text-sm font-medium text-[#1E1E1E] mb-3">What's included:</h4>
-                <ul className="flex flex-col gap-2">
-                  <li className="flex items-center gap-2 text-sm text-[#5A687C]">
-                    <div className="w-1.5 h-1.5 bg-[#335BFB] rounded-full" />
-                    Up to 15 projects
-                  </li>
-                  <li className="flex items-center gap-2 text-sm text-[#5A687C]">
-                    <div className="w-1.5 h-1.5 bg-[#335BFB] rounded-full" />
-                    Up to 50 team members
-                  </li>
-                  <li className="flex items-center gap-2 text-sm text-[#5A687C]">
-                    <div className="w-1.5 h-1.5 bg-[#335BFB] rounded-full" />
-                    Advanced analytics
-                  </li>
-                  <li className="flex items-center gap-2 text-sm text-[#5A687C]">
-                    <div className="w-1.5 h-1.5 bg-[#335BFB] rounded-full" />
-                    Priority support
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Enterprise Plan */}
-            <div className="flex flex-col p-6 border border-[#E1E4EA] rounded-2xl">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1">
-                  <h3 className="text-lg font-semibold text-[#1E1E1E]">Enterprise Plan</h3>
-                  <p className="text-sm text-[#5A687C]">Perfect for large organizations</p>
-                </div>
-                <div className="flex items-end gap-1">
-                  <span className="text-3xl font-semibold text-[#1E1E1E]">$99</span>
-                  <span className="text-base text-[#5A687C] mb-1">/month</span>
-                </div>
-                <button className="w-full py-2 px-4 bg-white text-[#5A687C] border border-[#5A687C] rounded-lg">
-                  Contact Sales
-                </button>
-              </div>
-              <div className="mt-6">
-                <h4 className="text-sm font-medium text-[#1E1E1E] mb-3">What's included:</h4>
-                <ul className="flex flex-col gap-2">
-                  <li className="flex items-center gap-2 text-sm text-[#5A687C]">
-                    <div className="w-1.5 h-1.5 bg-[#335BFB] rounded-full" />
-                    Unlimited projects
-                  </li>
-                  <li className="flex items-center gap-2 text-sm text-[#5A687C]">
-                    <div className="w-1.5 h-1.5 bg-[#335BFB] rounded-full" />
-                    Unlimited team members
-                  </li>
-                  <li className="flex items-center gap-2 text-sm text-[#5A687C]">
-                    <div className="w-1.5 h-1.5 bg-[#335BFB] rounded-full" />
-                    Custom analytics
-                  </li>
-                  <li className="flex items-center gap-2 text-sm text-[#5A687C]">
-                    <div className="w-1.5 h-1.5 bg-[#335BFB] rounded-full" />
-                    24/7 dedicated support
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          <Plan/>
         </div>
       );
     }
@@ -621,7 +507,7 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="h-full w-full overflow-auto">
+    <div className="h-full w-full overflow-auto bg-[#F6F7F9] ">
       <div>
         <div className='flex items-center pl-4 py-3'>
           <MdOutlineKeyboardArrowLeft size={25} />
@@ -629,7 +515,7 @@ const SettingsPage = () => {
         </div>
         <hr className='text-[#E1E4EA]' />
       </div>
-      <div className="flex items-start gap-8 relative pl-4 py-3">
+      <div className="flex flex-col md:flex-row items-start gap-8 relative pl-4 py-3 w-full">
         {/* Sidebar Navigation */}
         <div className="flex flex-col w-[153px] items-start gap-2 relative">
           <div
