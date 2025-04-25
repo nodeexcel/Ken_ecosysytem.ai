@@ -10,7 +10,7 @@ import { TfiHeadphoneAlt } from 'react-icons/tfi';
 
 const Sidebar = () => {
     return (
-        <aside className="bg-[#F3F4F6] shadow-md h-full space-y-6 flex justify-between flex-col">
+        <aside className="bg-[#F3F4F6] shadow-md h-screen space-y-6 overflow-y-auto flex justify-between flex-col">
             <div className='gap-2 flex flex-col'>
                 <div className="text-xl text-center py-4 font-bold">E</div>
                 <hr className='text-[#E1E4EA]' />

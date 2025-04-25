@@ -1,7 +1,9 @@
-import { CreditCardIcon, EyeIcon, EyeOffIcon, KeyIcon, SettingsIcon, UsersIcon, X } from "lucide-react";
+import { CreditCardIcon, EyeIcon, EyeOffIcon, SettingsIcon, UsersIcon, X } from "lucide-react";
 import React, { useState } from "react";
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md';
 import profile_pic from '../assets/images/profile.png';
+import { LuRefreshCw } from "react-icons/lu";
+import { TbLockPassword } from "react-icons/tb";
 
 
 // User profile data
@@ -17,22 +19,36 @@ const profileData = {
   avatar: "/rectangle-1043.png",
 };
 
-const teamMembers = [
+const tableData = [
   {
-    name: "Alice Johnson",
-    role: "Sales Manager",
-    email: "alice@example.com",
-    avatar: "https://i.pravatar.cc/40?img=1",
-    invited: true,
+    initials: 'RD',
+    name: 'Robert Downey',
+    email: 'robertdowney45@gmail.com',
+    role: 'Admin',
+    assigned: 'Liam',
   },
   {
-    name: "Bob Smith",
-    role: "Customer Success",
-    email: "bob@example.com",
-    avatar: "https://i.pravatar.cc/40?img=2",
-    invited: false,
+    initials: 'NC',
+    name: 'Nicolas Cage',
+    email: 'nicolascage88@gmail.com',
+    role: 'Member',
+    assigned: 'Daniel, Criss',
   },
-];
+  {
+    initials: 'JD',
+    name: 'Johny Deep',
+    email: 'johnydeep86@gmail.com',
+    role: 'Member',
+    assigned: 'Kenneth, Lori',
+  },
+  {
+    initials: 'JM',
+    name: 'Jecob More',
+    email: 'jecobmore56542@gmail.com',
+    role: 'Guest',
+    assigned: 'Kurt',
+  },
+]
 
 
 const SettingsPage = () => {
@@ -49,6 +65,8 @@ const SettingsPage = () => {
     confirmPassword: false,
   });
   const [open, setOpen] = useState(false);
+  const [emailInvite, setEmailInvite] = useState("")
+  const [role, setRole] = useState("")
 
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
@@ -192,16 +210,72 @@ const SettingsPage = () => {
     else if (activeSidebarItem === "team") {
       return (
         <>
-          <button
-            onClick={() => setOpen(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            Team Members
-          </button>
+          <div className="w-full p-2 flex flex-col gap-3">
+            <div className="flex justify-between">
+              <h1 className="text-[#1E1E1E] font-semibold text-[24px]">Team Members</h1>
+              <button className="bg-[#5E54FF] text-white rounded-md p-2" onClick={() => setOpen(true)}>Invite A Team Member</button>
+            </div>
+            <div className="flex justify-between">
+              <div className="w-[137px] flex items-center border border-gray-300 rounded ">
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="w-full bg-white px-4 py-2"
+                >
+                  <option value="" disabled>Role</option>
+                  <option value="admin">Admin</option>
+                  <option value="member">Member</option>
+                  <option value="guest">Guest</option>
+                </select>
+              </div>
+              <div className="flex items-center px-3 gap-2 border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                <LuRefreshCw color="#5E54FF" />
+                <button className="text-[16px] text-[#5A687C] bg-white">
+                  Refresh
+                </button>
+              </div>
+            </div>
+            <div className="rounded-lg shadow-sm overflow-hidden">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-transparent">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]">Name</th>
+                    <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]">Email</th>
+                    <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]">Role</th>
+                    <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]">Agents</th>
+                    <th className="px-6 py-3"></th>
+                  </tr>
+                </thead>
+                <tbody className="bg-[#F9FAFB] divide-y divide-gray-200">
+                  {tableData.map((user, index) => (
+                    <tr key={index} className="rounded-xl my-2">
+                      <td className="px-6 py-4 whitespace-nowrap flex items-center gap-2">
+                        <div className="w-8 h-8 bg-[#E8E9FF] text-[#5E54FF] rounded-full flex items-center justify-center font-semibold text-sm">
+                          {user.initials}
+                        </div>
+                        <span className="font-medium text-[#1E1E1E]">{user.name}</span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">{user.email}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">{user.role}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">{user.assigned}</td>
+                      <td className="px-6 py-4 text-right">
+                        <button className="text-gray-500 hover:text-gray-700">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+          </div>
 
           {open && (
-            <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-              <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
+            <div className="fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
+              <div className="bg-white max-h-[316px] flex flex-col gap-3 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
                 <button
                   onClick={() => setOpen(false)}
                   className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
@@ -209,44 +283,27 @@ const SettingsPage = () => {
                   <X className="w-5 h-5" />
                 </button>
 
-                <h2 className="text-xl font-semibold mb-4">Team Members</h2>
+                <h2 className="text-[#1E1E1E] font-semibold text-[20px] mb-4">Invite a team member</h2>
 
-                <input
-                  type="text"
-                  placeholder="Search team members..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-
-                <div className="space-y-4 max-h-[400px] overflow-y-auto">
-                  {teamMembers.map((member, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between bg-gray-100 p-4 rounded-xl"
-                    >
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={member.avatar}
-                          alt={member.name}
-                          className="w-10 h-10 rounded-full"
-                        />
-                        <div>
-                          <div className="font-medium text-sm">{member.name}</div>
-                          <div className="text-gray-500 text-xs">{member.role}</div>
-                          <div className="text-gray-400 text-xs">{member.email}</div>
-                        </div>
-                      </div>
-
-                      {member.invited ? (
-                        <span className="text-xs text-blue-600 border border-blue-600 rounded-full px-3 py-1">
-                          Invite Sent
-                        </span>
-                      ) : (
-                        <button className="text-xs text-red-600 border border-red-600 rounded-full px-3 py-1 hover:bg-red-100">
-                          Remove
-                        </button>
-                      )}
-                    </div>
-                  ))}
+                <div className="mb-4">
+                  <label className="block text-[14px] font-medium text-[#292D32] mb-1">Email Address</label>
+                  <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
+                    <input
+                      type="email"
+                      placeholder="Enter email address"
+                      value={emailInvite}
+                      onChange={(e) => setEmailInvite(e.target.value)}
+                      className="w-full focus:outline-none"
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-3">
+                  <button className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                    Close
+                  </button>
+                  <button className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]">
+                    Invite
+                  </button>
                 </div>
               </div>
             </div>
@@ -283,22 +340,24 @@ const SettingsPage = () => {
             <button
               onClick={() => setActiveTab("profile")}
               className={`inline-flex items-center justify-center gap-1 p-2.5 relative flex-[0_0_auto] border-b-2 ${activeTab === "profile"
-                  ? "border-[#335bfb] text-primary-color"
-                  : "border-[#e1e4ea] text-text-grey"
+                ? "border-[#5E54FF] text-primary-color"
+                : "border-[#e1e4ea] text-text-grey"
                 } rounded-none`}
             >
-              <span className="[font-family:'Onest',Helvetica] font-medium text-sm tracking-[0] leading-6 whitespace-nowrap">
+              <span className={`[font-family:'Onest',Helvetica] font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === "profile"? "text-[#5E54FF]"
+                : "text-[#5A687C] "}`}>
                 My Profile
               </span>
             </button>
             <button
               onClick={() => setActiveTab("password")}
               className={`inline-flex items-center justify-center gap-1 p-2.5 relative flex-[0_0_auto] border-b-2 ${activeTab === "password"
-                  ? "border-[#335bfb] text-primary-color"
-                  : "border-[#e1e4ea] text-text-grey"
+                ? "border-[#5E54FF] text-primary-color"
+                : "border-[#e1e4ea] text-text-grey"
                 } rounded-none`}
             >
-              <span className="[font-family:'Onest',Helvetica] font-medium text-sm tracking-[0] leading-6 whitespace-nowrap">
+              <span className={`[font-family:'Onest',Helvetica] font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === "password"? "text-[#5E54FF]"
+                : "text-[#5A687C] "}`}>
                 Change Password
               </span>
             </button>
@@ -427,7 +486,7 @@ const SettingsPage = () => {
 
                   {/* Action Buttons */}
                   <div className="flex items-center gap-4 relative self-stretch w-full">
-                    <button className="px-4 py-2 bg-[#335BFB] text-white rounded-lg">
+                    <button className="px-4 py-2 bg-[#5E54FF] text-white rounded-lg">
                       Update Profile
                     </button>
                     <button className="px-4 py-2 bg-[#f5f7ff] text-text-grey border border-[#5a687c] rounded-lg">
@@ -459,7 +518,7 @@ const SettingsPage = () => {
                       </label>
                       <div className="relative">
                         <div className="absolute left-3.5 top-1/2 transform -translate-y-1/2">
-                          <KeyIcon className="w-5 h-5 text-gray-400" />
+                          <TbLockPassword className="w-5 h-5 text-gray-400" />
                         </div>
                         <input
                           type={showPasswords.currentPassword ? "text" : "password"}
@@ -475,9 +534,9 @@ const SettingsPage = () => {
                           className="absolute right-3.5 top-1/2 transform -translate-y-1/2"
                         >
                           {showPasswords.currentPassword ? (
-                            <EyeOffIcon className="w-5 h-5 text-gray-400" />
-                          ) : (
                             <EyeIcon className="w-5 h-5 text-gray-400" />
+                          ) : (
+                            <EyeOffIcon className="w-5 h-5 text-gray-400" />
                           )}
                         </button>
                       </div>
@@ -489,7 +548,7 @@ const SettingsPage = () => {
                       </label>
                       <div className="relative">
                         <div className="absolute left-3.5 top-1/2 transform -translate-y-1/2">
-                          <KeyIcon className="w-5 h-5 text-gray-400" />
+                          <TbLockPassword className="w-5 h-5 text-gray-400" />
                         </div>
                         <input
                           type={showPasswords.newPassword ? "text" : "password"}
@@ -505,9 +564,9 @@ const SettingsPage = () => {
                           className="absolute right-3.5 top-1/2 transform -translate-y-1/2"
                         >
                           {showPasswords.newPassword ? (
-                            <EyeOffIcon className="w-5 h-5 text-gray-400" />
-                          ) : (
                             <EyeIcon className="w-5 h-5 text-gray-400" />
+                          ) : (
+                            <EyeOffIcon className="w-5 h-5 text-gray-400" />
                           )}
                         </button>
                       </div>
@@ -519,7 +578,7 @@ const SettingsPage = () => {
                       </label>
                       <div className="relative">
                         <div className="absolute left-3.5 top-1/2 transform -translate-y-1/2">
-                          <KeyIcon className="w-5 h-5 text-gray-400" />
+                          <TbLockPassword className="w-5 h-5 text-gray-400" />
                         </div>
                         <input
                           type={showPasswords.confirmPassword ? "text" : "password"}
@@ -535,9 +594,9 @@ const SettingsPage = () => {
                           className="absolute right-3.5 top-1/2 transform -translate-y-1/2"
                         >
                           {showPasswords.confirmPassword ? (
-                            <EyeOffIcon className="w-5 h-5 text-gray-400" />
-                          ) : (
                             <EyeIcon className="w-5 h-5 text-gray-400" />
+                          ) : (
+                            <EyeOffIcon className="w-5 h-5 text-gray-400" />
                           )}
                         </button>
                       </div>
@@ -545,7 +604,7 @@ const SettingsPage = () => {
                   </div>
 
                   <div className="flex items-center gap-4 pt-2">
-                    <button className="px-4 py-2 bg-[#335BFB] text-white rounded-lg">
+                    <button className="px-4 py-2 bg-[#5E54FF] text-white rounded-lg">
                       Update Password
                     </button>
                     <button className="px-4 py-2 bg-[#f5f7ff] text-text-grey border border-[#5a687c] rounded-lg">
@@ -570,7 +629,7 @@ const SettingsPage = () => {
         </div>
         <hr className='text-[#E1E4EA]' />
       </div>
-      <div className="inline-flex items-start gap-8 relative pl-4 py-3">
+      <div className="flex items-start gap-8 relative pl-4 py-3">
         {/* Sidebar Navigation */}
         <div className="flex flex-col w-[153px] items-start gap-2 relative">
           <div
