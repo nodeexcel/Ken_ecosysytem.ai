@@ -21,3 +21,24 @@
     transform: rotate(360deg);
   }
 }
+
+
+.custom-thumb::-webkit-slider-thumb {
+  appearance: none;
+  height: 24px; /* thumb height */
+  width: 24px;  /* thumb width */
+  background-color: #675FFF; /* thumb color */
+  border-radius: 9999px; /* fully rounded */
+  border: none;
+  cursor: pointer;
+   /* adjust position if needed */
+}
+
+.custom-thumb::-moz-range-thumb {
+  height: 24px;
+  width: 24px;
+  background-color: #675FFF;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+}
