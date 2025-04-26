@@ -2,9 +2,8 @@ import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import Login from './pages/login'
 import SettingsPage from './pages/Settings'
-import Sidebar from './components/Sidebar'
 import Dashboard from './layout/Dashboard'
-import { Pricing } from './pages/Pricing'
+import { Pricing } from './pages/pricing'
 
 
 function App() {

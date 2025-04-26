@@ -121,8 +121,8 @@ const SettingsPage = () => {
                 </button>
               </div>
             </div>
-            <div className="rounded-lg shadow-sm overflow-hidden">
-              <table className="min-w-full divide-y divide-gray-200">
+            <div className="overflow-auto">
+              <table className="min-w-full">
                 <thead className="bg-transparent">
                   <tr>
                     <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]">Name</th>
@@ -132,10 +132,10 @@ const SettingsPage = () => {
                     <th className="px-6 py-3"></th>
                   </tr>
                 </thead>
-                <tbody className="bg-[#F9FAFB] divide-y divide-gray-200">
+                <tbody className="bg-[#F9FAFB] rounded-2xl">
                   {tableData.map((user, index) => (
-                    <tr key={index} className="rounded-xl my-2">
-                      <td className="px-6 py-4 whitespace-nowrap flex items-center gap-2">
+                    <tr key={index} className="rounded-2xl">
+                      <td className="px-6 py-4 whitespace-nowrap flex items-center gap-2 rounded-2xl">
                         <div className="w-8 h-8 bg-[#E8E9FF] text-[#5E54FF] rounded-full flex items-center justify-center font-semibold text-sm">
                           {user.initials}
                         </div>
