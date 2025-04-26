@@ -1,7 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CheckCircle } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Success() {
+  const location = useLocation()
+  const query = new URLSearchParams(location.search);
+  const productId = query.get('id');
+
+  const navigate = useNavigate()
+
+  console.log(productId)
+
+  useEffect(() => {
+    setTimeout(() => {
+      navigate("/")
+    }, 3000)
+  }, [])
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
