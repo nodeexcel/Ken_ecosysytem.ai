@@ -4,7 +4,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { LuUserRound } from "react-icons/lu";
 import { TbLockPassword } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
-import { login } from "../api/auth";
+import { getEmailVerify, getOTPVerify, login } from "../api/auth";
 import { subscriptionPayment } from "../api/payment";
 import { loadStripe } from "@stripe/stripe-js";
 
@@ -41,12 +41,19 @@ export default function Login() {
 
         try {
             setLoading(true);
-            const response = await login({ email });
+            const response = await getEmailVerify({ email });
 
-            if (response.firstTime) {
-                setStep("otp");
+            console.log(response)
+
+            if (response?.data?.profilePresent) {
+                localStorage.setItem("email", email)
+                if (response?.data?.profileActivated) {
+                    setStep("password");
+                } else {
+                    setStep("otp");
+                }
             } else {
-                setStep("password");
+                setErrors({ email: "User doesn't exists" });
             }
         } catch (error) {
             console.log(error);
@@ -96,22 +103,66 @@ export default function Login() {
     };
 
 
-    const handlePasswordSubmit = () => {
+    const handlePasswordSubmit = async () => {
         setErrors({});
         if (!password) {
             setErrors({ password: "Password is required" });
             return;
         }
 
+        try {
+            setLoading(true)
+            const payload = {
+                email: email,
+                password: password
+            }
+
+            const response = await login(payload)
+
+            console.log(response)
+
+            if (response?.status === 200) {
+                localStorage.setItem("token", response?.data?.token)
+                navigate("/dashboard")
+            }
+
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
+
         console.log("Submit Password:", password);
         // handle login logic
     };
 
-    const handleOtpSubmit = (value) => {
+    const handleOtpSubmit = async (value) => {
         setErrors({});
         if (!value) {
             setErrors({ otp: "Otp is required" });
             return;
+        }
+
+        try {
+            setLoading(true)
+            const payload = {
+                email: email,
+                otp: value
+            }
+
+            const response = await getOTPVerify(payload)
+            console.log(response)
+            if (response?.status === 200) {
+                navigate("/create-password")
+            } else {
+                setErrors({ otp: response?.data?.message });
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+        finally {
+            setLoading(false)
         }
 
         console.log("Submit Password:", value);

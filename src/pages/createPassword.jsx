@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { TbLockPassword } from 'react-icons/tb';
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { setPassword } from '../api/auth';
+import { useNavigate } from 'react-router-dom';
 
 export default function SetPassword() {
     const [showPasswords, setShowPasswords] = useState({
@@ -15,6 +17,8 @@ export default function SetPassword() {
 
     const [formErrors, setFormErrors] = useState({});
     const [loading,setLoading]=useState(false)
+
+    const navigate=useNavigate()
 
     const togglePasswordVisibility = (field) => {
         setShowPasswords((prev) => ({
@@ -53,11 +57,29 @@ export default function SetPassword() {
         return errors;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
         const errors = validate();
         if (Object.keys(errors).length === 0) {
             console.log("Password set successfully!", formData);
+            try {
+                setLoading(true)
+                const payload={
+                    email:localStorage.getItem("email"),
+                    newPassword:formData?.password
+                }
+
+                const response=await setPassword(payload)
+                console.log(response)
+                if(response?.status===200){
+                    navigate("/")
+                }
+
+            } catch (error) {
+                console.log(error)
+            }finally{
+                setLoading(false)
+            }
             // handle successful submission logic
         } else {
             setFormErrors(errors);
