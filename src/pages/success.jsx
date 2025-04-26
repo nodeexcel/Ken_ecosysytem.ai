@@ -28,9 +28,6 @@ function Success() {
         <p className="text-gray-600 mb-6">
           Thank you for your purchase. Your payment has been processed successfully.
         </p>
-        <button className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 transition duration-300">
-          Back to Sign In
-        </button>
       </div>
     </div>
   );

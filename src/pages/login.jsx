@@ -19,6 +19,7 @@ export default function Login() {
 
     const otpRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
     const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+    const priceId = import.meta.env.VITE_REGISTER_PLAN_ID
     const navigate = useNavigate();
 
     const togglePasswordVisibility = () => {
@@ -119,12 +120,18 @@ export default function Login() {
 
     const getSubscriptionPlan = async () => {
         try {
-            //const response = await subscriptionPayment({ priceId: "price_1RHibgCdf6s13v8RatRzubcd" });
+            const payload = {
+
+                "priceId": priceId,
+                "successUrl": "http://localhost:5173/success",
+                "cancelUrl": "http://localhost:5173/cancel"
+            }
+            const response = await subscriptionPayment(payload);
             const stripe = await stripePromise;
-            await stripe.redirectToCheckout({ sessionId: 'cs_test_a1HaZUulwx48gpPQiPVuK1wJuS09udNAq5QdKGqlLoVUj7QVAkmK2c084I' });
-            // if (response.status === 200 && stripe) {
-            //     await stripe.redirectToCheckout({ sessionId: response?.data?.session_id });
-            // }
+            console.log(response)
+            if (response.status === 200 && stripe) {
+                await stripe.redirectToCheckout({ sessionId: response?.data?.sessionId });
+            }
         } catch (error) {
             console.log("Stripe error:", error);
         }

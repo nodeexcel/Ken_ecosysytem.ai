@@ -6,6 +6,7 @@ import Dashboard from './layout/Dashboard'
 import { Pricing } from './pages/pricing'
 import SetPassword from './pages/createPassword'
 import Success from './pages/success'
+import PaymentFailed from './pages/failure'
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
       <Route path='/dashboard' element={<Dashboard><SettingsPage /></Dashboard>} />
       <Route path='/pricing' element={<Pricing />} />
       <Route path='/success' element={<Success />} />
+      <Route path='/cancel' element={<PaymentFailed />} />
     </Routes>
     </div>
   )
