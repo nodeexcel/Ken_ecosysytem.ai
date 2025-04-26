@@ -3,14 +3,13 @@ import Sidebar from '../components/Sidebar'
 
 function Dashboard({ children }) {
     return (
-        <div className='w-full flex h-screen space-y-6 overflow-y-auto'>
-            <div className='w-[5%] min-w-[53px]'>
-            <Sidebar />
+        <div className='w-full flex h-screen overflow-hidden'>
+            <div className='w-[5%] h-screen'>
+                <Sidebar />
             </div>
-            <div className='w-[95%] bg-[#F6F7F9]'>
+            <div className='w-[95%] bg-[#F6F7F9] overflow-y-auto overflow-x-hidden'>
                 {children}
             </div>
-
         </div>
     )
 }

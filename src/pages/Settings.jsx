@@ -199,13 +199,15 @@ const SettingsPage = () => {
     }
 
     return (
-      <div className="flex flex-col w-[1136px] items-start gap-5 relative">
+      <div className="flex flex-col w-full items-start gap-5 relative px-4 sm:px-6">
         {/* Header */}
         <div className="flex flex-col items-start gap-[23px] relative self-stretch w-full flex-[0_0_auto]">
           <div className="flex items-center justify-between relative self-stretch w-full flex-[0_0_auto]">
             <div className="inline-flex items-center gap-2 relative flex-[0_0_auto]">
-              <div className="relative w-fit mt-[-1.00px] [font-family:'Onest',Helvetica] font-semibold text-[#1e1e1e] text-2xl tracking-[0] leading-8 whitespace-nowrap">
-                General Settings
+              <div className="relative w-fit mt-[-1.00px] [font-family:'Onest',Helvetica] font-semibold text-[#1e1e1e] text-xl sm:text-2xl tracking-[0] leading-8 whitespace-nowrap">
+                <h1 className="text-[20px] sm:text-[24px] font-[600] onest">
+                  General Settings
+                </h1>
               </div>
             </div>
 
@@ -230,7 +232,7 @@ const SettingsPage = () => {
                 : "border-[#e1e4ea] text-text-grey"
                 } rounded-none`}
             >
-              <span className={`[font-family:'Onest',Helvetica] font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === "profile"? "text-[#5E54FF]"
+              <span className={`onest text-[14px] font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === "profile"? "text-[#675FFF]"
                 : "text-[#5A687C] "}`}>
                 My Profile
               </span>
@@ -250,19 +252,19 @@ const SettingsPage = () => {
           </div>
 
           {activeTab === "profile" && (
-            <div className="mt-5 p-0">
-              <div className="w-[648px] border border-solid border-[#e1e4ea] rounded-2xl">
-                <div className="flex flex-col items-center justify-center gap-[26px] p-[30px] relative">
+            <div className="mt-5 bg-white lg:w-[648px] ">
+              <div className="w-full border border-solid border-[#e1e4ea] rounded-2xl">
+                <div className="flex flex-col items-center justify-center gap-[26px] p-4 sm:p-[30px] relative">
                   {/* Profile Avatar */}
                   <div className="relative">
-                    <div className="w-24 h-24 rounded-full overflow-hidden">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden">
                       <img
                         src={profile_pic || profileData.avatar}
                         alt="Profile"
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <button className="absolute top-[65px] left-[65px] bg-primary-color rounded-[110px] w-[31px] h-[31px] p-[7px]">
+                    <button className="absolute top-[45px] left-[45px] sm:top-[65px] sm:left-[65px] bg-primary-color rounded-[110px] w-[31px] h-[31px] p-[7px]">
                       <img
                         className="w-[17px] h-[17px]"
                         alt="Edit"
@@ -274,8 +276,8 @@ const SettingsPage = () => {
                   {/* Profile Form */}
                   <div className="flex flex-col items-start gap-4 relative self-stretch w-full">
                     {/* Name Fields */}
-                    <div className="flex items-start gap-[17px] relative self-stretch w-full">
-                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow">
+                    <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-[17px] relative self-stretch w-full">
+                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
                         <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm tracking-[0] leading-5">
                           First Name
                         </label>
@@ -285,7 +287,7 @@ const SettingsPage = () => {
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
                         />
                       </div>
-                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow">
+                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
                         <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm tracking-[0] leading-5">
                           Last Name
                         </label>
@@ -298,8 +300,8 @@ const SettingsPage = () => {
                     </div>
 
                     {/* Contact Fields */}
-                    <div className="flex items-start gap-[17px] relative self-stretch w-full">
-                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow">
+                    <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-[17px] relative self-stretch w-full">
+                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
                         <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm tracking-[0] leading-5">
                           Email Address
                         </label>
@@ -309,7 +311,7 @@ const SettingsPage = () => {
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
                         />
                       </div>
-                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow">
+                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
                         <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm tracking-[0] leading-5">
                           Phone No
                         </label>
@@ -322,8 +324,8 @@ const SettingsPage = () => {
                     </div>
 
                     {/* Company Fields */}
-                    <div className="flex items-start gap-[17px] relative self-stretch w-full">
-                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow">
+                    <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-[17px] relative self-stretch w-full">
+                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
                         <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm tracking-[0] leading-5">
                           Company
                         </label>
@@ -333,7 +335,7 @@ const SettingsPage = () => {
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
                         />
                       </div>
-                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow">
+                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
                         <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm tracking-[0] leading-5">
                           Role
                         </label>
@@ -346,8 +348,8 @@ const SettingsPage = () => {
                     </div>
 
                     {/* Location Fields */}
-                    <div className="flex items-start gap-[17px] relative self-stretch w-full">
-                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow">
+                    <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-[17px] relative self-stretch w-full">
+                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
                         <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm tracking-[0] leading-5">
                           City
                         </label>
@@ -357,7 +359,7 @@ const SettingsPage = () => {
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
                         />
                       </div>
-                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow">
+                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
                         <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm tracking-[0] leading-5">
                           Country
                         </label>
@@ -371,11 +373,11 @@ const SettingsPage = () => {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex items-center gap-4 relative self-stretch w-full">
-                    <button className="px-4 py-2 bg-[#5E54FF] text-white rounded-lg">
+                  <div className="flex flex-col sm:flex-row items-center gap-4 relative self-stretch w-full">
+                    <button className="w-full sm:w-auto px-4 py-2 bg-[#5E54FF] text-white rounded-lg">
                       Update Profile
                     </button>
-                    <button className="px-4 py-2 bg-[#f5f7ff] text-text-grey border border-[#5a687c] rounded-lg">
+                    <button className="w-full sm:w-auto px-4 py-2 bg-[#f5f7ff] text-text-grey border border-[#5a687c] rounded-lg">
                       Cancel
                     </button>
                   </div>
@@ -386,8 +388,8 @@ const SettingsPage = () => {
 
           {activeTab === "password" && (
             <div className="mt-5">
-              <div className="w-[648px] border border-solid border-[#e1e4ea] rounded-2xl">
-                <div className="flex flex-col items-start gap-6 p-[30px]">
+              <div className="w-full border border-solid border-[#e1e4ea] rounded-2xl">
+                <div className="flex flex-col items-start gap-6 p-4 sm:p-[30px]">
                   <div className="flex flex-col items-start gap-1">
                     <h2 className="[font-family:'Onest',Helvetica] font-semibold text-text-black text-lg leading-7">
                       Change Password
@@ -489,11 +491,11 @@ const SettingsPage = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 pt-2">
-                    <button className="px-4 py-2 bg-[#5E54FF] text-white rounded-lg">
+                  <div className="flex flex-col sm:flex-row items-center gap-4 pt-2 w-full">
+                    <button className="w-full sm:w-auto px-4 py-2 bg-[#5E54FF] text-white rounded-lg">
                       Update Password
                     </button>
-                    <button className="px-4 py-2 bg-[#f5f7ff] text-text-grey border border-[#5a687c] rounded-lg">
+                    <button className="w-full sm:w-auto px-4 py-2 bg-[#f5f7ff] text-text-grey border border-[#5a687c] rounded-lg">
                       Cancel
                     </button>
                   </div>
@@ -507,7 +509,7 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="h-full w-full overflow-auto bg-[#F6F7F9] ">
+    <div className="h-full w-full bg-[#F6F7F9]">
       <div>
         <div className='flex items-center pl-4 py-3'>
           <MdOutlineKeyboardArrowLeft size={25} />
@@ -523,8 +525,9 @@ const SettingsPage = () => {
             className={`flex items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#e1e5ea]" : ""
               }`}
           >
-            <SettingsIcon className="w-4 h-4" />
-            <div className={`relative w-fit mt-[-1.00px] [font-family:'Onest',Helvetica] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "general" ? "text-text-black" : "text-text-grey"
+            <SettingsIcon className={`w-4 h-4 ${activeSidebarItem === "general" ? "text-black" : "text-[#5A687C] "
+              } `} />
+            <div className={`relative w-fit mt-[-1.00px] onest font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "general" ? "text-black" : "text-[#5A687C] "
               }`}>
               General Settings
             </div>
@@ -535,8 +538,9 @@ const SettingsPage = () => {
             className={`flex items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#e1e5ea]" : ""
               }`}
           >
-            <CreditCardIcon className="w-4 h-4" />
-            <div className={`relative w-fit mt-[-1.00px] [font-family:'Onest',Helvetica] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "billing" ? "text-text-black" : "text-text-grey"
+            <CreditCardIcon className={`w-4 h-4 ${activeSidebarItem === "billing" ? "text-black" : "text-[#5A687C] "
+              } `} />
+            <div className={`relative w-fit mt-[-1.00px] [font-family:'Onest',Helvetica] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "billing" ? "text-black" : "text-[#5A687C] "
               }`}>
               Plan &amp; Billing
             </div>
@@ -547,8 +551,9 @@ const SettingsPage = () => {
             className={`flex items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "team" ? "bg-[#e1e5ea]" : ""
               }`}
           >
-            <UsersIcon className="w-4 h-4" />
-            <div className={`relative w-fit mt-[-1.00px] [font-family:'Onest',Helvetica] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "team" ? "text-text-black" : "text-text-grey"
+            <UsersIcon className={`w-4 h-4 ${activeSidebarItem === "team" ? "text-black" : "text-[#5A687C] "
+              } `} />
+            <div className={`relative w-fit mt-[-1.00px] [font-family:'Onest',Helvetica] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "team" ? "text-black" : "text-[#5A687C] "
               }`}>
               Team Members
             </div>
@@ -556,7 +561,9 @@ const SettingsPage = () => {
         </div>
 
         {/* Main Content */}
-        {renderMainContent()}
+        <div className="w-full overflow-x-hidden">
+          {renderMainContent()}
+        </div>
       </div>
     </div>
   );
