@@ -7,6 +7,7 @@ import { TbLockPassword } from "react-icons/tb";
 import Plan from "../components/Plan";
 import { useSelector } from "react-redux";
 import axiosInstance from "../api/axiosInstance";
+import { updateProfile } from "../api/auth";
 
 
 // User profile data
@@ -19,7 +20,7 @@ const profileData = {
   role: "Admin",
   city: "Springfield",
   country: "United States",
-  avatar: "/rectangle-1043.png",
+  avatar: profile_pic,
 };
 
 const tableData = [
@@ -76,27 +77,29 @@ const SettingsPage = () => {
 
   const token = localStorage.getItem('token');
 
-  useEffect(()=>{
-    const getDetails = async()=>{
-     try {
-      const res = await axiosInstance.get('/api/users/profile',
-        {
-          headers:{
-            'Authorization': `Bearer ${token}`
+  const [updateLoading,setUpdateLoading]=useState(false)
+
+  useEffect(() => {
+    const getDetails = async () => {
+      try {
+        const res = await axiosInstance.get('/api/users/profile',
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
           }
+        )
+        console.log(res.data)
+        if (res.status) {
+          setProfileFormData(res.data)
         }
-      )
-      console.log(res.data)
-      if(res.status){
-        setProfileFormData(res.data)
+      } catch (error) {
+        console.log(error)
       }
-     } catch (error) {
-      console.log(error)
-     }
     }
 
     getDetails()
-  },[])
+  }, [])
 
 
   const [showPasswords, setShowPasswords] = useState({
@@ -108,7 +111,7 @@ const SettingsPage = () => {
   const [emailInvite, setEmailInvite] = useState("")
   const [role, setRole] = useState("")
 
-  const users=useSelector((state)=>state)
+  const users = useSelector((state) => state)
   console.log(users)
 
   const handlePasswordChange = (e) => {
@@ -127,10 +130,41 @@ const SettingsPage = () => {
     }));
   };
 
-  const handleProfileSubmit = (e) => {
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+
+      setProfileFormData((prev) => ({
+        ...prev,
+        image: imageUrl,
+        imageFile: file, // Optional: for uploading to backend later
+      }));
+    }
+  };
+
+
+  const handleProfileSubmit = async (e) => {
     e.preventDefault();
-    // Here you can add your API call to update the profile
     console.log('Profile data to update:', profileFormData);
+    try {
+      setUpdateLoading(true)
+      const formData = new FormData();
+      Object.entries(profileFormData).forEach(([key, value]) => {
+        if (key === 'imageFile' && value) {
+          formData.append('file', value);
+        } else if (key !== 'image') {
+          formData.append(key, value);
+        }
+      });
+      const response = await updateProfile(formData, token)
+      console.log(response)
+
+    } catch (error) {
+      console.log(error)
+    }finally{
+      setUpdateLoading(false)
+    }
   };
 
   const togglePasswordVisibility = (field) => {
@@ -148,7 +182,7 @@ const SettingsPage = () => {
     if (activeSidebarItem === "billing") {
       return (
         <div className="flex flex-col w-full gap-6">
-          <Plan/>
+          <Plan />
         </div>
       );
     }
@@ -195,16 +229,16 @@ const SettingsPage = () => {
                 <tbody className=" rounded-lg">
                   {tableData.map((user, index) => (
                     <tr key={index} className="bg-white">
-                      <td className="px-6 py-4 whitespace-nowrap flex items-center gap-2 border-l-2 border-t-2 border-b-2 border-[#E1E4EA] rounded-l-lg">
+                      <td className="px-6 py-4 whitespace-nowrap flex items-center gap-2 border-l-1 border-t-1 border-b-1 border-[#E1E4EA] rounded-l-lg">
                         <div className="w-8 h-8 bg-[#E8E9FF] text-[#5E54FF] rounded-full flex items-center justify-center font-semibold text-sm">
                           {user.initials}
                         </div>
                         <span className="font-medium text-[#1E1E1E]">{user.name}</span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-700 border-t-2 border-b-2 border-[#E1E4EA]">{user.email}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700 border-t-2 border-b-2 border-[#E1E4EA]">{user.role}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700 border-r-2 border-t-2 border-b-2 rounded-r-lg border-[#E1E4EA]">
-                        <select 
+                      <td className="px-6 py-4 text-sm text-gray-700 border-t-1 border-b-1 border-[#E1E4EA]">{user.email}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700 border-t-1 border-b-1 border-[#E1E4EA]">{user.role}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700 border-r-1 border-t-1 border-b-1 rounded-r-lg border-[#E1E4EA]">
+                        <select
                           className="w-full bg-white  rounded-md px-2 py-1"
                           value={user.assigned[0]}
                           onChange={(e) => {
@@ -220,11 +254,11 @@ const SettingsPage = () => {
                         </select>
                       </td>
                       <td className="px-6 py-4 text-left border-[#E1E4EA] rounded-r-lg bg-[#F6F7F9]">
-                        <button 
+                        <button
                           onClick={() => handleDropdownClick(index)}
                           className="text-gray-500 hover:text-gray-700"
                         >
-                         <EllipsisVertical />
+                          <EllipsisVertical />
                         </button>
                         {activeDropdown === index && (
                           <div className="absolute right-6 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
@@ -332,7 +366,7 @@ const SettingsPage = () => {
                 : "border-[#e1e4ea] text-text-grey"
                 } rounded-none`}
             >
-              <span className={`onest text-[14px] font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === "profile"? "text-[#675FFF]"
+              <span className={`onest text-[14px] font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === "profile" ? "text-[#675FFF]"
                 : "text-[#5A687C] "}`}>
                 My Profile
               </span>
@@ -344,7 +378,7 @@ const SettingsPage = () => {
                 : "border-[#e1e4ea] text-text-grey"
                 } rounded-none`}
             >
-              <span className={`[font-family:'Onest',Helvetica] font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === "password"? "text-[#5E54FF]"
+              <span className={`[font-family:'Onest',Helvetica] font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === "password" ? "text-[#5E54FF]"
                 : "text-[#5A687C] "}`}>
                 Change Password
               </span>
@@ -364,14 +398,25 @@ const SettingsPage = () => {
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <button className="absolute top-[45px] left-[45px] sm:top-[65px] sm:left-[65px] bg-primary-color rounded-[110px] w-[31px] h-[31px] p-[7px]">
-                      <img
-                        className="w-[17px] h-[17px]"
-                        alt="Edit"
-                        src="/frame.svg"
-                      />
+
+                    {/* Hidden file input */}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      id="profileImageInput"
+                      className="hidden"
+                      onChange={handleImageUpload}
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => document.getElementById('profileImageInput').click()}
+                      className="absolute top-[45px] left-[45px] sm:top-[65px] sm:left-[65px] bg-primary-color rounded-[110px] w-[31px] h-[31px] p-[7px]"
+                    >
+                      <img className="w-[17px] h-[17px]" alt="Edit" src="/frame.svg" />
                     </button>
                   </div>
+
 
                   {/* Profile Form */}
                   <div className="flex flex-col items-start gap-4 relative self-stretch w-full">
@@ -412,6 +457,7 @@ const SettingsPage = () => {
                         <input
                           type="email"
                           name="email"
+                          readOnly
                           value={profileFormData.email}
                           onChange={handleProfileChange}
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
@@ -424,7 +470,7 @@ const SettingsPage = () => {
                         <input
                           type="text"
                           name="phoneNumber"
-                          value={profileFormData.phoneNumber || 'NA'}
+                          value={profileFormData.phoneNumber}
                           onChange={handleProfileChange}
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
                         />
@@ -490,8 +536,8 @@ const SettingsPage = () => {
 
                   {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row items-center gap-4 relative self-stretch w-full">
-                    <button type="submit" className="w-full sm:w-auto px-4 py-2 bg-[#5E54FF] text-white rounded-lg">
-                      Update Profile
+                    <button type="submit" disabled={updateLoading} className={`w-full sm:w-auto px-4 py-2 ${updateLoading?"bg-[#5f54ff87]":"bg-[#5E54FF]"} text-white rounded-lg`}>
+                      {updateLoading?<div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div>:"Update Profile"}
                     </button>
                     <button type="button" className="w-full sm:w-auto px-4 py-2 bg-[#f5f7ff] text-text-grey border border-[#5a687c] rounded-lg">
                       Cancel

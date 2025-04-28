@@ -19,21 +19,17 @@ const Sidebar = () => {
                 </div>
                 <hr className='text-[#E1E4EA]' />
                 <div className='text-xl flex justify-center py-4'>
-                    <RiHome6Line size={25} color='#5A687C' />
-                </div>
-                <div className='text-xl flex justify-center py-4'>
                     <GrAppsRounded size={25} color='#5A687C' />
                 </div>
-                <hr className='text-[#E1E4EA]' />
-            </div>
-            <div className='flex flex-col'>
-                <hr className='text-[#E1E4EA]' />
                 <div className='text-xl flex justify-center py-4'>
                     <img src={aiFrame} alt='aiframe' />
                 </div>
                 <div className='text-xl flex justify-center py-4'>
                     <IoSettingsOutline size={25} color='#5A687C' />
                 </div>
+                <hr className='text-[#E1E4EA]' />
+            </div>
+            <div className='flex flex-col'>
                 <hr className='text-[#E1E4EA]' />
                 <div className='text-xl flex justify-center py-4'>
                     <HiOutlineDocumentText size={25} color='#5A687C' />
