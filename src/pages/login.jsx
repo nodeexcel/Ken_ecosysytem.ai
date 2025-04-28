@@ -1,12 +1,15 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { LuUserRound } from "react-icons/lu";
 import { TbLockPassword } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
-import { getEmailVerify, getOTPVerify, login } from "../api/auth";
+import { forgotPassword, getEmailVerify, getOTPVerify, googleLogin, login } from "../api/auth";
 import { subscriptionPayment } from "../api/payment";
 import { loadStripe } from "@stripe/stripe-js";
+import { useGoogleLogin } from "@react-oauth/google";
+import { useDispatch } from "react-redux";
+import { emailState, loginSuccess } from "../store/authSlice";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -15,7 +18,11 @@ export default function Login() {
     const [step, setStep] = useState("email");
     const [otp, setOtp] = useState(["", "", "", ""]);
     const [loading, setLoading] = useState(false);
+    const [forgotLoading, setForgotLoading] = useState(false)
+    const [resentLoading, setResentLoading] = useState(false)
     const [errors, setErrors] = useState({});
+    const [success, setSuccess] = useState({})
+    const dispatch=useDispatch()
 
     const otpRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
     const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
@@ -27,6 +34,13 @@ export default function Login() {
     };
 
     const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
+
+
+    useEffect(() => {
+        setTimeout(() => {
+            setSuccess({})
+        }, 5000)
+    }, [success])
 
     const handleEmailSubmit = async () => {
         setErrors({});
@@ -46,15 +60,17 @@ export default function Login() {
             console.log(response)
 
             if (response?.data?.profilePresent) {
-                localStorage.setItem("email", email)
+                dispatch(emailState({email:email}))
                 if (response?.data?.profileActivated) {
                     setStep("password");
                 } else {
                     setStep("otp");
                 }
-            } else {
-                setErrors({ email: "User doesn't exists" });
             }
+            else {
+                setErrors({ email: response?.response?.data?.message })
+            }
+
         } catch (error) {
             console.log(error);
         } finally {
@@ -122,8 +138,11 @@ export default function Login() {
             console.log(response)
 
             if (response?.status === 200) {
+                dispatch(loginSuccess({user:response?.data,token:response?.data?.token}))
                 localStorage.setItem("token", response?.data?.token)
                 navigate("/dashboard")
+            } else {
+                setErrors({ password: response?.response?.data?.message })
             }
 
         } catch (error) {
@@ -155,7 +174,7 @@ export default function Login() {
             if (response?.status === 200) {
                 navigate("/create-password")
             } else {
-                setErrors({ otp: response?.data?.message });
+                setErrors({ otp: response?.response?.data?.message });
             }
 
         } catch (error) {
@@ -168,6 +187,65 @@ export default function Login() {
         console.log("Submit Password:", value);
         // handle login logic
     };
+
+    const handleForgot = async () => {
+        try {
+            setForgotLoading(true)
+            const payload = {
+                email: email
+            }
+            const response = await forgotPassword(payload)
+            if (response?.status === 200) {
+                setSuccess({ password: response?.data?.message })
+            } else {
+                setErrors({ password: response?.data?.message })
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setForgotLoading(false)
+        }
+    }
+
+    const handleResendOtp = async () => {
+        setResentLoading(true)
+        await handleEmailSubmit()
+        setSuccess({ otp: "Otp send successfully!" })
+        setResentLoading(false)
+    }
+
+    const handleGoogleLogin = async (auth_data) => {
+        console.log(auth_data, auth_data?.credential, "response")
+        const token = auth_data?.access_token
+        console.log(token, "jooo")
+        try {
+            const payload = {
+                accessToken: token
+            }
+            const response = await googleLogin(payload)
+            console.log(response)
+            if (response?.status === 200) {
+                if (response?.data?.profileActivated) {
+                    dispatch(loginSuccess({user:response?.data,token:response?.data?.token}))
+                    localStorage.setItem("token",response?.data?.token)
+                    navigate("/dashboard")
+                }else{
+                    console.log(response?.data?.email)
+                    dispatch(emailState({email:response?.data?.email}))
+                    navigate("/create-password")
+                }
+            } else {
+                setErrors({ google_auth: response?.response?.data?.message })
+            }
+        } catch (error) {
+            toast.error(error.message)
+            console.error("Error:", error)
+        }
+    }
+
+    const loginGoogle = useGoogleLogin({
+        onSuccess: handleGoogleLogin,
+    });
 
     const getSubscriptionPlan = async () => {
         try {
@@ -214,9 +292,9 @@ export default function Login() {
                 type="submit"
                 onClick={handleEmailSubmit}
                 disabled={loading}
-                className="w-full bg-[#675FFF] text-white my-4 py-[14px] rounded-[8px] font-semibold  transition"
+                className={`w-full ${loading ? "bg-[#675fff79]" : "bg-[#675FFF] cursor-pointer"} text-white my-4 py-[14px] rounded-[8px] font-semibold  transition`}
             >
-                {loading ? <span className="loader" /> : "Continue"}
+                {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Continue"}
             </button>
         </div>
     );
@@ -246,18 +324,19 @@ export default function Login() {
                 ))}
             </div>
             {errors.otp && <p className="text-red-500 text-center text-sm mt-1">{errors.otp}</p>}
+            {success.otp && <p className="text-green-500 text-center text-sm mt-1">{success.otp}</p>}
 
             <p className="text-center text-[16px] text-[#777F90] my-6">
-                Didn't receive code? <span className="font-semibold text-[#675FFF] cursor-pointer">Send Again</span>
+                Didn't receive code? <span className="font-semibold text-[#675FFF] cursor-pointer" onClick={handleResendOtp}>{resentLoading ? <span className="loader" /> : "Send Again"}</span>
             </p>
 
             <button
                 type="submit"
-                disabled={loading}
+                disabled={loading && !resentLoading}
                 onClick={() => handleOtpSubmit(otp.join(""))}
-                className="w-full bg-[#675FFF] my-4 text-white py-[14px] rounded-[8px] font-semibold transition"
+                className={`w-full ${(loading && !resentLoading) ? "bg-[#675fff79]" : "bg-[#675FFF] cursor-pointer"} my-4 text-white py-[14px] rounded-[8px] font-semibold transition`}
             >
-                {loading ? <span className="loader" /> : "Login"}
+                {(loading && !resentLoading) ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Login"}
             </button>
         </div>
     );
@@ -293,6 +372,7 @@ export default function Login() {
                     </button>
                 </div>
                 {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+                {success.password && <p className="text-green-500 text-sm mt-1">{success.password}</p>}
             </div>
 
             <div className="flex items-center justify-between text-sm text-gray-500">
@@ -300,18 +380,18 @@ export default function Login() {
                     <input type="checkbox" className="rounded" />
                     <span className="text-[#5A687C] text-[14px]">Remember me!</span>
                 </label>
-                <a href="#" className="text-[#675FFF] text-[14px] font-semibold hover:underline">
-                    Forgot Password
-                </a>
+                <p onClick={handleForgot} className="text-[#675FFF] text-[14px] cursor-pointer font-semibold hover:underline">
+                    {forgotLoading ? <span className="loader" /> : "Forgot Password"}
+                </p>
             </div>
 
             <button
                 type="submit"
                 disabled={loading}
                 onClick={handlePasswordSubmit}
-                className="w-full bg-[#675FFF] text-white my-4 py-[14px] rounded-[8px] font-semibold transition"
+                className={`w-full ${loading ? "bg-[#675fff79]" : "bg-[#675FFF] cursor-pointer"} text-white my-4 py-[14px] rounded-[8px] font-semibold transition`}
             >
-                {loading ? <span className="loader" /> : "Login"}
+                {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Login"}
             </button>
         </div>
     );
@@ -331,7 +411,8 @@ export default function Login() {
                             <div className="text-sm text-gray-500">OR</div>
                             <hr className="text-[#E1E4EA] min-w-[201px]" />
                         </div>
-                        <button className="w-full flex items-center justify-center border border-gray-300 py-[14px] rounded-[8px] hover:bg-gray-100 transition">
+                        {errors.google_auth && <p className="text-red-500 text-sm my-1 text-center">{errors.google_auth}</p>}
+                        <button onClick={() => loginGoogle()} className="w-full flex cursor-pointer items-center justify-center border border-gray-300 py-[14px] rounded-[8px] hover:bg-gray-100 transition">
                             <FcGoogle className="mr-2 text-xl" /> Continue with Google
                         </button>
                     </>

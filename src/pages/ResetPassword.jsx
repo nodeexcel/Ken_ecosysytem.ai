@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { TbLockPassword } from 'react-icons/tb';
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { setPassword } from '../api/auth';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { resetPassword, setPassword } from '../api/auth';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-export default function SetPassword() {
+export default function ResetPassword() {
     const [showPasswords, setShowPasswords] = useState({
         password: false,
         confirmPassword: false,
@@ -20,8 +19,10 @@ export default function SetPassword() {
     const [loading, setLoading] = useState(false)
 
     const navigate = useNavigate()
-
-    const storedEmail = useSelector((state) => state.auth.email)
+    const location = useLocation()
+    const query = new URLSearchParams(location.search);
+    const query_token = query.get('token');
+    console.log(query_token)
 
     const togglePasswordVisibility = (field) => {
         setShowPasswords((prev) => ({
@@ -69,11 +70,10 @@ export default function SetPassword() {
             try {
                 setLoading(true)
                 const payload = {
-                    email: storedEmail,
-                    newPassword: formData?.password
+                    newPassword: formData?.password,
+                    token: query_token
                 }
-
-                const response = await setPassword(payload)
+                const response = await resetPassword(payload)
                 console.log(response)
                 if (response?.status === 200) {
                     navigate("/")
@@ -101,7 +101,7 @@ export default function SetPassword() {
             <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-md w-full max-w-[500px]">
                 <div className="space-y-6">
                     <h2 className="text-[28px] font-bold text-center text-[#292D32]">Welcome Back</h2>
-                    <p className="text-center text-[16px] text-[#777F90] mt-2 mb-4">Please create your password below.</p>
+                    <p className="text-center text-[16px] text-[#777F90] mt-2 mb-4">Please reset your password below.</p>
 
                     <div className="flex flex-col gap-4 w-full">
                         {/* New Password */}
@@ -166,6 +166,7 @@ export default function SetPassword() {
                             )}
                         </div>
                     </div>
+
                     {formErrors.error && (
                         <p className="text-red-500 text-sm mt-1">{formErrors.error}</p>
                     )}

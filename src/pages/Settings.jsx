@@ -5,6 +5,7 @@ import profile_pic from '../assets/images/profile.png';
 import { LuRefreshCw } from "react-icons/lu";
 import { TbLockPassword } from "react-icons/tb";
 import Plan from "../components/Plan";
+import { useSelector } from "react-redux";
 
 
 // User profile data
@@ -68,6 +69,9 @@ const SettingsPage = () => {
   const [open, setOpen] = useState(false);
   const [emailInvite, setEmailInvite] = useState("")
   const [role, setRole] = useState("")
+
+  const users=useSelector((state)=>state)
+  console.log(users)
 
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;

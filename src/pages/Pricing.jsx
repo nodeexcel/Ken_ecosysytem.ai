@@ -1,7 +1,6 @@
-'use client'
 import React, { useState } from "react";
 
-export const  Pricing = () => {
+const  Pricing = () => {
     const [activeTab, setActiveTab] = useState("annual");
 
     const plans = {
@@ -650,3 +649,5 @@ export const  Pricing = () => {
       </div>
     );
   };
+
+export default Pricing
