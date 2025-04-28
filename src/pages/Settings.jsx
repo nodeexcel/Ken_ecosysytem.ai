@@ -1,11 +1,12 @@
-import { CreditCardIcon, EyeIcon, EyeOffIcon, SettingsIcon, UsersIcon, X } from "lucide-react";
-import React, { useState } from "react";
+import { CreditCardIcon, EllipsisVertical, EyeIcon, EyeOffIcon, SettingsIcon, UsersIcon, X } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md';
 import profile_pic from '../assets/images/profile.png';
 import { LuRefreshCw } from "react-icons/lu";
 import { TbLockPassword } from "react-icons/tb";
 import Plan from "../components/Plan";
 import { useSelector } from "react-redux";
+import axiosInstance from "../api/axiosInstance";
 
 
 // User profile data
@@ -27,28 +28,28 @@ const tableData = [
     name: 'Robert Downey',
     email: 'robertdowney45@gmail.com',
     role: 'Admin',
-    assigned: 'Liam',
+    assigned: ['Liam'],
   },
   {
     initials: 'NC',
     name: 'Nicolas Cage',
     email: 'nicolascage88@gmail.com',
     role: 'Member',
-    assigned: 'Daniel, Criss',
+    assigned: ['Daniel', 'Criss'],
   },
   {
     initials: 'JD',
     name: 'Johny Deep',
     email: 'johnydeep86@gmail.com',
     role: 'Member',
-    assigned: 'Kenneth, Lori',
+    assigned: ['Kenneth', 'Lori'],
   },
   {
     initials: 'JM',
     name: 'Jecob More',
     email: 'jecobmore56542@gmail.com',
     role: 'Guest',
-    assigned: 'Kurt',
+    assigned: ['Kurt'],
   },
 ]
 
@@ -56,11 +57,48 @@ const tableData = [
 const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const [activeSidebarItem, setActiveSidebarItem] = useState("general");
+  const [activeDropdown, setActiveDropdown] = useState(null);
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
+  const [profileFormData, setProfileFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    company: "",
+    role: "",
+    city: "",
+    country: "",
+  });
+
+  const token = localStorage.getItem('token');
+
+  useEffect(()=>{
+    const getDetails = async()=>{
+     try {
+      const res = await axiosInstance.get('/api/users/profile',
+        {
+          headers:{
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      )
+      console.log(res.data)
+      if(res.status){
+        setProfileFormData(res.data)
+      }
+     } catch (error) {
+      console.log(error)
+     }
+    }
+
+    getDetails()
+  },[])
+
+
   const [showPasswords, setShowPasswords] = useState({
     currentPassword: false,
     newPassword: false,
@@ -81,11 +119,29 @@ const SettingsPage = () => {
     }));
   };
 
+  const handleProfileChange = (e) => {
+    const { name, value } = e.target;
+    setProfileFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleProfileSubmit = (e) => {
+    e.preventDefault();
+    // Here you can add your API call to update the profile
+    console.log('Profile data to update:', profileFormData);
+  };
+
   const togglePasswordVisibility = (field) => {
     setShowPasswords((prev) => ({
       ...prev,
       [field]: !prev[field],
     }));
+  };
+
+  const handleDropdownClick = (index) => {
+    setActiveDropdown(activeDropdown === index ? null : index);
   };
 
   const renderMainContent = () => {
@@ -100,17 +156,17 @@ const SettingsPage = () => {
     else if (activeSidebarItem === "team") {
       return (
         <>
-          <div className="w-full p-2 flex flex-col gap-3">
+          <div className="w-full p-2 flex flex-col gap-3 px-6">
             <div className="flex justify-between">
-              <h1 className="text-[#1E1E1E] font-semibold text-[24px]">Team Members</h1>
-              <button className="bg-[#5E54FF] text-white rounded-md p-2" onClick={() => setOpen(true)}>Invite A Team Member</button>
+              <h1 className="text-[#1E1E1E] font-semibold text-[20px] md:text-[24px]">Team Members</h1>
+              <button className="bg-[#5E54FF] text-white rounded-md text-[14px] md:text-[16px] p-2" onClick={() => setOpen(true)}>Invite A Team Member</button>
             </div>
             <div className="flex justify-between">
-              <div className="w-[137px] flex items-center border border-gray-300 rounded ">
+              <div className="w-[137px] flex items-center border border-gray-300 rounded-lg ">
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="w-full bg-white px-4 py-2"
+                  className="w-full bg-white px-4 py-2 rounded-lg "
                 >
                   <option value="" disabled>Role</option>
                   <option value="admin">Admin</option>
@@ -126,7 +182,7 @@ const SettingsPage = () => {
               </div>
             </div>
             <div className="overflow-auto">
-              <table className="min-w-full">
+              <table className="min-w-full border-separate border-spacing-y-3">
                 <thead className="bg-transparent">
                   <tr>
                     <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]">Name</th>
@@ -136,24 +192,64 @@ const SettingsPage = () => {
                     <th className="px-6 py-3"></th>
                   </tr>
                 </thead>
-                <tbody className="bg-[#F9FAFB] rounded-2xl">
+                <tbody className=" rounded-lg">
                   {tableData.map((user, index) => (
-                    <tr key={index} className="rounded-2xl">
-                      <td className="px-6 py-4 whitespace-nowrap flex items-center gap-2 rounded-2xl">
+                    <tr key={index} className="bg-white">
+                      <td className="px-6 py-4 whitespace-nowrap flex items-center gap-2 border-l-2 border-t-2 border-b-2 border-[#E1E4EA] rounded-l-lg">
                         <div className="w-8 h-8 bg-[#E8E9FF] text-[#5E54FF] rounded-full flex items-center justify-center font-semibold text-sm">
                           {user.initials}
                         </div>
                         <span className="font-medium text-[#1E1E1E]">{user.name}</span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-700">{user.email}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">{user.role}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">{user.assigned}</td>
-                      <td className="px-6 py-4 text-right">
-                        <button className="text-gray-500 hover:text-gray-700">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
+                      <td className="px-6 py-4 text-sm text-gray-700 border-t-2 border-b-2 border-[#E1E4EA]">{user.email}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700 border-t-2 border-b-2 border-[#E1E4EA]">{user.role}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700 border-r-2 border-t-2 border-b-2 rounded-r-lg border-[#E1E4EA]">
+                        <select 
+                          className="w-full bg-white  rounded-md px-2 py-1"
+                          value={user.assigned[0]}
+                          onChange={(e) => {
+                            // Handle agent selection change
+                            console.log('Selected agent:', e.target.value);
+                          }}
+                        >
+                          {user.assigned.map((agent, idx) => (
+                            <option key={idx} value={agent}>
+                              {agent}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="px-6 py-4 text-left border-[#E1E4EA] rounded-r-lg bg-[#F6F7F9]">
+                        <button 
+                          onClick={() => handleDropdownClick(index)}
+                          className="text-gray-500 hover:text-gray-700"
+                        >
+                         <EllipsisVertical />
                         </button>
+                        {activeDropdown === index && (
+                          <div className="absolute right-6 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                            <div className="py-1">
+                              <button
+                                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                onClick={() => {
+                                  // Handle edit action
+                                  setActiveDropdown(null);
+                                }}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                                onClick={() => {
+                                  // Handle delete action
+                                  setActiveDropdown(null);
+                                }}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -257,13 +353,13 @@ const SettingsPage = () => {
 
           {activeTab === "profile" && (
             <div className="mt-5 bg-white lg:w-[648px] ">
-              <div className="w-full border border-solid border-[#e1e4ea] rounded-2xl">
+              <form onSubmit={handleProfileSubmit} className="w-full border border-solid border-[#e1e4ea] rounded-2xl">
                 <div className="flex flex-col items-center justify-center gap-[26px] p-4 sm:p-[30px] relative">
                   {/* Profile Avatar */}
                   <div className="relative">
                     <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden">
                       <img
-                        src={profile_pic || profileData.avatar}
+                        src={profileFormData.image || profileData.avatar}
                         alt="Profile"
                         className="w-full h-full object-cover"
                       />
@@ -287,7 +383,9 @@ const SettingsPage = () => {
                         </label>
                         <input
                           type="text"
-                          defaultValue={profileData.firstName}
+                          name="firstName"
+                          value={profileFormData.firstName}
+                          onChange={handleProfileChange}
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
                         />
                       </div>
@@ -297,7 +395,9 @@ const SettingsPage = () => {
                         </label>
                         <input
                           type="text"
-                          defaultValue={profileData.lastName}
+                          name="lastName"
+                          value={profileFormData.lastName}
+                          onChange={handleProfileChange}
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
                         />
                       </div>
@@ -311,7 +411,9 @@ const SettingsPage = () => {
                         </label>
                         <input
                           type="email"
-                          defaultValue={profileData.email}
+                          name="email"
+                          value={profileFormData.email}
+                          onChange={handleProfileChange}
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
                         />
                       </div>
@@ -320,8 +422,10 @@ const SettingsPage = () => {
                           Phone No
                         </label>
                         <input
-                          type="tel"
-                          defaultValue={profileData.phone}
+                          type="text"
+                          name="phoneNumber"
+                          value={profileFormData.phoneNumber || 'NA'}
+                          onChange={handleProfileChange}
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
                         />
                       </div>
@@ -335,7 +439,9 @@ const SettingsPage = () => {
                         </label>
                         <input
                           type="text"
-                          defaultValue={profileData.company}
+                          name="company"
+                          value={profileFormData.company}
+                          onChange={handleProfileChange}
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
                         />
                       </div>
@@ -345,7 +451,9 @@ const SettingsPage = () => {
                         </label>
                         <input
                           type="text"
-                          defaultValue={profileData.role}
+                          name="role"
+                          value={profileFormData.role}
+                          onChange={handleProfileChange}
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
                         />
                       </div>
@@ -359,7 +467,9 @@ const SettingsPage = () => {
                         </label>
                         <input
                           type="text"
-                          defaultValue={profileData.city}
+                          name="city"
+                          value={profileFormData.city}
+                          onChange={handleProfileChange}
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
                         />
                       </div>
@@ -369,7 +479,9 @@ const SettingsPage = () => {
                         </label>
                         <input
                           type="text"
-                          defaultValue={profileData.country}
+                          name="country"
+                          value={profileFormData.country}
+                          onChange={handleProfileChange}
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
                         />
                       </div>
@@ -378,15 +490,15 @@ const SettingsPage = () => {
 
                   {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row items-center gap-4 relative self-stretch w-full">
-                    <button className="w-full sm:w-auto px-4 py-2 bg-[#5E54FF] text-white rounded-lg">
+                    <button type="submit" className="w-full sm:w-auto px-4 py-2 bg-[#5E54FF] text-white rounded-lg">
                       Update Profile
                     </button>
-                    <button className="w-full sm:w-auto px-4 py-2 bg-[#f5f7ff] text-text-grey border border-[#5a687c] rounded-lg">
+                    <button type="button" className="w-full sm:w-auto px-4 py-2 bg-[#f5f7ff] text-text-grey border border-[#5a687c] rounded-lg">
                       Cancel
                     </button>
                   </div>
                 </div>
-              </div>
+              </form>
             </div>
           )}
 

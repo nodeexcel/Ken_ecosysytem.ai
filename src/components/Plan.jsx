@@ -1,3 +1,4 @@
+import { ChevronDown, X } from "lucide-react";
 import React, { useState } from "react";
 
 const CreditPopup = ({ onClose }) => {
@@ -18,19 +19,7 @@ const CreditPopup = ({ onClose }) => {
             onClick={onClose}
             className="text-gray-500 absolute right-2 top-2 hover:text-gray-700"
           >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
+           <X />
           </button>
         </div>
 
@@ -234,109 +223,82 @@ const PlanManagementPopup = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 w-full p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-[90%] h-[80vh] overflow-y-auto relative">
-        <div className="flex items-center gap-5 mb-6 ">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl p-3 sm:p-6 mx-2 w-full max-w-[95%] lg:max-w-[90%] h-[80vh] overflow-y-auto relative">
+        <div className="flex flex-wrap items-start justify-between gap-3 mb-6">
           <div className="flex items-center gap-2">
             <div className="p-2 bg-[#335BFB1A] rounded-lg">
-              <svg
-                width="22"
-                height="18"
-                viewBox="0 0 22 18"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M21.1268 2.47144C20.8547 2.1498 20.4737 1.95333 20.0538 1.91827L5.26538 0.683454C4.84547 0.648386 4.4372 0.778938 4.11551 1.05099C3.79514 1.32198 3.59896 1.70109 3.56279 2.11891L3.26526 4.91026H2.07725C1.20756 4.91026 0.5 5.61782 0.5 6.48751V15.7448C0.5 16.6145 1.20756 17.322 2.07725 17.322H16.9172C17.7869 17.322 18.4945 16.6145 18.4945 15.7448V14.2431L19.0211 14.2871C19.0655 14.2907 19.1097 14.2926 19.1535 14.2926C19.9643 14.2926 20.6554 13.6688 20.7241 12.8465L21.4944 3.62135C21.5294 3.20148 21.3989 2.79313 21.1268 2.47144ZM2.07725 5.73057H16.9172C17.3346 5.73057 17.6742 6.07014 17.6742 6.48751V7.33104H1.32031V6.48751C1.32031 6.07014 1.65988 5.73057 2.07725 5.73057ZM1.32031 8.15135H17.6742V9.85303H1.32031V8.15135ZM16.9172 16.5017H2.07725C1.65988 16.5017 1.32031 16.1622 1.32031 15.7448V10.6733H17.6742V15.7448C17.6742 16.1622 17.3346 16.5017 16.9172 16.5017ZM20.6769 3.55306L19.9066 12.7782C19.8719 13.1942 19.5052 13.5044 19.0893 13.4696L18.4945 13.4199V6.48751C18.4945 5.61782 17.7869 4.91026 16.9172 4.91026H4.09025L4.37896 2.2016C4.37928 2.19848 4.37957 2.19541 4.37982 2.19225C4.41456 1.77631 4.78107 1.46607 5.19713 1.50093L19.9856 2.73575C20.1871 2.75256 20.37 2.84686 20.5005 3.00124C20.6311 3.15562 20.6938 3.35155 20.6769 3.55306Z"
-                  fill="#5E54FF"
-                />
-                <path
-                  d="M15.9577 11.8928H12.0103C11.7837 11.8928 11.6001 12.0764 11.6001 12.303V14.8783C11.6001 15.1048 11.7837 15.2885 12.0103 15.2885H15.9577C16.1842 15.2885 16.3678 15.1048 16.3678 14.8783V12.303C16.3678 12.0764 16.1842 11.8928 15.9577 11.8928ZM15.5475 14.4682H12.4204V12.7131H15.5475V14.4682Z"
-                  fill="#5E54FF"
-                />
-              </svg>
+             <img src="/src/assets/svg/MangePlan.svg" alt="" />
             </div>
-            <span className="text-[20px] font-[600] onest ">Manage Plan</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 absolute top-2 right-2"
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-          </div>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 ">
-            <div className="flex gap-2 w-full sm:w-auto bg-[#F2F2F7] px-2 py-1 rounded-lg">
+            <span className="text-[16px] sm:text-[20px] font-[600] onest">Manage Plan</span>
+            <div className="flex gap-2 bg-[#F2F2F7] p-1 rounded-lg">
               <button
-                className={`flex-1 sm:flex-none px-4 py-2 rounded-lg font-medium ${
+                className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium ${
                   activeTab === "annual"
                     ? "bg-white text-black"
-                    : "bg-transparent text-[#5A687C] "
+                    : "bg-transparent text-[#5A687C]"
                 }`}
                 onClick={() => setActiveTab("annual")}
               >
                 Annual
               </button>
               <button
-                className={`flex-1 sm:flex-none px-4 py-2 rounded-lg font-medium ${
+                className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium ${
                   activeTab === "monthly"
                     ? "bg-white text-black"
-                    : "bg-transparent text-[#5A687C] "
+                    : "bg-transparent text-[#5A687C]"
                 }`}
                 onClick={() => setActiveTab("monthly")}
               >
                 Monthly
               </button>
             </div>
-            <div className="w-full sm:w-auto">
-              <button className="w-full sm:w-auto text-gray-600 hover:text-gray-800 text-sm">
-                Manage payment method
-              </button>
-            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700 absolute top-1 right-1"
+            >
+             <X />
+            </button>
+          </div>
+          <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <button className="text-gray-600 hover:text-gray-800 text-sm">
+              Manage payment method
+            </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           {plans[activeTab].map((plan, index) => (
             <div
               key={index}
-              className="border border-gray-200 rounded-xl p-4 sm:p-6"
+              className="border border-gray-200 rounded-xl p-4"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className=" flex flex-col gap-2">
-                  <div className="p-2  rounded-lg">
-                    <img src={plan.svg} alt="" />
+                <div className="flex flex-col gap-2">
+                  <div className="p-2 rounded-lg">
+                    <img src={plan.svg} alt="" className="w-8 h-8 object-contain" />
                   </div>
-                  <span className="font-[600] text-[18px] onest ">{plan.name}</span>
+                  <span className="font-[600] text-[15px] sm:text-[16px] onest">{plan.name}</span>
                 </div>
                 {plan.discount && (
-                  <span className="text-[#34C759] text-[18px] onest bg-[#34C7591A] px-2 py-1 rounded">
+                  <span className="text-[#34C759] text-[13px] sm:text-[14px] onest bg-[#34C7591A] px-2 py-1 rounded whitespace-nowrap">
                     {plan.discount}
                   </span>
                 )}
               </div>
-              <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-[25px] font-[600] onest ">{plan.price}</span>
+              <div className="flex items-baseline gap-1 mb-2 flex-wrap">
+                <span className="text-[18px] sm:text-[22px] font-[600] onest">{plan.price}</span>
                 {plan.period && (
-                  <span className="text-[#5A687C] font-[600] text-[18px] ">{plan.period}</span>
+                  <span className="text-[#5A687C] font-[600] text-[13px] sm:text-[14px]">
+                    {plan.period}
+                  </span>
                 )}
               </div>
-              <p className="text-gray-600 text-sm mb-4">{plan.description}</p>
+              <p className="text-gray-600 text-[13px] sm:text-sm mb-4 line-clamp-2">{plan.description}</p>
               <button
-                className={`w-full py-2 rounded-lg mb-4 ${
+                className={`w-full py-2 px-3 rounded-lg mb-4 text-[13px] sm:text-sm ${
                   plan.selected
                     ? "bg-gray-100 text-gray-700"
                     : plan.name === "Enterprise"
@@ -350,14 +312,11 @@ const PlanManagementPopup = ({ onClose }) => {
                   ? "Get a Quote"
                   : "Upgrade"}
               </button>
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {plan.features.map((feature, idx) => (
-                  <div key={idx} className="flex items-center gap-2">
-                   <svg width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M5.375 8.53125L6.96875 10.125L9.625 6.40625M13.875 8C13.875 8.83718 13.7101 9.66616 13.3897 10.4396C13.0694 11.2131 12.5998 11.9158 12.0078 12.5078C11.4158 13.0998 10.7131 13.5694 9.93961 13.8897C9.16616 14.2101 8.33718 14.375 7.5 14.375C6.66282 14.375 5.83384 14.2101 5.06039 13.8897C4.28694 13.5694 3.58417 13.0998 2.99219 12.5078C2.40022 11.9158 1.93064 11.2131 1.61027 10.4396C1.28989 9.66616 1.125 8.83718 1.125 8C1.125 6.30924 1.79665 4.68774 2.99219 3.49219C4.18774 2.29665 5.80924 1.625 7.5 1.625C9.19075 1.625 10.8123 2.29665 12.0078 3.49219C13.2033 4.68774 13.875 6.30924 13.875 8Z" stroke="#5E54FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-
-                    <span className="text-sm">{feature}</span>
+                  <div key={idx} className="flex items-start gap-2">
+                    <img src="/src/assets/svg/check.svg" alt="" className="w-4 h-4 mt-0.5" />
+                    <span className="text-[13px] sm:text-sm">{feature}</span>
                   </div>
                 ))}
               </div>
@@ -510,9 +469,7 @@ const Plan = () => {
                 <option>User</option>
               </select>
               <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M1 1.5L6 6.5L11 1.5" stroke="#5A687C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+              <ChevronDown />
               </div>
             </div>
 
@@ -523,9 +480,7 @@ const Plan = () => {
                 <option>Past 2 Months</option>
               </select>
               <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M1 1.5L6 6.5L11 1.5" stroke="#5A687C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+              <ChevronDown />
               </div>
             </div>
 
