@@ -140,7 +140,7 @@ export default function Login() {
             if (response?.status === 200) {
                 dispatch(loginSuccess({user:response?.data,token:response?.data?.token}))
                 localStorage.setItem("token", response?.data?.token)
-                navigate("/dashboard")
+                navigate("/dashboard/settings")
             } else {
                 setErrors({ password: response?.response?.data?.message })
             }
