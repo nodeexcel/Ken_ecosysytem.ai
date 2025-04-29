@@ -30,7 +30,7 @@ const Sidebar = () => {
                     <GrAppsRounded size={25} color='#5A687C' />
                 </div>
                 <div className='text-xl flex justify-center py-4'>
-                    <LuBrain size={25} color='#5A687C's/>
+                    <LuBrain size={25} color='#5A687C'/>
                 </div>
                 <div className='text-xl flex justify-center py-4' onClick={() => handleSelect("settings")}>
                     <IoSettingsOutline size={25} color={`${location.pathname.includes("settings") ? "#675FFF" : "#5A687C"}`} />
