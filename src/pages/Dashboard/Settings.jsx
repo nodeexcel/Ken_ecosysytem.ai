@@ -269,7 +269,7 @@ const SettingsPage = () => {
     else if (activeSidebarItem === "team") {
       return (
         <>
-          <div className="w-full p-2 flex flex-col gap-3 px-6">
+          <div className="w-full p-2 flex flex-col gap-3 px-2">
             <div className="flex justify-between">
               <h1 className="text-[#1E1E1E] font-semibold text-[20px] md:text-[24px]">Team Members</h1>
               <button className="bg-[#5E54FF] text-white rounded-md text-[14px] md:text-[16px] p-2" onClick={() => setOpen(true)}>Invite A Team Member</button>
@@ -340,7 +340,7 @@ const SettingsPage = () => {
                           <EllipsisVertical />
                         </button>
                         {activeDropdown === index && (
-                          <div className="absolute right-6 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                          <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                             <div className="py-1">
                               <button
                                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -490,9 +490,9 @@ const SettingsPage = () => {
                     {isEditing && <button
                       type="button"
                       onClick={() => document.getElementById('profileImageInput').click()}
-                      className="absolute top-[45px] left-[45px] sm:top-[65px] sm:left-[65px] bg-primary-color rounded-[110px] w-[31px] h-[31px] p-[7px]"
+                      className="absolute top-[55px] left-[45px] sm:top-[65px] sm:left-[65px] bg-[#675FFF] rounded-full cursor-pointer w-[31px] h-[31px] p-[7px]"
                     >
-                      <img className="w-[17px] h-[17px]" alt="Edit" src={edit_icon} />
+                      <img className="w-[17px] h-[17px]" alt="Edit" src='/src/assets/svg/edit.svg' />
                     </button>}
                   </div>
 
