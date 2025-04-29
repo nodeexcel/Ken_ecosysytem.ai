@@ -1,14 +1,15 @@
 import React from 'react'
 import Sidebar from '../components/Sidebar'
+import { Outlet } from 'react-router-dom'
 
-function Dashboard({ children }) {
+function Dashboard() {
     return (
-        <div className='w-full flex h-screen overflow-hidden'>
-            <div className='w-[5%] h-screen'>
+        <div className='w-full flex h-screen'>
+            <div className='w-[5%] h-full'>
                 <Sidebar />
             </div>
-            <div className='w-[95%] bg-[#F6F7F9] overflow-y-auto overflow-x-hidden'>
-                {children}
+            <div className='w-[95%] h-full'>
+                <Outlet/>
             </div>
         </div>
     )

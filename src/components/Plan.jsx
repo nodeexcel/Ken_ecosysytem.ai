@@ -1,5 +1,5 @@
 import { ChevronDown, X } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const CreditPopup = ({ onClose }) => {
   const [selectedCredit, setSelectedCredit] = useState(350);
@@ -92,6 +92,7 @@ const CreditPopup = ({ onClose }) => {
 
 const PlanManagementPopup = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState("annual");
+  const [activePlan, setActivePlan] = useState("");
 
   const plans = {
     annual: [
@@ -222,6 +223,14 @@ const PlanManagementPopup = ({ onClose }) => {
     ],
   };
 
+  useEffect(()=>{
+    setActivePlan(plans.annual[0].name)
+  },[])
+
+  const handleSelectPlan=(plan)=>{
+    setActivePlan(plan)
+  }
+
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
       <div className="bg-white rounded-xl p-3 sm:p-6 mx-2 w-full max-w-[95%] lg:max-w-[90%] h-[80vh] overflow-y-auto relative">
@@ -273,7 +282,8 @@ const PlanManagementPopup = ({ onClose }) => {
           {plans[activeTab].map((plan, index) => (
             <div
               key={index}
-              className="border border-gray-200 rounded-xl p-4"
+              onClick={()=>handleSelectPlan(plan.name)}
+              className={`border ${activePlan===plan.name?"border-[#675FFF]":"border-[#E1E4EA]"} rounded-xl p-4`}
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex flex-col gap-2">
@@ -486,7 +496,7 @@ const Plan = () => {
 
             <button className="w-full sm:w-auto flex border border-[#E1E4EA] items-center justify-center gap-2 text-[#5E54FF] hover:bg-[#5E54FF]/5 px-3 py-2 rounded-lg text-sm">
               <img src="/src/assets/svg/refresh.svg" alt="" />
-              Refresh
+              <span className="text-[#5A687C]">Refresh</span>
             </button>
           </div>
         </div>

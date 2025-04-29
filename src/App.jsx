@@ -1,13 +1,14 @@
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import Login from './pages/login'
-import SettingsPage from './pages/Settings'
 import Dashboard from './layout/Dashboard'
 import SetPassword from './pages/createPassword'
 import Success from './pages/success'
 import PaymentFailed from './pages/failure'
 import ResetPassword from './pages/ResetPassword'
 import PricingPage from './pages/Pricing'
+import SettingsPage from './pages/Dashboard/Settings'
+import Home from './pages/Dashboard/Home'
 
 
 function App() {
@@ -18,10 +19,13 @@ function App() {
         <Route path='/' element={<Login />} />
         <Route path='/create-password' element={<SetPassword />} />
         <Route path='/reset-password' element={<ResetPassword />} />
-        <Route path='/dashboard' element={<Dashboard><SettingsPage /></Dashboard>} />
         <Route path='/pricing' element={<PricingPage />} />
         <Route path='/success' element={<Success />} />
         <Route path='/cancel' element={<PaymentFailed />} />
+        <Route path='/dashboard' element={<Dashboard />}>
+          <Route index element={<Home />} />
+          <Route path="settings" element={<SettingsPage />} />
+        </Route>
       </Routes>
     </div>
   )

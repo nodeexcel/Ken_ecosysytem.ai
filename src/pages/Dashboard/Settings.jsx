@@ -1,14 +1,15 @@
 import { CreditCardIcon, EllipsisVertical, EyeIcon, EyeOffIcon, SettingsIcon, UsersIcon, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md';
-import profile_pic from '../assets/images/profile.png';
-import edit_icon from '../assets/images/edit_icon.svg';
+import profile_pic from '../../assets/images/profile.png';
+import edit_icon from '../../assets/images/edit_icon.svg';
 import { LuRefreshCw } from "react-icons/lu";
 import { TbLockPassword } from "react-icons/tb";
-import Plan from "../components/Plan";
+import Plan from "../../components/Plan";
 import { useSelector } from "react-redux";
-import { getProfile, updateProfile } from "../api/profile";
-import { updatePassword } from "../api/auth";
+import { getProfile, updateProfile } from "../../api/profile";
+import { updatePassword } from "../../api/auth";
+import { useNavigate } from "react-router-dom";
 
 
 // User profile data
@@ -83,6 +84,7 @@ const SettingsPage = () => {
   });
 
   const [success, setSuccess] = useState({})
+  const navigate = useNavigate()
 
 
   const token = localStorage.getItem('token');
@@ -287,7 +289,7 @@ const SettingsPage = () => {
               </div>
               <div className="flex items-center px-3 gap-2 border border-[#E1E4EA] rounded-[8px] h-[38px]">
                 <LuRefreshCw color="#5E54FF" />
-                <button className="text-[16px] text-[#5A687C] bg-white">
+                <button className="text-[16px] text-[#5A687C]">
                   Refresh
                 </button>
               </div>
@@ -772,7 +774,7 @@ const SettingsPage = () => {
   return (
     <div className="h-full w-full bg-[#F6F7F9]">
       <div>
-        <div className='flex items-center pl-4 py-3'>
+        <div className='flex items-center pl-4 py-3' onClick={() => navigate("/dashboard")}>
           <MdOutlineKeyboardArrowLeft size={25} />
           <h1 className="text-[26px] font-bold pb-1">Settings</h1>
         </div>
