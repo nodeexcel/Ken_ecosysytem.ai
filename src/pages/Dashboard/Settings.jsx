@@ -91,21 +91,15 @@ const SettingsPage = () => {
 
   const [updateLoading, setUpdateLoading] = useState(false)
 
-  useEffect(() => {
-    getDetails()
-  }, [])
+  const userDetails = useSelector((state) => state.profile)
 
-  const getDetails = async () => {
-    try {
-      const response = await getProfile(token)
-      console.log(response?.data)
-      if (response?.status == 200) {
-        setProfileFormData(response?.data)
-      }
-    } catch (error) {
-      console.log(error)
+
+  useEffect(() => {
+    if (token && !userDetails.loading) {
+      setProfileFormData(userDetails?.user)
     }
-  }
+
+  }, [token, !userDetails.loading])
 
 
   const [showPasswords, setShowPasswords] = useState({
@@ -770,6 +764,9 @@ const SettingsPage = () => {
       </div>
     );
   };
+
+  if (userDetails?.loading) return <p className='flex justify-center items-center h-full'><span className='loader' /></p>
+
 
   return (
     <div className="h-full w-full bg-[#F6F7F9]">

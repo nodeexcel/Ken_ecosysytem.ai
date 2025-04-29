@@ -1,5 +1,8 @@
 import { ChevronDown, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { updateSubscriptionPaymentStatus } from "../api/payment";
+import { useSelector } from "react-redux";
+import { loadStripe } from "@stripe/stripe-js";
 
 const CreditPopup = ({ onClose }) => {
   const [selectedCredit, setSelectedCredit] = useState(350);
@@ -19,7 +22,7 @@ const CreditPopup = ({ onClose }) => {
             onClick={onClose}
             className="text-gray-500 absolute right-2 top-2 hover:text-gray-700"
           >
-           <X />
+            <X />
           </button>
         </div>
 
@@ -41,11 +44,9 @@ const CreditPopup = ({ onClose }) => {
               onChange={(e) => setSelectedCredit(Number(e.target.value))}
               className="w-full h-3.5 bg-gray-200 rounded-lg appearance-none cursor-pointer custom-thumb"
               style={{
-                background: `linear-gradient(to right, #675FFF ${
-                  ((selectedCredit - 100) / (30000 - 100)) * 100
-                }%, #e5e7eb ${
-                  ((selectedCredit - 100) / (30000 - 100)) * 100
-                }%)`,
+                background: `linear-gradient(to right, #675FFF ${((selectedCredit - 100) / (30000 - 100)) * 100
+                  }%, #e5e7eb ${((selectedCredit - 100) / (30000 - 100)) * 100
+                  }%)`,
               }}
             />
             <div className="flex justify-between mt-2">
@@ -93,11 +94,19 @@ const CreditPopup = ({ onClose }) => {
 const PlanManagementPopup = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState("annual");
   const [activePlan, setActivePlan] = useState("");
+  const [planIndex, setPlanIndex] = useState();
+
+  const userDetails = useSelector((state) => state.profile.user)
+  const token = localStorage.getItem("token")
+
+  const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
   const plans = {
     annual: [
       {
+        id: import.meta.env.VITE_PRO_PLAN,
         name: "Pro",
+        key: "pro",
         svg: '/src/assets/svg/table.svg',
         price: "€97",
         period: "/ month",
@@ -115,7 +124,9 @@ const PlanManagementPopup = ({ onClose }) => {
         discount: "10% Off",
       },
       {
+        id: import.meta.env.VITE_TEAM_PLAN,
         name: "Team",
+        key: "team",
         svg: '/src/assets/svg/house.svg',
         price: "€179",
         period: "/ month",
@@ -131,7 +142,9 @@ const PlanManagementPopup = ({ onClose }) => {
         discount: "10% Off",
       },
       {
+        id: import.meta.env.VITE_BUSINESS_PLAN,
         name: "Business",
+        key: "business",
         svg: '/src/assets/svg/building.svg',
         price: "€279",
         period: "/ month",
@@ -223,13 +236,41 @@ const PlanManagementPopup = ({ onClose }) => {
     ],
   };
 
-  useEffect(()=>{
-    setActivePlan(plans.annual[0].name)
-  },[])
 
-  const handleSelectPlan=(plan)=>{
+  useEffect(() => {
+    if (token && !userDetails.loading) {
+      const filterData = plans.annual.filter((each) => each.key === userDetails?.subscriptionType)
+      const index = plans.annual.findIndex((each) => each.key === userDetails?.subscriptionType)
+      setPlanIndex(index)
+      setActivePlan(filterData?.[0].name)
+    }
+
+  }, [token, !userDetails.loading])
+
+  const handleSelectPlan = (plan) => {
     setActivePlan(plan)
   }
+
+  const handlePayment = async (id) => {
+    try {
+      const payload = {
+        email: userDetails.email,
+        priceId: id
+      }
+      const response = await updateSubscriptionPaymentStatus(payload, token)
+      const stripe = await stripePromise;
+      console.log(response)
+      if (response.status === 200 && stripe) {
+        await stripe.redirectToCheckout({ sessionId: response?.data?.sessionId });
+      }
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  if (userDetails?.loading) return <p className='flex justify-center items-center h-full'><span className='loader' /></p>
+
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
@@ -237,26 +278,24 @@ const PlanManagementPopup = ({ onClose }) => {
         <div className="flex flex-wrap items-start justify-between gap-3 mb-6">
           <div className="flex items-center gap-2">
             <div className="p-2 bg-[#335BFB1A] rounded-lg">
-             <img src="/src/assets/svg/MangePlan.svg" alt="" />
+              <img src="/src/assets/svg/MangePlan.svg" alt="" />
             </div>
             <span className="text-[16px] sm:text-[20px] font-[600] onest">Manage Plan</span>
             <div className="flex gap-2 bg-[#F2F2F7] p-1 rounded-lg">
               <button
-                className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium ${
-                  activeTab === "annual"
-                    ? "bg-white text-black"
-                    : "bg-transparent text-[#5A687C]"
-                }`}
+                className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium ${activeTab === "annual"
+                  ? "bg-white text-black"
+                  : "bg-transparent text-[#5A687C]"
+                  }`}
                 onClick={() => setActiveTab("annual")}
               >
                 Annual
               </button>
               <button
-                className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium ${
-                  activeTab === "monthly"
-                    ? "bg-white text-black"
-                    : "bg-transparent text-[#5A687C]"
-                }`}
+                className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium ${activeTab === "monthly"
+                  ? "bg-white text-black"
+                  : "bg-transparent text-[#5A687C]"
+                  }`}
                 onClick={() => setActiveTab("monthly")}
               >
                 Monthly
@@ -268,7 +307,7 @@ const PlanManagementPopup = ({ onClose }) => {
               onClick={onClose}
               className="text-gray-500 hover:text-gray-700 absolute top-1 right-1"
             >
-             <X />
+              <X />
             </button>
           </div>
           <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
@@ -282,8 +321,8 @@ const PlanManagementPopup = ({ onClose }) => {
           {plans[activeTab].map((plan, index) => (
             <div
               key={index}
-              onClick={()=>handleSelectPlan(plan.name)}
-              className={`border ${activePlan===plan.name?"border-[#675FFF]":"border-[#E1E4EA]"} rounded-xl p-4`}
+              onClick={index >= planIndex ? () => handleSelectPlan(plan.name) : undefined}
+              className={`border ${activePlan === plan.name && index>=planIndex  ? "border-[#675FFF]" : "border-[#E1E4EA]"} rounded-xl p-4`}
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex flex-col gap-2">
@@ -308,19 +347,20 @@ const PlanManagementPopup = ({ onClose }) => {
               </div>
               <p className="text-gray-600 text-[13px] sm:text-sm mb-4 line-clamp-2">{plan.description}</p>
               <button
-                className={`w-full py-2 px-3 rounded-lg mb-4 text-[13px] sm:text-sm ${
-                  plan.selected
-                    ? "bg-gray-100 text-gray-700"
-                    : plan.name === "Enterprise"
+                disabled={index<planIndex || plan.key === userDetails?.subscriptionType}
+                onClick={() => handlePayment(plan.id)}
+                className={`w-full py-2 px-3 rounded-lg mb-4 text-[13px] sm:text-sm ${(plan.key === userDetails?.subscriptionType || index<planIndex)
+                  ? "bg-gray-100 text-gray-700"
+                  : plan.name === "Enterprise"
                     ? "border border-[#5E54FF] text-[#5E54FF]"
                     : "bg-[#5E54FF] text-white"
-                }`}
+                  }`}
               >
-                {plan.selected
+                {plan.key === userDetails?.subscriptionType
                   ? "Selected"
                   : plan.name === "Enterprise"
-                  ? "Get a Quote"
-                  : "Upgrade"}
+                    ? "Get a Quote"
+                    : "Upgrade"}
               </button>
               <div className="space-y-2.5">
                 {plan.features.map((feature, idx) => (
@@ -410,7 +450,7 @@ const Plan = () => {
               <span className="text-[16px] font-[600] onest  ">Plan</span>
             </div>
             <button className="text-gray-400 hover:text-gray-600 cursor-pointer bg-[#F2F2F7] rounded-lg px-2 py-2"
-            onClick={() => setShowCreditPopup(true)}
+              onClick={() => setShowCreditPopup(true)}
             >
               <img src="/src/assets/svg/planedit.svg" alt="" />
             </button>
@@ -451,12 +491,12 @@ const Plan = () => {
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
               <div className="">
-                  <img src="/src/assets/svg/members.svg" alt="" />
+                <img src="/src/assets/svg/members.svg" alt="" />
               </div>
               <span className="font-medium">Member Seats</span>
             </div>
             <button className="text-[#5E54FF] font-[600] text-sm hover:underline flex items-center gap-1 onest">
-                <img src="/src/assets/svg/add.svg" alt="" />
+              <img src="/src/assets/svg/add.svg" alt="" />
               Add Seats{" "}
             </button>
           </div>
@@ -479,7 +519,7 @@ const Plan = () => {
                 <option>User</option>
               </select>
               <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-              <ChevronDown />
+                <ChevronDown />
               </div>
             </div>
 
@@ -490,7 +530,7 @@ const Plan = () => {
                 <option>Past 2 Months</option>
               </select>
               <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-              <ChevronDown />
+                <ChevronDown />
               </div>
             </div>
 
@@ -529,7 +569,7 @@ const Plan = () => {
                   <td className="py-3 pr-8">
                     <div className="flex items-center gap-4">
                       <div className="px-3 py-3 bg-[#335BFB1A] rounded-2xl">
-                       <img src="/src/assets/svg/coins.svg" alt="" />
+                        <img src="/src/assets/svg/coins.svg" alt="" />
                       </div>
                       {row.item}
                     </div>

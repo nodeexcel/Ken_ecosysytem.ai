@@ -1,14 +1,16 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
 
 function Home() {
-    const email=useSelector((state)=>state.auth)
-    
-  return (
-    <div className='flex justify-center items-center h-full'>
-        Welcome
-    </div>
-  )
+    const userDetails = useSelector((state) => state.profile)
+
+    if (userDetails?.loading) return <p className='flex justify-center items-center h-full'><span className='loader' /></p>
+
+    return (
+        <div className='flex justify-center items-center h-full'>
+            Welcome, {userDetails?.user?.email}
+        </div>
+    )
 }
 
 export default Home

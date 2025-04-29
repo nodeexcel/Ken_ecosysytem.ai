@@ -27,3 +27,17 @@ export const getSubscriptionPaymentStatus = async (payload) => {
         console.log(error)
     }
 };
+
+export const updateSubscriptionPaymentStatus = async (payload,token) => {
+    try {
+        const response = await axiosInstance.post("/api/payments/update-subscription", payload, {
+            headers: {
+                'Authorization':`Bearer ${token}`
+            }
+        });
+        console.log(response);
+        return response
+    } catch (error) {
+        console.log(error)
+    }
+};

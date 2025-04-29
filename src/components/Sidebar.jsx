@@ -21,7 +21,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
     return (
         <>
-            <button 
+            <button
                 onClick={toggleSidebar}
                 className="md:hidden fixed top-4 right-4 z-50 text-gray-600 hover:text-gray-800 bg-white p-2 rounded-full shadow-md"
             >
@@ -41,7 +41,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                         <GrAppsRounded size={25} color='#5A687C' />
                     </div>
                     <div className='text-xl flex justify-center py-4'>
-                        <LuBrain size={25} color='#5A687C'/>
+                        <LuBrain size={25} color='#5A687C' />
                     </div>
                     <hr className='text-[#E1E4EA]' />
                 </div>
@@ -53,6 +53,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     <div className='text-xl flex justify-center py-4 ' onClick={() => handleSelect("settings")}>
                         <img src="/src/assets/svg/flag.svg " className='rounded-full ' alt="" />
                     </div>
+                    <hr className='text-[#E1E4EA]' />
                     <div className='text-xl flex justify-center py-4'>
                         <HiOutlineDocumentText size={25} color='#5A687C' />
                     </div>
