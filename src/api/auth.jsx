@@ -95,11 +95,10 @@ export const forgotPassword = async (payload) => {
     }
 }
 
-export const updateProfile = async (payload, token) => {
+export const updatePassword = async (payload,token) => {
     try {
-        const response = await axiosInstance.put("/api/users/profile", payload, {
+        const response = await axiosInstance.post("/api/password/set-new", payload, {
             headers: {
-                "Content-Type": "multipart/form-data",
                 "Authorization": `Bearer ${token}`
             }
         })

@@ -2,12 +2,13 @@ import { CreditCardIcon, EllipsisVertical, EyeIcon, EyeOffIcon, SettingsIcon, Us
 import React, { useEffect, useState } from "react";
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md';
 import profile_pic from '../assets/images/profile.png';
+import edit_icon from '../assets/images/edit_icon.svg';
 import { LuRefreshCw } from "react-icons/lu";
 import { TbLockPassword } from "react-icons/tb";
 import Plan from "../components/Plan";
 import { useSelector } from "react-redux";
-import axiosInstance from "../api/axiosInstance";
-import { updateProfile } from "../api/auth";
+import { getProfile, updateProfile } from "../api/profile";
+import { updatePassword } from "../api/auth";
 
 
 // User profile data
@@ -75,31 +76,34 @@ const SettingsPage = () => {
     country: "",
   });
 
+  const [errors, setErrors] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+
+  const [success, setSuccess] = useState({})
+
+
   const token = localStorage.getItem('token');
 
-  const [updateLoading,setUpdateLoading]=useState(false)
+  const [updateLoading, setUpdateLoading] = useState(false)
 
   useEffect(() => {
-    const getDetails = async () => {
-      try {
-        const res = await axiosInstance.get('/api/users/profile',
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          }
-        )
-        console.log(res.data)
-        if (res.status) {
-          setProfileFormData(res.data)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-
     getDetails()
   }, [])
+
+  const getDetails = async () => {
+    try {
+      const response = await getProfile(token)
+      console.log(response?.data)
+      if (response?.status == 200) {
+        setProfileFormData(response?.data)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 
   const [showPasswords, setShowPasswords] = useState({
@@ -110,9 +114,16 @@ const SettingsPage = () => {
   const [open, setOpen] = useState(false);
   const [emailInvite, setEmailInvite] = useState("")
   const [role, setRole] = useState("")
+  const [isEditing, setIsEditing] = useState(false);
+  const [updatePasswordLoading, setUpdatePasswordLoading] = useState(false)
 
-  const users = useSelector((state) => state)
-  console.log(users)
+  const users = useSelector((state) => state.auth)
+
+  useEffect(() => {
+    setTimeout(() => {
+      setSuccess({})
+    }, 5000)
+  }, [success])
 
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
@@ -120,6 +131,9 @@ const SettingsPage = () => {
       ...prev,
       [name]: value,
     }));
+    setErrors((prev) => ({
+      ...prev, [name]: ''
+    }))
   };
 
   const handleProfileChange = (e) => {
@@ -159,13 +173,76 @@ const SettingsPage = () => {
       });
       const response = await updateProfile(formData, token)
       console.log(response)
+      if (response?.status === 200) {
+        setIsEditing(false)
+      }
 
     } catch (error) {
       console.log(error)
-    }finally{
+    } finally {
       setUpdateLoading(false)
     }
   };
+
+  const handleChangePassword = async () => {
+
+    const newErrors = {
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    };
+
+    let hasError = false;
+
+    if (!formData.currentPassword) {
+      newErrors.currentPassword = 'Current password is required';
+      hasError = true;
+    }
+
+    if (!formData.newPassword || formData.newPassword.length < 6) {
+      newErrors.newPassword = 'New password must be at least 6 characters';
+      hasError = true;
+    }
+
+    if (formData.confirmPassword !== formData.newPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+      hasError = true;
+    }
+
+    setErrors(newErrors);
+
+    if (!hasError) {
+      try {
+        setUpdatePasswordLoading(true)
+        const payload = {
+          email: profileFormData.email,
+          currentPassword: formData.currentPassword,
+          newPassword: formData.newPassword
+        }
+
+        const response = await updatePassword(payload, token)
+        console.log(response)
+        if (response?.status === 200) {
+          setSuccess({ passwordSuccess: response?.data?.message })
+          setFormData({
+            currentPassword: "",
+            newPassword: "",
+            confirmPassword: "",
+          })
+        } else {
+          setErrors((prev) => ({
+            ...prev, newError: response?.response?.data?.message
+          }))
+        }
+
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setUpdatePasswordLoading(false)
+      }
+    }
+  };
+
 
   const togglePasswordVisibility = (field) => {
     setShowPasswords((prev) => ({
@@ -386,8 +463,8 @@ const SettingsPage = () => {
           </div>
 
           {activeTab === "profile" && (
-            <div className="mt-5 bg-white lg:w-[648px] ">
-              <form onSubmit={handleProfileSubmit} className="w-full border border-solid border-[#e1e4ea] rounded-2xl">
+            <div className="mt-5 bg-white lg:w-[648px]">
+              <div className="w-full border border-solid border-[#e1e4ea] rounded-2xl">
                 <div className="flex flex-col items-center justify-center gap-[26px] p-4 sm:p-[30px] relative">
                   {/* Profile Avatar */}
                   <div className="relative">
@@ -405,152 +482,152 @@ const SettingsPage = () => {
                       accept="image/*"
                       id="profileImageInput"
                       className="hidden"
-                      onChange={handleImageUpload}
+                      onChange={isEditing ? handleImageUpload : undefined}
                     />
 
-                    <button
+                    {isEditing && <button
                       type="button"
                       onClick={() => document.getElementById('profileImageInput').click()}
                       className="absolute top-[45px] left-[45px] sm:top-[65px] sm:left-[65px] bg-primary-color rounded-[110px] w-[31px] h-[31px] p-[7px]"
                     >
-                      <img className="w-[17px] h-[17px]" alt="Edit" src="/frame.svg" />
-                    </button>
+                      <img className="w-[17px] h-[17px]" alt="Edit" src={edit_icon} />
+                    </button>}
                   </div>
-
 
                   {/* Profile Form */}
                   <div className="flex flex-col items-start gap-4 relative self-stretch w-full">
+
                     {/* Name Fields */}
                     <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-[17px] relative self-stretch w-full">
-                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
-                        <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm tracking-[0] leading-5">
-                          First Name
-                        </label>
-                        <input
-                          type="text"
-                          name="firstName"
-                          value={profileFormData.firstName}
-                          onChange={handleProfileChange}
-                          className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
-                        />
-                      </div>
-                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
-                        <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm tracking-[0] leading-5">
-                          Last Name
-                        </label>
-                        <input
-                          type="text"
-                          name="lastName"
-                          value={profileFormData.lastName}
-                          onChange={handleProfileChange}
-                          className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
-                        />
-                      </div>
+                      {["firstName", "lastName"].map((field, i) => (
+                        <div key={field} className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
+                          <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm leading-5">
+                            {field === "firstName" ? "First Name" : "Last Name"}
+                          </label>
+                          <input
+                            type="text"
+                            name={field}
+                            value={profileFormData[field]}
+                            readOnly={!isEditing}
+                            onChange={handleProfileChange}
+                            className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
+                          />
+                        </div>
+                      ))}
                     </div>
 
                     {/* Contact Fields */}
                     <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-[17px] relative self-stretch w-full">
                       <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
-                        <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm tracking-[0] leading-5">
-                          Email Address
-                        </label>
+                        <label className="font-medium text-sm text-text-black">Email Address</label>
                         <input
                           type="email"
                           name="email"
-                          readOnly
                           value={profileFormData.email}
-                          onChange={handleProfileChange}
-                          className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
+                          readOnly
+                          className="w-full px-3.5 py-2.5 bg-gray-100 rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
                         />
                       </div>
                       <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
-                        <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm tracking-[0] leading-5">
-                          Phone No
-                        </label>
+                        <label className="font-medium text-sm text-text-black">Phone No</label>
                         <input
                           type="text"
                           name="phoneNumber"
                           value={profileFormData.phoneNumber}
+                          readOnly={!isEditing}
                           onChange={handleProfileChange}
-                          className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
+                          className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
                         />
                       </div>
                     </div>
 
                     {/* Company Fields */}
                     <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-[17px] relative self-stretch w-full">
-                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
-                        <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm tracking-[0] leading-5">
-                          Company
-                        </label>
-                        <input
-                          type="text"
-                          name="company"
-                          value={profileFormData.company}
-                          onChange={handleProfileChange}
-                          className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
-                        />
-                      </div>
-                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
-                        <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm tracking-[0] leading-5">
-                          Role
-                        </label>
-                        <input
-                          type="text"
-                          name="role"
-                          value={profileFormData.role}
-                          onChange={handleProfileChange}
-                          className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
-                        />
-                      </div>
+                      {["company", "role"].map((field) => (
+                        <div key={field} className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
+                          <label className="font-medium text-sm text-text-black">
+                            {field.charAt(0).toUpperCase() + field.slice(1)}
+                          </label>
+                          <input
+                            type="text"
+                            name={field}
+                            value={profileFormData[field]}
+                            readOnly={!isEditing}
+                            onChange={handleProfileChange}
+                            className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
+                          />
+                        </div>
+                      ))}
                     </div>
 
                     {/* Location Fields */}
                     <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-[17px] relative self-stretch w-full">
-                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
-                        <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm tracking-[0] leading-5">
-                          City
-                        </label>
-                        <input
-                          type="text"
-                          name="city"
-                          value={profileFormData.city}
-                          onChange={handleProfileChange}
-                          className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
-                        />
-                      </div>
-                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
-                        <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm tracking-[0] leading-5">
-                          Country
-                        </label>
-                        <input
-                          type="text"
-                          name="country"
-                          value={profileFormData.country}
-                          onChange={handleProfileChange}
-                          className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base tracking-[0] leading-6"
-                        />
-                      </div>
+                      {["city", "country"].map((field) => (
+                        <div key={field} className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
+                          <label className="font-medium text-sm text-text-black">
+                            {field.charAt(0).toUpperCase() + field.slice(1)}
+                          </label>
+                          <input
+                            type="text"
+                            name={field}
+                            value={profileFormData[field]}
+                            readOnly={!isEditing}
+                            onChange={handleProfileChange}
+                            className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
+                          />
+                        </div>
+                      ))}
                     </div>
                   </div>
 
                   {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row items-center gap-4 relative self-stretch w-full">
-                    <button type="submit" disabled={updateLoading} className={`w-full sm:w-auto px-4 py-2 ${updateLoading?"bg-[#5f54ff87]":"bg-[#5E54FF]"} text-white rounded-lg`}>
-                      {updateLoading?<div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div>:"Update Profile"}
-                    </button>
-                    <button type="button" className="w-full sm:w-auto px-4 py-2 bg-[#f5f7ff] text-text-grey border border-[#5a687c] rounded-lg">
-                      Cancel
-                    </button>
+                    {!isEditing ? (
+                      <button
+                        type="button"
+                        className="w-full sm:w-auto px-4 py-2 bg-[#5E54FF] text-white rounded-lg"
+                        onClick={() => setIsEditing(true)}
+                      >
+                        Edit
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          disabled={updateLoading}
+                          onClick={handleProfileSubmit}
+                          className={`w-full sm:w-auto px-4 py-2 ${updateLoading ? "bg-[#5f54ff87]" : "bg-[#5E54FF]"} text-white rounded-lg`}
+                        >
+                          {updateLoading ? (
+                            <div className="flex items-center justify-center gap-2">
+                              <p>Processing...</p>
+                              <span className="loader" />
+                            </div>
+                          ) : (
+                            "Update Profile"
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsEditing(false);
+                          }}
+                          className="w-full sm:w-auto px-4 py-2 bg-[#f5f7ff] text-text-grey border border-[#5a687c] rounded-lg"
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
-              </form>
+              </div>
             </div>
+
           )}
 
           {activeTab === "password" && (
             <div className="mt-5">
-              <div className="w-full border border-solid border-[#e1e4ea] rounded-2xl">
+              <div className="w-full max-w-[648px] bg-[#fff] border border-solid border-[#e1e4ea] rounded-2xl">
                 <div className="flex flex-col items-start gap-6 p-4 sm:p-[30px]">
                   <div className="flex flex-col items-start gap-1">
                     <h2 className="[font-family:'Onest',Helvetica] font-semibold text-text-black text-lg leading-7">
@@ -590,6 +667,9 @@ const SettingsPage = () => {
                           )}
                         </button>
                       </div>
+                      {errors.currentPassword && (
+                        <p className="text-red-500 text-xs mt-1">{errors.currentPassword}</p>
+                      )}
                     </div>
 
                     <div className="flex flex-col gap-1.5">
@@ -620,6 +700,9 @@ const SettingsPage = () => {
                           )}
                         </button>
                       </div>
+                      {errors.newPassword && (
+                        <p className="text-red-500 text-xs mt-1">{errors.newPassword}</p>
+                      )}
                     </div>
 
                     <div className="flex flex-col gap-1.5">
@@ -650,12 +733,28 @@ const SettingsPage = () => {
                           )}
                         </button>
                       </div>
+                      {errors.confirmPassword && (
+                        <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>
+                      )}
                     </div>
                   </div>
+                  {success.passwordSuccess && (
+                    <p className="text-green-500 text-xs mt-1">{success.passwordSuccess}</p>
+                  )}
+                  {errors.newError && (
+                    <p className="text-red-500 text-xs mt-1">{errors.newError}</p>
+                  )}
 
                   <div className="flex flex-col sm:flex-row items-center gap-4 pt-2 w-full">
-                    <button className="w-full sm:w-auto px-4 py-2 bg-[#5E54FF] text-white rounded-lg">
-                      Update Password
+                    <button onClick={handleChangePassword} disabled={updatePasswordLoading} className={`w-full sm:w-auto px-4 py-2 ${updatePasswordLoading ? "bg-[#5f54ff87]" : "bg-[#5E54FF]"} text-white rounded-lg`}>
+                      {updatePasswordLoading ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <p>Processing...</p>
+                          <span className="loader" />
+                        </div>
+                      ) : (
+                        " Update Password"
+                      )}
                     </button>
                     <button className="w-full sm:w-auto px-4 py-2 bg-[#f5f7ff] text-text-grey border border-[#5a687c] rounded-lg">
                       Cancel
