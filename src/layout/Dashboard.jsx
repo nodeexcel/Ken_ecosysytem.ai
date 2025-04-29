@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Sidebar from '../components/Sidebar'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { getProfileData } from '../store/profileSlice';
 import { getProfile } from '../api/profile';
@@ -10,11 +10,15 @@ function Dashboard() {
     const token = localStorage.getItem("token")
     const userDetails = useSelector((state) => state.profile)
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     useEffect(() => {
 
         if (token && userDetails.loading) {
             handleProfile()
+        }
+        if (!token && userDetails.loading) {
+            navigate("/")
         }
 
     }, [token, userDetails.loading])
