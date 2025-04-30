@@ -56,6 +56,9 @@ function Dashboard() {
         setIsSidebarOpen(!isSidebarOpen);
     };
 
+    if (userDetails?.loading) return <p className='flex justify-center items-center h-full'><span className='loader' /></p>
+
+
 
     return (
         <div className='w-full flex h-full'>

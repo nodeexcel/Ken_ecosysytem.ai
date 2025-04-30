@@ -67,7 +67,15 @@ const CreditPopup = ({ onClose }) => {
             <input
               type="number"
               value={selectedCredit}
-              onChange={(e) => setSelectedCredit(Number(e.target.value))}
+              onChange={(e) => {
+                if (e.target.value > 30000) {
+                  setSelectedCredit(30000)
+                } else if (e.target.value < 100) {
+                  setSelectedCredit(100)
+                } else {
+                  setSelectedCredit(Number(e.target.value))
+                }
+              }}
               className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-center"
               min="100"
               max="30000"
@@ -322,7 +330,7 @@ const PlanManagementPopup = ({ onClose }) => {
             <div
               key={index}
               onClick={index >= planIndex ? () => handleSelectPlan(plan.name) : undefined}
-              className={`border ${activePlan === plan.name && index>=planIndex  ? "border-[#675FFF]" : "border-[#E1E4EA]"} rounded-xl p-4`}
+              className={`border ${activePlan === plan.name && index >= planIndex ? "border-[#675FFF]" : "border-[#E1E4EA]"} rounded-xl p-4`}
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex flex-col gap-2">
@@ -347,9 +355,9 @@ const PlanManagementPopup = ({ onClose }) => {
               </div>
               <p className="text-gray-600 text-[13px] sm:text-sm mb-4 line-clamp-2">{plan.description}</p>
               <button
-                disabled={index<planIndex || plan.key === userDetails?.subscriptionType}
+                disabled={index < planIndex || plan.key === userDetails?.subscriptionType}
                 onClick={() => handlePayment(plan.id)}
-                className={`w-full py-2 px-3 rounded-lg mb-4 text-[13px] sm:text-sm ${(plan.key === userDetails?.subscriptionType || index<planIndex)
+                className={`w-full py-2 px-3 rounded-lg mb-4 text-[13px] sm:text-sm ${(plan.key === userDetails?.subscriptionType || index < planIndex)
                   ? "bg-gray-100 text-gray-700"
                   : plan.name === "Enterprise"
                     ? "border border-[#5E54FF] text-[#5E54FF]"
@@ -378,9 +386,8 @@ const PlanManagementPopup = ({ onClose }) => {
   );
 };
 
-const Plan = () => {
+const Plan = ({showPlanPopup, setShowPlanPopup}) => {
   const [showCreditPopup, setShowCreditPopup] = useState(false);
-  const [showPlanPopup, setShowPlanPopup] = useState(false);
   const creditUsageData = [
     {
       item: "AI Agents - LLM and Tool Cost",

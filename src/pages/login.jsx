@@ -8,7 +8,7 @@ import { forgotPassword, getEmailVerify, getOTPVerify, googleLogin, login } from
 import { subscriptionPayment } from "../api/payment";
 import { loadStripe } from "@stripe/stripe-js";
 import { useGoogleLogin } from "@react-oauth/google";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { emailState, loginSuccess } from "../store/authSlice";
 
 export default function Login() {
@@ -22,7 +22,9 @@ export default function Login() {
     const [resentLoading, setResentLoading] = useState(false)
     const [errors, setErrors] = useState({});
     const [success, setSuccess] = useState({})
-    const dispatch=useDispatch()
+    const token = localStorage.getItem("token")
+    const userDetails = useSelector((state) => state.profile)
+    const dispatch = useDispatch()
 
     const otpRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
     const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
@@ -42,6 +44,14 @@ export default function Login() {
         }, 5000)
     }, [success])
 
+    useEffect(() => {
+
+        if (token && userDetails.loading) {
+            navigate("/dashboard")
+        }
+
+    }, [token, userDetails.loading])
+
     const handleEmailSubmit = async () => {
         setErrors({});
         if (!email) {
@@ -60,7 +70,7 @@ export default function Login() {
             console.log(response)
 
             if (response?.data?.profilePresent) {
-                dispatch(emailState({email:email}))
+                dispatch(emailState({ email: email }))
                 if (response?.data?.profileActivated) {
                     setStep("password");
                 } else {
@@ -138,8 +148,9 @@ export default function Login() {
             console.log(response)
 
             if (response?.status === 200) {
-                dispatch(loginSuccess({user:response?.data,token:response?.data?.token}))
-                localStorage.setItem("token", response?.data?.token)
+                dispatch(loginSuccess({ user: response?.data, token: response?.data?.accessToken }))
+                localStorage.setItem("token", response?.data?.accessToken)
+                localStorage.setItem("refreshToken", response?.data?.refreshToken)
                 navigate("/dashboard/settings")
             } else {
                 setErrors({ password: response?.response?.data?.message })
@@ -226,12 +237,14 @@ export default function Login() {
             console.log(response)
             if (response?.status === 200) {
                 if (response?.data?.profileActivated) {
-                    dispatch(loginSuccess({user:response?.data,token:response?.data?.token}))
-                    localStorage.setItem("token",response?.data?.token)
-                    navigate("/dashboard")
-                }else{
+                    dispatch(loginSuccess({ user: response?.data, token: response?.data?.accessToken }))
+                    localStorage.setItem("token", response?.data?.accessToken)
+                    localStorage.setItem("refreshToken", response?.data?.refreshToken)
+                    navigate("/dashboard/settings")
+                } else {
+                    d
                     console.log(response?.data?.email)
-                    dispatch(emailState({email:response?.data?.email}))
+                    dispatch(emailState({ email: response?.data?.email }))
                     navigate("/create-password")
                 }
             } else {
@@ -395,6 +408,9 @@ export default function Login() {
             </button>
         </div>
     );
+
+    if (userDetails?.loading && token) return <p className='flex justify-center items-center h-full'><span className='loader' /></p>
+
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-[#F6F7F9] p-3">

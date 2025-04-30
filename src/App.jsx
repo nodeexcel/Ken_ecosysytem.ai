@@ -9,6 +9,7 @@ import ResetPassword from './pages/ResetPassword'
 import PricingPage from './pages/Pricing'
 import SettingsPage from './pages/Dashboard/Settings'
 import Home from './pages/Dashboard/Home'
+import AcceptInvitation from './pages/acceptInvite'
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path='/pricing' element={<PricingPage />} />
         <Route path='/success' element={<Success />} />
         <Route path='/cancel' element={<PaymentFailed />} />
+        <Route path='/accept-invite' element={<AcceptInvitation />} />
         <Route path='/dashboard' element={<Dashboard />}>
           <Route index element={<Home />} />
           <Route path="settings" element={<SettingsPage />} />

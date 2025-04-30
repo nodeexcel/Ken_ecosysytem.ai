@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import { getProfile, updateProfile } from "../../api/profile";
 import { updatePassword } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
+import { sendInviteEmail } from "../../api/teamMember";
 
 
 // User profile data
@@ -84,6 +85,7 @@ const SettingsPage = () => {
   });
 
   const [success, setSuccess] = useState({})
+  const [showPlanPopup, setShowPlanPopup] = useState(false);
   const navigate = useNavigate()
 
 
@@ -109,9 +111,12 @@ const SettingsPage = () => {
   });
   const [open, setOpen] = useState(false);
   const [emailInvite, setEmailInvite] = useState("")
+  const [emailInviteRole, setEmailInviteRole] = useState("member")
   const [role, setRole] = useState("")
   const [isEditing, setIsEditing] = useState(false);
   const [updatePasswordLoading, setUpdatePasswordLoading] = useState(false)
+  const [inviteErrors, setInviteErrors] = useState({ email: "", limit: "" });
+  const [inviteEmailLoading, setInviteEmailLoading] = useState(false)
 
   const users = useSelector((state) => state.auth)
 
@@ -251,11 +256,70 @@ const SettingsPage = () => {
     setActiveDropdown(activeDropdown === index ? null : index);
   };
 
+  const invitePayload = {
+    total: 5,
+    used: 2,
+    remaining: 3
+  };
+
+  const handleInvite = async () => {
+    const newErrors = { email: "", limit: "" };
+    setInviteErrors(newErrors)
+
+    if (invitePayload.remaining === 0) {
+      newErrors.limit = `You’ve reached the limit for your plan (${invitePayload.total} members).`;
+    }
+    if (!emailInvite || !emailInvite.includes("@")) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+
+    // If there are errors, set them and return early
+    if (newErrors.email || newErrors.limit) {
+      setInviteErrors(newErrors);
+      return;
+    }
+
+    try {
+      setInviteEmailLoading(true)
+      const payload = {
+        email: emailInvite,
+        role: emailInviteRole
+      }
+      const response = await sendInviteEmail(payload)
+      console.log(response)
+      if (response?.status) {
+        setSuccess({ emailInvite: response?.data?.message })
+        setEmailInvite("")
+        setEmailInviteRole("member")
+      } else {
+        setInviteErrors((prev) => ({
+          ...prev, inviteError: response?.data?.message
+        }))
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setInviteEmailLoading(false)
+    }
+
+
+    setInviteErrors({ email: "", limit: "" });
+  }
+
+  const handleInviteTeam = () => {
+    if (userDetails?.user?.subscriptionType === "pro") {
+      setActiveSidebarItem("billing")
+      setShowPlanPopup(true)
+    } else {
+      setOpen(true)
+    }
+  }
+
   const renderMainContent = () => {
     if (activeSidebarItem === "billing") {
       return (
         <div className="flex flex-col w-full gap-6">
-          <Plan />
+          <Plan showPlanPopup={showPlanPopup} setShowPlanPopup={setShowPlanPopup} />
         </div>
       );
     }
@@ -266,7 +330,7 @@ const SettingsPage = () => {
           <div className="w-full p-2 flex flex-col gap-3 px-2">
             <div className="flex justify-between">
               <h1 className="text-[#1E1E1E] font-semibold text-[20px] md:text-[24px]">Team Members</h1>
-              <button className="bg-[#5E54FF] text-white rounded-md text-[14px] md:text-[16px] p-2" onClick={() => setOpen(true)}>Invite A Team Member</button>
+              <button className="bg-[#5E54FF] text-white rounded-md text-[14px] md:text-[16px] p-2" onClick={handleInviteTeam}>Invite A Team Member</button>
             </div>
             <div className="flex justify-between">
               <div className="w-[137px] flex items-center border border-gray-300 rounded-lg ">
@@ -368,7 +432,7 @@ const SettingsPage = () => {
 
           {open && (
             <div className="fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
-              <div className="bg-white max-h-[316px] flex flex-col gap-3 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
+              <div className="bg-white max-h-[364px] flex flex-col gap-3 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
                 <button
                   onClick={() => setOpen(false)}
                   className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
@@ -376,26 +440,50 @@ const SettingsPage = () => {
                   <X className="w-5 h-5" />
                 </button>
 
-                <h2 className="text-[#1E1E1E] font-semibold text-[20px] mb-4">Invite a team member</h2>
+                <h2 className="text-[#1E1E1E] font-semibold text-[20px] mb-2">Invite a team member</h2>
 
-                <div className="mb-4">
+                <div>
                   <label className="block text-[14px] font-medium text-[#292D32] mb-1">Email Address</label>
                   <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
                     <input
                       type="email"
                       placeholder="Enter email address"
                       value={emailInvite}
-                      onChange={(e) => setEmailInvite(e.target.value)}
+                      onChange={(e) => {
+                        setEmailInvite(e.target.value)
+                        setInviteErrors((prev) => ({
+                          ...prev, email: ''
+                        }))
+                      }}
                       className="w-full focus:outline-none"
                     />
                   </div>
+                  {inviteErrors.email && <p className="text-sm text-red-500 mt-1">{inviteErrors.email}</p>}
+                  <label className="block my-2 text-[14px] font-medium text-[#292D32]">Invite as</label>
+                  <div className="w-full flex items-center border border-gray-300 rounded-lg py-1">
+                    <select
+                      value={emailInviteRole}
+                      onChange={(e) => setEmailInviteRole(e.target.value)}
+                      className="w-full bg-white px-4 py-2 rounded-lg "
+                    >
+                      <option value="" disabled>Role</option>
+                      <option value="Admin">Admin</option>
+                      <option value="Member">Member</option>
+                      <option value="Guest">Guest</option>
+                    </select>
+                  </div>
                 </div>
+
+                {inviteErrors.limit && <p className="text-sm text-red-500 mt-1">{inviteErrors.limit}</p>}
+                {inviteErrors.inviteError && <p className="text-sm text-red-500 mt-1">{inviteErrors.inviteError}</p>}
+                {success.emailInvite && <p className="text-sm text-green-500 mt-1">{success.emailInvite}</p>}
+
                 <div className="flex gap-2 mt-3">
                   <button className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                     Close
                   </button>
-                  <button className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]">
-                    Invite
+                  <button onClick={handleInvite} className={`w-full text-[16px] text-white rounded-[8px] ${inviteEmailLoading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
+                    {inviteEmailLoading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Invite"}
                   </button>
                 </div>
               </div>
@@ -779,10 +867,10 @@ const SettingsPage = () => {
       </div>
       <div className="flex flex-col md:flex-row items-start gap-8 relative pl-4 py-3 w-full">
         {/* Sidebar Navigation */}
-        <div className="flex flex-col w-[153px] items-start gap-2 relative">
+        <div className="flex flex-col w-full md:w-[153px] items-start gap-2 relative">
           <div
             onClick={() => setActiveSidebarItem("general")}
-            className={`flex items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#e1e5ea]" : ""
+            className={`flex justify-center md:justify-start items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#e1e5ea]" : ""
               }`}
           >
             <SettingsIcon className={`w-4 h-4 ${activeSidebarItem === "general" ? "text-black" : "text-[#5A687C] "
@@ -795,7 +883,7 @@ const SettingsPage = () => {
 
           <div
             onClick={() => setActiveSidebarItem("billing")}
-            className={`flex items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#e1e5ea]" : ""
+            className={`flex justify-center md:justify-start items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#e1e5ea]" : ""
               }`}
           >
             <CreditCardIcon className={`w-4 h-4 ${activeSidebarItem === "billing" ? "text-black" : "text-[#5A687C] "
@@ -808,7 +896,7 @@ const SettingsPage = () => {
 
           <div
             onClick={() => setActiveSidebarItem("team")}
-            className={`flex items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "team" ? "bg-[#e1e5ea]" : ""
+            className={`flex justify-center md:justify-start items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "team" ? "bg-[#e1e5ea]" : ""
               }`}
           >
             <UsersIcon className={`w-4 h-4 ${activeSidebarItem === "team" ? "text-black" : "text-[#5A687C] "

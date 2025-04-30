@@ -1,30 +1,60 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+/**
+ * Initial authentication state.
+ * @type {{ user: Object|null, token: string|null, loading: boolean, email: string|null }}
+ */
 const initialState = {
-  user: null,
-  token: null,
-  loading: true,
-  email:null
+  user: null,     // Authenticated user object
+  token: null,    // JWT or access token
+  loading: true,  // Indicates if authentication check is in progress
+  email: null     // Email used in login or OTP flows
 };
 
+/**
+ * Redux slice to manage authentication state.
+ */
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    /**
+     * Handle successful login.
+     * @param {Object} state - Current state.
+     * @param {Object} action - Redux action with payload containing user and token.
+     * @param {Object} action.payload.user - Authenticated user details.
+     * @param {string} action.payload.token - JWT or auth token.
+     */
     loginSuccess: (state, action) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
-      state.loading = false
+      state.loading = false;
     },
-    emailState:(state,action)=>{
-      state.email=action.payload.email
+
+    /**
+     * Store email used during authentication (e.g. login or OTP steps).
+     * @param {Object} state - Current state.
+     * @param {Object} action - Redux action with payload containing the email.
+     * @param {string} action.payload.email - Email address to store.
+     */
+    emailState: (state, action) => {
+      state.email = action.payload.email;
     },
-    logout: (state) => {
+
+    /**
+     * Clear user and token on logout.
+     * @param {Object} state - Current state.
+     */
+    logoutState: (state) => {
       state.user = null;
       state.token = null;
-    },
+      state.email = null;
+    }
   },
 });
 
-export const { loginSuccess, logout, emailState } = authSlice.actions;
+// Exporting action creators
+export const { loginSuccess, logoutState, emailState } = authSlice.actions;
+
+// Exporting the reducer
 export default authSlice.reducer;
