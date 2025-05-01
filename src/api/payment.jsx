@@ -44,3 +44,13 @@ export const updateSubscriptionPaymentStatus = async (payload) => {
         return error;
     }
 };
+
+export const getTransactionsHistory = async () => {
+    try {
+        const response = await axiosInstance.get("/api/users/transactions");
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};

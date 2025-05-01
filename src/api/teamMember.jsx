@@ -19,3 +19,13 @@ export const acceptInviteEmail = async (payload) => {
         return error;
     }
 };
+
+export const getTeamMembers = async () => {
+    try {
+        const response = await axiosInstance.get("/api/users/team-members");
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};

@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import { getProfile, updateProfile } from "../../api/profile";
 import { updatePassword } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
-import { sendInviteEmail } from "../../api/teamMember";
+import { getTeamMembers, sendInviteEmail } from "../../api/teamMember";
 
 
 // User profile data
@@ -86,10 +86,11 @@ const SettingsPage = () => {
 
   const [success, setSuccess] = useState({})
   const [showPlanPopup, setShowPlanPopup] = useState(false);
+  const [teamMembersData,setTeamMembersData]=useState(null)
   const navigate = useNavigate()
 
 
-  const token = useSelector((state)=>state.auth.token);
+  const token = useSelector((state) => state.auth.token);
 
   const [updateLoading, setUpdateLoading] = useState(false)
 
@@ -99,6 +100,7 @@ const SettingsPage = () => {
   useEffect(() => {
     if (token && !userDetails.loading) {
       setProfileFormData(userDetails?.user)
+      renderTeamMembers()
     }
 
   }, [token, !userDetails.loading])
@@ -125,6 +127,18 @@ const SettingsPage = () => {
       setSuccess({})
     }, 5000)
   }, [success])
+
+  const renderTeamMembers = async () => {
+    try {
+      const response = await getTeamMembers()
+
+      if(response?.status===200){
+        setTeamMembersData(response?.data?.data)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
@@ -168,7 +182,7 @@ const SettingsPage = () => {
       Object.entries(profileFormData).forEach(([key, value]) => {
         if (key === 'imageFile' && value) {
           formData.append('file', value);
-        } else if (key !== 'image') {
+        } else {
           formData.append(key, value);
         }
       });
@@ -260,7 +274,7 @@ const SettingsPage = () => {
     const newErrors = { email: "", limit: "" };
     setInviteErrors(newErrors)
 
-    if ((userDetails?.user?.totalTeamMember - userDetails?.user?.numberOfTeamMembers ) === 0) {
+    if ((userDetails?.user?.totalTeamMember - userDetails?.user?.numberOfTeamMembers) === 0) {
       newErrors.limit = `You’ve reached the limit for your plan (${userDetails?.user?.totalTeamMember} members).`;
     }
     if (!emailInvite || !emailInvite.includes("@")) {
@@ -281,7 +295,7 @@ const SettingsPage = () => {
       }
       const response = await sendInviteEmail(payload)
       console.log(response)
-      if (response?.status===200) {
+      if (response?.status === 200) {
         setSuccess({ emailInvite: response?.data?.message })
         setEmailInvite("")
         setEmailInviteRole("Member")
@@ -356,7 +370,7 @@ const SettingsPage = () => {
                   </tr>
                 </thead>
                 <tbody className=" rounded-lg">
-                  {tableData.map((user, index) => (
+                  {teamMembersData?.length>0&&teamMembersData.map((user, index) => (
                     <tr key={index} className="bg-white">
                       <td className="px-6 py-4 whitespace-nowrap flex items-center gap-2 border-l-1 border-t-1 border-b-1 border-[#E1E4EA] rounded-l-lg">
                         <div className="w-8 h-8 bg-[#E8E9FF] text-[#5E54FF] rounded-full flex items-center justify-center font-semibold text-sm">
@@ -367,7 +381,7 @@ const SettingsPage = () => {
                       <td className="px-6 py-4 text-sm text-gray-700 border-t-1 border-b-1 border-[#E1E4EA]">{user.email}</td>
                       <td className="px-6 py-4 text-sm text-gray-700 border-t-1 border-b-1 border-[#E1E4EA]">{user.role}</td>
                       <td className="px-6 py-4 text-sm text-gray-700 border-r-1 border-t-1 border-b-1 rounded-r-lg border-[#E1E4EA]">
-                        <select
+                        {/* <select
                           className="w-full bg-white  rounded-md px-2 py-1"
                           value={user.assigned[0]}
                           onChange={(e) => {
@@ -380,7 +394,7 @@ const SettingsPage = () => {
                               {agent}
                             </option>
                           ))}
-                        </select>
+                        </select> */}
                       </td>
                       <td className="px-6 py-4 text-left border-[#E1E4EA] rounded-r-lg bg-[#F6F7F9]">
                         <button
@@ -469,7 +483,7 @@ const SettingsPage = () => {
                 {success.emailInvite && <p className="text-sm text-green-500 mt-1">{success.emailInvite}</p>}
 
                 <div className="flex gap-2 mt-3">
-                  <button  onClick={() => setOpen(false)} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                  <button onClick={() => setOpen(false)} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                     Close
                   </button>
                   <button onClick={handleInvite} className={`w-full text-[16px] text-white rounded-[8px] ${inviteEmailLoading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
@@ -581,8 +595,8 @@ const SettingsPage = () => {
                           <input
                             type="text"
                             name={field}
-                            value={profileFormData[field]}
-                            readOnly={!isEditing}
+                            value={profileFormData[field] === "null" ? '' : profileFormData[field]}
+                            disabled={!isEditing}
                             onChange={handleProfileChange}
                             className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
                           />
@@ -597,8 +611,8 @@ const SettingsPage = () => {
                         <input
                           type="email"
                           name="email"
-                          value={profileFormData.email}
-                          readOnly
+                          value={profileFormData.email === "null" ? '' : profileFormData.email}
+                          disabled
                           className="w-full px-3.5 py-2.5 bg-gray-100 rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
                         />
                       </div>
@@ -607,8 +621,8 @@ const SettingsPage = () => {
                         <input
                           type="text"
                           name="phoneNumber"
-                          value={profileFormData.phoneNumber}
-                          readOnly={!isEditing}
+                          value={profileFormData.phoneNumber === "null" ? '' : profileFormData.phoneNumber}
+                          disabled={!isEditing}
                           onChange={handleProfileChange}
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
                         />
@@ -617,21 +631,36 @@ const SettingsPage = () => {
 
                     {/* Company Fields */}
                     <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-[17px] relative self-stretch w-full">
-                      {["company", "role"].map((field) => (
-                        <div key={field} className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
-                          <label className="font-medium text-sm text-text-black">
-                            {field.charAt(0).toUpperCase() + field.slice(1)}
-                          </label>
-                          <input
-                            type="text"
-                            name={field}
-                            value={profileFormData[field]}
-                            readOnly={!isEditing}
-                            onChange={handleProfileChange}
-                            className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
-                          />
-                        </div>
-                      ))}
+                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
+                        <label className="font-medium text-sm text-text-black">
+                          Company
+                        </label>
+                        <input
+                          type="text"
+                          name="company"
+                          value={profileFormData.company === "null" ? '' : profileFormData.company}
+                          disabled={!isEditing}
+                          onChange={handleProfileChange}
+                          className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
+                        />
+                      </div>
+                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
+                        <label className="font-medium text-sm text-text-black">
+                          Role
+                        </label>
+                        <select
+                          name="role"
+                          value={profileFormData.role}
+                          onChange={handleProfileChange}
+                          disabled={!isEditing}
+                          className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
+                        >
+                          <option value="" disabled>Role</option>
+                          <option value="Admin">Admin</option>
+                          <option value="Member">Member</option>
+                          <option value="Guest">Guest</option>
+                        </select>
+                      </div>
                     </div>
 
                     {/* Location Fields */}
@@ -644,8 +673,8 @@ const SettingsPage = () => {
                           <input
                             type="text"
                             name={field}
-                            value={profileFormData[field]}
-                            readOnly={!isEditing}
+                            value={profileFormData[field] === "null" ? '' : profileFormData[field]}
+                            disabled={!isEditing}
                             onChange={handleProfileChange}
                             className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
                           />
@@ -848,13 +877,13 @@ const SettingsPage = () => {
 
   return (
     <div className="h-full w-full bg-[#F6F7F9]">
-      <div>
+      {/* <div>
         <div className='flex items-center pl-4 py-3' onClick={() => navigate("/dashboard")}>
           <MdOutlineKeyboardArrowLeft size={25} />
           <h1 className="text-[26px] font-bold pb-1">Settings</h1>
         </div>
         <hr className='text-[#E1E4EA]' />
-      </div>
+      </div> */}
       <div className="flex flex-col md:flex-row items-start gap-8 relative pl-4 py-3 w-full">
         {/* Sidebar Navigation */}
         <div className="flex flex-col w-full md:w-[153px] items-start gap-2 relative">

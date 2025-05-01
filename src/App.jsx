@@ -10,6 +10,12 @@ import PricingPage from './pages/Pricing'
 import SettingsPage from './pages/Dashboard/Settings'
 import Home from './pages/Dashboard/Home'
 import AcceptInvitation from './pages/acceptInvite'
+import Agents from './pages/Dashboard/Agents'
+import Documentation from './pages/Dashboard/Documentation'
+import Support from './pages/Dashboard/Support'
+import Community from './pages/Dashboard/Community'
+import BrainAI from './pages/Dashboard/Brain'
+import TransactionHistory from './pages/Dashboard/TransactionHistory'
 
 
 function App() {
@@ -25,8 +31,14 @@ function App() {
         <Route path='/cancel' element={<PaymentFailed />} />
         <Route path='/accept-invite' element={<AcceptInvitation />} />
         <Route path='/dashboard' element={<Dashboard />}>
-          <Route index element={<Home />} />
+          <Route path='' element={<Home />} />
+          <Route path="agents" element={<Agents />} />
+          <Route path="brain" element={<BrainAI />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="documentation" element={<Documentation />} />
+          <Route path="support" element={<Support />} />
+          <Route path="community" element={<Community />} />
+          <Route path="settings/transaction-history" element={<TransactionHistory />} />
         </Route>
       </Routes>
     </div>

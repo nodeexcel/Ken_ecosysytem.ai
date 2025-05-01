@@ -151,7 +151,7 @@ export default function Login() {
                 dispatch(loginSuccess({ user: response?.data, token: response?.data?.accessToken }))
                 localStorage.setItem("token", response?.data?.accessToken)
                 localStorage.setItem("refreshToken", response?.data?.refreshToken)
-                navigate("/dashboard/settings")
+                navigate("/dashboard")
             } else {
                 setErrors({ password: response?.response?.data?.message })
             }
@@ -240,7 +240,7 @@ export default function Login() {
                     dispatch(loginSuccess({ user: response?.data, token: response?.data?.accessToken }))
                     localStorage.setItem("token", response?.data?.accessToken)
                     localStorage.setItem("refreshToken", response?.data?.refreshToken)
-                    navigate("/dashboard/settings")
+                    navigate("/dashboard")
                 } else {
                     d
                     console.log(response?.data?.email)

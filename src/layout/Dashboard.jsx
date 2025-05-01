@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getProfileData } from '../store/profileSlice';
 import { getProfile } from '../api/profile';
 import { loginSuccess } from '../store/authSlice';
+import Navbar from '../components/Navbar';
+
 
 function Dashboard() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -39,15 +41,27 @@ function Dashboard() {
         };
     }, [isSidebarOpen]);
 
+    const SidebarItems=[
+        {id:"agents",label:"Agents"},
+        {id:"brain",label:"Brain AI"},
+        {id:"settings",label:"Settings"},
+        {id:"documentation",label:"Documentation"},
+        {id:"support",label:"Support"},
+        {id:"community",label:"Community"},
+        {id:"agents",label:"Agents"},
+    ]
+
     const handleProfile = async () => {
         try {
 
             const response = await getProfile()
             if (response?.status === 200) {
                 console.log(response?.data)
+                if(!response?.data?.isProfileComplete){
+                    navigate("settings")
+                }
                 dispatch(getProfileData(response?.data))
             }
-
         } catch (error) {
             console.log(error)
         }
@@ -65,9 +79,10 @@ function Dashboard() {
     return (
         <div className='w-full flex h-full'>
             <div className={`md:w-[5%] h-full transition-all duration-300 ${isSidebarOpen ? 'w-[250px]' : 'w-[0%]'} md:w-[5%] md:relative fixed z-50`}>
-                <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                <Sidebar sidebarItems={SidebarItems} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
             </div>
             <div className='w-[95%] h-full'>
+                <Navbar sidebarItems={SidebarItems}/>
                 <Outlet />
             </div>
         </div>

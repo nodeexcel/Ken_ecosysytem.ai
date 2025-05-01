@@ -1,8 +1,9 @@
 import { ChevronDown, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { updateSubscriptionPaymentStatus } from "../api/payment";
+import { getTransactionsHistory, updateSubscriptionPaymentStatus } from "../api/payment";
 import { useSelector } from "react-redux";
 import { loadStripe } from "@stripe/stripe-js";
+import { useNavigate } from "react-router-dom";
 
 const CreditPopup = ({ onClose }) => {
   const [selectedCredit, setSelectedCredit] = useState(350);
@@ -105,7 +106,7 @@ const PlanManagementPopup = ({ onClose }) => {
   const [planIndex, setPlanIndex] = useState();
 
   const userDetails = useSelector((state) => state.profile.user)
-  const token = useSelector((state)=>state.auth.token)
+  const token = useSelector((state) => state.auth.token)
 
   const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -386,7 +387,7 @@ const PlanManagementPopup = ({ onClose }) => {
   );
 };
 
-const Plan = ({showPlanPopup, setShowPlanPopup}) => {
+const Plan = ({ showPlanPopup, setShowPlanPopup }) => {
   const [showCreditPopup, setShowCreditPopup] = useState(false);
   const creditUsageData = [
     {
@@ -420,6 +421,7 @@ const Plan = ({showPlanPopup, setShowPlanPopup}) => {
       dateTime: "27/03/2025 03:30 PM",
     },
   ];
+  const navigate = useNavigate()
 
   return (
     <div className="p-4 sm:p-6 w-full">
@@ -481,7 +483,7 @@ const Plan = ({showPlanPopup, setShowPlanPopup}) => {
               </div>
               <span className="font-medium">Payment</span>
             </div>
-            <button className="text-[#5E54FF] font-[600] text-sm hover:underline flex items-center gap-2 onest">
+            <button onClick={()=>navigate("transaction-history")} className="text-[#5E54FF] font-[600] text-sm hover:underline flex items-center gap-2 onest">
               View Details{" "}
               <span>
                 <img src="/src/assets/svg/details.svg" alt="" />
