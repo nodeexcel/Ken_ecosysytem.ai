@@ -7,9 +7,7 @@ import axiosInstance from "./axiosInstance";
  */
 export const getEmailVerify = async (payload) => {
     try {
-        const response = await axiosInstance.post("/api/auth/check-profile", payload, {
-            headers: { "Content-Type": "application/json" }
-        });
+        const response = await axiosInstance.post("/api/auth/check-profile", payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -24,9 +22,7 @@ export const getEmailVerify = async (payload) => {
  */
 export const login = async (payload) => {
     try {
-        const response = await axiosInstance.post("/api/auth/login", payload, {
-            headers: { "Content-Type": "application/json" }
-        });
+        const response = await axiosInstance.post("/api/auth/login", payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -56,9 +52,7 @@ export const googleLogin = async (payload) => {
  */
 export const getOTPVerify = async (payload) => {
     try {
-        const response = await axiosInstance.post("/api/auth/verify-otp", payload, {
-            headers: { "Content-Type": "application/json" }
-        });
+        const response = await axiosInstance.post("/api/auth/verify-otp", payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -73,9 +67,7 @@ export const getOTPVerify = async (payload) => {
  */
 export const setPassword = async (payload) => {
     try {
-        const response = await axiosInstance.post("/api/auth/set-password", payload, {
-            headers: { "Content-Type": "application/json" }
-        });
+        const response = await axiosInstance.post("/api/auth/set-password", payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -90,9 +82,7 @@ export const setPassword = async (payload) => {
  */
 export const forgotPassword = async (payload) => {
     try {
-        const response = await axiosInstance.post("/api/password/request-reset", payload, {
-            headers: { "Content-Type": "application/json" }
-        });
+        const response = await axiosInstance.post("/api/password/request-reset", payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -107,9 +97,7 @@ export const forgotPassword = async (payload) => {
  */
 export const resetPassword = async (payload) => {
     try {
-        const response = await axiosInstance.post("/api/password/reset", payload, {
-            headers: { "Content-Type": "application/json" }
-        });
+        const response = await axiosInstance.post("/api/password/reset", payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -120,14 +108,11 @@ export const resetPassword = async (payload) => {
 /**
  * Update user password after authentication.
  * @param {Object} payload - Password update details.
- * @param {string} token - Auth token for verification.
  * @returns {Promise<Object>} Axios response or error object.
  */
-export const updatePassword = async (payload, token) => {
+export const updatePassword = async (payload) => {
     try {
-        const response = await axiosInstance.post("/api/password/set-new", payload, {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
+        const response = await axiosInstance.post("/api/password/set-new", payload);
         return response;
     } catch (error) {
         console.error(error);

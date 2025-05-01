@@ -6,12 +6,11 @@ import axiosInstance from "./axiosInstance";
  * @param {string} token - Auth token for verification.
  * @returns {Promise<Object>} Axios response or error object.
  */
-export const updateProfile = async (payload, token) => {
+export const updateProfile = async (payload) => {
     try {
         const response = await axiosInstance.put("/api/users/profile", payload, {
             headers: {
                 "Content-Type": "multipart/form-data",
-                "Authorization": `Bearer ${token}`
             }
         });
         return response;
@@ -26,13 +25,9 @@ export const updateProfile = async (payload, token) => {
  * @param {string} token - Auth token for verification.
  * @returns {Promise<Object>} Axios response or error object.
  */
-export const getProfile = async (token) => {
+export const getProfile = async () => {
     try {
-        const response = await axiosInstance.get("/api/users/profile", {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        });
+        const response = await axiosInstance.get("/api/users/profile");
         return response;
     } catch (error) {
         console.error(error);

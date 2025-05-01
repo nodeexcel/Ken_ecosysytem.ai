@@ -7,10 +7,7 @@ import axiosInstance from "./axiosInstance";
  */
 export const subscriptionPayment = async (payload) => {
     try {
-        const response = await axiosInstance.post("/api/payments/subscription-session", payload, {
-            headers: { "Content-Type": "application/json" }
-        });
-        console.log(response);
+        const response = await axiosInstance.post("/api/payments/subscription-session", payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -25,10 +22,7 @@ export const subscriptionPayment = async (payload) => {
  */
 export const getSubscriptionPaymentStatus = async (payload) => {
     try {
-        const response = await axiosInstance.post("/api/payments/checkout-session", payload, {
-            headers: { "Content-Type": "application/json" }
-        });
-        console.log(response);
+        const response = await axiosInstance.post("/api/payments/checkout-session", payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -39,15 +33,11 @@ export const getSubscriptionPaymentStatus = async (payload) => {
 /**
  * Update the status of a user’s subscription.
  * @param {Object} payload - Updated subscription info.
- * @param {string} token - Auth token for verification.
  * @returns {Promise<Object>} Axios response or error object.
  */
-export const updateSubscriptionPaymentStatus = async (payload, token) => {
+export const updateSubscriptionPaymentStatus = async (payload) => {
     try {
-        const response = await axiosInstance.post("/api/payments/update-subscription", payload, {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
-        console.log(response);
+        const response = await axiosInstance.post("/api/payments/update-subscription", payload);
         return response;
     } catch (error) {
         console.error(error);

@@ -89,7 +89,7 @@ const SettingsPage = () => {
   const navigate = useNavigate()
 
 
-  const token = localStorage.getItem('token');
+  const token = useSelector((state)=>state.auth.token);
 
   const [updateLoading, setUpdateLoading] = useState(false)
 
@@ -111,7 +111,7 @@ const SettingsPage = () => {
   });
   const [open, setOpen] = useState(false);
   const [emailInvite, setEmailInvite] = useState("")
-  const [emailInviteRole, setEmailInviteRole] = useState("member")
+  const [emailInviteRole, setEmailInviteRole] = useState("Member")
   const [role, setRole] = useState("")
   const [isEditing, setIsEditing] = useState(false);
   const [updatePasswordLoading, setUpdatePasswordLoading] = useState(false)
@@ -221,7 +221,7 @@ const SettingsPage = () => {
           newPassword: formData.newPassword
         }
 
-        const response = await updatePassword(payload, token)
+        const response = await updatePassword(payload)
         console.log(response)
         if (response?.status === 200) {
           setSuccess({ passwordSuccess: response?.data?.message })
@@ -256,18 +256,12 @@ const SettingsPage = () => {
     setActiveDropdown(activeDropdown === index ? null : index);
   };
 
-  const invitePayload = {
-    total: 5,
-    used: 2,
-    remaining: 3
-  };
-
   const handleInvite = async () => {
     const newErrors = { email: "", limit: "" };
     setInviteErrors(newErrors)
 
-    if (invitePayload.remaining === 0) {
-      newErrors.limit = `You’ve reached the limit for your plan (${invitePayload.total} members).`;
+    if ((userDetails?.user?.totalTeamMember - userDetails?.user?.numberOfTeamMembers ) === 0) {
+      newErrors.limit = `You’ve reached the limit for your plan (${userDetails?.user?.totalTeamMember} members).`;
     }
     if (!emailInvite || !emailInvite.includes("@")) {
       newErrors.email = "Please enter a valid email address.";
@@ -287,13 +281,14 @@ const SettingsPage = () => {
       }
       const response = await sendInviteEmail(payload)
       console.log(response)
-      if (response?.status) {
+      if (response?.status===200) {
         setSuccess({ emailInvite: response?.data?.message })
         setEmailInvite("")
-        setEmailInviteRole("member")
+        setEmailInviteRole("Member")
+        setInviteErrors({ email: "", limit: "" });
       } else {
         setInviteErrors((prev) => ({
-          ...prev, inviteError: response?.data?.message
+          ...prev, inviteError: response?.response?.data?.message
         }))
       }
     } catch (error) {
@@ -301,9 +296,6 @@ const SettingsPage = () => {
     } finally {
       setInviteEmailLoading(false)
     }
-
-
-    setInviteErrors({ email: "", limit: "" });
   }
 
   const handleInviteTeam = () => {
@@ -451,9 +443,7 @@ const SettingsPage = () => {
                       value={emailInvite}
                       onChange={(e) => {
                         setEmailInvite(e.target.value)
-                        setInviteErrors((prev) => ({
-                          ...prev, email: ''
-                        }))
+                        setInviteErrors({})
                       }}
                       className="w-full focus:outline-none"
                     />
@@ -479,7 +469,7 @@ const SettingsPage = () => {
                 {success.emailInvite && <p className="text-sm text-green-500 mt-1">{success.emailInvite}</p>}
 
                 <div className="flex gap-2 mt-3">
-                  <button className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                  <button  onClick={() => setOpen(false)} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                     Close
                   </button>
                   <button onClick={handleInvite} className={`w-full text-[16px] text-white rounded-[8px] ${inviteEmailLoading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>

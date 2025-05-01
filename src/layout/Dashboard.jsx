@@ -4,6 +4,7 @@ import { Outlet, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { getProfileData } from '../store/profileSlice';
 import { getProfile } from '../api/profile';
+import { loginSuccess } from '../store/authSlice';
 
 function Dashboard() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -16,6 +17,7 @@ function Dashboard() {
 
         if (token && userDetails.loading) {
             handleProfile()
+            dispatch(loginSuccess({token:token}))
         }
         if (!token && userDetails.loading) {
             navigate("/")
@@ -40,7 +42,7 @@ function Dashboard() {
     const handleProfile = async () => {
         try {
 
-            const response = await getProfile(token)
+            const response = await getProfile()
             if (response?.status === 200) {
                 console.log(response?.data)
                 dispatch(getProfileData(response?.data))

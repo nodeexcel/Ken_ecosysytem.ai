@@ -3,7 +3,6 @@ import axiosInstance from "./axiosInstance";
 export const sendInviteEmail = async (payload) => {
     try {
         const response = await axiosInstance.post("/api/users/invite-member", payload);
-        console.log(response);
         return response;
     } catch (error) {
         console.error(error);
@@ -14,7 +13,6 @@ export const sendInviteEmail = async (payload) => {
 export const acceptInviteEmail = async (payload) => {
     try {
         const response = await axiosInstance.post("/api/users/accept-invitation", payload);
-        console.log(response);
         return response;
     } catch (error) {
         console.error(error);

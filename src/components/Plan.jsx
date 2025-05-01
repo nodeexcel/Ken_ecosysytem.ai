@@ -105,7 +105,7 @@ const PlanManagementPopup = ({ onClose }) => {
   const [planIndex, setPlanIndex] = useState();
 
   const userDetails = useSelector((state) => state.profile.user)
-  const token = localStorage.getItem("token")
+  const token = useSelector((state)=>state.auth.token)
 
   const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -265,7 +265,7 @@ const PlanManagementPopup = ({ onClose }) => {
         email: userDetails.email,
         priceId: id
       }
-      const response = await updateSubscriptionPaymentStatus(payload, token)
+      const response = await updateSubscriptionPaymentStatus(payload)
       const stripe = await stripePromise;
       console.log(response)
       if (response.status === 200 && stripe) {
