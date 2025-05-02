@@ -36,7 +36,7 @@ const TransactionHistory = () => {
         renderTransactionData()
     }, [])
     return (
-        <div className="overflow-x-auto p-5">
+        <div className="overflow-x-auto p-5 onest">
             <table className="w-full min-w-[800px]">
                 <thead>
                     <tr className="text-left text-gray-600">

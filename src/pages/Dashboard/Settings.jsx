@@ -340,7 +340,7 @@ const SettingsPage = () => {
   const renderMainContent = () => {
     if (activeSidebarItem === "billing") {
       return (
-        <div className="flex flex-col w-full gap-6">
+        <div className="flex flex-col w-full gap-6 onest">
           <Plan setActiveSidebarItem={setActiveSidebarItem} showPlanPopup={showPlanPopup} setShowPlanPopup={setShowPlanPopup} />
         </div>
       );
@@ -349,7 +349,7 @@ const SettingsPage = () => {
     else if (activeSidebarItem === "team") {
       return (
         <>
-          <div className="w-full p-2 flex flex-col gap-3 px-2">
+          <div className="w-full p-2 flex flex-col gap-3 px-2 onest">
             <div className="flex justify-between">
               <h1 className="text-[#1E1E1E] font-semibold text-[20px] md:text-[24px]">Team Members</h1>
               <button className="bg-[#5E54FF] text-white rounded-md text-[14px] md:text-[16px] p-2" onClick={handleInviteTeam}>Invite A Team Member</button>
@@ -518,7 +518,7 @@ const SettingsPage = () => {
     }
 
     return (
-      <div className="flex flex-col w-full items-start gap-5 relative px-4 sm:px-6">
+      <div className="flex flex-col w-full items-start gap-5 relative px-4 sm:px-6 onest">
         {/* Header */}
         <div className="flex flex-col items-start gap-[23px] relative self-stretch w-full flex-[0_0_auto]">
           <div className="flex items-center justify-between relative self-stretch w-full flex-[0_0_auto]">
