@@ -387,7 +387,7 @@ const PlanManagementPopup = ({ onClose }) => {
   );
 };
 
-const Plan = ({ showPlanPopup, setShowPlanPopup }) => {
+const Plan = ({ setActiveSidebarItem,showPlanPopup, setShowPlanPopup }) => {
   const [showCreditPopup, setShowCreditPopup] = useState(false);
   const creditUsageData = [
     {
@@ -421,7 +421,6 @@ const Plan = ({ showPlanPopup, setShowPlanPopup }) => {
       dateTime: "27/03/2025 03:30 PM",
     },
   ];
-  const navigate = useNavigate()
 
   return (
     <div className="p-4 sm:p-6 w-full">
@@ -483,7 +482,7 @@ const Plan = ({ showPlanPopup, setShowPlanPopup }) => {
               </div>
               <span className="font-medium">Payment</span>
             </div>
-            <button onClick={()=>navigate("transaction-history")} className="text-[#5E54FF] font-[600] text-sm hover:underline flex items-center gap-2 onest">
+            <button onClick={()=>setActiveSidebarItem("transaction-history")} className="text-[#5E54FF] font-[600] text-sm hover:underline flex items-center gap-2 onest">
               View Details{" "}
               <span>
                 <img src="/src/assets/svg/details.svg" alt="" />

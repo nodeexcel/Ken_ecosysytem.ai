@@ -11,6 +11,7 @@ import { getProfile, updateProfile } from "../../api/profile";
 import { updatePassword } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import { getTeamMembers, sendInviteEmail } from "../../api/teamMember";
+import TransactionHistory from "../../components/TransactionHistory";
 
 
 // User profile data
@@ -86,7 +87,7 @@ const SettingsPage = () => {
 
   const [success, setSuccess] = useState({})
   const [showPlanPopup, setShowPlanPopup] = useState(false);
-  const [teamMembersData,setTeamMembersData]=useState(null)
+  const [teamMembersData, setTeamMembersData] = useState(null)
   const navigate = useNavigate()
 
 
@@ -119,6 +120,8 @@ const SettingsPage = () => {
   const [updatePasswordLoading, setUpdatePasswordLoading] = useState(false)
   const [inviteErrors, setInviteErrors] = useState({ email: "", limit: "" });
   const [inviteEmailLoading, setInviteEmailLoading] = useState(false)
+  const [teamMembersDataMessage, setTeamMembersDataMessage] = useState("")
+  const [teamMembersDataLoading, setTeamMembersDataLoading] = useState(true)
 
   const users = useSelector((state) => state.auth)
 
@@ -128,12 +131,25 @@ const SettingsPage = () => {
     }, 5000)
   }, [success])
 
+  useEffect(() => {
+    if (teamMembersData?.length > 0) {
+      setTeamMembersDataLoading(false)
+    }
+
+  }, [teamMembersData])
+
   const renderTeamMembers = async () => {
+    setTeamMembersDataMessage("")
+    setTeamMembersDataLoading(true)
     try {
       const response = await getTeamMembers()
 
-      if(response?.status===200){
+      if (response?.status === 200) {
         setTeamMembersData(response?.data?.data)
+        if (response?.data?.data?.length == 0) {
+          setTeamMembersDataLoading(false)
+          setTeamMembersDataMessage("No Data Found")
+        }
       }
     } catch (error) {
       console.log(error)
@@ -166,7 +182,7 @@ const SettingsPage = () => {
 
       setProfileFormData((prev) => ({
         ...prev,
-        image: imageUrl,
+        imagePath: imageUrl,
         imageFile: file, // Optional: for uploading to backend later
       }));
     }
@@ -182,7 +198,7 @@ const SettingsPage = () => {
       Object.entries(profileFormData).forEach(([key, value]) => {
         if (key === 'imageFile' && value) {
           formData.append('file', value);
-        } else {
+        } else if(key!=="imagePath") {
           formData.append(key, value);
         }
       });
@@ -325,7 +341,7 @@ const SettingsPage = () => {
     if (activeSidebarItem === "billing") {
       return (
         <div className="flex flex-col w-full gap-6">
-          <Plan showPlanPopup={showPlanPopup} setShowPlanPopup={setShowPlanPopup} />
+          <Plan setActiveSidebarItem={setActiveSidebarItem} showPlanPopup={showPlanPopup} setShowPlanPopup={setShowPlanPopup} />
         </div>
       );
     }
@@ -353,7 +369,7 @@ const SettingsPage = () => {
               </div>
               <div className="flex items-center px-3 gap-2 border border-[#E1E4EA] rounded-[8px] h-[38px]">
                 <LuRefreshCw color="#5E54FF" />
-                <button className="text-[16px] text-[#5A687C]">
+                <button onClick={renderTeamMembers} className="text-[16px] text-[#5A687C]">
                   Refresh
                 </button>
               </div>
@@ -370,7 +386,7 @@ const SettingsPage = () => {
                   </tr>
                 </thead>
                 <tbody className=" rounded-lg">
-                  {teamMembersData?.length>0&&teamMembersData.map((user, index) => (
+                  {teamMembersDataLoading ? <div><span className='loader' /></div> : teamMembersDataMessage ? <p>{teamMembersDataMessage}</p> : <>{teamMembersData?.length > 0 && teamMembersData.map((user, index) => (
                     <tr key={index} className="bg-white">
                       <td className="px-6 py-4 whitespace-nowrap flex items-center gap-2 border-l-1 border-t-1 border-b-1 border-[#E1E4EA] rounded-l-lg">
                         <div className="w-8 h-8 bg-[#E8E9FF] text-[#5E54FF] rounded-full flex items-center justify-center font-semibold text-sm">
@@ -429,7 +445,7 @@ const SettingsPage = () => {
                         )}
                       </td>
                     </tr>
-                  ))}
+                  ))}</>}
                 </tbody>
               </table>
             </div>
@@ -497,6 +513,10 @@ const SettingsPage = () => {
       );
     }
 
+    else if (activeSidebarItem === "transaction-history") {
+      return <TransactionHistory />
+    }
+
     return (
       <div className="flex flex-col w-full items-start gap-5 relative px-4 sm:px-6">
         {/* Header */}
@@ -558,7 +578,7 @@ const SettingsPage = () => {
                   <div className="relative">
                     <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden">
                       <img
-                        src={profileFormData.image || profileData.avatar}
+                        src={profileFormData.imagePath||profileFormData.image|| profileData.avatar}
                         alt="Profile"
                         className="w-full h-full object-cover"
                       />

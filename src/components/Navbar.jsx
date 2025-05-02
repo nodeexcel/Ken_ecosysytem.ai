@@ -15,8 +15,8 @@ function Navbar({ sidebarItems }) {
     return (
         <div className=''>
             <div className='flex items-center pl-4 pt-2 pb-[0.4rem]' onClick={() => navigate("/dashboard")}>
-                <MdOutlineKeyboardArrowLeft size={25} />
-                <h1 className="text-[26px] font-bold pb-1">{renderLabel() ?? "Home"}</h1>
+                {/* <MdOutlineKeyboardArrowLeft size={25} /> */}
+                <h1 className="text-[26px] font-[600] pb-1 onest">{renderLabel() ?? "Home"}</h1>
             </div>
             <hr className='text-[#E1E4EA]' />
         </div>

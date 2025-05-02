@@ -1,24 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import creditCardIcon from '../../assets/svg/credit.svg'; // Replace with actual paths
-import receiptIcon from '../../assets/svg/coins.svg';
-import { getTransactionsHistory } from '../../api/payment';
+import creditCardIcon from '../assets/svg/credit.svg'; // Replace with actual paths
+import { getTransactionsHistory } from '../api/payment';
+import { PiCoinsThin } from 'react-icons/pi';
 
 const TransactionHistory = () => {
     const [transactions, setTransactions] = useState("")
+    const [loading, setLoading] = useState(true)
+    const [message, setMessage] = useState("")
 
     const renderTransactionData = async () => {
+        setMessage("")
         try {
-
             const response = await getTransactionsHistory()
             if (response?.status === 200) {
                 setTransactions(response?.data?.data)
+                if (response?.data?.data?.length == 0) {
+                    setLoading(false)
+                    setMessage("No Data Found")
+                }
             }
-            console.log(response)
 
         } catch (error) {
             console.log(error)
         }
     }
+
+    useEffect(() => {
+        if (transactions?.length > 0) {
+            setLoading(false)
+        }
+
+    }, [transactions])
 
     useEffect(() => {
         renderTransactionData()
@@ -39,12 +51,12 @@ const TransactionHistory = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {transactions?.length>0 && transactions.map((row, index) => (
+                    {loading ? <div><span className='loader' /></div> : message ? <p>{message}</p> : <> {transactions?.length > 0 && transactions.map((row, index) => (
                         <tr key={index} className="border-b border-gray-100">
                             <td className="py-3 pr-8">
                                 <div className="flex items-center gap-4">
-                                    <div className="px-3 py-3 bg-[#335BFB1A] rounded-2xl">
-                                        <img src={receiptIcon} alt="Transaction Icon" />
+                                    <div className="px-3 py-3 bg-[#33fb721a] rounded-2xl">
+                                        <PiCoinsThin color='green' size={20} />
                                     </div>
                                     <div>
                                         <div className="font-medium text-[15px] capitalize">{row.subscriptionType}</div>
@@ -73,7 +85,7 @@ const TransactionHistory = () => {
                                 )}
                             </td>
                         </tr>
-                    ))}
+                    ))}</>}
                 </tbody>
             </table>
         </div>
