@@ -571,8 +571,8 @@ const SettingsPage = () => {
           </div>
 
           {activeTab === "profile" && (
-            <div className="mt-5 bg-white lg:w-[648px]">
-              <div className="w-full border border-solid border-[#e1e4ea] rounded-2xl">
+            <div className="mt-5 lg:w-[648px]">
+              <div className="w-full border border-solid border-[#e1e4ea] bg-white rounded-2xl">
                 <div className="flex flex-col items-center justify-center gap-[26px] p-4 sm:p-[30px] relative">
                   {/* Profile Avatar */}
                   <div className="relative">

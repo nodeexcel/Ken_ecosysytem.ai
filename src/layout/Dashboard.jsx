@@ -78,10 +78,10 @@ function Dashboard() {
 
     return (
         <div className='w-full flex h-full'>
-            <div className={`md:w-[5%] h-full transition-all duration-300 ${isSidebarOpen ? 'w-[250px]' : 'w-[0%]'} md:w-[5%] md:relative fixed z-50`}>
+            <div className={`md:w-[5%]  transition-all duration-300 ${isSidebarOpen ? 'w-[250px]' : 'w-[0%]'} md:w-[5%] md:relative fixed z-50`}>
                 <Sidebar sidebarItems={SidebarItems} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
             </div>
-            <div className='w-[95%] h-full'>
+            <div className='w-[95%]'>
                 <Navbar sidebarItems={SidebarItems}/>
                 <Outlet />
             </div>
