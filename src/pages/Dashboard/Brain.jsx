@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { Contact, FileText, Settings } from "lucide-react";
 import Contacts from "../../components/Contacts";
 import Knowledge from "../../components/Knowledge";
 import Integration from "../../components/Integration";
+import contact from '../../assets/svg/brain_contact.svg'
+import knowledge from '../../assets/svg/brain_knowledge.svg'
+import integration from '../../assets/svg/brain_integration.svg'
 
 const sideMenuItems = [
-  { label: "Contacts", icon: Contact, path: "contacts" },
-  { label: "Knowledge", icon: FileText, path: "knowledge" },
-  { label: "Integration", icon: Settings, path: "integration" },
+  { label: "Contacts", icon: contact, path: "contacts" },
+  { label: "Knowledge", icon: knowledge, path: "knowledge" },
+  { label: "Integration", icon: integration, path: "integration" },
 ];
 
 const BrainAI = () => {
@@ -39,15 +41,18 @@ const BrainAI = () => {
               <button
                 key={i}
                 onClick={() => setActivePath(item.path)}
-                className={`flex items-center justify-start gap-1.5 px-2 py-1.5 w-full h-auto rounded ${
-                  isActive ? "bg-[#e1e5ea] text-black" : "text-[#5A687C]"
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                <span
-                  className={`font-normal text-sm tracking-[-0.28px] leading-5 ${
-                    isActive ? "text-text-black" : "text-text-grey"
+                className={`flex items-center justify-start gap-1.5 px-2 py-1.5 w-full h-auto rounded ${isActive ? "bg-[#e1e5ea] text-black" : "text-[#5A687C]"
                   }`}
+              >
+                <div>
+                  <img
+                    alt={item.icon}
+                    src={item.icon}
+                  />
+                </div>
+                <span
+                  className={`font-normal text-sm tracking-[-0.28px] leading-5 ${isActive ? "text-text-black" : "text-text-grey"
+                    }`}
                 >
                   {item.label}
                 </span>

@@ -242,7 +242,6 @@ export default function Login() {
                     localStorage.setItem("refreshToken", response?.data?.refreshToken)
                     navigate("/dashboard")
                 } else {
-                    d
                     console.log(response?.data?.email)
                     dispatch(emailState({ email: response?.data?.email }))
                     navigate("/create-password")

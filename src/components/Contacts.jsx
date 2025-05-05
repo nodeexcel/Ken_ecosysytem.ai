@@ -89,7 +89,7 @@ const ContactsPage = () => {
 
             <button className="flex items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5f58e8] rounded bg-white">
               <Upload className="text-[#675FFF]" />
-              <span className="font-medium text-[#675FFF] text-base leading-6 text-[#675FFF]">Import</span>
+              <span className="font-medium text-base leading-6 text-[#675FFF]">Import</span>
             </button>
 
             <button onClick={activeTab === "lists" ? () => setOpen(true) : undefined} className="flex items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded text-white">

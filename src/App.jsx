@@ -15,6 +15,7 @@ import Documentation from './pages/Dashboard/Documentation'
 import Support from './pages/Dashboard/Support'
 import Community from './pages/Dashboard/Community'
 import BrainAI from './pages/Dashboard/Brain'
+import AppointmentSetter from './pages/Dashboard/AppointmentSetter'
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
           <Route path="documentation" element={<Documentation />} />
           <Route path="support" element={<Support />} />
           <Route path="community" element={<Community />} />
+          <Route path="appointment-setter" element={<AppointmentSetter />} />
         </Route>
       </Routes>
     </div>

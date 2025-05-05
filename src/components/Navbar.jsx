@@ -9,6 +9,9 @@ function Navbar({ sidebarItems }) {
 
     const renderLabel = () => {
         const filter = sidebarItems.filter((e) => e.id === lastPath)
+        if (lastPath === "appointment-setter") {
+            return "Seth, Appointment Setter"
+        }
         return filter?.[0]?.label
     }
 
