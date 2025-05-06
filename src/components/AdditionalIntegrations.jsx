@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import messageIcon from '../assets/svg/message_temp.svg'
+import metaIntegartion from '../assets/svg/meta_integration.svg'
 import { X } from "lucide-react";
-import { IoIosAdd } from "react-icons/io";
+import { IoIosAdd, IoMdHelpCircleOutline } from "react-icons/io";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { TfiHelpAlt } from "react-icons/tfi";
+import { FaArrowLeft } from "react-icons/fa";
 
 const tabs = [
     { label: "Account" },
@@ -18,7 +20,7 @@ const staticData = [
 const AdditionalIntegration = ({ integartionData }) => {
     const [open, setOpen] = useState(false);
     const [createTemplateOpen, setCreateTemplateOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState("username")
+    const [activeTab, setActiveTab] = useState("insta")
 
 
     const renderMainContent2 = () => {
@@ -116,7 +118,7 @@ const AdditionalIntegration = ({ integartionData }) => {
             <div className="w-full">
                 {renderMainContent()}
             </div>
-            {open && <div className="onest fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
+            {/* {open && <div className="onest fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
                 <div className="bg-white max-h-[600px] flex flex-col gap-2 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
                     <button
                         onClick={() => setOpen(false)}
@@ -125,21 +127,20 @@ const AdditionalIntegration = ({ integartionData }) => {
                         <X className="w-5 h-5" />
                     </button>
 
-                    <div className="flex justify-center">
+                    <div className="flex bg-[#F6F7F9] border border-[#E1E4EA] rounded-xl p-[10px] w-fit">
                         <img
-                            className="w-10 h-10"
+                            className="w-5 h-5"
                             alt={integartionData.name}
                             src={integartionData.icon}
                         />
                     </div>
-                    <h2 className="text-[#1E1E1E] text-center font-[600] text-[24px] mb-1">
-                        Connect your {integartionData.label} account
+                    <h2 className="text-[#1E1E1E] font-[600] text-[20px] mb-1">
+                        Connect {integartionData.name}
                     </h2>
-                    <p className="text-[16px] font-[400] text-center text-[#5A687C]">
-                        Allow ecosysteme.ai to access your {integartionData.label} account
+                    <p className="text-[16px] font-[400] text-[#5A687C]">
+                        Use your {integartionData.name} account to connect to Ecosystem.ai
                     </p>
 
-                    {/* Tab Content */}
                     <div className="mt-3">
                         {activeTab === "securitykey" && (
                             <div>
@@ -181,21 +182,112 @@ const AdditionalIntegration = ({ integartionData }) => {
                                 </div>
                             </div>
                         )}
+                        {activeTab === "insta" && (
+                            <div className="flex flex-col gap-3">
+                                <div className="flex items-center gap-2" > <p className="text-[14px] font-medium text-[#292D32]">A few steps left
+                                </p>
+                                    <IoMdHelpCircleOutline /></div>
+                                <p className="text-[16px] font-[400] text-[#5A687C]">
+                                    Log in with Instagram and set your permissions. Once that’s done, you're all set to connect to Ecosystem.ai
+                                </p>
+                            </div>
+                        )}
                     </div>
 
-                    <div className="flex gap-2 mt-4">
-                        <button
-                            onClick={() => setOpen(false)}
-                            className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
-                        >
-                            Close
-                        </button>
+                    <div className="flex flex-col gap-5 w-full mt-4">
                         <button
                             onClick={handleNext}
                             className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
                         >
-                            Next
+                            Go To Instagram
                         </button>
+                        <button
+                            onClick={() => setOpen(false)}
+                            className="w-full text-[16px] text-[#5E54FF] mt-3 bg-white"
+                        >
+                            Connect with Meta Business Suite instead
+                        </button>
+                    </div>
+                </div>
+            </div>} */}
+            {open && <div className="onest fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
+                <div className="bg-white max-h-[600px] flex flex-col gap-2 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
+                    <button
+                        onClick={() => setOpen(false)}
+                        className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
+
+                    <div className="flex bg-[#F6F7F9] border border-[#E1E4EA] rounded-xl p-[10px] w-fit">
+                        <img
+                            className="w-5 h-5"
+                            alt={integartionData.name}
+                            src={activeTab==="insta"?integartionData.icon:metaIntegartion}
+                        />
+                    </div>
+                    <h2 className="text-[#1E1E1E] font-[600] text-[20px] mb-1">
+                        Connect {integartionData.name}
+                    </h2>
+                    <p className="text-[16px] font-[400] text-[#5A687C]">
+                       {activeTab==="insta"?` Use your ${integartionData.name} account to connect to Ecosystem.ai`:"Use Meta Business Suite to connect your Instagram account to Ecosystem.ai"}
+                    </p>
+
+                    {/* Tab Content */}
+                    <div className="mt-3">
+                        {activeTab === "insta" && (
+                            <>
+                                <div className="flex flex-col gap-3">
+                                    <div className="flex items-center gap-2" > <p className="text-[14px] font-medium text-[#292D32]">A few steps left
+                                    </p>
+                                        <IoMdHelpCircleOutline /></div>
+                                    <p className="text-[16px] font-[400] text-[#5A687C]">
+                                        Log in with Instagram and set your permissions. Once that’s done, you're all set to connect to Ecosystem.ai
+                                    </p>
+                                </div>
+                                <div className="flex flex-col gap-5 w-full mt-4">
+                                    <button
+                                        // onClick={handleNext}
+                                        className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+                                    >
+                                        Go To Instagram
+                                    </button>
+                                    <button
+                                        onClick={() => setActiveTab("meta")}
+                                        className="w-full text-[16px] text-[#5E54FF] mt-3 bg-white"
+                                    >
+                                        Connect with Meta Business Suite instead
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                        {activeTab === "meta" && (
+                            <>
+                                <div className="flex flex-col gap-3">
+                                    <div className="flex items-center gap-2" > <p className="text-[14px] font-medium text-[#292D32]">Continue with Meta Business Suite
+                                    </p>
+                                        <IoMdHelpCircleOutline /></div>
+                                    <p className="text-[16px] font-[400] text-[#5A687C]">
+                                        Go to Facebook to link your Instagram account and connect it to Manychat.
+                                    </p>
+                                </div>
+                                <div className="flex flex-col gap-5 w-full mt-4">
+                                    <button
+                                        // onClick={handleNext}
+                                        className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+                                    >
+                                        Go To Facebook
+                                    </button>
+                                    <button
+                                        onClick={() => setActiveTab("insta")}
+                                        className="w-full flex items-center justify-center gap-3 text-[16px] text-[#1E1E1E] mt-3 bg-white"
+                                    >
+                                        <FaArrowLeft />
+                                        Back
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>}
