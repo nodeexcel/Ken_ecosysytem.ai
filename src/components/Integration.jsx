@@ -15,6 +15,7 @@ const integrations = [
     icon: instagram,
     name: "Instagram",
     connectedAccounts: 1,
+    path:import.meta.env.VITE_INSTA_URL
   },
   {
     icon: google,

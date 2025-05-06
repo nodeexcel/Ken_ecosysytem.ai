@@ -16,6 +16,9 @@ import Support from './pages/Dashboard/Support'
 import Community from './pages/Dashboard/Community'
 import BrainAI from './pages/Dashboard/Brain'
 import AppointmentSetter from './pages/Dashboard/AppointmentSetter'
+import 'react-datepicker/dist/react-datepicker.css';
+import Notification from './pages/Dashboard/Notification'
+
 
 
 function App() {
@@ -32,6 +35,7 @@ function App() {
         <Route path='/accept-invite' element={<AcceptInvitation />} />
         <Route path='/dashboard' element={<Dashboard />}>
           <Route path='' element={<Home />} />
+          <Route path="notification" element={<Notification />} />
           <Route path="agents" element={<Agents />} />
           <Route path="brain" element={<BrainAI />} />
           <Route path="settings" element={<SettingsPage />} />

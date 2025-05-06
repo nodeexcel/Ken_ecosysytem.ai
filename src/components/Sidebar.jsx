@@ -3,7 +3,7 @@ import person from '../assets/images/person.svg'
 import logo from '../assets/images/ecosystem_logo.svg'
 import switchuser from '../assets/images/switch_user.svg'
 import { GrAppsRounded } from 'react-icons/gr';
-import { IoSettingsOutline } from 'react-icons/io5';
+import { IoNotificationsOutline, IoSettingsOutline } from 'react-icons/io5';
 import { HiOutlineDocumentText } from 'react-icons/hi';
 import { TfiHeadphoneAlt } from 'react-icons/tfi';
 import { RxHamburgerMenu } from 'react-icons/rx';
@@ -63,11 +63,14 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         <img src={userDetails?.image ?? person} alt='image' className='rounded-[40px]' height={30} width={30} />
                     </div>
                     <hr className='text-[#E1E4EA]' />
-                    <div className='text-xl flex justify-center py-4' onClick={() => handleSelect(sidebarItems[0].id)}>
-                        <GrAppsRounded size={25} color={renderColor(0)} />
+                    <div className='text-xl flex justify-center py-4' onClick={() => handleSelect(sidebarItems[6].id)}>
+                        <IoNotificationsOutline size={25} color={renderColor(6)} />
                     </div>
                     <div className='text-xl flex justify-center py-4' onClick={() => handleSelect(sidebarItems[1].id)}>
                         <LuBrain size={25} color={renderColor(1)} />
+                    </div>
+                    <div className='text-xl flex justify-center py-4' onClick={() => handleSelect(sidebarItems[0].id)}>
+                        <GrAppsRounded size={25} color={renderColor(0)} />
                     </div>
                     <hr className='text-[#E1E4EA]' />
                 </div>
@@ -110,12 +113,12 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                     <div className='text-xl flex justify-center py-4' onClick={() => handleSelect(sidebarItems[3].id)}>
                         <HiOutlineDocumentText size={25} color={renderColor(3)} />
                     </div>
-                    <div className='text-xl flex justify-center py-4' onClick={() => handleSelect(sidebarItems[4].id)}>
+                    {/* <div className='text-xl flex justify-center py-4' onClick={() => handleSelect(sidebarItems[4].id)}>
                         <TfiHeadphoneAlt size={25} color={renderColor(4)} />
                     </div>
                     <div className='text-xl flex justify-center py-4' onClick={() => handleSelect(sidebarItems[5].id)}>
                         <img src={switchuser} alt='aiframe' color={renderColor(5)} />
-                    </div>
+                    </div> */}
                 </div>
             </aside>
         </>

@@ -48,7 +48,7 @@ function Dashboard() {
         {id:"documentation",label:"Documentation"},
         {id:"support",label:"Support"},
         {id:"community",label:"Community"},
-        {id:"agents",label:"Agents"},
+        {id:"notification",label:"Notification"},
     ]
 
     const handleProfile = async () => {

@@ -3,6 +3,8 @@ import agents from '../../assets/svg/campaign_image2.svg'
 import conversation from '../../assets/svg/conversation.svg'
 import analytics from '../../assets/svg/analytics.svg'
 import AgentsSeth from '../../components/AgentsSeth'
+import Conversation from '../../components/Conversation'
+import Analytics from '../../components/Analytics'
 
 const sideMenuList = [
     { label: "Agents", icon: agents, path: "agents" },
@@ -16,10 +18,12 @@ function AppointmentSetter() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("agents")
     const renderMainContent = () => {
         switch (activeSidebarItem) {
-            case "agents":
-                return <AgentsSeth />
+            case "conversations":
+                return <Conversation />
+            case "analytics":
+                return <Analytics />;
             default:
-                break;
+                return <AgentsSeth />
         }
 
     }
