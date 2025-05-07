@@ -18,13 +18,14 @@ import BrainAI from './pages/Dashboard/Brain'
 import AppointmentSetter from './pages/Dashboard/AppointmentSetter'
 import 'react-datepicker/dist/react-datepicker.css';
 import Notification from './pages/Dashboard/Notification'
+import Phone from './pages/Phone'
 
 
 
 function App() {
 
   return (
-    <div className='h-screen'>
+    <div className='h-screen onest'>
       <Routes>
         <Route path='/' element={<Login />} />
         <Route path='/create-password' element={<SetPassword />} />
@@ -38,6 +39,7 @@ function App() {
           <Route path="notification" element={<Notification />} />
           <Route path="agents" element={<Agents />} />
           <Route path="brain" element={<BrainAI />} />
+          <Route path="phone" element={<Phone />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="documentation" element={<Documentation />} />
           <Route path="support" element={<Support />} />

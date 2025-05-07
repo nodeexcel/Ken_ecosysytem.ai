@@ -15,7 +15,7 @@ const employees = [
     name: "Tom",
     role: "Phone",
     gradient: "bg-gradient-to-br from-[#0068FF] to-[#0049B2]",
-    path: ""
+    path: "/dashboard/phone"
   },
   {
     name: "Seth",
