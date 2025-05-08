@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Trash2, PhoneOutgoing, Plus, X, Info } from "lucide-react";
+import { BritishFlag, InboundCall, OutboundCall } from "../icons/icons";
 
 const initialRows = [
   {
@@ -11,12 +12,61 @@ const initialRows = [
     direction: "outbound",
     createdAt: "27/03/2025 03:30 PM",
   },
-  // more rows...
+  {
+    id: "2",
+    phone: "+41778090925",
+    country: "Switzerland",
+    active: true,
+    totalCalls: 0,
+    direction: "outbound",
+    createdAt: "27/03/2025 03:30 PM",
+  },
+  {
+    id: "3",
+    phone: "+41778090925",
+    country: "Switzerland",
+    active: true,
+    totalCalls: 0,
+    direction: "outbound",
+    createdAt: "27/03/2025 03:30 PM",
+  },
+  {
+    id: "4",
+    phone: "+41778090925",
+    country: "Switzerland",
+    active: true,
+    totalCalls: 0,
+    direction: "outbound",
+    createdAt: "27/03/2025 03:30 PM",
+  },
+  {
+    id: "5",
+    phone: "+41778090925",
+    country: "Switzerland",
+    active: true,
+    totalCalls: 0,
+    direction: "outbound",
+    createdAt: "27/03/2025 03:30 PM",
+  },
+];
+
+const tabs = [
+  { label: "Outbound Number", key: "outbound", icon: <OutboundCall /> },
+  { label: "Inbound Number", key: "inbound", icon: <InboundCall /> },
+]
+
+const countries = [
+  { name: "United States", code: "US", dial_code: "+1", flag: <BritishFlag /> },
+  { name: "United Kingdom", code: "GB", dial_code: "+44", flag: <BritishFlag /> },
+  { name: "India", code: "IN", dial_code: "+91", flag: <BritishFlag /> },
+  // Add more countries as needed
 ];
 
 export default function PhoneNumbers() {
   const [rows, setRows] = useState(initialRows);
   const [showModal, setShowModal] = useState(false);
+  const [activeTab, setActiveTab] = useState("outbound")
+  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
 
   const toggleActive = (id) => {
     setRows((prev) =>
@@ -31,48 +81,47 @@ export default function PhoneNumbers() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen px-6 lg:px-12 py-8">
+    <div className="p-4 flex flex-col gap-4 w-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Phone Numbers</h1>
+      <div className="flex items-center justify-between mb-3">
+        <h1 className="text-[24px] font-[600] text-[#1E1E1E]">Phone Numbers</h1>
         <button
           onClick={() => setShowModal(true)}
-          className="bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-xl px-5 py-3 flex items-center gap-2"
+          className="bg-[#675FFF] border border-[#5F58E8] text-white font-medium rounded-lg px-5 py-2 flex items-center gap-2"
         >
           New Phone Number
         </button>
       </div>
 
       {/* Table */}
-      <div className="rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-md">
-        <table className="min-w-full text-sm">
-          <thead className="bg-gray-100 text-gray-600 font-semibold">
-            <tr>
-              <th className="px-6 py-4 text-left">Phone Number</th>
-              <th className="px-6 py-4 text-left">Country</th>
-              <th className="px-6 py-4 text-left">Status</th>
-              <th className="px-6 py-4 text-center">Total Calls</th>
-              <th className="px-6 py-4 text-center">Direction</th>
-              <th className="px-6 py-4 text-left">Creation Date</th>
-              <th className="px-6 py-4 text-center">Actions</th>
+      <div className="overflow-auto w-full rounded-2xl">
+        <table className="w-full rounded-2xl">
+          <thead>
+            <tr className="text-left text-[#5a687c] text-[16px]">
+              <th className="px-6 py-3 font-medium whitespace-nowrap">Phone Number</th>
+              <th className="px-6 py-3 font-medium whitespace-nowrap">Country</th>
+              <th className="px-6 py-3 font-medium whitespace-nowrap">Status</th>
+              <th className="px-6 py-3 font-medium whitespace-nowrap">Total Calls</th>
+              <th className="px-6 py-3 font-medium whitespace-nowrap">Direction</th>
+              <th className="px-6 py-3 font-medium whitespace-nowrap">Creation Date</th>
+              <th className="px-6 py-3 font-medium whitespace-nowrap">Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="bg-white shadow-sm">
             {rows.map((row) => (
               <tr
                 key={row.id}
-                className="border-t border-gray-100 hover:bg-gray-50"
+                className="text-sm text-[#1e1e1e]"
               >
                 <td className="px-6 py-5 font-medium text-gray-900">{row.phone}</td>
                 <td className="px-6 py-5 text-gray-600">{row.country}</td>
                 <td className="px-6 py-5">
                   <div className="flex items-center gap-3">
                     <span
-                      className={`text-xs px-3 py-1 rounded-full border ${
-                        row.active
-                          ? "border-green-500 text-green-600"
-                          : "border-gray-400 text-gray-500"
-                      }`}
+                      className={`text-xs px-3 py-1 rounded-full border ${row.active
+                        ? "border-green-500 text-green-600"
+                        : "border-gray-400 text-gray-500"
+                        }`}
                     >
                       {row.active ? "Active" : "Inactive"}
                     </span>
@@ -120,13 +169,21 @@ export default function PhoneNumbers() {
             </p>
 
             {/* Tabs */}
-            <div className="flex mb-4 bg-gray-100 rounded-xl overflow-hidden">
-              <button className="flex-1 py-2 bg-white text-sm font-medium text-gray-800 shadow-sm">
-                Outbound Number
-              </button>
-              <button className="flex-1 py-2 text-sm font-medium text-gray-500 hover:bg-gray-200">
-                Inbound Number
-              </button>
+            <div className="flex border bg-[#F3F4F6] border-[#E1E4EA] rounded-lg overflow-hidden my-4">
+              {tabs.map((tab) => (
+                <div key={tab.key} className="w-full p-1" onClick={() => setActiveTab(tab.key)}>
+                  <button
+
+                    className={`w-full py-1.5 text-sm font-medium transition ${activeTab === tab.key
+                      ? "bg-white text-[#1E1E1E] rounded-lg"
+                      : "text-[#5A687C]"
+                      }`}
+
+                  >
+                    <div className="flex items-center gap-2 justify-center">{tab.icon} <span>{tab.label}</span> </div>
+                  </button>
+                </div>
+              ))}
             </div>
 
             {/* Form */}
@@ -138,7 +195,7 @@ export default function PhoneNumbers() {
                 <input
                   type="text"
                   placeholder="Enter number name"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
                 />
               </div>
 
@@ -146,31 +203,47 @@ export default function PhoneNumbers() {
                 <label className="text-sm text-gray-600 font-medium block mb-1">
                   Number
                 </label>
-                <div className="flex items-center gap-2 border border-gray-300 rounded-xl px-4 py-2">
-                  <span className="text-xl">🇺🇸</span>
+                <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-4 py-2">
+                  <select
+                    className="outline-none bg-transparent pr-2 text-xl"
+                    value={selectedCountry.code}
+                    onChange={(e) =>
+                      setSelectedCountry(countries.find((c) => c.code === e.target.value))
+                    }
+                  >
+                    {countries.map((country) => (
+                      <option key={country.code} value={country.code}>
+                        {country.flag} {country.dial_code}
+                      </option>
+                    ))}
+                  </select>
                   <input
-                    type="text"
+                    type="tel"
                     placeholder="Enter number"
                     className="w-full outline-none"
                   />
                 </div>
               </div>
 
-              <div className="bg-yellow-100 text-yellow-800 text-sm rounded-xl px-4 py-3 flex items-center gap-2">
-                <Info size={16} />
+              <div className="bg-[#FFF4E6] text-[#5A687C] text-sm rounded-lg px-4 py-3 flex items-center gap-2">
+                <svg width="21" height="22" viewBox="0 0 21 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9.84375 10.3438L9.87963 10.3262C9.99183 10.2702 10.1177 10.2475 10.2425 10.2608C10.3672 10.2741 10.4855 10.3228 10.5833 10.4012C10.6812 10.4797 10.7545 10.5845 10.7947 10.7034C10.8348 10.8222 10.84 10.95 10.8098 11.0717L10.1902 13.5533C10.1598 13.675 10.1648 13.803 10.2049 13.922C10.2449 14.0409 10.3182 14.146 10.4161 14.2245C10.514 14.3031 10.6324 14.3519 10.7572 14.3652C10.8821 14.3785 11.0081 14.3558 11.1204 14.2996L11.1562 14.2812M18.375 11C18.375 12.0342 18.1713 13.0582 17.7756 14.0136C17.3798 14.9691 16.7997 15.8372 16.0685 16.5685C15.3372 17.2997 14.4691 17.8798 13.5136 18.2756C12.5582 18.6713 11.5342 18.875 10.5 18.875C9.46584 18.875 8.44181 18.6713 7.48637 18.2756C6.53093 17.8798 5.6628 17.2997 4.93153 16.5685C4.20027 15.8372 3.6202 14.9691 3.22445 14.0136C2.82869 13.0582 2.625 12.0342 2.625 11C2.625 8.91142 3.45469 6.90838 4.93153 5.43153C6.40838 3.95469 8.41142 3.125 10.5 3.125C12.5886 3.125 14.5916 3.95469 16.0685 5.43153C17.5453 6.90838 18.375 8.91142 18.375 11ZM10.5 7.71875H10.507V7.72575H10.5V7.71875Z" stroke="#FF9500" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
                 You Will Receive a Call on This Number to Validate It
               </div>
             </div>
 
             {/* Footer */}
-            <div className="flex justify-end gap-3 mt-6">
+            <div className="flex gap-2 mt-4">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100"
+                className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
               >
                 Cancel
               </button>
-              <button className="px-5 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-medium">
+              <button
+                className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+              >
                 Add Number
               </button>
             </div>
@@ -185,14 +258,12 @@ function ToggleSwitch({ checked, onChange }) {
   return (
     <button
       onClick={onChange}
-      className={`w-10 h-6 rounded-full flex items-center px-1 transition-colors duration-300 ${
-        checked ? "bg-indigo-500" : "bg-gray-300"
-      }`}
+      className={`w-10 h-6 rounded-full flex items-center px-1 transition-colors duration-300 ${checked ? "bg-indigo-500" : "bg-gray-300"
+        }`}
     >
       <span
-        className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${
-          checked ? "translate-x-4" : "translate-x-0"
-        }`}
+        className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${checked ? "translate-x-4" : "translate-x-0"
+          }`}
       />
     </button>
   );

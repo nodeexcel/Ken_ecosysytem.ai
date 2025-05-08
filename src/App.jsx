@@ -18,7 +18,7 @@ import BrainAI from './pages/Dashboard/Brain'
 import AppointmentSetter from './pages/Dashboard/AppointmentSetter'
 import 'react-datepicker/dist/react-datepicker.css';
 import Notification from './pages/Dashboard/Notification'
-import Phone from './pages/Phone'
+import Phone from './pages/Dashboard/Phone'
 
 
 

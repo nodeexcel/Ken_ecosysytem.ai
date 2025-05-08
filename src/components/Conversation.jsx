@@ -93,9 +93,11 @@ const Conversation = () => {
                             <p className="text-[16px] font-[400] text-[#5A687C]">Explore conversation with your leads</p>
 
                             <div className="flex items-center gap-2 mt-3">
-                                <select className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-[#335BFB] bg-white shadow rounded-md">
-                                    <option>Engaged</option>
-                                    <option>Option2</option>
+                                <select value="engaged" className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-[#335BFB] bg-white shadow rounded-md">
+                                    <option value="positive" className="text-[#5A687C]">Positive</option>
+                                    <option value="engaged" className="text-[#5A687C]">Engaged</option>
+                                    <option value="no_answer" className="text-[#5A687C]">No Answer</option>
+                                    <option value="negative" className="text-[#5A687C]">Negative</option>
                                 </select>
                                 <div className="relative flex-1">
                                     <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />

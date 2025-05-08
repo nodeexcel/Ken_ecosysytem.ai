@@ -4,6 +4,7 @@ import CreateNewAgent from './CreateNewAgent';
 
 function AgentsSeth() {
     const [activeDropdown, setActiveDropdown] = useState(null);
+    const [updateAgent,setUpdateAgent]=useState(false)
     const [campaignData, setCampaignData] = useState([
         {
             firstName: 'Robert',
@@ -96,6 +97,8 @@ function AgentsSeth() {
                                                             onClick={() => {
                                                                 // Handle edit action
                                                                 setActiveDropdown(null);
+                                                                setUpdateAgent(true)
+                                                                setOpen(false)
                                                             }}
                                                         >
                                                             Edit
@@ -120,7 +123,7 @@ function AgentsSeth() {
                         </tbody>
                     </table>
                 </div>
-            </div> : <CreateNewAgent />}
+            </div> : <CreateNewAgent setOpen={setOpen} setUpdateAgentStatus={setUpdateAgent} updateAgentStatus={updateAgent}/>}
         </>
     );
 }

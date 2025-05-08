@@ -11,6 +11,8 @@ function Navbar({ sidebarItems }) {
         const filter = sidebarItems.filter((e) => e.id === lastPath)
         if (lastPath === "appointment-setter") {
             return "Seth, Appointment Setter"
+        } else if (lastPath==="phone"){
+            return "Phone"
         }
         return filter?.[0]?.label
     }

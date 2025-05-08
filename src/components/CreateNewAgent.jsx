@@ -7,7 +7,7 @@ import template from '../assets/svg/sequence_template.svg'
 import { X } from 'lucide-react';
 import { LuRefreshCw } from 'react-icons/lu';
 
-function CreateNewAgent() {
+function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
 
     const [followupsEnabled, setFollowupsEnabled] = useState(true);
     const [updateAgent, setUpdateAgent] = useState(false);
@@ -93,7 +93,7 @@ function CreateNewAgent() {
                         Preview Agent
                     </button>
                     <button onClick={() => setUpdateAgent(true)} className="bg-[#675FFF] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
-                        Create Agent
+                        {updateAgentStatus ? "Update Agent" : " Create Agent"}
                     </button>
                 </div>
             </div>
@@ -560,7 +560,10 @@ function CreateNewAgent() {
                             <button onClick={() => setUpdateAgent(false)} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                                 Cancel
                             </button>
-                            <button  className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
+                            <button onClick={() => {
+                                setUpdateAgentStatus(false)
+                                setOpen(true)
+                            }} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
                                 {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Send"}
                             </button>
                         </div>
