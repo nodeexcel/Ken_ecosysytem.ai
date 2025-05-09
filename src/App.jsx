@@ -19,6 +19,7 @@ import AppointmentSetter from './pages/Dashboard/AppointmentSetter'
 import 'react-datepicker/dist/react-datepicker.css';
 import Notification from './pages/Dashboard/Notification'
 import Phone from './pages/Dashboard/Phone'
+import Campaigns from './pages/Dashboard/Campaigns'
 
 
 
@@ -42,6 +43,7 @@ function App() {
           <Route path="phone" element={<Phone />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="documentation" element={<Documentation />} />
+          <Route path="campaigns" element={<Campaigns />} />
           <Route path="support" element={<Support />} />
           <Route path="community" element={<Community />} />
           <Route path="appointment-setter" element={<AppointmentSetter />} />

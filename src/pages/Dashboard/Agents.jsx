@@ -33,7 +33,7 @@ const employees = [
     name: "Emile",
     role: "Emailing",
     gradient: "bg-gradient-to-br from-[#919BFF] to-[#133A94]",
-    path: ""
+    path: "/dashboard/campaigns"
   },
   {
     name: "Assia",

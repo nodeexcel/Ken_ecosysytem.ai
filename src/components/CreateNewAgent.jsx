@@ -1,22 +1,22 @@
 import React, { useState } from 'react'
-import { IoIosAddCircleOutline, IoIosCloseCircleOutline } from 'react-icons/io';
 import trigger from '../assets/svg/sequence_trigger.svg'
 import delay from '../assets/svg/sequence_delay.svg'
 import channel from '../assets/svg/sequence_channel.svg'
 import template from '../assets/svg/sequence_template.svg'
 import { X } from 'lucide-react';
 import { LuRefreshCw } from 'react-icons/lu';
+import { AddPlus, CrossDelete } from '../icons/icons'
 
 function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
+    const [formData, setFormData] = useState({
+        agent_name: "",
+        agent_language: "english", agent_personality: "", business_description: "", business_offer: "",
+        qualification_questions: [""]
+    })
 
     const [followupsEnabled, setFollowupsEnabled] = useState(true);
     const [updateAgent, setUpdateAgent] = useState(false);
     const [loading, setLoading] = useState(false)
-
-    const qualificationQuestions = [
-        { id: 1, placeholder: "Enter your Question" },
-        { id: 2, placeholder: "Enter your Question" },
-    ];
 
     // Data for sequence cards
     const sequenceCards = [
@@ -24,13 +24,15 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
             id: 1,
             title: "Trigger",
             iconSrc: trigger,
-            value: "Systeme.io",
+            options: [{ label: "Systeme.io", key: "systeme.io" }, { label: "Clickfunnels", key: "clickfunnels" }],
+            value: "systeme.io",
             selected: true,
         },
         {
             id: 2,
             title: "Delay",
             iconSrc: delay,
+            options: [{ label: "5", key: "5" }, { label: "10", key: "10" }, { label: "15", key: "15" }, { label: "20", key: "20" }, { label: "30", key: "30" }],
             value: "15",
             unit: "Min",
             selected: false,
@@ -39,6 +41,7 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
             id: 3,
             title: "Channel",
             iconSrc: channel,
+            options: [{ label: "Whatsapp", key: "Whatsapp" }, { label: "Instagram", key: "Instagram" }],
             value: "Instagram",
             selected: true,
         },
@@ -46,6 +49,7 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
             id: 4,
             title: "Template",
             iconSrc: template,
+            options: [{ label: "Select", key: "Select" }, { label: "Select", key: "Select" }],
             value: "Select",
             selected: false,
         },
@@ -82,6 +86,40 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
         );
     };
 
+    const handleChange = (e) => {
+        const { name, value } = e.target
+        if (name.startsWith("qualification_questions[")) {
+            const index = parseInt(name.match(/\[(\d+)\]/)[1]);
+            const updatedQuestions = [...formData?.qualification_questions];
+            updatedQuestions[index] = value;
+            setFormData((prev) => ({
+                ...prev,
+                qualification_questions: updatedQuestions,
+            }));
+        } else {
+            setFormData((prev) => ({
+                ...prev, [name]: value
+            }))
+        }
+    }
+
+    const addQuestion = () => {
+        setFormData((prev) => ({
+            ...prev,
+            qualification_questions: [...prev.qualification_questions, ""],
+        }));
+    };
+
+    const deleteQuestion = (indexToRemove) => {
+        const updated = [...formData.qualification_questions];
+        updated.splice(indexToRemove, 1);
+
+        setFormData((prev) => ({
+            ...prev,
+            qualification_questions: updated,
+        }));
+    };
+
 
 
     return (
@@ -114,6 +152,9 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                         </label>
                         <input
                             type="text"
+                            name='agent_name'
+                            value={formData?.agent_name}
+                            onChange={handleChange}
                             className="w-full p-2 rounded-lg border border-[#e1e4ea] shadow"
                             placeholder="Enter your agent name"
                         />
@@ -125,8 +166,12 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                             <label className="text-sm font-medium text-[#1e1e1e]">
                                 Agent personality<span className="text-[#675fff]">*</span>
                             </label>
-                            <select className="w-full p-2 rounded-lg border border-[#e1e4ea] shadow">
-                                <option>Choose your agent personality</option>
+                            <select
+                                name='agent_personality'
+                                value={formData?.agent_personality}
+                                onChange={handleChange}
+                                className="w-full p-2 rounded-lg border border-[#e1e4ea] shadow">
+                                <option disabled value="">Choose your agent personality</option>
                                 <option value="friendly">Friendly</option>
                                 <option value="professional">Professional</option>
                                 <option value="casual">Casual</option>
@@ -136,7 +181,12 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                             <label className="text-sm font-medium text-[#1e1e1e]">
                                 Agent Language<span className="text-[#675fff]">*</span>
                             </label>
-                            <select className="w-full p-2 rounded-lg border border-[#e1e4ea] shadow">
+                            <select
+                                name='agent_language'
+                                value={formData?.agent_language }
+                                onChange={handleChange}
+                                defaultValue={"english"}
+                                className="w-full p-2 rounded-lg border border-[#e1e4ea] shadow">
                                 <option value="english">English</option>
                                 <option value="spanish">Spanish</option>
                                 <option value="french">French</option>
@@ -152,6 +202,10 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                                 <span className="text-[#675fff]">*</span>
                             </label>
                             <textarea
+                                name='business_description'
+                                onChange={handleChange}
+                                value={formData?.business_description}
+                                rows={4}
                                 className="w-full p-2 rounded-lg border border-[#e1e4ea] shadow resize-none"
                                 placeholder="Enter your business description"
                             />
@@ -161,6 +215,10 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                                 Your business offer<span className="text-[#675fff]">*</span>
                             </label>
                             <textarea
+                                name='business_offer'
+                                onChange={handleChange}
+                                value={formData?.business_offer}
+                                rows={4}
                                 className="w-full p-2 rounded-lg border border-[#e1e4ea] shadow resize-none"
                                 placeholder="Share everything you want the AI to know about your offer"
                             />
@@ -172,19 +230,29 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                         <label className="text-sm font-medium text-[#1e1e1e]">
                             Qualification questions<span className="text-[#675fff]">*</span>
                         </label>
-                        <div className="flex flex-col gap-3 w-full">
-                            {qualificationQuestions.map((q, i) => (
-                                <div key={q.id} className="flex items-center gap-2 w-full">
-                                    <input
-                                        type="text"
-                                        placeholder={q.placeholder}
-                                        className="flex-1 p-2 rounded-lg border border-[#e1e4ea] shadow"
-                                    />
-                                    {qualificationQuestions.length - 1 === i ? <IoIosAddCircleOutline />
-                                        : <IoIosCloseCircleOutline />}
-                                </div>
-                            ))}
-                        </div>
+                        {formData.qualification_questions.map((question, index) => (
+                            <div key={index} className="flex items-center gap-2 w-full">
+                                <input
+                                    type="text"
+                                    name={`qualification_questions[${index}]`}
+                                    value={question}
+                                    onChange={handleChange}
+                                    placeholder="Enter your question"
+                                    className="flex-1 p-2 rounded-lg border border-[#e1e4ea] shadow"
+                                />
+                                {index === formData.qualification_questions.length - 1 ? (
+                                    <button type="button" onClick={addQuestion}>
+                                        <AddPlus />
+                                    </button>
+                                ) : (
+                                    <button type="button" onClick={() =>
+                                        deleteQuestion(index)
+                                    }>
+                                        <CrossDelete />
+                                    </button>
+                                )}
+                            </div>
+                        ))}
                     </div>
 
                     {/* Sequence Section */}
@@ -239,9 +307,9 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                                                         <div className="flex items-center gap-2 w-full">
                                                             <div className="relative w-full">
                                                                 <select className="w-full h-8 py-1 px-3 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e] shadow-sm">
-                                                                    <option value={card.value}>{card.value}</option>
-                                                                    <option value="option1">Option 1</option>
-                                                                    <option value="option2">Option 2</option>
+                                                                    {card.options.map((e) => (
+                                                                        <option key={e.key} value={e.key}>{e.label}</option>
+                                                                    ))}
                                                                 </select>
                                                                 {card.unit && (
                                                                     <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-400">
@@ -563,6 +631,7 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                             <button onClick={() => {
                                 setUpdateAgentStatus(false)
                                 setOpen(true)
+                                console.log(formData,"formData")
                             }} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
                                 {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Send"}
                             </button>

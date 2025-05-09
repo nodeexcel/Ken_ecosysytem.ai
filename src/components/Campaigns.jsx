@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
 import { Delete, Notes, ThreeDots } from '../icons/icons';
 
-function CampaignDashboard() {
+function CampaignsTable() {
     const [campaignData, setCampaignData] = useState([
         {
-            name: 'XYZ',
-            sentDate: '27/03/2025 03:30 PM',
-            sentTo: 0,
-            status: true,
+            name: 'Campaign',
+            opened: '-',
+            clicked: '-',
+            bounced: '',
+            status: "Issue Detected"
         },
         {
-            name: 'XYZ',
-            sentDate: '27/03/2025 03:30 PM',
-            sentTo: 0,
-            status: true,
-        },
+            name: 'Campaign',
+            opened: '-',
+            clicked: '-',
+            bounced: '',
+            status: "Planned"
+        }
     ]);
 
     const [activeDropdown, setActiveDropdown] = useState(null);
@@ -35,12 +37,25 @@ function CampaignDashboard() {
         setActiveDropdown(activeDropdown === index ? null : index);
     };
 
+    const renderColor = (text) => {
+        switch (text) {
+            case "Issue Detected":
+                return `text-[#B32318] bg-[#FEF3F2] border-[#FECDC9]`
+            case "Running":
+                return `text-[#067647] bg-[#ECFDF3] border-[#AAEFC6]`
+            case "Planned":
+                return `text-[#675FFF] bg-[#F0EFFF] border-[#675FFF]`
+            default:
+                return `text-[#344054] bg[#fff] border[#EAECF0]`
+        }
+    }
+
     return (
         <div className="w-full p-4 flex flex-col gap-4 onest ">
             <div className="flex justify-between items-center">
                 <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">Campaigns</h1>
                 <button className="bg-[#675FFF] text-white rounded-md text-sm md:text-base px-4 py-2">
-                    Add Campaign
+                    Campaigns
                 </button>
             </div>
 
@@ -49,40 +64,24 @@ function CampaignDashboard() {
                     <thead>
                         <tr className="text-left text-[#5A687C]">
                             <th className="px-6 py-3 text-[16px] font-medium">Name</th>
-                            <th className="px-6 py-3 text-[16px] font-medium">Sent</th>
-                            <th className="px-6 py-3 text-[16px] font-medium">Sent to</th>
+                            <th className="px-6 py-3 text-[16px] font-medium">Opened</th>
+                            <th className="px-6 py-3 text-[16px] font-medium">Clicked</th>
+                            <th className="px-6 py-3 text-[16px] font-medium">Bounced</th>
                             <th className="px-6 py-3 text-[16px] font-medium">Status</th>
-                            <th className="px-6 py-3 text-[16px] font-medium">Actions</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody className='bg-white border border-[#E1E4EA]'>
                         {campaignData.map((item, index) => (
                             <tr key={index} className={`${index !== campaignData.length - 1 ? 'border-b border-gray-200' : ''}`}>
-                                <td className="px-6 py-4 text-sm text-gray-800 font-semibold">{item.name}</td>
-                                <td className="px-6 py-4 text-sm text-gray-700">{item.sentDate}</td>
-                                <td className="px-6 py-4 text-sm text-gray-700">{item.sentTo}</td>
-
-                                <td className="px-6 py-4 text-sm items-center gap-2">
-                                    <div className='flex  items-center gap-2'>
-                                        <p className="bg-green-100 text-green-700 px-2 py-1 text-xs rounded-full">
-                                            {item.status ? 'Active' : 'Paused'}
-                                        </p>
-                                        <label className="relative inline-flex items-center cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                className="sr-only peer"
-                                                checked={item.status}
-                                                onChange={() => toggleStatus(index, 'status')}
-                                            />
-                                            <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-400 rounded-full peer dark:bg-gray-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-                                        </label>
-                                    </div>
-                                </td>
-
-
-                                <td className="px-6 py-4 text-sm text-gray-700">
+                                <td className="px-6 py-4 text-sm text-[#1E1E1E] font-[600]">{item.name}</td>
+                                <td className="px-6 py-4 text-sm text-[#1E1E1E]">{item.opened}</td>
+                                <td className="px-6 py-4 text-sm text-[#1E1E1E]">{item.clicked}</td>
+                                <td className="px-6 py-4 text-sm text-[#1E1E1E]">{item.bounced}</td>
+                                <td className="px-6 py-4 text-sm text-[#1E1E1E]"><div className={`px-2 py-1 w-fit border rounded-2xl ${renderColor(item.status)}`}>{item.status}</div></td>
+                                <td className="px-6 py-4 text-sm text-[#1E1E1E]">
                                     <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
-                                        <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots/></div>
+                                        <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
                                     </button>
                                     {activeDropdown === index && (
                                         <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
@@ -102,7 +101,6 @@ function CampaignDashboard() {
                                                     onClick={() => {
                                                         // Handle delete action
                                                         setActiveDropdown(null);
-                                                        deleteRow(index)
                                                     }}
                                                 >
                                                     <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
@@ -127,4 +125,4 @@ function CampaignDashboard() {
     );
 }
 
-export default CampaignDashboard;
+export default CampaignsTable;
