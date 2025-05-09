@@ -11,10 +11,15 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
     const [formData, setFormData] = useState({
         agent_name: "",
         agent_language: "english", agent_personality: "", business_description: "", business_offer: "",
-        qualification_questions: [""]
+        qualification_questions: [""],
+        sequence: { trigger: '', delay: '', channel: '', template: '' },
+        objective_agent: { type: "book_call", calendar: "" },
+        message_time: { min_time: "15", max_time: "60" },
+        follow_ups: { enable: true, no_of_followers: "2", min_time: "15", max_time: "60" },
+        emoji_frequency: "25%",
+        directness: "2"
     })
 
-    const [followupsEnabled, setFollowupsEnabled] = useState(true);
     const [updateAgent, setUpdateAgent] = useState(false);
     const [loading, setLoading] = useState(false)
 
@@ -23,14 +28,16 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
         {
             id: 1,
             title: "Trigger",
+            key: "trigger",
             iconSrc: trigger,
-            options: [{ label: "Systeme.io", key: "systeme.io" }, { label: "Clickfunnels", key: "clickfunnels" }],
+            options: [{ label: "Systeme.io", key: "systeme.io" }, { label: "Clickfunnels", key: "clickfunnels" }, { label: "Whatsapp", key: "Whatsapp" }, { label: "Instagram", key: "Instagram" }],
             value: "systeme.io",
             selected: true,
         },
         {
             id: 2,
             title: "Delay",
+            key: "delay",
             iconSrc: delay,
             options: [{ label: "5", key: "5" }, { label: "10", key: "10" }, { label: "15", key: "15" }, { label: "20", key: "20" }, { label: "30", key: "30" }],
             value: "15",
@@ -40,16 +47,18 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
         {
             id: 3,
             title: "Channel",
+            key: "channel",
             iconSrc: channel,
-            options: [{ label: "Whatsapp", key: "Whatsapp" }, { label: "Instagram", key: "Instagram" }],
+            options: [{ label: "Whatsapp", key: "Whatsapp" }, { label: "Instagram", key: "Instagram" }, { label: "SMS", key: "SMS" }],
             value: "Instagram",
             selected: true,
         },
         {
             id: 4,
             title: "Template",
+            key: "template",
             iconSrc: template,
-            options: [{ label: "Select", key: "Select" }, { label: "Select", key: "Select" }],
+            options: [{ label: "Select", key: "Select" }, { label: "Select2", key: "Select2" }],
             value: "Select",
             selected: false,
         },
@@ -57,34 +66,37 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
 
     // Data for number options
     const followupOptions = [
-        { id: 1, value: "1", selected: false },
-        { id: 2, value: "2 (Recommended)", selected: true },
-        { id: 3, value: "3", selected: false },
+        { id: 1, value: "1" },
+        { id: 2, value: "2" },
+        { id: 3, value: "3" },
     ];
 
     const emojiOptions = [
-        { id: 1, value: "No emoji", selected: false },
-        { id: 2, value: "25% (Recommended)", selected: true },
-        { id: 3, value: "50%", selected: false },
-        { id: 4, value: "100%", selected: false },
+        { id: 1, value: "No emoji" },
+        { id: 2, value: "25%" },
+        { id: 3, value: "50%" },
+        { id: 4, value: "100%" },
     ];
 
-    const [directnessOptions, setDirectnessOptions] = useState([
-        { id: 1, value: "0", selected: false },
-        { id: 2, value: "2 (Recommended)", selected: true },
-        { id: 3, value: "4", selected: false },
-        { id: 4, value: "6", selected: false },
-        { id: 5, value: "8", selected: false },
-        { id: 6, value: "10", selected: false },
-    ]);
-    const handleDirectnessChange = (id) => {
-        setDirectnessOptions((prev) =>
-            prev.map((opt) => ({
-                ...opt,
-                selected: opt.id === id,
-            }))
-        );
-    };
+    const objectiveAgent = [
+        { label: "Book a Call", key: "book_call" },
+        { label: "Send to a web page", key: "web_page" },
+
+    ]
+
+    const directnessOptions = [
+        { id: 1, value: "0" },
+        { id: 2, value: "2" },
+        { id: 3, value: "4" },
+        { id: 4, value: "6" },
+        { id: 5, value: "8" },
+        { id: 6, value: "10" },
+    ];
+
+    const messageTimeRange = [
+        { label: "Min. Message time range", key: "min_time", options: ["5", "10", "15", "30"] },
+        { label: "Max. Message time range", key: "max_time", options: ["30", "45", "60", "90"] }
+    ]
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -119,6 +131,11 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
             qualification_questions: updated,
         }));
     };
+
+
+    const handleSubmit=()=>{
+        console.log(formData)
+    }
 
 
 
@@ -183,7 +200,7 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                             </label>
                             <select
                                 name='agent_language'
-                                value={formData?.agent_language }
+                                value={formData?.agent_language}
                                 onChange={handleChange}
                                 defaultValue={"english"}
                                 className="w-full p-2 rounded-lg border border-[#e1e4ea] shadow">
@@ -306,11 +323,28 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
 
                                                         <div className="flex items-center gap-2 w-full">
                                                             <div className="relative w-full">
-                                                                <select className="w-full h-8 py-1 px-3 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e] shadow-sm">
+                                                                <select
+                                                                    name={card.key}
+                                                                    className="w-full h-8 py-1 px-3 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e] shadow-sm"
+                                                                    value={formData.sequence[card.key] || ""}
+                                                                    onChange={(e) => {
+                                                                        const { name, value } = e.target;
+                                                                        setFormData((prev) => ({
+                                                                            ...prev,
+                                                                            sequence: {
+                                                                                ...prev.sequence,
+                                                                                [name]: value,
+                                                                            },
+                                                                        }));
+                                                                    }}
+                                                                >
                                                                     {card.options.map((e) => (
-                                                                        <option key={e.key} value={e.key}>{e.label}</option>
+                                                                        <option key={e.key} value={e.key}>
+                                                                            {e.label}
+                                                                        </option>
                                                                     ))}
                                                                 </select>
+
                                                                 {card.unit && (
                                                                     <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-400">
                                                                         {card.unit}
@@ -332,101 +366,95 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                     <div className="flex flex-col items-start gap-3 p-3.5 w-full bg-[#f3f4f6] rounded-[10px]">
                         <div className="flex items-center gap-2.5 w-full">
                             <div className="flex-1">
-                                <div className="font-medium text-[#1e1e1e] text-base">
-                                    Objective of the agent
-                                </div>
+                                <div className="font-medium text-[#1e1e1e] text-base">Objective of the agent</div>
                             </div>
                         </div>
 
                         <div className="flex flex-col md:flex-row items-start gap-4">
-                            <label className="flex w-[124px] items-center gap-2 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked
-                                    className=""
-                                />
-                                <div className="flex-1">
-                                    <div className="font-medium text-gray-700 text-sm">
-                                        Book a Call
-                                    </div>
-                                </div>
-                            </label>
-
-                            <label className="flex w-[344px] items-center gap-2 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={false}
-                                    className=""
-                                />
-                                <div className="flex-1">
-                                    <div className="font-medium text-gray-700 text-sm">
-                                        Send to a web page
-                                    </div>
-                                </div>
-                            </label>
+                            {objectiveAgent.map((each) => (
+                                <label key={each.key} className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="radio"
+                                        name="objective_type"
+                                        value={each.key}
+                                        checked={formData.objective_agent.type === each.key}
+                                        onChange={(e) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                objective_agent: {
+                                                    ...prev.objective_agent,
+                                                    type: e.target.value,
+                                                },
+                                            }))
+                                        }
+                                    />
+                                    <span className="text-sm font-medium text-gray-700">{each.label}</span>
+                                </label>
+                            ))}
                         </div>
-
-
-                        <div className="flex items-start gap-3 w-full">
+                        <div className="flex items-start gap-3 w-full mt-2">
                             <div className="flex-1">
-                                <div className="flex flex-col items-start gap-1.5 w-full">
-                                    <label className="font-medium text-[#1e1e1e] text-sm">
-                                        Select Calendar
-                                    </label>
-                                    <select className="w-full h-8 py-1 px-3 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e] shadow-sm">
+                                <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
+                                    <label className="font-medium text-[#1e1e1e] text-sm">Select Calendar</label>
+                                    <select
+                                        name="calendar"
+                                        value={formData.objective_agent.calendar}
+                                        onChange={(e) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                objective_agent: {
+                                                    ...prev.objective_agent,
+                                                    calendar: e.target.value,
+                                                },
+                                            }))
+                                        }
+                                        className="w-full h-8 pl-2 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e] shadow-sm"
+                                    >
+                                        <option value="">Select</option>
                                         <option value="calendly">Calendly</option>
-                                        <option value="option1">Option 1</option>
-                                        <option value="option2">Option 2</option>
+                                        <option value="google_calendar">Google Calendar</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+
                     {/* Message Time Range */}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                        {/* Min. Message time range */}
-                        <div className="flex flex-col items-start gap-1.5 w-full">
-                            <label className="font-medium text-[#1e1e1e] text-sm">
-                                Min. Message time range<span className="text-[#675fff]">*</span>
-                            </label>
-                            <div className="flex items-center w-full">
-                                <div className="flex items-center justify-between w-full bg-white rounded-lg border border-[#e1e4ea] shadow-shadows-shadow-xs px-3 py-2">
-                                    <select
-                                        className="flex-1 bg-transparent text-text-black text-base focus:outline-none appearance-none"
-                                        defaultValue="15"
-                                    >
-                                        <option value="5">5</option>
-                                        <option value="10">10</option>
-                                        <option value="15">15</option>
-                                        <option value="30">30</option>
-                                    </select>
-                                    <span className="text-text-grey text-base">Minutes</span>
+                        {messageTimeRange.map((each) => (
+                            <div key={each.key} className="flex flex-col items-start gap-1.5 w-full">
+                                <label className="font-medium text-[#1e1e1e] text-sm">
+                                    {each.label}<span className="text-[#675fff]">*</span>
+                                </label>
+                                <div className="flex items-center w-full">
+                                    <div className="flex items-center justify-between w-full bg-white rounded-lg border border-[#e1e4ea] shadow-shadows-shadow-xs px-3 py-2">
+                                        <select
+                                            className="flex-1 bg-transparent text-text-black text-base focus:outline-none appearance-none"
+                                            name={each.key}
+                                            value={formData.message_time[each.key]}
+                                            onChange={(e) => {
+                                                const { name, value } = e.target;
+                                                setFormData((prev) => ({
+                                                    ...prev,
+                                                    message_time: {
+                                                        ...prev.message_time,
+                                                        [name]: value,
+                                                    },
+                                                }));
+                                            }}
+                                        >
+                                            {each.options.map((e) => (
+                                                <option key={e} value={e}>{e}</option>
+                                            ))}
+                                        </select>
+                                        <span className="text-text-grey text-base">Minutes</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        ))}
 
-                        {/* Max. Message time range */}
-                        <div className="flex flex-col items-start gap-1.5 w-full">
-                            <label className="font-medium text-[#1e1e1e] text-sm">
-                                Max. Message time range<span className="text-[#675fff]">*</span>
-                            </label>
-                            <div className="flex items-center w-full">
-                                <div className="flex items-center justify-between w-full bg-white rounded-lg border border-[#e1e4ea] shadow-shadows-shadow-xs px-3 py-2">
-                                    <select
-                                        className="flex-1 bg-transparent text-text-black text-base focus:outline-none appearance-none"
-                                        defaultValue="60"
-                                    >
-                                        <option value="30">30</option>
-                                        <option value="45">45</option>
-                                        <option value="60">60</option>
-                                        <option value="90">90</option>
-                                    </select>
-                                    <span className="text-text-grey text-base">Minutes</span>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
 
@@ -434,12 +462,17 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                     <div className="flex flex-col gap-3 p-3.5 bg-[#F2F2F7] rounded-[10px] w-full">
                         <div className="flex items-center gap-2.5">
                             <button
-                                onClick={() => setFollowupsEnabled(!followupsEnabled)}
-                                className={`relative w-11 h-6 flex items-center rounded-full transition-colors duration-300 ${followupsEnabled ? "bg-[#675fff]" : "bg-gray-300"
+                                onClick={() => setFormData((prev) => ({
+                                    ...prev, follow_ups: {
+                                        ...prev.follow_ups,
+                                        enable: !formData.follow_ups.enable
+                                    }
+                                }))}
+                                className={`relative w-11 h-6 flex items-center rounded-full transition-colors duration-300 ${formData.follow_ups.enable ? "bg-[#675fff]" : "bg-gray-300"
                                     }`}
                             >
                                 <span
-                                    className={`inline-block w-5 h-5 transform bg-white rounded-full transition-transform duration-300 ${followupsEnabled ? "translate-x-5" : "translate-x-1"
+                                    className={`inline-block w-5 h-5 transform bg-white rounded-full transition-transform duration-300 ${formData.follow_ups.enable ? "translate-x-5" : "translate-x-1"
                                         }`}
                                 />
                             </button>
@@ -458,57 +491,57 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                                 {followupOptions.map((option) => (
                                     <div
                                         key={option.id}
-                                        className={`p-2 text-center rounded-lg border ${option.selected ? "bg-[#335bfb1a] border-[#675fff]" : "bg-white border-[#e1e4ea]"
+                                        className={`p-2 cursor-pointer text-center rounded-lg border  ${formData.follow_ups.no_of_followers === option.value ? "bg-[#335bfb1a] border-[#675fff]" : "bg-white border-[#e1e4ea]"
                                             } shadow`}
+                                        onClick={() =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                follow_ups: {
+                                                    ...prev.follow_ups,
+                                                    no_of_followers: option.value
+                                                },
+                                            }))
+                                        }
                                     >
-                                        {option.value}
+                                        {option.value === "2" ? `${option.value} (Recommended)` : option.value}
                                     </div>
                                 ))}
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                            {/* Min. Message time range */}
-                            <div className="flex flex-col items-start gap-1.5 w-full">
-                                <label className="font-medium text-[#1e1e1e] text-sm">
-                                    Min. Message time range<span className="text-[#675fff]">*</span>
-                                </label>
-                                <div className="flex items-center w-full">
-                                    <div className="flex items-center justify-between w-full bg-white rounded-lg border border-[#e1e4ea] shadow-shadows-shadow-xs px-3 py-2">
-                                        <select
-                                            className="flex-1 bg-transparent text-text-black text-base focus:outline-none appearance-none"
-                                            defaultValue="15"
-                                        >
-                                            <option value="5">5</option>
-                                            <option value="10">10</option>
-                                            <option value="15">15</option>
-                                            <option value="30">30</option>
-                                        </select>
-                                        <span className="text-text-grey text-base">Minutes</span>
+                            {messageTimeRange.map((each) => (
+                                <div key={each.key} className="flex flex-col items-start gap-1.5 w-full">
+                                    <label className="font-medium text-[#1e1e1e] text-sm">
+                                        {each.label}<span className="text-[#675fff]">*</span>
+                                    </label>
+                                    <div className="flex items-center w-full">
+                                        <div className="flex items-center justify-between w-full bg-white rounded-lg border border-[#e1e4ea] shadow-shadows-shadow-xs px-3 py-2">
+                                            <select
+                                                className="flex-1 bg-transparent text-text-black text-base focus:outline-none appearance-none"
+                                                name={each.key}
+                                                value={formData.follow_ups[each.key]}
+                                                onChange={(e) => {
+                                                    const { name, value } = e.target;
+                                                    setFormData((prev) => ({
+                                                        ...prev,
+                                                        follow_ups: {
+                                                            ...prev.follow_ups,
+                                                            [name]: value,
+                                                        },
+                                                    }));
+                                                }}
+                                            >
+                                                {each.options.map((e) => (
+                                                    <option key={e} value={e}>{e}</option>
+                                                ))}
+                                            </select>
+                                            <span className="text-text-grey text-base">Minutes</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            ))}
 
-                            {/* Max. Message time range */}
-                            <div className="flex flex-col items-start gap-1.5 w-full">
-                                <label className="font-medium text-[#1e1e1e] text-sm">
-                                    Max. Message time range<span className="text-[#675fff]">*</span>
-                                </label>
-                                <div className="flex items-center w-full">
-                                    <div className="flex items-center justify-between w-full bg-white rounded-lg border border-[#e1e4ea] shadow-shadows-shadow-xs px-3 py-2">
-                                        <select
-                                            className="flex-1 bg-transparent text-text-black text-base focus:outline-none appearance-none"
-                                            defaultValue="60"
-                                        >
-                                            <option value="30">30</option>
-                                            <option value="45">45</option>
-                                            <option value="60">60</option>
-                                            <option value="90">90</option>
-                                        </select>
-                                        <span className="text-text-grey text-base">Minutes</span>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
 
@@ -528,12 +561,20 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                             {emojiOptions.map((option) => (
                                 <div
                                     key={option.id}
-                                    className={`p-2  text-center rounded-lg border ${option.selected
+                                    value={formData.emoji_frequency}
+                                    className={`p-2 cursor-pointer  text-center rounded-lg border  ${formData.emoji_frequency === option.value
                                         ? "bg-[#335bfb1a] border-[#675fff]"
                                         : "bg-white border-[#e1e4ea]"
                                         } shadow`}
+                                    onClick={() =>
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            emoji_frequency: option.value,
+                                        }))
+                                    }
                                 >
-                                    {option.value}
+                                    {option.value === "25%" ? `${option.value} (Recommended)` : option.value}
+
                                 </div>
                             ))}
                         </div>
@@ -559,16 +600,22 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                             {directnessOptions.map((option) => (
                                 <div
                                     key={option.id}
-                                    className={`text-center cursor-pointer rounded-lg border px-3 py-2 shadow-shadows-shadow-xs transition
-        ${option.selected ? "bg-[#335bfb1a] border-[#675fff]" : "bg-white border-[#e1e4ea]"}`}
-                                    onClick={() => handleDirectnessChange(option.id)}
+                                    onClick={() =>
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            directness: option.value,
+                                        }))
+                                    }
+                                    className={`text-center cursor-pointer rounded-lg border px-3 py-2 shadow transition
+        ${formData.directness === option.value ? "bg-[#335bfb1a] border-[#675fff]" : "bg-white border-[#e1e4ea]"}`}
                                 >
                                     <span className="font-normal text-text-black text-base">
-                                        {option.value}
+                                        {option.value === "2" ? `${option.value} (Recommended)` : option.value}
                                     </span>
                                 </div>
                             ))}
                         </div>
+
 
                     </div>
 
@@ -631,7 +678,7 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                             <button onClick={() => {
                                 setUpdateAgentStatus(false)
                                 setOpen(true)
-                                console.log(formData,"formData")
+                                console.log(formData, "formData")
                             }} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
                                 {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Send"}
                             </button>
