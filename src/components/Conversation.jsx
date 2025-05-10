@@ -107,7 +107,7 @@ const Conversation = () => {
                         </div>
                     </div>
 
-                    <div className="mt-2 p-2">
+                    <div className="mt-2 p-2 max-h-[460px] overflow-y-auto">
                         {conversations.map((conversation) => (
                             <div
                                 key={conversation.id}
@@ -150,7 +150,7 @@ const Conversation = () => {
                     <hr style={{ color: "#E1E4EA" }} />
 
                     {/* Messages */}
-                    <div className="flex-1 p-4 overflow-y-auto">
+                    <div className="flex-1 p-4 overflow-y-auto max-h-[400px]">
                         <div className="space-y-6">
                             {messages.map((message) => (
                                 <div key={message.id} className="flex flex-col">

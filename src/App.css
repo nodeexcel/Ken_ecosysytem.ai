@@ -47,3 +47,18 @@ body{
   height: 100%;
   background-color: #F6F7F9;
 }
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #E1E4EA;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #675FFF;
+  border-radius: 8px;
+  border: 2px solid #E1E4EA;
+}
