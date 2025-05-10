@@ -430,7 +430,7 @@ function CampaignsTable() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium mb-1 flex items-center gap-2">
+                                <label className="text-sm font-medium mb-1 flex items-center gap-2">
                                     <p>Text Length</p>
                                     <div className="relative group">
                                         <Info className="text-gray-500 cursor-pointer" size={16} />

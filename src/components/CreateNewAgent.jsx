@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import trigger from '../assets/svg/sequence_trigger.svg'
 import delay from '../assets/svg/sequence_delay.svg'
 import channel from '../assets/svg/sequence_channel.svg'
@@ -12,7 +12,7 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
         agent_name: "",
         agent_language: "english", agent_personality: "", business_description: "", business_offer: "",
         qualification_questions: [""],
-        sequence: { trigger: '', delay: '', channel: '', template: '' },
+        sequence: { trigger: 'systeme.io', delay: '', channel: '', template: '' },
         objective_agent: { type: "book_call", calendar: "" },
         message_time: { min_time: "15", max_time: "60" },
         follow_ups: { enable: true, no_of_followers: "2", min_time: "15", max_time: "60" },
@@ -98,6 +98,41 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
         { label: "Max. Message time range", key: "max_time", options: ["30", "45", "60", "90"] }
     ]
 
+    useEffect(()=>{
+        if(formData.sequence.trigger){
+            switch (formData.sequence.trigger) {
+                case "systeme.io":
+                    setFormData((prev)=>({
+                        ...prev,sequence:{
+                            ...prev.sequence,
+                            channel:"SMS"
+                        }
+                    }))
+                    break;
+                case "Whatsapp":
+                    setFormData((prev)=>({
+                        ...prev,sequence:{
+                            ...prev.sequence,
+                            channel:"Whatsapp"
+                        }
+                    }))
+                    break;
+                case "Instagram":
+                    setFormData((prev)=>({
+                        ...prev,sequence:{
+                            ...prev.sequence,
+                            channel:"Instagram"
+                        }
+                    }))
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
+    },[formData.sequence.trigger])
+
     const handleChange = (e) => {
         const { name, value } = e.target
         if (name.startsWith("qualification_questions[")) {
@@ -133,7 +168,7 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
     };
 
 
-    const handleSubmit=()=>{
+    const handleSubmit = () => {
         console.log(formData)
     }
 
@@ -274,9 +309,9 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
 
                     {/* Sequence Section */}
 
-                    <div className="flex flex-col h-[191px] items-start gap-3 w-full">
-                        <div className="flex h-[191px] items-start gap-[30px] w-full">
-                            <div className="flex-1 h-[191px] bg-white rounded-2xl overflow-hidden border border-solid border-[#e1e4ea]">
+                    <div className="flex flex-col items-start gap-3 w-full">
+                        <div className="flex items-start gap-[30px] w-full">
+                            <div className="flex-1 bg-white rounded-2xl overflow-hidden border border-solid border-[#e1e4ea]">
                                 <div className="relative w-full h-full">
                                     {/* <div className="absolute w-full h-full top-0 left-0 opacity-40">
                                         <img
@@ -337,6 +372,7 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                                                                             },
                                                                         }));
                                                                     }}
+                                                                    disabled={card.key=="channel"}
                                                                 >
                                                                     {card.options.map((e) => (
                                                                         <option key={e.key} value={e.key}>
