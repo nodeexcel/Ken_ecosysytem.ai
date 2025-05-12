@@ -1,27 +1,47 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import trigger from '../assets/svg/sequence_trigger.svg'
 import delay from '../assets/svg/sequence_delay.svg'
 import channel from '../assets/svg/sequence_channel.svg'
 import template from '../assets/svg/sequence_template.svg'
 import { X } from 'lucide-react';
 import { LuRefreshCw } from 'react-icons/lu';
-import { AddPlus, CrossDelete } from '../icons/icons'
+import { AddPlus, CheckedCheckbox, CrossDelete, EmptyCheckbox } from '../icons/icons'
+import { appointmentSetter, getAppointmentSetterById } from '../api/appointmentSetter'
 
-function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
+function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentStatus }) {
     const [formData, setFormData] = useState({
         agent_name: "",
-        agent_language: "english", agent_personality: "", business_description: "", business_offer: "",
+        agent_language: "english", agent_personality: "", business_description: "", your_business_offer: "",
         qualification_questions: [""],
-        sequence: { trigger: 'systeme.io', delay: '', channel: '', template: '' },
-        objective_agent: { type: "book_call", calendar: "" },
-        message_time: { min_time: "15", max_time: "60" },
-        follow_ups: { enable: true, no_of_followers: "2", min_time: "15", max_time: "60" },
-        emoji_frequency: "25%",
-        directness: "2"
+        sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
+        objective_of_the_agent: [],
+        calendar_choosed: '',
+        reply_min_time: 15,
+        reply_max_time: 60,
+        is_followups_enabled: true,
+        follow_up_details: { number_of_followups: 2, min_time: 15, max_time: 60 },
+        emoji_frequency: 25,
+        directness: 2
     })
+    const [loadingStatus, setLoadingStatus] = useState(true)
+    const [dataRenderStatus, setDataRenderStatus] = useState(true)
 
     const [updateAgent, setUpdateAgent] = useState(false);
     const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        if (editData) {
+            getAppointementSetter()
+        } else {
+            setDataRenderStatus(false)
+        }
+    }, [editData])
+
+    useEffect(() => {
+        if (!loadingStatus) {
+            setDataRenderStatus(false)
+        }
+    }, [loadingStatus])
 
     // Data for sequence cards
     const sequenceCards = [
@@ -39,8 +59,8 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
             title: "Delay",
             key: "delay",
             iconSrc: delay,
-            options: [{ label: "5", key: "5" }, { label: "10", key: "10" }, { label: "15", key: "15" }, { label: "20", key: "20" }, { label: "30", key: "30" }],
-            value: "15",
+            options: [{ label: "5", key: 5 }, { label: "10", key: 10 }, { label: "15", key: 15 }, { label: "20", key: 20 }, { label: "30", key: 30 }],
+            value: 15,
             unit: "Min",
             selected: false,
         },
@@ -49,7 +69,8 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
             title: "Channel",
             key: "channel",
             iconSrc: channel,
-            options: [{ label: "Whatsapp", key: "Whatsapp" }, { label: "Instagram", key: "Instagram" }, { label: "SMS", key: "SMS" }],
+            options: [{ label: "Whatsapp", key: "Whatsapp" }, { label: "Instagram", key: "Instagram" }],
+            options2: [{ label: "Whatsapp", key: "Whatsapp" }, { label: "Email", key: "email" }, { label: "SMS", key: "SMS" }],
             value: "Instagram",
             selected: true,
         },
@@ -66,16 +87,16 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
 
     // Data for number options
     const followupOptions = [
-        { id: 1, value: "1" },
-        { id: 2, value: "2" },
-        { id: 3, value: "3" },
+        { id: 1, value: 1 },
+        { id: 2, value: 2 },
+        { id: 3, value: 3 },
     ];
 
     const emojiOptions = [
-        { id: 1, value: "No emoji" },
-        { id: 2, value: "25%" },
-        { id: 3, value: "50%" },
-        { id: 4, value: "100%" },
+        { id: 1, label: "No emoji", value: 0 },
+        { id: 2, label: "25%", value: 25 },
+        { id: 3, label: "50%", value: 50 },
+        { id: 4, label: "100%", value: 100 },
     ];
 
     const objectiveAgent = [
@@ -85,43 +106,61 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
     ]
 
     const directnessOptions = [
-        { id: 1, value: "0" },
-        { id: 2, value: "2" },
-        { id: 3, value: "4" },
-        { id: 4, value: "6" },
-        { id: 5, value: "8" },
-        { id: 6, value: "10" },
+        { id: 1, value: 0 },
+        { id: 2, value: 2 },
+        { id: 3, value: 4 },
+        { id: 4, value: 6 },
+        { id: 5, value: 8 },
+        { id: 6, value: 10 },
     ];
 
     const messageTimeRange = [
-        { label: "Min. Message time range", key: "min_time", options: ["5", "10", "15", "30"] },
-        { label: "Max. Message time range", key: "max_time", options: ["30", "45", "60", "90"] }
-    ]
+        { label: "Min. Message time range", key: "min_time", options: [5, 10, 15, 30] },
+        { label: "Max. Message time range", key: "max_time", options: [30, 45, 60, 90] }
+    ];
 
-    useEffect(()=>{
-        if(formData.sequence.trigger){
+    const globalMessageTimeRange = [
+        { label: "Min. Message time range", key: "reply_min_time", options: [5, 10, 15, 30] },
+        { label: "Max. Message time range", key: "reply_max_time", options: [30, 45, 60, 90] }
+    ];
+
+    const getAppointementSetter = async () => {
+        try {
+            const response = await getAppointmentSetterById(editData)
+            console.log(response)
+            if (response?.status === 200) {
+                setLoadingStatus(false)
+                const payload = {
+                    ...response.data.agent,
+                    follow_up_details: response.data.agent.is_followups_enabled
+                        ? response.data.agent.follow_up_details
+                        : formData.follow_up_details,
+                };
+                setFormData(payload)
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    useEffect(() => {
+        if (formData.sequence.trigger) {
             switch (formData.sequence.trigger) {
-                case "systeme.io":
-                    setFormData((prev)=>({
-                        ...prev,sequence:{
-                            ...prev.sequence,
-                            channel:"SMS"
-                        }
-                    }))
-                    break;
                 case "Whatsapp":
-                    setFormData((prev)=>({
-                        ...prev,sequence:{
+                    setFormData((prev) => ({
+                        ...prev, sequence: {
                             ...prev.sequence,
-                            channel:"Whatsapp"
+                            channel: "Whatsapp"
                         }
                     }))
                     break;
                 case "Instagram":
-                    setFormData((prev)=>({
-                        ...prev,sequence:{
+                    setFormData((prev) => ({
+                        ...prev, sequence: {
                             ...prev.sequence,
-                            channel:"Instagram"
+                            channel: "Instagram"
                         }
                     }))
                     break;
@@ -131,7 +170,7 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
 
         }
 
-    },[formData.sequence.trigger])
+    }, [formData.sequence.trigger])
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -168,10 +207,52 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
     };
 
 
-    const handleSubmit = () => {
-        console.log(formData)
+    const handleSubmit = async () => {
+        const finalPayload = {
+            ...formData,
+            follow_up_details: formData.is_followups_enabled
+                ? formData.follow_up_details
+                : {},
+        };
+        console.log(finalPayload, "payload")
+        try {
+            setLoading(true)
+            const response = await appointmentSetter(finalPayload)
+            console.log(response)
+            if (response.status === 200) {
+                setOpen(true)
+            } else {
+                setLoading(false)
+            }
+
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
     }
 
+    const renderOptions = (list) => {
+        if ((formData.sequence.trigger === "systeme.io" || formData.sequence.trigger === "clickfunnels") && list.key === "channel") {
+            return (
+                list.options2.map((e) => (
+                    <option key={e.key} value={e.key}>
+                        {e.label}
+                    </option>
+                ))
+            )
+        } else {
+            return (
+                list.options.map((e) => (
+                    <option key={e.key} value={e.key}>
+                        {e.label}
+                    </option>
+                ))
+            )
+        }
+    }
+
+    if (dataRenderStatus) return <p className='flex justify-center items-center h-[70vh]'><span className='loader' /></p>
 
 
     return (
@@ -182,8 +263,8 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                     <button className="bg-white text-[16px] font-[500] text-[#5A687C] border border-[#5A687C] rounded-md text-sm md:text-base px-4 py-2">
                         Preview Agent
                     </button>
-                    <button onClick={() => setUpdateAgent(true)} className="bg-[#675FFF] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
-                        {updateAgentStatus ? "Update Agent" : " Create Agent"}
+                    <button disabled={loading} onClick={updateAgentStatus?undefined:()=>handleSubmit()} className="bg-[#675FFF] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
+                        {loading?<div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div>:updateAgentStatus ? "Update Agent" : " Create Agent"}
                     </button>
                 </div>
             </div>
@@ -237,7 +318,6 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                                 name='agent_language'
                                 value={formData?.agent_language}
                                 onChange={handleChange}
-                                defaultValue={"english"}
                                 className="w-full p-2 rounded-lg border border-[#e1e4ea] shadow">
                                 <option value="english">English</option>
                                 <option value="spanish">Spanish</option>
@@ -267,9 +347,9 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                                 Your business offer<span className="text-[#675fff]">*</span>
                             </label>
                             <textarea
-                                name='business_offer'
+                                name='your_business_offer'
                                 onChange={handleChange}
-                                value={formData?.business_offer}
+                                value={formData?.your_business_offer}
                                 rows={4}
                                 className="w-full p-2 rounded-lg border border-[#e1e4ea] shadow resize-none"
                                 placeholder="Share everything you want the AI to know about your offer"
@@ -361,24 +441,20 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                                                                 <select
                                                                     name={card.key}
                                                                     className="w-full h-8 py-1 px-3 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e] shadow-sm"
-                                                                    value={formData.sequence[card.key] || ""}
+                                                                    value={formData.sequence[card.key]}
                                                                     onChange={(e) => {
                                                                         const { name, value } = e.target;
                                                                         setFormData((prev) => ({
                                                                             ...prev,
                                                                             sequence: {
                                                                                 ...prev.sequence,
-                                                                                [name]: value,
+                                                                                [name]: name === "delay" ? parseInt(value) : value,
                                                                             },
                                                                         }));
                                                                     }}
-                                                                    disabled={card.key=="channel"}
+                                                                    disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
                                                                 >
-                                                                    {card.options.map((e) => (
-                                                                        <option key={e.key} value={e.key}>
-                                                                            {e.label}
-                                                                        </option>
-                                                                    ))}
+                                                                    {renderOptions(card)}
                                                                 </select>
 
                                                                 {card.unit && (
@@ -408,24 +484,34 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
 
                         <div className="flex flex-col md:flex-row items-start gap-4">
                             {objectiveAgent.map((each) => (
-                                <label key={each.key} className="flex items-center gap-2 cursor-pointer">
-                                    <input
+                                <div key={each.key} className="flex items-center gap-2 cursor-pointer" onClick={() =>
+                                    setFormData((prev) => {
+                                        const exists = prev.objective_of_the_agent.includes(each.key);
+                                        return {
+                                            ...prev,
+                                            objective_of_the_agent: exists
+                                                ? prev.objective_of_the_agent.filter((key) => key !== each.key)
+                                                : [...prev.objective_of_the_agent, each.key],
+                                        };
+                                    })
+                                }
+                                >
+                                    {/* <input
                                         type="radio"
                                         name="objective_type"
                                         value={each.key}
-                                        checked={formData.objective_agent.type === each.key}
+                                        checked={formData.objective_of_the_agent === each.key}
                                         onChange={(e) =>
                                             setFormData((prev) => ({
                                                 ...prev,
-                                                objective_agent: {
-                                                    ...prev.objective_agent,
-                                                    type: e.target.value,
-                                                },
+                                                objective_of_the_agent: e.target.value,
                                             }))
                                         }
-                                    />
+                                    /> */}
+                                    <div>{formData.objective_of_the_agent.includes(each.key) ? <CheckedCheckbox /> : <EmptyCheckbox />}</div>
+
                                     <span className="text-sm font-medium text-gray-700">{each.label}</span>
-                                </label>
+                                </div>
                             ))}
                         </div>
                         <div className="flex items-start gap-3 w-full mt-2">
@@ -434,14 +520,11 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                                     <label className="font-medium text-[#1e1e1e] text-sm">Select Calendar</label>
                                     <select
                                         name="calendar"
-                                        value={formData.objective_agent.calendar}
+                                        value={formData.calendar_choosed}
                                         onChange={(e) =>
                                             setFormData((prev) => ({
                                                 ...prev,
-                                                objective_agent: {
-                                                    ...prev.objective_agent,
-                                                    calendar: e.target.value,
-                                                },
+                                                calendar_choosed: e.target.value,
                                             }))
                                         }
                                         className="w-full h-8 pl-2 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e] shadow-sm"
@@ -459,7 +542,7 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                     {/* Message Time Range */}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                        {messageTimeRange.map((each) => (
+                        {globalMessageTimeRange.map((each) => (
                             <div key={each.key} className="flex flex-col items-start gap-1.5 w-full">
                                 <label className="font-medium text-[#1e1e1e] text-sm">
                                     {each.label}<span className="text-[#675fff]">*</span>
@@ -469,15 +552,12 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                                         <select
                                             className="flex-1 bg-transparent text-text-black text-base focus:outline-none appearance-none"
                                             name={each.key}
-                                            value={formData.message_time[each.key]}
+                                            value={formData[each.key]}
                                             onChange={(e) => {
                                                 const { name, value } = e.target;
                                                 setFormData((prev) => ({
                                                     ...prev,
-                                                    message_time: {
-                                                        ...prev.message_time,
-                                                        [name]: value,
-                                                    },
+                                                    [name]: parseInt(value),
                                                 }));
                                             }}
                                         >
@@ -499,16 +579,14 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                         <div className="flex items-center gap-2.5">
                             <button
                                 onClick={() => setFormData((prev) => ({
-                                    ...prev, follow_ups: {
-                                        ...prev.follow_ups,
-                                        enable: !formData.follow_ups.enable
-                                    }
+                                    ...prev,
+                                    is_followups_enabled: !formData.is_followups_enabled
                                 }))}
-                                className={`relative w-11 h-6 flex items-center rounded-full transition-colors duration-300 ${formData.follow_ups.enable ? "bg-[#675fff]" : "bg-gray-300"
+                                className={`relative w-11 h-6 flex items-center rounded-full transition-colors duration-300 ${formData.is_followups_enabled ? "bg-[#675fff]" : "bg-gray-300"
                                     }`}
                             >
                                 <span
-                                    className={`inline-block w-5 h-5 transform bg-white rounded-full transition-transform duration-300 ${formData.follow_ups.enable ? "translate-x-5" : "translate-x-1"
+                                    className={`inline-block w-5 h-5 transform bg-white rounded-full transition-transform duration-300 ${formData.is_followups_enabled ? "translate-x-5" : "translate-x-1"
                                         }`}
                                 />
                             </button>
@@ -527,19 +605,20 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                                 {followupOptions.map((option) => (
                                     <div
                                         key={option.id}
-                                        className={`p-2 cursor-pointer text-center rounded-lg border  ${formData.follow_ups.no_of_followers === option.value ? "bg-[#335bfb1a] border-[#675fff]" : "bg-white border-[#e1e4ea]"
+                                        className={`p-2 cursor-pointer text-center rounded-lg border  ${formData.follow_up_details.number_of_followups === option.value ? "bg-[#335bfb1a] border-[#675fff]" : "bg-white border-[#e1e4ea]"
                                             } shadow`}
                                         onClick={() =>
+                                            formData.is_followups_enabled &&
                                             setFormData((prev) => ({
                                                 ...prev,
-                                                follow_ups: {
-                                                    ...prev.follow_ups,
-                                                    no_of_followers: option.value
+                                                follow_up_details: {
+                                                    ...prev.follow_up_details,
+                                                    number_of_followups: option.value
                                                 },
                                             }))
                                         }
                                     >
-                                        {option.value === "2" ? `${option.value} (Recommended)` : option.value}
+                                        {option.value === 2 ? `${option.value} (Recommended)` : option.value}
                                     </div>
                                 ))}
                             </div>
@@ -556,14 +635,15 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                                             <select
                                                 className="flex-1 bg-transparent text-text-black text-base focus:outline-none appearance-none"
                                                 name={each.key}
-                                                value={formData.follow_ups[each.key]}
+                                                value={formData.follow_up_details[each.key]}
+                                                disabled={!formData.is_followups_enabled}
                                                 onChange={(e) => {
                                                     const { name, value } = e.target;
                                                     setFormData((prev) => ({
                                                         ...prev,
-                                                        follow_ups: {
-                                                            ...prev.follow_ups,
-                                                            [name]: value,
+                                                        follow_up_details: {
+                                                            ...prev.follow_up_details,
+                                                            [name]: parseInt(value),
                                                         },
                                                     }));
                                                 }}
@@ -609,7 +689,7 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
                                         }))
                                     }
                                 >
-                                    {option.value === "25%" ? `${option.value} (Recommended)` : option.value}
+                                    {option.label === "25%" ? `${option.label} (Recommended)` : option.label}
 
                                 </div>
                             ))}
@@ -646,7 +726,7 @@ function CreateNewAgent({ setOpen, setUpdateAgentStatus, updateAgentStatus }) {
         ${formData.directness === option.value ? "bg-[#335bfb1a] border-[#675fff]" : "bg-white border-[#e1e4ea]"}`}
                                 >
                                     <span className="font-normal text-text-black text-base">
-                                        {option.value === "2" ? `${option.value} (Recommended)` : option.value}
+                                        {option.value === 2 ? `${option.value} (Recommended)` : option.value}
                                     </span>
                                 </div>
                             ))}

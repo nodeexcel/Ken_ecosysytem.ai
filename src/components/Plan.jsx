@@ -4,10 +4,11 @@ import { getTransactionsHistory, updateSubscriptionPaymentStatus } from "../api/
 import { useSelector } from "react-redux";
 import { loadStripe } from "@stripe/stripe-js";
 import { useNavigate } from "react-router-dom";
+import { CheckedCircle, EmptyCircle } from "../icons/icons";
 
-const CreditPopup = ({ onClose }) => {
-  const [selectedCredit, setSelectedCredit] = useState(350);
-  const creditOptions = [2000, 3000, 1000];
+const CreditPopup = ({ onClose, onOpen }) => {
+  const staticCredits = [{ "label": "500", "value": "35€" }, { "label": "1000", "value": "65€" }, { "label": "2000", "value": "110€" }]
+  const [selectedCredit, setSelectedCredit] = useState(staticCredits[2]);
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
@@ -17,7 +18,7 @@ const CreditPopup = ({ onClose }) => {
             <div className="p-2 bg-[#335BFB1A] rounded-lg">
               <img src="/src/assets/svg/coins.svg" alt="" />
             </div>
-            <span className="text-[20px] onest font-medium ">Your credit</span>
+            <span className="text-[20px] onest font-[600] ">Your credit</span>
           </div>
           <button
             onClick={onClose}
@@ -27,16 +28,16 @@ const CreditPopup = ({ onClose }) => {
           </button>
         </div>
 
-        <div className="bg-[#5E54FF] text-white p-4 rounded-lg mb-6 flex justify-between items-center ">
+        {/* <div className="bg-[#5E54FF] text-white p-4 rounded-lg mb-6 flex justify-between items-center ">
           <div className=" text-[16px] onest font-[500] text-[#E1E4EA] ">
             Available Credit
           </div>
           <div className="text-[36px] font-700 onest  font-semibold">100</div>
-        </div>
+        </div> */}
 
         <div className="mb-6">
-          <h3 className="text-[17px] font-[600] onest mb-4">Add credit</h3>
-          <div className="relative mb-4">
+          <h3 className="text-[17px] font-[600] onest my-4">Add credit</h3>
+          {/* <div className="relative mb-4">
             <input
               type="range"
               min="100"
@@ -54,8 +55,8 @@ const CreditPopup = ({ onClose }) => {
               <span className="text-[17px] font-[600] onest ">100</span>
               <span className="text-[17px] font-[600] onest ">30000</span>
             </div>
-          </div>
-          <div className="flex flex-wrap gap-2 mb-4">
+          </div> */}
+          {/* <div className="flex flex-wrap gap-2 mb-4">
             {creditOptions.map((credit, index) => (
               <button
                 key={index}
@@ -81,18 +82,38 @@ const CreditPopup = ({ onClose }) => {
               min="100"
               max="30000"
             />
-          </div>
+          </div> */}
+          {staticCredits.map((each) => (
+            <div key={each.value} className="my-3" onClick={() => setSelectedCredit(each)}>
+              <div className={`flex justify-between items-center px-4 py-3 rounded-lg ${selectedCredit.value === each.value ? 'bg-[#675FFF]' : 'bg-[#F2F2F7]'}`}>
+                <div className={`${selectedCredit.value === each.value ? 'text-[#fff]' : 'text-[#1E1E1E]'} flex items-center gap-2 text-[17px] font-[600]`}>
+                  <h2>{each.label} credits = </h2>
+                  <h2>{each.value}</h2>
+                </div>
+                {selectedCredit.value === each.value ? <CheckedCircle /> : <EmptyCircle />}
+              </div>
+            </div>
+          ))}
+          <button
+            onClick={() => {
+              onClose()
+              onOpen()
+            }}
+            className="flex-1 py-2 my-4 px-4 border-[1.5px] font-[500] border-[#675FFF] rounded-lg text-[#675FFF]"
+          >
+            Upgrade Plan
+          </button>
         </div>
 
         <div className="flex gap-4">
           <button
             onClick={onClose}
-            className="flex-1 py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="flex-1 py-2 px-4 border border-[#5A687C] rounded-lg text-[#5A687C]"
           >
-            Close
+            Cancel
           </button>
-          <button className="flex-1 py-2 px-4 bg-[#5E54FF] text-white rounded-lg hover:bg-[#4B43CC]">
-            Add {selectedCredit} Credit
+          <button className="flex-1 py-2 px-4 bg-[#675FFF] text-white rounded-lg">
+            Add {selectedCredit.label} Credits
           </button>
         </div>
       </div>
@@ -100,7 +121,7 @@ const CreditPopup = ({ onClose }) => {
   );
 };
 
-const PlanManagementPopup = ({ onClose }) => {
+const PlanManagementPopup = ({ onClose, onOpen }) => {
   const [activeTab, setActiveTab] = useState("annual");
   const [activePlan, setActivePlan] = useState("");
   const [planIndex, setPlanIndex] = useState();
@@ -320,8 +341,14 @@ const PlanManagementPopup = ({ onClose }) => {
             </button>
           </div>
           <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <button className="text-gray-600 hover:text-gray-800 text-sm">
+            <button className="text-[#1E1E1E] text-[14px] font-[400]">
               Manage payment method
+            </button>
+            <button onClick={() => {
+              onClose()
+              onOpen()
+            }} className="text-[#FF3B30] text-[14px] font-[400]">
+              Cancel Subscription
             </button>
           </div>
         </div>
@@ -387,8 +414,124 @@ const PlanManagementPopup = ({ onClose }) => {
   );
 };
 
-const Plan = ({ setActiveSidebarItem,showPlanPopup, setShowPlanPopup }) => {
+const CancelSubscriptionPopup = ({ onClose }) => {
+  const [initialTab, setInitailTab] = useState(true)
+  const [selectedData, setSelectedData] = useState()
+  const options = [{ label: "Select", value: " " }, { label: "Too expensive", value: "too_expensive" }, { label: "Not enough value", value: "not_enough_value" }, { label: "Other", value: "other" }]
+  const [otherIssue, setOtherIssue] = useState("")
+  return (
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+      {initialTab ? <div className="bg-white rounded-xl p-4 sm:p-8 max-w-[590px] max-h-[90%] overflow-auto relative">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <span className="text-[20px] text-[#1E1E1E] font-[600] ">Cancel Subscription</span>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-gray-500 absolute right-2 top-2 hover:text-gray-700"
+          >
+            <X />
+          </button>
+        </div>
+
+        <div className="mb-6 flex flex-col items-center gap-3">
+          <svg width="170" height="87" viewBox="0 0 170 87" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M156.472 1.5C156.582 8.45759 161.867 14.1324 168.838 14.6309V72.752C161.999 73.2418 156.783 78.7242 156.483 85.5H13.5791C13.2762 78.7186 8.00093 73.2406 1.16211 72.751V14.6494C8.18011 14.2946 13.6341 8.55372 13.7461 1.5H156.472ZM1.16211 13.6553H1.00488C1.05707 13.6531 1.10913 13.6503 1.16113 13.6475C1.16115 13.6501 1.16211 13.6527 1.16211 13.6553Z" fill="#FF3B30" stroke="#FF9696" stroke-width="2" />
+          </svg>
+
+          <h3 className="text-[17px] font-[600] onest">We’re sorry to see you go! </h3>
+          <h2 className="text-[14px] text-center text-[#5A687C] font-[400]">Final chance to stay! We’re offering a <span className="text-[#675FFF]">lifetime 50% discount</span>—a one-time deal! Pay just €48.50/month for Starter (save €48.50/month forever) and continue boosting your sales with our AI agents. This offer expires in 48 hours. Still want to cancel?</h2>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <h2 className="text-[18px] text-[#1E1E1E] font-[600] ">Pricing Impact</h2>
+          <div className="border border-[#E1E4EA] rounded-lg p-2 flex flex-col gap-2">
+            <div className="flex justify-between items-center">
+              <div>
+                <img src='/src/assets/svg/house.svg' alt="" className="w-8 h-8 object-contain" />
+              </div>
+              <p className="rounded-lg text-[#34C759] bg-[#EBF9EE] p-2">50% Off</p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <h2 className="text-[#675FFF] font-[600] text-[18px]">Starter</h2>
+              <p className="text-[#1E1E1E] font-[600] text-[16px]">€97 → €48.50/month</p>
+              <p className="text-[#5A687C] font-[400] text-[14px]">saving €48.50/month indefinitely</p>
+            </div>
+
+          </div>
+        </div>
+
+        <div className="flex gap-4 mt-5">
+          <button className="flex-1 py-2 px-4 bg-[#675FFF] text-white rounded-lg">
+            Accept Discount & Stay
+          </button>
+          <button
+            onClick={() => setInitailTab(false)}
+            className="flex-1 py-2 px-4 border border-[#FF3B30] rounded-lg text-[#FF3B30]"
+          >
+            No, I still want to cancel
+          </button>
+        </div>
+      </div> : <div className="bg-white rounded-xl p-4 sm:p-8 max-w-[590px] max-h-[90%] overflow-auto relative">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <span className="text-[20px] text-[#1E1E1E] font-[600] ">Cancel Subscription</span>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-gray-500 absolute right-2 top-2 hover:text-gray-700"
+          >
+            <X />
+          </button>
+        </div>
+
+        <div className="mb-6 flex flex-col items-center gap-3">
+          <svg width="170" height="87" viewBox="0 0 170 87" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M156.472 1.5C156.582 8.45759 161.867 14.1324 168.838 14.6309V72.752C161.999 73.2418 156.783 78.7242 156.483 85.5H13.5791C13.2762 78.7186 8.00093 73.2406 1.16211 72.751V14.6494C8.18011 14.2946 13.6341 8.55372 13.7461 1.5H156.472ZM1.16211 13.6553H1.00488C1.05707 13.6531 1.10913 13.6503 1.16113 13.6475C1.16115 13.6501 1.16211 13.6527 1.16211 13.6553Z" fill="#FF3B30" stroke="#FF9696" stroke-width="2" />
+          </svg>
+
+          <h3 className="text-[17px] font-[600] onest">We’re sorry to see you go! </h3>
+          <h2 className="text-[14px] text-center text-[#5A687C] font-[400]">Your credits will be revoked immediately, even before the end of your billing period. Feel free to return anytime—we’d welcome you back! Confirm your cancellation below.</h2>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
+            <label className="text-[14px] font-[500] mb-1">Why are you cancelling?</label>
+            <select
+              value={selectedData}
+              onChange={(e) => setSelectedData(e.target.value)}
+              className="w-full p-2 rounded-lg border border-[#E1E4EA]"
+            >
+              {options.map((each) => (
+                <option disabled={each.value == " "} value={each.value} key={each.value}>{each.label}</option>
+              ))}
+            </select>
+          </div>
+          {selectedData === "other" && <div>
+            <label className="text-[14px] font-[500]">Reason</label>
+            <textarea className="mt-1 w-full rounded-lg resize-none border border-[#E1E4EA] p-2" placeholder="Enter Reason" rows={3} value={otherIssue} onChange={(e) => setOtherIssue(e.target.value)} />
+          </div>}
+        </div>
+
+        <div className="flex gap-4 mt-5">
+          <button
+            onClick={onClose}
+            className="flex-1 p-2 text-center bg-[#FF3B30] rounded-lg text-[#fff]"
+          >
+            Confirm Cancellation
+          </button>
+          <button onClick={onClose} className="flex-1 w-full text-center p-2 bg-trasparent border border-[#5A687C] text-[#5A687C] rounded-lg">
+            I’ve changed my mind—I’ll stay
+          </button>
+        </div>
+      </div>}
+    </div>
+  )
+}
+
+const Plan = ({ setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
   const [showCreditPopup, setShowCreditPopup] = useState(false);
+  const [cancelPopup, setCancelPopup] = useState(false)
   const creditUsageData = [
     {
       item: "AI Agents - LLM and Tool Cost",
@@ -438,11 +581,15 @@ const Plan = ({ setActiveSidebarItem,showPlanPopup, setShowPlanPopup }) => {
       </div>
 
       {showPlanPopup && (
-        <PlanManagementPopup onClose={() => setShowPlanPopup(false)} />
+        <PlanManagementPopup onClose={() => setShowPlanPopup(false)} onOpen={() => setCancelPopup(true)} />
       )}
       {showCreditPopup && (
-        <CreditPopup onClose={() => setShowCreditPopup(false)} />
+        <CreditPopup onClose={() => setShowCreditPopup(false)} onOpen={() => setShowPlanPopup(true)} />
       )}
+      {cancelPopup && (
+        <CancelSubscriptionPopup onClose={() => setCancelPopup(false)} />
+      )}
+
 
       {/* Cards Container */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
@@ -482,7 +629,7 @@ const Plan = ({ setActiveSidebarItem,showPlanPopup, setShowPlanPopup }) => {
               </div>
               <span className="font-medium">Payment</span>
             </div>
-            <button onClick={()=>setActiveSidebarItem("transaction-history")} className="text-[#5E54FF] font-[600] text-sm hover:underline flex items-center gap-2 onest">
+            <button onClick={() => setActiveSidebarItem("transaction-history")} className="text-[#5E54FF] font-[600] text-sm hover:underline flex items-center gap-2 onest">
               View Details{" "}
               <span>
                 <img src="/src/assets/svg/details.svg" alt="" />

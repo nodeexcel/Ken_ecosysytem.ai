@@ -1,29 +1,21 @@
 import { EllipsisVertical } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CreateNewAgent from './CreateNewAgent';
+import { getAppointmentSetter } from '../api/appointmentSetter';
 
 function AgentsSeth() {
     const [activeDropdown, setActiveDropdown] = useState(null);
-    const [updateAgent,setUpdateAgent]=useState(false)
-    const [campaignData, setCampaignData] = useState([
-        {
-            firstName: 'Robert',
-            lastName: "Downey",
-            status: true,
-        },
-        {
-            firstName: 'Nicolas',
-            lastName: "Cage",
-            status: true,
-        },
-        {
-            firstName: 'Johny',
-            lastName: 'Deep',
-            status: false,
-        },
-    ]);
+    const [updateAgent, setUpdateAgent] = useState(false)
+    const [campaignData, setCampaignData] = useState();
+    const [loading, setLoading] = useState(true)
+    const [message, setMessage] = useState("")
+    const [editData,setEditData]=useState()
 
     const [open, setOpen] = useState(true)
+
+    useEffect(() => {
+        getAppointementSetterData()
+    }, [open])
 
     const handleDropdownClick = (index) => {
         setActiveDropdown(activeDropdown === index ? null : index);
@@ -34,6 +26,31 @@ function AgentsSeth() {
         updated[index][key] = !updated[index][key];
         setCampaignData(updated);
     };
+
+    const getAppointementSetterData = async () => {
+        setMessage("")
+        try {
+            const response = await getAppointmentSetter()
+            console.log(response)
+            if (response.status === 200) {
+                setCampaignData(response.data.agent)
+                if (response.data.agent.length === 0) {
+                    setLoading(false)
+                    setMessage("No Data Found")
+                }
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        if (campaignData?.length > 0) {
+            setLoading(false)
+        }
+
+    }, [campaignData])
 
     return (
         <>
@@ -55,28 +72,27 @@ function AgentsSeth() {
                             </tr>
                         </thead>
                         <tbody className='rounded-lg'>
-                            {campaignData.map((item, index) => {
-                                const initials = `${item.firstName[0]}${item.lastName[0]}`;
+                            {loading ? <div className='flex justify-center'><span className='loader'/></div> : message ? <p>{message}</p> : <>{campaignData.map((item, index) => {
                                 return (
                                     <tr key={index} className="text-center bg-white">
                                         <td className="px-6 py-4 text-sm text-gray-800 font-semibold border-l-1 border-t-1 border-b-1 border-[#E1E4EA] rounded-l-lg">
                                             <div className='flex items-center gap-2'>
-                                                <p className='flex items-center rounded-2xl p-2 bg-[#dce9f8] text-[#675FFF]'>{initials}</p>
-                                                {item.firstName} {item.lastName}
+                                                <p className='flex justify-center items-center rounded-full h-[30px] w-[30px] bg-[#dce9f8] text-[#675FFF]'>{item.agent_name[0]}</p>
+                                                {item.agent_name}
                                             </div>
                                         </td>
 
                                         <td className="px-6 py-4 text-sm items-center gap-2 border-r-1 border-t-1 border-b-1 rounded-r-lg border-[#E1E4EA]">
                                             <div className='flex justify-center items-center gap-2'>
-                                                <p className={`${item.status ? "text-[#34C759] bg-green-100" : "text-[#FF9500] bg-amber-100"} px-2 py-1 text-xs rounded-full`}>
-                                                    {item.status ? 'Active' : 'Paused'}
+                                                <p className={`${item.is_active ? "text-[#34C759] bg-green-100" : "text-[#FF9500] bg-amber-100"} px-2 py-1 text-xs rounded-full`}>
+                                                    {item.is_active ? 'Active' : 'Paused'}
                                                 </p>
                                                 <label className="relative inline-flex items-center cursor-pointer">
                                                     <input
                                                         type="checkbox"
                                                         className="sr-only peer"
-                                                        checked={item.status}
-                                                        onChange={() => toggleStatus(index, 'status')}
+                                                        checked={item.is_active}
+                                                        onChange={() => toggleStatus(index, 'is_active')}
                                                     />
                                                     <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-400 rounded-full peer dark:bg-gray-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
                                                 </label>
@@ -96,6 +112,7 @@ function AgentsSeth() {
                                                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                                             onClick={() => {
                                                                 // Handle edit action
+                                                                setEditData(item.agent_id)
                                                                 setActiveDropdown(null);
                                                                 setUpdateAgent(true)
                                                                 setOpen(false)
@@ -119,11 +136,11 @@ function AgentsSeth() {
                                     </tr>
                                 )
                             }
-                            )}
+                            )}</>}
                         </tbody>
                     </table>
                 </div>
-            </div> : <CreateNewAgent setOpen={setOpen} setUpdateAgentStatus={setUpdateAgent} updateAgentStatus={updateAgent}/>}
+            </div> : <CreateNewAgent editData={editData} setOpen={setOpen} setUpdateAgentStatus={setUpdateAgent} updateAgentStatus={updateAgent} />}
         </>
     );
 }
