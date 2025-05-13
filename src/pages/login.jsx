@@ -10,6 +10,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useDispatch, useSelector } from "react-redux";
 import { emailState, loginSuccess } from "../store/authSlice";
+import logo from '/ecosystem_logo.svg'
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -412,8 +413,13 @@ export default function Login() {
 
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-[#F6F7F9] p-3">
-            <h1 className="text-[28px] font-semibold text-center mb-4 text-[#1E1E1E]">Ecosysteme.ai</h1>
+        <div className="flex flex-col items-center min-h-screen bg-[#F6F7F9] p-3">
+            <div className="flex items-center gap-2 my-2">
+                <div>
+                    <img src={logo} alt="logo" className="w-[47.15px] h-[52px]"/>
+                </div>
+                <h1 className="text-[28px] font-semibold text-[#1E1E1E]">Ecosysteme.ai</h1>
+            </div>
             <div className="bg-white p-8 rounded-xl shadow-sm w-full max-w-[500px]">
                 {step === "email" && renderEmailStep()}
                 {step === "otp" && renderOtpStep()}

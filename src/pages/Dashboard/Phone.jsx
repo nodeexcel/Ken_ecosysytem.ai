@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import PhoneNumberList from '../../components/PhoneNumberList'
 import CallAgentsPage from '../../components/CallAgent'
 import CallCampaign from '../../components/CallCampaign'

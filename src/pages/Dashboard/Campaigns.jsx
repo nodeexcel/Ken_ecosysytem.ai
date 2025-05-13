@@ -20,7 +20,7 @@ const Campaigns = () => {
             case "calendar":
                 return <p>Calendar</p>
             default:
-                return <CampaignDashboard />;
+                return <CampaignDashboard setActiveSidebarItem={setActiveSidebarItem}/>;
         }
     };
 

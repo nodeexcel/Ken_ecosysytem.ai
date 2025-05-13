@@ -14,14 +14,16 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         agent_language: "english", agent_personality: "", business_description: "", your_business_offer: "",
         qualification_questions: [""],
         sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
-        objective_of_the_agent: [],
+        objective_of_the_agent: '',
         calendar_choosed: '',
         reply_min_time: 15,
         reply_max_time: 60,
         is_followups_enabled: true,
         follow_up_details: { number_of_followups: 2, min_time: 15, max_time: 60 },
         emoji_frequency: 25,
-        directness: 2
+        directness: 2,
+        webpage_link: "",
+        webpage_type: ""
     })
     const [loadingStatus, setLoadingStatus] = useState(true)
     const [dataRenderStatus, setDataRenderStatus] = useState(true)
@@ -252,6 +254,72 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         }
     }
 
+    const renderObjectiveAgent = () => {
+        switch (formData.objective_of_the_agent) {
+            case "web_page":
+                return (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-1 w-full">
+                        <div className="flex flex-col gap-1.5 w-full">
+                            <label className="text-sm font-medium text-[#1e1e1e]">
+                                Webpage Link
+                            </label>
+                            <input
+                                type="text"
+                                name='webpage_link'
+                                value={formData?.webpage_link}
+                                onChange={handleChange}
+                                className="w-full p-2 rounded-lg border border-[#e1e4ea] bg-white"
+                                placeholder="http://  Enter link"
+                            />
+                        </div>
+                        <div className="flex flex-col items-start gap-1.5 w-full">
+                            <label className="font-medium text-[#1e1e1e] text-sm">Send to a web page for</label>
+                            <select
+                                name="calendar"
+                                value={formData.webpage_type}
+                                onChange={(e) =>
+                                    setFormData((prev) => ({
+                                        ...prev,
+                                        webpage_type: e.target.value,
+                                    }))
+                                }
+                                className="w-full py-[9px] px-2 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e]"
+                            >
+                                <option disabled value="">Select</option>
+                                <option value="sales">Sales</option>
+                                <option value="ebook">ebook</option>
+                            </select>
+                        </div>
+                    </div>
+                )
+            default:
+                return (
+                    <div className="flex items-start gap-3 w-full mt-2">
+                        <div className="flex-1">
+                            <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
+                                <label className="font-medium text-[#1e1e1e] text-sm">Select Calendar</label>
+                                <select
+                                    name="calendar"
+                                    value={formData.calendar_choosed}
+                                    onChange={(e) =>
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            calendar_choosed: e.target.value,
+                                        }))
+                                    }
+                                    className="w-full p-2 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e]"
+                                >
+                                    <option value="" disabled>Select</option>
+                                    <option value="calendly">Calendly</option>
+                                    <option value="google_calendar">Google Calendar</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                )
+        }
+    }
+
     if (dataRenderStatus) return <p className='flex justify-center items-center h-[70vh]'><span className='loader' /></p>
 
 
@@ -263,8 +331,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     <button className="bg-white text-[16px] font-[500] text-[#5A687C] border border-[#5A687C] rounded-md text-sm md:text-base px-4 py-2">
                         Preview Agent
                     </button>
-                    <button disabled={loading} onClick={updateAgentStatus?undefined:()=>handleSubmit()} className="bg-[#675FFF] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
-                        {loading?<div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div>:updateAgentStatus ? "Update Agent" : " Create Agent"}
+                    <button disabled={loading} onClick={updateAgentStatus ? undefined : () => handleSubmit()} className="bg-[#675FFF] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
+                        {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : updateAgentStatus ? "Update Agent" : " Create Agent"}
                     </button>
                 </div>
             </div>
@@ -484,17 +552,12 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                         <div className="flex flex-col md:flex-row items-start gap-4">
                             {objectiveAgent.map((each) => (
-                                <div key={each.key} className="flex items-center gap-2 cursor-pointer" onClick={() =>
-                                    setFormData((prev) => {
-                                        const exists = prev.objective_of_the_agent.includes(each.key);
-                                        return {
-                                            ...prev,
-                                            objective_of_the_agent: exists
-                                                ? prev.objective_of_the_agent.filter((key) => key !== each.key)
-                                                : [...prev.objective_of_the_agent, each.key],
-                                        };
-                                    })
-                                }
+                                <div key={each.key} className="flex items-center gap-2 cursor-pointer" onClick={() => setFormData((prev) => ({
+                                    ...prev, objective_of_the_agent: each.key,
+                                    webpage_link: "",
+                                    webpage_type: "",
+                                    calendar_choosed: ''
+                                }))}
                                 >
                                     {/* <input
                                         type="radio"
@@ -508,34 +571,13 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             }))
                                         }
                                     /> */}
-                                    <div>{formData.objective_of_the_agent.includes(each.key) ? <CheckedCheckbox /> : <EmptyCheckbox />}</div>
+                                    <div>{formData.objective_of_the_agent === each.key ? <CheckedCheckbox /> : <EmptyCheckbox />}</div>
 
                                     <span className="text-sm font-medium text-gray-700">{each.label}</span>
                                 </div>
                             ))}
                         </div>
-                        <div className="flex items-start gap-3 w-full mt-2">
-                            <div className="flex-1">
-                                <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
-                                    <label className="font-medium text-[#1e1e1e] text-sm">Select Calendar</label>
-                                    <select
-                                        name="calendar"
-                                        value={formData.calendar_choosed}
-                                        onChange={(e) =>
-                                            setFormData((prev) => ({
-                                                ...prev,
-                                                calendar_choosed: e.target.value,
-                                            }))
-                                        }
-                                        className="w-full h-8 pl-2 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e] shadow-sm"
-                                    >
-                                        <option value="">Select</option>
-                                        <option value="calendly">Calendly</option>
-                                        <option value="google_calendar">Google Calendar</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                        {renderObjectiveAgent()}
                     </div>
 
 
