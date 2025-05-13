@@ -1,7 +1,7 @@
 import { EllipsisVertical } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import CreateNewAgent from './CreateNewAgent';
-import { getAppointmentSetter } from '../api/appointmentSetter';
+import { deleteAppointmentSetter, getAppointmentSetter, updateAppointmentSetterStatus } from '../api/appointmentSetter';
 
 function AgentsSeth() {
     const [activeDropdown, setActiveDropdown] = useState(null);
@@ -9,7 +9,7 @@ function AgentsSeth() {
     const [campaignData, setCampaignData] = useState();
     const [loading, setLoading] = useState(true)
     const [message, setMessage] = useState("")
-    const [editData,setEditData]=useState()
+    const [editData, setEditData] = useState()
 
     const [open, setOpen] = useState(true)
 
@@ -21,10 +21,17 @@ function AgentsSeth() {
         setActiveDropdown(activeDropdown === index ? null : index);
     };
 
-    const toggleStatus = (index, key) => {
-        const updated = [...campaignData];
-        updated[index][key] = !updated[index][key];
-        setCampaignData(updated);
+    const toggleStatus = async (index, key, id) => {
+        try {
+            const response = await updateAppointmentSetterStatus(id)
+            if (response.status === 200) {
+                const updated = [...campaignData];
+                updated[index][key] = !updated[index][key];
+                setCampaignData(updated);
+            }
+        } catch (error) {
+            console.log(error)
+        }
     };
 
     const getAppointementSetterData = async () => {
@@ -52,6 +59,20 @@ function AgentsSeth() {
 
     }, [campaignData])
 
+    const handleDelete = async (index,id) => {
+        try {
+            const response = await deleteAppointmentSetter(id)
+            if (response.status === 200) {
+                setActiveDropdown(null);
+                const updated = [...campaignData];
+                updated.splice(index, 1);
+                setCampaignData(updated);
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return (
         <>
             {open ? <div className="w-full p-4 flex flex-col gap-4 onest ">
@@ -72,7 +93,7 @@ function AgentsSeth() {
                             </tr>
                         </thead>
                         <tbody className='rounded-lg'>
-                            {loading ? <div className='flex justify-center'><span className='loader'/></div> : message ? <p>{message}</p> : <>{campaignData.map((item, index) => {
+                            {loading ? <div className='flex justify-center'><span className='loader' /></div> : message ? <p>{message}</p> : <>{campaignData.map((item, index) => {
                                 return (
                                     <tr key={index} className="text-center bg-white">
                                         <td className="px-6 py-4 text-sm text-gray-800 font-semibold border-l-1 border-t-1 border-b-1 border-[#E1E4EA] rounded-l-lg">
@@ -92,7 +113,7 @@ function AgentsSeth() {
                                                         type="checkbox"
                                                         className="sr-only peer"
                                                         checked={item.is_active}
-                                                        onChange={() => toggleStatus(index, 'is_active')}
+                                                        onChange={() => toggleStatus(index, 'is_active', item.agent_id)}
                                                     />
                                                     <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-400 rounded-full peer dark:bg-gray-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
                                                 </label>
@@ -124,7 +145,7 @@ function AgentsSeth() {
                                                             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                                                             onClick={() => {
                                                                 // Handle delete action
-                                                                setActiveDropdown(null);
+                                                                handleDelete(index,item.agent_id)
                                                             }}
                                                         >
                                                             Delete
