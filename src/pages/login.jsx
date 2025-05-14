@@ -11,6 +11,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { useDispatch, useSelector } from "react-redux";
 import { emailState, loginSuccess } from "../store/authSlice";
 import logo from '/ecosystem_logo.svg'
+import { X } from "lucide-react";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -26,6 +27,8 @@ export default function Login() {
     const token = localStorage.getItem("token")
     const userDetails = useSelector((state) => state.profile)
     const dispatch = useDispatch()
+    const [open, setOpen] = useState(false);
+    const [activeTabModal, setActiveTabModal] = useState("forgot-password")
 
     const otpRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
     const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
@@ -201,6 +204,15 @@ export default function Login() {
     };
 
     const handleForgot = async () => {
+        setErrors({});
+        if (!email) {
+            setErrors({ email: "Email is required" });
+            return;
+        }
+        if (!validateEmail(email)) {
+            setErrors({ email: "Invalid email format" });
+            return;
+        }
         try {
             setForgotLoading(true)
             const payload = {
@@ -208,9 +220,10 @@ export default function Login() {
             }
             const response = await forgotPassword(payload)
             if (response?.status === 200) {
-                setSuccess({ password: response?.data?.message })
+                setActiveTabModal("verify-email")
+                // setSuccess({ password: response?.data?.message })
             } else {
-                setErrors({ password: response?.data?.message })
+                setErrors({ email: response?.response?.data?.message })
             }
         } catch (error) {
             console.log(error)
@@ -224,6 +237,12 @@ export default function Login() {
         await handleEmailSubmit()
         setSuccess({ otp: "Otp send successfully!" })
         setResentLoading(false)
+    }
+
+    const handleBackToSignIn = () => {
+        setStep("email")
+        setOpen(false)
+        setErrors({})
     }
 
     const handleGoogleLogin = async (auth_data) => {
@@ -319,7 +338,10 @@ export default function Login() {
                 Please enter your 4-digit code below.
             </p>
             <p className="text-center text-[16px] text-[#777F90]">
-                We send code on: <span className="font-bold">{email}</span>
+                We send code on: <span className="font-[400] text-[#675FFF]">{email}</span>
+            </p>
+            <p className="text-center my-4 font-[500] text-[16px] text-[#292D32]">
+                Enter code
             </p>
 
             <div className="flex justify-center gap-4 my-4">
@@ -332,7 +354,7 @@ export default function Login() {
                         onChange={(e) => handleOtpChange(index, e.target.value)}
                         onKeyDown={(e) => handleOtpKeyDown(index, e)}
                         onPaste={(e) => handleOtpPaste(e)}
-                        className="w-12 h-12 text-center border border-gray-300 rounded-lg focus:outline-none text-lg"
+                        className="w-12 h-12 text-center border border-gray-300 rounded-lg focus:outline-[#675FFF] text-lg"
                     />
                 ))}
             </div>
@@ -340,7 +362,7 @@ export default function Login() {
             {success.otp && <p className="text-green-500 text-center text-sm mt-1">{success.otp}</p>}
 
             <p className="text-center text-[16px] text-[#777F90] my-6">
-                Didn't receive code? <span className="font-semibold text-[#675FFF] cursor-pointer" onClick={handleResendOtp}>{resentLoading ? <span className="loader" /> : "Send Again"}</span>
+                Didn't receive code? <span className="font-[400] text-[#675FFF] cursor-pointer" onClick={handleResendOtp}>{resentLoading ? <span className="loader" /> : "Send Again"}</span>
             </p>
 
             <button
@@ -393,8 +415,8 @@ export default function Login() {
                     <input type="checkbox" className="rounded" />
                     <span className="text-[#5A687C] text-[14px]">Remember me!</span>
                 </label>
-                <p onClick={handleForgot} className="text-[#675FFF] text-[14px] cursor-pointer font-semibold hover:underline">
-                    {forgotLoading ? <span className="loader" /> : "Forgot Password"}
+                <p onClick={() => setOpen(true)} className="text-[#675FFF] text-[14px] cursor-pointer font-semibold hover:underline">
+                    Forgot Password
                 </p>
             </div>
 
@@ -416,11 +438,11 @@ export default function Login() {
         <div className="flex flex-col items-center min-h-screen bg-[#F6F7F9] p-3">
             <div className="flex items-center gap-2 my-2">
                 <div>
-                    <img src={logo} alt="logo" className="w-[47.15px] h-[52px]"/>
+                    <img src={logo} alt="logo" className="w-[47.15px] h-[52px]" />
                 </div>
                 <h1 className="text-[28px] font-semibold text-[#1E1E1E]">Ecosysteme.ai</h1>
             </div>
-            <div className="bg-white p-8 rounded-xl shadow-sm w-full max-w-[500px]">
+            <div className="bg-white p-8 rounded-2xl border border-[#E1E4EA] mt-3 w-full max-w-[500px]">
                 {step === "email" && renderEmailStep()}
                 {step === "otp" && renderOtpStep()}
                 {step === "password" && renderPasswordStep()}
@@ -448,6 +470,73 @@ export default function Login() {
                     </span>
                 </p>
             )}
-        </div>
+            {open && <div className="onest fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
+                <div className="bg-white max-h-[600px] flex flex-col gap-4 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
+                    <button
+                        onClick={() => {
+                            setOpen(false)
+                            setActiveTabModal("forgot-password")
+                        }}
+                        className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
+
+                    {activeTabModal === "forgot-password" && <div div className="space-y-4 mt-6">
+                        <div className="flex justify-center">
+                            <img src={logo} alt="logo" className="w-[47.15px] h-[52px]" />
+                        </div>
+                        <div>
+                            <h2 className="text-[28px] font-[700] text-center text-[#292D32]">Forgot Password</h2>
+                            <p className="text-center text-[16px] text-[#5A687C] mb-4">Please enter your details below.</p>
+                        </div>
+                        <div>
+                            <label className="block text-[16px] font-medium text-[#292D32] mb-1">Email</label>
+                            <div className={`flex items-center border rounded-[8px] px-4 py-3 ${errors.email ? "border-red-500" : "border-gray-300"}`}>
+                                <LuUserRound className="text-gray-400 mr-2 text-xl" />
+                                <input
+                                    type="email"
+                                    placeholder="Enter Email"
+                                    value={email}
+                                    onChange={(e) => {
+                                        setEmail(e.target.value)
+                                        setErrors({})
+                                    }}
+                                    className="w-full focus:outline-none"
+                                />
+                            </div>
+                            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                        </div>
+
+                        <button
+                            type="submit"
+                            onClick={handleForgot}
+                            disabled={forgotLoading}
+                            className={`w-full ${forgotLoading ? "bg-[#675fff79]" : "bg-[#675FFF] cursor-pointer"} text-white my-4 py-[14px] rounded-[8px] font-semibold  transition`}
+                        >
+                            {forgotLoading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Continue"}
+                        </button>
+                        <p className="text-[#5A687C] text-center font-[400] text-[14px]">Back to <span className="text-[#675FFF] font-[600] cursor-pointer"
+                            onClick={handleBackToSignIn}>Sign In</span></p>
+                    </div>}
+                    {activeTabModal === "verify-email" && <div div className="space-y-6 mt-6">
+                        <div>
+                            <div className="flex justify-center">
+                                <img src={logo} alt="logo" className="w-[47.15px] h-[52px]" />
+                            </div>
+                            <h2 className="text-[28px] font-[700] text-center text-[#292D32]">Verify Email</h2>
+                        </div>
+                        <div className="flex flex-col gap-4">
+                            <p className="text-[16px] font-[500] text-center text-[#292D32]">Please check your mail!</p>
+                            <p className="text-[16px] text-center font-[400] text-[#5A687C]">We send Reset Password Link on: <br /><span className="text-[#675FFF]">{email}</span></p>
+                            <p className="text-[#5A687C] text-center font-[400] text-[14px]">Didn't received link: <span disabled={forgotLoading} className="text-[#675FFF] cursor-pointer"
+                                onClick={handleForgot}>{forgotLoading ? <span className="loader" /> : 'Send Again'}</span></p>
+                        </div>
+                    </div>}
+
+
+                </div>
+            </div>}
+        </div >
     );
 }

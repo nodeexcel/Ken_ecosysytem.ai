@@ -63,3 +63,7 @@ body{
   border-radius: 8px;
   border: 2px solid #E1E4EA;
 }
+
+.offer{
+  background-image: url('./assets/svg/cancelpage_backgound.svg');
+}

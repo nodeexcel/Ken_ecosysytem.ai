@@ -117,9 +117,9 @@ const staticData = {
 
 function TermsAndConditions() {
     return (
-        <div className="flex flex-col gap-5 my-3">
+        <div className="flex flex-col gap-5 mb-3">
             <h2 className="text-[24px] font-[600] text-[#1E1E1E]">{staticData.header}</h2>
-            <p className="text-[#5A687C] font-[400] text-[16px]">{staticData.lastDate}</p>
+            <p className="text-[#5A687C] font-[400] text-[16px]">{staticData.lastDate} 13/05/2025</p>
             <p className="text-[#5A687C] font-[400] text-[16px]">{staticData.description}</p>
             <div className="flex flex-col gap-2">
                 <h2 className="text-[20px] font-[600] text-[#1E1E1E]">{staticData.point1.header}</h2>

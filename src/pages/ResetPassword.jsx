@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { TbLockPassword } from 'react-icons/tb';
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { resetPassword, setPassword } from '../api/auth';
+import { resetPassword } from '../api/auth';
 import { useLocation, useNavigate } from 'react-router-dom';
+import logo from '/ecosystem_logo.svg'
 
 export default function ResetPassword() {
     const [showPasswords, setShowPasswords] = useState({
@@ -48,15 +49,15 @@ export default function ResetPassword() {
         const errors = {};
 
         if (!formData.password) {
-            errors.password = 'Password is required';
+            errors.password = 'New Password is required';
         } else if (formData.password.length < 6) {
-            errors.password = 'Password must be at least 6 characters';
+            errors.password = 'New Password must be at least 6 characters';
         }
 
         if (!formData.confirmPassword) {
             errors.confirmPassword = 'Confirm Password is required';
         } else if (formData.confirmPassword !== formData.password) {
-            errors.confirmPassword = 'Passwords do not match';
+            errors.confirmPassword = 'New Passwords do not match';
         }
 
         return errors;
@@ -97,16 +98,23 @@ export default function ResetPassword() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-3">
-            <h1 className="text-[28px] font-semibold text-center mb-2 text-[#1E1E1E]">Ecosysteme.ai</h1>
-            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-md w-full max-w-[500px]">
+            <div className="flex items-center gap-2 my-2">
+                <div>
+                    <img src={logo} alt="logo" className="w-[47.15px] h-[52px]" />
+                </div>
+                <h1 className="text-[28px] font-semibold text-[#1E1E1E]">Ecosysteme.ai</h1>
+            </div>
+            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl border border-[#E1E4EA] mt-3 w-full max-w-[500px]">
                 <div className="space-y-6">
-                    <h2 className="text-[28px] font-bold text-center text-[#292D32]">Welcome Back</h2>
-                    <p className="text-center text-[16px] text-[#777F90] mt-2 mb-4">Please reset your password below.</p>
+                    <div>
+                        <h2 className="text-[28px] font-[700] text-center text-[#292D32]">Set New Password</h2>
+                        <p className="text-center text-[16px] text-[#777F90] mt-2">Please enter your new password below.</p>
+                    </div>
 
                     <div className="flex flex-col gap-4 w-full">
                         {/* New Password */}
                         <div className="flex flex-col gap-1.5">
-                            <label className="font-medium text-black text-sm leading-5">Password</label>
+                            <label className="font-medium text-black text-sm leading-5">New Password</label>
                             <div className="relative">
                                 <TbLockPassword className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400" />
                                 <input
@@ -177,7 +185,7 @@ export default function ResetPassword() {
                             disabled={loading}
                             className={`w-full ${loading ? "bg-[#675fff79]" : "bg-[#675FFF] cursor-pointer"} text-white py-[14px] rounded-[8px]`}
                         >
-                            {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Submit"}
+                            {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Update Password"}
                         </button>
                     </div>
                 </div>

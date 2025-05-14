@@ -4,7 +4,7 @@ import { getTransactionsHistory, updateSubscriptionPaymentStatus } from "../api/
 import { useSelector } from "react-redux";
 import { loadStripe } from "@stripe/stripe-js";
 import { useNavigate } from "react-router-dom";
-import { CheckedCircle, EmptyCircle } from "../icons/icons";
+import { CheckedCircle, EmptyCircle, OfferIcon } from "../icons/icons";
 
 const CreditPopup = ({ onClose, onOpen }) => {
   const staticCredits = [{ "label": "500", "value": "35€" }, { "label": "1000", "value": "65€" }, { "label": "2000", "value": "110€" }]
@@ -435,10 +435,15 @@ const CancelSubscriptionPopup = ({ onClose }) => {
         </div>
 
         <div className="mb-6 flex flex-col items-center gap-3">
-          <svg width="170" height="87" viewBox="0 0 170 87" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M156.472 1.5C156.582 8.45759 161.867 14.1324 168.838 14.6309V72.752C161.999 73.2418 156.783 78.7242 156.483 85.5H13.5791C13.2762 78.7186 8.00093 73.2406 1.16211 72.751V14.6494C8.18011 14.2946 13.6341 8.55372 13.7461 1.5H156.472ZM1.16211 13.6553H1.00488C1.05707 13.6531 1.10913 13.6503 1.16113 13.6475C1.16115 13.6501 1.16211 13.6527 1.16211 13.6553Z" fill="#FF3B30" stroke="#FF9696" stroke-width="2" />
-          </svg>
-
+          <div className="relative w-[170px] h-[87px]">
+            <OfferIcon />
+            <div className="absolute top-0 right-15 h-[83px] border-l border-dashed border-[#857FFF] ">
+            </div>
+            <div className="absolute top-0 left-0 w-full h-full flex items-center justify-between px-4 text-white font-sans">
+              <p className="text-[#FBF665] text-[44.44px] font-[700]">50%</p>
+              <p className="text-white  font-[700] text-[40.26px] rotate-180 [writing-mode:vertical-rl]">off</p>
+            </div>
+          </div>
           <h3 className="text-[17px] font-[600] onest">We’re sorry to see you go! </h3>
           <h2 className="text-[14px] text-center text-[#5A687C] font-[400]">Final chance to stay! We’re offering a <span className="text-[#675FFF]">lifetime 50% discount</span>—a one-time deal! Pay just €48.50/month for Starter (save €48.50/month forever) and continue boosting your sales with our AI agents. This offer expires in 48 hours. Still want to cancel?</h2>
         </div>
@@ -486,9 +491,15 @@ const CancelSubscriptionPopup = ({ onClose }) => {
         </div>
 
         <div className="mb-6 flex flex-col items-center gap-3">
-          <svg width="170" height="87" viewBox="0 0 170 87" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M156.472 1.5C156.582 8.45759 161.867 14.1324 168.838 14.6309V72.752C161.999 73.2418 156.783 78.7242 156.483 85.5H13.5791C13.2762 78.7186 8.00093 73.2406 1.16211 72.751V14.6494C8.18011 14.2946 13.6341 8.55372 13.7461 1.5H156.472ZM1.16211 13.6553H1.00488C1.05707 13.6531 1.10913 13.6503 1.16113 13.6475C1.16115 13.6501 1.16211 13.6527 1.16211 13.6553Z" fill="#FF3B30" stroke="#FF9696" stroke-width="2" />
-          </svg>
+          <div className="relative w-[170px] h-[87px]">
+            <OfferIcon />
+            <div className="absolute top-0 right-15 h-[83px] border-l border-dashed border-[#857FFF] ">
+            </div>
+            <div className="absolute top-0 left-0 w-full h-full flex items-center justify-between px-4 text-white font-sans">
+              <p className="text-[#FBF665] text-[44.44px] font-[700]">50%</p>
+              <p className="text-white  font-[700] text-[40.26px] rotate-180 [writing-mode:vertical-rl]">off</p>
+            </div>
+          </div>
 
           <h3 className="text-[17px] font-[600] onest">We’re sorry to see you go! </h3>
           <h2 className="text-[14px] text-center text-[#5A687C] font-[400]">Your credits will be revoked immediately, even before the end of your billing period. Feel free to return anytime—we’d welcome you back! Confirm your cancellation below.</h2>

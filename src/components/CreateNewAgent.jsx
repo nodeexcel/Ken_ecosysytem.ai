@@ -6,7 +6,7 @@ import template from '../assets/svg/sequence_template.svg'
 import { X } from 'lucide-react';
 import { LuRefreshCw } from 'react-icons/lu';
 import { AddPlus, CheckedCheckbox, CrossDelete, EmptyCheckbox } from '../icons/icons'
-import { appointmentSetter, getAppointmentSetterById } from '../api/appointmentSetter'
+import { appointmentSetter, getAppointmentSetterById, updateAppointmentSetter } from '../api/appointmentSetter'
 
 function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentStatus }) {
     const [formData, setFormData] = useState({
@@ -30,6 +30,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
     const [updateAgent, setUpdateAgent] = useState(false);
     const [loading, setLoading] = useState(false)
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         if (editData) {
@@ -44,6 +45,36 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             setDataRenderStatus(false)
         }
     }, [loadingStatus])
+
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!formData.agent_name.trim()) newErrors.agent_name = "Agent name is required.";
+        if (!formData.agent_personality) newErrors.agent_personality = "Agent personality is required.";
+        if (!formData.business_description.trim()) newErrors.business_description = "Business description is required.";
+        if (formData.business_description.trim().length > 1 && formData.business_description.length < 50) newErrors.business_description = "Min 50 characters are required.";
+        if (!formData.your_business_offer.trim()) newErrors.your_business_offer = "Business offer is required.";
+        if (formData.your_business_offer.trim().length > 1 && formData.your_business_offer.length < 50) newErrors.your_business_offer = "Min 50 characters are required.";
+        if (!formData.objective_of_the_agent.trim()) newErrors.objective_of_the_agent = "Objective of the agent is required.";
+
+        if (formData.objective_of_the_agent === "book_call") {
+            if (!formData.calendar_choosed) {
+                newErrors.calendar_choosed = "Calendar must be chosen when objective is 'book_call'.";
+            }
+        }
+
+        if (formData.objective_of_the_agent === "web_page") {
+            if (!formData.webpage_link.trim()) {
+                newErrors.webpage_link = "Webpage link is required when objective is 'web_page'.";
+            }
+            if (!formData.webpage_type.trim()) {
+                newErrors.webpage_type = "Webpage type is required when objective is 'web_page'.";
+            }
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     // Data for sequence cards
     const sequenceCards = [
@@ -176,6 +207,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
     const handleChange = (e) => {
         const { name, value } = e.target
+        setErrors((prev) => ({
+            ...prev, [name]: ""
+        }))
         if (name.startsWith("qualification_questions[")) {
             const index = parseInt(name.match(/\[(\d+)\]/)[1]);
             const updatedQuestions = [...formData?.qualification_questions];
@@ -209,7 +243,41 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     };
 
 
+    const handleUpdate = async () => {
+        if (!validateForm()) {
+            console.log("Form validation failed", errors);
+            return;
+        }
+        const finalPayload = {
+            ...formData,
+            follow_up_details: formData.is_followups_enabled
+                ? formData.follow_up_details
+                : {},
+        };
+        console.log(finalPayload, "payload")
+        try {
+            setLoading(true)
+            const response = await updateAppointmentSetter(finalPayload)
+            console.log(response)
+            if (response.status === 200) {
+                setOpen(true)
+            } else {
+                setLoading(false)
+            }
+
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+
     const handleSubmit = async () => {
+        if (!validateForm()) {
+            console.log("Form validation failed", errors);
+            return;
+        }
         const finalPayload = {
             ...formData,
             follow_up_details: formData.is_followups_enabled
@@ -268,27 +336,31 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 name='webpage_link'
                                 value={formData?.webpage_link}
                                 onChange={handleChange}
-                                className="w-full p-2 rounded-lg border border-[#e1e4ea] bg-white"
+                                className={`w-full p-2 rounded-lg border ${errors.webpage_link ? 'border-red-500' : 'border-[#e1e4ea]'} bg-white`}
                                 placeholder="http://  Enter link"
                             />
+                            {errors.webpage_link && <p className="text-red-500 text-sm mt-1">{errors.webpage_link}</p>}
                         </div>
                         <div className="flex flex-col items-start gap-1.5 w-full">
                             <label className="font-medium text-[#1e1e1e] text-sm">Send to a web page for</label>
                             <select
                                 name="calendar"
                                 value={formData.webpage_type}
-                                onChange={(e) =>
+                                onChange={(e) => {
                                     setFormData((prev) => ({
                                         ...prev,
                                         webpage_type: e.target.value,
                                     }))
+                                    setErrors((prev) => ({ ...prev, webpage_type: '' }))
                                 }
-                                className="w-full py-[9px] px-2 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e]"
+                                }
+                                className={`w-full py-[9px] px-2 bg-white border ${errors.webpage_type ? 'border-red-500' : 'border-[#e1e4ea]'} rounded-lg text-base text-[#1e1e1e]`}
                             >
                                 <option disabled value="">Select</option>
                                 <option value="sales">Sales</option>
                                 <option value="ebook">ebook</option>
                             </select>
+                            {errors.webpage_type && <p className="text-red-500 text-sm mt-1">{errors.webpage_type}</p>}
                         </div>
                     </div>
                 )
@@ -301,18 +373,21 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <select
                                     name="calendar"
                                     value={formData.calendar_choosed}
-                                    onChange={(e) =>
+                                    onChange={(e) => {
                                         setFormData((prev) => ({
                                             ...prev,
                                             calendar_choosed: e.target.value,
                                         }))
+                                        setErrors((prev) => ({ ...prev, calendar_choosed: '' }))
                                     }
-                                    className="w-full p-2 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e]"
+                                    }
+                                    className={`w-full p-2 bg-white border ${errors.calendar_choosed ? 'border-red-500' : 'border-[#e1e4ea]'} rounded-lg text-base text-[#1e1e1e]`}
                                 >
                                     <option value="" disabled>Select</option>
                                     <option value="calendly">Calendly</option>
                                     <option value="google_calendar">Google Calendar</option>
                                 </select>
+                                {errors.calendar_choosed && <p className="text-red-500 text-sm mt-1">{errors.calendar_choosed}</p>}
                             </div>
                         </div>
                     </div>
@@ -331,7 +406,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     <button className="bg-white text-[16px] font-[500] text-[#5A687C] border border-[#5A687C] rounded-md text-sm md:text-base px-4 py-2">
                         Preview Agent
                     </button>
-                    <button disabled={loading} onClick={updateAgentStatus ? undefined : () => handleSubmit()} className="bg-[#675FFF] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
+                    <button disabled={loading} onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()} className="bg-[#675FFF] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
                         {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : updateAgentStatus ? "Update Agent" : " Create Agent"}
                     </button>
                 </div>
@@ -356,9 +431,10 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             name='agent_name'
                             value={formData?.agent_name}
                             onChange={handleChange}
-                            className="w-full p-2 rounded-lg border border-[#e1e4ea] shadow"
+                            className={`w-full p-2 rounded-lg border ${errors.agent_name ? 'border-red-500' : 'border-[#e1e4ea]'} shadow`}
                             placeholder="Enter your agent name"
                         />
+                        {errors.agent_name && <p className="text-red-500 text-sm mt-1">{errors.agent_name}</p>}
                     </div>
 
                     {/* Agent Personality and Language */}
@@ -371,12 +447,13 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 name='agent_personality'
                                 value={formData?.agent_personality}
                                 onChange={handleChange}
-                                className="w-full p-2 rounded-lg border border-[#e1e4ea] shadow">
+                                className={`w-full p-2 rounded-lg border ${errors.agent_personality ? 'border-red-500' : 'border-[#e1e4ea]'} shadow`}>
                                 <option disabled value="">Choose your agent personality</option>
                                 <option value="friendly">Friendly</option>
                                 <option value="professional">Professional</option>
                                 <option value="casual">Casual</option>
                             </select>
+                            {errors.agent_personality && <p className="text-red-500 text-sm mt-1">{errors.agent_personality}</p>}
                         </div>
                         <div className="flex flex-col gap-1.5 flex-1">
                             <label className="text-sm font-medium text-[#1e1e1e]">
@@ -406,9 +483,10 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 onChange={handleChange}
                                 value={formData?.business_description}
                                 rows={4}
-                                className="w-full p-2 rounded-lg border border-[#e1e4ea] shadow resize-none"
+                                className={`w-full p-2 rounded-lg border  ${errors.business_description ? 'border-red-500' : 'border-[#e1e4ea]'} shadow resize-none`}
                                 placeholder="Enter your business description"
                             />
+                            {errors.business_description && <p className="text-red-500 text-sm mt-1">{errors.business_description}</p>}
                         </div>
                         <div className="flex flex-col gap-1.5 flex-1">
                             <label className="text-sm font-medium text-[#1e1e1e]">
@@ -419,9 +497,10 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 onChange={handleChange}
                                 value={formData?.your_business_offer}
                                 rows={4}
-                                className="w-full p-2 rounded-lg border border-[#e1e4ea] shadow resize-none"
+                                className={`w-full p-2 rounded-lg border  ${errors.your_business_offer ? 'border-red-500' : 'border-[#e1e4ea]'} shadow resize-none`}
                                 placeholder="Share everything you want the AI to know about your offer"
                             />
+                            {errors.your_business_offer && <p className="text-red-500 text-sm mt-1">{errors.your_business_offer}</p>}
                         </div>
                     </div>
 
@@ -438,8 +517,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     value={question}
                                     onChange={handleChange}
                                     placeholder="Enter your question"
-                                    className="flex-1 p-2 rounded-lg border border-[#e1e4ea] shadow"
-                                />
+                                    className={`flex-1 p-2 rounded-lg border  shadow`}                                />
                                 {index === formData.qualification_questions.length - 1 ? (
                                     <button type="button" onClick={addQuestion}>
                                         <AddPlus />
@@ -552,12 +630,15 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                         <div className="flex flex-col md:flex-row items-start gap-4">
                             {objectiveAgent.map((each) => (
-                                <div key={each.key} className="flex items-center gap-2 cursor-pointer" onClick={() => setFormData((prev) => ({
-                                    ...prev, objective_of_the_agent: each.key,
-                                    webpage_link: "",
-                                    webpage_type: "",
-                                    calendar_choosed: ''
-                                }))}
+                                <div key={each.key} className="flex items-center gap-2 cursor-pointer" onClick={() => {
+                                    setFormData((prev) => ({
+                                        ...prev, objective_of_the_agent: each.key,
+                                        webpage_link: "",
+                                        webpage_type: "",
+                                        calendar_choosed: ''
+                                    }))
+                                    setErrors((prev) => ({ ...prev, objective_of_the_agent: "" }))
+                                }}
                                 >
                                     {/* <input
                                         type="radio"
@@ -577,6 +658,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 </div>
                             ))}
                         </div>
+                        {errors.objective_of_the_agent && <p className="text-red-500 text-sm mt-1">{errors.objective_of_the_agent}</p>}
                         {renderObjectiveAgent()}
                     </div>
 

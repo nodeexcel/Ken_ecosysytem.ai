@@ -50,3 +50,14 @@ export const deleteAppointmentSetter = async (id) => {
         return error;
     }
 };
+
+
+export const updateAppointmentSetter = async (payload) => {
+    try {
+        const response = await axiosInstance.put(`http://116.202.210.102:8000/update-appointment-agent/${payload.agent_id}`, payload);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};

@@ -4,6 +4,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { setPassword } from '../api/auth';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import logo from '/ecosystem_logo.svg'
 
 export default function SetPassword() {
     const [showPasswords, setShowPasswords] = useState({
@@ -97,13 +98,18 @@ export default function SetPassword() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-3">
-            <h1 className="text-[28px] font-semibold text-center mb-2 text-[#1E1E1E]">Ecosysteme.ai</h1>
-            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-md w-full max-w-[500px]">
-                <div className="space-y-6">
+            <div className="flex items-center gap-2 my-2">
+                <div>
+                    <img src={logo} alt="logo" className="w-[47.15px] h-[52px]" />
+                </div>
+                <h1 className="text-[28px] font-semibold text-[#1E1E1E]">Ecosysteme.ai</h1>
+            </div>
+            <form onSubmit={handleSubmit} className="bg-white p-8 mt-2 rounded-2xl border border-[#E1E4EA] w-full max-w-[500px]">
+                <div className="space-y-3">
                     <h2 className="text-[28px] font-bold text-center text-[#292D32]">Welcome Back</h2>
-                    <p className="text-center text-[16px] text-[#777F90] mt-2 mb-4">Please create your password below.</p>
+                    <p className="text-center text-[16px] text-[#777F90]">Please create your password below.</p>
 
-                    <div className="flex flex-col gap-4 w-full">
+                    <div className="flex flex-col gap-5 w-full">
                         {/* New Password */}
                         <div className="flex flex-col gap-1.5">
                             <label className="font-medium text-black text-sm leading-5">Password</label>

@@ -20,7 +20,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Notification from './pages/Dashboard/Notification'
 import Phone from './pages/Dashboard/Phone'
 import Campaigns from './pages/Dashboard/Campaigns'
-import PrivacyTerms from './pages/Dashboard/PrivacyTerms'
+import PrivacyTerms from './pages/PrivacyTerms'
 
 
 
@@ -36,6 +36,8 @@ function App() {
         <Route path='/success' element={<Success />} />
         <Route path='/cancel' element={<PaymentFailed />} />
         <Route path='/accept-invite' element={<AcceptInvitation />} />
+        <Route path='/terms-conditions' element={< PrivacyTerms />} />
+        <Route path='/privacy-policy' element={< PrivacyTerms />} />
         <Route path='/dashboard' element={<Dashboard />}>
           <Route path='' element={<Home />} />
           <Route path="notification" element={<Notification />} />
@@ -43,7 +45,7 @@ function App() {
           <Route path="brain" element={<BrainAI />} />
           <Route path="phone" element={<Phone />} />
           <Route path="settings" element={<SettingsPage />} />
-          <Route path="documentation" element={<PrivacyTerms />} />
+          <Route path="documentation" element={<Documentation />} />
           <Route path="campaigns" element={<Campaigns />} />
           <Route path="support" element={<Support />} />
           <Route path="community" element={<Community />} />

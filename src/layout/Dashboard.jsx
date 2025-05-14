@@ -45,7 +45,7 @@ function Dashboard() {
         {id:"agents",label:"Agents"},
         {id:"brain",label:"Brain AI"},
         {id:"settings",label:"Settings"},
-        {id:"documentation",label:"Privacy Policy, Terms and Conditions"},
+        {id:"documentation",label:"Documentation"},
         {id:"support",label:"Support"},
         {id:"community",label:"Community"},
         {id:"notification",label:"Notification"},

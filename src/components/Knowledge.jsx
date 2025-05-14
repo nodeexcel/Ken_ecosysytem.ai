@@ -28,7 +28,7 @@ const Knowledge = () => {
 
   const renderMainContent = () => {
     switch (activeTab) {
-      case "snippets":
+      case "websites":
         return (
           <div className="mt-3 max-w-[648px]">
             <div className="w-full gap-3 min-h-[360px] flex flex-col justify-center items-center border border-solid border-[#e1e4ea] bg-white rounded-2xl">
@@ -41,7 +41,7 @@ const Knowledge = () => {
           </div>
         )
 
-      case "websites":
+      case "snippets":
         return (
           <div className="mt-3 max-w-[648px]">
             <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">

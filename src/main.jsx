@@ -7,7 +7,7 @@ import { Provider } from 'react-redux'
 import store from './store/index.jsx'
 
 createRoot(document.getElementById('root')).render(
-  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+  <GoogleOAuthProvider clientId={import.meta.env.VITE_OAUTH_GOOGLE_CALENDER_CLIENT_ID}>
     <Provider store={store}>
       <BrowserRouter>
         <App />
