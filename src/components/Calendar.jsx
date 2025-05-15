@@ -204,13 +204,13 @@ export default function Calendar() {
 
   // Sample events data
   const events = [
-    { id: "1", name: "XYZ Campaign", time: "8:00 AM", date: 11, month: 0, year: 2025, color: "purple" },
-    { id: "2", name: "XYZ Campaign", time: "8:30 AM", date: 13, month: 0, year: 2025, color: "orange" },
-    { id: "3", name: "XYZ Campaign", time: "10 AM", date: 3, month: 0, year: 2025 },
-    { id: "4", name: "XYZ Campaign", time: "10 AM", date: 15, month: 0, year: 2025 },
-    { id: "5", name: "XYZ Campaign", time: "10 AM", date: 20, month: 0, year: 2025 },
-    { id: "6", name: "XYZ Campaign", time: "6:00 AM", date: 12, month: 0, year: 2025, color: "purple" },
-    { id: "7", name: "XYZ Campaign", time: "8:30 AM", date: 12, month: 0, year: 2025, color: "orange" },
+    { id: "1", name: "XYZ Campaign", time: "8:00 AM", date: 11, month: 4, year: 2025, color: "purple" },
+    { id: "2", name: "XYZ Campaign", time: "8:30 AM", date: 13, month: 4, year: 2025, color: "orange" },
+    { id: "3", name: "XYZ Campaign", time: "10 AM", date: 3, month: 4, year: 2025 },
+    { id: "4", name: "XYZ Campaign", time: "10 AM", date: 15, month: 4, year: 2025 },
+    { id: "5", name: "XYZ Campaign", time: "10 AM", date: 20, month: 4, year: 2025 },
+    { id: "6", name: "XYZ Campaign", time: "6:00 AM", date: 12, month: 4, year: 2025, color: "purple" },
+    { id: "7", name: "XYZ Campaign", time: "8:30 AM", date: 12, month: 4, year: 2025, color: "orange" },
   ]
 
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -401,7 +401,7 @@ export default function Calendar() {
     const days = getMonthData(currentYear, currentMonth)
 
     return (
-      <div className="grid grid-cols-7 border-t border-l border-[#E1E4EA]">
+      <div className="grid grid-cols-7 border-t border-[#E1E4EA]">
         {/* Header row with days of the week */}
         {daysOfWeek.map((day) => (
           <div key={day} className="py-2 text-center border-r border-b border-[#E1E4EA] font-medium text-sm">
@@ -465,11 +465,12 @@ export default function Calendar() {
 
   const renderWeekView = () => {
     return (
-      <div className="grid grid-cols-8 border-t border-l border-[#E1E4EA]">
+      <div className="grid grid-cols-8 border-t border-[#E1E4EA]">
         {/* Time column */}
         <div className="border-r border-[#E1E4EA]">
-          {hours.map((hour) => (
-            <div key={hour} className="h-16 border-b border-[#E1E4EA] flex items-start justify-end pr-2 pt-1">
+             <div className="h-10 border-b border-[#E1E4EA]" />
+          {hours.map((hour,index) => (
+            <div key={hour} className={`h-16 ${hours.length!==index+1 && 'border-b'} border-[#E1E4EA] flex items-start justify-end pr-2 pt-1`}>
               <span className="text-xs text-gray-500">{hour}</span>
             </div>
           ))}
@@ -484,7 +485,7 @@ export default function Calendar() {
           return (
             <div
               key={index}
-              className="border-r border-[#E1E4EA]"
+              className={`${weekDays.length!==index+1 && 'border-r'} border-[#E1E4EA]`}
               onClick={() => {
                 setCurrentDay(day.day)
                 setCurrentMonth(day.month)
@@ -505,11 +506,11 @@ export default function Calendar() {
               </div>
 
               {/* Hour cells */}
-              {hours.map((hour) => {
+              {hours.map((hour,index) => {
                 const hourEvents = getEventForHourDay(hour, day.day, day.month, day.year)
 
                 return (
-                  <div key={`${day.day}-${hour}`} className="h-16 border-b border-[#E1E4EA] relative">
+                  <div key={`${day.day}-${hour}`} className={`h-16 ${hours.length!==index+1 && 'border-b'} border-[#E1E4EA] relative`}>
                     {hourEvents.map((event, eventIndex) => {
                       const bgColor =
                         event.color === "purple"
@@ -537,20 +538,20 @@ export default function Calendar() {
 
   const renderDayView = () => {
     return (
-      <div className="grid grid-cols-1 border-t border-l border-r border-[#E1E4EA]">
+      <div className="grid grid-cols-1 border-t border-[#E1E4EA]">
         {/* Hours */}
-        {hours.map((hour) => {
+        {hours.map((hour,index) => {
           const hourEvents = getEventForHourDay(hour, currentDay, currentMonth, currentYear)
 
           return (
-            <div key={hour} className="flex border-b border-[#E1E4EA]">
+            <div key={hour} className="flex border-[#E1E4EA]">
               {/* Time column */}
-              <div className="w-16 py-2 flex items-start justify-end pr-2">
+              <div className={`w-16 py-2 border-r border-[#E1E4EA] ${hours.length!==index+1 && 'border-b'} flex items-start justify-end pr-2`}>
                 <span className="text-xs text-gray-500">{hour}</span>
               </div>
 
               {/* Events column */}
-              <div className="flex-1 min-h-16 relative">
+              <div className={`flex-1 border-[#E1E4EA] ${hours.length!==index+1 && 'border-b'}  min-h-16 relative`}>
                 {hourEvents.map((event, eventIndex) => {
                   const bgColor =
                     event.color === "purple"
@@ -614,7 +615,7 @@ export default function Calendar() {
       )
     } else if (currentView === "week") {
       return (
-        <div className="flex justify-between bg-[#F9FAFB] items-center p-4">
+        <div className="flex justify-between bg-[#F9FAFB] rounded-t-2xl items-center p-4">
           <h2 className="text-lg font-medium">
             {monthNames[currentMonth]} {currentYear} (Mon {selectedWeekStart} - Sun {selectedWeekEnd})
           </h2>
@@ -647,7 +648,7 @@ export default function Calendar() {
       )
     } else {
       return (
-        <div className="flex justify-between bg-[#F9FAFB] items-center p-4">
+        <div className="flex justify-between bg-[#F9FAFB] rounded-t-2xl items-center p-4">
           <h2 className="text-lg font-medium">
             {currentDay} {monthNames[currentMonth]} {currentYear}
           </h2>
