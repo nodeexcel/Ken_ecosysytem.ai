@@ -6,12 +6,13 @@ import edit_icon from '../../assets/images/edit_icon.svg';
 import { LuRefreshCw } from "react-icons/lu";
 import { TbLockPassword } from "react-icons/tb";
 import Plan from "../../components/Plan";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getProfile, updateProfile } from "../../api/profile";
 import { updatePassword } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import { getTeamMembers, sendInviteEmail } from "../../api/teamMember";
 import TransactionHistory from "../../components/TransactionHistory";
+import { discardData } from "../../store/profileSlice";
 
 
 // User profile data
@@ -88,7 +89,8 @@ const SettingsPage = () => {
   const [success, setSuccess] = useState({})
   const [showPlanPopup, setShowPlanPopup] = useState(false);
   const [teamMembersData, setTeamMembersData] = useState(null)
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
 
 
   const token = useSelector((state) => state.auth.token);
@@ -117,6 +119,7 @@ const SettingsPage = () => {
   const [emailInviteRole, setEmailInviteRole] = useState("Member")
   const [role, setRole] = useState("")
   const [isEditing, setIsEditing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState({})
   const [updatePasswordLoading, setUpdatePasswordLoading] = useState(false)
   const [inviteErrors, setInviteErrors] = useState({ email: "", limit: "" });
   const [inviteEmailLoading, setInviteEmailLoading] = useState(false)
@@ -130,6 +133,12 @@ const SettingsPage = () => {
       setSuccess({})
     }, 5000)
   }, [success])
+
+  useEffect(() => {
+    setTimeout(() => {
+      setErrorMessage({})
+    }, 5000)
+  }, [errorMessage])
 
   useEffect(() => {
     if (teamMembersData?.length > 0) {
@@ -198,14 +207,16 @@ const SettingsPage = () => {
       Object.entries(profileFormData).forEach(([key, value]) => {
         if (key === 'imageFile' && value) {
           formData.append('file', value);
-        } else if(key!=="imagePath") {
+        } else if (key !== "imagePath") {
           formData.append(key, value);
         }
       });
       const response = await updateProfile(formData, token)
       console.log(response)
       if (response?.status === 200) {
-        setIsEditing(false)
+        setSuccess((prev) => ({ ...prev, profile: response?.data?.message }))
+      } else {
+        setErrorMessage((prev) => ({ ...prev, profile: response?.data?.message }))
       }
 
     } catch (error) {
@@ -573,12 +584,12 @@ const SettingsPage = () => {
           {activeTab === "profile" && (
             <div className="mt-5 lg:w-[648px]">
               <div className="w-full border border-solid border-[#e1e4ea] bg-white rounded-2xl">
-                <div className="flex flex-col items-center justify-center gap-[26px] p-4 sm:p-[30px] relative">
+                <div className="flex flex-col justify-center gap-[26px] p-4 sm:p-[30px] relative">
                   {/* Profile Avatar */}
-                  <div className="relative">
+                  <div className="relative flex justify-center">
                     <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden">
                       <img
-                        src={profileFormData.imagePath||profileFormData.image|| profileData.avatar}
+                        src={profileFormData.imagePath || profileFormData.image || profileData.avatar}
                         alt="Profile"
                         className="w-full h-full object-cover"
                       />
@@ -590,16 +601,16 @@ const SettingsPage = () => {
                       accept="image/*"
                       id="profileImageInput"
                       className="hidden"
-                      onChange={isEditing ? handleImageUpload : undefined}
+                      onChange={handleImageUpload}
                     />
 
-                    {isEditing && <button
+                    <button
                       type="button"
                       onClick={() => document.getElementById('profileImageInput').click()}
-                      className="absolute top-[55px] left-[45px] sm:top-[65px] sm:left-[65px] bg-[#675FFF] rounded-full cursor-pointer w-[31px] h-[31px] p-[7px]"
+                      className="absolute top-[55px] ml-15 sm:top-[65px] bg-[#675FFF] rounded-full cursor-pointer w-[31px] h-[31px] p-[7px]"
                     >
                       <img className="w-[17px] h-[17px]" alt="Edit" src='/src/assets/svg/edit.svg' />
-                    </button>}
+                    </button>
                   </div>
 
                   {/* Profile Form */}
@@ -616,7 +627,7 @@ const SettingsPage = () => {
                             type="text"
                             name={field}
                             value={profileFormData[field] === "null" ? '' : profileFormData[field]}
-                            disabled={!isEditing}
+
                             onChange={handleProfileChange}
                             className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
                           />
@@ -642,7 +653,7 @@ const SettingsPage = () => {
                           type="text"
                           name="phoneNumber"
                           value={profileFormData.phoneNumber === "null" ? '' : profileFormData.phoneNumber}
-                          disabled={!isEditing}
+
                           onChange={handleProfileChange}
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
                         />
@@ -659,7 +670,7 @@ const SettingsPage = () => {
                           type="text"
                           name="company"
                           value={profileFormData.company === "null" ? '' : profileFormData.company}
-                          disabled={!isEditing}
+
                           onChange={handleProfileChange}
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
                         />
@@ -672,7 +683,7 @@ const SettingsPage = () => {
                           name="role"
                           value={profileFormData.role}
                           onChange={handleProfileChange}
-                          disabled={!isEditing}
+
                           className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
                         >
                           <option value="" disabled>Role</option>
@@ -694,7 +705,7 @@ const SettingsPage = () => {
                             type="text"
                             name={field}
                             value={profileFormData[field] === "null" ? '' : profileFormData[field]}
-                            disabled={!isEditing}
+
                             onChange={handleProfileChange}
                             className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
                           />
@@ -703,44 +714,43 @@ const SettingsPage = () => {
                     </div>
                   </div>
 
+                  {errorMessage.profile && <p className="text-sm text-red-500 mt-1">{errorMessage.profile}</p>}
+                  {success.profile && <p className="text-sm text-green-500 mt-1">{success.profile}</p>}
+
+
                   {/* Action Buttons */}
-                  <div className="flex flex-col sm:flex-row items-center gap-4 relative self-stretch w-full">
-                    {!isEditing ? (
+                  <div className="flex justify-between items-center">
+                    <div className="flex flex-col sm:flex-row gap-4">
                       <button
                         type="button"
-                        className="w-full sm:w-auto px-4 py-2 bg-[#5E54FF] text-white rounded-lg"
-                        onClick={() => setIsEditing(true)}
+                        disabled={updateLoading}
+                        onClick={handleProfileSubmit}
+                        className={`sm:w-auto px-4 py-2 ${updateLoading ? "bg-[#5f54ff87]" : "bg-[#5E54FF]"} text-white text-[16px] rounded-lg`}
                       >
-                        Edit
+                        {updateLoading ? (
+                          <div className="flex items-center justify-center gap-2">
+                            <p>Processing...</p>
+                            <span className="loader" />
+                          </div>
+                        ) : (
+                          "Update Profile"
+                        )}
                       </button>
-                    ) : (
-                      <>
-                        <button
-                          type="button"
-                          disabled={updateLoading}
-                          onClick={handleProfileSubmit}
-                          className={`w-full sm:w-auto px-4 py-2 ${updateLoading ? "bg-[#5f54ff87]" : "bg-[#5E54FF]"} text-white rounded-lg`}
-                        >
-                          {updateLoading ? (
-                            <div className="flex items-center justify-center gap-2">
-                              <p>Processing...</p>
-                              <span className="loader" />
-                            </div>
-                          ) : (
-                            "Update Profile"
-                          )}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsEditing(false);
-                          }}
-                          className="w-full sm:w-auto px-4 py-2 bg-[#f5f7ff] text-text-grey border border-[#5a687c] rounded-lg"
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          dispatch(discardData())
+                        }}
+                        className="px-4 py-2 bg-[#f5f7ff] text-[#5A687C] text-[16px] border-[1.5px] border-[#E1E4EA] rounded-lg"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                    <div>
+                      <button className="w-full text-[13px] font-[500] bg-transparent text-[#5A687C]">
+                        Delete Profile
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -879,7 +889,11 @@ const SettingsPage = () => {
                         " Update Password"
                       )}
                     </button>
-                    <button className="w-full sm:w-auto px-4 py-2 bg-[#f5f7ff] text-text-grey border border-[#5a687c] rounded-lg">
+                    <button onClick={() => setFormData({
+                      currentPassword: "",
+                      newPassword: "",
+                      confirmPassword: "",
+                    })} className="w-full sm:w-auto px-4 py-2 bg-[#f5f7ff] text-text-grey border border-[#5a687c] rounded-lg">
                       Cancel
                     </button>
                   </div>

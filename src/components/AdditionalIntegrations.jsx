@@ -242,7 +242,7 @@ const AdditionalIntegration = ({ integartionData }) => {
                                     </p>
                                         <IoMdHelpCircleOutline /></div>
                                     <p className="text-[16px] font-[400] text-[#5A687C]">
-                                        Log in with Instagram and set your permissions. Once that’s done, you're all set to connect to Ecosystem.ai
+                                        Log in with {integartionData.name} and set your permissions. Once that’s done, you're all set to connect to Ecosystem.ai
                                     </p>
                                 </div>
                                 <div className="flex flex-col gap-5 w-full mt-4">
@@ -250,7 +250,7 @@ const AdditionalIntegration = ({ integartionData }) => {
                                         // onClick={handleNext}
                                         className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
                                     >
-                                        Go To Instagram
+                                        Go To {integartionData.name}
                                     </button>
                                     <button
                                         onClick={() => setActiveTab("meta")}

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { CalenderIcon, FourBox, PhoneCampaign } from "../../icons/icons";
 import CampaignDashboard from "../../components/CampaignDashboard";
 import CampaignsTable from "../../components/Campaigns";
+import Calendar from "../../components/Calendar";
 
 
 const sideMenuList = [
@@ -18,7 +19,7 @@ const Campaigns = () => {
             case "campaigns":
                 return <CampaignsTable />;
             case "calendar":
-                return <p>Calendar</p>
+                return <Calendar/>
             default:
                 return <CampaignDashboard setActiveSidebarItem={setActiveSidebarItem}/>;
         }

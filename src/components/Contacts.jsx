@@ -1,6 +1,7 @@
 import { Contact, Download, Mail, Phone, SquarePen, Trash2, Upload, X } from "lucide-react";
 import React, { useState } from "react";
 import { FiSearch } from "react-icons/fi";
+import { Delete, Duplicate, Edit, Notes, ThreeDots } from "../icons/icons";
 
 const ContactsPage = () => {
   const [activeTab, setActiveTab] = useState("all-contacts");
@@ -8,6 +9,7 @@ const ContactsPage = () => {
   const [formData, setFormData] = useState({})
   const [formErrors, setFormErrors] = useState({})
   const [loading, setLoading] = useState(false)
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   const contacts = [
     {
@@ -59,6 +61,10 @@ const ContactsPage = () => {
     { name: "Actions", width: "w-[120px]" },
   ];
 
+  const statusOptions = ["Any", "Active", "Unconfirmed", "Unsubscribed", "Bounced"]
+  const channelOptions = ["All", "Email", "Phone No"]
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -70,6 +76,10 @@ const ContactsPage = () => {
     console.log(formData)
   }
 
+  const handleDropdownClick = (index) => {
+    setActiveDropdown(activeDropdown === index ? null : index);
+  };
+
 
   return (
     <div className="flex flex-col w-full items-start gap-6 onest">
@@ -80,17 +90,17 @@ const ContactsPage = () => {
           </h1>
 
           <div className="flex gap-2.5 items-center">
-            <button className="flex items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#e1e4ea] rounded bg-white">
+            {activeTab !== "lists" && <button className="flex items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#e1e4ea] rounded bg-white">
               <Download />
               <span className="font-medium text-text-grey text-base leading-6 text-[#5A687C]">
                 Export
               </span>
-            </button>
+            </button>}
 
-            <button className="flex items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5f58e8] rounded bg-white">
+            {activeTab !== "lists" && <button className="flex items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5f58e8] rounded bg-white">
               <Upload className="text-[#675FFF]" />
               <span className="font-medium text-base leading-6 text-[#675FFF]">Import</span>
-            </button>
+            </button>}
 
             <button onClick={activeTab === "lists" ? () => setOpen(true) : undefined} className="flex items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded text-white">
               <span className="font-medium text-base leading-6">
@@ -127,13 +137,24 @@ const ContactsPage = () => {
         <>
           <div className="flex items-center justify-between w-full">
             <div className="flex items-start gap-3">
-              <select className="text-[#5A687C] w-[147px] px-3.5 py-[8px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg">
-                <option value="">All Data</option>
+              <select className="text-[#5A687C] min-w-[147px] px-3.5 py-[8px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg">
+                {channelOptions.map(e => (
+                  <option key={e} value={e}>Channel: {e}</option>
+                ))}
               </select>
 
-              <select className="text-[#5A687C] w-[147px] px-3.5 py-[8px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg">
-                <option value="">Status: Any</option>
+              <select className="text-[#5A687C] min-w-[147px] px-3.5 py-[8px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg">
+                {statusOptions.map(e => (
+                  <option key={e} value={e}>Status: {e}</option>
+                ))}
               </select>
+              <div className="relative w-[179px]">
+                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  placeholder="Search"
+                  className="w-full pl-10 pr-3.5 pt-[7px] pb-[6px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg"
+                />
+              </div>
             </div>
           </div>
           <div className="overflow-auto w-full">
@@ -179,6 +200,11 @@ const ContactsPage = () => {
         (<>
           <div className="flex items-center justify-between w-full">
             <div className="flex items-start gap-3">
+              <select className="text-[#5A687C] min-w-[147px] px-3.5 py-[8px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg">
+                {channelOptions.map(e => (
+                  <option key={e} value={e}>Channel: {e}</option>
+                ))}
+              </select>
               <div className="relative w-[179px]">
                 <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
@@ -186,9 +212,6 @@ const ContactsPage = () => {
                   className="w-full pl-10 pr-3.5 pt-[7px] pb-[6px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg"
                 />
               </div>
-              <select className="text-[#5A687C] w-[147px] px-3.5 py-[8px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg">
-                <option value="">Channel: All</option>
-              </select>
             </div>
           </div>
           <div className="overflow-auto w-full rounded-2xl">
@@ -221,8 +244,49 @@ const ContactsPage = () => {
                       )}
                     </td>
                     <td className="px-6 py-4 text-[#5a687c] whitespace-nowrap">{list.createdDate}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <button className="text-[#5A687C] font-[500] border rounded-lg py-2 px-3">Import contacts</button>
+                    <td className="px-6 py-4">
+                      <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
+                        <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
+                      </button>
+                      {activeDropdown === index && (
+                        <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                          <div className="py-1">
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-gray-100"
+                              onClick={() => {
+                                setActiveDropdown(null);
+                              }}
+                            >
+                              <div className="flex items-center gap-2">{<Edit />} <span className="hover:text-[#675FFF] font-[500]">Edit</span> </div>
+                            </button>
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6]"
+                              onClick={() => {
+                                setActiveDropdown(null);
+                              }}
+                            >
+                              <div className="flex items-center gap-2">{<Notes />} <span className="hover:text-[#675FFF] font-[500]">View Contacts</span> </div>
+                            </button>
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6]"
+                              onClick={() => {
+                                setActiveDropdown(null);
+                              }}
+                            >
+                              <div className="flex items-center gap-2">{<Duplicate />} <span className="hover:text-[#675FFF] font-[500]">Duplicate</span> </div>
+                            </button>
+                            <hr style={{ color: "#E6EAEE" }} />
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
+                              onClick={() => {
+                                setActiveDropdown(null);
+                              }}
+                            >
+                              <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">Delete</span> </div>
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))}

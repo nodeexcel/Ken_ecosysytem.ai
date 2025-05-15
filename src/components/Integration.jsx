@@ -8,6 +8,10 @@ import systemio from '../assets/svg/systemio.svg'
 import calendly from '../assets/svg/calendly.svg'
 import google_calender from '../assets/svg/google_calender.svg'
 import whatsapp from '../assets/svg/whatsapp.svg'
+import active_campaign from '../assets/svg/activecampaign.svg'
+import hubspot from '../assets/svg/hubspot.svg'
+import mailchimp from '../assets/svg/mailchimp.svg'
+import click_funnels from '../assets/svg/click-funnels.svg'
 import AdditionalIntegration from './AdditionalIntegrations';
 // Define the integrations data
 const integrations = [
@@ -15,7 +19,7 @@ const integrations = [
     icon: instagram,
     name: "Instagram",
     connectedAccounts: 1,
-    path:import.meta.env.VITE_INSTA_URL
+    path: import.meta.env.VITE_INSTA_URL
   },
   {
     icon: google,
@@ -52,12 +56,32 @@ const integrations = [
     name: "WhatsApp",
     connectedAccounts: 1,
   },
+  {
+    icon: active_campaign,
+    name: "Active Campaign",
+    connectedAccounts: 0,
+  },
+  {
+    icon: hubspot,
+    name: "Hubspot",
+    connectedAccounts: 0,
+  },
+  {
+    icon: mailchimp,
+    name: "Mailchimp",
+    connectedAccounts: 0,
+  },
+  {
+    icon: click_funnels,
+    name: "Clickfunnels",
+    connectedAccounts: 0,
+  },
 ];
 
 const Integration = () => {
   const [firstRender, setFirstRender] = useState(true)
-  const [integartionData,setIntegrationData]=useState({})
-  const handleClick=(data)=>{
+  const [integartionData, setIntegrationData] = useState({})
+  const handleClick = (data) => {
     setFirstRender(false)
     setIntegrationData(data)
   }
@@ -76,7 +100,7 @@ const Integration = () => {
           {integrations.map((integration, index) => (
             <div
               key={index}
-              onClick={()=>handleClick(integration)}
+              onClick={() => handleClick(integration)}
               className="onest w-full md:max-w-[763px] mx-auto border-[0.5px] border-solid border-[#e1e4ea] rounded-lg"
             >
               <div className="flex items-center justify-between p-5">
@@ -104,7 +128,7 @@ const Integration = () => {
             </div>
           ))}
         </div>
-      </> : <AdditionalIntegration integartionData={integartionData}/>}
+      </> : <AdditionalIntegration integartionData={integartionData} />}
     </div>
   )
 }

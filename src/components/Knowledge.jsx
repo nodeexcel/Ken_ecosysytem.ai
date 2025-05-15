@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import nodata from '../assets/svg/brainai_nodata.svg'
 import letter from '../assets/svg/letter_t.svg'
 import { Upload, X } from "lucide-react";
+import { UploadIcon } from "../icons/icons";
 
 const tabs = [
   { label: "Snippets", key: "snippets" },
@@ -24,6 +25,40 @@ const staticData = [
 const Knowledge = () => {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("snippets")
+  const fileInputRef = useRef(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [dragActive, setDragActive] = useState(false);
+
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      console.log('Selected file:', file);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setDragActive(true);
+  };
+
+  const handleDragLeave = () => {
+    setDragActive(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragActive(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      console.log('Dropped file:', file);
+    }
+  };
 
 
   const renderMainContent = () => {
@@ -45,13 +80,12 @@ const Knowledge = () => {
         return (
           <div className="mt-3 max-w-[648px]">
             <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
-              {staticData.map((e) => <div key={e.header} className="bg-[#f7f8fc] p-4 rounded-xl flex gap-2">
+              {staticData.map((e) => <div key={e.header} className="bg-[#f7f8fc] p-4 rounded-xl flex items-center gap-2">
                 <div className="pt-1">
                   <img src={letter} alt="letter" />
                 </div>
                 <div>
-                  <h2 className="text-[16px] font-[600] font-inter text-[#373F51]">{e.header}</h2>
-                  <p className="text-[14px] font-[500] font-inter text-[#6B7280]">{e.description}</p>
+                  <p className="text-[14px] font-[400] font-inter text-[#5A687C]">{e.description}</p>
                 </div>
               </div>)}
 
@@ -124,30 +158,58 @@ const Knowledge = () => {
           </p>
 
           {/* Tabs */}
-          <div className="flex border border-[#E1E4EA] rounded-lg overflow-hidden mt-2">
+          <div className="flex bg-[#F3F4F6] rounded-lg overflow-hidden mt-2">
             {tabs.map((tab) => (
-              <button
-                key={tab.key}
-                className={`w-full py-2 text-sm font-medium transition ${activeTab === tab.key
-                  ? "bg-[#F3F4F6] text-[#1E1E1E]"
-                  : "bg-white text-[#5A687C]"
-                  }`}
-                onClick={() => setActiveTab(tab.key)}
-              >
-                {tab.label}
-              </button>
+              <div key={tab.key} className="w-full p-1" onClick={() => setActiveTab(tab.key)}>
+                <button
+
+                  className={`w-full py-2 text-sm font-medium transition ${activeTab === tab.key
+                    ? "bg-white text-[#1E1E1E] rounded-lg"
+                    : "text-[#5A687C]"
+                    }`}
+
+                >
+                  {tab.label}
+                </button>
+              </div>
             ))}
           </div>
+
 
           {/* Tab Content */}
           <div className="mt-3">
             {activeTab === "files" && (
               <div>
-                <label className="block text-[14px] font-medium text-[#292D32] mb-1">Upload File / Images</label>
-                <div className="border border-dashed border-[#CBD5E0] rounded-lg px-4 py-8 text-center">
-                  <Upload className="mx-auto mb-2 text-[#5E54FF]" />
-                  <p className="text-[#1E1E1E] font-medium">Upload from your computer</p>
-                  <p className="text-sm text-[#5A687C]">or drag and drop</p>
+                <label className="block text-sm font-medium mb-1">Upload File / Images</label>
+                <div className="mt-2">
+                  <div
+                    onClick={handleClick}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    className={`flex flex-col items-center justify-center py-4 border-2 border-dashed rounded-md text-center cursor-pointer transition ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-[#335CFF80] bg-[#F5F7FF]'
+                      }`}
+                  >
+                    <UploadIcon />
+                    <p className="text-[18px] font-[600] text-[#1E1E1E] mt-2">
+                      Upload from your computer
+                    </p>
+                    <p className="text-[14px] font-[500] text-[#5A687C] mt-1">
+                      or drag and drop
+                    </p>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                  </div>
+
+                  {selectedFile && (
+                    <div className="mt-3 text-sm text-gray-700">
+                      <strong>Selected File:</strong> {selectedFile.name}
+                    </div>
+                  )}
                 </div>
               </div>
             )}
