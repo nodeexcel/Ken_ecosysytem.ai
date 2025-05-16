@@ -3,16 +3,17 @@ import nodata from '../assets/svg/brainai_nodata.svg'
 import letter from '../assets/svg/letter_t.svg'
 import { Upload, X } from "lucide-react";
 import { UploadIcon } from "../icons/icons";
+import { knowledgeBase } from "../api/brainai";
 
 const tabs = [
-  { label: "Snippets", key: "snippets" },
-  { label: "Websites", key: "websites" },
+  { label: "Snippets", key: "snippet" },
+  { label: "Websites", key: "website" },
   { label: "Files", key: "files" },
 ]
 
 const modelData = {
-  snippets: { label: "Provide any facts, information you want to include in your Brain AI for agents to be aware of." },
-  websites: { label: "Provide any facts webpages you want to include in your Brain AI for agents to be aware of." },
+  snippet: { label: "Provide any facts, information you want to include in your Brain AI for agents to be aware of." },
+  website: { label: "Provide any facts webpages you want to include in your Brain AI for agents to be aware of." },
   files: { label: "Upload only clear, relevant, and concise documents to ensure accurate answers from AI agents. Exemples: Company bylaws, Presentation Brochure, Various Presentations." }
 }
 
@@ -24,10 +25,14 @@ const staticData = [
 
 const Knowledge = () => {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("snippets")
+  const [activeTab, setActiveTab] = useState("snippet")
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
+  const [snippetDetails, setSnippetDetail] = useState("")
+  const [websiteUrl,setWebsiteUrl]=useState("")
+  const [formData,setFormData]=useState({})
+  const [loading, setLoading] = useState(false)
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -60,10 +65,41 @@ const Knowledge = () => {
     }
   };
 
+  const handleKnowledge = async (payload) => {
+    try {
+      setLoading(true)
+      const response = await knowledgeBase(payload)
+      if (response.status === 200) {
+        setOpen(false)
+      } else {
+        setLoading(false)
+      }
+
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSubmit = () => {
+    switch (activeTab) {
+      case "snippet":
+        const payload = {
+          business_info_or_snippet: snippetDetails,
+          data_type: activeTab
+        }
+        handleKnowledge(payload)
+        break;
+      default:
+        break;
+    }
+  }
+
 
   const renderMainContent = () => {
     switch (activeTab) {
-      case "websites":
+      case "website":
         return (
           <div className="mt-3 max-w-[648px]">
             <div className="w-full gap-3 min-h-[360px] flex flex-col justify-center items-center border border-solid border-[#e1e4ea] bg-white rounded-2xl">
@@ -76,7 +112,7 @@ const Knowledge = () => {
           </div>
         )
 
-      case "snippets":
+      case "snippet":
         return (
           <div className="mt-3 max-w-[648px]">
             <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
@@ -213,13 +249,15 @@ const Knowledge = () => {
                 </div>
               </div>
             )}
-            {activeTab === "snippets" && (
+            {activeTab === "snippet" && (
               <div>
                 <label className="block text-[14px] font-medium text-[#292D32] mb-1">Details</label>
                 <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
                   <textarea
                     type="text"
                     name="details"
+                    value={snippetDetails}
+                    onChange={(e) => setSnippetDetail(e.target.value)}
                     placeholder="The more details, the better!"
                     rows={3}
                     className="w-full focus:outline-none"
@@ -227,13 +265,15 @@ const Knowledge = () => {
                 </div>
               </div>
             )}
-            {activeTab === "websites" && (
+            {activeTab === "website" && (
               <div>
                 <label className="block text-[14px] font-medium text-[#292D32] mb-1">Website</label>
                 <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
                   <input
                     type="text"
                     name="website"
+                    value={websiteUrl}
+                    onChange={(e)=>setWebsiteUrl(e.target.value)}
                     placeholder="https://ecosystem.ai.com"
                     className="w-full focus:outline-none"
                   />
@@ -250,9 +290,11 @@ const Knowledge = () => {
               Cancel
             </button>
             <button
+              onClick={handleSubmit}
+              disabled={loading}
               className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
             >
-              Save
+              {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save"}
             </button>
           </div>
         </div>
