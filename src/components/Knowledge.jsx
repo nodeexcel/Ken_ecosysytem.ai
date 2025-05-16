@@ -1,9 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import nodata from '../assets/svg/brainai_nodata.svg'
 import letter from '../assets/svg/letter_t.svg'
 import { Upload, X } from "lucide-react";
 import { UploadIcon } from "../icons/icons";
-import { knowledgeBase } from "../api/brainai";
+import { getKnowledgeSnippets, knowledgeBase } from "../api/brainai";
 
 const tabs = [
   { label: "Snippets", key: "snippet" },
@@ -30,9 +30,10 @@ const Knowledge = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const [snippetDetails, setSnippetDetail] = useState("")
-  const [websiteUrl,setWebsiteUrl]=useState("")
-  const [formData,setFormData]=useState({})
+  const [websiteUrl, setWebsiteUrl] = useState("")
+  const [formData, setFormData] = useState({})
   const [loading, setLoading] = useState(false)
+  const [snippetsData, setSnippetsData] = useState()
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -82,11 +83,28 @@ const Knowledge = () => {
     }
   }
 
+  const handleSnippetsData = async () => {
+    setSnippetsData({})
+    try {
+      const response = await getKnowledgeSnippets()
+      if (response.status === 200) {
+        setSnippetsData(response.data.snippets)
+      }
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    handleSnippetsData()
+  }, [])
+
   const handleSubmit = () => {
     switch (activeTab) {
       case "snippet":
         const payload = {
-          business_info_or_snippet: snippetDetails,
+          data: snippetDetails,
           data_type: activeTab
         }
         handleKnowledge(payload)
@@ -114,19 +132,28 @@ const Knowledge = () => {
 
       case "snippet":
         return (
-          <div className="mt-3 max-w-[648px]">
-            <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
-              {staticData.map((e) => <div key={e.header} className="bg-[#f7f8fc] p-4 rounded-xl flex items-center gap-2">
-                <div className="pt-1">
-                  <img src={letter} alt="letter" />
-                </div>
+          <>
+            {snippetsData?.length > 0 ? <div className="mt-3 max-w-[648px]">
+              <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
+                {snippetsData?.length > 0 && snippetsData.map((e,i) => <div key={i} className="bg-[#f7f8fc] p-4 rounded-xl flex items-center gap-2">
+                  <div className="pt-1">
+                    <img src={letter} alt="letter" />
+                  </div>
+                  <div>
+                    <p className="text-[14px] font-[400] font-inter text-[#5A687C]">{e.text}</p>
+                  </div>
+                </div>)}
+              </div>
+            </div> : <div className="mt-3 max-w-[648px]">
+              <div className="w-full gap-3 min-h-[360px] flex flex-col justify-center items-center border border-solid border-[#e1e4ea] bg-white rounded-2xl">
                 <div>
-                  <p className="text-[14px] font-[400] font-inter text-[#5A687C]">{e.description}</p>
+                  <img src={nodata} alt="nodata" />
                 </div>
-              </div>)}
-
-            </div>
-          </div>
+                <h1 className="text-[20px] font-[600] font-inter">Brain AI is empty</h1>
+                <p className="text-[14px] font-[500] font-inter">Add information to use it</p>
+              </div>
+            </div>}
+          </>
         )
       default:
         return (
@@ -273,7 +300,7 @@ const Knowledge = () => {
                     type="text"
                     name="website"
                     value={websiteUrl}
-                    onChange={(e)=>setWebsiteUrl(e.target.value)}
+                    onChange={(e) => setWebsiteUrl(e.target.value)}
                     placeholder="https://ecosystem.ai.com"
                     className="w-full focus:outline-none"
                   />
