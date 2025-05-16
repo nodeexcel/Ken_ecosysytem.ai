@@ -86,10 +86,10 @@ const Integration = () => {
     setIntegrationData(data)
   }
   return (
-    <div className='flex flex-col w-full items-start gap-6 onest"'>
+    <div className='flex flex-col w-full items-start gap-6 "'>
       {firstRender ? <>
         {/* Header */}
-        <header className="flex items-center justify-between w-full onest">
+        <header className="flex items-center justify-between w-full ">
           <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
             Integrations
           </h1>
@@ -101,7 +101,7 @@ const Integration = () => {
             <div
               key={index}
               onClick={() => handleClick(integration)}
-              className="onest w-full md:max-w-[763px] mx-auto border-[0.5px] border-solid border-[#e1e4ea] rounded-lg"
+              className=" w-full md:max-w-[763px] mx-auto border-[0.5px] border-solid border-[#e1e4ea] rounded-lg"
             >
               <div className="flex items-center justify-between p-5">
                 <div className="flex items-center gap-2.5">

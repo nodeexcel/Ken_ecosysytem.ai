@@ -1,3 +1,6 @@
+import { useNavigate } from "react-router-dom"
+import logo from '/ecosystem_logo.svg'
+
 const staticData = {
     header: "Terms and Conditions",
     lastDate: "Last Updated:",
@@ -116,126 +119,142 @@ const staticData = {
 
 
 function TermsAndConditions() {
+    const navigate = useNavigate()
     return (
-        <div className="flex flex-col gap-5 mb-3">
-            <h2 className="text-[24px] font-[600] text-[#1E1E1E]">{staticData.header}</h2>
-            <p className="text-[#5A687C] font-[400] text-[16px]">{staticData.lastDate} 13/05/2025</p>
-            <p className="text-[#5A687C] font-[400] text-[16px]">{staticData.description}</p>
-            <div className="flex flex-col gap-2">
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E]">{staticData.point1.header}</h2>
-                <p className="text-[#5A687C] font-[400] text-[16px] my-2">By creating an account or using any services provided by <span className="text-[#1E1E1E] font-[700]">Ecosysteme.ai </span>(“<span className="text-[#1E1E1E] font-[700]">we</span>”, “<span className="text-[#1E1E1E] font-[700]">us</span>”, or “<span className="text-[#1E1E1E] font-[700]">our</span>”), you (“<span className="text-[#1E1E1E] font-[700]">you</span>” or “<span className="text-[#1E1E1E] font-[700]">User</span>
-                    ”) agree to be bound by these Terms and Conditions (“<span className="text-[#1E1E1E] font-[700]">Terms</span>”). If you do not agree with these Terms, you must not use the Ecosysteme.ai platform or services. We may update these Terms from time to time by posting the revised Terms on our website and, if changes are significant, providing notice to users. Your continued use of the service after any changes means you accept the updated Terms.
-                </p>
+        <div className="h-full w-full bg-[#F6F7F9]">
+            <div className='flex justify-between p-4 items-center bg-[#E7E6F9]'>
+                <div className="flex justify-center items-center gap-3">
+                    <div>
+                        <img src={logo} alt="logo" className="w-[47.15px] h-[52px]" />
+                    </div>
+                    <h1 className="text-[28px] font-semibold onest text-[#1E1E1E]">Ecosysteme.ai</h1>
+                </div>
+                <div>
+                    <button onClick={() => navigate("/")} className='bg-[#675FFF] cursor-pointer border border-[#5F58E8] px-3 py-2 rounded-lg text-[#fff] text-[16px] font-[500]'>
+                        Log in
+                    </button>
+                </div>
             </div>
-            <div className="flex flex-col gap-2">
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point2.header}</h2>
-                {staticData.point2.points.map(each => (
-                    <p key={each.label} className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></p>
-                ))}
-                <p className="text-[#5A687C] font-[400]"><span className="text-[#675FFF] font-[700] text-[16px] cursor-pointer hover:underline">{staticData.point2.link} </span>{staticData.point2.description}</p>
-            </div>
-            <div className="flex flex-col gap-2">
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point3.header}</h2>
-                {staticData.point3.points.map(each => (
-                    <p key={each.label} className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></p>
-                ))}
-            </div>
-            <div className="flex flex-col gap-2">
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point4.header}</h2>
-                <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point4.description}</p>
-            </div>
-            <div className="flex flex-col gap-2">
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point5.header}</h2>
-                {staticData.point5.points.map(each => (
-                    <p key={each.label} className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></p>
-                ))}
-            </div>
-            <div className="flex flex-col gap-2">
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point6.header}</h2>
-                <p className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">Cancellation by You:<span className="text-[#5A687C] font-[400]"> You may cancel your subscription at any time through your account settings or by contacting us at </span><span className="text-[#675FFF] font-[400] cursor-pointer hover:underline">contact@ecosysteme.ai.</span><span className="text-[#5A687C] font-[400]"> Cancellation will take effect at the end of your current billing period. This means you will continue to have access to the service until the end of the period you have already paid for, but your subscription will not auto-renew thereafter. Please note that, per our No Refunds policy, cancelling will not retroactively refund any fees, and we will not prorate fees for the remaining portion of the billing period.</span></p>
-                {staticData.point6.points.map(each => (
-                    <p key={each.label} className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></p>
-                ))}
-            </div>
-            <div className="flex flex-col gap-2">
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point7.header}</h2>
-                <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point7.description}</p>
-                {staticData.point7.points.map(each => (
-                    <ul key={each.label} style={{ listStyleType: "disc", display: "list-item" }} className="pl-6">
-                        <li className="mb-1 text-[#1E1E1E] font-[700] text-[16px]" >{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></li>
-                    </ul>
-                ))}
-                <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point7.description2}</p>
-            </div>
-            <div className="flex flex-col gap-2">
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point8.header}</h2>
-                <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point8.description}</p>
-                {staticData.point8.points.map(each => (
-                    <ul key={each.label} style={{ listStyleType: "disc", display: "list-item" }} className="pl-6">
-                        <li className="mb-1 text-[#1E1E1E] font-[700] text-[16px]" >{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></li>
-                    </ul>
-                ))}
-                <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point8.description2}</p>
-            </div>
-            <div className="flex flex-col gap-2">
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point9.header}</h2>
-                {staticData.point9.points.map(each => (
-                    <p key={each.label} className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></p>
-                ))}
-            </div>
-            <div className="flex flex-col gap-2">
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point10.header}</h2>
-                <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point10.description}</p>
-                <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point10.label}</p>
-                {staticData.point10.points.map(each => (
-                    <ul key={each} style={{ listStyleType: "disc", display: "list-item" }} className="pl-6">
-                        <li className="mb-1 text-[16px] text-[#5A687C] font-[400]">{each}</li>
-                    </ul>
-                ))}
-                <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">For more details on how we handle and protect your data, please refer to the Privacy Policy. If you have any questions or concerns about privacy, you can contact us at <span className="text-[#675FFF] cursor-pointer hover:underline font-[700]">contact@ecosysteme.ai</span> By using the service, you acknowledge that you have read and understood our Privacy Policy.</p>
-            </div>
-            <div className="flex flex-col gap-2">
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point11.header}</h2>
-                {staticData.point11.points.map(each => (
-                    <p key={each.label} className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></p>
-                ))}
-                <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point11.description}</p>
-            </div>
-            <div className="flex flex-col gap-2">
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point12.header}</h2>
-                <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">To the fullest extent permitted by law, <span className="text-[#1E1E1E] font-[700]">Ecosysteme.ai and its affiliates, officers, employees, agents, partners, and licensors will not be liable to you for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits, revenues, data, or goodwill, arising</span> out of or related to your use of (or inability to use) the platform or services. This limitation applies to any theory of liability (whether based in contract, tort, negligence, strict liability, or otherwise) and even if we have been advised of the possibility of such damages. You assume all risks associated with your use of the service.</p>
-                <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">In no event will our total cumulative liability for all claims arising from or related to the service exceed the amount you have paid to Ecosysteme.ai in subscription fees in the <span className="text-[#1E1E1E] font-[700]"> twelve (12) months</span> immediately prior to the event giving rise to the liability (or, if you have not paid any subscription fees, the amount of CHF 0). This means that if, for example, you have paid us CHF 100 in the past year, our maximum total liability to you for any and all claims will be CHF 100.</p>
-                {staticData.point12.points.map(each => (
-                    <ul key={each.label} style={{ listStyleType: "disc", display: "list-item" }} className="pl-6">
-                        <li className="mb-1 text-[#1E1E1E] font-[700] text-[16px]" >{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></li>
-                    </ul>
-                ))}
-                <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point12.description}</p>
-            </div>
-            <div className="flex flex-col gap-2">
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point13.header}</h2>
-                {staticData.point13.points.map(each => (
-                    <p key={each.label} className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></p>
-                ))}
-                <p className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">Changes to Terms: <span className="text-[#5A687C] font-[400]">We may revise these Terms from time to time. When we make material changes, we will notify you by, for example, sending an email to the address associated with your account or by displaying a prominent notice on our site. The updated Terms will be indicated by an updated “Last Updated” date at the top. </span>By continuing to use the service after the new Terms become effective, you agree to be bound by the revised Terms. <span className="text-[#5A687C] font-[400]">If you do not agree to any updated Terms, you must stop using the service and cancel your subscription.</span></p>
-                <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point13.description}</p>
-            </div>
-            <div className="flex flex-col gap-2">
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point14.header}</h2>
-                {staticData.point14.points.map(each => (
-                    <p key={each} className="mb-1 text-[16px] text-[#5A687C] font-[400]">{each}</p>
-                ))}
-            </div>
-            <div className="flex flex-col gap-2">
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point15.header}</h2>
-                {staticData.point15.points.map(each => (
-                    <p key={each.label} className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></p>
-                ))}
-            </div>
-            <div className="flex flex-col gap-2">
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point16.header}</h2>
-                <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">If you have any questions, concerns, or feedback about these Terms or the Ecosysteme.ai service, please feel free to contact us at <span className="text-[#675FFF] font-[700] cursor-pointer hover:underline">contact@ecosysteme.ai. </span>We value communication with our users and will do our best to address your inquiry promptly.</p>
-                <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">By using Ecosysteme.ai, you acknowledge that you have read, understood, and agree to these Terms and Conditions. Thank you for choosing Ecosysteme.ai!</p>
+            <div className="flex flex-col gap-5 mb-3 mx-auto max-w-[1068px]">
+                <h2 className="text-[44px] font-[600] text-[#1E1E1E] flex justify-center mt-6">{staticData.header}</h2>
+                <p className="text-[#5A687C] font-[400] text-[16px]">{staticData.lastDate} 13/05/2025</p>
+                <p className="text-[#5A687C] font-[400] text-[16px]">{staticData.description}</p>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-[20px] font-[600] text-[#1E1E1E]">{staticData.point1.header}</h2>
+                    <p className="text-[#5A687C] font-[400] text-[16px] my-2">By creating an account or using any services provided by <span className="text-[#1E1E1E] font-[700]">Ecosysteme.ai </span>(“<span className="text-[#1E1E1E] font-[700]">we</span>”, “<span className="text-[#1E1E1E] font-[700]">us</span>”, or “<span className="text-[#1E1E1E] font-[700]">our</span>”), you (“<span className="text-[#1E1E1E] font-[700]">you</span>” or “<span className="text-[#1E1E1E] font-[700]">User</span>
+                        ”) agree to be bound by these Terms and Conditions (“<span className="text-[#1E1E1E] font-[700]">Terms</span>”). If you do not agree with these Terms, you must not use the Ecosysteme.ai platform or services. We may update these Terms from time to time by posting the revised Terms on our website and, if changes are significant, providing notice to users. Your continued use of the service after any changes means you accept the updated Terms.
+                    </p>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point2.header}</h2>
+                    {staticData.point2.points.map(each => (
+                        <p key={each.label} className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></p>
+                    ))}
+                    <p className="text-[#5A687C] font-[400]"><span className="text-[#675FFF] font-[700] text-[16px] cursor-pointer hover:underline">{staticData.point2.link} </span>{staticData.point2.description}</p>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point3.header}</h2>
+                    {staticData.point3.points.map(each => (
+                        <p key={each.label} className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></p>
+                    ))}
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point4.header}</h2>
+                    <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point4.description}</p>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point5.header}</h2>
+                    {staticData.point5.points.map(each => (
+                        <p key={each.label} className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></p>
+                    ))}
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point6.header}</h2>
+                    <p className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">Cancellation by You:<span className="text-[#5A687C] font-[400]"> You may cancel your subscription at any time through your account settings or by contacting us at </span><span className="text-[#675FFF] font-[400] cursor-pointer hover:underline">contact@ecosysteme.ai.</span><span className="text-[#5A687C] font-[400]"> Cancellation will take effect at the end of your current billing period. This means you will continue to have access to the service until the end of the period you have already paid for, but your subscription will not auto-renew thereafter. Please note that, per our No Refunds policy, cancelling will not retroactively refund any fees, and we will not prorate fees for the remaining portion of the billing period.</span></p>
+                    {staticData.point6.points.map(each => (
+                        <p key={each.label} className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></p>
+                    ))}
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point7.header}</h2>
+                    <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point7.description}</p>
+                    {staticData.point7.points.map(each => (
+                        <ul key={each.label} style={{ listStyleType: "disc" }} className="pl-6">
+                            <li className="mb-1 text-[#1E1E1E] font-[700] text-[16px]" >{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></li>
+                        </ul>
+                    ))}
+                    <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point7.description2}</p>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point8.header}</h2>
+                    <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point8.description}</p>
+                    {staticData.point8.points.map(each => (
+                        <ul key={each.label} style={{ listStyleType: "disc" }} className="pl-6">
+                            <li className="mb-1 text-[#1E1E1E] font-[700] text-[16px]" >{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></li>
+                        </ul>
+                    ))}
+                    <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point8.description2}</p>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point9.header}</h2>
+                    {staticData.point9.points.map(each => (
+                        <p key={each.label} className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></p>
+                    ))}
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point10.header}</h2>
+                    <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point10.description}</p>
+                    <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point10.label}</p>
+                    {staticData.point10.points.map(each => (
+                        <ul key={each} style={{ listStyleType: "disc" }} className="pl-6">
+                            <li className="mb-1 text-[16px] text-[#5A687C] font-[400]">{each}</li>
+                        </ul>
+                    ))}
+                    <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">For more details on how we handle and protect your data, please refer to the Privacy Policy. If you have any questions or concerns about privacy, you can contact us at <span className="text-[#675FFF] cursor-pointer hover:underline font-[700]">contact@ecosysteme.ai</span> By using the service, you acknowledge that you have read and understood our Privacy Policy.</p>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point11.header}</h2>
+                    {staticData.point11.points.map(each => (
+                        <p key={each.label} className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></p>
+                    ))}
+                    <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point11.description}</p>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point12.header}</h2>
+                    <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">To the fullest extent permitted by law, <span className="text-[#1E1E1E] font-[700]">Ecosysteme.ai and its affiliates, officers, employees, agents, partners, and licensors will not be liable to you for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits, revenues, data, or goodwill, arising</span> out of or related to your use of (or inability to use) the platform or services. This limitation applies to any theory of liability (whether based in contract, tort, negligence, strict liability, or otherwise) and even if we have been advised of the possibility of such damages. You assume all risks associated with your use of the service.</p>
+                    <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">In no event will our total cumulative liability for all claims arising from or related to the service exceed the amount you have paid to Ecosysteme.ai in subscription fees in the <span className="text-[#1E1E1E] font-[700]"> twelve (12) months</span> immediately prior to the event giving rise to the liability (or, if you have not paid any subscription fees, the amount of CHF 0). This means that if, for example, you have paid us CHF 100 in the past year, our maximum total liability to you for any and all claims will be CHF 100.</p>
+                    {staticData.point12.points.map(each => (
+                        <ul key={each.label} style={{ listStyleType: "disc" }} className="pl-6">
+                            <li className="mb-1 text-[#1E1E1E] font-[700] text-[16px]" >{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></li>
+                        </ul>
+                    ))}
+                    <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point12.description}</p>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point13.header}</h2>
+                    {staticData.point13.points.map(each => (
+                        <p key={each.label} className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></p>
+                    ))}
+                    <p className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">Changes to Terms: <span className="text-[#5A687C] font-[400]">We may revise these Terms from time to time. When we make material changes, we will notify you by, for example, sending an email to the address associated with your account or by displaying a prominent notice on our site. The updated Terms will be indicated by an updated “Last Updated” date at the top. </span>By continuing to use the service after the new Terms become effective, you agree to be bound by the revised Terms. <span className="text-[#5A687C] font-[400]">If you do not agree to any updated Terms, you must stop using the service and cancel your subscription.</span></p>
+                    <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">{staticData.point13.description}</p>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point14.header}</h2>
+                    {staticData.point14.points.map(each => (
+                        <p key={each} className="mb-1 text-[16px] text-[#5A687C] font-[400]">{each}</p>
+                    ))}
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point15.header}</h2>
+                    {staticData.point15.points.map(each => (
+                        <p key={each.label} className="mb-1 text-[#1E1E1E] font-[700] text-[16px]">{each.label}<span className="text-[#5A687C] font-[400]">{each.value}</span></p>
+                    ))}
+                </div>
+                <div className="flex flex-col gap-2 mb-5">
+                    <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-2">{staticData.point16.header}</h2>
+                    <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">If you have any questions, concerns, or feedback about these Terms or the Ecosysteme.ai service, please feel free to contact us at <span className="text-[#675FFF] font-[700] cursor-pointer hover:underline">contact@ecosysteme.ai. </span>We value communication with our users and will do our best to address your inquiry promptly.</p>
+                    <p className="mb-1 text-[#5A687C] font-[400] text-[16px]">By using Ecosysteme.ai, you acknowledge that you have read, understood, and agree to these Terms and Conditions. Thank you for choosing Ecosysteme.ai!</p>
+                </div>
             </div>
         </div>
     )

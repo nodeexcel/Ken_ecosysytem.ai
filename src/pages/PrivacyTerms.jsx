@@ -54,7 +54,7 @@ const PrivacyTerms = () => {
                                 }`}
                         >
                             {item.icon}
-                            <span className="onest text-[14px] font-[400]">{item.label}</span>
+                            <span className="text-[14px] font-[400]">{item.label}</span>
                         </div>
                     ))}
                 </div>

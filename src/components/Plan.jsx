@@ -18,7 +18,7 @@ const CreditPopup = ({ onClose, onOpen }) => {
             <div className="p-2 bg-[#335BFB1A] rounded-lg">
               <img src="/src/assets/svg/coins.svg" alt="" />
             </div>
-            <span className="text-[20px] onest font-[600] ">Your credit</span>
+            <span className="text-[20px]  font-[600] ">Your credit</span>
           </div>
           <button
             onClick={onClose}
@@ -29,14 +29,14 @@ const CreditPopup = ({ onClose, onOpen }) => {
         </div>
 
         {/* <div className="bg-[#5E54FF] text-white p-4 rounded-lg mb-6 flex justify-between items-center ">
-          <div className=" text-[16px] onest font-[500] text-[#E1E4EA] ">
+          <div className=" text-[16px]  font-[500] text-[#E1E4EA] ">
             Available Credit
           </div>
-          <div className="text-[36px] font-700 onest  font-semibold">100</div>
+          <div className="text-[36px] font-700   font-semibold">100</div>
         </div> */}
 
         <div className="mb-6">
-          <h3 className="text-[17px] font-[600] onest my-4">Add credit</h3>
+          <h3 className="text-[17px] font-[600]  my-4">Add credit</h3>
           {/* <div className="relative mb-4">
             <input
               type="range"
@@ -52,8 +52,8 @@ const CreditPopup = ({ onClose, onOpen }) => {
               }}
             />
             <div className="flex justify-between mt-2">
-              <span className="text-[17px] font-[600] onest ">100</span>
-              <span className="text-[17px] font-[600] onest ">30000</span>
+              <span className="text-[17px] font-[600]  ">100</span>
+              <span className="text-[17px] font-[600]  ">30000</span>
             </div>
           </div> */}
           {/* <div className="flex flex-wrap gap-2 mb-4">
@@ -61,7 +61,7 @@ const CreditPopup = ({ onClose, onOpen }) => {
               <button
                 key={index}
                 onClick={() => setSelectedCredit(credit)}
-                className="flex-1 py-2 px-4 border border-gray-300 bg-[#F2F2F7] rounded-lg text-[17px] font-[600] onest text-center hover:bg-gray-50"
+                className="flex-1 py-2 px-4 border border-gray-300 bg-[#F2F2F7] rounded-lg text-[17px] font-[600]  text-center hover:bg-gray-50"
               >
                 {credit}
               </button>
@@ -310,7 +310,7 @@ const PlanManagementPopup = ({ onClose, onOpen }) => {
             <div className="p-2 bg-[#335BFB1A] rounded-lg">
               <img src="/src/assets/svg/MangePlan.svg" alt="" />
             </div>
-            <span className="text-[16px] sm:text-[20px] font-[600] onest">Manage Plan</span>
+            <span className="text-[16px] sm:text-[20px] font-[600] ">Manage Plan</span>
             <div className="flex gap-2 bg-[#F2F2F7] p-1 rounded-lg">
               <button
                 className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium ${activeTab === "annual"
@@ -365,16 +365,16 @@ const PlanManagementPopup = ({ onClose, onOpen }) => {
                   <div className="p-2 rounded-lg">
                     <img src={plan.svg} alt="" className="w-8 h-8 object-contain" />
                   </div>
-                  <span className="font-[600] text-[15px] sm:text-[16px] onest">{plan.name}</span>
+                  <span className="font-[600] text-[15px] sm:text-[16px] ">{plan.name}</span>
                 </div>
                 {plan.discount && (
-                  <span className="text-[#34C759] text-[13px] sm:text-[14px] onest bg-[#34C7591A] px-2 py-1 rounded whitespace-nowrap">
+                  <span className="text-[#34C759] text-[13px] sm:text-[14px]  bg-[#34C7591A] px-2 py-1 rounded whitespace-nowrap">
                     {plan.discount}
                   </span>
                 )}
               </div>
               <div className="flex items-baseline gap-1 mb-2 flex-wrap">
-                <span className="text-[18px] sm:text-[22px] font-[600] onest">{plan.price}</span>
+                <span className="text-[18px] sm:text-[22px] font-[600] ">{plan.price}</span>
                 {plan.period && (
                   <span className="text-[#5A687C] font-[600] text-[13px] sm:text-[14px]">
                     {plan.period}
@@ -444,7 +444,7 @@ const CancelSubscriptionPopup = ({ onClose }) => {
               <p className="text-white  font-[700] text-[40.26px] rotate-180 [writing-mode:vertical-rl]">off</p>
             </div>
           </div>
-          <h3 className="text-[17px] font-[600] onest">We’re sorry to see you go! </h3>
+          <h3 className="text-[17px] font-[600] ">We’re sorry to see you go! </h3>
           <h2 className="text-[14px] text-center text-[#5A687C] font-[400]">Final chance to stay! We’re offering a <span className="text-[#675FFF]">lifetime 50% discount</span>—a one-time deal! Pay just €48.50/month for Starter (save €48.50/month forever) and continue boosting your sales with our AI agents. This offer expires in 48 hours. Still want to cancel?</h2>
         </div>
 
@@ -501,7 +501,7 @@ const CancelSubscriptionPopup = ({ onClose }) => {
             </div>
           </div>
 
-          <h3 className="text-[17px] font-[600] onest">We’re sorry to see you go! </h3>
+          <h3 className="text-[17px] font-[600] ">We’re sorry to see you go! </h3>
           <h2 className="text-[14px] text-center text-[#5A687C] font-[400]">Your credits will be revoked immediately, even before the end of your billing period. Feel free to return anytime—we’d welcome you back! Confirm your cancellation below.</h2>
         </div>
 
@@ -585,7 +585,7 @@ const Plan = ({ setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
         </h1>
         <button
           onClick={() => setShowPlanPopup(true)}
-          className="w-full sm:w-auto px-4 py-2 text-[#5E54FF] text-[16px] onest border border-[#5E54FF] hover:bg-indigo-50 rounded-lg"
+          className="w-full sm:w-auto px-4 py-2 text-[#5E54FF] text-[16px]  border border-[#5E54FF] hover:bg-indigo-50 rounded-lg"
         >
           Manage Plan
         </button>
@@ -613,7 +613,7 @@ const Plan = ({ setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
               <div className="">
                 <img src="/src/assets/svg/plan.svg" alt="" />
               </div>
-              <span className="text-[16px] font-[600] onest  ">Plan</span>
+              <span className="text-[16px] font-[600]   ">Plan</span>
             </div>
             <button className="text-gray-400 hover:text-gray-600 cursor-pointer bg-[#F2F2F7] rounded-lg px-2 py-2"
               onClick={() => setShowCreditPopup(true)}
@@ -621,10 +621,10 @@ const Plan = ({ setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
               <img src="/src/assets/svg/planedit.svg" alt="" />
             </button>
           </div>
-          <h1 className=" mb-2 text-sm font-[400] onest text-[#5A687C] " >Available Credits</h1>
+          <h1 className=" mb-2 text-sm font-[400]  text-[#5A687C] " >Available Credits</h1>
           <div className="flex items-center gap-2">
-            <span className="text-[24px] font-[600] onest ">100</span>
-            <button className="px-2 rounded-[5px] py-2 text-[14px] flex items-center gap-1 bg-[#335BFB1A] text-[#5E54FF] ">
+            <span className="text-[24px] font-[600]  ">100</span>
+            <button className="px-2 rounded-[5px] py-2 text-[14px] flex items-center gap-1 bg-[#335BFB1A] text-[#675FFF] font-[600] ">
               <img src="/src/assets/svg/add.svg" alt="" />
               <span>Add Credits</span>
             </button>
@@ -632,7 +632,7 @@ const Plan = ({ setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
         </div>
 
         {/* Payment Card */}
-        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-[#E1E4EA]">
+        <div className="bg-white p-4 sm:p-6 flex flex-col justify-between rounded-xl shadow-sm border border-[#E1E4EA]">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
               <div className="">
@@ -640,14 +640,14 @@ const Plan = ({ setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
               </div>
               <span className="font-medium">Payment</span>
             </div>
-            <button onClick={() => setActiveSidebarItem("transaction-history")} className="text-[#5E54FF] font-[600] text-sm hover:underline flex items-center gap-2 onest">
+            <button onClick={() => setActiveSidebarItem("transaction-history")} className="text-[#5E54FF] font-[600] text-sm hover:underline flex items-center gap-2 ">
               View Details{" "}
               <span>
                 <img src="/src/assets/svg/details.svg" alt="" />
               </span>
             </button>
           </div>
-          <div className="inline-block px-4 py-2 bg-green-50 text-green-600 rounded-lg text-sm">
+          <div className="inline-block w-fit px-4 py-2 bg-green-50 text-[#34C759] font-[600] rounded-lg text-sm">
             Pay By Invoice
           </div>
         </div>
@@ -661,14 +661,14 @@ const Plan = ({ setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
               </div>
               <span className="font-medium">Member Seats</span>
             </div>
-            <button className="text-[#5E54FF] font-[600] text-sm hover:underline flex items-center gap-1 onest">
+            <button className="text-[#5E54FF] font-[600] text-sm hover:underline flex items-center gap-1 ">
               <img src="/src/assets/svg/add.svg" alt="" />
               Add Seats{" "}
             </button>
           </div>
           <div className="flex flex-col gap-2">
             <span className="text-gray-500 text-sm">Users</span>
-            <span className="text-[24px] font-[600] onest ">1/5</span>
+            <span className="text-[24px] font-[600]  ">1/5</span>
           </div>
         </div>
       </div>
@@ -676,7 +676,7 @@ const Plan = ({ setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
       {/* Credit Usage Section */}
       <div className="bg-white rounded-xl shadow-sm border border-[#E1E4EA] p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <h2 className="text-[20px] sm:text-[24px] font-[600] onest">
+          <h2 className="text-[20px] sm:text-[24px] font-[600] ">
             Credit used
           </h2>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
@@ -712,19 +712,19 @@ const Plan = ({ setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
           <table className="w-full min-w-[600px]">
             <thead>
               <tr className="text-left text-gray-600">
-                <th className="pb-6 pr-8 text-[16px] onest font-[400] text-[#5A687C]">
+                <th className="pb-6 pr-8 text-[16px]  font-[400] text-[#5A687C]">
                   Item
                 </th>
-                <th className="pb-6 px-8 text-[16px] text-nowrap onest font-[400] text-[#5A687C] flex items-center gap-2">
+                <th className="pb-6 px-8 text-[16px] text-nowrap  font-[400] text-[#5A687C] flex items-center gap-2">
                   Credit{" "}
                   <span>
                     <img src="/src/assets/svg/credit.svg" alt="" />
                   </span>
                 </th>
-                <th className="pb-6 px-8 text-[16px] text-nowrap onest font-[400] text-[#5A687C]">
+                <th className="pb-6 px-8 text-[16px] text-nowrap  font-[400] text-[#5A687C]">
                   Used By
                 </th>
-                <th className="pb-6 pl-8 text-[16px] onest font-[400] text-[#5A687C]">
+                <th className="pb-6 pl-8 text-[16px]  font-[400] text-[#5A687C]">
                   Date And Time
                 </th>
               </tr>

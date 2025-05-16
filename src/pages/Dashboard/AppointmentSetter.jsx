@@ -43,7 +43,7 @@ function AppointmentSetter() {
                             }`}
                     >
                         <img src={e.icon} alt={`${e.path}`} />
-                        <div className={`relative w-fit mt-[-1.00px] onest font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === `${e.path}` ? "text-black" : "text-[#5A687C] "
+                        <div className={`relative w-fit mt-[-1.00px] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === `${e.path}` ? "text-black" : "text-[#5A687C] "
                             }`}>
                             {e.label}
                         </div>

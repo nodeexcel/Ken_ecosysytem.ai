@@ -97,14 +97,14 @@ export default function ResetPassword() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-3">
+        <div className="flex flex-col items-center min-h-screen bg-gray-50 p-3">
             <div className="flex items-center gap-2 my-2">
                 <div>
                     <img src={logo} alt="logo" className="w-[47.15px] h-[52px]" />
                 </div>
-                <h1 className="text-[28px] font-semibold text-[#1E1E1E]">Ecosysteme.ai</h1>
+                <h1 className="text-[28px] onest font-semibold text-[#1E1E1E]">Ecosysteme.ai</h1>
             </div>
-            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl border border-[#E1E4EA] mt-3 w-full max-w-[500px]">
+            <form onSubmit={handleSubmit} className="bg-white inter p-8 rounded-2xl border border-[#E1E4EA] mt-3 w-full max-w-[500px]">
                 <div className="space-y-6">
                     <div>
                         <h2 className="text-[28px] font-[700] text-center text-[#292D32]">Set New Password</h2>

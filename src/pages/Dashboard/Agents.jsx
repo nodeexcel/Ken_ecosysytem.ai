@@ -3,6 +3,7 @@ import React from "react";
 import image1 from '../../assets/svg/agent_image1.svg'
 import image2 from '../../assets/svg/agent_image2.svg'
 import { useNavigate } from "react-router-dom";
+import { RequestSend } from "../../icons/icons";
 
 const employees = [
   {
@@ -73,17 +74,19 @@ const Agents = () => {
     <div className="">
       {/* Top Right Button */}
       <div className="flex justify-end items-end pt-3 pr-2">
-        <button className="bg-white gap-2 rounded-2xl flex items-center p-3 onest font-[600] text-[16px]">
+        <button className="bg-white gap-2 rounded-lg flex items-center p-3 text-[#5A687C] border-[1.5px] border-[#E1E4EA] font-[600] text-[16px]">
           <span><img src={image1} alt="image1" /></span>
           Request new feature
-          <span><img src={image2} alt="image2" /></span>
+          <div className="pb-0.5">
+            <RequestSend />
+          </div>
         </button>
       </div>
 
       {/* Welcome Message */}
       <div className="flex justify-center flex-col items-center text-center gap-2 pb-5">
-        <h1 className="onest font-[600] text-2xl">Welcome Merry</h1>
-        <p className="onest font-[400] text-[16px] text-[#5A687C]">
+        <h1 className="font-[600] text-2xl">Welcome Merry</h1>
+        <p className="font-[400] text-[16px] text-[#5A687C]">
           Your AI agents are ready to boost your outreach.
         </p>
       </div>

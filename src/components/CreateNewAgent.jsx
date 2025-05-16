@@ -399,11 +399,11 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
 
     return (
-        <div className="w-full p-4 flex flex-col gap-4 onest ">
+        <div className="w-full p-4 flex flex-col gap-4 ">
             <div className="flex justify-between items-center">
                 <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">Create New Agent</h1>
                 <div className='flex gap-2'>
-                    <button className="bg-white text-[16px] font-[500] text-[#5A687C] border border-[#5A687C] rounded-md text-sm md:text-base px-4 py-2">
+                    <button className="bg-white text-[16px] font-[500] text-[#5A687C] border-[1.5px] border-[#E1E4EA] rounded-md text-sm md:text-base px-4 py-2">
                         Preview Agent
                     </button>
                     <button disabled={loading} onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()} className="bg-[#675FFF] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
@@ -862,7 +862,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 </div>
             </div>
             {updateAgent && (
-                <div className="onest fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
                     <div className="bg-white max-h-[547px] flex flex-col gap-3 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
                         <button
                             onClick={() => setUpdateAgent(false)}

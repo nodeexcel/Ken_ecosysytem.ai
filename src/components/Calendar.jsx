@@ -683,7 +683,7 @@ export default function Calendar() {
   }
 
   return (
-    <div className="gap-6 onest">
+    <div className="gap-6">
       <h1 className="font-semibold text-[#1e1e1e] mb-5 text-2xl leading-8">Calendar</h1>
       <div className="w-full max-w-5xl mx-auto bg-white rounded-xl border border-[#E1E4EA]">
         {renderCalendarHeader()}

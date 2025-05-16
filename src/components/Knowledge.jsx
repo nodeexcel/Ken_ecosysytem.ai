@@ -110,7 +110,7 @@ const Knowledge = () => {
 
 
   return (
-    <div className="flex flex-col w-full items-start gap-6 onest">
+    <div className="flex flex-col w-full items-start gap-6 ">
       <div className="flex items-center justify-between w-full">
         <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
           Knowledge Base
@@ -131,7 +131,7 @@ const Knowledge = () => {
             : "border-[#e1e4ea] text-text-grey"
             } rounded-none`}
         >
-          <span className={`[font-family:'Onest',Helvetica] font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === e.key ? "text-[#5E54FF]"
+          <span className={`font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === e.key ? "text-[#5E54FF]"
             : "text-[#5A687C] "}`}>
             {e.label}
           </span>
@@ -141,7 +141,7 @@ const Knowledge = () => {
       <div className="w-full">
         {renderMainContent()}
       </div>
-      {open && <div className="onest fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
+      {open && <div className=" fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
         <div className="bg-white max-h-[600px] flex flex-col gap-4 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
           <button
             onClick={() => setOpen(false)}

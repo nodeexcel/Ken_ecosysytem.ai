@@ -82,7 +82,7 @@ const ContactsPage = () => {
 
 
   return (
-    <div className="flex flex-col w-full items-start gap-6 onest">
+    <div className="flex flex-col w-full items-start gap-6 ">
       <div className="flex flex-col items-start gap-2.5 w-full">
         <div className="flex items-center justify-between w-full">
           <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
@@ -298,7 +298,7 @@ const ContactsPage = () => {
       }
 
       {open && (
-        <div className="onest fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
+        <div className=" fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
           <div className="bg-white max-h-[547px] flex flex-col gap-3 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
             <button
               onClick={() => setOpen(false)}

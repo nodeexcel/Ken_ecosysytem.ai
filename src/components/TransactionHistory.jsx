@@ -36,18 +36,18 @@ const TransactionHistory = () => {
         renderTransactionData()
     }, [])
     return (
-        <div className="overflow-x-auto p-5 onest">
+        <div className="overflow-x-auto p-5">
             <table className="w-full min-w-[800px]">
                 <thead>
                     <tr className="text-left text-gray-600">
-                        <th className="pb-6 pr-8 text-[16px] onest font-[400] text-[#5A687C]">Transaction</th>
-                        <th className="pb-6 px-8 text-[16px] onest font-[400] text-[#5A687C] flex items-center gap-2">
+                        <th className="pb-6 pr-8 text-[16px] font-[400] text-[#5A687C]">Transaction</th>
+                        <th className="pb-6 px-8 text-[16px] font-[400] text-[#5A687C] flex items-center gap-2">
                             Amount <img src={creditCardIcon} alt="Credit Icon" />
                         </th>
-                        <th className="pb-6 px-8 text-[16px] onest font-[400] text-[#5A687C]">Status</th>
-                        <th className="pb-6 px-8 text-[16px] onest font-[400] text-[#5A687C]">Email</th>
-                        <th className="pb-6 pl-8 text-[16px] onest font-[400] text-[#5A687C]">Date and Time</th>
-                        <th className="pb-6 pl-8 text-[16px] onest font-[400] text-[#5A687C]">Receipt</th>
+                        <th className="pb-6 px-8 text-[16px] font-[400] text-[#5A687C]">Status</th>
+                        <th className="pb-6 px-8 text-[16px] font-[400] text-[#5A687C]">Email</th>
+                        <th className="pb-6 pl-8 text-[16px] font-[400] text-[#5A687C]">Date and Time</th>
+                        <th className="pb-6 pl-8 text-[16px] font-[400] text-[#5A687C]">Receipt</th>
                     </tr>
                 </thead>
                 <tbody>

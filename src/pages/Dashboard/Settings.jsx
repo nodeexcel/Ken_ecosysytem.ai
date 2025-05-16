@@ -12,7 +12,7 @@ import { updatePassword } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import { getTeamMembers, sendInviteEmail } from "../../api/teamMember";
 import TransactionHistory from "../../components/TransactionHistory";
-import { discardData } from "../../store/profileSlice";
+import { PlanIcon, Settings, TeamMemberIcon } from "../../icons/icons";
 
 
 // User profile data
@@ -351,7 +351,7 @@ const SettingsPage = () => {
   const renderMainContent = () => {
     if (activeSidebarItem === "billing") {
       return (
-        <div className="flex flex-col w-full gap-6 onest">
+        <div className="flex flex-col w-full gap-6">
           <Plan setActiveSidebarItem={setActiveSidebarItem} showPlanPopup={showPlanPopup} setShowPlanPopup={setShowPlanPopup} />
         </div>
       );
@@ -360,7 +360,7 @@ const SettingsPage = () => {
     else if (activeSidebarItem === "team") {
       return (
         <>
-          <div className="w-full p-2 flex flex-col gap-3 px-2 onest">
+          <div className="w-full p-2 flex flex-col gap-3 px-2">
             <div className="flex justify-between">
               <h1 className="text-[#1E1E1E] font-semibold text-[20px] md:text-[24px]">Team Members</h1>
               <button className="bg-[#5E54FF] text-white rounded-md text-[14px] md:text-[16px] p-2" onClick={handleInviteTeam}>Invite A Team Member</button>
@@ -529,13 +529,13 @@ const SettingsPage = () => {
     }
 
     return (
-      <div className="flex flex-col w-full items-start gap-5 relative px-4 sm:px-6 onest">
+      <div className="flex flex-col w-full items-start gap-5 relative px-4 sm:px-6">
         {/* Header */}
         <div className="flex flex-col items-start gap-[23px] relative self-stretch w-full flex-[0_0_auto]">
           <div className="flex items-center justify-between relative self-stretch w-full flex-[0_0_auto]">
             <div className="inline-flex items-center gap-2 relative flex-[0_0_auto]">
-              <div className="relative w-fit mt-[-1.00px] [font-family:'Onest',Helvetica] font-semibold text-[#1e1e1e] text-xl sm:text-2xl tracking-[0] leading-8 whitespace-nowrap">
-                <h1 className="text-[20px] sm:text-[24px] font-[600] onest">
+              <div className="relative w-fit mt-[-1.00px] font-semibold text-[#1e1e1e] text-xl sm:text-2xl tracking-[0] leading-8 whitespace-nowrap">
+                <h1 className="text-[20px] sm:text-[24px] font-[600]">
                   General Settings
                 </h1>
               </div>
@@ -562,7 +562,7 @@ const SettingsPage = () => {
                 : "border-[#e1e4ea] text-text-grey"
                 } rounded-none`}
             >
-              <span className={`onest text-[14px] font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === "profile" ? "text-[#675FFF]"
+              <span className={`text-[14px] inter font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === "profile" ? "text-[#675FFF]"
                 : "text-[#5A687C] "}`}>
                 My Profile
               </span>
@@ -574,7 +574,7 @@ const SettingsPage = () => {
                 : "border-[#e1e4ea] text-text-grey"
                 } rounded-none`}
             >
-              <span className={`[font-family:'Onest',Helvetica] font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === "password" ? "text-[#5E54FF]"
+              <span className={`inter font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === "password" ? "text-[#5E54FF]"
                 : "text-[#5A687C] "}`}>
                 Change Password
               </span>
@@ -614,13 +614,13 @@ const SettingsPage = () => {
                   </div>
 
                   {/* Profile Form */}
-                  <div className="flex flex-col items-start gap-4 relative self-stretch w-full">
+                  <div className="flex flex-col items-start gap-4 relative self-stretch w-full text-[#1E1E1E]">
 
                     {/* Name Fields */}
                     <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-[17px] relative self-stretch w-full">
                       {["firstName", "lastName"].map((field, i) => (
                         <div key={field} className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
-                          <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm leading-5">
+                          <label className="font-medium text-text-black text-sm leading-5">
                             {field === "firstName" ? "First Name" : "Last Name"}
                           </label>
                           <input
@@ -644,7 +644,7 @@ const SettingsPage = () => {
                           name="email"
                           value={profileFormData.email === "null" ? '' : profileFormData.email}
                           disabled
-                          className="w-full px-3.5 py-2.5 bg-gray-100 rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
+                          className="w-full px-3.5 py-2.5 bg-[#E1E4EA] rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-[#5A687C] leading-6"
                         />
                       </div>
                       <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
@@ -679,7 +679,13 @@ const SettingsPage = () => {
                         <label className="font-medium text-sm text-text-black">
                           Role
                         </label>
-                        <select
+                        <input
+                          name="role"
+                          disabled
+                          value={profileFormData.role === "null" ? '' : profileFormData.role}
+                          className="w-full px-3.5 py-2.5 bg-[#E1E4EA] rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-[#5A687C] leading-6"
+                        />
+                        {/* <select
                           name="role"
                           value={profileFormData.role}
                           onChange={handleProfileChange}
@@ -690,7 +696,7 @@ const SettingsPage = () => {
                           <option value="Admin">Admin</option>
                           <option value="Member">Member</option>
                           <option value="Guest">Guest</option>
-                        </select>
+                        </select> */}
                       </div>
                     </div>
 
@@ -736,7 +742,7 @@ const SettingsPage = () => {
                           "Update Profile"
                         )}
                       </button>
-                      <button
+                      {/* <button
                         type="button"
                         onClick={() => {
                           dispatch(discardData())
@@ -744,7 +750,7 @@ const SettingsPage = () => {
                         className="px-4 py-2 bg-[#f5f7ff] text-[#5A687C] text-[16px] border-[1.5px] border-[#E1E4EA] rounded-lg"
                       >
                         Cancel
-                      </button>
+                      </button> */}
                     </div>
                     <div>
                       <button className="w-full text-[13px] font-[500] bg-transparent text-[#5A687C]">
@@ -762,18 +768,18 @@ const SettingsPage = () => {
             <div className="mt-5">
               <div className="w-full max-w-[648px] bg-[#fff] border border-solid border-[#e1e4ea] rounded-2xl">
                 <div className="flex flex-col items-start gap-6 p-4 sm:p-[30px]">
-                  <div className="flex flex-col items-start gap-1">
-                    <h2 className="[font-family:'Onest',Helvetica] font-semibold text-text-black text-lg leading-7">
+                  {/* <div className="flex flex-col items-start gap-1">
+                    <h2 className="font-semibold text-text-black text-lg leading-7">
                       Change Password
                     </h2>
-                    <p className="[font-family:'Onest',Helvetica] text-text-grey text-sm leading-5">
+                    <p className="text-text-grey text-sm leading-5">
                       Please enter your current password to change your password
                     </p>
-                  </div>
+                  </div> */}
 
                   <div className="flex flex-col gap-4 w-full">
                     <div className="flex flex-col gap-1.5">
-                      <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm leading-5">
+                      <label className="font-medium text-text-black text-sm leading-5">
                         Current Password
                       </label>
                       <div className="relative">
@@ -785,7 +791,7 @@ const SettingsPage = () => {
                           name="currentPassword"
                           value={formData.currentPassword}
                           onChange={handlePasswordChange}
-                          className="w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base leading-6"
+                          className="w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs font-normal text-text-black text-base leading-6"
                           placeholder="Enter current password"
                         />
                         <button
@@ -806,7 +812,7 @@ const SettingsPage = () => {
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                      <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm leading-5">
+                      <label className="font-medium text-text-black text-sm leading-5">
                         New Password
                       </label>
                       <div className="relative">
@@ -818,7 +824,7 @@ const SettingsPage = () => {
                           name="newPassword"
                           value={formData.newPassword}
                           onChange={handlePasswordChange}
-                          className="w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base leading-6"
+                          className="w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs font-normal text-text-black text-base leading-6"
                           placeholder="Enter new password"
                         />
                         <button
@@ -839,8 +845,8 @@ const SettingsPage = () => {
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                      <label className="[font-family:'Onest',Helvetica] font-medium text-text-black text-sm leading-5">
-                        Confirm New Password
+                      <label className="font-medium text-text-black text-sm leading-5">
+                        Confirm Password
                       </label>
                       <div className="relative">
                         <div className="absolute left-3.5 top-1/2 transform -translate-y-1/2">
@@ -851,8 +857,8 @@ const SettingsPage = () => {
                           name="confirmPassword"
                           value={formData.confirmPassword}
                           onChange={handlePasswordChange}
-                          className="w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs [font-family:'Onest',Helvetica] font-normal text-text-black text-base leading-6"
-                          placeholder="Confirm new password"
+                          className="w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs font-normal text-text-black text-base leading-6"
+                          placeholder="Confirm password"
                         />
                         <button
                           type="button"
@@ -889,13 +895,13 @@ const SettingsPage = () => {
                         " Update Password"
                       )}
                     </button>
-                    <button onClick={() => setFormData({
+                    {/* <button onClick={() => setFormData({
                       currentPassword: "",
                       newPassword: "",
                       confirmPassword: "",
                     })} className="w-full sm:w-auto px-4 py-2 bg-[#f5f7ff] text-text-grey border border-[#5a687c] rounded-lg">
                       Cancel
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </div>
@@ -910,7 +916,7 @@ const SettingsPage = () => {
 
 
   return (
-    <div className="h-full w-full bg-[#F6F7F9]">
+    <div className="h-full inter w-full bg-[#F6F7F9]">
       {/* <div>
         <div className='flex items-center pl-4 py-3' onClick={() => navigate("/dashboard")}>
           <MdOutlineKeyboardArrowLeft size={25} />
@@ -920,15 +926,14 @@ const SettingsPage = () => {
       </div> */}
       <div className="flex flex-col md:flex-row items-start gap-8 relative pl-4 py-3 w-full">
         {/* Sidebar Navigation */}
-        <div className="flex flex-col w-full md:w-[153px] items-start gap-2 relative">
+        <div className="flex inter flex-col w-full md:w-[153px] items-start gap-2 relative">
           <div
             onClick={() => setActiveSidebarItem("general")}
             className={`flex justify-center md:justify-start items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#e1e5ea]" : ""
               }`}
           >
-            <SettingsIcon className={`w-4 h-4 ${activeSidebarItem === "general" ? "text-black" : "text-[#5A687C] "
-              } `} />
-            <div className={`relative w-fit mt-[-1.00px] onest font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "general" ? "text-black" : "text-[#5A687C] "
+            <Settings status={activeSidebarItem === "general"}/>
+            <div className={`relative w-fit mt-[-1.00px] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "general" ? "text-black" : "text-[#5A687C] "
               }`}>
               General Settings
             </div>
@@ -939,9 +944,8 @@ const SettingsPage = () => {
             className={`flex justify-center md:justify-start items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#e1e5ea]" : ""
               }`}
           >
-            <CreditCardIcon className={`w-4 h-4 ${activeSidebarItem === "billing" ? "text-black" : "text-[#5A687C] "
-              } `} />
-            <div className={`relative w-fit mt-[-1.00px] [font-family:'Onest',Helvetica] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "billing" ? "text-black" : "text-[#5A687C] "
+            <PlanIcon status={activeSidebarItem === "billing"} />
+            <div className={`relative w-fit mt-[-1.00px] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "billing" ? "text-black" : "text-[#5A687C] "
               }`}>
               Plan &amp; Billing
             </div>
@@ -952,9 +956,8 @@ const SettingsPage = () => {
             className={`flex justify-center md:justify-start items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "team" ? "bg-[#e1e5ea]" : ""
               }`}
           >
-            <UsersIcon className={`w-4 h-4 ${activeSidebarItem === "team" ? "text-black" : "text-[#5A687C] "
-              } `} />
-            <div className={`relative w-fit mt-[-1.00px] [font-family:'Onest',Helvetica] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "team" ? "text-black" : "text-[#5A687C] "
+            <TeamMemberIcon status={activeSidebarItem === "team"} />
+            <div className={`relative w-fit mt-[-1.00px] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "team" ? "text-black" : "text-[#5A687C] "
               }`}>
               Team Members
             </div>

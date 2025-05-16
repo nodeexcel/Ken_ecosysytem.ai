@@ -71,7 +71,7 @@ const AdditionalIntegration = ({ integartionData }) => {
                                     </div>
                                     <h1 className="text-[16px] font-[500] font-inter">{integartionData.name === "WhatsApp" ? "15557158822" : "@Abcxyz"}</h1>
                                 </div>
-                                <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">Read and write using the {integartionData.label}.</li>
+                                <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">Read and write using the {integartionData.name}.</li>
                             </div>
                             <BiDotsVerticalRounded />
                         </div>
@@ -85,7 +85,7 @@ const AdditionalIntegration = ({ integartionData }) => {
     }
 
     return (
-        <div className="flex flex-col w-full items-start gap-6 onest md:max-w-[763px] mx-auto">
+        <div className="flex flex-col w-full items-start gap-6 md:max-w-[763px] mx-auto">
             <div className="flex items-center justify-between w-full">
                 <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
                     {integartionData.name}
@@ -108,7 +108,7 @@ const AdditionalIntegration = ({ integartionData }) => {
                         : "border-[#e1e4ea] text-text-grey"
                         } rounded-none`}
                 >
-                    <span className={`[font-family:'Onest',Helvetica] font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${integartionData.connectedAccounts > 0 ? "text-[black]"
+                    <span className={`font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${integartionData.connectedAccounts > 0 ? "text-[black]"
                         : "text-[#5A687C] "}`}>
                         {integartionData.connectedAccounts} {e.label}
                     </span>
@@ -210,7 +210,7 @@ const AdditionalIntegration = ({ integartionData }) => {
                     </div>
                 </div>
             </div>} */}
-            {open && <div className="onest fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
+            {open && <div className="fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
                 <div className="bg-white max-h-[600px] flex flex-col gap-2 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
                     <button
                         onClick={() => setOpen(false)}
@@ -307,7 +307,7 @@ const AdditionalIntegration = ({ integartionData }) => {
             <div className="w-full">
                 {renderMainContent2()}
             </div>
-            {createTemplateOpen && <div className="onest fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
+            {createTemplateOpen && <div className="fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
                 <div className="bg-white max-h-[600px] flex flex-col gap-2 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
                     <button
                         onClick={() => setCreateTemplateOpen(false)}
@@ -344,7 +344,7 @@ const AdditionalIntegration = ({ integartionData }) => {
                                     type="text"
                                     name="message"
                                     placeholder="Enter message"
-                                    className="w-full focus:outline-none"
+                                    className="w-full focus:outline-none resize-none"
                                 />
                             </div>
                         </div>

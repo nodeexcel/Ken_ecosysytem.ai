@@ -81,7 +81,7 @@ const Conversation = () => {
     ]
 
     return (
-        <div className="w-full p-4 flex flex-col gap-4 onest ">
+        <div className="w-full p-4 flex flex-col gap-4 ">
             <div className="flex justify-between items-center">
                 <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">Conversation</h1>
             </div>

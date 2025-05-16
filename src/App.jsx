@@ -20,14 +20,15 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Notification from './pages/Dashboard/Notification'
 import Phone from './pages/Dashboard/Phone'
 import Campaigns from './pages/Dashboard/Campaigns'
-import PrivacyTerms from './pages/PrivacyTerms'
+import PrivacyPolicy from './components/PrivacyPolicy'
+import TermsAndConditions from './components/TermsAndConditions'
 
 
 
 function App() {
 
   return (
-    <div className='h-screen onest'>
+    <div className='h-screen inter'>
       <Routes>
         <Route path='/' element={<Login />} />
         <Route path='/create-password' element={<SetPassword />} />
@@ -36,8 +37,8 @@ function App() {
         <Route path='/success' element={<Success />} />
         <Route path='/cancel' element={<PaymentFailed />} />
         <Route path='/accept-invite' element={<AcceptInvitation />} />
-        <Route path='/terms-conditions' element={< PrivacyTerms />} />
-        <Route path='/privacy-policy' element={< PrivacyTerms />} />
+        <Route path='/terms-conditions' element={< TermsAndConditions />} />
+        <Route path='/privacy-policy' element={< PrivacyPolicy />} />
         <Route path='/dashboard' element={<Dashboard />}>
           <Route path='' element={<Home />} />
           <Route path="notification" element={<Notification />} />

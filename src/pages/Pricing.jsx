@@ -543,7 +543,7 @@ const PricingPage = () => {
                 />
               </svg>
             </div>
-            <span className="text-[16px] sm:text-[20px] font-[600] onest">Manage Plan</span>
+            <span className="text-[16px] sm:text-[20px] font-[600]">Manage Plan</span>
           </div>
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
@@ -586,16 +586,16 @@ const PricingPage = () => {
                   <div className="p-2 rounded-lg">
                     {plan.svg}
                   </div>
-                  <span className="font-[600] text-[16px] sm:text-[18px] onest">{plan.name}</span>
+                  <span className="font-[600] text-[16px] sm:text-[18px]">{plan.name}</span>
                 </div>
                 {plan.discount && (
-                  <span className="text-[#34C759] text-[14px] sm:text-[18px] onest bg-[#34C7591A] px-2 py-1 rounded">
+                  <span className="text-[#34C759] text-[14px] sm:text-[18px] bg-[#34C7591A] px-2 py-1 rounded">
                     {plan.discount}
                   </span>
                 )}
               </div>
               <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-[20px] sm:text-[25px] font-[600] onest">{plan.price}</span>
+                <span className="text-[20px] sm:text-[25px] font-[600]">{plan.price}</span>
                 {plan.period && (
                   <span className="text-[#5A687C] font-[600] text-[14px] sm:text-[18px]">
                     {plan.period}

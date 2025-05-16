@@ -67,3 +67,7 @@ body{
 .offer{
   background-image: url('./assets/svg/cancelpage_backgound.svg');
 }
+
+.inter {
+  font-family: "Inter", sans-serif;
+}

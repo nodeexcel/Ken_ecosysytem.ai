@@ -17,14 +17,12 @@ const BrainAI = () => {
 
   const renderMainContent = () => {
     switch (activePath) {
-      case "contacts":
-        return <Contacts />;
       case "knowledge":
         return <Knowledge />;
       case "integration":
         return <Integration />;
       default:
-        return null;
+        return <Contacts />;
     }
   };
 

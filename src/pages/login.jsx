@@ -440,9 +440,9 @@ export default function Login() {
                 <div>
                     <img src={logo} alt="logo" className="w-[47.15px] h-[52px]" />
                 </div>
-                <h1 className="text-[28px] font-semibold text-[#1E1E1E]">Ecosysteme.ai</h1>
+                <h1 className="text-[28px] onest font-semibold text-[#1E1E1E]">Ecosysteme.ai</h1>
             </div>
-            <div className="bg-white p-8 rounded-2xl border border-[#E1E4EA] mt-3 w-full max-w-[500px]">
+            <div className="bg-white p-8 inter rounded-2xl border border-[#E1E4EA] mt-3 w-full max-w-[500px]">
                 {step === "email" && renderEmailStep()}
                 {step === "otp" && renderOtpStep()}
                 {step === "password" && renderPasswordStep()}
@@ -455,22 +455,31 @@ export default function Login() {
                             <hr className="text-[#E1E4EA] min-w-[201px]" />
                         </div>
                         {errors.google_auth && <p className="text-red-500 text-sm my-1 text-center">{errors.google_auth}</p>}
-                        <button onClick={() => loginGoogle()} className="w-full flex cursor-pointer items-center justify-center border border-gray-300 py-[14px] rounded-[8px] hover:bg-gray-100 transition">
+                        <button onClick={() => loginGoogle()} className="w-full flex cursor-pointer items-center font-[600] text-[#5A687C] text-[14px] justify-center border border-gray-300 py-[14px] rounded-[8px] hover:bg-gray-100 transition">
                             <FcGoogle className="mr-2 text-xl" /> Continue with Google
                         </button>
                     </>
                 )}
+                {step !== "otp" && (
+                    <p className="text-center mt-6 text-[#5A687C] text-[14px]">
+                        Don’t have an account?{" "}
+                        <span onClick={getSubscriptionPlan} className="hover:underline text-[#675FFF] text-[14px] font-semibold cursor-pointer">
+                            Sign Up
+                        </span>
+                    </p>
+                )}
             </div>
 
-            {step !== "otp" && (
-                <p className="text-center mt-6 text-[#5A687C] text-[14px]">
-                    Don’t have an account?{" "}
-                    <span onClick={getSubscriptionPlan} className="hover:underline text-[#675FFF] text-[14px] font-semibold cursor-pointer">
-                        Sign Up
-                    </span>
-                </p>
-            )}
-            {open && <div className="onest fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
+            <p className="text-center inter font-[400] my-6 text-[#5A687C] text-[12px]">
+                By signing in you agree to our{" "}
+                <span onClick={() => navigate("/terms-conditions")} className="underline text-[#675FFF] text-[12px] font-[600] cursor-pointer">
+                    Terms and Conditions
+                </span> & <span onClick={() => navigate("/privacy-policy")} className="underline text-[#675FFF] text-[12px] font-[600] cursor-pointer">
+                    Privacy Policy
+                </span>
+            </p>
+
+            {open && <div className="inter fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
                 <div className="bg-white max-h-[600px] flex flex-col gap-4 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
                     <button
                         onClick={() => {

@@ -72,7 +72,7 @@ const staticData2 = [
 function Analytics() {
     const [selectedDate, setSelectedDate] = useState(new Date())
     return (
-        <div className="w-full p-4 flex flex-col gap-4 onest ">
+        <div className="w-full p-4 flex flex-col gap-4 ">
             <div className="flex justify-between items-center">
                 <div className='flex flex-col gap-2'>
                     <h1 className="text-[#1E1E1E] font-[600] text-xl md:text-[24px]">Analytics</h1>
