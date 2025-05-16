@@ -43,7 +43,10 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     }
 
     const renderColor = (index) => {
-        if (location.pathname.includes(sidebarItems[index].id)) {
+        if(isNotification && index===6){
+           return "#675FFF"
+        }
+        else if (location.pathname.includes(sidebarItems[index].id)) {
             return "#675FFF"
         }
         return "#5A687C"
