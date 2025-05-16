@@ -1,15 +1,51 @@
 import { Contact, Download, Mail, Phone, SquarePen, Trash2, Upload, X } from "lucide-react";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import { Delete, Duplicate, Edit, Notes, ThreeDots } from "../icons/icons";
+import { Delete, Duplicate, Edit, Notes, ThreeDots, UploadIcon } from "../icons/icons";
 
 const ContactsPage = () => {
   const [activeTab, setActiveTab] = useState("all-contacts");
   const [open, setOpen] = useState(false);
+  const [openImport, setOpenImport] = useState(false);
   const [formData, setFormData] = useState({})
   const [formErrors, setFormErrors] = useState({})
   const [loading, setLoading] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState(null);
+
+   const fileInputRef = useRef(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [dragActive, setDragActive] = useState(false);
+
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      console.log('Selected file:', file);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setDragActive(true);
+  };
+
+  const handleDragLeave = () => {
+    setDragActive(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragActive(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      console.log('Dropped file:', file);
+    }
+  };
 
   const contacts = [
     {
@@ -97,7 +133,7 @@ const ContactsPage = () => {
               </span>
             </button>}
 
-            {activeTab !== "lists" && <button className="flex items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5f58e8] rounded bg-white">
+            {activeTab !== "lists" && <button onClick={() => setOpenImport(true)} className="flex items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5f58e8] rounded bg-white">
               <Upload className="text-[#675FFF]" />
               <span className="font-medium text-base leading-6 text-[#675FFF]">Import</span>
             </button>}
@@ -369,7 +405,88 @@ const ContactsPage = () => {
         </div>
       )}
 
+      {openImport && (
+        <div className=" fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
+          <div className="bg-white max-h-[547px] flex flex-col gap-3 w-full max-w-2xl rounded-2xl shadow-xl p-6 relative">
+            <button
+              onClick={() => setOpenImport(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+            >
+              <X className="w-5 h-5" />
+            </button>
 
+            <h2 className="text-[#1E1E1E] font-[600] text-[20px] mb-2">Upload your files</h2>
+            <p className="text-[16px] font-[400] text-[#5A687C]">Before uploading files. make sure your file is ready to import. <span className="text-[#675FFF]">Download sample file</span> or <span className="text-[#675FFF]">learn more</span>.</p>
+            <div className="flex flex-col gap-2">
+              <div>
+                <label className="block text-sm font-medium mb-1">Upload File / Images</label>
+                <div className="mt-2">
+                  <div
+                    onClick={handleClick}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    className={`flex flex-col items-center justify-center py-4 border-2 border-dashed rounded-md text-center cursor-pointer transition ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-[#335CFF80] bg-[#F5F7FF]'
+                      }`}
+                  >
+                    <UploadIcon />
+                    <p className="text-[18px] font-[600] text-[#1E1E1E] mt-2">
+                      Upload from your computer
+                    </p>
+                    <p className="text-[14px] font-[500] text-[#5A687C] mt-1">
+                      or drag and drop
+                    </p>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                  </div>
+
+                  {selectedFile && (
+                    <div className="mt-3 text-sm text-gray-700">
+                      <strong>Selected File:</strong> {selectedFile.name}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div>
+                <label className="block mt-2 text-[14px] font-medium text-[#292D32] mb-1">Choose how to import contacts</label>
+                <div className="w-full flex items-center border border-gray-300 rounded-lg">
+                  <select
+                    name="channel"
+                    className="w-full bg-white px-4 py-2 rounded-lg focus:outline-none"
+                  >
+                    <option value="email">Create contact</option>
+                    <option value="Member">Update contact</option>
+                    <option value="Guest">Create and update contact</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Find existing contacts based on</label>
+                <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-2">
+                  <input
+                    type="text"
+                    name="contact"
+                    placeholder="Contact id, phone ,then email"
+                    className="w-full focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-2 mt-3">
+              <button onClick={() => setOpenImport(false)} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                Cancel
+              </button>
+              <button onClick={() => setOpenImport(false)} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
+                {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MoreHorizontal, X } from "lucide-react";
-import { BritishFlag, Delete, Notes, Phone, TestCall } from "../icons/icons";
+import { BritishFlag, Delete, Notes, Phone, TestCall, ThreeDots } from "../icons/icons";
 import DatePicker from "react-datepicker";
 import { LuCalendarDays } from "react-icons/lu";
 
@@ -73,12 +73,12 @@ export default function InBoundCalls() {
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold text-black">Inbound Calls</h1>
-                <button
+                {/* <button
                     className="bg-[#7065F0] text-white font-medium px-5 py-2 rounded-lg shadow"
                     onClick={() => setShowModal(true)}
                 >
                     New Campaign
-                </button>
+                </button> */}
             </div>
 
             {/* Filters */}
@@ -120,7 +120,7 @@ export default function InBoundCalls() {
                             <th className="px-6 py-3 font-medium whitespace-nowrap">Date</th>
                             <th className="px-6 py-3 font-medium whitespace-nowrap">Language</th>
                             <th className="px-6 py-3 font-medium whitespace-nowrap">Voice</th>
-                            <th className="px-6 py-3 font-medium whitespace-nowrap">Recipient No</th>
+                            <th className="px-6 py-3 font-medium whitespace-nowrap">Caller no</th>
                             <th className="px-6 py-3 font-medium whitespace-nowrap">Status</th>
                             <th className="px-6 py-3 font-medium whitespace-nowrap">Duration</th>
                             <th className="px-6 py-3 font-medium whitespace-nowrap">Actions</th>
@@ -144,8 +144,8 @@ export default function InBoundCalls() {
                                 </td>
                                 <td className="px-6 py-4">{agent.duration}</td>
                                 <td className="px-6 py-4">
-                                    <button onClick={() => handleDropdownClick(index)} className="p-2 hover:bg-gray-100 rounded-lg">
-                                        <MoreHorizontal size={18} className="text-gray-500" />
+                                    <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
+                                        <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
                                     </button>
                                     {activeDropdown === index && (
                                         <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MoreHorizontal, X } from "lucide-react";
-import { BritishFlag, Delete, Notes, Phone, TestCall } from "../icons/icons";
+import { BritishFlag, Delete, Notes, Phone, TestCall, ThreeDots } from "../icons/icons";
 import DatePicker from "react-datepicker";
 import { LuCalendarDays } from "react-icons/lu";
 
@@ -158,8 +158,8 @@ export default function OutBoundCalls() {
                                 </td>
                                 <td className="px-6 py-4">{agent.duration}</td>
                                 <td className="px-6 py-4">
-                                    <button onClick={() => handleDropdownClick(index)} className="p-2 hover:bg-gray-100 rounded-lg">
-                                        <MoreHorizontal size={18} className="text-gray-500" />
+                                    <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
+                                        <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
                                     </button>
                                     {activeDropdown === index && (
                                         <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">

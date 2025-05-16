@@ -1,5 +1,6 @@
 import React from "react";
 import { MoreHorizontal } from "lucide-react";
+import { ThreeDots } from "../icons/icons";
 
 const agents = [
   {
@@ -80,9 +81,14 @@ export default function CallAgentsPage() {
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  <button className="p-2 hover:bg-gray-100 rounded-lg">
-                    <MoreHorizontal size={18} className="text-gray-500" />
-                  </button>
+                  <div className='flex items-center gap-2'>
+                    <button className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg'>
+                      View Report
+                    </button>
+                    <button className="p-2 rounded-lg">
+                      <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
