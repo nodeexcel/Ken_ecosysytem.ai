@@ -5,12 +5,13 @@ import analytics from '../../assets/svg/analytics.svg'
 import AgentsSeth from '../../components/AgentsSeth'
 import Conversation from '../../components/Conversation'
 import Analytics from '../../components/Analytics'
+import DemoChat from '../../components/DemoChat'
 
 const sideMenuList = [
     { label: "Agents", icon: agents, path: "agents" },
     { label: "Conversations", icon: conversation, path: "conversations" },
     { label: "Analytics", icon: analytics, path: "analytics" },
-
+    { label: "Demo Chat", icon: conversation, path: "demo" },
 ]
 
 
@@ -22,6 +23,8 @@ function AppointmentSetter() {
                 return <Conversation />
             case "analytics":
                 return <Analytics />;
+            case "demo":
+                return <DemoChat />;
             default:
                 return <AgentsSeth />
         }

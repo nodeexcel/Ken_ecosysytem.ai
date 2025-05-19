@@ -141,7 +141,7 @@ const SettingsPage = () => {
   }, [errorMessage])
 
   useEffect(() => {
-    if (teamMembersData?.length > 0) {
+    if (teamMembersData?.membersData?.length > 0) {
       setTeamMembersDataLoading(false)
     }
 
@@ -155,7 +155,7 @@ const SettingsPage = () => {
 
       if (response?.status === 200) {
         setTeamMembersData(response?.data?.data)
-        if (response?.data?.data?.length == 0) {
+        if (response?.data?.data?.membersData?.length == 0) {
           setTeamMembersDataLoading(false)
           setTeamMembersDataMessage("No Data Found")
         }
@@ -301,8 +301,8 @@ const SettingsPage = () => {
     const newErrors = { email: "", limit: "" };
     setInviteErrors(newErrors)
 
-    if ((userDetails?.user?.totalTeamMember - userDetails?.user?.numberOfTeamMembers) === 0) {
-      newErrors.limit = `You’ve reached the limit for your plan (${userDetails?.user?.totalTeamMember} members).`;
+    if ((teamMembersData?.teamSize - teamMembersData?.teamMembers) === 0) {
+      newErrors.limit = `You’ve reached the limit for your plan (${teamMembersData?.teamSize} members).`;
     }
     if (!emailInvite || !emailInvite.includes("@")) {
       newErrors.email = "Please enter a valid email address.";
@@ -352,7 +352,7 @@ const SettingsPage = () => {
     if (activeSidebarItem === "billing") {
       return (
         <div className="flex flex-col w-full gap-6">
-          <Plan setActiveSidebarItem={setActiveSidebarItem} showPlanPopup={showPlanPopup} setShowPlanPopup={setShowPlanPopup} />
+          <Plan teamMembersData={teamMembersData} setActiveSidebarItem={setActiveSidebarItem} showPlanPopup={showPlanPopup} setShowPlanPopup={setShowPlanPopup} />
         </div>
       );
     }
@@ -397,7 +397,7 @@ const SettingsPage = () => {
                   </tr>
                 </thead>
                 <tbody className=" rounded-lg">
-                  {teamMembersDataLoading ? <div><span className='loader' /></div> : teamMembersDataMessage ? <p>{teamMembersDataMessage}</p> : <>{teamMembersData?.length > 0 && teamMembersData.map((user, index) => (
+                  {teamMembersDataLoading ? <div><span className='loader' /></div> : teamMembersDataMessage ? <p>{teamMembersDataMessage}</p> : <>{teamMembersData?.membersData?.length > 0 && teamMembersData?.membersData.map((user, index) => (
                     <tr key={index} className="bg-white">
                       <td className="px-6 py-4 whitespace-nowrap flex items-center gap-2 border-l-1 border-t-1 border-b-1 border-[#E1E4EA] rounded-l-lg">
                         <div className="w-8 h-8 bg-[#E8E9FF] text-[#5E54FF] rounded-full flex items-center justify-center font-semibold text-sm">

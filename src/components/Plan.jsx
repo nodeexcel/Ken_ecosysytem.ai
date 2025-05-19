@@ -540,7 +540,7 @@ const CancelSubscriptionPopup = ({ onClose }) => {
   )
 }
 
-const Plan = ({ setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
+const Plan = ({ teamMembersData,setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
   const [showCreditPopup, setShowCreditPopup] = useState(false);
   const [cancelPopup, setCancelPopup] = useState(false)
   const creditUsageData = [
@@ -575,6 +575,7 @@ const Plan = ({ setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
       dateTime: "27/03/2025 03:30 PM",
     },
   ];
+  const role=useSelector((state)=>state.profile.user.role)
 
   return (
     <div className="p-4 sm:p-6 w-full">
@@ -667,8 +668,8 @@ const Plan = ({ setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
             </button>
           </div>
           <div className="flex flex-col gap-2">
-            <span className="text-gray-500 text-sm">Users</span>
-            <span className="text-[24px] font-[600]  ">1/5</span>
+            <span className="text-gray-500 text-sm">{role}</span>
+            <span className="text-[24px] font-[600]  ">{teamMembersData.teamMembers}/{teamMembersData.teamSize}</span>
           </div>
         </div>
       </div>

@@ -61,3 +61,36 @@ export const updateAppointmentSetter = async (payload) => {
         return error;
     }
 };
+
+
+export const chatAgent = async (payload,id) => {
+    try {
+        const response= await axiosInstance.post(`http://116.202.210.102:8000/chat-with-agent/${id}`,payload);
+        return response
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}
+
+
+export const getChats = async () => {
+    try {
+        const response= await axiosInstance.get(`http://116.202.210.102:8000/get-chats`);
+        return response
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}
+
+
+export const getChatHistory = async (id) => {
+    try {
+        const response= await axiosInstance.get(`http://116.202.210.102:8000/get-chat-history/${id}`);
+        return response
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}

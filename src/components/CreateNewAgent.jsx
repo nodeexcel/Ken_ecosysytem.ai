@@ -16,8 +16,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
         objective_of_the_agent: '',
         calendar_choosed: '',
-        reply_min_time: 15,
-        reply_max_time: 60,
+        // reply_min_time: 15,
+        // reply_max_time: 60,
         is_followups_enabled: true,
         follow_up_details: { number_of_followups: 2, min_time: 15, max_time: 60 },
         emoji_frequency: 25,
@@ -665,7 +665,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                     {/* Message Time Range */}
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                    {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                         {globalMessageTimeRange.map((each) => (
                             <div key={each.key} className="flex flex-col items-start gap-1.5 w-full">
                                 <label className="font-medium text-[#1e1e1e] text-sm">
@@ -695,7 +695,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             </div>
                         ))}
 
-                    </div>
+                    </div> */}
 
 
                     {/* Followup Options */}

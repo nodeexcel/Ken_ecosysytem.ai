@@ -23,6 +23,20 @@ const staticData = [
   { header: "Skill improvement area", description: "Looking to improve in an unspecified area to help Lev grow." }
 ]
 
+const NoData = ({ setOpen }) => {
+  return (
+    <div className="mt-3 max-w-[648px]">
+      <div className="w-full gap-3 min-h-[360px] flex flex-col justify-center items-center border border-solid border-[#e1e4ea] bg-white rounded-2xl">
+        <div onClick={setOpen}>
+          <img src={nodata} alt="nodata" />
+        </div>
+        <h1 className="text-[20px] font-[600] font-inter">Brain AI is empty</h1>
+        <p className="text-[14px] font-[500] font-inter">Add information to use it</p>
+      </div>
+    </div>
+  )
+}
+
 const Knowledge = () => {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("snippet")
@@ -33,7 +47,16 @@ const Knowledge = () => {
   const [websiteUrl, setWebsiteUrl] = useState("")
   const [formData, setFormData] = useState({})
   const [loading, setLoading] = useState(false)
-  const [snippetsData, setSnippetsData] = useState()
+  const [knowledgeData, setKnowledgeData] = useState({})
+  const [loadingData, setLoadingData] = useState(false)
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev, [name]: value
+    }))
+  }
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -84,15 +107,17 @@ const Knowledge = () => {
   }
 
   const handleSnippetsData = async () => {
-    setSnippetsData({})
+    setLoadingData(true)
     try {
       const response = await getKnowledgeSnippets()
       if (response.status === 200) {
-        setSnippetsData(response.data.snippets)
+        setKnowledgeData(response.data)
       }
 
     } catch (error) {
       console.log(error)
+    } finally {
+      setLoadingData(false)
     }
   }
 
@@ -102,14 +127,19 @@ const Knowledge = () => {
 
   const handleSubmit = () => {
     switch (activeTab) {
-      case "snippet":
+      case "website":
         const payload = {
-          data: snippetDetails,
+          data: formData.website,
           data_type: activeTab
         }
         handleKnowledge(payload)
         break;
       default:
+        const data = {
+          data: formData.snippet,
+          data_type: activeTab
+        }
+        handleKnowledge(data)
         break;
     }
   }
@@ -119,53 +149,43 @@ const Knowledge = () => {
     switch (activeTab) {
       case "website":
         return (
-          <div className="mt-3 max-w-[648px]">
-            <div className="w-full gap-3 min-h-[360px] flex flex-col justify-center items-center border border-solid border-[#e1e4ea] bg-white rounded-2xl">
-              <div>
-                <img src={nodata} alt="nodata" />
+          <>
+            {loadingData ? <div className="flex justify-center items-center"><span className="loader" /></div> : knowledgeData?.website?.length > 0 ? <div className="mt-3 max-w-[648px]">
+              <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
+                {knowledgeData?.website?.length > 0 && knowledgeData?.website.map((e, i) => <div key={i} className="bg-[#f7f8fc] p-4 rounded-xl flex items-center gap-2">
+                  <div className="text-[#675FFF]">
+                    W
+                  </div>
+                  <div>
+                    <a href={e} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C]">{e}</a>
+                  </div>
+                </div>)}
               </div>
-              <h1 className="text-[20px] font-[600] font-inter">Brain AI is empty</h1>
-              <p className="text-[14px] font-[500] font-inter">Add information to use it</p>
-            </div>
-          </div>
+            </div> :
+              <NoData setOpen={() => setOpen(true)} />}
+          </>
         )
 
       case "snippet":
         return (
           <>
-            {snippetsData?.length > 0 ? <div className="mt-3 max-w-[648px]">
+            {loadingData ? <div className="flex justify-center items-center"><span className="loader" /></div> : knowledgeData?.snippets?.length > 0 ? <div className="mt-3 max-w-[648px]">
               <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
-                {snippetsData?.length > 0 && snippetsData.map((e,i) => <div key={i} className="bg-[#f7f8fc] p-4 rounded-xl flex items-center gap-2">
+                {knowledgeData?.snippets?.length > 0 && knowledgeData?.snippets.map((e, i) => <div key={i} className="bg-[#f7f8fc] p-4 rounded-xl flex items-center gap-2">
                   <div className="pt-1">
                     <img src={letter} alt="letter" />
                   </div>
                   <div>
-                    <p className="text-[14px] font-[400] font-inter text-[#5A687C]">{e.text}</p>
+                    <p className="text-[14px] font-[400] font-inter text-[#5A687C]">{e}</p>
                   </div>
                 </div>)}
               </div>
-            </div> : <div className="mt-3 max-w-[648px]">
-              <div className="w-full gap-3 min-h-[360px] flex flex-col justify-center items-center border border-solid border-[#e1e4ea] bg-white rounded-2xl">
-                <div>
-                  <img src={nodata} alt="nodata" />
-                </div>
-                <h1 className="text-[20px] font-[600] font-inter">Brain AI is empty</h1>
-                <p className="text-[14px] font-[500] font-inter">Add information to use it</p>
-              </div>
-            </div>}
+            </div> : <NoData setOpen={() => setOpen(true)} />}
           </>
         )
       default:
         return (
-          <div className="mt-3 max-w-[648px]">
-            <div className="w-full gap-3 min-h-[360px] flex flex-col justify-center items-center border border-solid border-[#e1e4ea] bg-white rounded-2xl">
-              <div>
-                <img src={nodata} alt="nodata" />
-              </div>
-              <h1 className="text-[20px] font-[600] font-inter">Brain AI is empty</h1>
-              <p className="text-[14px] font-[500] font-inter">Add information to use it</p>
-            </div>
-          </div>
+          <NoData setOpen={() => setOpen(true)} />
         )
     }
   }
@@ -282,9 +302,9 @@ const Knowledge = () => {
                 <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
                   <textarea
                     type="text"
-                    name="details"
-                    value={snippetDetails}
-                    onChange={(e) => setSnippetDetail(e.target.value)}
+                    name="snippet"
+                    value={formData?.snippet}
+                    onChange={handleChange}
                     placeholder="The more details, the better!"
                     rows={3}
                     className="w-full focus:outline-none"
@@ -299,8 +319,8 @@ const Knowledge = () => {
                   <input
                     type="text"
                     name="website"
-                    value={websiteUrl}
-                    onChange={(e) => setWebsiteUrl(e.target.value)}
+                    value={formData?.website}
+                    onChange={handleChange}
                     placeholder="https://ecosystem.ai.com"
                     className="w-full focus:outline-none"
                   />

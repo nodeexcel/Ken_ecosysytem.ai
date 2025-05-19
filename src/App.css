@@ -71,3 +71,17 @@ body{
 .inter {
   font-family: "Inter", sans-serif;
 }
+
+.three-dots {
+  margin-left: 10px;
+  width: 8px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  animation: l5 1s infinite linear alternate;
+}
+@keyframes l5 {
+    0%  {box-shadow: 20px 0 #b1d0e8, -20px 0 rgb(197, 177, 177);background: #d2f9f9 }
+    33% {box-shadow: 20px 0 rgb(197, 177, 177)0e8, -20px 0 #0002;background: #d2f9f9}
+    66% {box-shadow: 20px 0 #d2f9f9,-20px 0 rgb(197, 177, 177); background: #d2f9f9}
+    100%{box-shadow: 20px 0 #d2f9f9,-20px 0 rgb(197, 177, 177); background: rgb(197, 177, 177) }
+}

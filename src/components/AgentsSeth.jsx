@@ -45,6 +45,9 @@ function AgentsSeth() {
                     setLoading(false)
                     setMessage("No Data Found")
                 }
+            } else {
+                setLoading(false)
+                setMessage("Network connection error")
             }
 
         } catch (error) {
@@ -59,7 +62,7 @@ function AgentsSeth() {
 
     }, [campaignData])
 
-    const handleDelete = async (index,id) => {
+    const handleDelete = async (index, id) => {
         try {
             const response = await deleteAppointmentSetter(id)
             if (response.status === 200) {
@@ -145,7 +148,7 @@ function AgentsSeth() {
                                                             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                                                             onClick={() => {
                                                                 // Handle delete action
-                                                                handleDelete(index,item.agent_id)
+                                                                handleDelete(index, item.agent_id)
                                                             }}
                                                         >
                                                             Delete
