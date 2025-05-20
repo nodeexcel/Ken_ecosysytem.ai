@@ -5,13 +5,15 @@ import channel from '../assets/svg/sequence_channel.svg'
 import template from '../assets/svg/sequence_template.svg'
 import { X } from 'lucide-react';
 import { LuRefreshCw } from 'react-icons/lu';
-import { AddPlus, CheckedCheckbox, CrossDelete, EmptyCheckbox } from '../icons/icons'
+import { AddPlus, CheckedCheckbox, CrossDelete, EmptyCheckbox, RequestSend } from '../icons/icons'
 import { appointmentSetter, getAppointmentSetterById, updateAppointmentSetter } from '../api/appointmentSetter'
 
 function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentStatus }) {
     const [formData, setFormData] = useState({
         agent_name: "",
-        agent_language: "english", agent_personality: "", business_description: "", your_business_offer: "",
+        gender: '',
+        age: '',
+        agent_language: [], agent_personality: "", business_description: "", your_business_offer: "",
         qualification_questions: [""],
         sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
         objective_of_the_agent: '',
@@ -19,11 +21,12 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         // reply_min_time: 15,
         // reply_max_time: 60,
         is_followups_enabled: true,
-        follow_up_details: { number_of_followups: 2, min_time: 15, max_time: 60 },
+        follow_up_details: { number_of_followups: '', min_time: 15, max_time: 60 },
         emoji_frequency: 25,
-        directness: 2,
+        // directness: 2,a
         webpage_link: "",
-        webpage_type: ""
+        // webpage_type: "",
+        whatsapp_number: ''
     })
     const [loadingStatus, setLoadingStatus] = useState(true)
     const [dataRenderStatus, setDataRenderStatus] = useState(true)
@@ -31,6 +34,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const [updateAgent, setUpdateAgent] = useState(false);
     const [loading, setLoading] = useState(false)
     const [errors, setErrors] = useState({});
+    const [showLanguageSelector, setShowLanguageSelector] = useState(false);
 
     useEffect(() => {
         if (editData) {
@@ -50,25 +54,48 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         const newErrors = {};
 
         if (!formData.agent_name.trim()) newErrors.agent_name = "Agent name is required.";
+        if (!formData.gender) newErrors.gender = "Gender is required.";
+        if (!formData.age) newErrors.age = "Age is required.";
+        if (formData.agent_language.length===0) newErrors.agent_language = "Language is required.";
         if (!formData.agent_personality) newErrors.agent_personality = "Agent personality is required.";
         if (!formData.business_description.trim()) newErrors.business_description = "Business description is required.";
         if (formData.business_description.trim().length > 1 && formData.business_description.length < 50) newErrors.business_description = "Min 50 characters are required.";
         if (!formData.your_business_offer.trim()) newErrors.your_business_offer = "Business offer is required.";
         if (formData.your_business_offer.trim().length > 1 && formData.your_business_offer.length < 50) newErrors.your_business_offer = "Min 50 characters are required.";
-        if (!formData.objective_of_the_agent.trim()) newErrors.objective_of_the_agent = "Objective of the agent is required.";
+        if (!formData.prompt) newErrors.prompt = "Prompt is required.";
+        if (!formData.objective_of_the_agent) newErrors.objective_of_the_agent = "Objective of the agent is required.";
+        if(formData.qualification_questions.forEach((e,i)=>{
+            if(e===""){
+                newErrors[`qualification_questions[${i}]`] = "Calendar must be chosen.";
+            }
+        }))
 
         if (formData.objective_of_the_agent === "book_call") {
             if (!formData.calendar_choosed) {
-                newErrors.calendar_choosed = "Calendar must be chosen when objective is 'book_call'.";
+                newErrors.calendar_choosed = "Calendar must be chosen.";
+            }
+        }
+
+        if (formData.objective_of_the_agent === "whatsapp_number") {
+            if (!formData.whatsapp_number) {
+                newErrors.whatsapp_number = "Whatsapp Number is required.";
             }
         }
 
         if (formData.objective_of_the_agent === "web_page") {
             if (!formData.webpage_link.trim()) {
-                newErrors.webpage_link = "Webpage link is required when objective is 'web_page'.";
+                newErrors.webpage_link = "Webpage link is required.";
             }
-            if (!formData.webpage_type.trim()) {
-                newErrors.webpage_type = "Webpage type is required when objective is 'web_page'.";
+            // if (!formData.webpage_type.trim()) {
+            //     newErrors.webpage_type = "Webpage type is required.";
+            // }
+        }
+
+        if (formData.is_followups_enabled && (!formData.follow_up_details.number_of_followups)) {
+            if (formData.follow_up_details.number_of_followups === 0) {
+                newErrors.number_of_followups = "";
+            } else {
+                newErrors.number_of_followups = "followup is required.";
             }
         }
 
@@ -135,6 +162,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const objectiveAgent = [
         { label: "Book a Call", key: "book_call" },
         { label: "Send to a web page", key: "web_page" },
+        { label: "Send to a WhatsApp Number", key: "whatsapp_number" }
 
     ]
 
@@ -156,6 +184,16 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         { label: "Min. Message time range", key: "reply_min_time", options: [5, 10, 15, 30] },
         { label: "Max. Message time range", key: "reply_max_time", options: [30, 45, 60, 90] }
     ];
+
+    const agentsPersonalityOptions = [
+        { label: "Friendly", key: "friendly" },
+        { label: "Professional", key: "professional" },
+        { label: "Energetic", key: "energetic" },
+        { label: "Relaxed", key: "relaxed" },
+        { label: "Results-Oriented", key: "results_oriented" },
+        { label: "Direct", key: "direct" },
+        { label: "Emphatic", key: "emphatic" },
+    ]
 
     const getAppointementSetter = async () => {
         try {
@@ -302,6 +340,48 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         }
     }
 
+    const LanguageSelector = ({ value = [], onChange }) => {
+        const languages = ['English', 'French', 'Spanish'];
+
+        const toggleLanguage = (lang) => {
+            const newSelection = value.includes(lang)
+                ? value.filter((l) => l !== lang)
+                : [...value, lang];
+            onChange(newSelection);
+            setErrors((prev)=>({...prev,agent_language:''}))
+        };
+
+        return (
+            <div className="bg-white rounded-lg shadow-lg p-4">
+                <div className="space-y-2">
+                    {languages.map((lang) => (
+                        <div
+                            key={lang}
+                            onClick={() => toggleLanguage(lang)}
+                            className={`p-2 rounded-lg cursor-pointer flex items-center gap-2 ${value.includes(lang)
+                                    ? 'bg-[#F0EFFF] text-[#675FFF]'
+                                    : 'hover:bg-gray-50'
+                                }`}
+                        >
+                            <div
+                                className={`w-4 h-4 rounded border flex items-center justify-center ${value.includes(lang)
+                                        ? 'border-[#675FFF] bg-[#675FFF]'
+                                        : 'border-[#E1E4EA]'
+                                    }`}
+                            >
+                                {value.includes(lang) && (
+                                    <span className="text-white text-xs">✓</span>
+                                )}
+                            </div>
+                            <span>{lang}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    };
+
+
     const renderOptions = (list) => {
         if ((formData.sequence.trigger === "systeme.io" || formData.sequence.trigger === "clickfunnels") && list.key === "channel") {
             return (
@@ -324,6 +404,37 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
     const renderObjectiveAgent = () => {
         switch (formData.objective_of_the_agent) {
+            case "whatsapp_number":
+                return (
+                    <div className="flex items-start gap-3 w-full mt-2">
+                        <div className="flex-1">
+                            <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
+                                <label className="text-sm font-medium text-[#1e1e1e]">
+                                    WhatsApp Number
+                                </label>
+                                <input
+                                    type="text"
+                                    name='whatsapp_number'
+                                    value={formData?.whatsapp_number}
+                                    onChange={handleChange}
+                                    // onChange={(e) => {
+                                    //     const { name, value } = e.target;
+                                    //     if (value === '' || /^\d+$/.test(value)) {
+                                    //         setFormData((prev) => ({
+                                    //             ...prev,
+                                    //             [name]: value === '' ? '' : parseInt(value, 10)
+                                    //         }));
+                                    //         setErrors((prev) => ({ ...prev, [name]: '' }))
+                                    //     }
+                                    // }}
+                                    className={`w-full p-2 rounded-lg border ${errors.whatsapp_number ? 'border-red-500' : 'border-[#e1e4ea]'} bg-white`}
+                                    placeholder="Enter your WhatsApp Number"
+                                />
+                                {errors.whatsapp_number && <p className="text-red-500 text-sm mt-1">{errors.whatsapp_number}</p>}
+                            </div>
+                        </div>
+                    </div>
+                )
             case "web_page":
                 return (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-1 w-full">
@@ -341,7 +452,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             />
                             {errors.webpage_link && <p className="text-red-500 text-sm mt-1">{errors.webpage_link}</p>}
                         </div>
-                        <div className="flex flex-col items-start gap-1.5 w-full">
+                        {/* <div className="flex flex-col items-start gap-1.5 w-full">
                             <label className="font-medium text-[#1e1e1e] text-sm">Send to a web page for</label>
                             <select
                                 name="calendar"
@@ -361,7 +472,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <option value="ebook">ebook</option>
                             </select>
                             {errors.webpage_type && <p className="text-red-500 text-sm mt-1">{errors.webpage_type}</p>}
-                        </div>
+                        </div> */}
                     </div>
                 )
             default:
@@ -422,40 +533,86 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 </header>
                 <div className="flex flex-col gap-8 p-6 w-full bg-white rounded-[10px] border border-[#e1e4ea]">
                     {/* Agent Name */}
-                    <div className="flex flex-col gap-1.5 w-full">
-                        <label className="text-sm font-medium text-[#1e1e1e]">
-                            Agent Name<span className="text-[#675fff]">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            name='agent_name'
-                            value={formData?.agent_name}
-                            onChange={handleChange}
-                            className={`w-full p-2 rounded-lg border ${errors.agent_name ? 'border-red-500' : 'border-[#e1e4ea]'} shadow`}
-                            placeholder="Enter your agent name"
-                        />
-                        {errors.agent_name && <p className="text-red-500 text-sm mt-1">{errors.agent_name}</p>}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                        <div className="flex flex-col gap-1.5 w-full">
+                            <label className="text-sm font-medium text-[#1e1e1e]">
+                                Agent Name<span className="text-[#675fff]">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                name='agent_name'
+                                value={formData?.agent_name}
+                                onChange={handleChange}
+                                className={`w-full p-2 rounded-lg border ${errors.agent_name ? 'border-red-500' : 'border-[#e1e4ea]'}`}
+                                placeholder="Enter your agent name"
+                            />
+                            {errors.agent_name && <p className="text-red-500 text-sm mt-1">{errors.agent_name}</p>}
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                            <div className="flex flex-col gap-1.5 flex-1">
+                                <label className="text-sm font-medium text-[#1e1e1e]">
+                                    Gender<span className="text-[#675fff]">*</span>
+                                </label>
+                                <select
+                                    name='gender'
+                                    value={formData?.gender}
+                                    onChange={handleChange}
+                                    className={`w-full p-2 rounded-lg border ${errors.gender ? 'border-red-500' : 'border-[#e1e4ea]'}`}>
+                                    <option value="" disabled>Select</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                                {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
+                            </div>
+                            <div className="flex flex-col gap-1.5 w-full">
+                                <label className="text-sm font-medium text-[#1e1e1e]">
+                                    Age<span className="text-[#675fff]">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    name='age'
+                                    value={formData?.age}
+                                    onChange={(e) => {
+                                        const { name, value } = e.target;
+                                        if (value === '' || /^\d+$/.test(value)) {
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                [name]: value === '' ? '' : parseInt(value, 10)
+                                            }));
+                                            setErrors((prev) => ({ ...prev, [name]: '' }))
+                                        }
+                                    }}
+                                    className={`w-full p-2 rounded-lg border ${errors.age ? 'border-red-500' : 'border-[#e1e4ea]'}`}
+                                    placeholder="Enter your agent age"
+                                />
+                                {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
+                            </div>
+                        </div>
                     </div>
+
 
                     {/* Agent Personality and Language */}
                     <div className="flex flex-col md:flex-row  gap-4 w-full">
                         <div className="flex flex-col gap-1.5 flex-1">
-                            <label className="text-sm font-medium text-[#1e1e1e]">
-                                Agent personality<span className="text-[#675fff]">*</span>
-                            </label>
+                            <div className='flex justify-between items-center'>
+                                <label className="text-sm font-medium text-[#1e1e1e]">
+                                    Agent personality<span className="text-[#675fff]">*</span>
+                                </label>
+                                <a href='/agent-personality-documentation' target='_blank' className='flex items-center hover:underline gap-1 text-[14px] text-[#675FFF] font-[500]'>Learn more<RequestSend status={true} /></a>
+                            </div>
                             <select
                                 name='agent_personality'
                                 value={formData?.agent_personality}
                                 onChange={handleChange}
-                                className={`w-full p-2 rounded-lg border ${errors.agent_personality ? 'border-red-500' : 'border-[#e1e4ea]'} shadow`}>
+                                className={`w-full p-2 rounded-lg border ${errors.agent_personality ? 'border-red-500' : 'border-[#e1e4ea]'}`}>
                                 <option disabled value="">Choose your agent personality</option>
-                                <option value="friendly">Friendly</option>
-                                <option value="professional">Professional</option>
-                                <option value="casual">Casual</option>
+                                {agentsPersonalityOptions.map((e) => (
+                                    <option value={e.key}>{e.label}</option>
+                                ))}
                             </select>
                             {errors.agent_personality && <p className="text-red-500 text-sm mt-1">{errors.agent_personality}</p>}
                         </div>
-                        <div className="flex flex-col gap-1.5 flex-1">
+                        {/* <div className="flex flex-col gap-1.5 flex-1">
                             <label className="text-sm font-medium text-[#1e1e1e]">
                                 Agent Language<span className="text-[#675fff]">*</span>
                             </label>
@@ -463,11 +620,79 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 name='agent_language'
                                 value={formData?.agent_language}
                                 onChange={handleChange}
-                                className="w-full p-2 rounded-lg border border-[#e1e4ea] shadow">
+                                className="w-full p-2 rounded-lg border border-[#e1e4ea]">
                                 <option value="english">English</option>
                                 <option value="spanish">Spanish</option>
                                 <option value="french">French</option>
                             </select>
+                        </div> */}
+                        <div className='flex flex-col gap-1.5 flex-1'>
+                            <div className="relative">
+                                <label className="text-sm font-medium text-[#1e1e1e]">
+                                    Agent Language<span className="text-[#675fff]">*</span>
+                                </label>
+                                <div
+                                    onClick={() => setShowLanguageSelector((prev) => !prev)}
+                                    className={`w-full border ${errors.agent_language ? 'border-red-500' : 'border-[#e1e4ea]'} rounded-lg px-3 py-2 cursor-pointer`}
+                                >
+                                    {formData.agent_language?.length > 0
+                                        ? formData.agent_language.join(', ')
+                                        : 'Select Languages'}
+                                </div>
+                                {showLanguageSelector && (
+                                    <div className="absolute z-50 mt-1 w-full">
+                                        <LanguageSelector
+                                            value={formData.agent_language}
+                                            onChange={(updated) =>
+                                                setFormData((prev) => ({
+                                                    ...prev,
+                                                    agent_language: updated,
+                                                }))
+                                            }
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                            {errors.agent_language && <p className="text-red-500 text-sm mt-1">{errors.agent_language}</p>}
+                        </div>
+
+                    </div>
+
+                    {/* Emoji Frequency */}
+                    <div className="flex flex-col gap-3 p-3.5 bg-[#F2F2F7] rounded-[10px] w-full">
+                        <div className='flex gap-1'>
+                            <div className="text-base font-medium text-[#1e1e1e]">
+                                Emoji Frequency<span className="text-[#675fff]">*</span>
+                            </div>
+                            <div className="text-xs text-gray-500">
+                                (100% is implemented on every message)
+                            </div>
+                        </div>
+                        <label className="text-sm font-medium text-[#1e1e1e]">
+                            Number of followups
+                        </label>
+
+                        {/* Using grid layout */}
+                        <div className="grid grid-col-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 w-full">
+                            {emojiOptions.map((option) => (
+                                <div
+                                    key={option.id}
+                                    value={formData.emoji_frequency}
+                                    className={`p-2 cursor-pointer  text-center rounded-lg border  ${formData.emoji_frequency === option.value
+                                        ? "bg-[#335bfb1a] border-[#675fff]"
+                                        : "bg-white border-[#e1e4ea]"
+                                        }`}
+                                    onClick={() =>
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            emoji_frequency: option.value,
+                                        }))
+                                    }
+                                >
+                                    {option.label === "25%" ? `${option.label} (Recommended)` : option.label}
+
+                                </div>
+                            ))}
                         </div>
                     </div>
 
@@ -483,7 +708,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 onChange={handleChange}
                                 value={formData?.business_description}
                                 rows={4}
-                                className={`w-full p-2 rounded-lg border  ${errors.business_description ? 'border-red-500' : 'border-[#e1e4ea]'} shadow resize-none`}
+                                className={`w-full p-2 rounded-lg border  ${errors.business_description ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none`}
                                 placeholder="Enter your business description"
                             />
                             {errors.business_description && <p className="text-red-500 text-sm mt-1">{errors.business_description}</p>}
@@ -497,11 +722,29 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 onChange={handleChange}
                                 value={formData?.your_business_offer}
                                 rows={4}
-                                className={`w-full p-2 rounded-lg border  ${errors.your_business_offer ? 'border-red-500' : 'border-[#e1e4ea]'} shadow resize-none`}
+                                className={`w-full p-2 rounded-lg border  ${errors.your_business_offer ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none`}
                                 placeholder="Share everything you want the AI to know about your offer"
                             />
                             {errors.your_business_offer && <p className="text-red-500 text-sm mt-1">{errors.your_business_offer}</p>}
                         </div>
+                    </div>
+
+                    {/* Prompt */}
+                    <div className="flex flex-col gap-1.5 flex-1">
+                        <label className="text-sm font-medium text-[#1e1e1e]">
+                            Prompt
+                            <span className="text-[#675fff]">*</span>
+                        </label>
+                        <p className='text-[#5A687C] text-[14px] font-[400]'>Provide any guidelines, instructions, or relevant context to shape your AI agent’s behavior.</p>
+                        <textarea
+                            name='prompt'
+                            onChange={handleChange}
+                            value={formData?.prompt}
+                            rows={3}
+                            className={`w-full p-2 rounded-lg border  ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none`}
+                            placeholder="Enter your prompt here"
+                        />
+                        {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
                     </div>
 
                     {/* Qualification Questions */}
@@ -516,8 +759,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     name={`qualification_questions[${index}]`}
                                     value={question}
                                     onChange={handleChange}
-                                    placeholder="Enter your question"
-                                    className={`flex-1 p-2 rounded-lg border  shadow`}                                />
+                                    placeholder="Enter your Question"
+                                    className={`flex-1 p-2 rounded-lg border ${errors[`qualification_questions[${index}]`]?"border-red-500":"border-[#e1e4ea]"}`} />
                                 {index === formData.qualification_questions.length - 1 ? (
                                     <button type="button" onClick={addQuestion}>
                                         <AddPlus />
@@ -634,8 +877,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     setFormData((prev) => ({
                                         ...prev, objective_of_the_agent: each.key,
                                         webpage_link: "",
-                                        webpage_type: "",
-                                        calendar_choosed: ''
+                                        // webpage_type: "",
+                                        calendar_choosed: '',
+                                        whatsapp_number:""
                                     }))
                                     setErrors((prev) => ({ ...prev, objective_of_the_agent: "" }))
                                 }}
@@ -724,13 +968,52 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             <label className="text-sm font-medium text-[#1e1e1e]">
                                 Number of followups
                             </label>
+                            <input
+                                type="number"
+                                min="0"
+                                max="10"
+                                disabled={!formData.is_followups_enabled}
+                                name="number_of_followups"
+                                value={formData?.follow_up_details?.number_of_followups ?? ''}
+                                onChange={(e) => {
+                                    const { name, value } = e.target;
+                                    let parsedValue = parseInt(value);
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
+                                    if (value === '') {
+                                        parsedValue = '';
+                                    } else if (!isNaN(parsedValue)) {
+                                        parsedValue = Math.max(0, Math.min(10, parsedValue));
+                                    }
+                                    console.log(parsedValue)
+
+                                    setFormData((prev) => ({
+                                        ...prev,
+                                        follow_up_details: {
+                                            ...prev.follow_up_details,
+                                            [name]: parsedValue
+                                        }
+                                    }));
+
+                                    // Clear error if value is valid (including 0)
+                                    if (value === '' || isNaN(parsedValue)) {
+                                        setErrors((prev) => ({ ...prev, [name]: 'This field is required' }));
+                                    } else {
+                                        setErrors((prev) => ({ ...prev, [name]: '' }));
+                                    }
+                                }}
+
+                                className={`w-full p-2 bg-white rounded-lg border ${errors.number_of_followups ? 'border-red-500' : 'border-[#e1e4ea]'} no-spinner`}
+                                placeholder="Please enter a number from 0 to 10"
+                            />
+
+                            {errors.number_of_followups && <p className="text-red-500 text-sm mt-1">{errors.number_of_followups}</p>}
+
+                            {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
                                 {followupOptions.map((option) => (
                                     <div
                                         key={option.id}
                                         className={`p-2 cursor-pointer text-center rounded-lg border  ${formData.follow_up_details.number_of_followups === option.value ? "bg-[#335bfb1a] border-[#675fff]" : "bg-white border-[#e1e4ea]"
-                                            } shadow`}
+                                            }`}
                                         onClick={() =>
                                             formData.is_followups_enabled &&
                                             setFormData((prev) => ({
@@ -745,7 +1028,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         {option.value === 2 ? `${option.value} (Recommended)` : option.value}
                                     </div>
                                 ))}
-                            </div>
+                            </div> */}
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
@@ -755,7 +1038,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         {each.label}<span className="text-[#675fff]">*</span>
                                     </label>
                                     <div className="flex items-center w-full">
-                                        <div className="flex items-center justify-between w-full bg-white rounded-lg border border-[#e1e4ea] shadow-shadows-shadow-xs px-3 py-2">
+                                        <div className="flex items-center justify-between w-full bg-white rounded-lg border border-[#e1e4ea] px-3 py-2">
                                             <select
                                                 className="flex-1 bg-transparent text-text-black text-base focus:outline-none appearance-none"
                                                 name={each.key}
@@ -787,43 +1070,10 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                     </div>
 
-                    {/* Emoji Frequency */}
-                    <div className="flex flex-col gap-3 p-3.5 bg-[#F2F2F7] rounded-[10px] w-full">
-                        <div className="text-base font-medium text-[#1e1e1e]">
-                            Emoji Frequency<span className="text-[#675fff]">*</span>
-                        </div>
-                        <div className="text-xs text-gray-500">
-                            (100% is implemented on every message)
-                        </div>
-
-                        {/* Using grid layout */}
-                        <div className="grid grid-col-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 w-full">
-                            {emojiOptions.map((option) => (
-                                <div
-                                    key={option.id}
-                                    value={formData.emoji_frequency}
-                                    className={`p-2 cursor-pointer  text-center rounded-lg border  ${formData.emoji_frequency === option.value
-                                        ? "bg-[#335bfb1a] border-[#675fff]"
-                                        : "bg-white border-[#e1e4ea]"
-                                        } shadow`}
-                                    onClick={() =>
-                                        setFormData((prev) => ({
-                                            ...prev,
-                                            emoji_frequency: option.value,
-                                        }))
-                                    }
-                                >
-                                    {option.label === "25%" ? `${option.label} (Recommended)` : option.label}
-
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
 
                     {/* Directness */}
-                    <div className="flex flex-col items-start gap-3 p-3.5 w-full bg-[#F2F2F7] rounded-[10px] overflow-hidden">
-                        {/* Label Section */}
+                    {/* <div className="flex flex-col items-start gap-3 p-3.5 w-full bg-[#F2F2F7] rounded-[10px] overflow-hidden">
+
                         <div className="flex items-center gap-2.5 w-full">
                             <div className="flex items-center gap-[5px] flex-1">
                                 <div className="font-medium text-[#1e1e1e] text-base">
@@ -834,8 +1084,6 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 </div>
                             </div>
                         </div>
-
-                        {/* Options Grid */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
                             {directnessOptions.map((option) => (
                                 <div
@@ -846,7 +1094,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             directness: option.value,
                                         }))
                                     }
-                                    className={`text-center cursor-pointer rounded-lg border px-3 py-2 shadow transition
+                                    className={`text-center cursor-pointer rounded-lg border px-3 py-2 transition
         ${formData.directness === option.value ? "bg-[#335bfb1a] border-[#675fff]" : "bg-white border-[#e1e4ea]"}`}
                                 >
                                     <span className="font-normal text-text-black text-base">
@@ -857,7 +1105,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                         </div>
 
 
-                    </div>
+                    </div> */}
 
                 </div>
             </div>

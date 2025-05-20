@@ -7,7 +7,7 @@ import { LuRefreshCw } from "react-icons/lu";
 import { TbLockPassword } from "react-icons/tb";
 import Plan from "../../components/Plan";
 import { useDispatch, useSelector } from "react-redux";
-import { getProfile, updateProfile } from "../../api/profile";
+import { deleteProfile, getProfile, updateProfile } from "../../api/profile";
 import { updatePassword } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import { getTeamMembers, sendInviteEmail } from "../../api/teamMember";
@@ -345,6 +345,20 @@ const SettingsPage = () => {
       setShowPlanPopup(true)
     } else {
       setOpen(true)
+    }
+  }
+
+  const handleDeleteProfile = async () => {
+    try {
+      const response = await deleteProfile();
+      console.log(response)
+      if (response.status === 200) {
+        localStorage.clear()
+        navigate("/")
+      }
+
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -753,7 +767,7 @@ const SettingsPage = () => {
                       </button> */}
                     </div>
                     <div>
-                      <button className="w-full text-[13px] font-[500] bg-transparent text-[#5A687C]">
+                      <button onClick={handleDeleteProfile} className="w-full text-[13px] font-[500] bg-transparent text-[#5A687C]">
                         Delete Profile
                       </button>
                     </div>
@@ -932,7 +946,7 @@ const SettingsPage = () => {
             className={`flex justify-center md:justify-start items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#e1e5ea]" : ""
               }`}
           >
-            <Settings status={activeSidebarItem === "general"}/>
+            <Settings status={activeSidebarItem === "general"} />
             <div className={`relative w-fit mt-[-1.00px] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "general" ? "text-black" : "text-[#5A687C] "
               }`}>
               General Settings

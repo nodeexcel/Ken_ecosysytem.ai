@@ -56,7 +56,7 @@ function PrivacyPolicy() {
                     </button>
                 </div>
             </div>
-            <div className="flex flex-col gap-5 mb-3 mx-auto max-w-[1068px]">
+            <div className="flex flex-col gap-5 mb-3 mx-auto max-w-[1068px] px-2">
                 <h2 className="text-[44px] font-[600] text-[#1E1E1E] flex justify-center mt-6">{staticData.header}</h2>
                 <p className="text-[#5A687C] font-[400] text-[16px]">{staticData.description}</p>
                 <div className="flex flex-col gap-2">

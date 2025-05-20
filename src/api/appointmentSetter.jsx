@@ -94,3 +94,14 @@ export const getChatHistory = async (id) => {
         return error
     }
 }
+
+
+export const getLeadAnalytics = async (path) => {
+    try {
+        const response= await axiosInstance.get(`http://116.202.210.102:8000/get-lead-analytics${path}`);
+        return response
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}

@@ -22,6 +22,7 @@ import Phone from './pages/Dashboard/Phone'
 import Campaigns from './pages/Dashboard/Campaigns'
 import PrivacyPolicy from './components/PrivacyPolicy'
 import TermsAndConditions from './components/TermsAndConditions'
+import AgentPersonalityDocumentation from './components/AgentPersonalityDocumentation'
 
 
 
@@ -39,6 +40,7 @@ function App() {
         <Route path='/accept-invite' element={<AcceptInvitation />} />
         <Route path='/terms-conditions' element={< TermsAndConditions />} />
         <Route path='/privacy-policy' element={< PrivacyPolicy />} />
+        <Route path='/agent-personality-documentation' element={< AgentPersonalityDocumentation />} />
         <Route path='/dashboard' element={<Dashboard />}>
           <Route path='' element={<Home />} />
           <Route path="notification" element={<Notification />} />
