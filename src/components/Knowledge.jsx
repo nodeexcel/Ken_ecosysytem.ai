@@ -48,7 +48,14 @@ const Knowledge = () => {
   const [formData, setFormData] = useState({})
   const [loading, setLoading] = useState(false)
   const [knowledgeData, setKnowledgeData] = useState({})
-  const [loadingData, setLoadingData] = useState(false)
+  const [loadingData, setLoadingData] = useState(false);
+  const [errors, setErrors] = useState({})
+
+  useEffect(() => {
+    setTimeout(() => {
+      setErrors({})
+    }, 5000)
+  }, [errors])
 
 
   const handleChange = (e) => {
@@ -64,7 +71,11 @@ const Knowledge = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (file && file.type !== "application/pdf") {
+      setErrors((prev) => ({ ...prev, files: "Only PDF files are allowed." }));
+      e.target.files = '';
+      return;
+    } else if (file) {
       setSelectedFile(file);
       setFormData((prev) => ({
         ...prev, files: file
@@ -86,7 +97,11 @@ const Knowledge = () => {
     e.preventDefault();
     setDragActive(false);
     const file = e.dataTransfer.files?.[0];
-    if (file) {
+    if (file && file.type !== "application/pdf") {
+      setErrors((prev) => ({ ...prev, files: "Only PDF files are allowed." }));
+      e.target.files = '';
+      return;
+    } else if (file) {
       setSelectedFile(file);
       setFormData((prev) => ({
         ...prev, files: file
@@ -143,7 +158,8 @@ const Knowledge = () => {
         break;
       case "files":
         const filePayload = {
-          data: formData.files,
+          data: formData.files.name,
+          file: formData.files,
           data_type: activeTab
         }
         handleKnowledge(filePayload)
@@ -310,6 +326,7 @@ const Knowledge = () => {
                     </p>
                     <input
                       type="file"
+                      accept="application/pdf"
                       ref={fileInputRef}
                       onChange={handleFileChange}
                       className="hidden"
@@ -321,6 +338,7 @@ const Knowledge = () => {
                       <strong>Selected File:</strong> {selectedFile.name}
                     </div>
                   )}
+                  {errors.files && <p className="text-red-500 mt-5">{errors.files}</p>}
                 </div>
               </div>
             )}

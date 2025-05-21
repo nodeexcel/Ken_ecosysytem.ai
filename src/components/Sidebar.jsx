@@ -12,6 +12,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { LuBrain } from 'react-icons/lu';
 import { useSelector } from 'react-redux';
 import { flag } from '../icons/Brain';
+import uk_flag from "../assets/images/uk_flag.png"
+import fr_flag from "../assets/images/fr_flag.png"
 import Notification from '../pages/Dashboard/Notification';
 
 const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
@@ -25,8 +27,8 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     const [selectedLang, setSelectedLang] = useState('en');
 
     const languages = {
-        en: { label: 'English', flag: flag },
-        fr: { label: 'French', flag: flag }
+        en: { label: 'English', flag: uk_flag },
+        fr: { label: 'French', flag: fr_flag }
     };
 
     const toggleDropdown = () => setShowDropdown(!showDropdown);
@@ -107,8 +109,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         className='relative text-xl flex justify-center py-4 cursor-pointer'
                         onClick={toggleDropdown}
                     >
-
-                        {languages[selectedLang].flag}
+                        <img src={languages[selectedLang].flag} alt={languages[selectedLang].label} width={20}/>
                         {showDropdown && (
                             <div
                                 className='fixed md:left-[57px] left-[102px] top-[338px] bg-white shadow-md rounded p-2 z-[9999]'
@@ -119,7 +120,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                                         onClick={() => handleLanguageSelect(key)}
                                         className='flex items-center gap-2 py-1 hover:bg-gray-100 px-2 rounded cursor-pointer'
                                     >
-                                        {value.flag}
+                                        <img src={value.flag} alt={value.label} width={20}/>
                                         <span className='text-sm'>{value.label}</span>
                                     </div>
                                 ))}

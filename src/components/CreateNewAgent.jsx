@@ -56,7 +56,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         if (!formData.agent_name.trim()) newErrors.agent_name = "Agent name is required.";
         if (!formData.gender) newErrors.gender = "Gender is required.";
         if (!formData.age) newErrors.age = "Age is required.";
-        if (formData.agent_language.length===0) newErrors.agent_language = "Language is required.";
+        if (formData.agent_language.length === 0) newErrors.agent_language = "Language is required.";
         if (!formData.agent_personality) newErrors.agent_personality = "Agent personality is required.";
         if (!formData.business_description.trim()) newErrors.business_description = "Business description is required.";
         if (formData.business_description.trim().length > 1 && formData.business_description.length < 50) newErrors.business_description = "Min 50 characters are required.";
@@ -64,11 +64,11 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         if (formData.your_business_offer.trim().length > 1 && formData.your_business_offer.length < 50) newErrors.your_business_offer = "Min 50 characters are required.";
         if (!formData.prompt) newErrors.prompt = "Prompt is required.";
         if (!formData.objective_of_the_agent) newErrors.objective_of_the_agent = "Objective of the agent is required.";
-        if(formData.qualification_questions.forEach((e,i)=>{
-            if(e===""){
-                newErrors[`qualification_questions[${i}]`] = "Calendar must be chosen.";
+        formData.qualification_questions.forEach((e, i) => {
+            if (e === "") {
+                newErrors[`qualification_questions[${i}]`] = "Qualification must be chosen.";
             }
-        }))
+        });
 
         if (formData.objective_of_the_agent === "book_call") {
             if (!formData.calendar_choosed) {
@@ -348,7 +348,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 ? value.filter((l) => l !== lang)
                 : [...value, lang];
             onChange(newSelection);
-            setErrors((prev)=>({...prev,agent_language:''}))
+            setErrors((prev) => ({ ...prev, agent_language: '' }))
         };
 
         return (
@@ -359,14 +359,14 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             key={lang}
                             onClick={() => toggleLanguage(lang)}
                             className={`p-2 rounded-lg cursor-pointer flex items-center gap-2 ${value.includes(lang)
-                                    ? 'bg-[#F0EFFF] text-[#675FFF]'
-                                    : 'hover:bg-gray-50'
+                                ? 'bg-[#F0EFFF] text-[#675FFF]'
+                                : 'hover:bg-gray-50'
                                 }`}
                         >
                             <div
                                 className={`w-4 h-4 rounded border flex items-center justify-center ${value.includes(lang)
-                                        ? 'border-[#675FFF] bg-[#675FFF]'
-                                        : 'border-[#E1E4EA]'
+                                    ? 'border-[#675FFF] bg-[#675FFF]'
+                                    : 'border-[#E1E4EA]'
                                     }`}
                             >
                                 {value.includes(lang) && (
@@ -760,7 +760,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     value={question}
                                     onChange={handleChange}
                                     placeholder="Enter your Question"
-                                    className={`flex-1 p-2 rounded-lg border ${errors[`qualification_questions[${index}]`]?"border-red-500":"border-[#e1e4ea]"}`} />
+                                    className={`flex-1 p-2 rounded-lg border ${errors[`qualification_questions[${index}]`] ? "border-red-500" : "border-[#e1e4ea]"}`} />
                                 {index === formData.qualification_questions.length - 1 ? (
                                     <button type="button" onClick={addQuestion}>
                                         <AddPlus />
@@ -879,7 +879,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         webpage_link: "",
                                         // webpage_type: "",
                                         calendar_choosed: '',
-                                        whatsapp_number:""
+                                        whatsapp_number: ""
                                     }))
                                     setErrors((prev) => ({ ...prev, objective_of_the_agent: "" }))
                                 }}
