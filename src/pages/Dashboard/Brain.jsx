@@ -5,15 +5,16 @@ import Integration from "../../components/Integration";
 import contact from '../../assets/svg/brain_contact.svg'
 import knowledge from '../../assets/svg/brain_knowledge.svg'
 import integration from '../../assets/svg/brain_integration.svg'
-
-const sideMenuItems = [
-  { label: "Contacts", icon: contact, path: "contacts" },
-  { label: "Knowledge", icon: knowledge, path: "knowledge" },
-  { label: "Integration", icon: integration, path: "integration" },
-];
+import { ContactIcon, IntegrationIcon, KnowledgeIcon } from "../../icons/icons";
 
 const BrainAI = () => {
   const [activePath, setActivePath] = useState("contacts");
+
+  const sideMenuItems = [
+    { label: "Contacts", icon: <ContactIcon status={activePath == "contacts"} />, path: "contacts" },
+    { label: "Knowledge", icon: <KnowledgeIcon status={activePath == "knowledge"} />, path: "knowledge" },
+    { label: "Integration", icon: <IntegrationIcon status={activePath == "integration"} />, path: "integration" },
+  ];
 
   const renderMainContent = () => {
     switch (activePath) {
@@ -43,10 +44,7 @@ const BrainAI = () => {
                   }`}
               >
                 <div>
-                  <img
-                    alt={item.icon}
-                    src={item.icon}
-                  />
+                  {Icon}
                 </div>
                 <span
                   className={`font-normal text-sm tracking-[-0.28px] leading-5 ${isActive ? "text-text-black" : "text-text-grey"

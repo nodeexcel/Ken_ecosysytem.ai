@@ -66,7 +66,7 @@ const staticData2 = [
     {
         icon: response_rate,
         label: "Response Rate",
-        key: "response_rate",
+        key: "responded_rate",
         value: "0.0"
     },
     {
@@ -161,10 +161,10 @@ function Analytics() {
                         <option value={agentSelect} disabled>
                             Agent: {selectedAgentName}
                         </option>
-                        <option value="all">All</option>
+                        <option value="all" className={`${agentSelect == "all" && 'hidden'}`}>All</option>
                         {agentsList?.length > 0 &&
                             agentsList.map((e) => (
-                                <option key={e.agent_id} value={e.agent_id}>
+                                <option className={`${agentSelect == e.agent_id && 'hidden'}`} key={e.agent_id} value={e.agent_id}>
                                     {e.agent_name}
                                 </option>
                             ))}

@@ -11,8 +11,10 @@ const ContactsPage = () => {
   const [formErrors, setFormErrors] = useState({})
   const [loading, setLoading] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [channelSelect, setChannelSelect] = useState("all")
+  const [statusSelect, setStatusSelect] = useState("any")
 
-   const fileInputRef = useRef(null);
+  const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
 
@@ -97,8 +99,12 @@ const ContactsPage = () => {
     { name: "Actions", width: "w-[120px]" },
   ];
 
-  const statusOptions = ["Any", "Active", "Unconfirmed", "Unsubscribed", "Bounced"]
-  const channelOptions = ["All", "Email", "Phone No"]
+  const statusOptions = [{ label: "Any", key: "any" }, { label: "Active", key: "active" }, { label: "Unconfirmed", key: "unconfirmed" }, { label: "Unsubscribed", key: "unsubscribed" }, { label: "Bounced", key: "bounced" }]
+  const channelOptions = [{ label: "All", key: "all" }, { label: "Email", key: "email" }, { label: "Phone No", key: "phone_no" }]
+
+  const selectedChannel = channelOptions.find((a) => a.key == channelSelect)?.label;
+
+  const selectedStatus = statusOptions.find((a) => a.key == statusSelect)?.label;
 
 
   const handleChange = (e) => {
@@ -173,15 +179,21 @@ const ContactsPage = () => {
         <>
           <div className="flex items-center justify-between w-full">
             <div className="flex items-start gap-3">
-              <select className="text-[#5A687C] min-w-[147px] px-3.5 py-[8px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg">
+              <select value={channelSelect} onChange={(e) => setChannelSelect(e.target.value)} className="text-[#5A687C] min-w-[147px] px-3.5 py-[8px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg">
+                <option value={channelSelect} disabled>
+                  Channel: {selectedChannel}
+                </option>
                 {channelOptions.map(e => (
-                  <option key={e} value={e}>Channel: {e}</option>
+                  <option className={`${channelSelect == e.key && 'hidden'}`} key={e.key} value={e.key}>{e.label}</option>
                 ))}
               </select>
 
-              <select className="text-[#5A687C] min-w-[147px] px-3.5 py-[8px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg">
+              <select value={statusSelect} onChange={(e) => setStatusSelect(e.target.value)} className="text-[#5A687C] min-w-[147px] px-3.5 py-[8px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg">
+                <option value={statusSelect} disabled>
+                  Status: {selectedStatus}
+                </option>
                 {statusOptions.map(e => (
-                  <option key={e} value={e}>Status: {e}</option>
+                  <option className={`${statusSelect == e.key && 'hidden'}`} key={e.key} value={e.key}>{e.label}</option>
                 ))}
               </select>
               <div className="relative w-[179px]">
@@ -236,9 +248,12 @@ const ContactsPage = () => {
         (<>
           <div className="flex items-center justify-between w-full">
             <div className="flex items-start gap-3">
-              <select className="text-[#5A687C] min-w-[147px] px-3.5 py-[8px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg">
+              <select value={channelSelect} onChange={(e) => setChannelSelect(e.target.value)} className="text-[#5A687C] min-w-[147px] px-3.5 py-[8px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg">
+                <option value={channelSelect} disabled>
+                  Channel: {selectedChannel}
+                </option>
                 {channelOptions.map(e => (
-                  <option key={e} value={e}>Channel: {e}</option>
+                  <option className={`${channelSelect == e.key && 'hidden'}`} key={e.key} value={e.key}>{e.label}</option>
                 ))}
               </select>
               <div className="relative w-[179px]">
@@ -407,7 +422,7 @@ const ContactsPage = () => {
 
       {openImport && (
         <div className=" fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
-          <div className="bg-white max-h-[547px] flex flex-col gap-3 w-full max-w-2xl rounded-2xl shadow-xl p-6 relative">
+          <div className="bg-white max-h-[547px] flex flex-col gap-3 w-full max-w-3xl rounded-2xl shadow-xl p-6 relative">
             <button
               onClick={() => setOpenImport(false)}
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
@@ -451,28 +466,33 @@ const ContactsPage = () => {
                   )}
                 </div>
               </div>
-              <div>
-                <label className="block mt-2 text-[14px] font-medium text-[#292D32] mb-1">Choose how to import contacts</label>
-                <div className="w-full flex items-center border border-gray-300 rounded-lg">
-                  <select
-                    name="channel"
-                    className="w-full bg-white px-4 py-2 rounded-lg focus:outline-none"
-                  >
-                    <option value="email">Create contact</option>
-                    <option value="Member">Update contact</option>
-                    <option value="Guest">Create and update contact</option>
-                  </select>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 items-center">
+                <div>
+                  <label className="block text-[14px] font-medium text-[#292D32] mb-1">Choose how to import contacts</label>
+                  <div className="w-full flex items-center border border-gray-300 rounded-lg">
+                    <select
+                      name="channel"
+                      className="w-full bg-white px-4 py-2 rounded-lg focus:outline-none"
+                    >
+                      <option value="" disabled>Select</option>
+                      <option value="create_contact">Create contact</option>
+                      <option value="update_contact">Update contact</option>
+                      <option value="create_update_contact">Create and update contact</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Find existing contacts based on</label>
-                <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-2">
-                  <input
-                    type="text"
-                    name="contact"
-                    placeholder="Contact id, phone ,then email"
-                    className="w-full focus:outline-none"
-                  />
+                <div>
+                  <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Find existing contacts based on</label>
+                  <div className="w-full flex items-center border border-gray-300 rounded-lg">
+                    <select
+                      name="existing_contacts"
+                      className="w-full bg-white px-4 py-2 rounded-lg focus:outline-none"
+                    >
+                      <option value="" disabled>Select</option>
+                      <option value="phone">Phone</option>
+                      <option value="Email">Email</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>

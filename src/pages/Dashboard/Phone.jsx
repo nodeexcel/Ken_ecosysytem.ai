@@ -6,19 +6,20 @@ import PhoneDashboard from '../../components/PhoneDashboard'
 import { CallAgent, FourBox, Phone, PhoneCampaign, OutboundCall, InboundCall } from "../../icons/icons";
 import OutBoundCalls from "../../components/OutboundCalls";
 import InBoundCalls from "../../components/InboundCalls";
+import dashboardProfile from '../../assets/svg/dashboard_profile.svg'
 
-
-const sideMenuList = [
-  { label: "Dashboard", icon: <FourBox />, path: "dashboard" },
-  { label: "Phone Numbers", icon: <Phone />, path: "phone-numbers" },
-  { label: "Call Agents", icon: <CallAgent />, path: "call-agents" },
-  { label: "Call Campaigns", icon: <PhoneCampaign />, path: "call-campaigns" },
-  { label: "Outbound Calls", icon: <OutboundCall />, path: "outbound-calls" },
-  { label: "Inbound Calls", icon: <InboundCall />, path: "inbound-calls" },
-];
 
 const PhonePage = () => {
   const [activeSidebarItem, setActiveSidebarItem] = useState("dashboard");
+
+  const sideMenuList = [
+    { label: "Dashboard", icon: <FourBox status={activeSidebarItem=="dashboard"}/>, path: "dashboard" },
+    { label: "Phone Numbers", icon: <Phone status={activeSidebarItem=="phone-numbers"}/>, path: "phone-numbers" },
+    { label: "Call Agents", icon: <CallAgent status={activeSidebarItem=="call-agents"}/>, path: "call-agents" },
+    { label: "Call Campaigns", icon: <PhoneCampaign status={activeSidebarItem=="call-campaigns"}/>, path: "call-campaigns" },
+    { label: "Outbound Calls", icon: <OutboundCall status={activeSidebarItem=="outbound-calls"}/>, path: "outbound-calls" },
+    { label: "Inbound Calls", icon: <InboundCall status={activeSidebarItem=="inbound-calls"}/>, path: "inbound-calls" },
+  ];
 
   const renderMainContent = () => {
     switch (activeSidebarItem) {
@@ -42,7 +43,11 @@ const PhonePage = () => {
       <div className="flex flex-col md:flex-row items-start gap-8 relative pl-4 py-3 w-full">
         {/* Sidebar */}
         <div className="flex flex-col w-full md:w-[200px] items-start gap-2 relative">
-          <div className="bg-[#E1E4EA] rounded-lg w-[153px] h-[153px]"></div>
+          <div>
+            <img
+              src={dashboardProfile} alt='profile'
+            />
+          </div>
           {sideMenuList.map((item, i) => (
             <div
               key={i}

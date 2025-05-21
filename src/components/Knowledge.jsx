@@ -66,6 +66,9 @@ const Knowledge = () => {
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
+      setFormData((prev) => ({
+        ...prev, files: file
+      }))
       console.log('Selected file:', file);
     }
   };
@@ -85,6 +88,9 @@ const Knowledge = () => {
     const file = e.dataTransfer.files?.[0];
     if (file) {
       setSelectedFile(file);
+      setFormData((prev) => ({
+        ...prev, files: file
+      }))
       console.log('Dropped file:', file);
     }
   };
@@ -95,6 +101,7 @@ const Knowledge = () => {
       const response = await knowledgeBase(payload)
       if (response.status === 200) {
         setOpen(false)
+        handleSnippetsData()
       } else {
         setLoading(false)
       }
@@ -134,6 +141,13 @@ const Knowledge = () => {
         }
         handleKnowledge(payload)
         break;
+      case "files":
+        const filePayload = {
+          data: formData.files,
+          data_type: activeTab
+        }
+        handleKnowledge(filePayload)
+        break;
       default:
         const data = {
           data: formData.snippet,
@@ -150,7 +164,7 @@ const Knowledge = () => {
       case "website":
         return (
           <>
-            {loadingData ? <div className="flex justify-center items-center"><span className="loader" /></div> : knowledgeData?.website?.length > 0 ? <div className="mt-3 max-w-[648px]">
+            {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.website?.length > 0 ? <div className="mt-3 max-w-[648px]">
               <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
                 {knowledgeData?.website?.length > 0 && knowledgeData?.website.map((e, i) => <div key={i} className="bg-[#f7f8fc] p-4 rounded-xl flex items-center gap-2">
                   <div className="text-[#675FFF]">
@@ -169,7 +183,7 @@ const Knowledge = () => {
       case "snippet":
         return (
           <>
-            {loadingData ? <div className="flex justify-center items-center"><span className="loader" /></div> : knowledgeData?.snippets?.length > 0 ? <div className="mt-3 max-w-[648px]">
+            {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.snippets?.length > 0 ? <div className="mt-3 max-w-[648px]">
               <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
                 {knowledgeData?.snippets?.length > 0 && knowledgeData?.snippets.map((e, i) => <div key={i} className="bg-[#f7f8fc] p-4 rounded-xl flex items-center gap-2">
                   <div className="pt-1">
@@ -185,7 +199,21 @@ const Knowledge = () => {
         )
       default:
         return (
-          <NoData setOpen={() => setOpen(true)} />
+          <>
+            {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.files?.length > 0 ? <div className="mt-3 max-w-[648px]">
+              <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
+                {knowledgeData?.files?.length > 0 && knowledgeData?.files.map((e, i) => <div key={i} className="bg-[#f7f8fc] p-4 rounded-xl flex items-center gap-2">
+                  <div className="text-[#675FFF]">
+                    F
+                  </div>
+                  <div>
+                    <a href={e} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C]">{e}</a>
+                  </div>
+                </div>)}
+              </div>
+            </div> :
+              <NoData setOpen={() => setOpen(true)} />}
+          </>
         )
     }
   }

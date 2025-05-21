@@ -3,25 +3,26 @@ import { CalenderIcon, FourBox, PhoneCampaign } from "../../icons/icons";
 import CampaignDashboard from "../../components/CampaignDashboard";
 import CampaignsTable from "../../components/Campaigns";
 import Calendar from "../../components/Calendar";
+import dashboardProfile from '../../assets/svg/dashboard_profile.svg'
 
-
-const sideMenuList = [
-    { label: "Dashboard", icon: <FourBox />, path: "dashboard" },
-    { label: "Campaigns", icon: <PhoneCampaign />, path: "campaigns" },
-    { label: "Calendar", icon: <CalenderIcon />, path: "calendar" },
-];
 
 const Campaigns = () => {
     const [activeSidebarItem, setActiveSidebarItem] = useState("dashboard");
+
+    const sideMenuList = [
+        { label: "Dashboard", icon: <FourBox status={activeSidebarItem=="dashboard"}/>, path: "dashboard" },
+        { label: "Campaigns", icon: <PhoneCampaign status={activeSidebarItem=="campaigns"}/>, path: "campaigns" },
+        { label: "Calendar", icon: <CalenderIcon status={activeSidebarItem=="calendar"}/>, path: "calendar" },
+    ];
 
     const renderMainContent = () => {
         switch (activeSidebarItem) {
             case "campaigns":
                 return <CampaignsTable />;
             case "calendar":
-                return <Calendar/>
+                return <Calendar />
             default:
-                return <CampaignDashboard setActiveSidebarItem={setActiveSidebarItem}/>;
+                return <CampaignDashboard setActiveSidebarItem={setActiveSidebarItem} />;
         }
     };
 
@@ -30,7 +31,11 @@ const Campaigns = () => {
             <div className="flex flex-col md:flex-row items-start gap-8 relative pl-4 py-3 w-full">
                 {/* Sidebar */}
                 <div className="flex flex-col w-full md:w-[153px] items-start gap-2 relative">
-                    <div className="bg-[#E1E4EA] rounded-lg w-[153px] h-[153px]"></div>
+                    <div>
+                        <img
+                            src={dashboardProfile} alt='profile'
+                        />
+                    </div>
                     {sideMenuList.map((item, i) => (
                         <div
                             key={i}

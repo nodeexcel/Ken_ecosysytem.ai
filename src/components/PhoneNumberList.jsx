@@ -50,10 +50,7 @@ const initialRows = [
   },
 ];
 
-const tabs = [
-  { label: "Outbound Number", key: "outbound", icon: <OutboundCall /> },
-  { label: "Inbound Number", key: "inbound", icon: <InboundCall /> },
-]
+
 
 const countries = [
   { name: "United States", code: "US", dial_code: "+1", flag: <BritishFlag /> },
@@ -67,6 +64,11 @@ export default function PhoneNumbers() {
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState("outbound")
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+
+  const tabs = [
+  { label: "Outbound Number", key: "outbound", icon: <OutboundCall active={activeTab=="outbound"}/> },
+  { label: "Inbound Number", key: "inbound", icon: <InboundCall active={activeTab=="inbound"}/> },
+]
 
   const toggleActive = (id) => {
     setRows((prev) =>
