@@ -8,21 +8,22 @@ import dashboardProfile from '../../assets/svg/dashboard_profile.svg'
 
 const Campaigns = () => {
     const [activeSidebarItem, setActiveSidebarItem] = useState("dashboard");
+    const [isEdit, setIsEdit] = useState()
 
     const sideMenuList = [
-        { label: "Dashboard", icon: <FourBox status={activeSidebarItem=="dashboard"}/>, path: "dashboard" },
-        { label: "Campaigns", icon: <PhoneCampaign status={activeSidebarItem=="campaigns"}/>, path: "campaigns" },
-        { label: "Calendar", icon: <CalenderIcon status={activeSidebarItem=="calendar"}/>, path: "calendar" },
+        { label: "Dashboard", icon: <FourBox status={activeSidebarItem == "dashboard"} />, path: "dashboard" },
+        { label: "Campaigns", icon: <PhoneCampaign status={activeSidebarItem == "campaigns"} />, path: "campaigns" },
+        { label: "Calendar", icon: <CalenderIcon status={activeSidebarItem == "calendar"} />, path: "calendar" },
     ];
 
     const renderMainContent = () => {
         switch (activeSidebarItem) {
             case "campaigns":
-                return <CampaignsTable />;
+                return <CampaignsTable isEdit={isEdit} setActiveSidebarItem={setActiveSidebarItem}/>;
             case "calendar":
                 return <Calendar />
             default:
-                return <CampaignDashboard setActiveSidebarItem={setActiveSidebarItem} />;
+                return <CampaignDashboard setActiveSidebarItem={setActiveSidebarItem} setIsEdit={setIsEdit} />;
         }
     };
 
@@ -39,7 +40,10 @@ const Campaigns = () => {
                     {sideMenuList.map((item, i) => (
                         <div
                             key={i}
-                            onClick={() => setActiveSidebarItem(item.path)}
+                            onClick={() => {
+                                setActiveSidebarItem(item.path)
+                                setIsEdit("")
+                            }}
                             className={`flex items-center gap-2 px-3 py-2 rounded-md cursor-pointer w-full ${activeSidebarItem === item.path
                                 ? "bg-[#E1E5EA] text-black"
                                 : "text-gray-600 hover:bg-gray-100"

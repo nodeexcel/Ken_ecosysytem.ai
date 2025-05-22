@@ -1,76 +1,111 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Delete, Duplicate, Edit, Notes, ThreeDots } from '../icons/icons';
 import { X } from 'lucide-react';
+import { deleteEmailCampaign, getEmailCampaign, updateEmailCampaignStatus } from '../api/emailCampaign';
 
 const staticData = [
     {
-        label: "Total calls",
+        label: "Total Emails Sent",
         value: "0"
     },
     {
-        label: "Unsuccessful calls",
+        label: "Emails Delivered",
         value: "0"
     },
     {
-        label: "Average call duration",
+        label: "Emails Opened",
         value: "0"
     },
     {
-        label: "Total call time",
-        value: "00:00:00"
+        label: "Email Clicks",
+        value: "0"
+    },
+    {
+        label: "Bounced Emails",
+        value: "0"
     }
 ]
-function CampaignDashboard({setActiveSidebarItem}) {
-    const [campaignData, setCampaignData] = useState([
-        {
-            name: 'XYZ',
-            sentDate: '27/03/2025 03:30 PM',
-            sentTo: 0,
-            status: true,
-            status_type:"Running"
-        },
-        {
-            name: 'XYZ',
-            sentDate: '27/03/2025 03:30 PM',
-            sentTo: 0,
-            status: true,
-            status_type:"Planned"
-        },
-        {
-            name: 'XYZ',
-            sentDate: '27/03/2025 03:30 PM',
-            sentTo: 0,
-            status: true,
-            status_type:"Terminated"
-        },
-        {
-            name: 'XYZ',
-            sentDate: '27/03/2025 03:30 PM',
-            sentTo: 0,
-            status: true,
-            status_type:"Issue Detected"
-        },
-    ]);
+function CampaignDashboard({ setActiveSidebarItem, setIsEdit }) {
+    const [campaignData, setCampaignData] = useState();
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState("")
 
     const [viewReportModel, setViewReportModel] = useState(false)
 
     const [activeDropdown, setActiveDropdown] = useState(null);
 
-    const toggleStatus = (index, key) => {
-        const updated = [...campaignData];
-        updated[index][key] = !updated[index][key];
-        setCampaignData(updated);
+    useEffect(() => {
+        getCampaignData()
+    }, [])
+
+    const toggleStatus = async (index, key, id) => {
+        try {
+            const response = await updateEmailCampaignStatus(id)
+            if (response.status === 200) {
+                const updated = [...campaignData];
+                updated[index][key] = !updated[index][key];
+                setCampaignData(updated);
+            }
+        } catch (error) {
+            console.log(error)
+        }
     };
 
-    const deleteRow = (index) => {
-        const updated = [...campaignData];
-        updated.splice(index, 1);
-        setCampaignData(updated);
-    };
+    const handleDelete = async (index, id) => {
+        try {
+            const response = await deleteEmailCampaign(id)
+            if (response.status === 200) {
+                setActiveDropdown(null);
+                const updated = [...campaignData];
+                updated.splice(index, 1);
+                if (updated?.length === 0) {
+                    setMessage("No Data Found")
+                }
+                setCampaignData(updated);
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handleEdit = (id) => {
+        setIsEdit(id)
+        setActiveSidebarItem("campaigns")
+    }
 
     const handleDropdownClick = (index) => {
         setActiveDropdown(activeDropdown === index ? null : index);
     };
+
+    useEffect(() => {
+        if (campaignData?.length > 0) {
+            setLoading(false)
+        }
+    }, [campaignData])
+
+    const getCampaignData = async () => {
+        setMessage("")
+        setLoading(true)
+        try {
+            const response = await getEmailCampaign()
+            if (response.status === 200) {
+                console.log(response?.data?.campaign_info)
+                if (response?.data?.campaign_info?.length > 0) {
+                    setCampaignData(response?.data?.campaign_info)
+                } else {
+                    setCampaignData([])
+                    setLoading(false)
+                    setMessage("No Data Found")
+                }
+            } else {
+                setLoading(false)
+                setMessage("Network Error!")
+            }
+        } catch (error) {
+            console.log(error)
+            setLoading(false)
+        }
+    }
 
     const renderColor = (text) => {
         switch (text) {
@@ -83,7 +118,7 @@ function CampaignDashboard({setActiveSidebarItem}) {
             case "Terminated":
                 return `text-[#B42318] bg-[#FFEBEA] border-[#B42318]`;
             default:
-                return `text-[#344054] bg-[#fff] border-[#EAECF0]`;
+                return `text-[#5A687C] bg-[#fff] border-[#5A687C]`;
         }
     };
 
@@ -91,7 +126,7 @@ function CampaignDashboard({setActiveSidebarItem}) {
         <div className="w-full p-4 flex flex-col gap-4 ">
             <div className="flex justify-between items-center">
                 <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">Campaigns</h1>
-                <button onClick={()=>setActiveSidebarItem("campaigns")} className="bg-[#675FFF] text-white rounded-md text-sm md:text-base px-4 py-2">
+                <button onClick={() => setActiveSidebarItem("campaigns")} className="bg-[#675FFF] text-white rounded-md text-sm md:text-base px-4 py-2">
                     Add Campaign
                 </button>
             </div>
@@ -107,82 +142,84 @@ function CampaignDashboard({setActiveSidebarItem}) {
                             <th className="px-6 py-3 text-[16px] font-medium">Actions</th>
                         </tr>
                     </thead>
-                    <tbody className='bg-white border border-[#E1E4EA]'>
-                        {campaignData.map((item, index) => (
-                            <tr key={index} className={`${index !== campaignData.length - 1 ? 'border-b border-gray-200' : ''}`}>
-                                <td className="px-6 py-4 text-sm text-gray-800 font-semibold">{item.name}</td>
-                                <td className="px-6 py-4 text-sm text-gray-700">{item.sentDate}</td>
-                                <td className="px-6 py-4 text-sm text-gray-700">{item.sentTo}</td>
+                    <tbody className={`${!message && !loading && 'bg-white'} border border-[#E1E4EA]`}>
+                        {loading ? <tr><td className='h-34'></td><td></td><td><span className='loader' /></td></tr> : message ? <tr className='h-34'><td></td><td></td><td>{message}</td></tr> :
+                            campaignData?.length > 0 && campaignData.map((item, index) => (
+                                <tr key={index} className={`${index !== campaignData.length - 1 ? 'border-b border-gray-200' : ''}`}>
+                                    <td className="px-6 py-4 text-sm text-gray-800 font-semibold">{item.campaign_name}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-700">{item.sent}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-700">{item.sent_to}</td>
 
-                                <td className="px-6 py-4 text-sm items-center gap-2">
-                                    <div className='flex justify-between items-center gap-2'>
-                                        <p className={`${renderColor(item.status_type)} border px-2 py-1 text-xs rounded-full`}>
-                                            {item.status_type}
-                                        </p>
-                                        <label className="relative inline-flex items-center cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                className="sr-only peer"
-                                                checked={item.status}
-                                                onChange={() => toggleStatus(index, 'status')}
-                                            />
-                                            <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-400 rounded-full peer dark:bg-gray-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-                                        </label>
-                                    </div>
-                                </td>
-
-
-                                <td className="px-6 py-4 text-sm text-gray-700">
-                                    <div className='flex items-center gap-2'>
-                                        <button onClick={() => setViewReportModel(true)} className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg'>
-                                            View Report
-                                        </button>
-                                        <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
-                                            <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
-                                        </button>
-                                    </div>
-                                    {activeDropdown === index && (
-                                        <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
-                                            <div className="py-1">
-                                                <button
-                                                    className="block w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-gray-100"
-                                                    onClick={() => {
-                                                        // Handle edit action
-                                                        setActiveDropdown(null);
-                                                    }}
-                                                >
-                                                    <div className="flex items-center gap-2">{<Edit />} <span className="hover:text-[#675FFF]">Edit</span> </div>
-                                                </button>
-                                                <button
-                                                    className="block w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6]"
-                                                    onClick={() => {
-                                                        // Handle delete action
-                                                        setActiveDropdown(null);
-                                                    }}
-                                                >
-                                                    <div className="flex items-center gap-2">{<Duplicate />} <span className="hover:text-[#675FFF]">Duplicate</span> </div>
-                                                </button>
-                                                <hr style={{ color: "#E6EAEE" }} />
-                                                <button
-                                                    className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
-                                                    onClick={() => {
-                                                        // Handle delete action
-                                                        setActiveDropdown(null);
-                                                        deleteRow(index)
-                                                    }}
-                                                >
-                                                    <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
-                                                </button>
-                                            </div>
+                                    <td className="px-6 py-4 text-sm items-center gap-2">
+                                        <div className='flex justify-between items-center gap-2'>
+                                            <p className={`${renderColor(item.campaign_status)} border px-2 py-1 text-xs rounded-full`}>
+                                                {item.campaign_status}
+                                            </p>
+                                            <label className="relative inline-flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    className="sr-only peer"
+                                                    checked={item.is_active}
+                                                    onChange={() => toggleStatus(index, 'is_active', item.campaign_id)}
+                                                />
+                                                <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-400 rounded-full peer dark:bg-gray-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                            </label>
                                         </div>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
+                                    </td>
+
+
+                                    <td className="px-6 py-4 text-sm text-gray-700">
+                                        <div className='flex items-center gap-2'>
+                                            <button onClick={() => setViewReportModel(true)} className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg'>
+                                                View Report
+                                            </button>
+                                            <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
+                                                <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
+                                            </button>
+                                        </div>
+                                        {activeDropdown === index && (
+                                            <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                                                <div className="py-1">
+                                                    <button
+                                                        className="block w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-gray-100"
+                                                        onClick={() => {
+                                                            // Handle edit action
+                                                            handleEdit(item.campaign_id)
+                                                            setActiveDropdown(null);
+                                                        }}
+                                                    >
+                                                        <div className="flex items-center gap-2">{<Edit />} <span className="hover:text-[#675FFF]">Edit</span> </div>
+                                                    </button>
+                                                    <button
+                                                        className="block w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6]"
+                                                        onClick={() => {
+                                                            // Handle delete action
+                                                            setActiveDropdown(null);
+                                                        }}
+                                                    >
+                                                        <div className="flex items-center gap-2">{<Duplicate />} <span className="hover:text-[#675FFF]">Duplicate</span> </div>
+                                                    </button>
+                                                    <hr style={{ color: "#E6EAEE" }} />
+                                                    <button
+                                                        className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
+                                                        onClick={() => {
+                                                            // Handle delete action
+                                                            setActiveDropdown(null);
+                                                            handleDelete(index, item.campaign_id)
+                                                        }}
+                                                    >
+                                                        <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
                     </tbody>
                 </table>
             </div>
-            <div onClick={()=>setActiveSidebarItem("campaigns")} className="w-full border rounded-lg border-dashed border-[#C0C0C0] mt-4 p-3 flex justify-center">
+            <div onClick={() => setActiveSidebarItem("campaigns")} className="w-full border rounded-lg border-dashed border-[#C0C0C0] mt-4 p-3 flex justify-center">
                 <button
                     className="text-[#5E54FF] bg-transparent px-6 py-2 rounded-md text-[16px] font-[500]"
                 >

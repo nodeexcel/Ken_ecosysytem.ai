@@ -22,30 +22,29 @@
   }
 }
 
-
 .custom-thumb::-webkit-slider-thumb {
   appearance: none;
   height: 24px; /* thumb height */
-  width: 24px;  /* thumb width */
-  background-color: #675FFF; /* thumb color */
+  width: 24px; /* thumb width */
+  background-color: #675fff; /* thumb color */
   border-radius: 9999px; /* fully rounded */
   border: none;
   cursor: pointer;
-   /* adjust position if needed */
+  /* adjust position if needed */
 }
 
 .custom-thumb::-moz-range-thumb {
   height: 24px;
   width: 24px;
-  background-color: #675FFF;
+  background-color: #675fff;
   border: none;
   border-radius: 9999px;
   cursor: pointer;
 }
 
-body{
+body {
   height: 100%;
-  background-color: #F6F7F9;
+  background-color: #f6f7f9;
 }
 
 ::-webkit-scrollbar {
@@ -54,18 +53,18 @@ body{
 }
 
 ::-webkit-scrollbar-track {
-  background: #E1E4EA;
+  background: #e1e4ea;
   border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #675FFF;
+  background-color: #675fff;
   border-radius: 8px;
-  border: 2px solid #E1E4EA;
+  border: 2px solid #e1e4ea;
 }
 
-.offer{
-  background-image: url('./assets/svg/cancelpage_backgound.svg');
+.offer {
+  background-image: url("./assets/svg/cancelpage_backgound.svg");
 }
 
 .inter {
@@ -80,8 +79,28 @@ body{
   animation: l5 1s infinite linear alternate;
 }
 @keyframes l5 {
-    0%  {box-shadow: 20px 0 #b1d0e8, -20px 0 rgb(197, 177, 177);background: #d2f9f9 }
-    33% {box-shadow: 20px 0 rgb(197, 177, 177)0e8, -20px 0 #0002;background: #d2f9f9}
-    66% {box-shadow: 20px 0 #d2f9f9,-20px 0 rgb(197, 177, 177); background: #d2f9f9}
-    100%{box-shadow: 20px 0 #d2f9f9,-20px 0 rgb(197, 177, 177); background: rgb(197, 177, 177) }
+  0% {
+    box-shadow: 20px 0 #b1d0e8, -20px 0 rgb(197, 177, 177);
+    background: #d2f9f9;
+  }
+  33% {
+    box-shadow: 20px 0 rgb(197, 177, 177) 0e8, -20px 0 #0002;
+    background: #d2f9f9;
+  }
+  66% {
+    box-shadow: 20px 0 #d2f9f9, -20px 0 rgb(197, 177, 177);
+    background: #d2f9f9;
+  }
+  100% {
+    box-shadow: 20px 0 #d2f9f9, -20px 0 rgb(197, 177, 177);
+    background: rgb(197, 177, 177);
+  }
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }

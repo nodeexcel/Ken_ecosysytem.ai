@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Delete, Notes, ThreeDots, UploadIcon } from '../icons/icons';
 import { ChevronDown, Info, X } from 'lucide-react';
 import { format } from 'date-fns';
+import { createEmailCampaign, getEmailCampaignById, updateEmailCampaign } from '../api/emailCampaign';
 
 
 
@@ -262,66 +263,54 @@ const TimeSelector = ({ onSave, onCancel, initialTime }) => {
                     Cancel
                 </button>
             </div>
-
-            <style jsx>{`
-                .scrollbar-hide {
-                    -ms-overflow-style: none;
-                    scrollbar-width: none;
-                }
-                .scrollbar-hide::-webkit-scrollbar {
-                    display: none;
-                }
-            `}</style>
         </div>
     );
 };
 
 
+const CustomSelector = ({ options, setShowSelector, value = [], onChange }) => {
 
-// WeekSelector Component
-const WeekSelector = ({ setShowWeekSelector, value = [], onChange }) => {
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const dropdownRef = useRef(null);
 
-    const dropdownWeekRef = useRef(null);
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (dropdownWeekRef.current && !dropdownWeekRef.current.contains(event.target)) {
-                setShowWeekSelector(false);
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShowSelector(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const toggleLanguage = (day) => {
-        const newSelection = value.includes(day)
-            ? value.filter((d) => d !== day)
-            : [...value, day];
+    const toggleChange = (e) => {
+        const newSelection = value.includes(e)
+            ? value.filter((d) => d !== e)
+            : [...value, e];
         onChange(newSelection);
     };
     return (
-        <div ref={dropdownWeekRef} className="bg-white rounded-lg shadow-lg p-4">
+        <div ref={dropdownRef} className="bg-white rounded-lg shadow-lg p-4">
             <div className="space-y-2">
-                {days.map((day) => (
+                {options.map((e) => (
                     <div
-                        key={day}
-                        onClick={() => toggleLanguage(day)}
-                        className={`p-2 rounded-lg cursor-pointer flex items-center gap-2 ${value.includes(day)
+                        key={e.key}
+                        onClick={() => toggleChange(e.key)}
+                        className={`p-2 rounded-lg cursor-pointer flex items-center gap-2 ${value.includes(e.key)
                             ? 'bg-[#F0EFFF] text-[#675FFF]'
                             : 'hover:bg-gray-50'
                             }`}
                     >
                         <div
-                            className={`w-4 h-4 rounded border flex items-center justify-center ${value.includes(day)
+                            className={`w-4 h-4 rounded border flex items-center justify-center ${value.includes(e.key)
                                 ? 'border-[#675FFF] bg-[#675FFF]'
                                 : 'border-[#E1E4EA]'
                                 }`}
                         >
-                            {value.includes(day) && (
+                            {value.includes(e.key) && (
                                 <span className="text-white text-xs">✓</span>
                             )}
                         </div>
-                        <span>{day}</span>
+                        <span>{e.label}</span>
                     </div>
                 ))}
             </div>
@@ -329,51 +318,11 @@ const WeekSelector = ({ setShowWeekSelector, value = [], onChange }) => {
     );
 };
 
-// Dropdown Component
-const Dropdown = ({ options, placeholder = 'Select', value, onChange, className = '' }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef(null);
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsOpen(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
-    const handleSelect = (option) => {
-        onChange(option);
-        setIsOpen(false);
-    };
-
-    const optionLabel = value && options.find((e) => e.key === value)
-
-    return (
-        <div ref={dropdownRef} className={`relative w-full ${className}`}>
-            <button type="button" onClick={() => setIsOpen(!isOpen)} className="flex justify-between items-center w-full border border-[#E1E4EA] rounded-lg px-3 py-2 bg-white text-left focus:outline-none focus:ring-1 focus:ring-[#675FFF]">
-                <span className={`block truncate ${!optionLabel ? 'text-gray-500' : 'text-gray-900'}`}>{optionLabel.label || placeholder}</span>
-                <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
-            </button>
-            {isOpen && (
-                <div className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg border border-gray-200 max-h-60 overflow-auto">
-                    <ul className="py-1">
-                        {options.map((option) => (
-                            <li key={option.key} className={`cursor-pointer select-none relative px-4 py-2 hover:bg-[#F4F5F6] ${value === option.key ? 'text-[#675FFF]' : 'text-gray-900'}`} onClick={() => handleSelect(option.key)}>{option.label}</li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-        </div>
-    );
-};
 
 
 
 
-
-
-function CampaignsTable() {
+function CampaignsTable({ isEdit, setActiveSidebarItem }) {
     const [campaignData, setCampaignData] = useState([
         { name: 'Campaign', opened: '-', clicked: '-', bounced: '', status: "Issue Detected" },
         { name: 'Campaign', opened: '-', clicked: '-', bounced: '', status: "Planned" }
@@ -381,18 +330,24 @@ function CampaignsTable() {
 
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [showModal, setShowModal] = useState(false);
-    const [startDate, setStartDate] = useState("");
     const [showTimeSelector, setShowTimeSelector] = useState(false);
     const [showWeekSelector, setShowWeekSelector] = useState(false);
+    const [showListTargetSelector, setShowListTargetSelector] = useState(false);
+    const [submitStatus, setSubmitStatus] = useState(false)
+    const [updateStatus, setUpdateStatus] = useState(false);
+    const [loading, setLoading] = useState(false)
 
     const [formData, setFormData] = useState({
         campaign_title: "",
         campaign_objective: "",
         campaign_objective_other: "",
-        main_subject: "", cta_type: "", calendar_type: "", url: "", file: "", list_of_target: "", desired_tone: "", language: "",
-        send_time_window: "", start_date: "", frequency: [], include_branding: false, use_ai_brain_for_email: false,
-        custom_prompt: "", text_length: "", product_service_to_feature: "", review_before_sending: false
-    })
+        main_subject: "", cta_type: "", calender_choosed: "", url: "", file: "", list_of_target: [], desired_tone: "", language: "",
+        send_time_window: "", start_date: "", frequency: [], include_branding: false, include_brainai: false,
+        custom_prompt: "", text_length: "", product_or_service_feature: "", review: false, is_draft: false
+    });
+
+    const [errors, setErrors] = useState({});
+
 
     const campaignObjectiveOptions = [{ label: "Promote an offer", key: "promote_an_offer" }, { label: "Inform / Educate", key: "inform_educate" }, { label: "Re-engage leads", key: "re_engage_leads" }, { label: "Announce a new feature", key: "announce_a_new_feature" }, { label: "Other", key: "other" }]
 
@@ -411,6 +366,64 @@ function CampaignsTable() {
 
     const listOfTargetOptions = [{ label: "Segment A", key: "segment_a" }, { label: "Segment B", key: "segment_b" }]
 
+    const daysOptions = [{ label: 'Monday', key: 'monday' }, { label: "Tuesday", key: "tuesday" }, { label: "Wednesday", key: "wednesday" }, { label: "Thursday", key: "thursday" }, { label: "Friday", key: "friday" }, { label: "Saturday", key: "saturday" }, { label: "Sunday", key: "sunday" }];
+
+
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!formData.campaign_title.trim()) newErrors.campaign_title = "Campaign title is required.";
+        if (!formData.campaign_objective) newErrors.campaign_objective = "Campaign objective is required.";
+
+        if (formData.campaign_objective === 'other' && !formData.campaign_objective_other.trim()) {
+            newErrors.campaign_objective_other = "Please specify the objective.";
+        }
+
+        if (!formData.main_subject.trim()) newErrors.main_subject = "Main subject is required.";
+        if (!formData.cta_type) newErrors.cta_type = "CTA type is required.";
+        if (formData.cta_type === "book_a_meeting") {
+            if (!formData.calender_choosed) newErrors.calender_choosed = "Calendar type is required.";
+        } else if (formData.cta_type === "purchase" || formData.cta_type === "visit_a_page") {
+            if (!formData.url.trim()) {
+                newErrors.url = "URL is required.";
+            } else if (!/^https?:\/\/\S+$/.test(formData.url)) {
+                newErrors.url = "Enter a valid URL (http:// or https://).";
+            }
+        } else if (formData.cta_type === "download") {
+            newErrors.file = "Upload a file is required."
+        }
+
+        if (!formData.desired_tone) newErrors.desired_tone = "Desired tone is required.";
+        if (!formData.language) newErrors.language = "Language is required.";
+        if (!formData.send_time_window) newErrors.send_time_window = "Send time window is required.";
+
+        if (!formData.start_date) {
+            newErrors.start_date = "Start date is required.";
+        } else if (!/^\d{4}-\d{2}-\d{2}$/.test(formData.start_date)) {
+            newErrors.start_date = "Start date must be in YYYY-MM-DD format.";
+        }
+
+        if (!Array.isArray(formData.frequency) || formData.frequency.length === 0) {
+            newErrors.frequency = "At least one frequency option must be selected.";
+        }
+
+        if (!Array.isArray(formData.list_of_target) || formData.list_of_target.length === 0) {
+            newErrors.list_of_target = "At least one Target option must be selected.";
+        }
+
+        if (!formData.text_length) newErrors.text_length = "Text length is required.";
+        if (!formData.product_or_service_feature.trim()) newErrors.product_or_service_feature = "Product/service to feature is required.";
+        if (!formData.custom_prompt.trim()) newErrors.custom_prompt = "Custom prompt is required when using AI brain.";
+
+        return newErrors;
+    };
+
+    useEffect(() => {
+        if (isEdit) {
+            getEmailCampaigndData()
+        }
+    }, [isEdit])
+
     const deleteRow = (index) => {
         const updated = [...campaignData];
         updated.splice(index, 1);
@@ -426,6 +439,7 @@ function CampaignsTable() {
             ...prev,
             send_time_window: time,
         }))
+        setErrors((prev) => ({ ...prev, send_time_window: "" }))
         setShowTimeSelector(false);
     };
 
@@ -439,7 +453,13 @@ function CampaignsTable() {
 
     const handleFileChange = (e) => {
         const file = e.target.files?.[0];
-        if (file) {
+        setErrors((prev) => ({ ...prev, file: "" }))
+        if (file && file.type !== "application/pdf") {
+            setErrors((prev) => ({ ...prev, file: "Only PDF files are allowed." }));
+            e.target.files = '';
+            return;
+        }
+        else if (file) {
             setSelectedFile(file);
             setFormData((prev) => ({
                 ...prev,
@@ -460,9 +480,15 @@ function CampaignsTable() {
 
     const handleDrop = (e) => {
         e.preventDefault();
+        setErrors((prev) => ({ ...prev, file: "" }))
         setDragActive(false);
         const file = e.dataTransfer.files?.[0];
-        if (file) {
+        if (file && file.type !== "application/pdf") {
+            setErrors((prev) => ({ ...prev, file: "Only PDF files are allowed." }));
+            e.target.files = '';
+            return;
+        }
+        else if (file) {
             setSelectedFile(file);
             setFormData((prev) => ({
                 ...prev,
@@ -477,11 +503,139 @@ function CampaignsTable() {
         setFormData((prev) => ({
             ...prev, [name]: value
         }))
+        setErrors((prev) => ({ ...prev, [name]: "" }))
     }
 
-    const handleSubmit = () => {
-        console.log(formData, "formData")
+    const getEmailCampaigndData = async () => {
+        setLoading(true)
+        try {
+            const response = await getEmailCampaignById(isEdit)
+            if (response.status === 200) {
+                console.log(response?.data)
+                const campaign = response?.data?.campaign;
+                const isCustomObjective = !campaignObjectiveOptions.some(
+                    (e) => e.key === campaign.campaign_objective
+                );
+                setFormData({
+                    ...campaign,
+                    campaign_objective: isCustomObjective ? 'other' : campaign.campaign_objective,
+                    campaign_objective_other: isCustomObjective ? campaign.campaign_objective : '',
+                });
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
     }
+
+    const handleSubmit = async () => {
+        const validationErrors = validateForm();
+
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            console.log("Validation errors:", validationErrors);
+            return;
+        }
+
+        console.log(formData, "formData")
+        setSubmitStatus(true)
+        try {
+            let payload = { ...formData };
+
+            if (formData.campaign_objective_other?.trim()) {
+                payload.campaign_objective = formData.campaign_objective_other;
+            }
+
+            delete payload.campaign_objective_other;
+
+            const response = await createEmailCampaign(payload);
+            if (response.status === 201) {
+                console.log(response.data)
+                setActiveSidebarItem("dashboard")
+            }
+
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setSubmitStatus(false)
+        }
+    }
+
+
+    const handleUpdate = async () => {
+        const validationErrors = validateForm();
+
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            console.log("Validation errors:", validationErrors);
+            return;
+        }
+
+        console.log(formData, "formData")
+        setUpdateStatus(true)
+        try {
+            let payload = { ...formData };
+
+            if (formData.campaign_objective_other?.trim()) {
+                payload.campaign_objective = formData.campaign_objective_other;
+            }
+
+            delete payload.campaign_objective_other;
+            const response = await updateEmailCampaign(payload, isEdit);
+            if (response.status === 200) {
+                console.log(response.data)
+                setActiveSidebarItem("dashboard")
+            }
+
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setUpdateStatus(false)
+        }
+    }
+
+    // Dropdown Component
+    const Dropdown = ({ name, options, placeholder = 'Select', value, onChange, className = '' }) => {
+        const [isOpen, setIsOpen] = useState(false);
+        const dropdownRef = useRef(null);
+
+        useEffect(() => {
+            const handleClickOutside = (event) => {
+                if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                    setIsOpen(false);
+                }
+            };
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => document.removeEventListener('mousedown', handleClickOutside);
+        }, []);
+
+        const handleSelect = (option) => {
+            onChange(option);
+            setIsOpen(false);
+        };
+
+        const optionLabel = value && options.find((e) => e.key === value)
+
+        return (
+            <div ref={dropdownRef} className={`relative w-full ${className}`}>
+                <button type="button" onClick={() => setIsOpen(!isOpen)} className={`flex justify-between items-center w-full border ${errors[name] ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 bg-white text-left focus:outline-none focus:ring-1 focus:ring-[#675FFF]`}>
+                    <span className={`block truncate ${!optionLabel ? 'text-gray-500' : 'text-gray-900'}`}>{optionLabel.label || placeholder}</span>
+                    <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
+                </button>
+                {isOpen && (
+                    <div className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg border border-gray-200 max-h-60 overflow-auto">
+                        <ul className="py-1">
+                            {options.map((option) => (
+                                <li key={option.key} className={`cursor-pointer select-none relative px-4 py-2 hover:bg-[#F4F5F6] ${value === option.key ? 'text-[#675FFF]' : 'text-gray-900'}`} onClick={() => handleSelect(option.key)}>{option.label}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
 
     const renderColor = (text) => {
         switch (text) {
@@ -503,16 +657,20 @@ function CampaignsTable() {
                     <div>
                         <label className="block text-sm font-medium mb-1">Calendars</label>
                         <Dropdown
+                            name="calender_choosed"
                             options={calendarOptions}
-                            value={formData.calendar_type}
-                            onChange={(updated) =>
+                            value={formData.calender_choosed}
+                            onChange={(updated) => {
                                 setFormData((prev) => ({
                                     ...prev,
-                                    calendar_type: updated,
+                                    calender_choosed: updated,
                                 }))
+                                setErrors((prev) => ({ ...prev, calender_choosed: "" }))
+                            }
                             }
                             placeholder="Select"
                         />
+                        {errors.calender_choosed && <p className='my-1 text-[#FF3B30]'>{errors.calender_choosed}</p>}
                     </div>
                 );
             case "download":
@@ -537,6 +695,7 @@ function CampaignsTable() {
                                 </p>
                                 <input
                                     type="file"
+                                    accept="application/pdf"
                                     ref={fileInputRef}
                                     onChange={handleFileChange}
                                     className="hidden"
@@ -548,6 +707,7 @@ function CampaignsTable() {
                                     <strong>Selected File:</strong> {selectedFile.name}
                                 </div>
                             )}
+                            {errors.file && <p className='my-1 text-[#FF3B30]'>{errors.file}</p>}
                         </div>
                     </div>
                 );
@@ -555,14 +715,16 @@ function CampaignsTable() {
                 return (
                     <div>
                         <label className="block text-sm font-medium mb-1">URL</label>
-                        <input type="text" value={formData.url} name='url' onChange={handleChange} placeholder="http:// Enter URL" className="w-full border border-[#E1E4EA] rounded-lg px-3 py-2" />
+                        <input type="text" value={formData.url} name='url' onChange={handleChange} placeholder="http:// Enter URL" className={`w-full border ${errors.url ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
+                        {errors.url && <p className='my-1 text-[#FF3B30]'>{errors.url}</p>}
                     </div>
                 )
             case "purchase":
                 return (
                     <div>
                         <label className="block text-sm font-medium mb-1">URL</label>
-                        <input type="text" value={formData.url} name='url' onChange={handleChange} placeholder="http:// Enter URL" className="w-full border border-[#E1E4EA] rounded-lg px-3 py-2" />
+                        <input type="text" value={formData.url} name='url' onChange={handleChange} placeholder="http:// Enter URL" className={`w-full border ${errors.url ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
+                        {errors.url && <p className='my-1 text-[#FF3B30]'>{errors.url}</p>}
                     </div>
                 )
             default:
@@ -573,6 +735,8 @@ function CampaignsTable() {
                 )
         }
     }
+
+    if (loading) return <p className='flex justify-center items-center h-[70vh]'><span className='loader' /></p>
 
     return (
         <>
@@ -648,105 +812,143 @@ function CampaignsTable() {
             {/* Modal Overlay */}
             <div className="w-full p-4 flex flex-col justify-center">
                 <h1 className="text-[#5A687C] font-[400] text-[14px]">{`Campaigns > New Campaign`}</h1>
-                <h1 className="text-[#1E1E1E] font-[600] text-[24px] mt-2 my-4">Add New Campaign</h1>
+                <h1 className="text-[#1E1E1E] font-[600] text-[24px] mt-2 my-4">{isEdit ? 'Update' : 'Add'} New Campaign</h1>
 
                 <div className="bg-white max-w-[848px] w-full rounded-xl border border-[#E1E4EA] p-6 relative overflow-auto">
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium mb-1">Campaign Title</label>
-                            <input type="text" onChange={handleChange} name='campaign_title' value={formData.campaign_title} placeholder="Enter campaign title" className="w-full border border-[#E1E4EA] rounded-lg px-3 py-2" />
+                            <input type="text" onChange={handleChange} name='campaign_title' value={formData.campaign_title} placeholder="Enter campaign title" className={`w-full border ${errors.campaign_title ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
+                            {errors.campaign_title && <p className='my-1 text-[#FF3B30]'>{errors.campaign_title}</p>}
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium mb-1">Campaign Objective</label>
                                 <Dropdown
+                                    name="campaign_objective"
                                     options={campaignObjectiveOptions}
                                     value={formData.campaign_objective}
-                                    onChange={(updated) =>
+                                    onChange={(updated) => {
                                         setFormData((prev) => ({
                                             ...prev,
                                             campaign_objective: updated,
+                                            campaign_objective_other: ""
                                         }))
+                                        setErrors((prev) => ({ ...prev, campaign_objective: "" }))
+                                    }
                                     }
                                     placeholder="Select"
                                 />
+                                {errors.campaign_objective && <p className='my-1 text-[#FF3B30]'>{errors.campaign_objective}</p>}
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium mb-1">Main Subject</label>
-                                <input type="text" placeholder="Enter main subject" value={formData.main_subject} name='main_subject' onChange={handleChange} className="w-full border border-[#E1E4EA] rounded-lg px-3 py-2" />
+                                <input type="text" placeholder="Enter main subject" value={formData.main_subject} name='main_subject' onChange={handleChange} className={`w-full border ${errors.main_subject ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
+                                {errors.main_subject && <p className='my-1 text-[#FF3B30]'>{errors.main_subject}</p>}
                             </div>
                         </div>
 
                         {formData.campaign_objective === "other" && <div>
                             <label className="block text-sm font-medium mb-1">Other</label>
-                            <input type="text" placeholder="Enter Campaign Objective Other" value={formData.campaign_objective_other} name='campaign_objective_other' onChange={handleChange} className="w-full border border-[#E1E4EA] rounded-lg px-3 py-2" />
+                            <input type="text" placeholder="Enter Campaign Objective Other" value={formData.campaign_objective_other} name='campaign_objective_other' onChange={handleChange} className={`w-full border ${errors.campaign_objective_other ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
+                            {errors.campaign_objective_other && <p className='my-1 text-[#FF3B30]'>{errors.campaign_objective_other}</p>}
                         </div>}
 
                         <div>
                             <label className="block text-sm font-medium mb-1">CTA Type</label>
                             <Dropdown
+                                name="cta_type"
                                 options={ctaTypeOptions}
                                 value={formData.cta_type}
-                                onChange={(updated) =>
+                                onChange={(updated) => {
                                     setFormData((prev) => ({
                                         ...prev,
                                         cta_type: updated,
                                         url: "",
-                                        calendar_type: "",
+                                        calender_choosed: "",
                                         file: ""
                                     }))
+                                    setErrors((prev) => ({ ...prev, cta_type: "" }))
+                                }
                                 }
                                 placeholder="Select"
                             />
+                            {errors.cta_type && <p className='my-1 text-[#FF3B30]'>{errors.cta_type}</p>}
                         </div>
                         {renderCTAField()}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
+                            <div className="relative">
                                 <label className="block text-sm font-medium mb-1">List Of Target</label>
-                                <Dropdown
-                                    options={listOfTargetOptions}
-                                    value={formData.list_of_target}
-                                    onChange={(updated) =>
-                                        setFormData((prev) => ({
-                                            ...prev,
-                                            list_of_target: updated,
-                                        }))
-                                    }
-                                    placeholder="Select"
-                                />
+                                <div
+                                    onClick={() => setShowListTargetSelector((prev) => !prev)}
+                                    className={`w-full border ${errors.list_of_target ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
+                                >
+                                    {formData.list_of_target?.length > 0
+                                        ? formData.list_of_target.map(dayKey => {
+                                            const found = listOfTargetOptions.find(d => d.key === dayKey);
+                                            return found?.label;
+                                        }).join(', ')
+                                        : 'Select'}
+                                </div>
+                                {showListTargetSelector && (
+                                    <div className="absolute z-50 mt-1 w-full">
+                                        <CustomSelector
+                                            options={listOfTargetOptions}
+                                            setShowSelector={setShowListTargetSelector}
+                                            value={formData.list_of_target}
+                                            onChange={(updated) => {
+                                                setFormData((prev) => ({
+                                                    ...prev,
+                                                    list_of_target: updated,
+                                                }))
+                                                setErrors((prev) => ({ ...prev, list_of_target: "" }))
+                                            }
+                                            }
+                                        />
+                                    </div>
+                                )}
+                                {errors.list_of_target && <p className='my-1 text-[#FF3B30]'>{errors.list_of_target}</p>}
                                 <p className="text-sm mt-1 ">Estimated Segment Size: 12</p>
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium mb-1">Desired Tone</label>
                                 <Dropdown
+                                    name="desired_tone"
                                     options={toneOptions}
                                     value={formData.desired_tone}
-                                    onChange={(updated) =>
+                                    onChange={(updated) => {
                                         setFormData((prev) => ({
                                             ...prev,
                                             desired_tone: updated,
                                         }))
+                                        setErrors((prev) => ({ ...prev, desired_tone: "" }))
+                                    }
                                     }
                                     placeholder="Select"
                                 />
+                                {errors.desired_tone && <p className='my-1 text-[#FF3B30]'>{errors.desired_tone}</p>}
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium mb-1">Language</label>
                                 <Dropdown
+                                    name="language"
                                     options={languageOptions}
                                     value={formData.language}
-                                    onChange={(updated) =>
+                                    onChange={(updated) => {
                                         setFormData((prev) => ({
                                             ...prev,
                                             language: updated,
                                         }))
+                                        setErrors((prev) => ({ ...prev, language: "" }))
+                                    }
                                     }
                                     placeholder="Select"
                                 />
+                                {errors.language && <p className='my-1 text-[#FF3B30]'>{errors.language}</p>}
                             </div>
                         </div>
 
@@ -755,7 +957,7 @@ function CampaignsTable() {
                                 <label className="block text-sm font-medium mb-1">Send Time Window</label>
                                 <div
                                     onClick={() => setShowTimeSelector(true)}
-                                    className="w-full border border-[#E1E4EA] rounded-lg px-3 py-2 cursor-pointer"
+                                    className={`w-full border ${errors.send_time_window ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
                                 >
                                     {formData.send_time_window || "Select Time"}
                                 </div>
@@ -768,51 +970,61 @@ function CampaignsTable() {
                                         />
                                     </div>
                                 )}
+                                {errors.send_time_window && <p className='my-1 text-[#FF3B30]'>{errors.send_time_window}</p>}
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">Start Date</label>
                                 <input
                                     type="date"
-                                    value={startDate}
+                                    min={format(new Date(), 'yyyy-MM-dd')}
+                                    value={formData.start_date}
                                     onChange={(e) => {
-                                        setStartDate(e.target.value)
                                         setFormData((prev) => ({
                                             ...prev, start_date: format(e.target.value, 'yyyy-MM-dd')
                                         }))
+                                        setErrors((prev) => ({ ...prev, start_date: "" }))
                                     }}
-                                    className="w-full border border-[#E1E4EA] rounded-lg px-3 py-2"
+                                    className={`w-full border ${errors.start_date ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`}
                                 />
+                                {errors.start_date && <p className='my-1 text-[#FF3B30]'>{errors.start_date}</p>}
                             </div>
                             <div className="relative">
                                 <label className="block text-sm font-medium mb-1">Frequency</label>
                                 <div
                                     onClick={() => setShowWeekSelector((prev) => !prev)}
-                                    className="w-full border border-[#E1E4EA] rounded-lg px-3 py-2 cursor-pointer"
+                                    className={`w-full border ${errors.frequency ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
                                 >
                                     {formData.frequency?.length > 0
-                                        ? formData.frequency.join(', ')
+                                        ? formData.frequency.map(dayKey => {
+                                            const found = daysOptions.find(d => d.key === dayKey);
+                                            return found?.label;
+                                        }).join(', ')
                                         : 'Select Days'}
                                 </div>
                                 {showWeekSelector && (
                                     <div className="absolute z-50 mt-1 w-full">
-                                        <WeekSelector
-                                            setShowWeekSelector={setShowWeekSelector}
+                                        <CustomSelector
+                                            options={daysOptions}
+                                            setShowSelector={setShowWeekSelector}
                                             value={formData.frequency}
-                                            onChange={(updated) =>
+                                            onChange={(updated) => {
                                                 setFormData((prev) => ({
                                                     ...prev,
                                                     frequency: updated,
                                                 }))
+                                                setErrors((prev) => ({ ...prev, frequency: "" }))
+                                            }
                                             }
                                         />
                                     </div>
                                 )}
+                                {errors.frequency && <p className='my-1 text-[#FF3B30]'>{errors.frequency}</p>}
                             </div>
                         </div>
 
                         <div className='flex flex-col gap-5'>
                             <div className="flex items-center justify-between">
-                                <label className="text-sm font-medium">Include branding (Brain A1)?</label>
+                                <label className="text-sm font-medium">Include branding (Brain AI)?</label>
                                 <div className='flex items-center gap-6'>
                                     {/* <div className='relative group'>
                                         <Info className="text-gray-500 cursor-pointer" size={16} />
@@ -842,19 +1054,20 @@ function CampaignsTable() {
                                     </div>
                                 </label>
                                 <button
-                                    onClick={() => setFormData((prev) => ({ ...prev, use_ai_brain_for_email: !formData.use_ai_brain_for_email }))}
-                                    className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${formData.use_ai_brain_for_email ? "bg-[#7065F0]" : "bg-[#E1E4EA]"}`}
+                                    onClick={() => setFormData((prev) => ({ ...prev, include_brainai: !formData.include_brainai }))}
+                                    className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${formData.include_brainai ? "bg-[#7065F0]" : "bg-[#E1E4EA]"}`}
                                 >
                                     <span
-                                        className={`block w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${formData.use_ai_brain_for_email ? "translate-x-5" : "translate-x-0.5"}`}
+                                        className={`block w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${formData.include_brainai ? "translate-x-5" : "translate-x-0.5"}`}
                                     ></span>
                                 </button>
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium mb-1">Custom prompt for A1</label>
-                            <textarea value={formData.custom_prompt} name='custom_prompt' onChange={handleChange} placeholder="e.g. Write a re-engagement email for cold leads about my A1 training offer" className="w-full border border-[#E1E4EA] rounded px-3 py-2 resize-none" rows={3}></textarea>
+                            <label className="block text-sm font-medium mb-1">Custom prompt for AI</label>
+                            <textarea value={formData.custom_prompt} name='custom_prompt' onChange={handleChange} placeholder="e.g. Write a re-engagement email for cold leads about my AI training offer" className={`w-full border ${errors.custom_prompt ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded px-3 py-2 resize-none`} rows={3}></textarea>
+                            {errors.custom_prompt && <p className='my-1 text-[#FF3B30]'>{errors.custom_prompt}</p>}
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -869,21 +1082,26 @@ function CampaignsTable() {
                                     </div>
                                 </label>
                                 <Dropdown
+                                    name="text_length"
                                     options={wordOptions}
                                     value={formData.text_length}
-                                    onChange={(updated) =>
+                                    onChange={(updated) => {
                                         setFormData((prev) => ({
                                             ...prev,
                                             text_length: updated,
                                         }))
+                                        setErrors((prev) => ({ ...prev, text_length: "" }))
+                                    }
                                     }
                                     placeholder="Select"
                                 />
+                                {errors.text_length && <p className='my-1 text-[#FF3B30]'>{errors.text_length}</p>}
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium mb-1">Products/Service to feature</label>
-                                <input type="text" value={formData.product_service_to_feature} name='product_service_to_feature' onChange={handleChange} placeholder="Enter Products/Service to feature" className="w-full border border-[#E1E4EA] rounded-lg px-3 py-2" />
+                                <input type="text" value={formData.product_or_service_feature} name='product_or_service_feature' onChange={handleChange} placeholder="Enter Products/Service to feature" className={`w-full border ${errors.product_or_service_feature ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
+                                {errors.product_or_service_feature && <p className='my-1 text-[#FF3B30]'>{errors.product_or_service_feature}</p>}
                             </div>
                         </div>
 
@@ -901,11 +1119,11 @@ function CampaignsTable() {
                                 </div>
                             </label>
                             <button
-                                onClick={() => setFormData((prev) => ({ ...prev, review_before_sending: !formData.review_before_sending }))}
-                                className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${formData.review_before_sending ? "bg-[#7065F0]" : "bg-[#E1E4EA]"}`}
+                                onClick={() => setFormData((prev) => ({ ...prev, review: !formData.review }))}
+                                className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${formData.review ? "bg-[#7065F0]" : "bg-[#E1E4EA]"}`}
                             >
                                 <span
-                                    className={`block w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${formData.review_before_sending ? "translate-x-5" : "translate-x-0.5"}`}
+                                    className={`block w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${formData.review ? "translate-x-5" : "translate-x-0.5"}`}
                                 ></span>
                             </button>
                         </div>
@@ -916,7 +1134,8 @@ function CampaignsTable() {
                         </div> */}
 
                         <div className="flex justify-between gap-4 pt-4">
-                            <button className="px-4 font-[500] w-full py-2 bg-[#675FFF] text-white rounded" onClick={handleSubmit}>Launch Campaign</button>
+                            {isEdit ? <button disabled={updateStatus} className="px-4 font-[500] w-full py-2 bg-[#675FFF] text-white rounded" onClick={handleUpdate}>{updateStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Update Campaign"}</button> :
+                                <button disabled={submitStatus} className="px-4 font-[500] w-full py-2 bg-[#675FFF] text-white rounded" onClick={handleSubmit}>{submitStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Launch Campaign"}</button>}
                             <button className="px-4 font-[500] w-full py-2 border text-[#5A687C] border-[#E1E4EA] rounded">Save As Draft</button>
                         </div>
                     </div>
