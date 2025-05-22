@@ -8,7 +8,18 @@ import { createEmailCampaign, getEmailCampaignById, updateEmailCampaign } from '
 
 const TimeSelector = ({ onSave, onCancel, initialTime }) => {
     const parseInitialTime = () => {
-        if (!initialTime) return { hour: '11', minute: '01', period: 'PM' };
+        if (!initialTime) {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const period = hours >= 12 ? 'PM' : 'AM';
+
+            // Convert to 12-hour format
+            hours = hours % 12 || 12;
+            const hour = String(hours).padStart(2, '0');
+
+            return { hour, minute: minutes, period };
+        }
 
         try {
             const matches = initialTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
