@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Delete, Notes, ThreeDots, UploadIcon } from '../icons/icons';
 import { ChevronDown, Info, X } from 'lucide-react';
-import { format } from 'date-fns';
+import { format , isValid } from 'date-fns';
 import { createEmailCampaign, getEmailCampaignById, updateEmailCampaign } from '../api/emailCampaign';
 
 
@@ -1030,12 +1030,19 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
                                     min={format(new Date(), 'yyyy-MM-dd')}
                                     value={formData.start_date}
                                     onChange={(e) => {
+                                        const selectedDate = new Date(e.target.value);
+                                        if (isValid(selectedDate)) {
                                         setFormData((prev) => ({
-                                            ...prev, start_date: format(e.target.value, 'yyyy-MM-dd'),
+                                            ...prev, start_date: format(selectedDate, 'yyyy-MM-dd'),
                                             send_time_window: ""
                                         }))
                                         setErrors((prev) => ({ ...prev, start_date: "" }))
-                                    }}
+                                    }else {
+                                        setFormData((prev) => ({ ...prev, start_date: "" }))
+                                    }
+                                
+                                }
+                                }
                                     className={`w-full border ${errors.start_date ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`}
                                 />
                                 {errors.start_date && <p className='my-1 text-[#FF3B30]'>{errors.start_date}</p>}
