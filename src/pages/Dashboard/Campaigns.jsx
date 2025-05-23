@@ -1,14 +1,13 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { CalenderIcon, FourBox, PhoneCampaign } from "../../icons/icons";
 import CampaignDashboard from "../../components/CampaignDashboard";
-import CampaignsTable from "../../components/Campaigns";
 import Calendar from "../../components/Calendar";
 import dashboardProfile from '../../assets/svg/dashboard_profile.svg'
+import EmailDashboard from "../../components/EmailDashboard";
 
 
 const Campaigns = () => {
     const [activeSidebarItem, setActiveSidebarItem] = useState("dashboard");
-    const [isEdit, setIsEdit] = useState()
 
     const sideMenuList = [
         { label: "Dashboard", icon: <FourBox status={activeSidebarItem == "dashboard"} />, path: "dashboard" },
@@ -19,11 +18,11 @@ const Campaigns = () => {
     const renderMainContent = () => {
         switch (activeSidebarItem) {
             case "campaigns":
-                return <CampaignsTable isEdit={isEdit} setActiveSidebarItem={setActiveSidebarItem}/>;
+                return <CampaignDashboard />;
             case "calendar":
                 return <Calendar />
             default:
-                return <CampaignDashboard setActiveSidebarItem={setActiveSidebarItem} setIsEdit={setIsEdit} />;
+                return <EmailDashboard />
         }
     };
 
@@ -42,7 +41,6 @@ const Campaigns = () => {
                             key={i}
                             onClick={() => {
                                 setActiveSidebarItem(item.path)
-                                setIsEdit("")
                             }}
                             className={`flex items-center gap-2 px-3 py-2 rounded-md cursor-pointer w-full ${activeSidebarItem === item.path
                                 ? "bg-[#E1E5EA] text-black"

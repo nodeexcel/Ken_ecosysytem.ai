@@ -333,7 +333,7 @@ const CustomSelector = ({ options, setShowSelector, value = [], onChange }) => {
 
 
 
-function CampaignsTable({ isEdit, setActiveSidebarItem }) {
+function CampaignsTable({ isEdit, setNewCampaignStatus }) {
     const [campaignData, setCampaignData] = useState([
         { name: 'Campaign', opened: '-', clicked: '-', bounced: '', status: "Issue Detected" },
         { name: 'Campaign', opened: '-', clicked: '-', bounced: '', status: "Planned" }
@@ -563,7 +563,7 @@ function CampaignsTable({ isEdit, setActiveSidebarItem }) {
             const response = await createEmailCampaign(payload);
             if (response.status === 201) {
                 console.log(response.data)
-                setActiveSidebarItem("dashboard")
+                setNewCampaignStatus(false)
             }
 
         } catch (error) {
@@ -596,7 +596,7 @@ function CampaignsTable({ isEdit, setActiveSidebarItem }) {
             const response = await updateEmailCampaign(payload, isEdit);
             if (response.status === 200) {
                 console.log(response.data)
-                setActiveSidebarItem("dashboard")
+                setNewCampaignStatus(false)
             }
 
         } catch (error) {
