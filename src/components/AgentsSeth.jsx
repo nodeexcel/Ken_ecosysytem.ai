@@ -1,7 +1,8 @@
 import { EllipsisVertical } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import CreateNewAgent from './CreateNewAgent';
 import { deleteAppointmentSetter, getAppointmentSetter, updateAppointmentSetterStatus } from '../api/appointmentSetter';
+import { Delete, Edit } from '../icons/icons';
 
 function AgentsSeth() {
     const [activeDropdown, setActiveDropdown] = useState(null);
@@ -133,7 +134,7 @@ function AgentsSeth() {
                                                 <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                                                     <div className="py-1">
                                                         <button
-                                                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                            className="block w-full group text-left px-4 py-2 text-sm text-gray-700 hover:text-[#675FFF] hover:bg-gray-100"
                                                             onClick={() => {
                                                                 // Handle edit action
                                                                 setEditData(item.agent_id)
@@ -142,8 +143,9 @@ function AgentsSeth() {
                                                                 setOpen(false)
                                                             }}
                                                         >
-                                                            Edit
+                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
                                                         </button>
+                                                        <hr style={{ color: "#E6EAEE" }} />
                                                         <button
                                                             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                                                             onClick={() => {
@@ -151,7 +153,7 @@ function AgentsSeth() {
                                                                 handleDelete(index, item.agent_id)
                                                             }}
                                                         >
-                                                            Delete
+                                                            <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
                                                         </button>
                                                     </div>
                                                 </div>

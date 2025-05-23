@@ -15,21 +15,21 @@ const TimeSelector = ({ onSave, onCancel, initialTime,start_date }) => {
                 now.getFullYear() === selectedDate.getFullYear() &&
                 now.getMonth() === selectedDate.getMonth() &&
                 now.getDate() === selectedDate.getDate();
-    
+
             let baseTime = new Date(now);
-    
+
             if (isToday) {
-                
+
                 baseTime.setMinutes(baseTime.getMinutes() + 30);
-            } 
+            }
             let hours = baseTime.getHours();
             const minutes = String(baseTime.getMinutes()).padStart(2, '0');
             const period = hours >= 12 ? 'PM' : 'AM';
-    
+
             // Convert to 12-hour format
             hours = hours % 12 || 12;
             const hour = String(hours).padStart(2, '0');
-    
+
             return { hour, minute: minutes, period };
         }
         try {
@@ -43,7 +43,7 @@ const TimeSelector = ({ onSave, onCancel, initialTime,start_date }) => {
             }
         } catch (e) {
             console.error('Error parsing initial time:', e);
-        }  
+        }
         return { hour: '11', minute: '01', period: 'PM' };
     };
     const isTimeBeforeMinAllowed = (hour, minute, period) => {
@@ -53,12 +53,12 @@ const TimeSelector = ({ onSave, onCancel, initialTime,start_date }) => {
             now.getFullYear() === selectedDate.getFullYear() &&
             now.getMonth() === selectedDate.getMonth() &&
             now.getDate() === selectedDate.getDate();
-    
+
         if (!isToday) return false;
-    
+
         const minTime = new Date();
         minTime.setMinutes(minTime.getMinutes() + 30);
-    
+
         const h24 = parseInt(hour, 10) % 12 + (period === 'PM' ? 12 : 0);
         const candidate = new Date(
             now.getFullYear(),
@@ -68,10 +68,10 @@ const TimeSelector = ({ onSave, onCancel, initialTime,start_date }) => {
             parseInt(minute, 10),
             0
         );
-    
+
         return candidate < minTime;
     };
-    
+
     const { hour, minute, period } = parseInitialTime();
 
     const [selectedHour, setSelectedHour] = useState(hour);
@@ -385,7 +385,9 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
     const [showListTargetSelector, setShowListTargetSelector] = useState(false);
     const [submitStatus, setSubmitStatus] = useState(false)
     const [updateStatus, setUpdateStatus] = useState(false);
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [saveDraftStatus, setSaveDraftStatus] = useState(false);
+    const [updateSaveDraftStatus, setUpdateSaveDraftStatus] = useState(false)
 
     const [formData, setFormData] = useState({
         campaign_title: "",
@@ -579,7 +581,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
         }
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (status) => {
         const validationErrors = validateForm();
 
         if (Object.keys(validationErrors).length > 0) {
@@ -589,12 +591,15 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
         }
 
         console.log(formData, "formData")
-        setSubmitStatus(true)
+        { status ? setSaveDraftStatus(true) : setSubmitStatus(true) }
         try {
             let payload = { ...formData };
 
             if (formData.campaign_objective_other?.trim()) {
                 payload.campaign_objective = formData.campaign_objective_other;
+            }
+            if (status) {
+                payload.is_draft = status
             }
 
             delete payload.campaign_objective_other;
@@ -608,12 +613,12 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
         } catch (error) {
             console.log(error)
         } finally {
-            setSubmitStatus(false)
+            { status ? setSaveDraftStatus(false) : setSubmitStatus(false) }
         }
     }
 
 
-    const handleUpdate = async () => {
+    const handleUpdate = async (status) => {
         const validationErrors = validateForm();
 
         if (Object.keys(validationErrors).length > 0) {
@@ -623,12 +628,15 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
         }
 
         console.log(formData, "formData")
-        setUpdateStatus(true)
+        { status ? setUpdateSaveDraftStatus(true) : setUpdateStatus(true) }
         try {
             let payload = { ...formData };
 
             if (formData.campaign_objective_other?.trim()) {
                 payload.campaign_objective = formData.campaign_objective_other;
+            }
+            if (status) {
+                payload.is_draft = status
             }
 
             delete payload.campaign_objective_other;
@@ -641,7 +649,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
         } catch (error) {
             console.log(error)
         } finally {
-            setUpdateStatus(false)
+            { status ? setUpdateSaveDraftStatus(false) : setUpdateStatus(false) }
         }
     }
 
@@ -1040,7 +1048,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
                                     }else {
                                         setFormData((prev) => ({ ...prev, start_date: "" }))
                                     }
-                                
+
                                 }
                                 }
                                     className={`w-full border ${errors.start_date ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`}
@@ -1051,7 +1059,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
                                 <label className="block text-sm font-medium mb-1">Frequency</label>
                                 <div
                                     onClick={() => setShowWeekSelector((prev) => !prev)}
-                                    className={`w-full border ${errors.frequency ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
+                                    className={`w-full border truncate ${errors.frequency ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
                                 >
                                     {formData.frequency?.length > 0
                                         ? formData.frequency.map(dayKey => {
@@ -1193,9 +1201,10 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
                         </div> */}
 
                         <div className="flex justify-between gap-4 pt-4">
-                            {isEdit ? <button disabled={updateStatus} className="px-4 font-[500] w-full py-2 bg-[#675FFF] text-white rounded" onClick={handleUpdate}>{updateStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Update Campaign"}</button> :
-                                <button disabled={submitStatus} className="px-4 font-[500] w-full py-2 bg-[#675FFF] text-white rounded" onClick={handleSubmit}>{submitStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Launch Campaign"}</button>}
-                            <button className="px-4 font-[500] w-full py-2 border text-[#5A687C] border-[#E1E4EA] rounded">Save As Draft</button>
+                            {isEdit ? <button disabled={updateStatus} className="px-4 font-[500] w-full py-2 bg-[#675FFF] text-white rounded" onClick={() => handleUpdate(false)}>{updateStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Update Campaign"}</button> :
+                                <button disabled={submitStatus} className="px-4 font-[500] w-full py-2 bg-[#675FFF] text-white rounded" onClick={() => handleSubmit(false)}>{submitStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Launch Campaign"}</button>}
+                            {isEdit ? <button disabled={updateSaveDraftStatus} className="px-4 font-[500] w-full py-2 border text-[#5A687C] border-[#E1E4EA] rounded" onClick={() => handleUpdate(true)}>{updateSaveDraftStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save As Draft"}</button> :
+                                <button disabled={saveDraftStatus} className="px-4 font-[500] w-full py-2 border text-[#5A687C] border-[#E1E4EA] rounded" onClick={() => handleSubmit(true)}>{saveDraftStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save As Draft"}</button>}
                         </div>
                     </div>
                 </div>

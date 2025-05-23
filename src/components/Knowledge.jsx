@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import nodata from '../assets/svg/brainai_nodata.svg'
 import letter from '../assets/svg/letter_t.svg'
 import { Upload, X } from "lucide-react";
-import { UploadIcon } from "../icons/icons";
+import { Delete, Edit, ThreeDots, UploadIcon } from "../icons/icons";
 import { getKnowledgeSnippets, knowledgeBase } from "../api/brainai";
 
 const tabs = [
@@ -49,7 +49,8 @@ const Knowledge = () => {
   const [loading, setLoading] = useState(false)
   const [knowledgeData, setKnowledgeData] = useState({})
   const [loadingData, setLoadingData] = useState(false);
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState({});
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   useEffect(() => {
     setTimeout(() => {
@@ -175,6 +176,16 @@ const Knowledge = () => {
   }
 
 
+  const renderHeader = () => {
+    const tab = tabs.find((e) => e.key === activeTab)
+    return tab.label
+  }
+
+  const handleDropdownClick = (index) => {
+    setActiveDropdown(activeDropdown === index ? null : index);
+  };
+
+
   const renderMainContent = () => {
     switch (activeTab) {
       case "website":
@@ -182,12 +193,45 @@ const Knowledge = () => {
           <>
             {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.website?.length > 0 ? <div className="mt-3 max-w-[648px]">
               <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
-                {knowledgeData?.website?.length > 0 && knowledgeData?.website.map((e, i) => <div key={i} className="bg-[#f7f8fc] p-4 rounded-xl flex items-center gap-2">
-                  <div className="text-[#675FFF]">
-                    W
+                {knowledgeData?.website?.length > 0 && knowledgeData?.website.map((e, i) => <div key={i} className="bg-[#f7f8fc] p-4 rounded-xl flex justify-between items-center gap-2">
+                  <div className="flex  items-center gap-2">
+                    <div className="text-[#675FFF]">
+                      W
+                    </div>
+                    <div>
+                      <a href={e} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C]">{e}</a>
+                    </div>
                   </div>
-                  <div>
-                    <a href={e} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C]">{e}</a>
+                  <div className='bg-[#fff] rounded-lg'>
+                    <button
+                      onClick={() => handleDropdownClick(i)}
+                      className="text-gray-500 p-2"
+                    >
+                      <ThreeDots />
+                    </button>
+                    {activeDropdown === i && (
+                      <div className="absolute w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                        <div className="py-1">
+                          <button
+                            className="block w-full group text-left px-4 py-2 text-sm text-gray-700 hover:text-[#675FFF] hover:bg-gray-100"
+                            onClick={() => {
+                              setActiveDropdown(null);
+                            }}
+                          >
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                          </button>
+                          <hr style={{ color: "#E6EAEE" }} />
+                          <button
+                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                            onClick={() => {
+                              setActiveDropdown(null);
+                            }}
+                          >
+                            <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>)}
               </div>
@@ -201,12 +245,45 @@ const Knowledge = () => {
           <>
             {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.snippets?.length > 0 ? <div className="mt-3 max-w-[648px]">
               <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
-                {knowledgeData?.snippets?.length > 0 && knowledgeData?.snippets.map((e, i) => <div key={i} className="bg-[#f7f8fc] p-4 rounded-xl flex items-center gap-2">
-                  <div className="pt-1">
-                    <img src={letter} alt="letter" />
+                {knowledgeData?.snippets?.length > 0 && knowledgeData?.snippets.map((e, i) => <div key={i} className="bg-[#f7f8fc] p-4 rounded-xl flex justify-between items-center gap-2">
+                  <div className="flex  items-center gap-2">
+                    <div className="pt-1">
+                      <img src={letter} alt="letter" />
+                    </div>
+                    <div>
+                      <p className="text-[14px] font-[400] font-inter text-[#5A687C]">{e}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[14px] font-[400] font-inter text-[#5A687C]">{e}</p>
+                  <div className='bg-[#fff] rounded-lg'>
+                    <button
+                      onClick={() => handleDropdownClick(i)}
+                      className="text-gray-500 p-2"
+                    >
+                      <ThreeDots />
+                    </button>
+                    {activeDropdown === i && (
+                      <div className="absolute w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                        <div className="py-1">
+                          <button
+                            className="block w-full group text-left px-4 py-2 text-sm text-gray-700 hover:text-[#675FFF] hover:bg-gray-100"
+                            onClick={() => {
+                              setActiveDropdown(null);
+                            }}
+                          >
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                          </button>
+                          <hr style={{ color: "#E6EAEE" }} />
+                          <button
+                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                            onClick={() => {
+                              setActiveDropdown(null);
+                            }}
+                          >
+                            <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>)}
               </div>
@@ -218,12 +295,45 @@ const Knowledge = () => {
           <>
             {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.files?.length > 0 ? <div className="mt-3 max-w-[648px]">
               <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
-                {knowledgeData?.files?.length > 0 && knowledgeData?.files.map((e, i) => <div key={i} className="bg-[#f7f8fc] p-4 rounded-xl flex items-center gap-2">
-                  <div className="text-[#675FFF]">
-                    F
+                {knowledgeData?.files?.length > 0 && knowledgeData?.files.map((e, i) => <div key={i} className="bg-[#f7f8fc] p-4 rounded-xl flex justify-between items-center gap-2">
+                  <div className="flex  items-center gap-2">
+                    <div className="text-[#675FFF]">
+                      F
+                    </div>
+                    <div>
+                      <a href={e} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C]">{e}</a>
+                    </div>
                   </div>
-                  <div>
-                    <a href={e} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C]">{e}</a>
+                  <div className='bg-[#fff] rounded-lg'>
+                    <button
+                      onClick={() => handleDropdownClick(i)}
+                      className="text-gray-500 p-2"
+                    >
+                      <ThreeDots />
+                    </button>
+                    {activeDropdown === i && (
+                      <div className="absolute w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                        <div className="py-1">
+                          <button
+                            className="block w-full group text-left px-4 py-2 text-sm text-gray-700 hover:text-[#675FFF] hover:bg-gray-100"
+                            onClick={() => {
+                              setActiveDropdown(null);
+                            }}
+                          >
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                          </button>
+                          <hr style={{ color: "#E6EAEE" }} />
+                          <button
+                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                            onClick={() => {
+                              setActiveDropdown(null);
+                            }}
+                          >
+                            <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>)}
               </div>
@@ -278,14 +388,14 @@ const Knowledge = () => {
           </button>
 
           <h2 className="text-[#1E1E1E] font-semibold text-[20px] mb-1">
-            Add Knowledge
+            Add {renderHeader()}
           </h2>
           <p className="text-[14px] text-[#5A687C]">
             {modelData[activeTab].label}
           </p>
 
           {/* Tabs */}
-          <div className="flex bg-[#F3F4F6] rounded-lg overflow-hidden mt-2">
+          {/* <div className="flex bg-[#F3F4F6] rounded-lg overflow-hidden mt-2">
             {tabs.map((tab) => (
               <div key={tab.key} className="w-full p-1" onClick={() => setActiveTab(tab.key)}>
                 <button
@@ -300,7 +410,7 @@ const Knowledge = () => {
                 </button>
               </div>
             ))}
-          </div>
+          </div> */}
 
 
           {/* Tab Content */}
@@ -353,7 +463,7 @@ const Knowledge = () => {
                     onChange={handleChange}
                     placeholder="The more details, the better!"
                     rows={3}
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none resize-none"
                   />
                 </div>
               </div>

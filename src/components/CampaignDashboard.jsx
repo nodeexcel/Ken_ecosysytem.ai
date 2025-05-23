@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Delete, Duplicate, Edit, Notes, ThreeDots } from '../icons/icons';
+import { Delete, Duplicate, Edit, ThreeDots } from '../icons/icons';
 import { X } from 'lucide-react';
 import { deleteEmailCampaign, getEmailCampaign, updateEmailCampaignStatus } from '../api/emailCampaign';
 import CampaignsTable from './Campaigns';
@@ -39,7 +39,7 @@ function CampaignDashboard() {
 
     useEffect(() => {
         getCampaignData()
-    }, [])
+    }, [newCampaignStatus])
 
     const toggleStatus = async (index, key, id) => {
         try {
@@ -185,23 +185,23 @@ function CampaignDashboard() {
                                                 <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                                                     <div className="py-1">
                                                         <button
-                                                            className="block w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-gray-100"
+                                                            className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-gray-100"
                                                             onClick={() => {
                                                                 // Handle edit action
                                                                 handleEdit(item.campaign_id)
                                                                 setActiveDropdown(null);
                                                             }}
                                                         >
-                                                            <div className="flex items-center gap-2">{<Edit />} <span className="hover:text-[#675FFF]">Edit</span> </div>
+                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
                                                         </button>
                                                         <button
-                                                            className="block w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6]"
+                                                            className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6]"
                                                             onClick={() => {
                                                                 // Handle delete action
                                                                 setActiveDropdown(null);
                                                             }}
                                                         >
-                                                            <div className="flex items-center gap-2">{<Duplicate />} <span className="hover:text-[#675FFF]">Duplicate</span> </div>
+                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
                                                         </button>
                                                         <hr style={{ color: "#E6EAEE" }} />
                                                         <button
