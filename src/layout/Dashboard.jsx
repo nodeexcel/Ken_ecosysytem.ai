@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Sidebar from '../components/Sidebar'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,7 +19,7 @@ function Dashboard() {
 
         if (token && userDetails.loading) {
             handleProfile()
-            dispatch(loginSuccess({token:token}))
+            dispatch(loginSuccess({ token: token }))
         }
         if (!token && userDetails.loading) {
             navigate("/")
@@ -41,14 +41,14 @@ function Dashboard() {
         };
     }, [isSidebarOpen]);
 
-    const SidebarItems=[
-        {id:"agents",label:"Agents"},
-        {id:"brain",label:"Brain AI"},
-        {id:"settings",label:"Settings"},
-        {id:"documentation",label:"Documentation"},
-        {id:"support",label:"Support"},
-        {id:"community",label:"Community"},
-        {id:"notification",label:"Notification"},
+    const SidebarItems = [
+        { id: "agents", label: "Agents" },
+        { id: "brain", label: "Brain AI" },
+        { id: "settings", label: "Settings" },
+        { id: "documentation", label: "Documentation" },
+        { id: "support", label: "Support" },
+        { id: "community", label: "Community" },
+        { id: "notification", label: "Notification" },
     ]
 
     const handleProfile = async () => {
@@ -57,7 +57,7 @@ function Dashboard() {
             const response = await getProfile()
             if (response?.status === 200) {
                 console.log(response?.data)
-                if(!response?.data?.isProfileComplete){
+                if (!response?.data?.isProfileComplete) {
                     navigate("settings")
                 }
                 dispatch(getProfileData(response?.data))
@@ -82,7 +82,7 @@ function Dashboard() {
                 <Sidebar sidebarItems={SidebarItems} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
             </div>
             <div className='w-[95%]'>
-                <Navbar sidebarItems={SidebarItems}/>
+                <Navbar sidebarItems={SidebarItems} />
                 <Outlet />
             </div>
         </div>

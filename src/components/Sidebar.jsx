@@ -15,16 +15,18 @@ import { flag } from '../icons/Brain';
 import uk_flag from "../assets/images/uk_flag.png"
 import fr_flag from "../assets/images/fr_flag.png"
 import Notification from '../pages/Dashboard/Notification';
+import { X } from 'lucide-react';
 
 const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     const navigate = useNavigate()
     const location = useLocation()
     const userDetails = useSelector((state) => state.profile.user)
 
-    const [isNotification,setIsNotification]=useState(false);
+    const [isNotification, setIsNotification] = useState(false);
 
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedLang, setSelectedLang] = useState('en');
+    const [modalStatus, setModalStatus] = useState(false)
 
     const languages = {
         en: { label: 'English', flag: uk_flag },
@@ -40,13 +42,17 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
 
 
     const handleSelect = (path) => {
-        setShowDropdown(false)
-        navigate(path)
+        if (userDetails?.isProfileComplete === false) {
+            setModalStatus(true)
+        } else {
+            setShowDropdown(false)
+            navigate(path)
+        }
     }
 
     const renderColor = (index) => {
-        if(isNotification && index===6){
-           return "#675FFF"
+        if (isNotification && index === 6) {
+            return "#675FFF"
         }
         else if (location.pathname.includes(sidebarItems[index].id)) {
             return "#675FFF"
@@ -72,7 +78,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         <img src={userDetails?.image ?? person} alt='image' className='rounded-[40px]' height={30} width={30} />
                     </div>
                     <hr className='text-[#E1E4EA]' />
-                    <div className='text-xl flex justify-center py-4' onClick={() => {setIsNotification(true)}}>
+                    <div className='text-xl flex justify-center py-4' onClick={() => { setIsNotification(true) }}>
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M10.0167 17.1086C8.07499 17.1086 6.13333 16.8003 4.29166 16.1836C3.59166 15.9419 3.05833 15.4503 2.82499 14.8086C2.58333 14.1669 2.66666 13.4586 3.04999 12.8253L4.00833 11.2336C4.20833 10.9003 4.39166 10.2336 4.39166 9.84193V7.43359C4.39166 4.33359 6.91666 1.80859 10.0167 1.80859C13.1167 1.80859 15.6417 4.33359 15.6417 7.43359V9.84193C15.6417 10.2253 15.825 10.9003 16.025 11.2419L16.975 12.8253C17.3333 13.4253 17.4 14.1503 17.1583 14.8086C16.9167 15.4669 16.3917 15.9669 15.7333 16.1836C13.9 16.8003 11.9583 17.1086 10.0167 17.1086ZM10.0167 3.05859C7.60833 3.05859 5.64166 5.01693 5.64166 7.43359V9.84193C5.64166 10.4503 5.39166 11.3503 5.08333 11.8753L4.12499 13.4669C3.94166 13.7753 3.89166 14.1003 3.99999 14.3753C4.09999 14.6586 4.34999 14.8753 4.69166 14.9919C8.17499 16.1586 11.8667 16.1586 15.35 14.9919C15.65 14.8919 15.8833 14.6669 15.9917 14.3669C16.1 14.0669 16.075 13.7419 15.9083 13.4669L14.95 11.8753C14.6333 11.3336 14.3917 10.4419 14.3917 9.83359V7.43359C14.3917 5.01693 12.4333 3.05859 10.0167 3.05859Z" fill={renderColor(6)} />
                             <path d="M11.5667 3.28242C11.5083 3.28242 11.45 3.27409 11.3917 3.25742C11.15 3.19076 10.9167 3.14076 10.6917 3.10742C9.98333 3.01576 9.29999 3.06576 8.65833 3.25742C8.42499 3.33242 8.17499 3.25742 8.01666 3.08242C7.85833 2.90742 7.80833 2.65742 7.89999 2.43242C8.24166 1.55742 9.07499 0.982422 10.025 0.982422C10.975 0.982422 11.8083 1.54909 12.15 2.43242C12.2333 2.65742 12.1917 2.90742 12.0333 3.08242C11.9083 3.21576 11.7333 3.28242 11.5667 3.28242Z" fill={renderColor(6)} />
@@ -109,7 +115,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         className='relative text-xl flex justify-center py-4 cursor-pointer'
                         onClick={toggleDropdown}
                     >
-                        <img src={languages[selectedLang].flag} alt={languages[selectedLang].label} width={20}/>
+                        <img src={languages[selectedLang].flag} alt={languages[selectedLang].label} width={20} />
                         {showDropdown && (
                             <div
                                 className='fixed md:left-[57px] left-[102px] top-[338px] bg-white shadow-md rounded p-2 z-[9999]'
@@ -120,7 +126,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                                         onClick={() => handleLanguageSelect(key)}
                                         className='flex items-center gap-2 py-1 hover:bg-gray-100 px-2 rounded cursor-pointer'
                                     >
-                                        <img src={value.flag} alt={value.label} width={20}/>
+                                        <img src={value.flag} alt={value.label} width={20} />
                                         <span className='text-sm'>{value.label}</span>
                                     </div>
                                 ))}
@@ -151,7 +157,25 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                 </div>
             </aside>
 
-           { isNotification && <Notification setNotification={setIsNotification}/>}
+            {isNotification && <Notification setNotification={setIsNotification} />}
+            {modalStatus && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                <div className="bg-white rounded-2xl w-full max-w-[514px] p-6 relative shadow-lg">
+                    <button
+                        className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                        onClick={() => {
+                            setModalStatus(false)
+                        }}
+                    >
+                        <X size={20} />
+                    </button>
+
+                    <div className='h-[100px] flex justify-center items-center '>
+                        <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-1">
+                            Please complete your profile first
+                        </h2>
+                    </div>
+                </div>
+            </div>}
         </>
     );
 };

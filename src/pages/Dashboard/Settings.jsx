@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { getTeamMembers, sendInviteEmail } from "../../api/teamMember";
 import TransactionHistory from "../../components/TransactionHistory";
 import { PlanIcon, Settings, TeamMemberIcon } from "../../icons/icons";
+import { discardData } from "../../store/profileSlice";
 
 
 // User profile data
@@ -124,7 +125,9 @@ const SettingsPage = () => {
   const [inviteErrors, setInviteErrors] = useState({ email: "", limit: "" });
   const [inviteEmailLoading, setInviteEmailLoading] = useState(false)
   const [teamMembersDataMessage, setTeamMembersDataMessage] = useState("")
-  const [teamMembersDataLoading, setTeamMembersDataLoading] = useState(true)
+  const [teamMembersDataLoading, setTeamMembersDataLoading] = useState(true);
+  const [modalStatus, setModalStatus] = useState(false);
+  const [profileErrors, setProfileErrors] = useState({})
 
   const users = useSelector((state) => state.auth)
 
@@ -146,6 +149,20 @@ const SettingsPage = () => {
     }
 
   }, [teamMembersData])
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (profileFormData.firstName === null) newErrors.firstName = "First Name is required.";
+    if (profileFormData.lastName === null) newErrors.lastName = "Last Name is required.";
+    if (profileFormData.phoneNumber === null) newErrors.phoneNumber = "Phone Number is required.";
+    if (profileFormData.company === null) newErrors.company = "Company is required.";
+    if (profileFormData.city === null) newErrors.city = "City is required.";
+    if (profileFormData.country === null) newErrors.country = "Country is required.";
+    if (profileFormData.image === null && !profileFormData.imageFile) newErrors.imageFile = "Profile Image is required.";
+
+    return newErrors;
+  };
 
   const renderTeamMembers = async () => {
     setTeamMembersDataMessage("")
@@ -182,10 +199,16 @@ const SettingsPage = () => {
       ...prev,
       [name]: value,
     }));
+    setProfileErrors((prev) => ({
+      ...prev, [name]: ""
+    }))
   };
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
+    setProfileErrors((prev) => ({
+      ...prev, imageFile: ""
+    }))
     if (file) {
       const imageUrl = URL.createObjectURL(file);
 
@@ -200,6 +223,13 @@ const SettingsPage = () => {
 
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validateForm();
+
+    if (Object.keys(validationErrors).length > 0) {
+      setProfileErrors(validationErrors);
+      console.log("Validation errors:", validationErrors);
+      return;
+    }
     console.log('Profile data to update:', profileFormData);
     try {
       setUpdateLoading(true)
@@ -214,6 +244,7 @@ const SettingsPage = () => {
       const response = await updateProfile(formData, token)
       console.log(response)
       if (response?.status === 200) {
+        dispatch(discardData())
         setSuccess((prev) => ({ ...prev, profile: response?.data?.message }))
       } else {
         setErrorMessage((prev) => ({ ...prev, profile: response?.data?.message }))
@@ -359,6 +390,14 @@ const SettingsPage = () => {
 
     } catch (error) {
       console.log(error)
+    }
+  }
+
+  const handleSelect = (value) => {
+    if (userDetails?.user?.isProfileComplete === false) {
+      setModalStatus(true)
+    } else {
+      setActiveSidebarItem(value)
     }
   }
 
@@ -627,6 +666,7 @@ const SettingsPage = () => {
                       <img className="w-[17px] h-[17px]" alt="Edit" src='/src/assets/svg/edit.svg' />
                     </button>
                   </div>
+                  {profileErrors.imageFile && <p className="text-[#FF3B30] text-center">{profileErrors.imageFile}</p>}
 
                   {/* Profile Form */}
                   <div className="flex flex-col items-start gap-4 relative self-stretch w-full text-[#1E1E1E]">
@@ -644,8 +684,9 @@ const SettingsPage = () => {
                             value={profileFormData[field] === "null" ? '' : profileFormData[field]}
 
                             onChange={handleProfileChange}
-                            className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
+                            className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors[field] ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} shadow-shadows-shadow-xs text-base text-text-black leading-6`}
                           />
+                          {profileErrors[field] && <p className="text-[#FF3B30] py-1">{profileErrors[field]}</p>}
                         </div>
                       ))}
                     </div>
@@ -670,8 +711,9 @@ const SettingsPage = () => {
                           value={profileFormData.phoneNumber === "null" ? '' : profileFormData.phoneNumber}
 
                           onChange={handleProfileChange}
-                          className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
+                          className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors.phoneNumber ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} shadow-shadows-shadow-xs text-base text-text-black leading-6`}
                         />
+                        {profileErrors.phoneNumber && <p className="text-[#FF3B30] py-1">{profileErrors.phoneNumber}</p>}
                       </div>
                     </div>
 
@@ -687,8 +729,9 @@ const SettingsPage = () => {
                           value={profileFormData.company === "null" ? '' : profileFormData.company}
 
                           onChange={handleProfileChange}
-                          className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
+                          className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors.company ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} shadow-shadows-shadow-xs text-base text-text-black leading-6`}
                         />
+                        {profileErrors.company && <p className="text-[#FF3B30] py-1">{profileErrors.company}</p>}
                       </div>
                       <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
                         <label className="font-medium text-sm text-text-black">
@@ -728,8 +771,9 @@ const SettingsPage = () => {
                             value={profileFormData[field] === "null" ? '' : profileFormData[field]}
 
                             onChange={handleProfileChange}
-                            className="w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-text-black leading-6"
+                            className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors[field] ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} shadow-shadows-shadow-xs text-base text-text-black leading-6`}
                           />
+                          {profileErrors[field] && <p className="text-[#FF3B30] py-1">{profileErrors[field]}</p>}
                         </div>
                       ))}
                     </div>
@@ -943,7 +987,7 @@ const SettingsPage = () => {
         {/* Sidebar Navigation */}
         <div className="flex inter flex-col w-full md:w-[153px] items-start gap-2 relative">
           <div
-            onClick={() => setActiveSidebarItem("general")}
+            onClick={() => handleSelect("general")}
             className={`flex justify-center md:justify-start items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#e1e5ea]" : ""
               }`}
           >
@@ -955,7 +999,7 @@ const SettingsPage = () => {
           </div>
 
           <div
-            onClick={() => setActiveSidebarItem("billing")}
+            onClick={() => handleSelect("billing")}
             className={`flex justify-center md:justify-start items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#e1e5ea]" : ""
               }`}
           >
@@ -967,7 +1011,7 @@ const SettingsPage = () => {
           </div>
 
           <div
-            onClick={() => setActiveSidebarItem("team")}
+            onClick={() => handleSelect("team")}
             className={`flex justify-center md:justify-start items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "team" ? "bg-[#e1e5ea]" : ""
               }`}
           >
@@ -984,6 +1028,24 @@ const SettingsPage = () => {
           {renderMainContent()}
         </div>
       </div>
+      {modalStatus && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+        <div className="bg-white rounded-2xl w-full max-w-[514px] p-6 relative shadow-lg">
+          <button
+            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            onClick={() => {
+              setModalStatus(false)
+            }}
+          >
+            <X size={20} />
+          </button>
+
+          <div className='h-[100px] flex justify-center items-center '>
+            <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-1">
+              Please complete your profile first
+            </h2>
+          </div>
+        </div>
+      </div>}
     </div>
   );
 };
