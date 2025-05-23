@@ -6,21 +6,32 @@ import { createEmailCampaign, getEmailCampaignById, updateEmailCampaign } from '
 
 
 
-const TimeSelector = ({ onSave, onCancel, initialTime }) => {
+const TimeSelector = ({ onSave, onCancel, initialTime,start_date }) => {
     const parseInitialTime = () => {
         if (!initialTime) {
             const now = new Date();
-            let hours = now.getHours();
-            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const selectedDate = new Date(start_date);
+            const isToday =
+                now.getFullYear() === selectedDate.getFullYear() &&
+                now.getMonth() === selectedDate.getMonth() &&
+                now.getDate() === selectedDate.getDate();
+    
+            let baseTime = new Date(now);
+    
+            if (isToday) {
+                
+                baseTime.setMinutes(baseTime.getMinutes() + 30);
+            } 
+            let hours = baseTime.getHours();
+            const minutes = String(baseTime.getMinutes()).padStart(2, '0');
             const period = hours >= 12 ? 'PM' : 'AM';
-
+    
             // Convert to 12-hour format
             hours = hours % 12 || 12;
             const hour = String(hours).padStart(2, '0');
-
+    
             return { hour, minute: minutes, period };
         }
-
         try {
             const matches = initialTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
             if (matches) {
@@ -32,11 +43,35 @@ const TimeSelector = ({ onSave, onCancel, initialTime }) => {
             }
         } catch (e) {
             console.error('Error parsing initial time:', e);
-        }
-
+        }  
         return { hour: '11', minute: '01', period: 'PM' };
     };
-
+    const isTimeBeforeMinAllowed = (hour, minute, period) => {
+        const now = new Date();
+        const selectedDate = new Date(start_date);
+        const isToday =
+            now.getFullYear() === selectedDate.getFullYear() &&
+            now.getMonth() === selectedDate.getMonth() &&
+            now.getDate() === selectedDate.getDate();
+    
+        if (!isToday) return false;
+    
+        const minTime = new Date();
+        minTime.setMinutes(minTime.getMinutes() + 30);
+    
+        const h24 = parseInt(hour, 10) % 12 + (period === 'PM' ? 12 : 0);
+        const candidate = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(),
+            h24,
+            parseInt(minute, 10),
+            0
+        );
+    
+        return candidate < minTime;
+    };
+    
     const { hour, minute, period } = parseInitialTime();
 
     const [selectedHour, setSelectedHour] = useState(hour);
@@ -184,9 +219,10 @@ const TimeSelector = ({ onSave, onCancel, initialTime }) => {
                                     <div
                                         key={`hour-${index}`}
                                         className={`h-[36px] flex items-center justify-center text-[14px]
-                                            ${isSelected(hour, selectedHour) ? 'text-[#675FFF] font-semibold' : 'text-gray-500'}`}
+                                            ${isSelected(hour, selectedHour) ? 'text-[#675FFF] font-semibold' : 'text-gray-500'}
+                                            ${isTimeBeforeMinAllowed(hour, selectedMinute, selectedPeriod) ? 'text-gray-300' : ''}`}
                                         onClick={() => {
-                                            if (hour) {
+                                            if (hour && !isTimeBeforeMinAllowed(hour, selectedMinute, selectedPeriod)) {
                                                 setSelectedHour(hour);
                                                 scrollToItem(hoursRef, hours, hour);
                                             }
@@ -216,9 +252,10 @@ const TimeSelector = ({ onSave, onCancel, initialTime }) => {
                                     <div
                                         key={`minute-${index}`}
                                         className={`h-[36px] flex items-center justify-center text-[14px]
-                                            ${isSelected(minute, selectedMinute) ? 'text-[#675FFF] font-semibold' : 'text-gray-500'}`}
+                                            ${isSelected(minute, selectedMinute) ? 'text-[#675FFF] font-semibold' : 'text-gray-500'}
+                                            ${isTimeBeforeMinAllowed(selectedHour, minute, selectedPeriod) ? 'text-gray-300' : ''}`}
                                         onClick={() => {
-                                            if (minute) {
+                                            if (minute && !isTimeBeforeMinAllowed(selectedHour, minute, selectedPeriod)) {
                                                 setSelectedMinute(minute);
                                                 scrollToItem(minutesRef, minutes, minute);
                                             }
@@ -243,9 +280,10 @@ const TimeSelector = ({ onSave, onCancel, initialTime }) => {
                                     <div
                                         key={`period-${index}`}
                                         className={`h-[36px] flex items-center justify-center text-[14px]
-                                            ${isSelected(period, selectedPeriod) ? 'text-[#675FFF] font-semibold' : 'text-gray-500'}`}
+                                            ${isSelected(period, selectedPeriod) ? 'text-[#675FFF] font-semibold' : 'text-gray-500'}
+                                            ${isTimeBeforeMinAllowed(selectedHour, selectedMinute, period) ? 'text-gray-300' : ''}`}
                                         onClick={() => {
-                                            if (period) {
+                                            if (period && !isTimeBeforeMinAllowed(selectedHour, selectedMinute, period)) {
                                                 setSelectedPeriod(period);
                                                 scrollToItem(periodRef, periods, period);
                                             }
@@ -262,8 +300,10 @@ const TimeSelector = ({ onSave, onCancel, initialTime }) => {
 
             <div className="flex justify-between gap-2">
                 <button
+                    disabled={isTimeBeforeMinAllowed(selectedHour, selectedMinute, selectedPeriod)}
                     onClick={handleSave}
-                    className="flex-1 bg-[#675FFF] text-white py-2 px-4 rounded hover:bg-[#5648ff]"
+                    className={`"flex-1 bg-[#675FFF] text-white py-2 px-4 rounded hover:bg-[#5648ff]"
+                        ${isTimeBeforeMinAllowed(selectedHour, selectedMinute, selectedPeriod) ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                     Save
                 </button>
@@ -978,6 +1018,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
                                             initialTime={formData.send_time_window}
                                             onSave={handleTimeSelect}
                                             onCancel={() => setShowTimeSelector(false)}
+                                            start_date={formData.start_date}
                                         />
                                     </div>
                                 )}
@@ -991,7 +1032,8 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
                                     value={formData.start_date}
                                     onChange={(e) => {
                                         setFormData((prev) => ({
-                                            ...prev, start_date: format(e.target.value, 'yyyy-MM-dd')
+                                            ...prev, start_date: format(e.target.value, 'yyyy-MM-dd'),
+                                            send_time_window: ""
                                         }))
                                         setErrors((prev) => ({ ...prev, start_date: "" }))
                                     }}
