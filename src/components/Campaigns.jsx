@@ -302,8 +302,7 @@ const TimeSelector = ({ onSave, onCancel, initialTime,start_date }) => {
                 <button
                     disabled={isTimeBeforeMinAllowed(selectedHour, selectedMinute, selectedPeriod)}
                     onClick={handleSave}
-                    className={`"flex-1 bg-[#675FFF] text-white py-2 px-4 rounded hover:bg-[#5648ff]"
-                        ${isTimeBeforeMinAllowed(selectedHour, selectedMinute, selectedPeriod) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`flex-1 bg-[#675FFF] text-white py-2 px-4 rounded hover:bg-[#5648ff] ${isTimeBeforeMinAllowed(selectedHour, selectedMinute, selectedPeriod) ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                     Save
                 </button>
