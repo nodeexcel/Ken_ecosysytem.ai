@@ -70,20 +70,20 @@ const staticData = [
   }
 ]
 
- const renderColor = (text) => {
-        switch (text) {
-            case "Issue Detected":
-                return `text-[#FF9500] bg-[#FFF4E6] border-[#FF9500]`;
-            case "Running":
-                return `text-[#675FFF] bg-[#F0EFFF] border-[#675FFF]`;
-            case "Pending":
-                return `text-[#5A687C] bg-[#E9E9E9] border-[#5A687C]`;
-            case "Terminated":
-                return `text-[#FF2D55] bg-[#FFEAEE] border-[#FF2D55]`;
-            default:
-                return `text-[#34C759] bg-[#EBF9EE] border-[#34C759]`;
-        }
-    };
+const renderColor = (text) => {
+  switch (text) {
+    case "Issue Detected":
+      return `text-[#FF9500] bg-[#FFF4E6] border-[#FF9500]`;
+    case "Running":
+      return `text-[#675FFF] bg-[#F0EFFF] border-[#675FFF]`;
+    case "Pending":
+      return `text-[#5A687C] bg-[#E9E9E9] border-[#5A687C]`;
+    case "Terminated":
+      return `text-[#FF2D55] bg-[#FFEAEE] border-[#FF2D55]`;
+    default:
+      return `text-[#34C759] bg-[#EBF9EE] border-[#34C759]`;
+  }
+};
 
 const countries = [
   { name: "United States", code: "US", dial_code: "+1", flag: <BritishFlag /> },
@@ -188,7 +188,7 @@ export default function CallCampaign() {
                         <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                           <div className="py-1">
                             <button
-                              className="block w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-gray-100"
+                              className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-gray-100"
                               onClick={() => {
                                 // Handle edit action
                                 setEditData(agent.id)
@@ -196,26 +196,16 @@ export default function CallCampaign() {
                                 setActiveDropdown(null);
                               }}
                             >
-                              <div className="flex items-center gap-2">{<Edit />} <span className="hover:text-[#675FFF]">Edit</span> </div>
+                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
                             </button>
                             <button
-                              className="block w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6]"
+                              className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6]"
                               onClick={() => {
                                 // Handle delete action
                                 setActiveDropdown(null);
                               }}
                             >
-                              <div className="flex items-center gap-2">{<Duplicate />} <span className="hover:text-[#675FFF]">Duplicate</span> </div>
-                            </button>
-                            <button
-                              className="block w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6]"
-                              onClick={() => {
-                                // Handle delete action
-                                setActiveDropdown(null);
-                                setViewReportModel(true)
-                              }}
-                            >
-                              <div className="flex items-center gap-2">{<Notes />} <span className="hover:text-[#675FFF]">View Report</span> </div>
+                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
                             </button>
                             <hr style={{ color: "#E6EAEE" }} />
                             <button
@@ -277,7 +267,7 @@ export default function CallCampaign() {
             <h1 onClick={() => {
               setShowModal(false)
               setEditData()
-            }} className="text-[14px] font-[400] text-[#5A687C]">{`Call Campaigns > ${editData ? 'Campaign Name' : 'New Campaign'}`}</h1>
+            }} className="text-[14px] font-[400] text-[#5A687C] hover:text-[#5a687cdb] cursor-pointer">{`Call Campaigns > ${editData ? 'Campaign Name' : 'New Campaign'}`}</h1>
             <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{editData ? 'Edit' : 'Add New'} Campaigns</h1>
           </div>
           <div className="bg-white rounded-2xl border border-[#E1E4EA] w-full max-w-[678px] p-6"

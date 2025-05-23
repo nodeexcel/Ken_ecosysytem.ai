@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { Delete, Notes, ThreeDots, UploadIcon } from '../icons/icons';
 import { ChevronDown, Info, X } from 'lucide-react';
-import { format , isValid } from 'date-fns';
+import { format, isValid } from 'date-fns';
 import { createEmailCampaign, getEmailCampaignById, updateEmailCampaign } from '../api/emailCampaign';
 
 
 
-const TimeSelector = ({ onSave, onCancel, initialTime,start_date }) => {
+const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
     const parseInitialTime = () => {
         if (!initialTime) {
             const now = new Date();
@@ -869,7 +869,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
 
             {/* Modal Overlay */}
             <div className="w-full p-4 flex flex-col justify-center">
-                <h1 className="text-[#5A687C] font-[400] text-[14px]">{`Campaigns > New Campaign`}</h1>
+                <h1 onClick={() => setNewCampaignStatus(false)} className="text-[#5A687C] hover:text-[#5a687cdc] cursor-pointer font-[400] text-[14px]">{`Campaigns > New Campaign`}</h1>
                 <h1 className="text-[#1E1E1E] font-[600] text-[24px] mt-2 my-4">{isEdit ? 'Update' : 'Add'} New Campaign</h1>
 
                 <div className="bg-white max-w-[848px] w-full rounded-xl border border-[#E1E4EA] p-6 relative overflow-auto">
@@ -1040,17 +1040,17 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
                                     onChange={(e) => {
                                         const selectedDate = new Date(e.target.value);
                                         if (isValid(selectedDate)) {
-                                        setFormData((prev) => ({
-                                            ...prev, start_date: format(selectedDate, 'yyyy-MM-dd'),
-                                            send_time_window: ""
-                                        }))
-                                        setErrors((prev) => ({ ...prev, start_date: "" }))
-                                    }else {
-                                        setFormData((prev) => ({ ...prev, start_date: "" }))
-                                    }
+                                            setFormData((prev) => ({
+                                                ...prev, start_date: format(selectedDate, 'yyyy-MM-dd'),
+                                                send_time_window: ""
+                                            }))
+                                            setErrors((prev) => ({ ...prev, start_date: "" }))
+                                        } else {
+                                            setFormData((prev) => ({ ...prev, start_date: "" }))
+                                        }
 
-                                }
-                                }
+                                    }
+                                    }
                                     className={`w-full border ${errors.start_date ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`}
                                 />
                                 {errors.start_date && <p className='my-1 text-[#FF3B30]'>{errors.start_date}</p>}

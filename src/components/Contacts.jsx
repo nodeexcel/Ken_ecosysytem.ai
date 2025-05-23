@@ -303,28 +303,28 @@ const ContactsPage = () => {
                         <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                           <div className="py-1">
                             <button
-                              className="block w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-gray-100"
+                              className="block group w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-gray-100"
                               onClick={() => {
                                 setActiveDropdown(null);
                               }}
                             >
-                              <div className="flex items-center gap-2">{<Edit />} <span className="hover:text-[#675FFF] font-[500]">Edit</span> </div>
+                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
                             </button>
                             <button
-                              className="block w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6]"
+                              className="block group w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
                               onClick={() => {
                                 setActiveDropdown(null);
                               }}
                             >
-                              <div className="flex items-center gap-2">{<Notes />} <span className="hover:text-[#675FFF] font-[500]">View Contacts</span> </div>
+                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>View Contacts</span> </div>
                             </button>
                             <button
-                              className="block w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6]"
+                              className="block group w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
                               onClick={() => {
                                 setActiveDropdown(null);
                               }}
                             >
-                              <div className="flex items-center gap-2">{<Duplicate />} <span className="hover:text-[#675FFF] font-[500]">Duplicate</span> </div>
+                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
                             </button>
                             <hr style={{ color: "#E6EAEE" }} />
                             <button

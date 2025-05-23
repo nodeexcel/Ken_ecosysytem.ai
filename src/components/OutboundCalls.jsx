@@ -8,34 +8,37 @@ const agents = [
     {
         id: 1,
         campaign_name: "XYZ Campaign",
-        agent_name: "Sami  chosen by the user",
+        agent_name: "Sami",
+        choosen: "chosen by the user",
         date: "02-05-2024",
         language: "Francais",
         voice: "Nicolas Petit",
         recipient_no: "4177809025",
-        status: "Completed",
+        status: "No Answer",
         duration: "1:00 hr"
     },
     {
         id: 2,
         campaign_name: "XYZ Campaign",
-        agent_name: "Sami  chosen by the user",
+        agent_name: "Sami",
+        choosen: "chosen by the user",
         date: "02-05-2024",
         language: "Francais",
         voice: "Nicolas Petit",
         recipient_no: "4177809025",
-        status: "Pending",
+        status: "Replied",
         duration: "1:00 hr"
     },
     {
         id: 3,
         campaign_name: "XYZ Campaign",
-        agent_name: "Sami  chosen by the user",
+        agent_name: "Sami",
+        choosen: "chosen by the user",
         date: "02-05-2024",
         language: "Francais",
         voice: "Nicolas Petit",
         recipient_no: "4177809025",
-        status: "Completed",
+        status: "Replied",
         duration: "1:00 hr"
     },
 ];
@@ -54,7 +57,7 @@ export default function OutBoundCalls() {
     const modalRef = useRef(null);
     const [startDate, setStartDate] = useState(new Date())
     const [endDate, setEndDate] = useState(new Date())
-        const [activeDropdown, setActiveDropdown] = useState(null);
+    const [activeDropdown, setActiveDropdown] = useState(null);
 
 
     useEffect(() => {
@@ -145,18 +148,18 @@ export default function OutBoundCalls() {
                                 key={agent.id}
                                 className={`hover:bg-gray-50 ${index !== agents.length - 1 ? 'border-b border-gray-200' : ''}`}
                             >
-                                <td className="px-6 py-4 font-medium text-gray-900">{agent.campaign_name}</td>
-                                <td className="px-6 py-4">{agent.agent_name}</td>
-                                <td className="px-6 py-4">{agent.date}</td>
-                                <td className="px-6 py-4">{agent.language}</td>
-                                <td className="px-6 py-4">{agent.voice}</td>
-                                <td className="px-6 py-4">{agent.recipient_no}</td>
+                                <td className="px-6 py-4 font-[600] text-[#1E1E1E] text-[16px]">{agent.campaign_name}</td>
+                                <td className="px-6 py-4"><div className="flex flex-col text-[16px] text-[#1E1E1E] font-[400]">{agent.agent_name}<span className="text-[#5A687C]">{agent.choosen}</span></div></td>
+                                <td className="px-6 py-4 text-[#5A687C]">{agent.date}</td>
+                                <td className="px-6 py-4 text-[#5A687C]">{agent.language}</td>
+                                <td className="px-6 py-4 text-[#5A687C]">{agent.voice}</td>
+                                <td className="px-6 py-4 text-[#5A687C]">{agent.recipient_no}</td>
                                 <td className="px-6 py-4">
-                                    <span className={`inline-block border ${agent.status !== "Pending" ? "text-[#34C759] bg-[#EBF9EE] border-[34C759]" : "text-[#FF3B30] border-[#FF3B30] bg-[#F4E1E0]"} text-sm font-medium px-3 py-1 rounded-full`}>
+                                    <span className={`inline-block ${agent.status !== "Replied" ? "text-[#34C759]" : "text-[#FF3B30]"} text-[16px] font-[400] px-3 py-1 rounded-full`}>
                                         {agent.status}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4">{agent.duration}</td>
+                                <td className="px-6 py-4 text-[#5A687C]">{agent.duration}</td>
                                 <td className="px-6 py-4">
                                     <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
                                         <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
@@ -165,22 +168,22 @@ export default function OutBoundCalls() {
                                         <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                                             <div className="py-1">
                                                 <button
-                                                    className="block w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-gray-100"
+                                                    className="block w-full text-left px-4 py-2 group text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-gray-100"
                                                     onClick={() => {
                                                         // Handle edit action
                                                         setActiveDropdown(null);
                                                     }}
                                                 >
-                                                    <div className="flex items-center gap-2">{<Phone />} <span className="hover:text-[#675FFF]">Listen the call</span> </div>
+                                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'><Phone /></div> <div className='hidden group-hover:block'><Phone active={true} /></div> <span>Listen the call</span> </div>
                                                 </button>
                                                 <button
-                                                    className="block w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6]"
+                                                    className="block w-full text-left px-4 py-2 group text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6]"
                                                     onClick={() => {
                                                         // Handle delete action
                                                         setActiveDropdown(null);
                                                     }}
                                                 >
-                                                    <div className="flex items-center gap-2">{<Notes />} <span className="hover:text-[#675FFF]">Notes</span> </div>
+                                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>Notes</span> </div>
                                                 </button>
                                                 <hr style={{ color: "#E6EAEE" }} />
                                                 <button
