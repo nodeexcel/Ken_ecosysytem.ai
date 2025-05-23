@@ -51,7 +51,7 @@ const TransactionHistory = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {loading ? <div><span className='loader' /></div> : message ? <p>{message}</p> : <> {transactions?.length > 0 && transactions.map((row, index) => (
+                    {loading ? <tr className='h-34'><td></td><td></td><td><span className='loader' /></td></tr> : message ? <tr className='h-34'><td></td><td></td><td>{message}</td></tr> : <> {transactions?.length > 0 && transactions.map((row, index) => (
                         <tr key={index} className="border-b border-gray-100">
                             <td className="py-3 pr-8">
                                 <div className="flex items-center gap-4">

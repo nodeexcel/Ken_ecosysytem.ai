@@ -278,7 +278,7 @@ const DemoChat = () => {
                             <p className="text-[16px] font-[400] text-[#5A687C]">Explore conversation with your leads</p>
 
                             <div className="flex items-center gap-2 mt-3">
-                                <select value="engaged" className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-[#335BFB] bg-white shadow rounded-md">
+                                <select className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-[#335BFB] bg-white shadow rounded-md">
                                     <option value="positive" className="text-[#5A687C]">Positive</option>
                                     <option value="engaged" className="text-[#5A687C]">Engaged</option>
                                     <option value="no_answer" className="text-[#5A687C]">No Answer</option>

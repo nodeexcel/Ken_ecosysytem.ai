@@ -411,7 +411,8 @@ const SettingsPage = () => {
                   </tr>
                 </thead>
                 <tbody className=" rounded-lg">
-                  {teamMembersDataLoading ? <div><span className='loader' /></div> : teamMembersDataMessage ? <p>{teamMembersDataMessage}</p> : <>{teamMembersData?.membersData?.length > 0 && teamMembersData?.membersData.map((user, index) => (
+
+                  {teamMembersDataLoading ? <tr className='h-34'><td></td><td></td><td><span className='loader' /></td></tr> : teamMembersDataMessage ? <tr className='h-34'><td></td><td></td><td>{teamMembersDataMessage}</td></tr> : <>{teamMembersData?.membersData?.length > 0 && teamMembersData?.membersData.map((user, index) => (
                     <tr key={index} className="bg-white">
                       <td className="px-6 py-4 whitespace-nowrap flex items-center gap-2 border-l-1 border-t-1 border-b-1 border-[#E1E4EA] rounded-l-lg">
                         <div className="w-8 h-8 bg-[#E8E9FF] text-[#5E54FF] rounded-full flex items-center justify-center font-semibold text-sm">
