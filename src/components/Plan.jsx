@@ -1,14 +1,35 @@
 import { ChevronDown, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { getTransactionsHistory, updateSubscriptionPaymentStatus } from "../api/payment";
+import { useEffect, useState } from "react";
+import { addCredits, updateSubscriptionPaymentStatus } from "../api/payment";
 import { useSelector } from "react-redux";
 import { loadStripe } from "@stripe/stripe-js";
-import { useNavigate } from "react-router-dom";
 import { CheckedCircle, EmptyCircle, OfferIcon } from "../icons/icons";
 
-const CreditPopup = ({ onClose, onOpen }) => {
-  const staticCredits = [{ "label": "500", "value": "35€" }, { "label": "1000", "value": "65€" }, { "label": "2000", "value": "110€" }]
+const CreditPopup = ({ onClose, onOpen, stripePromise, userDetails }) => {
+  const staticCredits = [{ label: 500, value: "35€", priceId: import.meta.env.VITE_CREDITS_500_ID }, { label: 1000, value: "65€", priceId: import.meta.env.VITE_CREDITS_1000_ID }, { label: 2000, value: "110€", priceId: import.meta.env.VITE_CREDITS_2000_ID }]
   const [selectedCredit, setSelectedCredit] = useState(staticCredits[2]);
+  const [loading, setLoading] = useState(false)
+
+  const handleAddCredits = async () => {
+    setLoading(true)
+    try {
+      const payload = {
+        priceId: selectedCredit.priceId,
+        credits: selectedCredit.label,
+        userId: userDetails.id
+      }
+      const response = await addCredits(payload);
+      const stripe = await stripePromise;
+      console.log(response)
+      if (response.status === 200 && stripe) {
+        await stripe.redirectToCheckout({ sessionId: response?.data?.sessionId });
+      }
+    } catch (error) {
+      console.log("Stripe error:", error);
+    } finally {
+      setLoading(false)
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
@@ -112,8 +133,8 @@ const CreditPopup = ({ onClose, onOpen }) => {
           >
             Cancel
           </button>
-          <button className="flex-1 py-2 px-4 bg-[#675FFF] text-white rounded-lg">
-            Add {selectedCredit.label} Credits
+          <button disabled={loading} onClick={handleAddCredits} className="flex-1 py-2 px-4 bg-[#675FFF] text-white rounded-lg">
+            {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : `Add ${selectedCredit.label} Credits`}
           </button>
         </div>
       </div>
@@ -121,15 +142,13 @@ const CreditPopup = ({ onClose, onOpen }) => {
   );
 };
 
-const PlanManagementPopup = ({ onClose, onOpen }) => {
+const PlanManagementPopup = ({ onClose, onOpen, stripePromise }) => {
   const [activeTab, setActiveTab] = useState("annual");
   const [activePlan, setActivePlan] = useState("");
   const [planIndex, setPlanIndex] = useState();
 
   const userDetails = useSelector((state) => state.profile.user)
   const token = useSelector((state) => state.auth.token)
-
-  const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
   const plans = {
     annual: [
@@ -540,9 +559,11 @@ const CancelSubscriptionPopup = ({ onClose }) => {
   )
 }
 
-const Plan = ({ teamMembersData,setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
+const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
   const [showCreditPopup, setShowCreditPopup] = useState(false);
-  const [cancelPopup, setCancelPopup] = useState(false)
+  const [cancelPopup, setCancelPopup] = useState(false);
+  const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+  const userDetails = useSelector((state) => state.profile.user)
   const creditUsageData = [
     {
       item: "AI Agents - LLM and Tool Cost",
@@ -575,7 +596,7 @@ const Plan = ({ teamMembersData,setActiveSidebarItem, showPlanPopup, setShowPlan
       dateTime: "27/03/2025 03:30 PM",
     },
   ];
-  const role=useSelector((state)=>state.profile.user.role)
+  const role = useSelector((state) => state.profile.user.role)
 
   return (
     <div className="p-4 sm:p-6 w-full">
@@ -593,10 +614,10 @@ const Plan = ({ teamMembersData,setActiveSidebarItem, showPlanPopup, setShowPlan
       </div>
 
       {showPlanPopup && (
-        <PlanManagementPopup onClose={() => setShowPlanPopup(false)} onOpen={() => setCancelPopup(true)} />
+        <PlanManagementPopup onClose={() => setShowPlanPopup(false)} onOpen={() => setCancelPopup(true)} stripePromise={stripePromise} />
       )}
       {showCreditPopup && (
-        <CreditPopup onClose={() => setShowCreditPopup(false)} onOpen={() => setShowPlanPopup(true)} />
+        <CreditPopup onClose={() => setShowCreditPopup(false)} onOpen={() => setShowPlanPopup(true)} stripePromise={stripePromise} userDetails={userDetails} />
       )}
       {cancelPopup && (
         <CancelSubscriptionPopup onClose={() => setCancelPopup(false)} />
@@ -625,7 +646,7 @@ const Plan = ({ teamMembersData,setActiveSidebarItem, showPlanPopup, setShowPlan
           <h1 className=" mb-2 text-sm font-[400]  text-[#5A687C] " >Available Credits</h1>
           <div className="flex items-center gap-2">
             <span className="text-[24px] font-[600]  ">100</span>
-            <button className="px-2 rounded-[5px] py-2 text-[14px] flex items-center gap-1 bg-[#335BFB1A] text-[#675FFF] font-[600] ">
+            <button onClick={() => setShowCreditPopup(true)} className="px-2 rounded-[5px] py-2 text-[14px] flex items-center gap-1 bg-[#335BFB1A] text-[#675FFF] font-[600] ">
               <img src="/src/assets/svg/add.svg" alt="" />
               <span>Add Credits</span>
             </button>

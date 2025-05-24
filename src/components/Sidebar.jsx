@@ -130,7 +130,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         <img src={languages[selectedLang].flag} alt={languages[selectedLang].label} width={20} />
                         {showDropdown && (
                             <div
-                                className='fixed md:left-[57px] left-[102px] top-[338px] bg-white shadow-md rounded p-2 z-[9999]'
+                                className='fixed md:left-[59px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]'
                             >
                                 {Object.entries(languages).map(([key, value]) => (
                                     <div

@@ -54,3 +54,13 @@ export const getTransactionsHistory = async () => {
         return error;
     }
 };
+
+export const addCredits = async (payload) => {
+    try {
+        const response = await axiosInstance.post("/api/payments/create-credit-session", payload);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
