@@ -83,7 +83,11 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                     </div>
                     <hr className='text-[#E1E4EA]' />
                     <div className='text-xl flex justify-center py-4'>
-                        <img src={userDetails?.image ?? person} alt='image' className='rounded-[40px]' height={30} width={30} />
+                        <img
+                            src={userDetails?.image ?? person}
+                            alt='image'
+                            className='w-8 h-8 rounded-full'
+                        />
                     </div>
                     <hr className='text-[#E1E4EA]' />
                     <div className='text-xl flex justify-center py-4' onClick={handleNotification}>
