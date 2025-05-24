@@ -452,9 +452,9 @@ const SettingsPage = () => {
                     ))}
                 </select>
               </div>
-              <div className="flex items-center px-3 gap-2 border border-[#E1E4EA] rounded-[8px] h-[38px]">
+              <div onClick={renderTeamMembers} className="flex items-center px-3 gap-2 border border-[#E1E4EA] rounded-[8px] h-[38px]">
                 <LuRefreshCw color="#5E54FF" />
-                <button onClick={renderTeamMembers} className="text-[16px] text-[#5A687C]">
+                <button className="text-[16px] text-[#5A687C]">
                   Refresh
                 </button>
               </div>
@@ -476,7 +476,7 @@ const SettingsPage = () => {
                     <tr key={index} className="bg-white">
                       <td className="px-6 py-4 whitespace-nowrap flex items-center gap-3 border-l-1 border-t-1 border-b-1 border-[#E1E4EA] rounded-l-lg">
                         <div className="w-10 h-10 p-2 bg-[#EBEFFF] text-[#5E54FF] rounded-xl flex items-center justify-center font-[600] text-[16px]">
-                          {user.firstName !== null ? user.firstName[0]:user.email[0]}{""}{user.lastName !== null && user.lastName[0]}
+                          {user.firstName !== null ? user.firstName[0] : user.email[0]}{""}{user.lastName !== null && user.lastName[0]}
                         </div>
                         <span className="font-[600] text-[16px] text-[#1E1E1E]">{user.firstName !== null && user.firstName}{" "}{user.lastName !== null && user.lastName}</span>
                       </td>
