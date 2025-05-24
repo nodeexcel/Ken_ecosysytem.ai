@@ -607,7 +607,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 className={`w-full p-2 rounded-lg border ${errors.agent_personality ? 'border-red-500' : 'border-[#e1e4ea]'}`}>
                                 <option disabled value="">Choose your agent personality</option>
                                 {agentsPersonalityOptions.map((e) => (
-                                    <option value={e.key}>{e.label}</option>
+                                    <option key={e.key} value={e.key}>{e.label}</option>
                                 ))}
                             </select>
                             {errors.agent_personality && <p className="text-red-500 text-sm mt-1">{errors.agent_personality}</p>}
