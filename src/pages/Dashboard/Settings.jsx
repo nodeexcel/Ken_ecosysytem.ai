@@ -89,7 +89,7 @@ const SettingsPage = () => {
 
   const [success, setSuccess] = useState({})
   const [showPlanPopup, setShowPlanPopup] = useState(false);
-  const [teamMembersData, setTeamMembersData] = useState(null)
+  const [teamMembersData, setTeamMembersData] = useState({})
   const navigate = useNavigate();
   const dispatch = useDispatch()
 
@@ -128,7 +128,8 @@ const SettingsPage = () => {
   const [teamMembersDataLoading, setTeamMembersDataLoading] = useState(true);
   const [modalStatus, setModalStatus] = useState(false);
   const [profileErrors, setProfileErrors] = useState({});
-  const [filteredMembers, setFilteredMembers] = useState([])
+  const [filteredMembers, setFilteredMembers] = useState([]);
+  const [deleteModalStatus, setDeleteModalStatus] = useState(false)
 
   const users = useSelector((state) => state.auth);
 
@@ -174,11 +175,11 @@ const SettingsPage = () => {
       const response = await getTeamMembers()
 
       if (response?.status === 200) {
+        setTeamMembersData(response?.data?.data)
         if (response?.data?.data?.membersData?.length == 0) {
           setTeamMembersDataLoading(false)
           setTeamMembersDataMessage("No Data Found")
         } else {
-          setTeamMembersData(response?.data?.data)
           setFilteredMembers(response?.data?.data?.membersData)
         }
       }
@@ -474,9 +475,9 @@ const SettingsPage = () => {
                   {teamMembersDataLoading ? <tr className='h-34'><td></td><td></td><td><span className='loader' /></td></tr> : teamMembersDataMessage ? <tr className='h-34'><td></td><td></td><td>{teamMembersDataMessage}</td></tr> : <>{filteredMembers?.length > 0 ? filteredMembers?.map((user, index) => (
                     <tr key={index} className="bg-white">
                       <td className="px-6 py-4 whitespace-nowrap flex items-center gap-3 border-l-1 border-t-1 border-b-1 border-[#E1E4EA] rounded-l-lg">
-                        {user.firstName !== null && <div className="w-10 h-10 p-2 bg-[#EBEFFF] text-[#5E54FF] rounded-xl flex items-center justify-center font-[600] text-[16px]">
-                          {user.firstName !== null && user.firstName[0]}{""}{user.lastName !== null && user.lastName[0]}
-                        </div>}
+                        <div className="w-10 h-10 p-2 bg-[#EBEFFF] text-[#5E54FF] rounded-xl flex items-center justify-center font-[600] text-[16px]">
+                          {user.firstName !== null ? user.firstName[0]:user.email[0]}{""}{user.lastName !== null && user.lastName[0]}
+                        </div>
                         <span className="font-[600] text-[16px] text-[#1E1E1E]">{user.firstName !== null && user.firstName}{" "}{user.lastName !== null && user.lastName}</span>
                       </td>
                       <td className="px-6 py-4 text-[16px] font-[400] text-[#5A687C] border-t-1 border-b-1 border-[#E1E4EA]">{user.email}</td>
@@ -832,7 +833,7 @@ const SettingsPage = () => {
                       </button> */}
                     </div>
                     <div>
-                      <button onClick={handleDeleteProfile} className="w-full text-[13px] font-[500] bg-transparent text-[#5A687C]">
+                      <button onClick={() => setDeleteModalStatus(true)} className="w-full text-[13px] font-[500] bg-transparent text-[#5A687C]">
                         Delete Profile
                       </button>
                     </div>
@@ -1059,13 +1060,53 @@ const SettingsPage = () => {
             <X size={20} />
           </button>
 
-          <div className='h-[100px] flex justify-center items-center '>
+          <div className='h-[120px] flex flex-col justify-around gap-2 items-center '>
             <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-1">
               Please complete your profile first
             </h2>
+            <button
+              className="bg-[#675FFF] text-white px-5 py-2 font-[500] test-[16px]  rounded-lg"
+              onClick={() => setModalStatus(false)}
+            >
+              Ok
+            </button>
           </div>
         </div>
       </div>}
+      {deleteModalStatus && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl w-full max-w-[514px] p-6 relative shadow-lg">
+            <button
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              onClick={() => {
+                setDeleteModalStatus(false)
+              }}
+            >
+              <X size={20} />
+            </button>
+
+            <div className="flex flex-col justify-around h-[150px] text-center">
+              <h2 className="text-[20px] font-semibold text-[#1E1E1E] mb-4">
+                Are you sure you want to delete your profile?
+              </h2>
+              <div className="flex gap-4 mt-2 w-full">
+                <button
+                  className="w-full bg-[#FF3B30] text-white px-5 py-2 font-[500] test-[16px]  rounded-lg"
+                  onClick={handleDeleteProfile}
+                >
+                  Confirm Delete
+                </button>
+                <button
+                  className="w-full bg-white text-[#5A687C] border-[1.5px] border-[#E1E4EA] font-[500] test-[16px] px-5 py-2 rounded-lg"
+                  onClick={() => setDeleteModalStatus(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

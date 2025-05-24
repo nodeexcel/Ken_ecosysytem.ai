@@ -121,7 +121,7 @@ export default function SetPassword() {
                                     value={formData.password}
                                     onChange={handlePasswordChange}
                                     className={`w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border ${formErrors.password ? 'border-red-500' : 'border-[#e1e4ea]'
-                                        } shadow-sm`}
+                                        }`}
                                     placeholder="Enter new password"
                                 />
                                 <button
@@ -152,7 +152,7 @@ export default function SetPassword() {
                                     value={formData.confirmPassword}
                                     onChange={handlePasswordChange}
                                     className={`w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border ${formErrors.confirmPassword ? 'border-red-500' : 'border-[#e1e4ea]'
-                                        } shadow-sm`}
+                                        }`}
                                     placeholder="Confirm new password"
                                 />
                                 <button
