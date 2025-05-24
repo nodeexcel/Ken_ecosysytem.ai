@@ -4,6 +4,7 @@ import image1 from '../../assets/svg/agent_image1.svg'
 import image2 from '../../assets/svg/agent_image2.svg'
 import { useNavigate } from "react-router-dom";
 import { RequestSend } from "../../icons/icons";
+import { useSelector } from "react-redux";
 
 const employees = [
   {
@@ -64,12 +65,17 @@ const employees = [
 
 const Agents = () => {
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const userDetails = useSelector((state) => state.profile)
+
   const handleNavigate = (path) => {
     if (path !== "") {
       navigate(path)
     }
   }
+
+  if (userDetails?.loading) return <p className='flex justify-center items-center h-[70vh]'><span className='loader' /></p>
+
   return (
     <div className="">
       {/* Top Right Button */}
@@ -85,7 +91,7 @@ const Agents = () => {
 
       {/* Welcome Message */}
       <div className="flex justify-center flex-col items-center text-center gap-2 pb-5">
-        <h1 className="font-[600] text-2xl">Welcome Merry</h1>
+        <h1 className="font-[600] text-2xl">Welcome {userDetails?.user?.firstName}{" "}{userDetails?.user?.lastName !== null && userDetails?.user?.lastName}</h1>
         <p className="font-[400] text-[16px] text-[#5A687C]">
           Your AI agents are ready to boost your outreach.
         </p>

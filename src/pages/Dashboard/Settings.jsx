@@ -12,7 +12,7 @@ import { updatePassword } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import { getTeamMembers, sendInviteEmail } from "../../api/teamMember";
 import TransactionHistory from "../../components/TransactionHistory";
-import { PlanIcon, Settings, TeamMemberIcon } from "../../icons/icons";
+import { Delete, Edit, PlanIcon, Settings, TeamMemberIcon } from "../../icons/icons";
 import { discardData } from "../../store/profileSlice";
 
 
@@ -118,7 +118,7 @@ const SettingsPage = () => {
   const [open, setOpen] = useState(false);
   const [emailInvite, setEmailInvite] = useState("")
   const [emailInviteRole, setEmailInviteRole] = useState("Member")
-  const [role, setRole] = useState("")
+  const [role, setRole] = useState("All")
   const [isEditing, setIsEditing] = useState(false);
   const [errorMessage, setErrorMessage] = useState({})
   const [updatePasswordLoading, setUpdatePasswordLoading] = useState(false)
@@ -127,9 +127,12 @@ const SettingsPage = () => {
   const [teamMembersDataMessage, setTeamMembersDataMessage] = useState("")
   const [teamMembersDataLoading, setTeamMembersDataLoading] = useState(true);
   const [modalStatus, setModalStatus] = useState(false);
-  const [profileErrors, setProfileErrors] = useState({})
+  const [profileErrors, setProfileErrors] = useState({});
+  const [filteredMembers, setFilteredMembers] = useState([])
 
-  const users = useSelector((state) => state.auth)
+  const users = useSelector((state) => state.auth);
+
+  const roleOptions = ["All", "Admin", "Member", "Guest"]
 
   useEffect(() => {
     setTimeout(() => {
@@ -144,11 +147,11 @@ const SettingsPage = () => {
   }, [errorMessage])
 
   useEffect(() => {
-    if (teamMembersData?.membersData?.length > 0) {
+    if (filteredMembers?.length > 0) {
       setTeamMembersDataLoading(false)
     }
 
-  }, [teamMembersData])
+  }, [filteredMembers])
 
   const validateForm = () => {
     const newErrors = {};
@@ -171,10 +174,12 @@ const SettingsPage = () => {
       const response = await getTeamMembers()
 
       if (response?.status === 200) {
-        setTeamMembersData(response?.data?.data)
         if (response?.data?.data?.membersData?.length == 0) {
           setTeamMembersDataLoading(false)
           setTeamMembersDataMessage("No Data Found")
+        } else {
+          setTeamMembersData(response?.data?.data)
+          setFilteredMembers(response?.data?.data?.membersData)
         }
       }
     } catch (error) {
@@ -401,6 +406,16 @@ const SettingsPage = () => {
     }
   }
 
+  const handleChangeRole = (value) => {
+    setRole(value);
+    if (value !== "All") {
+      const filterData = teamMembersData?.membersData?.filter((e) => e.role === value)
+      setFilteredMembers(filterData)
+    } else {
+      setFilteredMembers(teamMembersData?.membersData)
+    }
+  }
+
   const renderMainContent = () => {
     if (activeSidebarItem === "billing") {
       return (
@@ -419,16 +434,21 @@ const SettingsPage = () => {
               <button className="bg-[#5E54FF] text-white rounded-md text-[14px] md:text-[16px] p-2" onClick={handleInviteTeam}>Invite A Team Member</button>
             </div>
             <div className="flex justify-between">
-              <div className="w-[137px] flex items-center border border-gray-300 rounded-lg ">
+              <div className="w-[157px] flex items-center border border-gray-300 rounded-lg ">
                 <select
                   value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full bg-white px-4 py-2 rounded-lg "
+                  onChange={(e) => handleChangeRole(e.target.value)}
+                  className="w-full bg-white border text-[#5A687C] text-[16px] font-[400] border-[#E1E4EA] px-3 py-2 rounded-lg "
                 >
-                  <option value="" disabled>Role</option>
-                  <option value="admin">Admin</option>
-                  <option value="member">Member</option>
-                  <option value="guest">Guest</option>
+                  <option value={role} disabled>
+                    Role: {role}
+                  </option>
+                  {
+                    roleOptions.map((e) => (
+                      <option className={`${role == e && 'hidden'}`} key={e} value={e}>
+                        {e}
+                      </option>
+                    ))}
                 </select>
               </div>
               <div className="flex items-center px-3 gap-2 border border-[#E1E4EA] rounded-[8px] h-[38px]">
@@ -451,16 +471,16 @@ const SettingsPage = () => {
                 </thead>
                 <tbody className=" rounded-lg">
 
-                  {teamMembersDataLoading ? <tr className='h-34'><td></td><td></td><td><span className='loader' /></td></tr> : teamMembersDataMessage ? <tr className='h-34'><td></td><td></td><td>{teamMembersDataMessage}</td></tr> : <>{teamMembersData?.membersData?.length > 0 && teamMembersData?.membersData.map((user, index) => (
+                  {teamMembersDataLoading ? <tr className='h-34'><td></td><td></td><td><span className='loader' /></td></tr> : teamMembersDataMessage ? <tr className='h-34'><td></td><td></td><td>{teamMembersDataMessage}</td></tr> : <>{filteredMembers?.length > 0 ? filteredMembers?.map((user, index) => (
                     <tr key={index} className="bg-white">
-                      <td className="px-6 py-4 whitespace-nowrap flex items-center gap-2 border-l-1 border-t-1 border-b-1 border-[#E1E4EA] rounded-l-lg">
-                        <div className="w-8 h-8 bg-[#E8E9FF] text-[#5E54FF] rounded-full flex items-center justify-center font-semibold text-sm">
-                          {user.initials}
-                        </div>
-                        <span className="font-medium text-[#1E1E1E]">{user.name}</span>
+                      <td className="px-6 py-4 whitespace-nowrap flex items-center gap-3 border-l-1 border-t-1 border-b-1 border-[#E1E4EA] rounded-l-lg">
+                        {user.firstName !== null && <div className="w-10 h-10 p-2 bg-[#EBEFFF] text-[#5E54FF] rounded-xl flex items-center justify-center font-[600] text-[16px]">
+                          {user.firstName !== null && user.firstName[0]}{""}{user.lastName !== null && user.lastName[0]}
+                        </div>}
+                        <span className="font-[600] text-[16px] text-[#1E1E1E]">{user.firstName !== null && user.firstName}{" "}{user.lastName !== null && user.lastName}</span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-700 border-t-1 border-b-1 border-[#E1E4EA]">{user.email}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700 border-t-1 border-b-1 border-[#E1E4EA]">{user.role}</td>
+                      <td className="px-6 py-4 text-[16px] font-[400] text-[#5A687C] border-t-1 border-b-1 border-[#E1E4EA]">{user.email}</td>
+                      <td className="px-6 py-4 text-[16px] font-[400] text-[#5A687C] border-t-1 border-b-1 border-[#E1E4EA]">{user.role}</td>
                       <td className="px-6 py-4 text-sm text-gray-700 border-r-1 border-t-1 border-b-1 rounded-r-lg border-[#E1E4EA]">
                         {/* <select
                           className="w-full bg-white  rounded-md px-2 py-1"
@@ -488,13 +508,13 @@ const SettingsPage = () => {
                           <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                             <div className="py-1">
                               <button
-                                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                className="block group w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-[#675FFF]"
                                 onClick={() => {
                                   // Handle edit action
                                   setActiveDropdown(null);
                                 }}
                               >
-                                Edit
+                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
                               </button>
                               <button
                                 className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
@@ -503,14 +523,14 @@ const SettingsPage = () => {
                                   setActiveDropdown(null);
                                 }}
                               >
-                                Delete
+                                <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
                               </button>
                             </div>
                           </div>
                         )}
                       </td>
                     </tr>
-                  ))}</>}
+                  )) : <tr className='h-34'><td></td><td></td><td>No Data Found</td></tr>}</>}
                 </tbody>
               </table>
             </div>
