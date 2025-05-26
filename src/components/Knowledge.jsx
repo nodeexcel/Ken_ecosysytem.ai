@@ -3,16 +3,16 @@ import nodata from '../assets/svg/brainai_nodata.svg'
 import letter from '../assets/svg/letter_t.svg'
 import { Upload, X } from "lucide-react";
 import { Delete, Edit, ThreeDots, UploadIcon } from "../icons/icons";
-import { getKnowledgeSnippets, knowledgeBase } from "../api/brainai";
+import { deleteKnowledgeSnippets, getKnowledgeSnippets, knowledgeBase } from "../api/brainai";
 
 const tabs = [
-  { label: "Snippets", key: "snippet" },
+  { label: "Snippets", key: "snippets" },
   { label: "Websites", key: "website" },
   { label: "Files", key: "files" },
 ]
 
 const modelData = {
-  snippet: { label: "Provide any facts, information you want to include in your Brain AI for agents to be aware of." },
+  snippets: { label: "Provide any facts, information you want to include in your Brain AI for agents to be aware of." },
   website: { label: "Provide any facts webpages you want to include in your Brain AI for agents to be aware of." },
   files: { label: "Upload only clear, relevant, and concise documents to ensure accurate answers from AI agents. Exemples: Company bylaws, Presentation Brochure, Various Presentations." }
 }
@@ -39,7 +39,7 @@ const NoData = ({ setOpen }) => {
 
 const Knowledge = () => {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("snippet")
+  const [activeTab, setActiveTab] = useState("snippets")
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
@@ -185,6 +185,23 @@ const Knowledge = () => {
     setActiveDropdown(activeDropdown === index ? null : index);
   };
 
+  const handleDelete = async (index, id) => {
+    try {
+      const response = await deleteKnowledgeSnippets(id)
+      if (response.status === 200) {
+        setActiveDropdown(null);
+        const data = knowledgeData[activeTab]
+        const updated = [...data];
+        updated.splice(index, 1);
+        setKnowledgeData((prev) => ({
+          ...prev, [activeTab]: updated
+        }));
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
 
   const renderMainContent = () => {
     switch (activeTab) {
@@ -193,13 +210,13 @@ const Knowledge = () => {
           <>
             {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.website?.length > 0 ? <div className="mt-3 max-w-[648px]">
               <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
-                {knowledgeData?.website?.length > 0 && knowledgeData?.website.map((e, i) => <div key={i} className="bg-[#f7f8fc] p-4 rounded-xl flex justify-between items-center gap-2">
+                {knowledgeData?.website?.length > 0 && knowledgeData?.website.map((e, i) => <div key={e.id} className="bg-[#f7f8fc] p-4 rounded-xl flex justify-between items-center gap-2">
                   <div className="flex  items-center gap-2">
                     <div className="text-[#675FFF]">
                       W
                     </div>
                     <div>
-                      <a href={e} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C]">{e}</a>
+                      <a href={e.url} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C]">{e.url}</a>
                     </div>
                   </div>
                   <div className='bg-[#fff] rounded-lg'>
@@ -224,7 +241,7 @@ const Knowledge = () => {
                           <button
                             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                             onClick={() => {
-                              setActiveDropdown(null);
+                              handleDelete(i, e.id)
                             }}
                           >
                             <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
@@ -240,18 +257,18 @@ const Knowledge = () => {
           </>
         )
 
-      case "snippet":
+      case "snippets":
         return (
           <>
             {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.snippets?.length > 0 ? <div className="mt-3 max-w-[648px]">
               <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
-                {knowledgeData?.snippets?.length > 0 && knowledgeData?.snippets.map((e, i) => <div key={i} className="bg-[#f7f8fc] p-4 rounded-xl flex justify-between items-center gap-2">
+                {knowledgeData?.snippets?.length > 0 && knowledgeData?.snippets.map((e, i) => <div key={e.id} className="bg-[#f7f8fc] p-4 rounded-xl flex justify-between items-center gap-2">
                   <div className="flex  items-center gap-2">
                     <div className="pt-1">
                       <img src={letter} alt="letter" />
                     </div>
                     <div>
-                      <p className="text-[14px] font-[400] font-inter text-[#5A687C]">{e}</p>
+                      <p className="text-[14px] font-[400] font-inter text-[#5A687C]">{e.data}</p>
                     </div>
                   </div>
                   <div className='bg-[#fff] rounded-lg'>
@@ -276,7 +293,7 @@ const Knowledge = () => {
                           <button
                             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                             onClick={() => {
-                              setActiveDropdown(null);
+                              handleDelete(i, e.id)
                             }}
                           >
                             <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
@@ -295,13 +312,13 @@ const Knowledge = () => {
           <>
             {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.files?.length > 0 ? <div className="mt-3 max-w-[648px]">
               <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
-                {knowledgeData?.files?.length > 0 && knowledgeData?.files.map((e, i) => <div key={i} className="bg-[#f7f8fc] p-4 rounded-xl flex justify-between items-center gap-2">
+                {knowledgeData?.files?.length > 0 && knowledgeData?.files.map((e, i) => <div key={e.id} className="bg-[#f7f8fc] p-4 rounded-xl flex justify-between items-center gap-2">
                   <div className="flex  items-center gap-2">
                     <div className="text-[#675FFF]">
                       F
                     </div>
                     <div>
-                      <a href={e} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C]">{e}</a>
+                      <a href={e.path} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C]">{e.path}</a>
                     </div>
                   </div>
                   <div className='bg-[#fff] rounded-lg'>
@@ -326,7 +343,7 @@ const Knowledge = () => {
                           <button
                             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                             onClick={() => {
-                              setActiveDropdown(null);
+                              handleDelete(i, e.id)
                             }}
                           >
                             <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
@@ -452,7 +469,7 @@ const Knowledge = () => {
                 </div>
               </div>
             )}
-            {activeTab === "snippet" && (
+            {activeTab === "snippets" && (
               <div>
                 <label className="block text-[14px] font-medium text-[#292D32] mb-1">Details</label>
                 <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">

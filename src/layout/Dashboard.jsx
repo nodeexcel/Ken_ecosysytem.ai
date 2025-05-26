@@ -42,7 +42,7 @@ function Dashboard() {
     }, [isSidebarOpen]);
 
     const SidebarItems = [
-        { id: "agents", label: "Agents" },
+        { id: "", label: "Home" },
         { id: "brain", label: "Brain AI" },
         { id: "settings", label: "Settings" },
         { id: "documentation", label: "Documentation" },

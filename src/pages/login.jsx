@@ -51,7 +51,7 @@ export default function Login() {
     useEffect(() => {
 
         if (token && userDetails.loading) {
-            navigate("/dashboard/agents")
+            navigate("/dashboard")
         }
 
     }, [token, userDetails.loading])
@@ -155,7 +155,7 @@ export default function Login() {
                 dispatch(loginSuccess({ user: response?.data, token: response?.data?.accessToken }))
                 localStorage.setItem("token", response?.data?.accessToken)
                 localStorage.setItem("refreshToken", response?.data?.refreshToken)
-                navigate("/dashboard/agents")
+                navigate("/dashboard")
             } else {
                 setErrors({ password: response?.response?.data?.message })
             }
@@ -260,7 +260,7 @@ export default function Login() {
                     dispatch(loginSuccess({ user: response?.data, token: response?.data?.accessToken }))
                     localStorage.setItem("token", response?.data?.accessToken)
                     localStorage.setItem("refreshToken", response?.data?.refreshToken)
-                    navigate("/dashboard/agents")
+                    navigate("/dashboard")
                 } else {
                     console.log(response?.data?.email)
                     dispatch(emailState({ email: response?.data?.email }))

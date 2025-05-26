@@ -2,6 +2,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MoreHorizontal, X } from "lucide-react";
 import { BritishFlag, Delete, Duplicate, Edit, Notes, TestCall, ThreeDots } from "../icons/icons";
+import { useDispatch } from "react-redux";
+import { getNavbarData } from "../store/navbarSlice";
 
 const agents = [
   {
@@ -100,6 +102,7 @@ export default function CallCampaign() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [viewReportModel, setViewReportModel] = useState(false);
   const [editData, setEditData] = useState()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -125,6 +128,7 @@ export default function CallCampaign() {
             <button
               className="bg-[#7065F0] text-white font-medium px-5 py-2 rounded-lg shadow"
               onClick={() => {
+                dispatch(getNavbarData("Tom, Phone"))
                 setShowModal(true)
                 setSecondModel(false)
               }}

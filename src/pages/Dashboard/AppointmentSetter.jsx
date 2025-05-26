@@ -8,6 +8,7 @@ import Analytics from '../../components/Analytics'
 import DemoChat from '../../components/DemoChat'
 import dashboardProfile from '../../assets/svg/dashboard_profile.svg'
 import { AnalyticsIcon, ConversationIcon, TeamMemberIcon } from '../../icons/icons'
+import sethImg from "../../assets/svg/seth.svg"
 
 function AppointmentSetter() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("agents")
@@ -36,12 +37,9 @@ function AppointmentSetter() {
         <div className="h-full w-full bg-[#F6F7F9]">
             <div className="flex flex-col md:flex-row items-start gap-8 relative pl-4 py-3 w-full">
                 <div className="flex flex-col w-full md:w-[180px] items-start gap-2 relative">
-                    <div>
-                        <img
-                            src={dashboardProfile} alt='profile'
-                        />
+                    <div className="w-[153px] h-[153px] flex justify-center items-center">
+                        <img src={sethImg} alt={"seth"} className="object-fit" />
                     </div>
-
                     {sideMenuList.map((e, i) => <div
                         key={i}
                         onClick={() => setActiveSidebarItem(e.path)}

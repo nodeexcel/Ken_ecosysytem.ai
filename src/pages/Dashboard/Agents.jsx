@@ -4,73 +4,103 @@ import image1 from '../../assets/svg/agent_image1.svg'
 import image2 from '../../assets/svg/agent_image2.svg'
 import { useNavigate } from "react-router-dom";
 import { RequestSend } from "../../icons/icons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getNavbarData } from "../../store/navbarSlice";
+import taraImg from '../../assets/svg/tara.svg'
+import constanceImg from '../../assets/svg/constance.svg'
+import tomImg from '../../assets/svg/tom.svg'
+import rebeccaImg from '../../assets/svg/rebecca.svg'
+import sethImg from '../../assets/svg/seth.svg'
+import assiaImg from '../../assets/svg/assia.svg'
+import emileImg from '../../assets/svg/emile.svg'
+import calinaImg from '../../assets/svg/calina.svg'
+import finnImg from '../../assets/svg/finn.svg'
 
 const employees = [
   {
-    name: "Rebecca",
-    role: "Receptionist",
-    gradient: "bg-gradient-to-br from-[#FCC42A] to-[#F4056A]",
-    path: ""
-  },
-  {
-    name: "Tom",
-    role: "Phone",
-    gradient: "bg-gradient-to-br from-[#0068FF] to-[#0049B2]",
-    path: "/dashboard/phone"
-  },
-  {
-    name: "Seth",
-    role: "Appointment Setter",
-    gradient: "bg-gradient-to-br from-[#0A66C2] to-[#053361]",
-    path: "/dashboard/appointment-setter"
+    name: "Tara",
+    role: "COO",
+    gradient: "bg-gradient-to-br from-[#D1BEF6] to-[#D1BEF6]",
+    path: "",
+    label: "",
+    image: taraImg,
   },
   {
     name: "Constance",
     role: "Content Creation",
-    gradient: "bg-gradient-to-br from-[#40C9FF] to-[#E81CFF]",
-    path: ""
+    gradient: "bg-gradient-to-br from-[#FFDCF1] to-[#FFDCF1]",
+    path: "",
+    label: "",
+    image: constanceImg
+  },
+  {
+    name: "Tom",
+    role: "Phone",
+    gradient: "bg-gradient-to-br from-[#CFE9F5] to-[#CFE9F5]",
+    path: "/dashboard/phone",
+    label: "Tom & Rebecca, Phone",
+    image: tomImg
+  },
+  {
+    name: "Rebecca",
+    role: "Receptionist",
+    gradient: "bg-gradient-to-br from-[#C9FEEA] to-[#C9FEEA]",
+    path: "",
+    label: "",
+    image: rebeccaImg
+  },
+  {
+    name: "Seth",
+    role: "Appointment Setter",
+    gradient: "bg-gradient-to-br from-[#C4F9F6] to-[#C4F9F6]",
+    path: "/dashboard/appointment-setter",
+    label: "Seth, Appointment Setter",
+    image: sethImg
+  },
+  {
+    name: "Assia",
+    role: "HR",
+    gradient: "bg-gradient-to-br from-[#FDF8D4] to-[#FDF8D4]",
+    path: "",
+    label: "",
+    image: assiaImg
   },
   {
     name: "Emile",
     role: "Emailing",
-    gradient: "bg-gradient-to-br from-[#919BFF] to-[#133A94]",
-    path: "/dashboard/campaigns"
+    gradient: "bg-gradient-to-br from-[#D1BEF6] to-[#D1BEF6]",
+    path: "/dashboard/campaigns",
+    label: "Emile, Emailing",
+    image: emileImg
   },
   {
-    name: "Assia",
-    role: "Executive Assistant",
-    gradient: "bg-gradient-to-br from-[#FF0F7B] to-[#F89B29]",
-    path: ""
-  },
-  {
-    name: "Vania",
-    role: "HR",
-    gradient: "bg-gradient-to-br from-[#FF0F7B] to-[#FFF95B]",
-    path: ""
-  },
-  {
-    name: "X",
+    name: "Calina",
     role: "Customer Support",
-    gradient: "bg-gradient-to-br from-[#FF930F] to-[#FFF95B]",
-    path: ""
+    gradient: "bg-gradient-to-br from-[#FFDCF1] to-[#FFDCF1]",
+    path: "",
+    label: "",
+    image: calinaImg
   },
   {
     name: "Finn",
     role: "Accounting",
-    gradient: "bg-gradient-to-br from-[#F8997D] to-[#AD336D]",
-    path: ""
+    gradient: "bg-gradient-to-br from-[#C8FEE6] to-[#C8FEE6]",
+    path: "",
+    label: "",
+    image: finnImg
   },
 ];
 
 const Agents = () => {
 
   const navigate = useNavigate();
-  const userDetails = useSelector((state) => state.profile)
+  const userDetails = useSelector((state) => state.profile);
+  const dispatch = useDispatch()
 
-  const handleNavigate = (path) => {
+  const handleNavigate = (path, label) => {
     if (path !== "") {
       navigate(path)
+      dispatch(getNavbarData(label))
     }
   }
 
@@ -98,24 +128,27 @@ const Agents = () => {
       </div>
 
       {/* Responsive Centered Grid */}
-      <div className="flex justify-center w-full py-5">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center">
+      <div className="flex justify-between w-full py-5">
+        <div className="flex flex-wrap gap-4 justify-center items-center">
           {employees.map((employee, index) => (
             <div
-              onClick={() => handleNavigate(employee.path)}
+              onClick={() => handleNavigate(employee.path, employee.label)}
               key={index}
-              className={`w-[227px] h-[266px] rounded-lg shadow-lg ${employee.gradient}`}
+              className={`w-[227px] h-[266px] rounded-lg ${employee.gradient}`}
             >
               <div className="flex flex-col items-start p-[21px] h-full justify-between">
                 <div className="w-full relative">
-                  <div className="font-inter text-lg text-white leading-[26px]">
-                    <span className="font-semibold">
+                  <div className="text-[18px] text-[#1E1E1E] font-[400] leading-[26px]">
+                    <span className="font-[600]">
                       {employee.name}
                       <br />
                     </span>
                     <span>{employee.role}</span>
                   </div>
-                  <CircleArrowRightIcon className="absolute w-5 h-5 top-0 right-0 text-white" />
+                  <CircleArrowRightIcon className="absolute w-5 h-5 top-0 right-0 text-[#1E1E1E]" />
+                </div>
+                <div>
+                  <img src={employee.image} alt={employee.label} className="object-fit max-w-[88.47px] max-h-[128.24px]" />
                 </div>
               </div>
             </div>

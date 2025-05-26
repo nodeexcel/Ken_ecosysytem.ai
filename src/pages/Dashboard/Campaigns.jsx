@@ -4,6 +4,7 @@ import CampaignDashboard from "../../components/CampaignDashboard";
 import Calendar from "../../components/Calendar";
 import dashboardProfile from '../../assets/svg/dashboard_profile.svg'
 import EmailDashboard from "../../components/EmailDashboard";
+import emileImg from "../../assets/svg/emile.svg"
 
 
 const Campaigns = () => {
@@ -31,10 +32,8 @@ const Campaigns = () => {
             <div className="flex flex-col md:flex-row items-start gap-8 relative pl-4 py-3 w-full">
                 {/* Sidebar */}
                 <div className="flex flex-col w-full md:w-[153px] items-start gap-2 relative">
-                    <div>
-                        <img
-                            src={dashboardProfile} alt='profile'
-                        />
+                    <div className="w-[153px] h-[153px] flex justify-center items-center">
+                        <img src={emileImg} alt={"emile"} className="object-fit" />
                     </div>
                     {sideMenuList.map((item, i) => (
                         <div

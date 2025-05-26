@@ -42,9 +42,8 @@ function App() {
         <Route path='/privacy-policy' element={< PrivacyPolicy />} />
         <Route path='/agent-personality-documentation' element={< AgentPersonalityDocumentation />} />
         <Route path='/dashboard' element={<Dashboard />}>
-          <Route path='' element={<Home />} />
+          <Route path='' element={<Agents />} />
           <Route path="notification" element={<Notification />} />
-          <Route path="agents" element={<Agents />} />
           <Route path="brain" element={<BrainAI />} />
           <Route path="phone" element={<Phone />} />
           <Route path="settings" element={<SettingsPage />} />
