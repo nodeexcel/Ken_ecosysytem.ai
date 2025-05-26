@@ -628,7 +628,7 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
         {/* Plan Card */}
         <div
-          className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-[#E1E4EA]"
+          className="bg-white p-4 sm:p-6 rounded-xl  border border-[#E1E4EA]"
         >
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
@@ -654,7 +654,7 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
         </div>
 
         {/* Payment Card */}
-        <div className="bg-white p-4 sm:p-6 flex flex-col justify-between rounded-xl shadow-sm border border-[#E1E4EA]">
+        <div className="bg-white p-4 sm:p-6 flex flex-col justify-between rounded-xl  border border-[#E1E4EA]">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
               <div className="">
@@ -675,7 +675,7 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
         </div>
 
         {/* Member Seats Card */}
-        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-[#E1E4EA]">
+        <div className="bg-white p-4 sm:p-6 rounded-xl  border border-[#E1E4EA]">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
               <div className="">
@@ -696,7 +696,7 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
       </div>
 
       {/* Credit Usage Section */}
-      <div className="bg-white rounded-xl shadow-sm border border-[#E1E4EA] p-4 sm:p-6">
+      <div className="bg-white rounded-xl  border border-[#E1E4EA] p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <h2 className="text-[20px] sm:text-[24px] font-[600] ">
             Credit used
