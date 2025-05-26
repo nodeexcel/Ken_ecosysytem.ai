@@ -64,6 +64,16 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
         }
     }
 
+    const handleHome = () => {
+        if (userDetails?.isProfileComplete === false) {
+            setModalStatus(true)
+        }
+        else {
+            dispatch(getNavbarData("Home"))
+            navigate("/dashboard")
+        }
+    }
+
     const renderColor = (index) => {
         if (isNotification && index === 6) {
             return "#675FFF"
@@ -87,7 +97,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
             </button>
             <aside className={`bg-[#FFFFFF] md:max-w-[58px] border-r border-[#E1E4EA] fixed h-full transition-all duration-300 ${isOpen ? 'w-[100px]' : 'w-0 overflow-hidden'} md:w-[5%] flex flex-col justify-between`}>
                 <div className='flex flex-col'>
-                    <div className="flex justify-center py-4" onClick={() => navigate("/dashboard")}>
+                    <div className="flex justify-center py-4" onClick={handleHome}>
                         <img src={logo} alt='image' />
                     </div>
                     <hr className='text-[#E1E4EA]' />
