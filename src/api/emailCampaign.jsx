@@ -64,3 +64,14 @@ export const updateEmailCampaignStatus = async (id) => {
         return error;
     }
 };
+
+
+export const getCampaignSchedule = async () => {
+    try {
+        const response = await axiosInstance.get(`http://116.202.210.102:8000/get-campaign-schedule`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};

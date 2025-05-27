@@ -599,7 +599,7 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
   const role = useSelector((state) => state.profile.user.role)
 
   return (
-    <div className="p-4 sm:p-6 w-full">
+    <div className="py-2 pr-2 w-full">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h1 className="text-[20px] sm:text-[24px] font-semibold">

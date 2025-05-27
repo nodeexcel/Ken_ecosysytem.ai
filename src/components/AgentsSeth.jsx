@@ -78,8 +78,8 @@ function AgentsSeth() {
     }
 
     return (
-        <>
-            {open ? <div className="w-full p-4 flex flex-col gap-4 ">
+        <div className='h-screen overflow-auto'>
+            {open ? <div className="w-full  py-4 pr-4 flex flex-col gap-4 ">
                 <div className="flex justify-between items-center">
                     <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">Agents</h1>
                     <button onClick={() => setOpen(false)} className="bg-[#675FFF] text-white rounded-md text-sm md:text-base px-4 py-2">
@@ -167,7 +167,7 @@ function AgentsSeth() {
                     </table>
                 </div>
             </div> : <CreateNewAgent editData={editData} setOpen={setOpen} setUpdateAgentStatus={setUpdateAgent} updateAgentStatus={updateAgent} />}
-        </>
+        </div>
     );
 }
 

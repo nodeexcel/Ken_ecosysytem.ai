@@ -372,7 +372,7 @@ const CustomSelector = ({ options, setShowSelector, value = [], onChange }) => {
 
 
 
-function CampaignsTable({ isEdit, setNewCampaignStatus }) {
+function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
     const [campaignData, setCampaignData] = useState([
         { name: 'Campaign', opened: '-', clicked: '-', bounced: '', status: "Issue Detected" },
         { name: 'Campaign', opened: '-', clicked: '-', bounced: '', status: "Planned" }
@@ -868,15 +868,18 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
             </div> */}
 
             {/* Modal Overlay */}
-            <div className="w-full p-4 flex flex-col justify-center">
-                <h1 onClick={() => setNewCampaignStatus(false)} className="text-[#5A687C] hover:text-[#5a687cdc] cursor-pointer font-[400] text-[14px]">{`Campaigns > New Campaign`}</h1>
+            <div className="w-full py-4 pr-2 flex flex-col justify-center">
+                <h1 onClick={() => {
+                    setNewCampaignStatus(false)
+                    setIsEdit("")
+                }} className="text-[#5A687C] hover:text-[#5a687cdc] cursor-pointer font-[400] text-[14px]">{`Campaigns > New Campaign`}</h1>
                 <h1 className="text-[#1E1E1E] font-[600] text-[24px] mt-2 my-4">{isEdit ? 'Update' : 'Add'} New Campaign</h1>
 
-                <div className="bg-white max-w-[848px] w-full rounded-xl border border-[#E1E4EA] p-6 relative overflow-auto">
+                <div className="w-full relative overflow-auto">
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium mb-1">Campaign Title</label>
-                            <input type="text" onChange={handleChange} name='campaign_title' value={formData.campaign_title} placeholder="Enter campaign title" className={`w-full border ${errors.campaign_title ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
+                            <input type="text" onChange={handleChange} name='campaign_title' value={formData.campaign_title} placeholder="Enter campaign title" className={`w-full border bg-white ${errors.campaign_title ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
                             {errors.campaign_title && <p className='my-1 text-[#FF3B30]'>{errors.campaign_title}</p>}
                         </div>
 
@@ -903,7 +906,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
 
                             <div>
                                 <label className="block text-sm font-medium mb-1">Main Subject</label>
-                                <input type="text" placeholder="Enter main subject" value={formData.main_subject} name='main_subject' onChange={handleChange} className={`w-full border ${errors.main_subject ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
+                                <input type="text" placeholder="Enter main subject" value={formData.main_subject} name='main_subject' onChange={handleChange} className={`w-full border bg-white ${errors.main_subject ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
                                 {errors.main_subject && <p className='my-1 text-[#FF3B30]'>{errors.main_subject}</p>}
                             </div>
                         </div>
@@ -941,7 +944,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
                                 <label className="block text-sm font-medium mb-1">List Of Target</label>
                                 <div
                                     onClick={() => setShowListTargetSelector((prev) => !prev)}
-                                    className={`w-full border ${errors.list_of_target ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
+                                    className={`w-full bg-white border ${errors.list_of_target ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
                                 >
                                     {formData.list_of_target?.length > 0
                                         ? formData.list_of_target.map(dayKey => {
@@ -1015,7 +1018,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
                                 <label className="block text-sm font-medium mb-1">Send Time Window</label>
                                 <div
                                     onClick={() => setShowTimeSelector(true)}
-                                    className={`w-full border ${errors.send_time_window ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
+                                    className={`w-full bg-white border ${errors.send_time_window ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
                                 >
                                     {formData.send_time_window || "Select Time"}
                                 </div>
@@ -1051,7 +1054,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
 
                                     }
                                     }
-                                    className={`w-full border ${errors.start_date ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`}
+                                    className={`w-full bg-white border ${errors.start_date ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`}
                                 />
                                 {errors.start_date && <p className='my-1 text-[#FF3B30]'>{errors.start_date}</p>}
                             </div>
@@ -1059,7 +1062,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
                                 <label className="block text-sm font-medium mb-1">Frequency</label>
                                 <div
                                     onClick={() => setShowWeekSelector((prev) => !prev)}
-                                    className={`w-full border truncate ${errors.frequency ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
+                                    className={`w-full bg-white border truncate ${errors.frequency ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
                                 >
                                     {formData.frequency?.length > 0
                                         ? formData.frequency.map(dayKey => {
@@ -1133,7 +1136,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
 
                         <div>
                             <label className="block text-sm font-medium mb-1">Custom prompt for AI</label>
-                            <textarea value={formData.custom_prompt} name='custom_prompt' onChange={handleChange} placeholder="e.g. Write a re-engagement email for cold leads about my AI training offer" className={`w-full border ${errors.custom_prompt ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded px-3 py-2 resize-none`} rows={3}></textarea>
+                            <textarea value={formData.custom_prompt} name='custom_prompt' onChange={handleChange} placeholder="e.g. Write a re-engagement email for cold leads about my AI training offer" className={`w-full bg-white border ${errors.custom_prompt ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded px-3 py-2 resize-none`} rows={3}></textarea>
                             {errors.custom_prompt && <p className='my-1 text-[#FF3B30]'>{errors.custom_prompt}</p>}
                         </div>
 
@@ -1167,7 +1170,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus }) {
 
                             <div>
                                 <label className="block text-sm font-medium mb-1">Products/Service to feature</label>
-                                <input type="text" value={formData.product_or_service_feature} name='product_or_service_feature' onChange={handleChange} placeholder="Enter Products/Service to feature" className={`w-full border ${errors.product_or_service_feature ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
+                                <input type="text" value={formData.product_or_service_feature} name='product_or_service_feature' onChange={handleChange} placeholder="Enter Products/Service to feature" className={`w-full bg-white border ${errors.product_or_service_feature ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
                                 {errors.product_or_service_feature && <p className='my-1 text-[#FF3B30]'>{errors.product_or_service_feature}</p>}
                             </div>
                         </div>

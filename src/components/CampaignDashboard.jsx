@@ -126,8 +126,8 @@ function CampaignDashboard() {
     };
 
     return (
-        <>
-            {!newCampaignStatus ? <div className="w-full p-4 flex flex-col gap-4 ">
+        <div className=' overflow-auto h-screen'>
+            {!newCampaignStatus ? <div className="w-full py-4 pr-2 flex flex-col gap-4 ">
                 <div className="flex justify-between items-center">
                     <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">Campaigns</h1>
                     <button onClick={() => setNewCampaignStatus(true)} className="bg-[#675FFF] text-white rounded-md text-sm md:text-base px-4 py-2">
@@ -263,8 +263,8 @@ function CampaignDashboard() {
                         </div>
                     </div>
                 </div>}
-            </div> : <CampaignsTable isEdit={isEdit} setNewCampaignStatus={setNewCampaignStatus} />}
-        </>
+            </div> : <CampaignsTable isEdit={isEdit} setNewCampaignStatus={setNewCampaignStatus} setIsEdit={setIsEdit}/>}
+        </div>
     );
 }
 

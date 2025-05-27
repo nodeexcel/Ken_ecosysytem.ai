@@ -70,7 +70,7 @@ const employees = [
     role: "Emailing",
     gradient: "bg-gradient-to-br from-[#D1BEF6] to-[#D1BEF6]",
     path: "/dashboard/campaigns",
-    label: "Emile, Emailing",
+    label: "Emailing",
     image: emileImg
   },
   {
@@ -107,7 +107,16 @@ const Agents = () => {
   if (userDetails?.loading) return <p className='flex justify-center items-center h-[70vh]'><span className='loader' /></p>
 
   return (
-    <div className="">
+    <div className="overflow-auto h-screen">
+      <div className=''>
+        <div className='flex justify-between items-center' onClick={() => navigate("/dashboard")}>
+          {/* <MdOutlineKeyboardArrowLeft size={25} /> */}
+          <div className="flex gap-2 items-center h-[57px]">
+            <h1 className="text-[20px] font-[600] pl-3">Home</h1>
+          </div>
+        </div>
+        <hr className='text-[#E1E4EA]' />
+      </div>
       {/* Top Right Button */}
       <div className="flex justify-end items-end pt-3 pr-2">
         <button className="bg-white gap-2 rounded-lg flex items-center p-3 text-[#5A687C] border-[1.5px] border-[#E1E4EA] font-[600] text-[16px]">

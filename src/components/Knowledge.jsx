@@ -364,7 +364,7 @@ const Knowledge = () => {
 
 
   return (
-    <div className="flex flex-col w-full items-start gap-6 ">
+    <div className="flex pr-2 flex-col w-full items-start gap-6 ">
       <div className="flex items-center justify-between w-full">
         <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
           Knowledge Base

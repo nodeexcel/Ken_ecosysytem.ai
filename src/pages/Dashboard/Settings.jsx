@@ -429,7 +429,7 @@ const SettingsPage = () => {
     else if (activeSidebarItem === "team") {
       return (
         <>
-          <div className="w-full p-2 flex flex-col gap-3 px-2">
+          <div className="w-full py-2 flex flex-col gap-3 pr-2">
             <div className="flex justify-between">
               <h1 className="text-[#1E1E1E] font-semibold text-[20px] md:text-[24px]">Team Members</h1>
               <button className="bg-[#5E54FF] text-white rounded-md text-[14px] md:text-[16px] p-2" onClick={handleInviteTeam}>Invite A Team Member</button>
@@ -498,7 +498,7 @@ const SettingsPage = () => {
                           ))}
                         </select> */}
                       </td>
-                      <td className="px-6 py-4 text-left border-[#E1E4EA] rounded-r-lg bg-[#F6F7F9]">
+                      <td className="px-6 py-4 text-left">
                         <button
                           onClick={() => handleDropdownClick(index)}
                           className="text-gray-500 hover:text-gray-700"
@@ -604,7 +604,7 @@ const SettingsPage = () => {
     }
 
     return (
-      <div className="flex flex-col w-full items-start gap-5 relative px-4 sm:px-6">
+      <div className="flex flex-col w-full items-start gap-5 relative ">
         {/* Header */}
         <div className="flex flex-col items-start gap-[23px] relative self-stretch w-full flex-[0_0_auto]">
           <div className="flex items-center justify-between relative self-stretch w-full flex-[0_0_auto]">
@@ -628,7 +628,7 @@ const SettingsPage = () => {
         </div>
 
         {/* Tabs */}
-        <div className="w-full">
+        <div className="w-full pr-2">
           <div className="flex items-start relative self-stretch w-full flex-[0_0_auto] border-b border-[#e1e4ea]">
             <button
               onClick={() => setActiveTab("profile")}
@@ -657,11 +657,11 @@ const SettingsPage = () => {
           </div>
 
           {activeTab === "profile" && (
-            <div className="mt-5 lg:w-[648px]">
-              <div className="w-full border border-solid border-[#e1e4ea] bg-white rounded-2xl">
-                <div className="flex flex-col justify-center gap-[26px] p-4 sm:p-[30px] relative">
+            <div className="mt-5">
+              <div className="w-full rounded-2xl">
+                <div className="flex flex-col justify-center gap-[26px] py-4 relative">
                   {/* Profile Avatar */}
-                  <div className="relative flex justify-center">
+                  <div className="relative flex">
                     <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden">
                       <img
                         src={profileFormData.imagePath || profileFormData.image || profileData.avatar}
@@ -846,8 +846,8 @@ const SettingsPage = () => {
 
           {activeTab === "password" && (
             <div className="mt-5">
-              <div className="w-full max-w-[648px] bg-[#fff] border border-solid border-[#e1e4ea] rounded-2xl">
-                <div className="flex flex-col items-start gap-6 p-4 sm:p-[30px]">
+              <div className="w-full">
+                <div className="flex flex-col items-start gap-6 py-4">
                   {/* <div className="flex flex-col items-start gap-1">
                     <h2 className="font-semibold text-text-black text-lg leading-7">
                       Change Password
@@ -996,7 +996,7 @@ const SettingsPage = () => {
 
 
   return (
-    <div className="h-full inter w-full bg-[#F6F7F9]">
+    <div className="w-full overflow-auto">
       {/* <div>
         <div className='flex items-center pl-4 py-3' onClick={() => navigate("/dashboard")}>
           <MdOutlineKeyboardArrowLeft size={25} />
@@ -1004,48 +1004,60 @@ const SettingsPage = () => {
         </div>
         <hr className='text-[#E1E4EA]' />
       </div> */}
-      <div className="flex flex-col md:flex-row items-start gap-8 relative pl-4 py-3 w-full">
+      <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
         {/* Sidebar Navigation */}
-        <div className="flex inter flex-col w-full md:w-[153px] items-start gap-2 relative">
-          <div
-            onClick={() => handleSelect("general")}
-            className={`flex justify-center md:justify-start items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#e1e5ea]" : ""
-              }`}
-          >
-            <Settings status={activeSidebarItem === "general"} />
-            <div className={`relative w-fit mt-[-1.00px] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "general" ? "text-black" : "text-[#5A687C] "
-              }`}>
-              General Settings
+        <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
+          <div className=''>
+            <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
+              {/* <MdOutlineKeyboardArrowLeft size={25} /> */}
+              <div className="flex gap-2 items-center h-[57px]">
+                <MdOutlineKeyboardArrowLeft size={25} />
+                <h1 className="text-[20px] font-[600]">Settings</h1>
+              </div>
             </div>
+            <hr className='text-[#E1E4EA]' />
           </div>
-
-          <div
-            onClick={() => handleSelect("billing")}
-            className={`flex justify-center md:justify-start items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#e1e5ea]" : ""
-              }`}
-          >
-            <PlanIcon status={activeSidebarItem === "billing"} />
-            <div className={`relative w-fit mt-[-1.00px] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "billing" ? "text-black" : "text-[#5A687C] "
-              }`}>
-              Plan &amp; Billing
+          <div className="flex inter flex-col w-full px-2 items-start gap-2 relative">
+            <div
+              onClick={() => handleSelect("general")}
+              className={`flex justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#EDF3FF]" : ""
+                }`}
+            >
+              <Settings status={activeSidebarItem === "general"} />
+              <div className={`relative w-fit mt-[-1.00px] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "general" ? "text-black" : "text-[#5A687C] "
+                }`}>
+                General Settings
+              </div>
             </div>
-          </div>
 
-          <div
-            onClick={() => handleSelect("team")}
-            className={`flex justify-center md:justify-start items-center gap-1.5 px-2 py-1.5 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "team" ? "bg-[#e1e5ea]" : ""
-              }`}
-          >
-            <TeamMemberIcon status={activeSidebarItem === "team"} />
-            <div className={`relative w-fit mt-[-1.00px] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "team" ? "text-black" : "text-[#5A687C] "
-              }`}>
-              Team Members
+            <div
+              onClick={() => handleSelect("billing")}
+              className={`flex justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#EDF3FF]" : ""
+                }`}
+            >
+              <PlanIcon status={activeSidebarItem === "billing"} />
+              <div className={`relative w-fit mt-[-1.00px] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "billing" ? "text-black" : "text-[#5A687C] "
+                }`}>
+                Plan &amp; Billing
+              </div>
+            </div>
+
+            <div
+              onClick={() => handleSelect("team")}
+              className={`flex justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "team" ? "bg-[#EDF3FF]" : ""
+                }`}
+            >
+              <TeamMemberIcon status={activeSidebarItem === "team"} />
+              <div className={`relative w-fit mt-[-1.00px] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "team" ? "text-black" : "text-[#5A687C] "
+                }`}>
+                Team Members
+              </div>
             </div>
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="w-full overflow-x-hidden">
+        <div className="w-full h-full overflow-x-hidden py-3">
           {renderMainContent()}
         </div>
       </div>

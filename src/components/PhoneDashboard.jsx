@@ -6,7 +6,7 @@ const PhoneDashboard = () => {
   const [autoRefill, setAutoRefill] = useState(true);
   return (
 
-    <div className="p-4 flex flex-col gap-4 w-full">
+    <div className="py-4 pr-2 flex flex-col gap-4 w-full h-screen overflow-auto">
       <h1 className="text-2xl font-bold mb-3 text-gray-800">Dashboard</h1>
 
       <div className="flex flex-col lg:flex-row gap-6">

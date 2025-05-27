@@ -119,9 +119,9 @@ export default function CallCampaign() {
   };
 
   return (
-    <>
+    <div className="h-screen overflow-auto">
       {!showModal ?
-        <div className="p-4 flex flex-col gap-4 w-full">
+        <div className="py-4 pr-2 flex flex-col gap-4 w-full">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-semibold text-black">Call Campaign</h1>
@@ -265,7 +265,7 @@ export default function CallCampaign() {
             </div>
           </div>}
         </div> :
-        <div className="p-4 flex flex-col gap-4 w-full">
+        <div className="py-4 pr-2 flex flex-col gap-4 w-full">
           {/* Header */}
           <div className="flex flex-col gap-2">
             <h1 onClick={() => {
@@ -274,7 +274,7 @@ export default function CallCampaign() {
             }} className="text-[14px] font-[400] text-[#5A687C] hover:text-[#5a687cdb] cursor-pointer">{`Call Campaigns > ${editData ? 'Campaign Name' : 'New Campaign'}`}</h1>
             <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{editData ? 'Edit' : 'Add New'} Campaigns</h1>
           </div>
-          <div className="bg-white rounded-2xl border border-[#E1E4EA] w-full max-w-[678px] p-6"
+          <div className="w-full"
           >
             <div className="space-y-4">
               <div>
@@ -448,6 +448,6 @@ export default function CallCampaign() {
           </div>
         </div>
       </div>}
-    </>
+    </div>
   );
 }

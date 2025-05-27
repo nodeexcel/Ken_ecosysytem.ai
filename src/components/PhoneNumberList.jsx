@@ -88,7 +88,7 @@ export default function PhoneNumbers() {
   };
 
   return (
-    <div className="p-4 flex flex-col gap-4 w-full">
+    <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <h1 className="text-[24px] font-[600] text-[#1E1E1E]">Phone Numbers</h1>

@@ -522,16 +522,16 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     </button>
                 </div>
             </div>
-            <div className="flex flex-col gap-8 p-6 w-full bg-white rounded-[10px] border border-[#e1e4ea]">
-                <header className="flex flex-col gap-[11px]">
+            <div className="flex flex-col gap-8 w-full">
+                {/* <header className="flex flex-col gap-[11px]">
                     <h1 className="font-semibold text-text-black text-xl leading-7">
                         Configure your agent
                     </h1>
                     <p className="font-medium text-text-black text-sm leading-5">
                         Adjust agent conversation behavior based on your need
                     </p>
-                </header>
-                <div className="flex flex-col gap-8 p-6 w-full bg-white rounded-[10px] border border-[#e1e4ea]">
+                </header> */}
+                <div className="flex flex-col gap-8 w-full">
                     {/* Agent Name */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                         <div className="flex flex-col gap-1.5 w-full">
@@ -543,7 +543,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 name='agent_name'
                                 value={formData?.agent_name}
                                 onChange={handleChange}
-                                className={`w-full p-2 rounded-lg border ${errors.agent_name ? 'border-red-500' : 'border-[#e1e4ea]'}`}
+                                className={`w-full bg-white p-2 rounded-lg border ${errors.agent_name ? 'border-red-500' : 'border-[#e1e4ea]'}`}
                                 placeholder="Enter your agent name"
                             />
                             {errors.agent_name && <p className="text-red-500 text-sm mt-1">{errors.agent_name}</p>}
@@ -557,7 +557,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     name='gender'
                                     value={formData?.gender}
                                     onChange={handleChange}
-                                    className={`w-full p-2 rounded-lg border ${errors.gender ? 'border-red-500' : 'border-[#e1e4ea]'}`}>
+                                    className={`w-full bg-white p-2 rounded-lg border ${errors.gender ? 'border-red-500' : 'border-[#e1e4ea]'}`}>
                                     <option value="" disabled>Select</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
@@ -582,7 +582,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             setErrors((prev) => ({ ...prev, [name]: '' }))
                                         }
                                     }}
-                                    className={`w-full p-2 rounded-lg border ${errors.age ? 'border-red-500' : 'border-[#e1e4ea]'}`}
+                                    className={`w-full bg-white p-2 rounded-lg border ${errors.age ? 'border-red-500' : 'border-[#e1e4ea]'}`}
                                     placeholder="Enter your agent age"
                                 />
                                 {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
@@ -604,7 +604,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 name='agent_personality'
                                 value={formData?.agent_personality}
                                 onChange={handleChange}
-                                className={`w-full p-2 rounded-lg border ${errors.agent_personality ? 'border-red-500' : 'border-[#e1e4ea]'}`}>
+                                className={`w-full bg-white p-2 rounded-lg border ${errors.agent_personality ? 'border-red-500' : 'border-[#e1e4ea]'}`}>
                                 <option disabled value="">Choose your agent personality</option>
                                 {agentsPersonalityOptions.map((e) => (
                                     <option key={e.key} value={e.key}>{e.label}</option>
@@ -633,7 +633,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 </label>
                                 <div
                                     onClick={() => setShowLanguageSelector((prev) => !prev)}
-                                    className={`w-full border ${errors.agent_language ? 'border-red-500' : 'border-[#e1e4ea]'} rounded-lg px-3 py-2 cursor-pointer`}
+                                    className={`w-full bg-white border ${errors.agent_language ? 'border-red-500' : 'border-[#e1e4ea]'} rounded-lg px-3 py-2 cursor-pointer`}
                                 >
                                     {formData.agent_language?.length > 0
                                         ? formData.agent_language.join(', ')
@@ -659,7 +659,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     </div>
 
                     {/* Emoji Frequency */}
-                    <div className="flex flex-col gap-3 p-3.5 bg-[#F2F2F7] rounded-[10px] w-full">
+                    <div className="flex flex-col gap-3 p-3.5 bg-[#fff] border border-[#E1E4EA] rounded-[10px] w-full">
                         <div className='flex gap-1'>
                             <div className="text-base font-medium text-[#1e1e1e]">
                                 Emoji Frequency<span className="text-[#675fff]">*</span>
@@ -708,7 +708,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 onChange={handleChange}
                                 value={formData?.business_description}
                                 rows={4}
-                                className={`w-full p-2 rounded-lg border  ${errors.business_description ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none`}
+                                className={`w-full bg-white p-2 rounded-lg border  ${errors.business_description ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none`}
                                 placeholder="Enter your business description"
                             />
                             {errors.business_description && <p className="text-red-500 text-sm mt-1">{errors.business_description}</p>}
@@ -722,7 +722,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 onChange={handleChange}
                                 value={formData?.your_business_offer}
                                 rows={4}
-                                className={`w-full p-2 rounded-lg border  ${errors.your_business_offer ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none`}
+                                className={`w-full bg-white p-2 rounded-lg border  ${errors.your_business_offer ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none`}
                                 placeholder="Share everything you want the AI to know about your offer"
                             />
                             {errors.your_business_offer && <p className="text-red-500 text-sm mt-1">{errors.your_business_offer}</p>}
@@ -741,7 +741,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             onChange={handleChange}
                             value={formData?.prompt}
                             rows={3}
-                            className={`w-full p-2 rounded-lg border  ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none`}
+                            className={`w-full bg-white p-2 rounded-lg border  ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none`}
                             placeholder="Enter your prompt here"
                         />
                         {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
@@ -760,7 +760,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     value={question}
                                     onChange={handleChange}
                                     placeholder="Enter your Question"
-                                    className={`flex-1 p-2 rounded-lg border ${errors[`qualification_questions[${index}]`] ? "border-red-500" : "border-[#e1e4ea]"}`} />
+                                    className={`flex-1 bg-white p-2 rounded-lg border ${errors[`qualification_questions[${index}]`] ? "border-red-500" : "border-[#e1e4ea]"}`} />
                                 {index === formData.qualification_questions.length - 1 ? (
                                     <button type="button" onClick={addQuestion}>
                                         <AddPlus />
@@ -864,7 +864,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     </div>
 
                     {/* Objective of the agent */}
-                    <div className="flex flex-col items-start gap-3 p-3.5 w-full bg-[#f3f4f6] rounded-[10px]">
+                    <div className="flex flex-col items-start gap-3 p-3.5 w-full bg-[#fff] border border-[#E1E4EA] rounded-[10px]">
                         <div className="flex items-center gap-2.5 w-full">
                             <div className="flex-1">
                                 <div className="font-medium text-[#1e1e1e] text-base">Objective of the agent</div>
@@ -943,7 +943,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
 
                     {/* Followup Options */}
-                    <div className="flex flex-col gap-3 p-3.5 bg-[#F2F2F7] rounded-[10px] w-full">
+                    <div className="flex flex-col gap-3 p-3.5 bg-[#fff] border border-[#E1E4EA] rounded-[10px] w-full">
                         <div className="flex items-center gap-2.5">
                             <button
                                 onClick={() => setFormData((prev) => ({

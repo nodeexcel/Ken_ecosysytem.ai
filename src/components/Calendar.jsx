@@ -175,8 +175,10 @@
 // }
 
 
-import { useState } from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { useEffect, useState } from "react"
+import { ChevronLeft, ChevronRight, X } from "lucide-react"
+import successImg from '../assets/svg/success.svg'
+import { getCampaignSchedule } from "../api/emailCampaign"
 
 export default function Calendar() {
   // Get current date information
@@ -188,9 +190,31 @@ export default function Calendar() {
   const [currentDay, setCurrentDay] = useState(today.getDate())
   const [currentView, setCurrentView] = useState("month")
 
+  const [modalStatus, setModalStatus] = useState(false);
+  const [successModal, setSuccessModal] = useState(false);
+  const [isDisapprove, setIsDisapprove] = useState(false);
+  const [rawText, setRawText] = useState(
+    `Hi [First Name],\n\nThanks for signing up with Ecosystem.ai! We're thrilled to have you in our community. Here's a quick overview of what you can do:\n\n• Access exclusive features\n• Connect with our support team\n• Stay updated with the latest news\n\nTo get started, click the button below:\n[CTA Button: Get Started Now]\n\nNeed help? Visit our Help Center or reply to this email—we're here for you!\n\nCheers,\nThe Ecosystem.ai Team`
+  );
+
+  const convertToHtml = (text) => {
+    return text
+      .replace(/\n/g, '<br>')
+      .replace(/\[CTA Button: (.*?)\]/g, '<a href="#" style="color: blue; text-decoration: underline;">$1</a>')
+      .replace(/\[([^\]]+)\]/g, '<strong>$1</strong>');
+  };
+
+  const handleSubmit = async () => {
+    const htmlContent = convertToHtml(rawText);
+  };
+
   // Week view state
   const [selectedWeekStart, setSelectedWeekStart] = useState(0)
-  const [selectedWeekEnd, setSelectedWeekEnd] = useState(0)
+  const [selectedWeekEnd, setSelectedWeekEnd] = useState(0);
+
+  const handleChange = (e) => {
+    setEmailContent(e.target.value);
+  };
 
   // Initialize week view dates if needed
   if (selectedWeekStart === 0) {
@@ -204,13 +228,13 @@ export default function Calendar() {
 
   // Sample events data
   const events = [
-    { id: "1", name: "XYZ Campaign", time: "8:00 AM", date: 11, month: 4, year: 2025, color: "purple" },
-    { id: "2", name: "XYZ Campaign", time: "8:30 AM", date: 13, month: 4, year: 2025, color: "orange" },
-    { id: "3", name: "XYZ Campaign", time: "10 AM", date: 3, month: 4, year: 2025 },
-    { id: "4", name: "XYZ Campaign", time: "10 AM", date: 15, month: 4, year: 2025 },
-    { id: "5", name: "XYZ Campaign", time: "10 AM", date: 20, month: 4, year: 2025 },
-    { id: "6", name: "XYZ Campaign", time: "6:00 AM", date: 12, month: 4, year: 2025, color: "purple" },
-    { id: "7", name: "XYZ Campaign", time: "8:30 AM", date: 12, month: 4, year: 2025, color: "orange" },
+    { id: "1", name: "XYZ Campaign", time: "8:00 AM", date: 27, month: 4, year: 2025, color: "purple", status: "Planned" },
+    { id: "2", name: "XYZ Campaign", time: "8:30 AM", date: 28, month: 4, year: 2025, color: "orange", status: "Pending Approval" },
+    { id: "3", name: "XYZ Campaign", time: "10 AM", date: 25, month: 4, year: 2025, status: "Approved" },
+    { id: "4", name: "XYZ Campaign", time: "10 AM", date: 26, month: 4, year: 2025, status: "Approved" },
+    { id: "5", name: "XYZ Campaign", time: "10 AM", date: 27, month: 4, year: 2025, status: "Pending Approval" },
+    { id: "6", name: "XYZ Campaign", time: "6:00 AM", date: 27, month: 4, year: 2025, color: "purple", status: "Planned" },
+    { id: "7", name: "XYZ Campaign", time: "8:30 AM", date: 30, month: 4, year: 2025, color: "orange", status: "Pending Approval" },
   ]
 
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -229,10 +253,24 @@ export default function Calendar() {
     "December",
   ]
 
-  const hours = ["6AM", "7AM", "8AM", "9AM", "10AM", "11AM"]
+  const hours = ["6AM", "7AM", "8AM", "9AM", "10AM", "11AM"];
+
+
+  const getScheduleDate = async () => {
+    try {
+      const response = await getCampaignSchedule();
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getScheduleDate()
+  }, [])
 
   // Helper functions for date manipulation
-  function getFirstDayOfWeek(date){
+  function getFirstDayOfWeek(date) {
     const day = date.getDay() // 0 = Sunday, 1 = Monday, etc.
     const diff = date.getDate() - day + (day === 0 ? -6 : 1) // Adjust to get Monday
 
@@ -443,13 +481,10 @@ export default function Calendar() {
                 {dayEvents.map((event, eventIndex) => (
                   <div
                     key={eventIndex}
-                    className={`text-xs ${
-                      event.color === "purple"
-                        ? "bg-purple-100"
-                        : event.color === "orange"
-                          ? "bg-orange-100"
-                          : "bg-white"
-                    } p-1 mb-1 rounded`}
+                    className={`text-xs ${event.status === "Pending Approved"
+                      ? "bg-[#FFEFD9]"
+                      : "bg-[#EEEDFF]"
+                      } p-1 mb-1 rounded`}
                   >
                     <div className="font-medium">{event.name}</div>
                     <div className="text-gray-500">{event.time}</div>
@@ -468,9 +503,9 @@ export default function Calendar() {
       <div className="grid grid-cols-8 border-t border-[#E1E4EA]">
         {/* Time column */}
         <div className="border-r border-[#E1E4EA]">
-             <div className="h-10 border-b border-[#E1E4EA]" />
-          {hours.map((hour,index) => (
-            <div key={hour} className={`h-16 ${hours.length!==index+1 && 'border-b'} border-[#E1E4EA] flex items-start justify-end pr-2 pt-1`}>
+          <div className="h-10 border-b border-[#E1E4EA]" />
+          {hours.map((hour, index) => (
+            <div key={hour} className={`h-20 ${hours.length !== index + 1 && 'border-b'} border-[#E1E4EA] flex items-start justify-end pr-2 pt-1`}>
               <span className="text-xs text-gray-500">{hour}</span>
             </div>
           ))}
@@ -485,44 +520,44 @@ export default function Calendar() {
           return (
             <div
               key={index}
-              className={`${weekDays.length!==index+1 && 'border-r'} border-[#E1E4EA]`}
-              onClick={() => {
-                setCurrentDay(day.day)
-                setCurrentMonth(day.month)
-                setCurrentYear(day.year)
-                setCurrentView("day")
-              }}
+              className={`${weekDays.length !== index + 1 && 'border-r'} border-[#E1E4EA]`}
+
             >
               {/* Day header */}
               <div className="h-10 border-b border-[#E1E4EA] flex flex-col items-center justify-center">
                 <div className="text-sm font-medium">
-                  {dayName} {day.day}
+                  {dayName} <span className={`${isToday && 'w-6 h-6 rounded-full bg-[#675FFF] p-1 text-white'}`}>{day.day}</span>
                 </div>
-                {isToday && (
+                {/* {isToday && (
                   <div className="w-6 h-6 rounded-full bg-[#675FFF] flex items-center justify-center absolute">
                     <span className="text-white text-xs">{day.day}</span>
                   </div>
-                )}
+                )} */}
               </div>
 
               {/* Hour cells */}
-              {hours.map((hour,index) => {
+              {hours.map((hour, index) => {
                 const hourEvents = getEventForHourDay(hour, day.day, day.month, day.year)
 
                 return (
-                  <div key={`${day.day}-${hour}`} className={`h-16 ${hours.length!==index+1 && 'border-b'} border-[#E1E4EA] relative`}>
+                  <div key={`${day.day}-${hour}`} className={`h-20 ${hours.length !== index + 1 && 'border-b'} border-[#E1E4EA] relative`}>
                     {hourEvents.map((event, eventIndex) => {
-                      const bgColor =
-                        event.color === "purple"
-                          ? "bg-purple-100"
-                          : event.color === "orange"
-                            ? "bg-orange-100"
-                            : "bg-gray-100"
-
+                      const bgColor = event.status === "Pending Approved"
+                        ? "bg-[#FFEFD9]"
+                        : "bg-[#EEEDFF]"
+                      const statusColor = event.status === "Approved" ? 'border-[#34C759] text-[#34C759]' : event.status === "Planned" ? 'border-[#007AFF] text-[#007AFF]' : 'border-[#FF9500] text-[#FF9500]'
                       return (
-                        <div key={eventIndex} className={`absolute top-0 left-0 right-0 h-full ${bgColor} p-1`}>
-                          <div className="text-xs font-medium">{event.time}</div>
-                          <div className="text-xs">{event.name}</div>
+                        <div key={eventIndex} onClick={() => {
+                          setCurrentDay(day.day)
+                          setCurrentMonth(day.month)
+                          setCurrentYear(day.year)
+                          event.status === "Planned" && setModalStatus(true)
+                          console.log(day)
+                          // setCurrentView("day")
+                        }} className={`absolute top-0 left-0 right-0 h-full ${bgColor} p-1`}>
+                          <div className="text-[12px] font-[400] text-[#5A687C]">{event.time}</div>
+                          <div className="text-[14px] font-[600] text-[#1E1E1E]">{event.name}</div>
+                          <div className={`text-[12px] font-[500] ${statusColor} rounded-full border w-fit px-1.5 py-1 bg-white`}>{event.status}</div>
                         </div>
                       )
                     })}
@@ -540,30 +575,29 @@ export default function Calendar() {
     return (
       <div className="grid grid-cols-1 border-t border-[#E1E4EA]">
         {/* Hours */}
-        {hours.map((hour,index) => {
+        {hours.map((hour, index) => {
           const hourEvents = getEventForHourDay(hour, currentDay, currentMonth, currentYear)
 
           return (
             <div key={hour} className="flex border-[#E1E4EA]">
               {/* Time column */}
-              <div className={`w-16 py-2 border-r border-[#E1E4EA] ${hours.length!==index+1 && 'border-b'} flex items-start justify-end pr-2`}>
+              <div className={`w-20 py-2 border-r border-[#E1E4EA] ${hours.length !== index + 1 && 'border-b'} flex items-start justify-end pr-2`}>
                 <span className="text-xs text-gray-500">{hour}</span>
               </div>
 
               {/* Events column */}
-              <div className={`flex-1 border-[#E1E4EA] ${hours.length!==index+1 && 'border-b'}  min-h-16 relative`}>
+              <div className={`flex-1 border-[#E1E4EA] ${hours.length !== index + 1 && 'border-b'}  min-h-20 relative`}>
                 {hourEvents.map((event, eventIndex) => {
-                  const bgColor =
-                    event.color === "purple"
-                      ? "bg-purple-100"
-                      : event.color === "orange"
-                        ? "bg-orange-100"
-                        : "bg-gray-100"
+                  const bgColor = event.status === "Pending Approved"
+                    ? "bg-[#FFEFD9]"
+                    : "bg-[#EEEDFF]"
+                  const statusColor = event.status === "Approved" ? 'border-[#34C759] text-[#34C759]' : event.status === "Planned" ? 'border-[#007AFF] text-[#007AFF]' : 'border-[#FF9500] text-[#FF9500]'
 
                   return (
                     <div key={eventIndex} className={`absolute top-0 left-0 right-0 h-full ${bgColor} p-2`}>
-                      <div className="text-xs font-medium">{event.time}</div>
-                      <div className="text-xs">{event.name}</div>
+                      <div className="text-[12px] font-[400] text-[#5A687C]">{event.time}</div>
+                      <div className="text-[14px] font-[600] text-[#1E1E1E]">{event.name}</div>
+                      <div className={`text-[12px] font-[500] ${statusColor} rounded-full border w-fit px-1.5 py-1 bg-white`}>{event.status}</div>
                     </div>
                   )
                 })}
@@ -683,7 +717,7 @@ export default function Calendar() {
   }
 
   return (
-    <div className="gap-6">
+    <div className="gap-6 h-screen overflow-auto py-4 pr-2">
       <h1 className="font-semibold text-[#1e1e1e] mb-5 text-2xl leading-8">Calendar</h1>
       <div className="w-full max-w-5xl mx-auto bg-white rounded-xl border border-[#E1E4EA]">
         {renderCalendarHeader()}
@@ -691,7 +725,108 @@ export default function Calendar() {
         {currentView === "week" && renderWeekView()}
         {currentView === "day" && renderDayView()}
       </div>
-    </div>
+      {modalStatus && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+        <div className="bg-white rounded-2xl w-full max-w-[718px] p-6 relative shadow-lg">
+          <button
+            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            onClick={() => {
+              setModalStatus(false)
+              setIsDisapprove(false)
+            }}
+          >
+            <X size={20} />
+          </button>
+
+          <div className="flex flex-col gap-2 mt-3">
+            <div className="flex justify-between items-center my-1">
+              <h2 className="text-[20px] font-[600] text-[#1E1E1E]">
+                XYZ Campaign
+              </h2>
+              {isDisapprove && <button onClick={handleSubmit} className="border-[1.5px] p-1.5 rounded-lg border-[#5F58E8] text-[#675FFF] text-[16px] font-[500]">
+                Generate New Email
+              </button>}
+            </div>
+            <div>
+              <div className="space-y-4">
+                {/* Editable Textarea */}
+                <textarea
+                  rows={12}
+                  disabled={!isDisapprove}
+                  value={rawText}
+                  onChange={(e) => setRawText(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-md text-sm text-gray-800 bg-white resize-none"
+                />
+
+                {/* HTML Preview */}
+                {/* <div
+                  className="p-4 border bg-gray-50 rounded text-sm text-gray-800"
+                  dangerouslySetInnerHTML={{ __html: convertToHtml(rawText) }}
+                /> */}
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                className="bg-white w-full border-[1.5px] border-[#E1E4EA] text-[#5A687C] px-5 py-2 font-[500] text-[16px] rounded-lg"
+                onClick={isDisapprove ? () => {
+                  setModalStatus(false)
+                  setIsDisapprove(false)
+                } : () => setIsDisapprove(true)}
+              >
+                {isDisapprove ? "Cancel" : "Disapprove"}
+              </button>
+              <button
+                className="bg-[#675FFF] w-full border border-[#5F58E8] text-white px-5 py-2 font-[500] text-[16px] rounded-lg"
+                onClick={isDisapprove ? () => {
+                  setModalStatus(false)
+                  setIsDisapprove(false)
+                } : () => {
+                  setModalStatus(false)
+                  setSuccessModal(true)
+                }}
+              >
+                {isDisapprove ? "Save" : "Approve"}
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div >}
+      {
+        successModal && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl w-full max-w-[442px] p-6 relative shadow-lg">
+            <button
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              onClick={() => {
+                setSuccessModal(false)
+              }}
+            >
+              <X size={20} />
+            </button>
+
+            <div className="flex h-[270px] flex-col justify-end items-center gap-3">
+              <div>
+                <img src={successImg} alt="success" />
+              </div>
+              <div className="flex flex-col gap-2 items-center">
+                <h2 className="text-[28px] font-[700] text-[#292D32]">
+                  Congratulations!
+                </h2>
+                <p className="text-[#5A687C] text-[16px] font-[400]">You have successfully approved the campaign.</p>
+              </div>
+              {/* <div className="flex gap-2"> */}
+              <button
+                className="bg-[#675FFF] w-full border border-[#5F58E8] text-white px-5 py-2 font-[500] text-[16px] rounded-lg"
+                onClick={() => setSuccessModal(false)}
+              >
+                Ok
+              </button>
+              {/* </div> */}
+            </div>
+
+          </div>
+        </div >
+      }
+    </div >
   )
 }
 

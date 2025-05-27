@@ -19,7 +19,7 @@ function EmailDashboard() {
     const [loading, setLoading] = useState(false);
 
     return (
-        <div className="w-full p-4 flex flex-col gap-4 ">
+        <div className="w-full p-4 flex flex-col gap-4 overflow-auto h-screen">
             <div className="flex justify-between items-center mb-2">
                 <h1 className="text-[#1E1E1E] font-[600] text-xl md:text-[24px]">Dashboard</h1>
             </div>
