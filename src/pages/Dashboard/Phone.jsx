@@ -24,10 +24,10 @@ const PhonePage = () => {
   const sideMenuList = [
     { label: "Dashboard", icon: <FourBox status={activeSidebarItem == "dashboard"} />, path: "dashboard", header: "Tom & Rebecca, Phone" },
     { label: "Phone Numbers", icon: <Phone status={activeSidebarItem == "phone-numbers"} />, path: "phone-numbers", header: "Tom & Rebecca, Phone" },
-    { label: "Call Agents", icon: <CallAgent status={activeSidebarItem == "call-agents"} />, path: "call-agents", header: "Tom, Outbound Calls" },
-    { label: "Call Campaigns", icon: <PhoneCampaign status={activeSidebarItem == "call-campaigns"} />, path: "call-campaigns", header: "Tom, Outbound Calls" },
-    { label: "Outbound Calls", icon: <OutboundCall status={activeSidebarItem == "outbound-calls"} />, path: "outbound-calls", header: "Tom, Outbound Calls" },
-    { label: "Inbound Calls", icon: <InboundCall status={activeSidebarItem == "inbound-calls"} />, path: "inbound-calls", header: "Rebecca, Inbound Calls" },
+    { label: "Call Agents", icon: <CallAgent status={activeSidebarItem == "call-agents"} />, path: "call-agents", header: "Tom & Rebecca, Phone" },
+    { label: "Call Campaigns", icon: <PhoneCampaign status={activeSidebarItem == "call-campaigns"} />, path: "call-campaigns", header: "Tom" },
+    { label: "Outbound Calls", icon: <OutboundCall status={activeSidebarItem == "outbound-calls"} />, path: "outbound-calls", header: "Tom" },
+    { label: "Inbound Calls", icon: <InboundCall status={activeSidebarItem == "inbound-calls"} />, path: "inbound-calls", header: "Rebecca" },
   ];
 
   const renderMainContent = () => {
@@ -48,7 +48,7 @@ const PhonePage = () => {
   };
 
   const renderImg = () => {
-    if (navbarDetails.label === "Rebecca, Inbound Calls") {
+    if (navbarDetails.label === "Rebecca") {
       return <div className="bg-[#F0EFFF] w-[232px] mb-5 flex gap-3 p-[12px] rounded-[9px]">
         <div className="w-[35px] h-[45px] flex justify-center items-center">
           <img src={rebeccaImg} alt={"rebecca"} className="object-fit" />
@@ -58,7 +58,17 @@ const PhonePage = () => {
           <p className="text-[#5A687C] text-[14px] font-[400]">Receptionist</p>
         </div>
       </div>
-    } else if (navbarDetails.label === "Tom & Rebecca, Phone") {
+    } else if (navbarDetails.label === "Tom") {
+      return <div className="bg-[#F0EFFF] w-[232px] mb-5 flex gap-3 p-[12px] rounded-[9px]">
+        <div className="w-[35px] h-[45px] flex justify-center items-center">
+          <img src={tomImg} alt={"tome"} className="object-fit" />
+        </div>
+        <div className="flex flex-col">
+          <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Tom</h1>
+          <p className="text-[#5A687C] text-[14px] font-[400]">Phone Outreach</p>
+        </div>
+      </div>
+    } else {
       return <div className="bg-[#F0EFFF] w-[232px] mb-5 flex gap-3 p-[12px] rounded-[9px]">
         <div className="w-[64.43pxpx] h-[39px] flex justify-center items-center">
           <img src={tomImg} alt={"tome"} className="object-fit" />
@@ -66,16 +76,6 @@ const PhonePage = () => {
         </div>
         <div className="flex flex-col">
           <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Tom & Rebecca</h1>
-          <p className="text-[#5A687C] text-[14px] font-[400]">Phone,Receptionist</p>
-        </div>
-      </div>
-    } else {
-      return <div className="bg-[#F0EFFF] w-[232px] mb-5 flex gap-3 p-[12px] rounded-[9px]">
-        <div className="w-[35px] h-[45px] flex justify-center items-center">
-          <img src={tomImg} alt={"tome"} className="object-fit" />
-        </div>
-        <div className="flex flex-col">
-          <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Tom</h1>
           <p className="text-[#5A687C] text-[14px] font-[400]">Phone</p>
         </div>
       </div>

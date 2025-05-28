@@ -97,3 +97,14 @@ export const updateContentStatus = async (id, payload) => {
         return error;
     }
 };
+
+
+export const duplicateCampaign = async (id) => {
+    try {
+        const response = await axiosInstance.post(`http://116.202.210.102:8000/duplicate-campaign/${id}`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};

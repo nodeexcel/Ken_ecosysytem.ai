@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Delete, Duplicate, Edit, ThreeDots } from '../icons/icons';
 import { X } from 'lucide-react';
-import { deleteEmailCampaign, getEmailCampaign, updateEmailCampaignStatus } from '../api/emailCampaign';
+import { deleteEmailCampaign, duplicateCampaign, getEmailCampaign, updateEmailCampaignStatus } from '../api/emailCampaign';
 import CampaignsTable from './Campaigns';
 
 const staticData = [
@@ -45,9 +45,10 @@ function CampaignDashboard() {
         try {
             const response = await updateEmailCampaignStatus(id)
             if (response.status === 200) {
-                const updated = [...campaignData];
-                updated[index][key] = !updated[index][key];
-                setCampaignData(updated);
+                // const updated = [...campaignData];
+                // updated[index][key] = !updated[index][key];
+                // setCampaignData(updated);
+                getCampaignData()
             }
         } catch (error) {
             console.log(error)
@@ -71,9 +72,22 @@ function CampaignDashboard() {
         }
     }
 
+    const handleDuplicate = async (id) => {
+        try {
+            const response = await duplicateCampaign(id)
+            if (response?.status === 201) {
+                setActiveDropdown(null);
+                getCampaignData()
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     const handleEdit = (id) => {
         setIsEdit(id)
         setNewCampaignStatus(true)
+        setActiveDropdown(null);
     }
 
     const handleDropdownClick = (index) => {
@@ -139,6 +153,8 @@ function CampaignDashboard() {
                 return `Terminated`;
             case "draft":
                 return `Draft`
+            default:
+                return `Paused`
         }
     }
 
@@ -176,7 +192,7 @@ function CampaignDashboard() {
                                                 <p className={`${renderColor(item.campaign_status)} border flex items-center gap-2 px-2 py-1 text-xs rounded-full`}>
                                                     {renderStatus(item.campaign_status)}
 
-                                                    {item.campaign_status === "running" && <label className="relative inline-flex items-center cursor-pointer">
+                                                    {(item.campaign_status !== "draft" && item.campaign_status !== "issue_detected") && <label className="relative inline-flex items-center cursor-pointer">
                                                         <input
                                                             type="checkbox"
                                                             className="sr-only peer"
@@ -205,9 +221,7 @@ function CampaignDashboard() {
                                                         <button
                                                             className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-gray-100"
                                                             onClick={() => {
-                                                                // Handle edit action
                                                                 handleEdit(item.campaign_id)
-                                                                setActiveDropdown(null);
                                                             }}
                                                         >
                                                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
@@ -215,8 +229,7 @@ function CampaignDashboard() {
                                                         <button
                                                             className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6]"
                                                             onClick={() => {
-                                                                // Handle delete action
-                                                                setActiveDropdown(null);
+                                                                handleDuplicate(item.campaign_id)
                                                             }}
                                                         >
                                                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
@@ -225,8 +238,6 @@ function CampaignDashboard() {
                                                         <button
                                                             className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
                                                             onClick={() => {
-                                                                // Handle delete action
-                                                                setActiveDropdown(null);
                                                                 handleDelete(index, item.campaign_id)
                                                             }}
                                                         >

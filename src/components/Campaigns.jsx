@@ -868,7 +868,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
             </div> */}
 
             {/* Modal Overlay */}
-            <div className="w-full py-4 pr-2 flex flex-col justify-center">
+            <div className="w-full py-4 pr-4 flex flex-col justify-center">
                 <h1 onClick={() => {
                     setNewCampaignStatus(false)
                     setIsEdit("")
