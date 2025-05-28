@@ -25,7 +25,7 @@ function EmailDashboard() {
     }, [])
 
     useEffect(() => {
-        if (campaignData?.running) {
+        if (Object.prototype.hasOwnProperty.call(campaignData, 'running')) {
             setLoading(false)
         }
     }, [campaignData])
