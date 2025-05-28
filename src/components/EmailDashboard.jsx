@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { campaignStatics } from '../api/emailCampaign';
 
 const staticData = [
     {
         header: "Campaign", list: [
-            { label: "Running", value: 15 }, { label: "Scheduled", value: 20 }, { label: "Terminated", value: 15 },
-            { label: "Issue Detected", value: 16 }, { label: "Draft", value: 17 }
+            { label: "Running", key: "running" }, { label: "Scheduled", key: "scheduled" }, { label: "Terminated", key: "terminated" },
+            { label: "Issue Detected", key: "issue_detected" }, { label: "Draft", key: "draft" }, { label: "Paused", key: "paused" }
         ]
     },
     {
@@ -17,6 +18,34 @@ const staticData = [
 
 function EmailDashboard() {
     const [loading, setLoading] = useState(false);
+    const [campaignData, setCampaignData] = useState({})
+
+    useEffect(() => {
+        getCampaignData()
+    }, [])
+
+    useEffect(() => {
+        if (campaignData?.running) {
+            setLoading(false)
+        }
+    }, [campaignData])
+
+    const getCampaignData = async () => {
+        setLoading(true)
+        try {
+            const response = await campaignStatics();
+            if (response?.status === 200) {
+                setCampaignData(response?.data)
+            } else {
+                setLoading(false)
+            }
+        } catch (error) {
+            console.log(error)
+            setLoading(false)
+        }
+    }
+
+    if (loading) return <p className='flex justify-center items-center h-screen'><span className='loader' /></p>
 
     return (
         <div className="w-full p-4 flex flex-col gap-4 overflow-auto h-screen">
@@ -40,7 +69,7 @@ function EmailDashboard() {
 
                                     <div className='flex gap-2 p-3 items-center'>
                                         <p className="font-[600] text-[#1E1E1E] text-[24px]">
-                                            {each.value}
+                                            {campaignData?.[each.key] ?? 0}
                                         </p>
                                     </div>
                                 </div>
