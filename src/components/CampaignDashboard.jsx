@@ -112,18 +112,35 @@ function CampaignDashboard() {
 
     const renderColor = (text) => {
         switch (text) {
-            case "Issue Detected":
+            case "issue_detected":
                 return `text-[#FF9500] bg-[#FFF4E6] border-[#FF9500]`;
-            case "Running":
+            case "running":
                 return `text-[#675FFF] bg-[#F0EFFF] border-[#675FFF]`;
-            case "Planned":
+            case "scheduled":
                 return `text-[#34C759] bg-[#EBF9EE] border-[#34C759]`;
-            case "Terminated":
+            case "terminated":
                 return `text-[#B42318] bg-[#FFEBEA] border-[#B42318]`;
+            case "draft":
+                return `text-[#1E1E1E] bg-[#DCDCDC] border-[#1E1E1E]`
             default:
                 return `text-[#5A687C] bg-[#fff] border-[#5A687C]`;
         }
     };
+
+    const renderStatus = (text) => {
+        switch (text) {
+            case "issue_detected":
+                return `Issue Detected`;
+            case "running":
+                return `Running`;
+            case "scheduled":
+                return `Scheduled`;
+            case "terminated":
+                return `Terminated`;
+            case "draft":
+                return `Draft`
+        }
+    }
 
     return (
         <div className=' overflow-auto h-screen'>
@@ -156,18 +173,19 @@ function CampaignDashboard() {
 
                                         <td className="px-6 py-4 text-sm items-center gap-2">
                                             <div className='flex justify-between items-center gap-2'>
-                                                <p className={`${renderColor(item.campaign_status)} border px-2 py-1 text-xs rounded-full`}>
-                                                    {item.campaign_status}
+                                                <p className={`${renderColor(item.campaign_status)} border flex items-center gap-2 px-2 py-1 text-xs rounded-full`}>
+                                                    {renderStatus(item.campaign_status)}
+
+                                                    {item.campaign_status === "running" && <label className="relative inline-flex items-center cursor-pointer">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="sr-only peer"
+                                                            checked={item.is_active}
+                                                            onChange={() => toggleStatus(index, 'is_active', item.campaign_id)}
+                                                        />
+                                                        <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-400 rounded-full peer dark:bg-gray-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                                    </label>}
                                                 </p>
-                                                <label className="relative inline-flex items-center cursor-pointer">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="sr-only peer"
-                                                        checked={item.is_active}
-                                                        onChange={() => toggleStatus(index, 'is_active', item.campaign_id)}
-                                                    />
-                                                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-400 rounded-full peer dark:bg-gray-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-                                                </label>
                                             </div>
                                         </td>
 
@@ -263,7 +281,7 @@ function CampaignDashboard() {
                         </div>
                     </div>
                 </div>}
-            </div> : <CampaignsTable isEdit={isEdit} setNewCampaignStatus={setNewCampaignStatus} setIsEdit={setIsEdit}/>}
+            </div> : <CampaignsTable isEdit={isEdit} setNewCampaignStatus={setNewCampaignStatus} setIsEdit={setIsEdit} />}
         </div>
     );
 }

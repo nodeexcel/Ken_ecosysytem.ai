@@ -4,6 +4,10 @@ import { MoreHorizontal, X } from "lucide-react";
 import { BritishFlag, Delete, Duplicate, Edit, Notes, TestCall, ThreeDots } from "../icons/icons";
 import { useDispatch } from "react-redux";
 import { getNavbarData } from "../store/navbarSlice";
+import uk_flag from "../assets/images/uk_flag.png"
+import us_flag from "../assets/images/us_flag.png"
+import fr_flag from "../assets/images/fr_flag.png"
+import { FaChevronDown } from "react-icons/fa";
 
 const agents = [
   {
@@ -88,9 +92,9 @@ const renderColor = (text) => {
 };
 
 const countries = [
-  { name: "United States", code: "US", dial_code: "+1", flag: <BritishFlag /> },
-  { name: "United Kingdom", code: "GB", dial_code: "+44", flag: <BritishFlag /> },
-  { name: "India", code: "IN", dial_code: "+91", flag: <BritishFlag /> },
+  { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
+  { name: "United Kingdom", code: "GB", dial_code: "+44", flag: uk_flag }, ,
+  { name: "France", code: "FR", dial_code: "+33", flag: fr_flag }, ,
   // Add more countries as needed
 ];
 
@@ -101,7 +105,9 @@ export default function CallCampaign() {
   const modalRef = useRef(null);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [viewReportModel, setViewReportModel] = useState(false);
-  const [editData, setEditData] = useState()
+  const [editData, setEditData] = useState();
+  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+  const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -336,16 +342,32 @@ export default function CallCampaign() {
                   Phone Number
                 </label>
                 <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-4 py-2">
-                  <select
-                    className="outline-none bg-transparent pr-2 text-xl"
-                    value={countries[0].code}
-                  >
-                    {countries.map((country) => (
-                      <option key={country.code} value={country.code}>
-                        {country.flag} {country.dial_code}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <button
+                      onClick={() => setIsOpen(!isOpen)}
+                      className="w-fit flex border-none justify-between gap-2 items-center border py-1 text-left"
+                    >
+                      <img src={selectedCountry.flag} alt={selectedCountry.name} width={16} />
+                      <FaChevronDown color="#5A687C" className="w-[10px]" />
+                      <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />
+                    </button>
+                    {isOpen && (
+                      <div className="absolute z-10 w-full left-[-13px] bg-white mt-1">
+                        {countries.map((country) => (
+                          <div
+                            key={country.code}
+                            onClick={() => {
+                              setSelectedCountry(country);
+                              setIsOpen(false);
+                            }}
+                            className={`px-4 py-2 hover:bg-gray-100 ${selectedCountry.code === country.code && 'bg-[#EDF3FF]'} cursor-pointer flex items-center`}
+                          >
+                            <img src={country.flag} alt={country.name} width={16} />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                   <input
                     type="tel"
                     placeholder="Enter number"
@@ -387,24 +409,24 @@ export default function CallCampaign() {
                 />
               </div>
 
-              {editData ? <div className="flex gap-4 mt-6 justify-between">
-                <button className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]">
+              {editData ? <div className="flex gap-4 mt-6">
+                <button className="w-[195px]  text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]">
                   Save Campaign
                 </button>
                 <button onClick={() => {
                   setShowModal(false)
                   setEditData()
-                }} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                }} className="w-[195px]  text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                   Cancel
                 </button>
-              </div> : <div className="flex gap-4 mt-6 justify-between">
+              </div> : <div className="flex gap-4 mt-6">
                 <button onClick={() => {
                   setSecondModel(true)
                   setShowModal(false)
-                }} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                }} className="w-[195px] text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                   Test Call
                 </button>
-                <button className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]">
+                <button className="w-[195px]  text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]">
                   Launch Calls
                 </button>
               </div>}

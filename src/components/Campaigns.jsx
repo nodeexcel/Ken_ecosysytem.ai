@@ -1203,11 +1203,11 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                             You'll be able to review and edit each email 24 hours before it's sent, directly from your calendar.
                         </div> */}
 
-                        <div className="flex justify-between gap-4 pt-4">
-                            {isEdit ? <button disabled={updateStatus} className="px-4 font-[500] w-full py-2 bg-[#675FFF] text-white rounded" onClick={() => handleUpdate(false)}>{updateStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Update Campaign"}</button> :
-                                <button disabled={submitStatus} className="px-4 font-[500] w-full py-2 bg-[#675FFF] text-white rounded" onClick={() => handleSubmit(false)}>{submitStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Launch Campaign"}</button>}
-                            {isEdit ? <button disabled={updateSaveDraftStatus} className="px-4 font-[500] w-full py-2 border text-[#5A687C] border-[#E1E4EA] rounded" onClick={() => handleUpdate(true)}>{updateSaveDraftStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save As Draft"}</button> :
-                                <button disabled={saveDraftStatus} className="px-4 font-[500] w-full py-2 border text-[#5A687C] border-[#E1E4EA] rounded" onClick={() => handleSubmit(true)}>{saveDraftStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save As Draft"}</button>}
+                        <div className="flex gap-4 pt-4">
+                            {isEdit ? <button disabled={updateStatus} className="px-4 font-[500] w-[200px] py-2 bg-[#675FFF] text-white rounded-lg" onClick={() => handleUpdate(false)}>{updateStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Update Campaign"}</button> :
+                                <button disabled={submitStatus} className="px-4 font-[500] w-[200px] py-2 bg-[#675FFF] text-white rounded-lg" onClick={() => handleSubmit(false)}>{submitStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Launch Campaign"}</button>}
+                            {isEdit ? <button disabled={updateSaveDraftStatus} className="px-4 font-[500] w-[200px] py-2 border text-[#5A687C] border-[#E1E4EA] rounded-lg" onClick={() => handleUpdate(true)}>{updateSaveDraftStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save As Draft"}</button> :
+                                <button disabled={saveDraftStatus} className="px-4 font-[500] w-[200px] py-2 border text-[#5A687C] border-[#E1E4EA] rounded-lg" onClick={() => handleSubmit(true)}>{saveDraftStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save As Draft"}</button>}
                         </div>
                     </div>
                 </div>

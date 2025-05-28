@@ -15,6 +15,9 @@ import assiaImg from '../../assets/svg/assia.svg'
 import emileImg from '../../assets/svg/emile.svg'
 import calinaImg from '../../assets/svg/calina.svg'
 import finnImg from '../../assets/svg/finn.svg'
+import { logoutState } from "../../store/authSlice";
+import { discardData } from "../../store/profileSlice";
+import { logout } from "../../api/auth";
 
 const employees = [
   {
@@ -104,15 +107,29 @@ const Agents = () => {
     }
   }
 
+  const handleLogout = async () => {
+    const response = await logout()
+    if (response?.data?.success) {
+      navigate("/")
+    }
+    localStorage.clear()
+    dispatch(logoutState())
+    dispatch(discardData())
+
+  }
+
   if (userDetails?.loading) return <p className='flex justify-center items-center h-[70vh]'><span className='loader' /></p>
 
   return (
     <div className="overflow-auto h-screen">
       <div className=''>
-        <div className='flex justify-between items-center' onClick={() => navigate("/dashboard")}>
+        <div className='flex justify-between px-2 items-center'>
           {/* <MdOutlineKeyboardArrowLeft size={25} /> */}
           <div className="flex gap-2 items-center h-[57px]">
             <h1 className="text-[20px] font-[600] pl-3">Home</h1>
+          </div>
+          <div>
+            <button className='bg-[#675FFF] p-2 rounded-lg text-white cursor-pointer' onClick={handleLogout}>Logout</button>
           </div>
         </div>
         <hr className='text-[#E1E4EA]' />

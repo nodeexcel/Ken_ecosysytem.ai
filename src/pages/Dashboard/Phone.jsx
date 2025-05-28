@@ -12,12 +12,14 @@ import { getNavbarData } from "../../store/navbarSlice";
 import tomImg from "../../assets/svg/tom_logo.svg"
 import rebeccaImg from "../../assets/svg/rebecca_logo.svg"
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 
 const PhonePage = () => {
   const [activeSidebarItem, setActiveSidebarItem] = useState("dashboard");
   const dispatch = useDispatch();
-  const navbarDetails = useSelector((state) => state.navbar)
+  const navbarDetails = useSelector((state) => state.navbar);
+  const navigate = useNavigate()
 
   const sideMenuList = [
     { label: "Dashboard", icon: <FourBox status={activeSidebarItem == "dashboard"} />, path: "dashboard", header: "Tom & Rebecca, Phone" },

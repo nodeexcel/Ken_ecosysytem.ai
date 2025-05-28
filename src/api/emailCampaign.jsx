@@ -75,3 +75,25 @@ export const getCampaignSchedule = async () => {
         return error;
     }
 };
+
+
+export const getScheduledContent = async (id) => {
+    try {
+        const response = await axiosInstance.get(`http://116.202.210.102:8000/get-scheduled-content/${id}`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+
+
+export const updateContentStatus = async (id, payload) => {
+    try {
+        const response = await axiosInstance.post(`http://116.202.210.102:8000/content-status/${id}`, payload);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};

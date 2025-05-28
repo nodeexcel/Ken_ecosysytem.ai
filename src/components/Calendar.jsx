@@ -1,184 +1,7 @@
-// import React, { useEffect, useState } from "react";
-// import {
-//     format,
-//     startOfWeek,
-//     addDays,
-//     startOfMonth,
-//     endOfMonth,
-//     endOfWeek,
-//     isSameMonth,
-//     isSameDay,
-//     addMonths,
-//     subMonths,
-// } from "date-fns";
-
-// const fetchGoogleCalendarEvents = async () => {
-//     return [
-//         { id: 1, title: "XYZ Campaign", date: "2025-01-03T10:00:00" },
-//         { id: 2, title: "XYZ Campaign", date: "2025-01-15T10:00:00" },
-//         { id: 3, title: "XYZ Campaign", date: "2025-01-20T10:00:00" },
-//         { id: 4, title: "XYZ Campaign", date: "2025-01-11T06:00:00" },
-//         { id: 5, title: "XYZ Campaign", date: "2025-01-13T08:30:00" },
-//     ];
-// };
-
-// export default function Calendar() {
-//     const [currentDate, setCurrentDate] = useState(new Date());
-//     const [events, setEvents] = useState([]);
-//     const [view, setView] = useState("month");
-
-//     useEffect(() => {
-//         const loadEvents = async () => {
-//             const data = await fetchGoogleCalendarEvents();
-//             setEvents(data);
-//         };
-//         loadEvents();
-//     }, []);
-
-//     const renderHeader = () => (
-//         <div className="flex justify-between items-center mb-4">
-//             <div className="text-xl font-semibold">
-//                 {format(currentDate, view === "month" ? "MMMM yyyy" : view === "week" ? "MMMM yyyy (EEE dd)" : "d MMMM yyyy")}
-//             </div>
-//             <div className="flex items-center gap-2">
-//                 <button className="border px-2 py-1 rounded" onClick={() => setCurrentDate(subMonths(currentDate, 1))}>&lt;</button>
-//                 {format(currentDate, view === "month" ? "MMMM yyyy" : view === "week" ? "MMMM yyyy (EEE dd)" : "d MMMM yyyy")}
-//                 <button className="border px-2 py-1 rounded" onClick={() => setCurrentDate(addMonths(currentDate, 1))}>&gt;</button>
-//                 <select
-//                     className="ml-4 border rounded px-2 py-1"
-//                     value={view}
-//                     onChange={(e) => setView(e.target.value)}
-//                 >
-//                     <option value="month">Month View</option>
-//                     <option value="week">Week View</option>
-//                     <option value="day">Day View</option>
-//                 </select>
-//             </div>
-//         </div>
-//     );
-
-//     const renderMonthView = () => {
-//         const monthStart = startOfMonth(currentDate);
-//         const monthEnd = endOfMonth(monthStart);
-//         const startDate = startOfWeek(monthStart);
-//         const endDate = endOfWeek(monthEnd);
-//         const rows = [];
-//         let days = [];
-//         let day = startDate;
-
-//         while (day <= endDate) {
-//             for (let i = 0; i < 7; i++) {
-//                 const cloneDay = day;
-//                 const dayEvents = events.filter(event => isSameDay(new Date(event.date), cloneDay));
-//                 days.push(
-//                     <div className="border h-24 p-1 text-xs relative" key={day.toString()}>
-//                         <div className={`absolute top-1 right-1 text-xs ${!isSameMonth(day, monthStart) ? "text-gray-400" : ""}`}>{format(day, "d")}</div>
-//                         <div className="mt-5">
-//                             {dayEvents.map(event => (
-//                                 <div key={event.id} className="bg-purple-200 px-1 rounded text-[10px] mb-1 truncate">
-//                                     {event.title} {format(new Date(event.date), "p")}
-//                                 </div>
-//                             ))}
-//                         </div>
-//                     </div>
-//                 );
-//                 day = addDays(day, 1);
-//             }
-//             rows.push(<div className="grid grid-cols-7" key={day.toString()}>{days}</div>);
-//             days = [];
-//         }
-//         return <div>{rows}</div>;
-//     };
-
-//     const renderWeekView = () => {
-//         const start = startOfWeek(currentDate, { weekStartsOn: 1 });
-//         const days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
-//         const hours = Array.from({ length: 12 }, (_, i) => 6 + i);
-
-//         return (
-//             <div className="grid grid-cols-8 text-xs">
-//                 <div className="border p-1">Time</div>
-//                 {days.map(day => (
-//                     <div className="border p-1 text-center" key={day.toString()}>{format(day, "EEE d")}</div>
-//                 ))}
-//                 {hours.map(hour => (
-//                     <React.Fragment key={hour}>
-//                         <div className="border p-1">{hour > 12 ? `${hour - 12} PM` : `${hour} AM`}</div>
-//                         {days.map(day => {
-//                             const slotEvents = events.filter(e => isSameDay(new Date(e.date), day) && new Date(e.date).getHours() === hour);
-//                             return (
-//                                 <div key={day.toString() + hour} className="border h-20 relative">
-//                                     {slotEvents.map(ev => (
-//                                         <div key={ev.id} className="absolute bg-blue-200 p-1 rounded text-[10px] w-full">
-//                                             {ev.title} {format(new Date(ev.date), "p")}
-//                                         </div>
-//                                     ))}
-//                                 </div>
-//                             );
-//                         })}
-//                     </React.Fragment>
-//                 ))}
-//             </div>
-//         );
-//     };
-
-//     const renderDayView = () => {
-//         const hours = Array.from({ length: 18 }, (_, i) => 6 + i);
-//         const dayEvents = events.filter(e => isSameDay(new Date(e.date), currentDate));
-
-//         return (
-//             <div className="border rounded p-4">
-//                 <div className="text-sm font-medium mb-4">{format(currentDate, "dd MMMM yyyy")}</div>
-//                 <div className="grid grid-cols-12">
-//                     <div className="col-span-1 text-right pr-2">
-//                         {hours.map(hour => (
-//                             <div key={hour} className="h-16 text-xs leading-4">
-//                                 {hour > 12 ? `${hour - 12} PM` : `${hour} AM`}
-//                             </div>
-//                         ))}
-//                     </div>
-//                     <div className="col-span-11 relative">
-//                         {hours.map(hour => (
-//                             <div key={hour} className="h-16 border-t border-gray-200"></div>
-//                         ))}
-//                         {dayEvents.map(event => {
-//                             const eventDate = new Date(event.date);
-//                             const top = (eventDate.getHours() - 6) * 64 + (eventDate.getMinutes() / 60) * 64;
-//                             return (
-//                                 <div
-//                                     key={event.id}
-//                                     className="absolute left-0 right-0 bg-yellow-100 border rounded px-2 py-1 text-xs shadow"
-//                                     style={{ top: `${top}px` }}
-//                                 >
-//                                     <div className="font-semibold text-[10px]">{format(eventDate, "p")}</div>
-//                                     <div className="text-[11px]">{event.title}</div>
-//                                 </div>
-//                             );
-//                         })}
-//                     </div>
-//                 </div>
-//             </div>
-//         );
-//     };
-
-//     return (
-//         <div className="gap-6 onest">
-//             <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
-//                 Calendar
-//             </h1>
-//             {renderHeader()}
-//             {view === "month" && renderMonthView()}
-//             {view === "week" && renderWeekView()}
-//             {view === "day" && renderDayView()}
-//         </div>
-//     );
-// }
-
-
 import { useEffect, useState } from "react"
 import { ChevronLeft, ChevronRight, X } from "lucide-react"
-import successImg from '../assets/svg/success.svg'
-import { getCampaignSchedule } from "../api/emailCampaign"
+import successImg from "../assets/svg/success.svg"
+import { getCampaignSchedule, getScheduledContent, updateContentStatus } from "../api/emailCampaign"
 
 export default function Calendar() {
   // Get current date information
@@ -188,33 +11,55 @@ export default function Calendar() {
   const [currentMonth, setCurrentMonth] = useState(today.getMonth())
   const [currentYear, setCurrentYear] = useState(today.getFullYear())
   const [currentDay, setCurrentDay] = useState(today.getDate())
-  const [currentView, setCurrentView] = useState("month")
+  const [currentView, setCurrentView] = useState("month");
+  const [newEvents, setNewEvents] = useState();
+  const [popUpData, setPopUpData] = useState({})
 
-  const [modalStatus, setModalStatus] = useState(false);
-  const [successModal, setSuccessModal] = useState(false);
-  const [isDisapprove, setIsDisapprove] = useState(false);
-  const [rawText, setRawText] = useState(
-    `Hi [First Name],\n\nThanks for signing up with Ecosystem.ai! We're thrilled to have you in our community. Here's a quick overview of what you can do:\n\n• Access exclusive features\n• Connect with our support team\n• Stay updated with the latest news\n\nTo get started, click the button below:\n[CTA Button: Get Started Now]\n\nNeed help? Visit our Help Center or reply to this email—we're here for you!\n\nCheers,\nThe Ecosystem.ai Team`
-  );
+  const [loading, setLoading] = useState(true)
+  const [submitStatus, setSubmitStatus] = useState(false)
 
-  const convertToHtml = (text) => {
-    return text
-      .replace(/\n/g, '<br>')
-      .replace(/\[CTA Button: (.*?)\]/g, '<a href="#" style="color: blue; text-decoration: underline;">$1</a>')
-      .replace(/\[([^\]]+)\]/g, '<strong>$1</strong>');
-  };
+  const [modalStatus, setModalStatus] = useState(false)
+  const [successModal, setSuccessModal] = useState(false)
+  const [isDisapprove, setIsDisapprove] = useState(false)
+
+  const [emailContent, setEmailContent] = useState("")
 
   const handleSubmit = async () => {
-    const htmlContent = convertToHtml(rawText);
-  };
+    setSubmitStatus(true);
+    try {
+      const payload = {
+        status: isDisapprove ? 'pending_approval' : 'approved',
+        email_content: emailContent
+      }
+      const response = await updateContentStatus(popUpData?.content_id, payload)
+      if (response?.status === 200) {
+        if (isDisapprove) {
+          setModalStatus(false)
+          setIsDisapprove(false)
+        } else {
+          setModalStatus(false)
+          setSuccessModal(true)
+        }
+        setPopUpData({})
+        setEmailContent("")
+        getScheduleDate()
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setSubmitStatus(false);
+    }
+  }
 
   // Week view state
   const [selectedWeekStart, setSelectedWeekStart] = useState(0)
   const [selectedWeekEnd, setSelectedWeekEnd] = useState(0);
 
-  const handleChange = (e) => {
-    setEmailContent(e.target.value);
-  };
+  useEffect(() => {
+    if (newEvents?.length > 0) {
+      setLoading(false)
+    }
+  }, [newEvents])
 
   // Initialize week view dates if needed
   if (selectedWeekStart === 0) {
@@ -226,16 +71,83 @@ export default function Calendar() {
     setSelectedWeekEnd(lastDayOfWeek.getDate())
   }
 
-  // Sample events data
-  const events = [
-    { id: "1", name: "XYZ Campaign", time: "8:00 AM", date: 27, month: 4, year: 2025, color: "purple", status: "Planned" },
-    { id: "2", name: "XYZ Campaign", time: "8:30 AM", date: 28, month: 4, year: 2025, color: "orange", status: "Pending Approval" },
-    { id: "3", name: "XYZ Campaign", time: "10 AM", date: 25, month: 4, year: 2025, status: "Approved" },
-    { id: "4", name: "XYZ Campaign", time: "10 AM", date: 26, month: 4, year: 2025, status: "Approved" },
-    { id: "5", name: "XYZ Campaign", time: "10 AM", date: 27, month: 4, year: 2025, status: "Pending Approval" },
-    { id: "6", name: "XYZ Campaign", time: "6:00 AM", date: 27, month: 4, year: 2025, color: "purple", status: "Planned" },
-    { id: "7", name: "XYZ Campaign", time: "8:30 AM", date: 30, month: 4, year: 2025, color: "orange", status: "Pending Approval" },
-  ]
+  // Helper function to parse date string (DD-MM-YYYY) to Date object
+  const parseDate = (dateString) => {
+    const [day, month, year] = dateString.split("-").map(Number)
+    return new Date(year, month - 1, day) // month is 0-indexed in Date constructor
+  }
+
+  // Helper function to get day name from date
+  const getDayName = (date) => {
+    const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+    return days[date.getDay()]
+  }
+
+  // Helper function to check if a date matches event frequency
+  const isEventDay = (event, checkDate) => {
+    const startDate = parseDate(event.start_date)
+
+    // If the check date is before start date, no event
+    if (checkDate < startDate) return false
+
+    // If it's the start date, always show event
+    if (checkDate.getTime() === startDate.getTime()) return true
+
+    // Check if the day matches the frequency
+    const dayName = getDayName(checkDate)
+    return event.frequency.includes(dayName)
+  }
+
+  // Helper function to get events for a specific day
+  const getNewEventForDay = (day, month, year) => {
+    const checkDate = new Date(year, month, day)
+    return newEvents.filter((event) => isEventDay(event, checkDate))
+  }
+
+  // Parse time string to get hour and minutes
+  const parseTime = (timeStr) => {
+    // Handle formats like "8:30 AM", "10AM", "6:00 AM", "10:32 PM"
+    const cleaned = timeStr.replace(/\s+/g, "").toLowerCase()
+
+    // Match patterns like "8:30am", "10am", "6:00am"
+    const match = cleaned.match(/^(\d{1,2})(?::(\d{1,2}))?([ap]m)$/)
+
+    if (match) {
+      let hour = Number.parseInt(match[1])
+      const minutes = match[2] ? Number.parseInt(match[2]) : 0
+      const isPM = match[3] === "pm"
+
+      // Convert to 24-hour format for easier comparison
+      if (isPM && hour < 12) hour += 12
+      if (!isPM && hour === 12) hour = 0
+
+      return { hour, minutes }
+    }
+
+    return { hour: 0, minutes: 0 } // Default fallback
+  }
+
+  // Helper function to get events for a specific hour and day
+  const getNewEventForHourDay = (hourStr, day, month, year) => {
+    const checkDate = new Date(year, month, day)
+    const eventsForDay = newEvents.filter((event) => isEventDay(event, checkDate))
+
+    // Parse the hour slot
+    const { hour: slotHour } = parseTime(hourStr)
+
+    // Filter events that belong to this hour slot
+    return eventsForDay.filter((event) => {
+      const { hour: eventHour } = parseTime(event.time)
+      return eventHour === slotHour
+    })
+  }
+
+  // Calculate position within hour slot based on minutes
+  const calculateEventPosition = (timeStr) => {
+    const { minutes } = parseTime(timeStr)
+    // Calculate percentage position within the hour (0-60 minutes)
+    return (minutes / 60) * 100
+  }
 
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
   const monthNames = [
@@ -253,21 +165,99 @@ export default function Calendar() {
     "December",
   ]
 
-  const hours = ["6AM", "7AM", "8AM", "9AM", "10AM", "11AM"];
-
+  // Replace the hours array with full 24-hour cycle in 12-hour format
+  const hours = [
+    "12AM",
+    "1AM",
+    "2AM",
+    "3AM",
+    "4AM",
+    "5AM",
+    "6AM",
+    "7AM",
+    "8AM",
+    "9AM",
+    "10AM",
+    "11AM",
+    "12PM",
+    "1PM",
+    "2PM",
+    "3PM",
+    "4PM",
+    "5PM",
+    "6PM",
+    "7PM",
+    "8PM",
+    "9PM",
+    "10PM",
+    "11PM",
+  ]
 
   const getScheduleDate = async () => {
     try {
-      const response = await getCampaignSchedule();
+      const response = await getCampaignSchedule()
       console.log(response)
+      if (response?.status === 200) {
+        if (response?.data?.schedule_info?.length > 0) {
+          const transformedData = response?.data?.schedule_info.map((item, index) => ({
+            ...item,
+            id: item.campaign_id,
+            name: item.name,
+            frequency: item.scheduled_days,
+            start_date: item.date.split("-").reverse().join("-"), // Convert YYYY-MM-DD → DD-MM-YYYY
+            time: item.time
+          }))
+          setNewEvents(transformedData)
+        } else {
+          setLoading(false)
+          setNewEvents([])
+        }
+      }
+
     } catch (error) {
       console.log(error)
     }
   }
 
+
   useEffect(() => {
     getScheduleDate()
   }, [])
+
+
+  const handleScheduleContent = async (id) => {
+    try {
+      const response = await getScheduledContent(id)
+      if (response?.status === 200) {
+        console.log(response?.data)
+        setModalStatus(true)
+        let cleaned = response?.data?.email;
+
+        // STEP 1: Remove wrapping parentheses or extra quotes
+        cleaned = cleaned.trim();
+
+        // Remove leading and trailing parentheses or quotes (if present)
+        if (
+          (cleaned.startsWith('("') && cleaned.endsWith('")')) ||
+          (cleaned.startsWith('"') && cleaned.endsWith('"'))
+        ) {
+          cleaned = cleaned.slice(1, -1);
+        }
+
+        // STEP 2: Unescape characters
+        cleaned = cleaned
+          .replace(/\\"/g, '"')      // Escaped double quotes → "
+          .replace(/\\n/g, '\n')     // Escaped newlines → real line breaks
+          .replace(/\\'/g, "'")      // Escaped single quotes → '
+          .replace(/^\"|\"$/g, '')   // Remove any remaining surrounding quotes
+
+        setEmailContent(cleaned.trim());
+      }
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   // Helper functions for date manipulation
   function getFirstDayOfWeek(date) {
@@ -399,40 +389,46 @@ export default function Calendar() {
     setCurrentYear(currentDate.getFullYear())
   }
 
-  // Event handling functions
-  const getEventForDay = (day, month, year) => {
-    return events.filter((event) => event.date === day && event.month === month && event.year === year)
-  }
-
-  const getEventForHourDay = (hour, day, month, year) => {
-    return events.filter(
-      (event) =>
-        event.date === day &&
-        event.month === month &&
-        event.year === year &&
-        event.time.includes(hour.replace("AM", "")),
-    )
-  }
-
-  // Generate week days for week view
-  const getWeekDays = () => {
-    const weekDays = []
-    const startDate = new Date(currentYear, currentMonth, selectedWeekStart)
-
-    for (let i = 0; i < 7; i++) {
-      const currentDate = new Date(startDate)
-      currentDate.setDate(startDate.getDate() + i)
-      weekDays.push({
-        day: currentDate.getDate(),
-        month: currentDate.getMonth(),
-        year: currentDate.getFullYear(),
-      })
+  // Get status color for events
+  const getStatusStyles = (status) => {
+    switch (status) {
+      case "approved":
+        return {
+          bg: "bg-[#EEEDFF]",
+          border: "border-[#34C759]",
+          text: "text-[#34C759]",
+        }
+      case "planned":
+        return {
+          bg: "bg-[#EEEDFF]",
+          border: "border-[#007AFF]",
+          text: "text-[#007AFF]",
+        }
+      case "pending_approval":
+        return {
+          bg: "bg-[#FFEFD9]",
+          border: "border-[#FF9500]",
+          text: "text-[#FF9500]",
+        }
+      default:
+        return {
+          bg: "bg-[#EEEDFF]",
+          border: "border-gray-400",
+          text: "text-gray-600",
+        }
     }
-
-    return weekDays
   }
 
-  const weekDays = getWeekDays()
+  const renderStatusLabel = (status) => {
+    switch (status) {
+      case "approved":
+        return "Approved"
+      case "planned":
+        return "Planned"
+      default:
+        return "Pending Approval"
+    }
+  }
 
   // Calendar view rendering functions
   const renderMonthView = () => {
@@ -449,7 +445,7 @@ export default function Calendar() {
 
         {/* Calendar days */}
         {days.map((day, index) => {
-          const dayEvents = getEventForDay(day.day, day.month, day.year)
+          const dayEvents = getNewEventForDay(day.day, day.month, day.year)
           const isToday =
             day.day === today.getDate() && day.month === today.getMonth() && day.year === today.getFullYear()
 
@@ -478,18 +474,15 @@ export default function Calendar() {
 
               {/* Events */}
               <div className="mt-1">
-                {dayEvents.map((event, eventIndex) => (
-                  <div
-                    key={eventIndex}
-                    className={`text-xs ${event.status === "Pending Approved"
-                      ? "bg-[#FFEFD9]"
-                      : "bg-[#EEEDFF]"
-                      } p-1 mb-1 rounded`}
-                  >
-                    <div className="font-medium">{event.name}</div>
-                    <div className="text-gray-500">{event.time}</div>
-                  </div>
-                ))}
+                {dayEvents.map((event, eventIndex) => {
+                  const statusStyles = getStatusStyles(event.status)
+                  return (
+                    <div key={eventIndex} className={`text-xs ${statusStyles.bg} p-1 mb-1 rounded`}>
+                      <div className="font-medium">{event.name}</div>
+                      <div className="text-gray-500">{event.time}</div>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           )
@@ -498,14 +491,37 @@ export default function Calendar() {
     )
   }
 
+  // Generate week days for week view
+  const getWeekDays = () => {
+    const weekDays = []
+    const startDate = new Date(currentYear, currentMonth, selectedWeekStart)
+
+    for (let i = 0; i < 7; i++) {
+      const currentDate = new Date(startDate)
+      currentDate.setDate(startDate.getDate() + i)
+      weekDays.push({
+        day: currentDate.getDate(),
+        month: currentDate.getMonth(),
+        year: currentDate.getFullYear(),
+      })
+    }
+
+    return weekDays
+  }
+
   const renderWeekView = () => {
+    const weekDays = getWeekDays()
+
     return (
       <div className="grid grid-cols-8 border-t border-[#E1E4EA]">
         {/* Time column */}
         <div className="border-r border-[#E1E4EA]">
           <div className="h-10 border-b border-[#E1E4EA]" />
           {hours.map((hour, index) => (
-            <div key={hour} className={`h-20 ${hours.length !== index + 1 && 'border-b'} border-[#E1E4EA] flex items-start justify-end pr-2 pt-1`}>
+            <div
+              key={hour}
+              className={`h-34 ${hours.length !== index + 1 && "border-b"} border-[#E1E4EA] flex items-start justify-end pr-2 pt-1`}
+            >
               <span className="text-xs text-gray-500">{hour}</span>
             </div>
           ))}
@@ -518,46 +534,56 @@ export default function Calendar() {
           const dayName = daysOfWeek[index]
 
           return (
-            <div
-              key={index}
-              className={`${weekDays.length !== index + 1 && 'border-r'} border-[#E1E4EA]`}
-
-            >
+            <div key={index} className={`${weekDays.length !== index + 1 && "border-r"} border-[#E1E4EA]`}>
               {/* Day header */}
               <div className="h-10 border-b border-[#E1E4EA] flex flex-col items-center justify-center">
                 <div className="text-sm font-medium">
-                  {dayName} <span className={`${isToday && 'w-6 h-6 rounded-full bg-[#675FFF] p-1 text-white'}`}>{day.day}</span>
+                  {dayName}{" "}
+                  <span className={`${isToday ? "w-6 h-6 rounded-full bg-[#675FFF] p-1 text-white" : ""}`}>
+                    {day.day}
+                  </span>
                 </div>
-                {/* {isToday && (
-                  <div className="w-6 h-6 rounded-full bg-[#675FFF] flex items-center justify-center absolute">
-                    <span className="text-white text-xs">{day.day}</span>
-                  </div>
-                )} */}
               </div>
 
               {/* Hour cells */}
-              {hours.map((hour, index) => {
-                const hourEvents = getEventForHourDay(hour, day.day, day.month, day.year)
+              {hours.map((hour, hourIndex) => {
+                const hourEvents = getNewEventForHourDay(hour, day.day, day.month, day.year)
 
                 return (
-                  <div key={`${day.day}-${hour}`} className={`h-20 ${hours.length !== index + 1 && 'border-b'} border-[#E1E4EA] relative`}>
+                  <div
+                    key={`${day.day}-${hour}`}
+                    className={`h-34 ${hours.length !== hourIndex + 1 && "border-b"} border-[#E1E4EA] relative`}
+                  >
+                    {/* 30-minute line */}
+                    <div className="absolute left-0 right-0 top-1/2 border-t border-gray-200 border-dashed"></div>
+
                     {hourEvents.map((event, eventIndex) => {
-                      const bgColor = event.status === "Pending Approved"
-                        ? "bg-[#FFEFD9]"
-                        : "bg-[#EEEDFF]"
-                      const statusColor = event.status === "Approved" ? 'border-[#34C759] text-[#34C759]' : event.status === "Planned" ? 'border-[#007AFF] text-[#007AFF]' : 'border-[#FF9500] text-[#FF9500]'
+                      const statusStyles = getStatusStyles(event.status)
+                      const topPosition = calculateEventPosition(event.time)
+
                       return (
-                        <div key={eventIndex} onClick={() => {
-                          setCurrentDay(day.day)
-                          setCurrentMonth(day.month)
-                          setCurrentYear(day.year)
-                          event.status === "Planned" && setModalStatus(true)
-                          console.log(day)
-                          // setCurrentView("day")
-                        }} className={`absolute top-0 left-0 right-0 h-full ${bgColor} p-1`}>
+                        <div
+                          key={eventIndex}
+                          onClick={() => {
+                            setCurrentDay(day.day)
+                            setCurrentMonth(day.month)
+                            setCurrentYear(day.year)
+                            if (event.status !== "planned") {
+                              handleScheduleContent(event.content_id)
+                              setPopUpData(event)
+                              // setModalStatus(true)
+                            }
+                          }}
+                          className={`${statusStyles.bg} p-2 rounded cursor-pointer absolute left-1 right-1 z-10`}
+                          style={{ top: `${topPosition}%` }}
+                        >
                           <div className="text-[12px] font-[400] text-[#5A687C]">{event.time}</div>
                           <div className="text-[14px] font-[600] text-[#1E1E1E]">{event.name}</div>
-                          <div className={`text-[12px] font-[500] ${statusColor} rounded-full border w-fit px-1.5 py-1 bg-white`}>{event.status}</div>
+                          <div
+                            className={`text-[12px] font-[500] ${statusStyles.text} rounded-full border ${statusStyles.border} w-fit px-1.5 py-0.5 bg-white`}
+                          >
+                            {renderStatusLabel(event.status)}
+                          </div>
                         </div>
                       )
                     })}
@@ -576,28 +602,45 @@ export default function Calendar() {
       <div className="grid grid-cols-1 border-t border-[#E1E4EA]">
         {/* Hours */}
         {hours.map((hour, index) => {
-          const hourEvents = getEventForHourDay(hour, currentDay, currentMonth, currentYear)
+          const hourEvents = getNewEventForHourDay(hour, currentDay, currentMonth, currentYear)
 
           return (
             <div key={hour} className="flex border-[#E1E4EA]">
               {/* Time column */}
-              <div className={`w-20 py-2 border-r border-[#E1E4EA] ${hours.length !== index + 1 && 'border-b'} flex items-start justify-end pr-2`}>
+              <div
+                className={`w-20 py-2 border-r border-[#E1E4EA] ${hours.length !== index + 1 && "border-b"} flex items-start justify-end pr-2`}
+              >
                 <span className="text-xs text-gray-500">{hour}</span>
               </div>
 
               {/* Events column */}
-              <div className={`flex-1 border-[#E1E4EA] ${hours.length !== index + 1 && 'border-b'}  min-h-20 relative`}>
+              <div className={`flex-1 border-[#E1E4EA] ${hours.length !== index + 1 && "border-b"} h-34 relative`}>
+                {/* 30-minute line */}
+                <div className="absolute left-0 right-0 top-1/2 border-t border-gray-200 border-dashed"></div>
+
                 {hourEvents.map((event, eventIndex) => {
-                  const bgColor = event.status === "Pending Approved"
-                    ? "bg-[#FFEFD9]"
-                    : "bg-[#EEEDFF]"
-                  const statusColor = event.status === "Approved" ? 'border-[#34C759] text-[#34C759]' : event.status === "Planned" ? 'border-[#007AFF] text-[#007AFF]' : 'border-[#FF9500] text-[#FF9500]'
+                  const statusStyles = getStatusStyles(event.status)
+                  const topPosition = calculateEventPosition(event.time)
 
                   return (
-                    <div key={eventIndex} className={`absolute top-0 left-0 right-0 h-full ${bgColor} p-2`}>
+                    <div
+                      key={eventIndex}
+                      className={`${statusStyles.bg} p-2 rounded cursor-pointer w-full absolute z-10`}
+                      style={{ top: `${topPosition}%` }}
+                      onClick={() => {
+                        if (event.status !== "planned") {
+                          handleScheduleContent(event.content_id)
+                          setPopUpData(event)
+                        }
+                      }}
+                    >
                       <div className="text-[12px] font-[400] text-[#5A687C]">{event.time}</div>
                       <div className="text-[14px] font-[600] text-[#1E1E1E]">{event.name}</div>
-                      <div className={`text-[12px] font-[500] ${statusColor} rounded-full border w-fit px-1.5 py-1 bg-white`}>{event.status}</div>
+                      <div
+                        className={`text-[12px] font-[500] ${statusStyles.text} rounded-full border ${statusStyles.border} w-fit px-1.5 py-0.5 bg-white`}
+                      >
+                        {renderStatusLabel(event.status)}
+                      </div>
                     </div>
                   )
                 })}
@@ -716,6 +759,8 @@ export default function Calendar() {
     }
   }
 
+  if (loading) return <p className="h-screen flex justify-center items-center"><span className="loader" /></p>
+
   return (
     <div className="gap-6 h-screen overflow-auto py-4 pr-2">
       <h1 className="font-semibold text-[#1e1e1e] mb-5 text-2xl leading-8">Calendar</h1>
@@ -725,74 +770,78 @@ export default function Calendar() {
         {currentView === "week" && renderWeekView()}
         {currentView === "day" && renderDayView()}
       </div>
-      {modalStatus && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-        <div className="bg-white rounded-2xl w-full max-w-[718px] p-6 relative shadow-lg">
-          <button
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-            onClick={() => {
-              setModalStatus(false)
-              setIsDisapprove(false)
-            }}
-          >
-            <X size={20} />
-          </button>
+      {modalStatus && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl w-full max-w-[718px] p-6 relative shadow-lg">
+            <button
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              onClick={() => {
+                setModalStatus(false)
+                setIsDisapprove(false)
+              }}
+            >
+              <X size={20} />
+            </button>
 
-          <div className="flex flex-col gap-2 mt-3">
-            <div className="flex justify-between items-center my-1">
-              <h2 className="text-[20px] font-[600] text-[#1E1E1E]">
-                XYZ Campaign
-              </h2>
-              {isDisapprove && <button onClick={handleSubmit} className="border-[1.5px] p-1.5 rounded-lg border-[#5F58E8] text-[#675FFF] text-[16px] font-[500]">
-                Generate New Email
-              </button>}
-            </div>
-            <div>
-              <div className="space-y-4">
-                {/* Editable Textarea */}
-                <textarea
-                  rows={12}
-                  disabled={!isDisapprove}
-                  value={rawText}
-                  onChange={(e) => setRawText(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-md text-sm text-gray-800 bg-white resize-none"
-                />
+            <div className="flex flex-col gap-2 mt-3">
+              <div className="flex justify-between items-center my-1">
+                <h2 className="text-[20px] font-[600] text-[#1E1E1E]">{popUpData?.name}</h2>
+                {isDisapprove && (
+                  <button
+                    // onClick={handleSubmit}
+                    className="border-[1.5px] p-1.5 rounded-lg border-[#5F58E8] text-[#675FFF] text-[16px] font-[500]"
+                  >
+                    Generate New Email
+                  </button>
+                )}
+              </div>
+              <div>
+                <div className="space-y-4">
+                  {/* Editable Textarea */}
+                  <textarea
+                    rows={12}
+                    disabled={!isDisapprove}
+                    value={emailContent}
+                    onChange={(e) => setEmailContent(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-md text-sm text-gray-800 bg-white resize-none"
+                  />
 
-                {/* HTML Preview */}
-                {/* <div
+                  {/* HTML Preview */}
+                  {/* <div
                   className="p-4 border bg-gray-50 rounded text-sm text-gray-800"
                   dangerouslySetInnerHTML={{ __html: convertToHtml(rawText) }}
                 /> */}
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  className="bg-white w-full border-[1.5px] border-[#E1E4EA] text-[#5A687C] px-5 py-2 font-[500] text-[16px] rounded-lg"
+                  onClick={
+                    isDisapprove
+                      ? () => {
+                        setModalStatus(false)
+                        setIsDisapprove(false)
+                      }
+                      : () => setIsDisapprove(true)
+                  }
+                >
+                  {isDisapprove ? "Cancel" : "Disapprove"}
+                </button>
+                <button
+                  className="bg-[#675FFF] w-full border border-[#5F58E8] text-white px-5 py-2 font-[500] text-[16px] rounded-lg"
+                  onClick={
+                    handleSubmit
+                  }
+                >
+                  {submitStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : isDisapprove ? "Save" : "Approve"}
+                </button>
               </div>
             </div>
-            <div className="flex gap-2">
-              <button
-                className="bg-white w-full border-[1.5px] border-[#E1E4EA] text-[#5A687C] px-5 py-2 font-[500] text-[16px] rounded-lg"
-                onClick={isDisapprove ? () => {
-                  setModalStatus(false)
-                  setIsDisapprove(false)
-                } : () => setIsDisapprove(true)}
-              >
-                {isDisapprove ? "Cancel" : "Disapprove"}
-              </button>
-              <button
-                className="bg-[#675FFF] w-full border border-[#5F58E8] text-white px-5 py-2 font-[500] text-[16px] rounded-lg"
-                onClick={isDisapprove ? () => {
-                  setModalStatus(false)
-                  setIsDisapprove(false)
-                } : () => {
-                  setModalStatus(false)
-                  setSuccessModal(true)
-                }}
-              >
-                {isDisapprove ? "Save" : "Approve"}
-              </button>
-            </div>
           </div>
-
         </div>
-      </div >}
-      {
-        successModal && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      )}
+      {successModal && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl w-full max-w-[442px] p-6 relative shadow-lg">
             <button
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
@@ -805,12 +854,10 @@ export default function Calendar() {
 
             <div className="flex h-[270px] flex-col justify-end items-center gap-3">
               <div>
-                <img src={successImg} alt="success" />
+                <img src={successImg || "/placeholder.svg"} alt="success" />
               </div>
               <div className="flex flex-col gap-2 items-center">
-                <h2 className="text-[28px] font-[700] text-[#292D32]">
-                  Congratulations!
-                </h2>
+                <h2 className="text-[28px] font-[700] text-[#292D32]">Congratulations!</h2>
                 <p className="text-[#5A687C] text-[16px] font-[400]">You have successfully approved the campaign.</p>
               </div>
               {/* <div className="flex gap-2"> */}
@@ -822,11 +869,9 @@ export default function Calendar() {
               </button>
               {/* </div> */}
             </div>
-
           </div>
-        </div >
-      }
-    </div >
+        </div>
+      )}
+    </div>
   )
 }
-

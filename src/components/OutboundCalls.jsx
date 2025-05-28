@@ -75,7 +75,7 @@ export default function OutBoundCalls() {
     };
 
     return (
-        <div className="p-4 flex flex-col gap-4 w-full">
+        <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold text-black">Outbound Calls</h1>
