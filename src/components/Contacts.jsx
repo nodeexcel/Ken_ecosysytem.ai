@@ -1,6 +1,6 @@
 import { Contact, Download, Mail, Phone, SquarePen, Trash2, Upload, X } from "lucide-react";
 import React, { useRef, useState } from "react";
-import { FiSearch } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi";
 import { Delete, Duplicate, Edit, Notes, ThreeDots, UploadIcon } from "../icons/icons";
 
 const ContactsPage = () => {
@@ -12,7 +12,8 @@ const ContactsPage = () => {
   const [loading, setLoading] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [channelSelect, setChannelSelect] = useState("all")
-  const [statusSelect, setStatusSelect] = useState("any")
+  const [statusSelect, setStatusSelect] = useState("any");
+  const [createList, setCreateList] = useState(false)
 
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -122,6 +123,39 @@ const ContactsPage = () => {
     setActiveDropdown(activeDropdown === index ? null : index);
   };
 
+  const [selectedContacts, setSelectedContacts] = useState([]);
+
+  const allSelected = selectedContacts.length === contacts.length && contacts.length > 0;
+
+  const toggleSelectAll = () => {
+    if (allSelected) {
+      setSelectedContacts([]);
+    } else {
+      setSelectedContacts(contacts.map((details) => details.email));
+    }
+  };
+
+  const toggleSelectOne = (email) => {
+    if (selectedContacts.includes(email)) {
+      setSelectedContacts(selectedContacts.filter(i => i !== email));
+    } else {
+      setSelectedContacts([...selectedContacts, email]);
+    }
+  };
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const totalPages = Math.ceil(contacts.length / rowsPerPage);
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const currentContacts = contacts.slice(startIndex, endIndex);
+
+  const handleRowsPerPageChange = (e) => {
+    setRowsPerPage(Number(e.target.value));
+    setCurrentPage(1);
+  };
+
 
   return (
     <div className="flex overflow-auto pr-4 py-4 flex-col w-full items-start gap-6 ">
@@ -133,7 +167,7 @@ const ContactsPage = () => {
 
           <div className="flex gap-2.5 items-center">
             {activeTab !== "lists" && <button className="flex items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#E1E4EA] rounded-[7px] bg-white">
-              <Download color="#5A687C"/>
+              <Download color="#5A687C" />
               <span className="font-[500] text-[16px] leading-6 text-[#5A687C]">
                 Export
               </span>
@@ -203,6 +237,11 @@ const ContactsPage = () => {
                   className="w-full pl-10 pr-3.5 pt-[7px] pb-[6px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg"
                 />
               </div>
+              {activeTab !== "lists" && <button disabled={selectedContacts?.length === 0} onClick={() => setCreateList(true)} className="flex items-center gap-2.5 px-5 py-[6px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
+                <span className="font-medium text-base leading-6">
+                  Create List
+                </span>
+              </button>}
             </div>
           </div>
           <div className="overflow-auto w-full">
@@ -211,16 +250,40 @@ const ContactsPage = () => {
                 <tr className="text-left text-[#5A687C]">
                   {tableHeaders.map((header, index) => (
                     <th key={index} className="px-6 py-3 text-[16px] font-[400] whitespace-nowrap">
-                      {header.name}
+                      {header.name === 'Full Name' ? (
+                        <div className="flex items-center gap-2">
+                          <label class="checkbox-container">
+                            <input
+                              type="checkbox"
+                              checked={allSelected}
+                              onChange={toggleSelectAll}
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+                          {header.name}
+                        </div>
+                      ) : (
+                        header.name
+                      )}
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody className="bg-white border border-[#E1E4EA] rounded-[16px]">
-                {contacts.map((contact, index) => (
-                  <tr key={index} className={`${contacts.length-1!==index && 'border border-[#E1E4EA] px-4'}`}>
+                {currentContacts.map((contact, index) => (
+                  <tr key={index} className={`${contacts.length - 1 !== index && 'border border-[#E1E4EA] px-4'}`}>
                     <td className="px-6 py-4 text-sm text-gray-800 font-semibold whitespace-nowrap">
-                      {contact.name}
+                      <div className="flex items-center gap-2">
+                        <label class="checkbox-container">
+                          <input
+                            type="checkbox"
+                            checked={selectedContacts.includes(contact.email)}
+                            onChange={() => toggleSelectOne(contact.email)}
+                          />
+                          <span class="checkmark"></span>
+                        </label>
+                        {contact.name}
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
                       {contact.email}
@@ -241,6 +304,56 @@ const ContactsPage = () => {
                 ))}
               </tbody>
             </table>
+            <div className="flex justify-between items-center mt-4 px-4 flex-wrap gap-3">
+              <div className="flex items-center gap-2 text-[16px] text-[#5A687C]">
+                <div>
+                  Showing {startIndex + 1} - {Math.min(endIndex, contacts.length)} of {contacts.length}
+                </div>
+                |
+                <span>Rows per page:</span>
+                <select
+                  value={rowsPerPage}
+                  onChange={handleRowsPerPageChange}
+                  className="border border-[#E1E4EA] rounded-lg px-2 py-1"
+                >
+                  {[10, 20, 50, 75, 100].map((value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="text-gray-600 h-[32px] w-[32px] flex justify-center items-center rounded-md border border-[#E1E4EA] hover:text-black disabled:opacity-30"
+                >
+                  <FiChevronLeft />
+                </button>
+
+                {Array.from({ length: totalPages }, (_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentPage(index + 1)}
+                    className={`h-[32px] w-[32px] flex justify-center items-center rounded-md text-[16px] border ${currentPage === index + 1
+                      ? 'bg-[#675FFF] text-white'
+                      : 'bg-white text-[#5A687C] border-[#E1E4EA]'
+                      }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="text-gray-600 rounded-md  border border-[#E1E4EA] h-[32px] w-[32px] flex justify-center items-center hover:text-black disabled:opacity-30"
+                >
+                  <FiChevronRight />
+                </button>
+              </div>
+            </div>
           </div>
         </>
       ) :
@@ -278,7 +391,7 @@ const ContactsPage = () => {
               </thead>
               <tbody className="bg-white border border-[#E1E4EA] rounded-[16px]">
                 {contactLists.map((list, index) => (
-                  <tr key={list.name} className={`${contacts.length-1!==index && 'border border-[#E1E4EA] px-4 text-[16px]'}`}>
+                  <tr key={list.name} className={`${contacts.length - 1 !== index && 'border border-[#E1E4EA] px-4 text-[16px]'}`}>
                     <td className="px-6 py-4 font-[600] whitespace-nowrap">{list.name}</td>
                     <td className="px-6 py-4 font-[400] text-[#5A687C] whitespace-nowrap">{list.activeContacts.toLocaleString()}</td>
                     <td className="px-6 py-4 font-[400] whitespace-nowrap">
@@ -415,6 +528,53 @@ const ContactsPage = () => {
                 {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save"}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {createList && (
+        <div className=" fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
+          <div className="bg-white max-h-[547px] flex flex-col gap-3 w-full max-w-[510px] rounded-2xl shadow-xl p-6 relative">
+            <button
+              onClick={() => setCreateList(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+
+            <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-1">
+                <h2 className="text-[#1E1E1E] font-[600] text-[20px]">Create List</h2>
+                <h2 className="text-[#5A687C] font-[400] text-[16px]">{selectedContacts?.length} Contact Selected</h2>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <div>
+                  <label className="block text-[14px] font-medium text-[#292D32] mb-1">List Name</label>
+                  <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
+                    <input
+                      type="text"
+                      name="list_name"
+                      placeholder="Enter list name"
+                      value={formData?.list_name}
+                      onChange={handleChange}
+                      className="w-full focus:outline-none"
+                    />
+                  </div>
+                </div>
+                {formErrors.list_name && <p classlist_name="text-sm text-red-500 mt-1">{formErrors.name}</p>}
+              </div>
+
+              <div className="flex gap-2 mt-3">
+                <button onClick={() => setCreateList(false)} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                  Cancel
+                </button>
+                <button className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
+                  {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save"}
+                </button>
+              </div>
+            </div>
+
           </div>
         </div>
       )}
