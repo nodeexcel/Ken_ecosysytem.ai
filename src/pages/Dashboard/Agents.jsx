@@ -154,7 +154,7 @@ const Agents = () => {
       </div>
 
       {/* Responsive Centered Grid */}
-      <div className="flex justify-between w-full py-5">
+      <div className="flex justify-between w-full py-5 px-2">
         <div className="flex flex-wrap gap-4 justify-center items-center">
           {employees.map((employee, index) => (
             <div

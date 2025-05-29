@@ -135,7 +135,7 @@ function CampaignDashboard() {
             case "terminated":
                 return `text-[#B42318] bg-[#FFEBEA] border-[#B42318]`;
             case "draft":
-                return `text-[#1E1E1E] bg-[#DCDCDC] border-[#1E1E1E]`
+                return `text-[#1E1E1E] bg-[#E9E9E9] border-[#1E1E1E]`
             default:
                 return `text-[#5A687C] bg-[#fff] border-[#5A687C]`;
         }
@@ -172,11 +172,12 @@ function CampaignDashboard() {
                     <table className="w-full rounded-2xl">
                         <thead>
                             <tr className="text-left text-[#5A687C]">
-                                <th className="px-6 py-3 text-[16px] font-medium">Name</th>
-                                <th className="px-6 py-3 text-[16px] font-medium">Sent</th>
-                                <th className="px-6 py-3 text-[16px] font-medium">Sent to</th>
-                                <th className="px-6 py-3 text-[16px] font-medium">Status</th>
-                                <th className="px-6 py-3 text-[16px] font-medium">Actions</th>
+                                <th className="px-6 py-3 text-[16px] font-[400]">Name</th>
+                                <th className="px-6 py-3 text-[16px] font-[400]">Sent</th>
+                                <th className="px-6 py-3 text-[16px] font-[400]">Sent to</th>
+                                <th className="px-6 py-3 text-[16px] font-[400]">Campaign Status</th>
+                                <th className="px-6 py-3 text-[16px] font-[400]">Status</th>
+                                <th className="px-6 py-3 text-[16px] font-[400]">Actions</th>
                             </tr>
                         </thead>
                         <tbody className={`${!message && !loading && 'bg-white'} border border-[#E1E4EA]`}>
@@ -184,29 +185,32 @@ function CampaignDashboard() {
                                 campaignData?.length > 0 && campaignData.map((item, index) => (
                                     <tr key={index} className={`${index !== campaignData.length - 1 ? 'border-b border-gray-200' : ''}`}>
                                         <td className="px-6 py-4 text-sm text-gray-800 font-semibold">{item.campaign_name}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-700">{item.sent}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-700">{item.sent_to}</td>
+                                        <td className="px-6 py-4 text-sm text-[#5A687C]">{item.sent}</td>
+                                        <td className="px-6 py-4 text-sm text-[#5A687C]">{item.sent_to}</td>
 
                                         <td className="px-6 py-4 text-sm items-center gap-2">
                                             <div className='flex justify-between items-center gap-2'>
                                                 <p className={`${renderColor(item.campaign_status)} border flex items-center gap-2 px-2 py-1 text-xs rounded-full`}>
                                                     {renderStatus(item.campaign_status)}
-
-                                                    {(item.campaign_status !== "draft" && item.campaign_status !== "issue_detected") && <label className="relative inline-flex items-center cursor-pointer">
-                                                        <input
-                                                            type="checkbox"
-                                                            className="sr-only peer"
-                                                            checked={item.is_active}
-                                                            onChange={() => toggleStatus(index, 'is_active', item.campaign_id)}
-                                                        />
-                                                        <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-400 rounded-full peer dark:bg-gray-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-                                                    </label>}
                                                 </p>
                                             </div>
                                         </td>
 
+                                        <td className='text-center'>
+                                            <label className="relative inline-flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    className="sr-only peer"
+                                                    disabled={(item.campaign_status === "draft" || item.campaign_status === "issue_detected")}
+                                                    checked={item.is_active}
+                                                    onChange={item.campaign_status !== "draft" || item.campaign_status !== "issue_detected" ? () => toggleStatus(index, 'is_active', item.campaign_id) : undefined}
+                                                />
+                                                <div className={`w-9 h-5 bg-gray-200  rounded-full ${(item.campaign_status === "draft" || item.campaign_status === "issue_detected")?'dark:bg-[#F1F3F6] cursor-not-allowed':'dark:bg-[#D9D7FF] peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-400'} peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600`}></div>
+                                            </label>
+                                        </td>
 
-                                        <td className="px-6 py-4 text-sm text-gray-700">
+
+                                        <td className="px-6 py-4 text-sm text-[#5A687C]">
                                             <div className='flex items-center gap-2'>
                                                 <button onClick={() => setViewReportModel(true)} className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg'>
                                                     View Report

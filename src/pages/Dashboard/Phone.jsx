@@ -3,7 +3,7 @@ import PhoneNumberList from '../../components/PhoneNumberList'
 import CallAgentsPage from '../../components/CallAgent'
 import CallCampaign from '../../components/CallCampaign'
 import PhoneDashboard from '../../components/PhoneDashboard'
-import { CallAgent, FourBox, Phone, PhoneCampaign, OutboundCall, InboundCall } from "../../icons/icons";
+import { CallAgent, FourBox, Phone, PhoneCampaign, OutboundCall, InboundCall, LeftArrow } from "../../icons/icons";
 import OutBoundCalls from "../../components/OutboundCalls";
 import InBoundCalls from "../../components/InboundCalls";
 import dashboardProfile from '../../assets/svg/dashboard_profile.svg'
@@ -49,7 +49,7 @@ const PhonePage = () => {
 
   const renderImg = () => {
     if (navbarDetails.label === "Rebecca") {
-      return <div className="bg-[#F0EFFF] w-[232px] mb-5 flex gap-3 p-[12px] rounded-[9px]">
+      return <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] mb-5 flex gap-3 p-[12px] rounded-[9px]">
         <div className="w-[35px] h-[45px] flex justify-center items-center">
           <img src={rebeccaImg} alt={"rebecca"} className="object-fit" />
         </div>
@@ -59,7 +59,7 @@ const PhonePage = () => {
         </div>
       </div>
     } else if (navbarDetails.label === "Tom") {
-      return <div className="bg-[#F0EFFF] w-[232px] mb-5 flex gap-3 p-[12px] rounded-[9px]">
+      return <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] mb-5 flex gap-3 p-[12px] rounded-[9px]">
         <div className="w-[35px] h-[45px] flex justify-center items-center">
           <img src={tomImg} alt={"tome"} className="object-fit" />
         </div>
@@ -69,7 +69,7 @@ const PhonePage = () => {
         </div>
       </div>
     } else {
-      return <div className="bg-[#F0EFFF] w-[232px] mb-5 flex gap-3 p-[12px] rounded-[9px]">
+      return <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] mb-5 flex gap-3 p-[12px] rounded-[9px]">
         <div className="w-[64.43pxpx] h-[39px] flex justify-center items-center">
           <img src={tomImg} alt={"tome"} className="object-fit" />
           <img src={rebeccaImg} alt={"rebecca"} className="object-fit" />
@@ -89,8 +89,8 @@ const PhonePage = () => {
         <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
           <div className=''>
             <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
-              <div className="flex gap-2 items-center h-[57px]">
-                <MdOutlineKeyboardArrowLeft size={25} />
+              <div className="flex gap-4 pl-5 items-center h-[57px]">
+                <LeftArrow />
                 <h1 className="text-[20px] font-[600]">Phone</h1>
               </div>
             </div>
@@ -106,19 +106,19 @@ const PhonePage = () => {
                   setActiveSidebarItem(item.path)
                 }}
                 className={`flex items-center gap-2 px-3 py-2 rounded-md cursor-pointer w-full ${activeSidebarItem === item.path
-                  ? "bg-[#EDF3FF] text-black"
-                  : "text-gray-600 hover:bg-gray-100"
+                  ? "bg-[#F0EFFF] text-[#675FFF]"
+                  : "text-[#5A687C]"
                   }`}
               >
                 {item.icon}
-                <span className="text-[14px] font-[400]">{item.label}</span>
+                <span className="text-[16px] font-[400]">{item.label}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="w-full overflow-x-hidden">{renderMainContent()}</div>
+        <div className="w-full py-3 pr-4 overflow-x-hidden">{renderMainContent()}</div>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { resetPassword } from '../api/auth';
 import { useLocation, useNavigate } from 'react-router-dom';
 import logo from '/ecosystem_logo.svg'
+import { PasswordLock } from '../icons/icons';
 
 export default function ResetPassword() {
     const [showPasswords, setShowPasswords] = useState({
@@ -97,7 +98,7 @@ export default function ResetPassword() {
     };
 
     return (
-        <div className="flex flex-col items-center min-h-screen bg-gray-50 p-3">
+        <div className="flex flex-col items-center overflow-auto h-screen bg-gray-50 p-3">
             <div className="flex items-center gap-2 my-2">
                 <div>
                     <img src={logo} alt="logo" className="w-[47.15px] h-[52px]" />
@@ -116,14 +117,16 @@ export default function ResetPassword() {
                         <div className="flex flex-col gap-1.5">
                             <label className="font-medium text-black text-sm leading-5">New Password</label>
                             <div className="relative">
-                                <TbLockPassword className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                <div className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                <PasswordLock />
+                                </div>
                                 <input
                                     type={showPasswords.password ? 'text' : 'password'}
                                     name="password"
                                     value={formData.password}
                                     onChange={handlePasswordChange}
                                     className={`w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border ${formErrors.password ? 'border-red-500' : 'border-[#e1e4ea]'
-                                        } shadow-sm`}
+                                        } `}
                                     placeholder="Enter new password"
                                 />
                                 <button
@@ -147,14 +150,16 @@ export default function ResetPassword() {
                         <div className="flex flex-col gap-1.5">
                             <label className="font-medium text-black text-sm leading-5">Confirm Password</label>
                             <div className="relative">
-                                <TbLockPassword className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                <div className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                <PasswordLock />
+                                </div>
                                 <input
                                     type={showPasswords.confirmPassword ? 'text' : 'password'}
                                     name="confirmPassword"
                                     value={formData.confirmPassword}
                                     onChange={handlePasswordChange}
                                     className={`w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border ${formErrors.confirmPassword ? 'border-red-500' : 'border-[#e1e4ea]'
-                                        } shadow-sm`}
+                                        } `}
                                     placeholder="Confirm new password"
                                 />
                                 <button

@@ -12,7 +12,7 @@ import { updatePassword } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import { getTeamMembers, sendInviteEmail } from "../../api/teamMember";
 import TransactionHistory from "../../components/TransactionHistory";
-import { Delete, Edit, PlanIcon, Settings, TeamMemberIcon } from "../../icons/icons";
+import { Delete, Edit, LeftArrow, PasswordLock, PlanIcon, Settings, TeamMemberIcon } from "../../icons/icons";
 import { discardData } from "../../store/profileSlice";
 
 
@@ -420,7 +420,7 @@ const SettingsPage = () => {
   const renderMainContent = () => {
     if (activeSidebarItem === "billing") {
       return (
-        <div className="flex flex-col w-full gap-6">
+        <div className="flex py-3 pr-4 flex-col w-full gap-6">
           <Plan teamMembersData={teamMembersData} setActiveSidebarItem={setActiveSidebarItem} showPlanPopup={showPlanPopup} setShowPlanPopup={setShowPlanPopup} />
         </div>
       );
@@ -429,7 +429,7 @@ const SettingsPage = () => {
     else if (activeSidebarItem === "team") {
       return (
         <>
-          <div className="w-full py-2 flex flex-col gap-3 pr-2">
+          <div className="w-full py-4 flex flex-col gap-3 pr-4">
             <div className="flex justify-between">
               <h1 className="text-[#1E1E1E] font-semibold text-[20px] md:text-[24px]">Team Members</h1>
               <button className="bg-[#5E54FF] text-white rounded-md text-[14px] md:text-[16px] p-2" onClick={handleInviteTeam}>Invite A Team Member</button>
@@ -604,7 +604,7 @@ const SettingsPage = () => {
     }
 
     return (
-      <div className="flex flex-col w-full items-start gap-5 relative ">
+      <div className="flex flex-col py-4 pr-4 w-full items-start gap-5 relative ">
         {/* Header */}
         <div className="flex flex-col items-start gap-[23px] relative self-stretch w-full flex-[0_0_auto]">
           <div className="flex items-center justify-between relative self-stretch w-full flex-[0_0_auto]">
@@ -628,7 +628,7 @@ const SettingsPage = () => {
         </div>
 
         {/* Tabs */}
-        <div className="w-full pr-2">
+        <div className="w-full pr-4">
           <div className="flex items-start relative self-stretch w-full flex-[0_0_auto] border-b border-[#e1e4ea]">
             <button
               onClick={() => setActiveTab("profile")}
@@ -864,7 +864,7 @@ const SettingsPage = () => {
                       </label>
                       <div className="relative">
                         <div className="absolute left-3.5 top-1/2 transform -translate-y-1/2">
-                          <TbLockPassword className="w-5 h-5 text-gray-400" />
+                          <PasswordLock />
                         </div>
                         <input
                           type={showPasswords.currentPassword ? "text" : "password"}
@@ -897,7 +897,7 @@ const SettingsPage = () => {
                       </label>
                       <div className="relative">
                         <div className="absolute left-3.5 top-1/2 transform -translate-y-1/2">
-                          <TbLockPassword className="w-5 h-5 text-gray-400" />
+                          <PasswordLock />
                         </div>
                         <input
                           type={showPasswords.newPassword ? "text" : "password"}
@@ -930,7 +930,7 @@ const SettingsPage = () => {
                       </label>
                       <div className="relative">
                         <div className="absolute left-3.5 top-1/2 transform -translate-y-1/2">
-                          <TbLockPassword className="w-5 h-5 text-gray-400" />
+                          <PasswordLock/>
                         </div>
                         <input
                           type={showPasswords.confirmPassword ? "text" : "password"}
@@ -1010,8 +1010,8 @@ const SettingsPage = () => {
           <div className=''>
             <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
               {/* <MdOutlineKeyboardArrowLeft size={25} /> */}
-              <div className="flex gap-2 items-center h-[57px]">
-                <MdOutlineKeyboardArrowLeft size={25} />
+              <div className="flex gap-4 pl-5 items-center h-[57px]">
+                <LeftArrow />
                 <h1 className="text-[20px] font-[600]">Settings</h1>
               </div>
             </div>
@@ -1020,11 +1020,11 @@ const SettingsPage = () => {
           <div className="flex inter flex-col w-full px-2 items-start gap-2 relative">
             <div
               onClick={() => handleSelect("general")}
-              className={`flex justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#EDF3FF]" : ""
+              className={`flex justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#F0EFFF]" : ""
                 }`}
             >
               <Settings status={activeSidebarItem === "general"} />
-              <div className={`relative w-fit mt-[-1.00px] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "general" ? "text-black" : "text-[#5A687C] "
+              <div className={`relative w-fit mt-[-1.00px] font-[400] text-[16px] tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "general" ? "text-[#675FFF]" : "text-[#5A687C] "
                 }`}>
                 General Settings
               </div>
@@ -1036,7 +1036,7 @@ const SettingsPage = () => {
                 }`}
             >
               <PlanIcon status={activeSidebarItem === "billing"} />
-              <div className={`relative w-fit mt-[-1.00px] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "billing" ? "text-black" : "text-[#5A687C] "
+              <div className={`relative w-fit mt-[-1.00px] font-[400] text-[16px] tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "billing" ? "text-[#675FFF]" : "text-[#5A687C] "
                 }`}>
                 Plan &amp; Billing
               </div>
@@ -1048,7 +1048,7 @@ const SettingsPage = () => {
                 }`}
             >
               <TeamMemberIcon status={activeSidebarItem === "team"} />
-              <div className={`relative w-fit mt-[-1.00px] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "team" ? "text-black" : "text-[#5A687C] "
+              <div className={`relative w-fit mt-[-1.00px] font-[400] text-[16px] tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "team" ? "text-[#675FFF]" : "text-[#5A687C] "
                 }`}>
                 Team Members
               </div>

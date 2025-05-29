@@ -625,7 +625,7 @@ export default function Calendar() {
                   return (
                     <div
                       key={eventIndex}
-                      className={`${statusStyles.bg} p-2 rounded cursor-pointer w-full absolute z-10`}
+                      className={`${statusStyles.bg} p-2 rounded-l cursor-pointer w-full absolute z-10`}
                       style={{ top: `${topPosition}%` }}
                       onClick={() => {
                         if (event.status !== "planned") {

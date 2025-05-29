@@ -5,6 +5,7 @@ import { setPassword } from '../api/auth';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import logo from '/ecosystem_logo.svg'
+import { PasswordLock } from '../icons/icons';
 
 export default function SetPassword() {
     const [showPasswords, setShowPasswords] = useState({
@@ -97,7 +98,7 @@ export default function SetPassword() {
     };
 
     return (
-        <div className="flex flex-col items-center min-h-screen bg-gray-50 p-3">
+        <div className="flex flex-col items-center overflow-auto h-screen bg-gray-50 p-3">
             <div className="flex items-center gap-2 my-2">
                 <div>
                     <img src={logo} alt="logo" className="w-[47.15px] h-[52px]" />
@@ -114,7 +115,9 @@ export default function SetPassword() {
                         <div className="flex flex-col gap-1.5">
                             <label className="font-medium text-black text-sm leading-5">Password</label>
                             <div className="relative">
-                                <TbLockPassword className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                <div className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                    <PasswordLock />
+                                </div>
                                 <input
                                     type={showPasswords.password ? 'text' : 'password'}
                                     name="password"
@@ -145,7 +148,9 @@ export default function SetPassword() {
                         <div className="flex flex-col gap-1.5">
                             <label className="font-medium text-black text-sm leading-5">Confirm Password</label>
                             <div className="relative">
-                                <TbLockPassword className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                <div className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                    <PasswordLock />
+                                </div>
                                 <input
                                     type={showPasswords.confirmPassword ? 'text' : 'password'}
                                     name="confirmPassword"

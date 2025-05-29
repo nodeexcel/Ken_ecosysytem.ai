@@ -434,7 +434,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
         if (!formData.main_subject.trim()) newErrors.main_subject = "Main subject is required.";
         if (!formData.cta_type) newErrors.cta_type = "CTA type is required.";
         if (formData.cta_type === "book_a_meeting") {
-            if (!formData.calender_choosed) newErrors.calender_choosed = "Calendar type is required.";
+            if (!formData.calender_choosed) newErrors.calender_choosed = "Meeting Link is required.";
         } else if (formData.cta_type === "purchase" || formData.cta_type === "visit_a_page") {
             if (!formData.url.trim()) {
                 newErrors.url = "URL is required.";
@@ -713,8 +713,8 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
             case "book_a_meeting":
                 return (
                     <div>
-                        <label className="block text-sm font-medium mb-1">Calendars</label>
-                        <Dropdown
+                        <label className="block text-sm font-medium mb-1">Meeting Link</label>
+                        {/* <Dropdown
                             name="calender_choosed"
                             options={calendarOptions}
                             value={formData.calender_choosed}
@@ -727,7 +727,8 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                             }
                             }
                             placeholder="Select"
-                        />
+                        /> */}
+                        <input type="text" value={formData.calender_choosed} name='calender_choosed' onChange={handleChange} placeholder="Enter Meeting Link" className={`w-full border ${errors.calender_choosed ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
                         {errors.calender_choosed && <p className='my-1 text-[#FF3B30]'>{errors.calender_choosed}</p>}
                     </div>
                 );
@@ -868,11 +869,11 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
             </div> */}
 
             {/* Modal Overlay */}
-            <div className="w-full py-4 pr-4 flex flex-col justify-center">
+            <div className="w-full pt-4 pb-6 pr-4 flex flex-col justify-center">
                 <h1 onClick={() => {
                     setNewCampaignStatus(false)
                     setIsEdit("")
-                }} className="text-[#5A687C] hover:text-[#5a687cdc] cursor-pointer font-[400] text-[14px]">{`Campaigns > New Campaign`}</h1>
+                }} className="text-[#5A687C] hover:text-[#5a687cdc] cursor-pointer font-[400] text-[14px]">{`Campaigns > `}{isEdit ? `${formData.campaign_title}` : 'New Campaign'}</h1>
                 <h1 className="text-[#1E1E1E] font-[600] text-[24px] mt-2 my-4">{isEdit ? 'Update' : 'Add'} New Campaign</h1>
 
                 <div className="w-full relative overflow-auto">

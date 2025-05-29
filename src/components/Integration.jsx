@@ -13,6 +13,8 @@ import hubspot from '../assets/svg/hubspot.svg'
 import mailchimp from '../assets/svg/mailchimp.svg'
 import click_funnels from '../assets/svg/click-funnels.svg'
 import AdditionalIntegration from './AdditionalIntegrations';
+import { useDispatch } from 'react-redux';
+import { getNavbarData } from '../store/navbarSlice'
 // Define the integrations data
 const integrations = [
   {
@@ -81,12 +83,15 @@ const integrations = [
 const Integration = () => {
   const [firstRender, setFirstRender] = useState(true)
   const [integartionData, setIntegrationData] = useState({})
+  const dispatch = useDispatch();
+
   const handleClick = (data) => {
+    dispatch(getNavbarData("integrations"))
     setFirstRender(false)
     setIntegrationData(data)
   }
   return (
-    <div className='flex flex-col w-full items-start gap-6 "'>
+    <div className={`flex flex-col  ${firstRender ? 'py-4' : 'pb-4'}  pr-4 w-full items-start gap-6 `}>
       {firstRender ? <>
         {/* Header */}
         <header className="flex items-center justify-between w-full ">
@@ -128,7 +133,7 @@ const Integration = () => {
             </div>
           ))}
         </div>
-      </> : <AdditionalIntegration integartionData={integartionData} />}
+      </> : <AdditionalIntegration integartionData={integartionData} setFirstRender={setFirstRender} />}
     </div>
   )
 }

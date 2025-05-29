@@ -95,7 +95,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
             >
                 {isOpen ? <IoClose size={24} /> : <RxHamburgerMenu size={24} />}
             </button>
-            <aside className={`bg-[#FFFFFF] md:max-w-[58px] border-r border-[#E1E4EA] fixed h-full transition-all duration-300 ${isOpen ? 'w-[100px]' : 'w-0 overflow-hidden'} md:w-[5%] flex flex-col justify-between`}>
+            <aside className={`bg-[#FFFFFF] md:w-[58px] border-r border-[#E1E4EA] h-full transition-all duration-300 ${isOpen ? 'w-[100px]' : 'w-0 overflow-hidden'}  flex flex-col justify-between`}>
                 <div className='flex flex-col'>
                     <div className="flex justify-center py-4" onClick={handleHome}>
                         <img src={logo} alt='image' />

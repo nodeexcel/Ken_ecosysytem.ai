@@ -599,7 +599,7 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
   const role = useSelector((state) => state.profile.user.role)
 
   return (
-    <div className="py-2 pr-2 w-full">
+    <div className="py-2 pr-4 w-full">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h1 className="text-[20px] sm:text-[24px] font-semibold">
@@ -645,7 +645,7 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
           </div>
           <h1 className=" mb-2 text-sm font-[400]  text-[#5A687C] " >Available Credits</h1>
           <div className="flex items-center gap-2">
-            <span className="text-[24px] font-[600]  ">100</span>
+            <span className="text-[24px] font-[600]  ">{teamMembersData?.credits}</span>
             <button onClick={() => setShowCreditPopup(true)} className="px-2 rounded-[5px] py-2 text-[14px] flex items-center gap-1 bg-[#335BFB1A] text-[#675FFF] font-[600] ">
               <img src="/src/assets/svg/add.svg" alt="" />
               <span>Add Credits</span>

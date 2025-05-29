@@ -124,7 +124,7 @@ const ContactsPage = () => {
 
 
   return (
-    <div className="flex overflow-auto pr-2 flex-col w-full items-start gap-6 ">
+    <div className="flex overflow-auto pr-4 py-4 flex-col w-full items-start gap-6 ">
       <div className="flex flex-col items-start gap-2.5 w-full">
         <div className="flex items-center justify-between w-full">
           <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
@@ -132,19 +132,19 @@ const ContactsPage = () => {
           </h1>
 
           <div className="flex gap-2.5 items-center">
-            {activeTab !== "lists" && <button className="flex items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#e1e4ea] rounded bg-white">
-              <Download />
-              <span className="font-medium text-text-grey text-base leading-6 text-[#5A687C]">
+            {activeTab !== "lists" && <button className="flex items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#E1E4EA] rounded-[7px] bg-white">
+              <Download color="#5A687C"/>
+              <span className="font-[500] text-[16px] leading-6 text-[#5A687C]">
                 Export
               </span>
             </button>}
 
-            {activeTab !== "lists" && <button onClick={() => setOpenImport(true)} className="flex items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5f58e8] rounded bg-white">
-              <Upload className="text-[#675FFF]" />
-              <span className="font-medium text-base leading-6 text-[#675FFF]">Import</span>
+            {activeTab !== "lists" && <button onClick={() => setOpenImport(true)} className="flex items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5F58E8] rounded-[7px] bg-white">
+              <Upload color="#675FFF" />
+              <span className="font-[500] text-[16px] leading-6 text-[#675FFF]">Import</span>
             </button>}
 
-            <button onClick={activeTab === "lists" ? () => setOpen(true) : undefined} className="flex items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded text-white">
+            <button onClick={activeTab === "lists" ? () => setOpen(true) : undefined} className="flex items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
               <span className="font-medium text-base leading-6">
                 {activeTab === "lists" ? "Create List" : "Add Contact"}
               </span>
@@ -158,7 +158,7 @@ const ContactsPage = () => {
               onClick={() => setActiveTab("all-contacts")}
               className={`inline-flex items-center justify-center gap-1 p-2.5 border-b-2 ${activeTab === "all-contacts"
                 ? "border-[#675fff] text-[#675FFF]"
-                : "border-transparent text-text-grey"
+                : "border-transparent text-[#5A687C]"
                 }`}
             >
               All Contacts
@@ -167,7 +167,7 @@ const ContactsPage = () => {
               onClick={() => setActiveTab("lists")}
               className={`inline-flex items-center justify-center gap-1 p-2.5 border-b-2 ${activeTab === "lists"
                 ? "border-[#675fff] text-[#675FFF]"
-                : "border-transparent text-text-grey"
+                : "border-transparent text-[#5A687C]"
                 }`}
             >
               Lists
@@ -210,15 +210,15 @@ const ContactsPage = () => {
               <thead>
                 <tr className="text-left text-[#5A687C]">
                   {tableHeaders.map((header, index) => (
-                    <th key={index} className="px-6 py-3 text-[16px] font-medium whitespace-nowrap">
+                    <th key={index} className="px-6 py-3 text-[16px] font-[400] whitespace-nowrap">
                       {header.name}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="bg-white shadow-sm">
+              <tbody className="bg-white border border-[#E1E4EA] rounded-[16px]">
                 {contacts.map((contact, index) => (
-                  <tr key={index} className="">
+                  <tr key={index} className={`${contacts.length-1!==index && 'border border-[#E1E4EA] px-4'}`}>
                     <td className="px-6 py-4 text-sm text-gray-800 font-semibold whitespace-nowrap">
                       {contact.name}
                     </td>
@@ -232,9 +232,9 @@ const ContactsPage = () => {
                       {contact.dateCreated}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-700">
-                      <div className="flex items-center justify-center gap-3.5">
-                        <SquarePen />
-                        <Trash2 className="text-red-500" />
+                      <div className="flex items-center gap-3.5">
+                        <Edit />
+                        <Delete className="text-red-500" />
                       </div>
                     </td>
                   </tr>
@@ -268,20 +268,20 @@ const ContactsPage = () => {
           <div className="overflow-auto w-full rounded-2xl">
             <table className="w-full rounded-2xl">
               <thead>
-                <tr className="text-left text-[#5a687c] text-[16px]">
-                  <th className="px-6 py-3 font-medium whitespace-nowrap">List Name</th>
-                  <th className="px-6 py-3 font-medium whitespace-nowrap">Active Contacts</th>
-                  <th className="px-6 py-3 font-medium whitespace-nowrap">Channel</th>
-                  <th className="px-6 py-3 font-medium whitespace-nowrap">Created Date</th>
-                  <th className="px-6 py-3 font-medium whitespace-nowrap">Actions</th>
+                <tr className="text-left text-[#5A687C] text-[16px] font-[400]">
+                  <th className="px-6 py-3 font-[400] whitespace-nowrap">List Name</th>
+                  <th className="px-6 py-3 font-[400] whitespace-nowrap">Active Contacts</th>
+                  <th className="px-6 py-3 font-[400] whitespace-nowrap">Channel</th>
+                  <th className="px-6 py-3 font-[400] whitespace-nowrap">Created Date</th>
+                  <th className="px-6 py-3 font-[400] whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white shadow-sm">
+              <tbody className="bg-white border border-[#E1E4EA] rounded-[16px]">
                 {contactLists.map((list, index) => (
-                  <tr key={list.name} className=" text-sm text-[#1e1e1e]">
-                    <td className="px-6 py-4 font-semibold whitespace-nowrap">{list.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{list.activeContacts.toLocaleString()}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                  <tr key={list.name} className={`${contacts.length-1!==index && 'border border-[#E1E4EA] px-4 text-[16px]'}`}>
+                    <td className="px-6 py-4 font-[600] whitespace-nowrap">{list.name}</td>
+                    <td className="px-6 py-4 font-[400] text-[#5A687C] whitespace-nowrap">{list.activeContacts.toLocaleString()}</td>
+                    <td className="px-6 py-4 font-[400] whitespace-nowrap">
                       {list.channel === "Email" ? (
                         <div className="flex items-center gap-1.5 bg-[#fff5e6] text-[#ff9500] px-3 py-1 rounded-md w-fit">
                           <Mail className="h-4 w-4" />
@@ -294,7 +294,7 @@ const ContactsPage = () => {
                         </div>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-[#5a687c] whitespace-nowrap">{list.createdDate}</td>
+                    <td className="px-6 py-4 font-[400] text-[#5A687C] whitespace-nowrap">{list.createdDate}</td>
                     <td className="px-6 py-4">
                       <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
                         <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
@@ -386,7 +386,7 @@ const ContactsPage = () => {
                     value={formData?.description}
                     rows={4}
                     onChange={handleChange}
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none resize-none"
                   />
                 </div>
                 {formErrors.description && <p classdescription="text-sm text-red-500 mt-1">{formErrors.name}</p>}
@@ -397,12 +397,11 @@ const ContactsPage = () => {
                   value={formData?.channel}
                   name="channel"
                   onChange={handleChange}
-                  className="w-full bg-white px-4 py-2 rounded-lg "
+                  className="w-full bg-white px-4 py-2 text-[#5A687C] rounded-lg "
                 >
                   <option value="" disabled>Channel</option>
                   <option value="email">Email</option>
-                  <option value="Member">Member</option>
-                  <option value="Guest">Guest</option>
+                  <option value="phone">Phone</option>
                 </select>
               </div>
             </div>

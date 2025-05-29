@@ -7,7 +7,7 @@ import Conversation from '../../components/Conversation'
 import Analytics from '../../components/Analytics'
 import DemoChat from '../../components/DemoChat'
 import dashboardProfile from '../../assets/svg/dashboard_profile.svg'
-import { AnalyticsIcon, ConversationIcon, TeamMemberIcon } from '../../icons/icons'
+import { AnalyticsIcon, ConversationIcon, LeftArrow, TeamMemberIcon } from '../../icons/icons'
 import sethImg from "../../assets/svg/seth_logo.svg"
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
@@ -44,15 +44,15 @@ function AppointmentSetter() {
                 <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
-                            <div className="flex gap-2 items-center h-[57px]">
-                                <MdOutlineKeyboardArrowLeft size={25} />
+                            <div className="flex gap-4 pl-5 items-center h-[57px]">
+                                <LeftArrow />
                                 <h1 className="text-[20px] font-[600]">Appointment Setter</h1>
                             </div>
                         </div>
                         <hr className='text-[#E1E4EA]' />
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-2">
-                        <div className="bg-[#F0EFFF]  w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
+                        <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
                             <div className="w-[35px] h-[45px] flex justify-center items-center">
                                 <img src={sethImg} alt={"seth"} className="object-fit" />
                             </div>
@@ -64,11 +64,11 @@ function AppointmentSetter() {
                         {sideMenuList.map((e, i) => <div
                             key={i}
                             onClick={() => setActiveSidebarItem(e.path)}
-                            className={`flex justify-center md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#EDF3FF]" : ""
+                            className={`flex justify-center md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#F0EFFF]" : ""
                                 }`}
                         >
                             {e.icon}
-                            <div className={`relative w-fit mt-[-1.00px] font-normal text-sm tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === `${e.path}` ? "text-black" : "text-[#5A687C] "
+                            <div className={`relative w-fit mt-[-1.00px] font-[400] text-[16px] tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === `${e.path}` ? "text-[#675FFF]" : "text-[#5A687C] "
                                 }`}>
                                 {e.label}
                             </div>
@@ -77,7 +77,7 @@ function AppointmentSetter() {
                 </div>
 
                 {/* Main Content */}
-                <div className="w-full overflow-x-hidden">
+                <div className="w-full py-3 pr-4 overflow-x-hidden">
                     {renderMainContent()}
                 </div>
             </div>

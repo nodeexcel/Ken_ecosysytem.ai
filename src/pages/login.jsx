@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { emailState, loginSuccess } from "../store/authSlice";
 import logo from '/ecosystem_logo.svg'
 import { X } from "lucide-react";
+import { PasswordLock } from "../icons/icons";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -383,7 +384,9 @@ export default function Login() {
             <div>
                 <label className="block text-[16px] font-medium text-[#292D32] mb-1">Password</label>
                 <div className={`flex items-center border rounded-[8px] px-4 py-3 ${errors.password ? "border-red-500" : "border-gray-300"}`}>
-                    <TbLockPassword className="text-gray-400 mr-2 text-lg" />
+                    <div className="pr-2">
+                        <PasswordLock />
+                    </div>
                     <input
                         type={showPassword ? "text" : "password"}
                         placeholder="••••••••"
@@ -435,7 +438,7 @@ export default function Login() {
 
 
     return (
-        <div className="flex flex-col items-center min-h-screen bg-[#F6F7F9] p-3">
+        <div className="flex flex-col overflow-auto items-center h-screen bg-[#F6F7F9] p-3">
             <div className="flex items-center gap-2 my-2">
                 <div>
                     <img src={logo} alt="logo" className="w-[47.15px] h-[52px]" />

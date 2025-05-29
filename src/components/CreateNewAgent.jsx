@@ -513,7 +513,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
     return (
         <>
-            <div className="w-full p-4 flex flex-col gap-4 ">
+            <div className="w-full py-4 pr-4 flex flex-col gap-4 ">
                 <div className="flex justify-between items-center">
                     <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">Create New Agent</h1>
                     <div className='flex gap-2'>

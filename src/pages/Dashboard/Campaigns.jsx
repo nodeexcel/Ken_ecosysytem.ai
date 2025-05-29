@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CalenderIcon, FourBox, PhoneCampaign } from "../../icons/icons";
+import { CalenderIcon, FourBox, LeftArrow, PhoneCampaign } from "../../icons/icons";
 import CampaignDashboard from "../../components/CampaignDashboard";
 import Calendar from "../../components/Calendar";
 import dashboardProfile from '../../assets/svg/dashboard_profile.svg'
@@ -39,15 +39,15 @@ const Campaigns = () => {
                 <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
-                            <div className="flex gap-2 items-center h-[57px]">
-                                <MdOutlineKeyboardArrowLeft size={25} />
+                            <div className="flex gap-4 pl-5 items-center h-[57px]">
+                                <LeftArrow/>
                                 <h1 className="text-[20px] font-[600]">Emailing</h1>
                             </div>
                         </div>
                         <hr className='text-[#E1E4EA]' />
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-2">
-                        <div className="bg-[#F0EFFF] w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
+                        <div className="bg-[#F7F7FF] border border-[#E9E8FF] w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
                             <div className="w-[35px] h-[45px] flex justify-center items-center">
                                 <img src={emileImg} alt={"emile"} className="object-fit" />
                             </div>
@@ -63,19 +63,19 @@ const Campaigns = () => {
                                     setActiveSidebarItem(item.path)
                                 }}
                                 className={`flex items-center gap-2 px-3 py-2 rounded-md cursor-pointer w-full ${activeSidebarItem === item.path
-                                    ? "bg-[#EDF3FF] text-black"
-                                    : "text-gray-600 hover:bg-gray-100"
+                                    ? "bg-[#F0EFFF] text-[#675FFF]"
+                                    : "text-[#5A687C]"
                                     }`}
                             >
                                 {item.icon}
-                                <span className="text-[14px] font-[400]">{item.label}</span>
+                                <span className="text-[16px] font-[400]">{item.label}</span>
                             </div>
                         ))}
                     </div>
                 </div>
 
                 {/* Main Content */}
-                <div className="w-full overflow-x-hidden">{renderMainContent()}</div>
+                <div className="w-full py-3 pr-4 overflow-x-hidden">{renderMainContent()}</div>
             </div>
         </div>
     );

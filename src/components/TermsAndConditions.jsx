@@ -121,7 +121,7 @@ const staticData = {
 function TermsAndConditions() {
     const navigate = useNavigate()
     return (
-        <div className="h-full w-full bg-[#F6F7F9]">
+        <div className="h-full overflow-auto w-full bg-[#F6F7F9]">
             <div className='flex justify-between p-4 items-center bg-[#E7E6F9]'>
                 <div className="flex justify-center items-center gap-3">
                     <div>

@@ -25,7 +25,7 @@ const staticData = [
 
 const NoData = ({ setOpen }) => {
   return (
-    <div className="mt-3 max-w-[648px]">
+    <div className="mt-3">
       <div className="w-full gap-3 min-h-[360px] flex flex-col justify-center items-center border border-solid border-[#e1e4ea] bg-white rounded-2xl">
         <div onClick={setOpen}>
           <img src={nodata} alt="nodata" />
@@ -208,7 +208,7 @@ const Knowledge = () => {
       case "website":
         return (
           <>
-            {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.website?.length > 0 ? <div className="mt-3 max-w-[648px]">
+            {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.website?.length > 0 ? <div className="mt-3">
               <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
                 {knowledgeData?.website?.length > 0 && knowledgeData?.website.map((e, i) => <div key={e.id} className="bg-[#f7f8fc] p-4 rounded-xl flex justify-between items-center gap-2">
                   <div className="flex  items-center gap-2">
@@ -260,7 +260,7 @@ const Knowledge = () => {
       case "snippets":
         return (
           <>
-            {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.snippets?.length > 0 ? <div className="mt-3 max-w-[648px]">
+            {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.snippets?.length > 0 ? <div className="mt-3">
               <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
                 {knowledgeData?.snippets?.length > 0 && knowledgeData?.snippets.map((e, i) => <div key={e.id} className="bg-[#f7f8fc] p-4 rounded-xl flex justify-between items-center gap-2">
                   <div className="flex  items-center gap-2">
@@ -310,7 +310,7 @@ const Knowledge = () => {
       default:
         return (
           <>
-            {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.files?.length > 0 ? <div className="mt-3 max-w-[648px]">
+            {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.files?.length > 0 ? <div className="mt-3">
               <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
                 {knowledgeData?.files?.length > 0 && knowledgeData?.files.map((e, i) => <div key={e.id} className="bg-[#f7f8fc] p-4 rounded-xl flex justify-between items-center gap-2">
                   <div className="flex  items-center gap-2">
@@ -364,14 +364,14 @@ const Knowledge = () => {
 
 
   return (
-    <div className="flex pr-2 flex-col w-full items-start gap-6 ">
+    <div className="flex pr-4 py-4 flex-col w-full items-start gap-6 ">
       <div className="flex items-center justify-between w-full">
         <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
           Knowledge Base
         </h1>
         <button onClick={() => setOpen(true)} className="flex items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded text-white">
           <span className="font-medium text-base leading-6">
-            Add Info Manually
+            Add Snippet
           </span>
         </button>
       </div>
