@@ -23,7 +23,7 @@ const employees = [
   {
     name: "Tara",
     role: "COO",
-    gradient: "bg-gradient-to-br from-[#D1BEF6] to-[#D1BEF6]",
+    gradient: "bg-gradient-to-br from-[#CEBFFD] to-[#CEBFFD]",
     path: "",
     label: "",
     image: taraImg,
@@ -31,63 +31,63 @@ const employees = [
   {
     name: "Constance",
     role: "Content Creation",
-    gradient: "bg-gradient-to-br from-[#FFDCF1] to-[#FFDCF1]",
+    gradient: "bg-gradient-to-br from-[#F8DDFF] to-[#F8DDFF]",
     path: "",
     label: "",
     image: constanceImg
   },
   {
     name: "Tom",
-    role: "Phone",
-    gradient: "bg-gradient-to-br from-[#CFE9F5] to-[#CFE9F5]",
+    role: "Phone Outreach",
+    gradient: "bg-gradient-to-br from-[#DBE5FF] to-[#DBE5FF]",
     path: "/dashboard/phone",
     label: "Tom & Rebecca, Phone",
     image: tomImg
   },
   {
-    name: "Rebecca",
-    role: "Receptionist",
-    gradient: "bg-gradient-to-br from-[#C9FEEA] to-[#C9FEEA]",
-    path: "",
-    label: "",
-    image: rebeccaImg
-  },
-  {
     name: "Seth",
     role: "Appointment Setter",
-    gradient: "bg-gradient-to-br from-[#C4F9F6] to-[#C4F9F6]",
+    gradient: "bg-gradient-to-br from-[#FFE4C5] to-[#FFE4C5]",
     path: "/dashboard/appointment-setter",
     label: "Seth, Appointment Setter",
     image: sethImg
   },
   {
-    name: "Assia",
-    role: "HR",
-    gradient: "bg-gradient-to-br from-[#FDF8D4] to-[#FDF8D4]",
-    path: "",
-    label: "",
-    image: assiaImg
-  },
-  {
-    name: "Emile",
-    role: "Emailing",
-    gradient: "bg-gradient-to-br from-[#D1BEF6] to-[#D1BEF6]",
-    path: "/dashboard/campaigns",
-    label: "Emailing",
-    image: emileImg
-  },
-  {
     name: "Calina",
     role: "Customer Support",
-    gradient: "bg-gradient-to-br from-[#FFDCF1] to-[#FFDCF1]",
+    gradient: "bg-gradient-to-br from-[#E3F6ED] to-[#E3F6ED]",
     path: "",
     label: "",
     image: calinaImg
   },
   {
+    name: "Rebecca",
+    role: "Receptionist",
+    gradient: "bg-gradient-to-br from-[#DBE5FF] to-[#DBE5FF]",
+    path: "",
+    label: "",
+    image: rebeccaImg
+  },
+  {
+    name: "Emile",
+    role: "Emailing",
+    gradient: "bg-gradient-to-br from-[#CEBFFD] to-[#CEBFFD]",
+    path: "/dashboard/campaigns",
+    label: "Emailing",
+    image: emileImg
+  },
+  {
+    name: "Assia",
+    role: "HR",
+    gradient: "bg-gradient-to-br from-[#FFE4C5] to-[#FFE4C5]",
+    path: "",
+    label: "",
+    image: assiaImg
+  },
+  {
     name: "Finn",
     role: "Accounting",
-    gradient: "bg-gradient-to-br from-[#C8FEE6] to-[#C8FEE6]",
+    gradient: "bg-gradient-to-br from-[#E3F6ED] to-[#E3F6ED]",
     path: "",
     label: "",
     image: finnImg
@@ -154,7 +154,7 @@ const Agents = () => {
       </div>
 
       {/* Responsive Centered Grid */}
-      <div className="flex justify-between w-full py-5 px-2">
+      <div className="flex justify-between max-w-[1289px] mx-auto py-5 px-2">
         <div className="flex flex-wrap gap-4 justify-center items-center">
           {employees.map((employee, index) => (
             <div

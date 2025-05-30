@@ -1,23 +1,61 @@
 import { Contact, Download, Mail, Phone, SquarePen, Trash2, Upload, X } from "lucide-react";
-import React, { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi";
 import { Delete, Duplicate, Edit, Notes, ThreeDots, UploadIcon } from "../icons/icons";
+import { addContactsToList, createContactList, getContactList, uploadContacts } from "../api/brainai";
+import { DateFormat } from "../utils/TimeFormat";
 
 const ContactsPage = () => {
   const [activeTab, setActiveTab] = useState("all-contacts");
   const [open, setOpen] = useState(false);
   const [openImport, setOpenImport] = useState(false);
-  const [formData, setFormData] = useState({})
+  const [formData, setFormData] = useState({ listName: '', description: '', channel: '' })
   const [formErrors, setFormErrors] = useState({})
   const [loading, setLoading] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [channelSelect, setChannelSelect] = useState("all")
   const [statusSelect, setStatusSelect] = useState("any");
-  const [createList, setCreateList] = useState(false)
+  const [createList, setCreateList] = useState(false);
+  const [fileUploadError, setFileUploadError] = useState("")
 
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
+  const [formCreateList, setFormCreateList] = useState({ listName: '', contactsId: [], channel: '' });
+  const [createListErrors, setCreateListErrors] = useState({});
+  const [allContacts, setAllContacts] = useState([]);
+  const [loadingStatus, setLoadingStatus] = useState(true);
+  const [allContactsMessage, setAllContactsMessage] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [currentContacts, setCurrentContacts] = useState([])
+
+  const totalPages = Math.ceil(allContacts.length / rowsPerPage);
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+
+
+  const handleRowsPerPageChange = (e) => {
+    setRowsPerPage(Number(e.target.value));
+    setCurrentPage(1);
+  };
+
+
+  useEffect(() => {
+    getAllContacts()
+  }, [])
+
+  useEffect(() => {
+    if (currentContacts?.length > 0) {
+      setLoadingStatus(false)
+    }
+  }, [currentContacts])
+
+  useEffect(() => {
+    if (allContacts?.length > 0) {
+      setCurrentContacts(allContacts.slice(startIndex, endIndex))
+    }
+  }, [startIndex, endIndex, allContacts])
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -25,6 +63,7 @@ const ContactsPage = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
+    setFileUploadError("")
     if (file) {
       setSelectedFile(file);
       console.log('Selected file:', file);
@@ -42,6 +81,7 @@ const ContactsPage = () => {
 
   const handleDrop = (e) => {
     e.preventDefault();
+    setFileUploadError("")
     setDragActive(false);
     const file = e.dataTransfer.files?.[0];
     if (file) {
@@ -107,54 +147,183 @@ const ContactsPage = () => {
 
   const selectedStatus = statusOptions.find((a) => a.key == statusSelect)?.label;
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formCreateList.listName.trim()) newErrors.listName = "List name is required.";
+    if (!formCreateList.channel) newErrors.channel = "Channel is required.";
+
+    setCreateListErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+
+  const validateListForm = () => {
+    const newErrors = {};
+
+    if (!formData.listName.trim()) newErrors.listName = "List name is required.";
+    if (!formData.description.trim()) newErrors.description = "Description is required.";
+    if (!formData.channel) newErrors.channel = "Channel is required.";
+
+    setFormErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev, [name]: value
     }))
+    setFormErrors((prev) => ({
+      ...prev, [name]: ''
+    }))
   }
 
-  const handleSubmit = () => {
-    console.log(formData)
+  const handleCreateListChange = (e) => {
+    const { name, value } = e.target;
+    setFormCreateList((prev) => ({
+      ...prev, [name]: value
+    }))
+    setCreateListErrors((prev) => ({
+      ...prev, [name]: ''
+    }))
   }
+
+  const getAllContacts = async () => {
+    setAllContactsMessage("")
+    try {
+      const response = await getContactList();
+      if (response?.status === 200) {
+        console.log(response?.data)
+        setAllContacts(...allContacts, response?.data?.contacts)
+        if (response?.data?.contacts?.length == 0) {
+          setLoadingStatus(false)
+          setAllContactsMessage("No Data Found")
+          setAllContacts([])
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleListSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
+    setLoading(true)
+    try {
+      const response = await addContactsToList(formCreateList);
+      if (response?.status === 200) {
+        setCreateList(false)
+        setFormCreateList({ listName: '', contactsId: [], channel: '' })
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+
+  const handleSubmit = async () => {
+    if (!validateListForm()) {
+      return;
+    }
+    setLoading(true)
+    try {
+      const response = await createContactList(formData);
+      if (response?.status === 200) {
+        setOpen(false)
+      } else {
+        console.log(response)
+        setFormErrors((prev) => ({ ...prev, listName: response?.response?.data?.message }))
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleDownload = async () => {
+    const response = await fetch('../assets/file/sample_file.svg');
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'sample_file';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
 
   const handleDropdownClick = (index) => {
     setActiveDropdown(activeDropdown === index ? null : index);
   };
 
-  const [selectedContacts, setSelectedContacts] = useState([]);
-
-  const allSelected = selectedContacts.length === contacts.length && contacts.length > 0;
+  const allSelected = formCreateList.contactsId.length === allContacts.length && allContacts.length > 0;
 
   const toggleSelectAll = () => {
     if (allSelected) {
-      setSelectedContacts([]);
+      setFormCreateList((prev) => ({ ...prev, contactsId: [] }));
     } else {
-      setSelectedContacts(contacts.map((details) => details.email));
+      setFormCreateList((prev) => ({
+        ...prev, contactsId: allContacts.map((details) => details.id)
+      }))
     }
   };
 
-  const toggleSelectOne = (email) => {
-    if (selectedContacts.includes(email)) {
-      setSelectedContacts(selectedContacts.filter(i => i !== email));
+  const toggleSelectOne = (id) => {
+    if (formCreateList.contactsId.includes(id)) {
+      setFormCreateList((prev) => ({
+        ...prev, contactsId: formCreateList.contactsId.filter(i => i !== id)
+      }))
     } else {
-      setSelectedContacts([...selectedContacts, email]);
+      setFormCreateList((prev) => ({
+        ...prev, contactsId: [...formCreateList.contactsId, id]
+      }))
     }
   };
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const totalPages = Math.ceil(contacts.length / rowsPerPage);
-  const startIndex = (currentPage - 1) * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-  const currentContacts = contacts.slice(startIndex, endIndex);
+  const handleUploadFile = async () => {
+    console.log(selectedFile)
+    if (selectedFile == null) {
+      setFileUploadError("File is required")
+      return
+    }
+    setLoading(true)
+    try {
+      const form = new FormData();
+      form.append("file", selectedFile);
+      const response = await uploadContacts(form)
+      if (response?.status === 200) {
+        setOpenImport(false)
+        getAllContacts()
+      } else {
+        console.log(response)
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
-  const handleRowsPerPageChange = (e) => {
-    setRowsPerPage(Number(e.target.value));
-    setCurrentPage(1);
-  };
+  const handleAddToContactsList = async () => {
+    try {
+      const response = await addContactsToList(formCreateList)
+      if (response?.status === 200) {
+        setCreateList(true)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 
   return (
@@ -237,7 +406,7 @@ const ContactsPage = () => {
                   className="w-full pl-10 pr-3.5 pt-[7px] pb-[6px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg"
                 />
               </div>
-              {activeTab !== "lists" && <button disabled={selectedContacts?.length === 0} onClick={() => setCreateList(true)} className="flex items-center gap-2.5 px-5 py-[6px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
+              {activeTab !== "lists" && <button disabled={formCreateList.contactsId?.length === 0} onClick={handleAddToContactsList} className="flex items-center gap-2.5 px-5 py-[6px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
                 <span className="font-medium text-base leading-6">
                   Create List
                 </span>
@@ -270,44 +439,45 @@ const ContactsPage = () => {
                 </tr>
               </thead>
               <tbody className="bg-white border border-[#E1E4EA] rounded-[16px]">
-                {currentContacts.map((contact, index) => (
-                  <tr key={index} className={`${contacts.length - 1 !== index && 'border border-[#E1E4EA] px-4'}`}>
-                    <td className="px-6 py-4 text-sm text-gray-800 font-semibold whitespace-nowrap">
-                      <div className="flex items-center gap-2">
-                        <label class="checkbox-container">
-                          <input
-                            type="checkbox"
-                            checked={selectedContacts.includes(contact.email)}
-                            onChange={() => toggleSelectOne(contact.email)}
-                          />
-                          <span class="checkmark"></span>
-                        </label>
-                        {contact.name}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
-                      {contact.email}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
-                      {contact.phone}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
-                      {contact.dateCreated}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      <div className="flex items-center gap-3.5">
-                        <Edit />
-                        <Delete className="text-red-500" />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                {loadingStatus ? <tr className='h-34'><td ></td><td ></td><td><span className='loader' /></td></tr> : allContactsMessage ? <tr className='h-34'><td></td><td ></td><td>{allContactsMessage}</td></tr> : <>
+                  {currentContacts.map((contact, index) => (
+                    <tr key={index} className={`${contacts.length - 1 !== index && 'border border-[#E1E4EA] px-4'}`}>
+                      <td className="px-6 py-4 text-sm text-gray-800 font-semibold whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <label class="checkbox-container">
+                            <input
+                              type="checkbox"
+                              checked={formCreateList.contactsId.includes(contact.id)}
+                              onChange={() => toggleSelectOne(contact.id)}
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+                          {contact?.firstName}{" "}{contact?.lastName}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
+                        {contact?.email}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
+                        {contact?.phone}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
+                        {DateFormat(contact?.created_at)}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        <div className="flex items-center gap-3.5">
+                          <Edit />
+                          <Delete className="text-red-500" />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}</>}
               </tbody>
             </table>
             <div className="flex justify-between items-center mt-4 px-4 flex-wrap gap-3">
               <div className="flex items-center gap-2 text-[16px] text-[#5A687C]">
                 <div>
-                  Showing {startIndex + 1} - {Math.min(endIndex, contacts.length)} of {contacts.length}
+                  Showing {startIndex + 1} - {Math.min(endIndex, allContacts.length)} of {allContacts.length}
                 </div>
                 |
                 <span>Rows per page:</span>
@@ -332,18 +502,47 @@ const ContactsPage = () => {
                   <FiChevronLeft />
                 </button>
 
-                {Array.from({ length: totalPages }, (_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentPage(index + 1)}
-                    className={`h-[32px] w-[32px] flex justify-center items-center rounded-md text-[16px] border ${currentPage === index + 1
-                      ? 'bg-[#675FFF] text-white'
-                      : 'bg-white text-[#5A687C] border-[#E1E4EA]'
-                      }`}
-                  >
-                    {index + 1}
-                  </button>
-                ))}
+                {(() => {
+                  const buttons = [];
+                  const visiblePages = 5;
+
+                  if (totalPages <= visiblePages) {
+                    for (let i = 1; i <= totalPages; i++) {
+                      buttons.push(i);
+                    }
+                  } else {
+                    buttons.push(1);
+                    const left = currentPage - 1;
+                    const right = currentPage + 1;
+                    if (currentPage > 3) {
+                      buttons.push("...");
+                    }
+                    for (let i = Math.max(2, left); i <= Math.min(totalPages - 1, right); i++) {
+                      buttons.push(i);
+                    }
+                    if (currentPage < totalPages - 2) {
+                      buttons.push("...");
+                    }
+                    buttons.push(totalPages);
+                  }
+                  return buttons.map((page, index) =>
+                    page === "..." ? (
+                      <span key={`ellipsis-${index}`} className="mx-1 text-gray-500">...</span>
+                    ) : (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`h-[32px] w-[32px] flex justify-center items-center rounded-md text-[16px] border ${currentPage === page
+                          ? 'bg-[#675FFF] text-white'
+                          : 'bg-white text-[#5A687C] border-[#E1E4EA]'
+                          }`}
+                      >
+                        {page}
+                      </button>
+                    )
+                  );
+                })()}
+
 
                 <button
                   onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
@@ -463,9 +662,13 @@ const ContactsPage = () => {
 
       {open && (
         <div className=" fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
-          <div className="bg-white max-h-[547px] flex flex-col gap-3 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
+          <div className="bg-white max-h-[547px] overflow-auto flex flex-col gap-3 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
             <button
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                setOpen(false)
+                setFormData({ listName: '', description: '', channel: '' })
+                setFormErrors({})
+              }}
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
             >
               <X className="w-5 h-5" />
@@ -476,22 +679,22 @@ const ContactsPage = () => {
             <div className="flex flex-col gap-2">
               <div>
                 <label className="block text-[14px] font-medium text-[#292D32] mb-1">Name</label>
-                <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
+                <div className={`flex items-center border ${formData.listName ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-3`}>
                   <input
                     type="text"
-                    name="name"
+                    name="listName"
                     placeholder="e.g. Monthly Newsletter, Sales Leads, etc."
-                    value={formData?.name}
+                    value={formData?.listName}
                     onChange={handleChange}
                     className="w-full focus:outline-none"
                   />
                 </div>
                 <p className="text-[12px] pt-2 text-[#5A687C] font-[400]">List names are visible to contacts</p>
               </div>
-              {formErrors.name && <p className="text-sm text-red-500 mt-1">{formErrors.name}</p>}
+              {formErrors.listName && <p className="text-sm text-red-500">{formErrors.listName}</p>}
               <div>
                 <label className="block text-[14px] font-medium text-[#292D32] mb-1">List Description</label>
-                <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
+                <div className={`flex items-center border ${formErrors.description ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-3`}>
                   <textarea
                     type="text"
                     name="description"
@@ -502,26 +705,30 @@ const ContactsPage = () => {
                     className="w-full focus:outline-none resize-none"
                   />
                 </div>
-                {formErrors.description && <p classdescription="text-sm text-red-500 mt-1">{formErrors.name}</p>}
+                {formErrors.description && <p className="text-sm text-red-500 mt-1">{formErrors.description}</p>}
               </div>
               <label className="block mt-2 text-[14px] font-medium text-[#292D32]">Channel</label>
-              <div className="w-full flex items-center border border-gray-300 rounded-lg pb-1">
+              <div className={`w-full flex items-center border ${formErrors.channel ? 'border-red-500' : 'border-gray-300'} rounded-lg pb-1`}>
                 <select
                   value={formData?.channel}
                   name="channel"
                   onChange={handleChange}
                   className="w-full bg-white px-4 py-2 text-[#5A687C] rounded-lg "
                 >
-                  <option value="" disabled>Channel</option>
+                  <option value="" disabled>Select</option>
                   <option value="email">Email</option>
                   <option value="phone">Phone</option>
                 </select>
               </div>
+              {formErrors.channel && <p className="text-sm text-red-500">{formErrors.channel}</p>}
             </div>
-            {formErrors.error && <p className="text-sm text-red-500 mt-1">{formErrors.error}</p>}
 
             <div className="flex gap-2 mt-3">
-              <button onClick={() => setOpen(false)} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+              <button onClick={() => {
+                setOpen(false)
+                setFormData({ listName: '', description: '', channel: '' })
+                setFormErrors({})
+              }} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                 Cancel
               </button>
               <button onClick={handleSubmit} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
@@ -533,9 +740,13 @@ const ContactsPage = () => {
       )}
       {createList && (
         <div className=" fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
-          <div className="bg-white max-h-[547px] flex flex-col gap-3 w-full max-w-[510px] rounded-2xl shadow-xl p-6 relative">
+          <div className="bg-white max-h-[547px] overflow-auto flex flex-col gap-3 w-full max-w-[510px] rounded-2xl shadow-xl p-6 relative">
             <button
-              onClick={() => setCreateList(false)}
+              onClick={() => {
+                setCreateList(false)
+                setFormCreateList({ listName: "", channel: '', contactsId: [] })
+                setCreateListErrors({})
+              }}
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
             >
               <X className="w-5 h-5" />
@@ -545,31 +756,53 @@ const ContactsPage = () => {
             <div className="flex flex-col gap-5">
               <div className="flex flex-col gap-1">
                 <h2 className="text-[#1E1E1E] font-[600] text-[20px]">Create List</h2>
-                <h2 className="text-[#5A687C] font-[400] text-[16px]">{selectedContacts?.length} Contact Selected</h2>
+                <h2 className="text-[#5A687C] font-[400] text-[16px]">{formCreateList.contactsId?.length} Contact Selected</h2>
               </div>
 
               <div className="flex flex-col gap-2">
                 <div>
                   <label className="block text-[14px] font-medium text-[#292D32] mb-1">List Name</label>
-                  <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
+                  <div className={`flex items-center border ${createListErrors.listName ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-3`}>
                     <input
                       type="text"
-                      name="list_name"
+                      name="listName"
                       placeholder="Enter list name"
-                      value={formData?.list_name}
-                      onChange={handleChange}
+                      value={formCreateList?.listName}
+                      onChange={handleCreateListChange}
                       className="w-full focus:outline-none"
                     />
                   </div>
+                  {createListErrors.listName && <p className="text-sm text-red-500 mt-1">{createListErrors.listName}</p>}
                 </div>
-                {formErrors.list_name && <p classlist_name="text-sm text-red-500 mt-1">{formErrors.name}</p>}
+                <div>
+                  <label className="block mt-2 text-[14px] font-medium text-[#292D32]">Channel</label>
+                  <div className={`w-full flex items-center border ${createListErrors.channel ? 'border-red-500' : 'border-gray-300'} rounded-lg pb-1`}>
+                    <select
+                      value={formCreateList?.channel}
+                      name="channel"
+                      onChange={handleCreateListChange}
+                      className="w-full bg-white px-4 py-2 text-[#5A687C] rounded-lg "
+                    >
+                      <option value="" disabled>Select</option>
+                      <option value="email">Email</option>
+                      <option value="phone">Phone</option>
+                    </select>
+                  </div>
+                  {createListErrors.channel && <p className="text-sm text-red-500">{createListErrors.channel}</p>}
+                </div>
               </div>
 
               <div className="flex gap-2 mt-3">
-                <button onClick={() => setCreateList(false)} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                <button onClick={() => {
+                  {
+                    setCreateList(false)
+                    setFormCreateList({ listName: "", channel: '', contactsId: [] })
+                    setCreateListErrors({})
+                  }
+                }} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                   Cancel
                 </button>
-                <button className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
+                <button onClick={handleListSubmit} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
                   {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save"}
                 </button>
               </div>
@@ -583,14 +816,17 @@ const ContactsPage = () => {
         <div className=" fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
           <div className="bg-white max-h-[547px] flex flex-col gap-3 w-full max-w-3xl rounded-2xl shadow-xl p-6 relative">
             <button
-              onClick={() => setOpenImport(false)}
+              onClick={() => {
+                setOpenImport(false)
+                setSelectedFile(null)
+              }}
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
             >
               <X className="w-5 h-5" />
             </button>
 
             <h2 className="text-[#1E1E1E] font-[600] text-[20px] mb-2">Upload your files</h2>
-            <p className="text-[16px] font-[400] text-[#5A687C]">Before uploading files. make sure your file is ready to import. <span className="text-[#675FFF]">Download sample file</span> or <span className="text-[#675FFF]">learn more</span>.</p>
+            <p className="text-[16px] font-[400] text-[#5A687C]">Before uploading files. make sure your file is ready to import. <span onClick={handleDownload} className="text-[#675FFF]">Download sample file</span> or <span className="text-[#675FFF]">learn more</span>.</p>
             <div className="flex flex-col gap-2">
               <div>
                 <label className="block text-sm font-medium mb-1">Upload File / Images</label>
@@ -624,8 +860,9 @@ const ContactsPage = () => {
                     </div>
                   )}
                 </div>
+                {fileUploadError && <p className="text-sm text-red-500 mt-1">{fileUploadError}</p>}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 items-center">
+              {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 items-center">
                 <div>
                   <label className="block text-[14px] font-medium text-[#292D32] mb-1">Choose how to import contacts</label>
                   <div className="w-full flex items-center border border-gray-300 rounded-lg">
@@ -653,13 +890,16 @@ const ContactsPage = () => {
                     </select>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="flex gap-2 mt-3">
-              <button onClick={() => setOpenImport(false)} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+              <button onClick={() => {
+                setOpenImport(false)
+                setSelectedFile(null)
+              }} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                 Cancel
               </button>
-              <button onClick={() => setOpenImport(false)} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
+              <button onClick={handleUploadFile} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
                 {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save"}
               </button>
             </div>
