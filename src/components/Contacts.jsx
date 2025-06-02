@@ -2,8 +2,9 @@ import { Contact, Download, Mail, Phone, SquarePen, Trash2, Upload, X } from "lu
 import { useEffect, useRef, useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi";
 import { Delete, Duplicate, Edit, Notes, ThreeDots, UploadIcon } from "../icons/icons";
-import { addContactsToList, createContactList, getContactList, uploadContacts } from "../api/brainai";
+import { addContactsToList, createContactList, getContactList, uploadContacts,getLists } from "../api/brainai";
 import { DateFormat } from "../utils/TimeFormat";
+import { format } from "date-fns";
 
 const ContactsPage = () => {
   const [activeTab, setActiveTab] = useState("all-contacts");
@@ -28,9 +29,11 @@ const ContactsPage = () => {
   const [allContactsMessage, setAllContactsMessage] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [currentContacts, setCurrentContacts] = useState([])
+ const [totalContacts, setTotalContacts] = useState(0);
+  const [contactLists,setContactLists]=useState([]);
 
-  const totalPages = Math.ceil(allContacts.length / rowsPerPage);
+  const [totalPages, setTotalPages] = useState(0);
+
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
 
@@ -41,21 +44,13 @@ const ContactsPage = () => {
   };
 
 
-  useEffect(() => {
-    getAllContacts()
-  }, [])
 
-  useEffect(() => {
-    if (currentContacts?.length > 0) {
-      setLoadingStatus(false)
-    }
-  }, [currentContacts])
+  // useEffect(() => {
+  //   if (currentContacts?.length > 0) {
+  //     setLoadingStatus(false)
+  //   }
+  // }, [currentContacts])
 
-  useEffect(() => {
-    if (allContacts?.length > 0) {
-      setCurrentContacts(allContacts.slice(startIndex, endIndex))
-    }
-  }, [startIndex, endIndex, allContacts])
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -111,26 +106,7 @@ const ContactsPage = () => {
     },
   ];
 
-  const contactLists = [
-    {
-      name: "Clients Mindset",
-      activeContacts: 1849,
-      channel: "Email",
-      createdDate: "27/03/2025 03:30 PM",
-    },
-    {
-      name: "Comminute MBP",
-      activeContacts: 141,
-      channel: "Phone No",
-      createdDate: "27/03/2025 03:30 PM",
-    },
-    {
-      name: "Lead Magnet GLOWUP",
-      activeContacts: 89004,
-      channel: "Email",
-      createdDate: "27/03/2025 03:30 PM",
-    },
-  ]
+
 
   const tableHeaders = [
     { name: "Full Name", width: "flex-1" },
@@ -193,18 +169,25 @@ const ContactsPage = () => {
   const getAllContacts = async () => {
     setAllContactsMessage("")
     try {
-      const response = await getContactList();
+      const response = await getContactList(currentPage,rowsPerPage);
       if (response?.status === 200) {
         console.log(response?.data)
-        setAllContacts(...allContacts, response?.data?.contacts)
+
         if (response?.data?.contacts?.length == 0) {
-          setLoadingStatus(false)
+
           setAllContactsMessage("No Data Found")
           setAllContacts([])
+        }else{
+            setAllContacts( response?.data?.contacts);
+            setTotalPages(response?.data?.totalPages);
+            setTotalContacts(response?.data?.totalContacts);
+
         }
       }
     } catch (error) {
       console.log(error)
+    }finally {
+         setLoadingStatus(false)
     }
   }
 
@@ -226,6 +209,20 @@ const ContactsPage = () => {
     }
   }
 
+  const handleGetLists=async()=>{
+     try{
+
+      const response = await getLists();
+      if (response?.status === 200) {
+          setContactLists(response?.data?.lists);
+          console.log(response?.data?.lists)
+      }
+
+     }catch(error){
+      console.log(error)
+     }
+  }
+
 
   const handleSubmit = async () => {
     if (!validateListForm()) {
@@ -234,8 +231,9 @@ const ContactsPage = () => {
     setLoading(true)
     try {
       const response = await createContactList(formData);
-      if (response?.status === 200) {
+      if (response?.status === 201) {
         setOpen(false)
+        handleGetLists();
       } else {
         console.log(response)
         setFormErrors((prev) => ({ ...prev, listName: response?.response?.data?.message }))
@@ -244,6 +242,7 @@ const ContactsPage = () => {
       console.log(error)
     } finally {
       setLoading(false)
+
     }
   }
 
@@ -324,6 +323,14 @@ const ContactsPage = () => {
       console.log(error)
     }
   }
+
+    useEffect(() => {
+
+    handleGetLists()
+  }, [])
+
+  useEffect(() => {    getAllContacts()},[currentPage, rowsPerPage]);
+
 
 
   return (
@@ -406,7 +413,7 @@ const ContactsPage = () => {
                   className="w-full pl-10 pr-3.5 pt-[7px] pb-[6px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg"
                 />
               </div>
-              {activeTab !== "lists" && <button disabled={formCreateList.contactsId?.length === 0} onClick={handleAddToContactsList} className="flex items-center gap-2.5 px-5 py-[6px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
+              {activeTab !== "lists" && <button disabled={formCreateList.contactsId?.length === 0} onClick={()=>setCreateList(true)} className="flex items-center gap-2.5 px-5 py-[6px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
                 <span className="font-medium text-base leading-6">
                   Create List
                 </span>
@@ -440,7 +447,7 @@ const ContactsPage = () => {
               </thead>
               <tbody className="bg-white border border-[#E1E4EA] rounded-[16px]">
                 {loadingStatus ? <tr className='h-34'><td ></td><td ></td><td><span className='loader' /></td></tr> : allContactsMessage ? <tr className='h-34'><td></td><td ></td><td>{allContactsMessage}</td></tr> : <>
-                  {currentContacts.map((contact, index) => (
+                  {allContacts.map((contact, index) => (
                     <tr key={index} className={`${contacts.length - 1 !== index && 'border border-[#E1E4EA] px-4'}`}>
                       <td className="px-6 py-4 text-sm text-gray-800 font-semibold whitespace-nowrap">
                         <div className="flex items-center gap-2">
@@ -477,7 +484,8 @@ const ContactsPage = () => {
             <div className="flex justify-between items-center mt-4 px-4 flex-wrap gap-3">
               <div className="flex items-center gap-2 text-[16px] text-[#5A687C]">
                 <div>
-                  Showing {startIndex + 1} - {Math.min(endIndex, allContacts.length)} of {allContacts.length}
+                  Showing {(currentPage-1)*rowsPerPage+1} - {Math.min((currentPage)*rowsPerPage,totalContacts)} of {totalContacts}
+
                 </div>
                 |
                 <span>Rows per page:</span>
@@ -591,10 +599,10 @@ const ContactsPage = () => {
               <tbody className="bg-white border border-[#E1E4EA] rounded-[16px]">
                 {contactLists.map((list, index) => (
                   <tr key={list.name} className={`${contacts.length - 1 !== index && 'border border-[#E1E4EA] px-4 text-[16px]'}`}>
-                    <td className="px-6 py-4 font-[600] whitespace-nowrap">{list.name}</td>
+                    <td className="px-6 py-4 font-[600] whitespace-nowrap">{list.listName}</td>
                     <td className="px-6 py-4 font-[400] text-[#5A687C] whitespace-nowrap">{list.activeContacts.toLocaleString()}</td>
                     <td className="px-6 py-4 font-[400] whitespace-nowrap">
-                      {list.channel === "Email" ? (
+                      {list.channel.toLowerCase() === "email" ? (
                         <div className="flex items-center gap-1.5 bg-[#fff5e6] text-[#ff9500] px-3 py-1 rounded-md w-fit">
                           <Mail className="h-4 w-4" />
                           <span>Email</span>
@@ -606,7 +614,7 @@ const ContactsPage = () => {
                         </div>
                       )}
                     </td>
-                    <td className="px-6 py-4 font-[400] text-[#5A687C] whitespace-nowrap">{list.createdDate}</td>
+                    <td className="px-6 py-4 font-[400] text-[#5A687C] whitespace-nowrap">{format(list.createdDate, 'dd/MM/yyyy hh:mm a')}</td>
                     <td className="px-6 py-4">
                       <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
                         <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>

@@ -108,6 +108,7 @@ export default function CallCampaign() {
   const [editData, setEditData] = useState();
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
   const [isOpen, setIsOpen] = useState(false);
+  const [showReport, setShowReport] = useState(false);
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -187,7 +188,7 @@ export default function CallCampaign() {
                     </td>
                     <td className="px-6 py-4">
                       <div className='flex items-center gap-2'>
-                        <button className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg'>
+                        <button className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg' onClick={()=>setShowReport(true)}>
                           View Report
                         </button>
                         <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
@@ -470,6 +471,44 @@ export default function CallCampaign() {
           </div>
         </div>
       </div>}
+
+      {
+        showReport &&  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+     <div class="bg-white rounded-xl shadow-lg p-6 w-[500px]">
+    <div class="flex justify-between items-start mb-4">
+      <div>
+        <h4 class="text-md font-semibold text-gray-800">Campaign Name :  Inbound.4d74997e-2c17-4024-98c4-5fbca9d4f5d1</h4>
+
+
+
+      </div>
+      <button class="text-gray-400 hover:text-gray-600 text-xl relative -top-4 -right-4 cursor-pointer" onClick={()=>setShowReport(false)}><X/></button>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 mb-8">
+      <div class=" rounded-lg border border-gray-200 ">
+        <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">Total calls</p>
+        <p class="text-xl font-semibold text-gray-900 m-2">0</p>
+      </div>
+
+      <div class=" rounded-lg border border-gray-200 ">
+        <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">Unsuccessful calls</p>
+        <p class="text-xl font-semibold text-gray-900 m-2">0</p>
+      </div>
+ <div class=" rounded-lg border border-gray-200 ">
+        <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">Average call duration</p>
+        <p class="text-xl font-semibold text-gray-900 m-2">0</p>
+      </div>
+
+    <div class=" rounded-lg border border-gray-200 ">
+        <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">Total call time</p>
+        <p class="text-xl font-semibold text-gray-900 m-2">00:00:00</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+      }
     </div>
   );
 }

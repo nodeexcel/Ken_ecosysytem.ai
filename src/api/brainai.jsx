@@ -70,12 +70,22 @@ export const createContactList = async (payload) => {
     }
 };
 
-export const getContactList = async () => {
+export const getContactList = async (page=1,rows) => {
     try {
-        const response = await axiosInstance.get(`/api/users/get-contact-list`);
+        const response = await axiosInstance.get(`/api/users/get-contact-list?page=${page}&rows=${rows}`);
         return response;
     } catch (error) {
         console.error(error);
         return error;
     }
 };
+
+export const getLists=async()=>{
+     try{
+        const response = await axiosInstance.get(`/api/users/get-lists`);
+        return response;
+     }catch(error){
+        console.error(error);
+        return error;
+     }
+}

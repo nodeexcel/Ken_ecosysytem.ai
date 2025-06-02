@@ -227,7 +227,7 @@ const Knowledge = () => {
                       <ThreeDots />
                     </button>
                     {activeDropdown === i && (
-                      <div className="absolute w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                      <div className="absolute right-1 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                         <div className="py-1">
                           <button
                             className="block w-full group text-left px-4 py-2 text-sm text-gray-700 hover:text-[#675FFF] hover:bg-gray-100"
@@ -329,7 +329,7 @@ const Knowledge = () => {
                       <ThreeDots />
                     </button>
                     {activeDropdown === i && (
-                      <div className="absolute w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                      <div className="absolute  rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10 ">
                         <div className="py-1">
                           <button
                             className="block w-full group text-left px-4 py-2 text-sm text-gray-700 hover:text-[#675FFF] hover:bg-gray-100"
