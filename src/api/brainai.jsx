@@ -38,7 +38,7 @@ export const deleteKnowledgeSnippets = async (id) => {
 
 export const uploadContacts = async (payload) => {
     try {
-        const response = await axiosInstance.post(`/api/users/upload-contacts`, payload, {
+        const response = await axiosInstance.post(`/api/contacts/upload-contacts`, payload, {
             headers: {
                 "Content-Type": "multipart/form-data"
             }
@@ -52,7 +52,7 @@ export const uploadContacts = async (payload) => {
 
 export const addContactsToList = async (payload) => {
     try {
-        const response = await axiosInstance.post(`/api/users/add-contacts-to-list`, payload);
+        const response = await axiosInstance.post(`/api/contacts/add-contacts-to-list`, payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -62,7 +62,7 @@ export const addContactsToList = async (payload) => {
 
 export const createContactList = async (payload) => {
     try {
-        const response = await axiosInstance.post(`/api/users/create-list`, payload);
+        const response = await axiosInstance.post(`/api/contacts/create-list`, payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -72,7 +72,7 @@ export const createContactList = async (payload) => {
 
 export const getContactList = async (page=1,rows) => {
     try {
-        const response = await axiosInstance.get(`/api/users/get-contact-list?page=${page}&rows=${rows}`);
+        const response = await axiosInstance.get(`/api/contacts/get-contact-list?page=${page}&rows=${rows}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -82,7 +82,7 @@ export const getContactList = async (page=1,rows) => {
 
 export const getLists=async()=>{
      try{
-        const response = await axiosInstance.get(`/api/users/get-lists`);
+        const response = await axiosInstance.get(`/api/contacts/get-lists`);
         return response;
      }catch(error){
         console.error(error);

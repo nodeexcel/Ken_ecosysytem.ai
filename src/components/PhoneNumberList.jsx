@@ -1,54 +1,56 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Trash2, PhoneOutgoing, Plus, X, Info } from "lucide-react";
 import { InboundCall, OutboundCall } from "../icons/icons";
+import { format } from "date-fns";
 import { FaChevronDown } from "react-icons/fa";
 import uk_flag from "../assets/images/uk_flag.png"
 import us_flag from "../assets/images/us_flag.png"
 import fr_flag from "../assets/images/fr_flag.png"
-
+import {addPhoneNumber, getPhoneNumber} from "../api/callAgent"
+import { set } from "date-fns";
 const initialRows = [
   {
     id: "1",
-    phone: "+41778090925",
+    phone_number: "+41778090925",
     country: "Switzerland",
     active: true,
-    totalCalls: 0,
+    total_calls: 0,
     direction: "outbound",
     createdAt: "27/03/2025 03:30 PM",
   },
   {
     id: "2",
-    phone: "+41778090925",
+    phone_number: "+41778090925",
     country: "Switzerland",
     active: true,
-    totalCalls: 0,
+    total_calls: 0,
     direction: "outbound",
     createdAt: "27/03/2025 03:30 PM",
   },
   {
     id: "3",
-    phone: "+41778090925",
+    phone_number: "+41778090925",
     country: "Switzerland",
     active: true,
-    totalCalls: 0,
+    total_calls: 0,
     direction: "outbound",
     createdAt: "27/03/2025 03:30 PM",
   },
   {
     id: "4",
-    phone: "+41778090925",
+    phone_number: "+41778090925",
     country: "Switzerland",
     active: true,
-    totalCalls: 0,
+    total_calls: 0,
     direction: "outbound",
     createdAt: "27/03/2025 03:30 PM",
   },
   {
     id: "5",
-    phone: "+41778090925",
+    phone_number: "+41778090925",
     country: "Switzerland",
     active: true,
-    totalCalls: 0,
+    total_calls: 0,
     direction: "outbound",
     createdAt: "27/03/2025 03:30 PM",
   },
@@ -64,11 +66,16 @@ const countries = [
 ];
 
 export default function PhoneNumbers() {
-  const [rows, setRows] = useState(initialRows);
+  const [rows, setRows] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState("outbound")
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
   const [isOpen, setIsOpen] = useState(false);
+  const [number, setNumber] = useState("");
+  const[phoneName, setPhoneName] = useState("");
+  const [loader,setLoader] = useState(false);
+  const [error,setError]=useState({});
+  const[responseError,setResponseError]=useState();
 
   const tabs = [
     { label: "Outbound Number", key: "outbound", icon: <OutboundCall active={activeTab == "outbound"} /> },
@@ -83,15 +90,71 @@ export default function PhoneNumbers() {
     );
   };
 
+  const ValidateSubmit=()=>{
+    const errors = {};
+    if (!phoneName) {
+      errors.phoneName = "Phone name is required";
+    }
+    if (!number) {
+      errors.number = "Phone number is required";
+    }
+    if (number && !/^\+?[0-9\s]+$/.test(number)) {
+      errors.number = "Invalid phone number format";
+    }
+    setError(errors);
+    return Object.keys(errors).length === 0;
+  }
+
+  const handleAddNumber = async(e) => {
+        e.preventDefault();
+       if(!ValidateSubmit()) {
+        return;
+       }
+       setLoader(true);
+       const response=await addPhoneNumber({name:phoneName, phone_number:number, country: selectedCountry.name,number_type:activeTab});
+
+       if(response.status === 201){
+        console.log("Phone number added successfully");
+        fetchPhoneNumbers();
+         setShowModal(false);
+         setLoader(false);
+
+       }else{
+        setLoader(false);
+        setResponseError(response.response.data.error || "Failed to add phone number");
+       }
+  }
+
   const removeRow = (id) => {
     setRows((prev) => prev.filter((r) => r.id !== id));
+
   };
+
+  const fetchPhoneNumbers = async () => {
+    try {
+      const response = await getPhoneNumber();
+      if (response.status === 200) {
+        console.log(response.data.phone_numbers);
+        setRows(response.data.phone_numbers);
+      } else {
+        console.error("Failed to fetch phone numbers");
+      }
+    } catch (error) {
+      console.error("Error fetching phone numbers:", error);
+    }
+  }
+
+  useEffect(()=>{
+
+    fetchPhoneNumbers();
+
+  },[]);
 
   return (
     <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <h1 className="text-[24px] font-[600] text-[#1E1E1E]">Phone Numbers</h1>
+        <h1 className="text-[24px] font-[600] text-[#1E1E1E]">Phone Numbers </h1>
         <button
           onClick={() => setShowModal(true)}
           className="bg-[#675FFF] border border-[#5F58E8] text-white font-medium rounded-lg px-5 py-2 flex items-center gap-2"
@@ -115,13 +178,15 @@ export default function PhoneNumbers() {
             </tr>
           </thead>
           <tbody className="bg-white shadow-sm">
-            {rows.map((row) => (
+
+            { rows.length !== 0 ? (
+            rows.map((row) => (
               <tr
                 key={row.id}
                 className="text-sm text-[#1e1e1e]"
               >
-                <td className="px-6 py-5 font-medium text-gray-900">{row.phone}</td>
-                <td className="px-6 py-5 text-gray-600">{row.country}</td>
+                <td className="px-6 py-5 font-medium text-gray-900">{row.phone_number}</td>
+                <td className="px-6 py-5 text-gray-600">{row.country }</td>
                 <td className="px-6 py-5">
                   <div className="flex items-center gap-3">
                     <span
@@ -138,11 +203,12 @@ export default function PhoneNumbers() {
                     />
                   </div>
                 </td>
-                <td className="px-6 py-5 text-center text-gray-600">{row.totalCalls}</td>
+                <td className="px-6 py-5 text-center text-gray-600">{row.total_calls}</td>
                 <td className="px-6 py-5 text-center">
                   <PhoneOutgoing size={18} className="text-green-600 inline" />
                 </td>
-                <td className="px-6 py-5 text-gray-600">{row.createdAt}</td>
+                <td className="px-6 py-5 text-gray-600">{format(row.creation_date,"mm-dd-yyyy hh:mm a")}</td>
+
                 <td className="px-6 py-5 text-center">
                   <button
                     onClick={() => removeRow(row.id)}
@@ -152,7 +218,19 @@ export default function PhoneNumbers() {
                   </button>
                 </td>
               </tr>
-            ))}
+            ))
+          ):(
+            <tr className="text-sm text-[#1e1e1e]">
+              <td colSpan="7" className="px-6 py-5 text-center text-gray-500">
+                No phone numbers found.
+              </td>
+            </tr>
+          )
+
+          }
+
+
+
           </tbody>
         </table>
       </div>
@@ -203,7 +281,15 @@ export default function PhoneNumbers() {
                   type="text"
                   placeholder="Enter number name"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                  onChange={(e) =>{ setPhoneName(e.target.value);
+                    setError((prev) => ({ ...prev, phoneName: "" }));
+                  }}
+                  value={phoneName}
                 />
+
+                {error.phoneName && (
+                  <p className="text-red-500 text-sm mt-1">{error.phoneName}</p>
+                )}
               </div>
 
               <div>
@@ -241,8 +327,17 @@ export default function PhoneNumbers() {
                     type="tel"
                     placeholder="Enter number"
                     className="w-full outline-none"
+                    onChange={(e) =>{ setNumber(e.target.value);
+                      setError((prev) => ({ ...prev, number: "" }));
+                    }}
+                    value={number}
                   />
+
+
                 </div>
+                 {error.number && (
+                    <p className="text-red-500 text-sm mt-1">{error.number}</p>
+                  )}
               </div>
 
               <div className="bg-[#FFF4E6] text-[#5A687C] text-sm rounded-lg px-4 py-3 flex items-center gap-2">
@@ -253,6 +348,12 @@ export default function PhoneNumbers() {
               </div>
             </div>
 
+              {responseError && (
+              <div className="mt-4 text-red-500 text-sm">
+                {responseError}
+              </div>
+            )}
+
             {/* Footer */}
             <div className="flex gap-2 mt-4">
               <button
@@ -262,11 +363,19 @@ export default function PhoneNumbers() {
                 Cancel
               </button>
               <button
-                className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+                className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
+                disabled={loader}
+                onClick={handleAddNumber}
               >
-                Add Number
+
+                <p>  Add Number</p>
+              { loader&& <span className="loader text-[#5E54FF]"></span>}
+
+
               </button>
             </div>
+
+
           </div>
         </div>
       )}

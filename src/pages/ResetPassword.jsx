@@ -16,7 +16,6 @@ export default function ResetPassword() {
         password: '',
         confirmPassword: '',
     });
-
     const [formErrors, setFormErrors] = useState({});
     const [loading, setLoading] = useState(false)
 

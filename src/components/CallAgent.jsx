@@ -1,43 +1,13 @@
-import React,{useState} from "react";
+import React,{useEffect, useState} from "react";
 import { MoreHorizontal, X } from "lucide-react";
 import { ThreeDots } from "../icons/icons";
 import { FaChevronDown } from "react-icons/fa";
 import uk_flag from "../assets/images/uk_flag.png"
 import us_flag from "../assets/images/us_flag.png"
 import fr_flag from "../assets/images/fr_flag.png"
+import {getPhoneNumber,createPhoneAgent,getCallAgent} from "../api/callAgent";
 
-const data = [
-  {
-    id: 1,
-    name: "Sami",
-    language: "FR",
-    voice: "Sophie",
-    phone: "+33 6 12 34 56 78",
-    calls: "184 Calls",
-    status: "Completed",
-    active: true,
-  },
-  {
-    id: 2,
-    name: "Amir",
-    language: "ENG",
-    voice: "Brian",
-    phone: "+44 7700 900123",
-    calls: "91 Calls",
-    status: "Pending",
-    active: false,
-  },
-  {
-    id: 3,
-    name: "Lina",
-    language: "ENG",
-    voice: "Emma",
-    phone: "+1 202-555-0143",
-    calls: "302 Calls",
-    status: "Running",
-    active: true,
-  },
-];
+
 
 
 const countries = [
@@ -49,10 +19,14 @@ const countries = [
 
 export default function CallAgentsPage() {
 
-    const [agents, setAgents] = useState(data);
+    const [agents, setAgents] = useState([]);
     const [showModal, setShowModal] = useState(false);
-      const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+    const [selectedCountry, setSelectedCountry] = useState(countries[0]);
     const [isOpen, setIsOpen] = useState(false);
+    const [agent,setAgent]=useState({agent_name:"",language:"",voice:"",phone_number:""});
+    const [error,setError]=useState("");
+    const [phoneNumbers,setPhoneNumbers]=useState([]);
+    const [loader,setLoader]=useState(false);
 
    const toggleActive = (id) => {
     setAgents((prev) =>
@@ -62,8 +36,71 @@ export default function CallAgentsPage() {
     );
   };
 
+  const fetchPhoneNumbers = async () => {
+    try {
+      const response = await getPhoneNumber();
+      if (response.status === 200) {
+        setPhoneNumbers(response.data.phone_numbers || []);
+      } else {
+        console.error("Failed to fetch phone numbers");
+      }
+    } catch (error) {
+      console.error("Error fetching phone numbers:", error);
+    }
+  }
 
 
+  const isValidForm=()=>{
+     const error = {};
+    if(!agent.agent_name)error.agent_name="Agent name is required";
+    if(!agent.language)error.language="Language is required";
+    if(!agent.voice)error.voice="Voice is required";
+    if(!agent.phone_number)error.phone_number="Phone number is required";
+    setError({...error});
+    return Object.keys(error).length === 0;
+
+  }
+
+  const submitForm=async (e) => {
+    e.preventDefault();
+    if(!isValidForm()){
+      return;
+    }else{
+      const response=await createPhoneAgent(agent);
+
+      if(response.status === 201){
+        setShowModal(false);
+        setLoader(true);
+        setAgent({name:"",language:"",voice:"",phone:""});
+        fetchAgents();
+
+    }else{
+        console.log("Error creating agent:", response);
+    }
+      setLoader(false);
+  }
+}
+
+const fetchAgents = async () => {
+  try {
+
+    const response=await getCallAgent();
+    if(response.status === 200){
+      setAgents(response.data.agents_info||[]);
+      console.log("Agents fetched successfully:", response.data.agents_info);
+    }else{
+      console.error("Failed to fetch agents");
+    }
+  }
+  catch(error){
+     console.error("Error fetching agents:", error);
+  }
+}
+
+  useEffect(() => {
+    fetchPhoneNumbers();
+    fetchAgents();
+  },[]);
 
 
   return (
@@ -102,15 +139,17 @@ export default function CallAgentsPage() {
             </tr>
           </thead>
           <tbody className="bg-white border rounded-2xl border-[#E1E4EA]  p-3 ">
-            {agents.map((agent, index) => (
+
+
+            { agents.length!==0?(agents.map((agent, index) => (
               <tr
                 key={agent.id}
                 className={`hover:bg-gray-50 ${index !== agents.length - 1 ? 'border-b border-gray-200' : ''}`}
               >
-                <td className="px-6 py-4 font-medium text-gray-900 ml-3">{agent.name}</td>
-                <td className="px-6 py-4">{agent.language}</td>
+                <td className="px-6 py-4 font-medium text-gray-900 ml-3">{agent.agent_name}</td>
+                <td className="px-6 py-4">{agent.language.charAt(0).toLocaleUpperCase()+agent.language.substring(1,agent.language.length)}</td>
                 <td className="px-6 py-4">{agent.voice}</td>
-                <td className="px-6 py-4">{agent.calls}</td>
+                <td className="px-6 py-4">{agent.phone_numbers}</td>
                   <td className="px-6 py-5">
                   <div className="flex items-center gap-3">
                     <ToggleSwitch
@@ -130,7 +169,13 @@ export default function CallAgentsPage() {
                   </div>
                 </td>
               </tr>
-            ))}
+            ))):(
+                <tr className="text-sm text-[#1e1e1e]">
+              <td colSpan="7" className="px-6 py-5 text-center text-gray-500">
+                No phone numbers found.
+              </td>
+            </tr>
+            )}
           </tbody>
 
         </table>
@@ -163,7 +208,12 @@ export default function CallAgentsPage() {
                         type="text"
                         placeholder="Enter number name"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                        value={agent.agent_name}
+                        name="agent_name"
+                        onChange={(e) => {setAgent({ ...agent, agent_name: e.target.value }); setError({...error, agent_name:""})}
+                        }
                       />
+                      {error.agent_name && <p className="text-red-500 text-sm mt-1">{error.agent_name}</p>}
                     </div>
 
                       <div>
@@ -174,11 +224,18 @@ export default function CallAgentsPage() {
 
                         placeholder="Enter number name"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                        value={agent.language}
+                        name="language"
+                        onChange={(e) =>{setAgent({ ...agent, language: e.target.value }); setError({...error, language:""})}
+                        }
+
                       >
                         <option value="">Select </option>
-                          <option value="English">English</option>
-                          <option value="French">French</option>
+                          <option value="english">English</option>
+                          <option value="french">French</option>
                       </select>
+
+                      {error.language && <p className="text-red-500 text-sm mt-1">{error.language}</p>}
                     </div>
 
                       <div>
@@ -189,11 +246,16 @@ export default function CallAgentsPage() {
 
                         placeholder="Enter number name"
                         className="w-full px-4 py-2 border border-gray-300  text-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                        value={agent.voice}
+                        name="voice"
+                        onChange={(e) =>{ setAgent({ ...agent, voice: e.target.value }); setError({...error, voice:""})}}
                       >
                         <option value="">Select </option>
                           <option value="English">English</option>
                           <option value="French">French</option>
                       </select>
+
+                      {error.voice && <p className="text-red-500 text-sm mt-1">{error.voice}</p>}
                     </div>
 
                     <div>
@@ -227,12 +289,23 @@ export default function CallAgentsPage() {
                             </div>
                           )}
                         </div>
-                        <input
-                          type="tel"
-                          placeholder="Enter number"
-                          className="w-full outline-none"
-                        />
+                         <select id="" className="w-full focus:border-none focus:outline-none  text-black"
+                         value={agent.phone_number}
+                         onChange={(e) =>{ setAgent({ ...agent, phone_number: e.target.value });setError({...error, phone_number:""})}}
+                         name="phone_number"
+
+                         >
+                            <option value="">Select</option>
+                          {phoneNumbers.map((number) => (
+                            <option key={number.id} value={number.phone_number}>
+                              {number.phone_number}
+                            </option>
+                          ))}
+                         </select>
+
+
                       </div>
+                      {error.phone_number && <p className="text-red-500 text-sm mt-1">{error.phone_number}</p>}
                     </div>
 
 
@@ -246,11 +319,17 @@ export default function CallAgentsPage() {
                     >
                       Cancel
                     </button>
-                    <button
-                      className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
-                    >
-                      Add Agent
-                    </button>
+                     <button
+                className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
+                disabled={loader}
+                onClick={submitForm}
+              >
+
+                <p>  Add Number</p>
+              { loader&& <span className="loader text-[#5E54FF]"></span>}
+
+
+              </button>
                   </div>
                 </div>
               </div>

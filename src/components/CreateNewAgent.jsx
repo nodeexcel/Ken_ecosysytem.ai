@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState ,useRef} from 'react'
 import trigger from '../assets/svg/sequence_trigger.svg'
 import delay from '../assets/svg/sequence_delay.svg'
 import channel from '../assets/svg/sequence_channel.svg'
@@ -10,6 +10,7 @@ import { appointmentSetter, getAppointmentSetterById, updateAppointmentSetter } 
 import AgentPreviewModal from './AgentPreview'
 
 function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentStatus }) {
+
     const [formData, setFormData] = useState({
         agent_name: "",
         gender: '',
@@ -37,6 +38,20 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const [errors, setErrors] = useState({});
     const [showLanguageSelector, setShowLanguageSelector] = useState(false);
     const [previewAgent, setPreviewAgent] = useState(false)
+
+
+
+    const dropdownRef= useRef(null);
+
+    useEffect(() => {
+                const handleClickOutside = (event) => {
+                    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                        setShowLanguageSelector(false);
+                    }
+                };
+                document.addEventListener('mousedown', handleClickOutside);
+                return () => document.removeEventListener('mousedown', handleClickOutside);
+            }, []);
 
     useEffect(() => {
         if (editData) {
@@ -630,7 +645,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             </select>
                         </div> */}
                             <div className='flex flex-col gap-1.5 flex-1'>
-                                <div className="relative">
+                                <div className="relative" ref={dropdownRef}>
                                     <label className="text-sm font-medium text-[#1e1e1e]">
                                         Agent Language<span className="text-[#675fff]">*</span>
                                     </label>

@@ -60,6 +60,10 @@ export default function OutBoundCalls() {
     const [activeDropdown, setActiveDropdown] = useState(null);
 
 
+
+
+
+
     useEffect(() => {
         function handleClickOutside(event) {
             if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -73,6 +77,8 @@ export default function OutBoundCalls() {
     const handleDropdownClick = (index) => {
         setActiveDropdown(activeDropdown === index ? null : index);
     };
+
+
 
     return (
         <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
@@ -207,6 +213,7 @@ export default function OutBoundCalls() {
             </div>
 
             {/* Modal */}
+
             {showModal && (
                 <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
                     {!secondModel ? <div
@@ -229,6 +236,7 @@ export default function OutBoundCalls() {
                                     type="text"
                                     placeholder="Enter campaign name"
                                     className="w-full px-4 py-2 border rounded-lg border-gray-300"
+                                   
                                 />
                             </div>
 
