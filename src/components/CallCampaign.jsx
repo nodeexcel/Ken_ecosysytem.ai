@@ -9,7 +9,8 @@ import us_flag from "../assets/images/us_flag.png"
 import fr_flag from "../assets/images/fr_flag.png"
 import { FaChevronDown } from "react-icons/fa";
 import {createPhoneCampaign} from "../api/callAgent";
-import { getCallAgent,getPhoneNumber,getPhoneCampaign } from "../api/callAgent";
+import { getCallAgent,getPhoneNumber,getPhoneCampaign,deletePhoneCampaign,getPhoneCampaignDetail ,updatePhoneCampaign,duplicateCampaign} from "../api/callAgent";
+import { format } from "date-fns";
 
 
 
@@ -69,6 +70,7 @@ export default function CallCampaign() {
   const [agents,setAgent]=useState([]);
   const[phoneNumbers,setPhoneNumbers]=useState([]);
   const [loader,setLoader] = useState(false);
+  const [deleteRow,setDeleteRow]=useState(null);
 
      const [campaign,setCampaign] = useState(
         {
@@ -122,12 +124,31 @@ const validateForm = () => {
   if (!campaign.phone_number) newErrors.phone_number = "Phone number is required.";
   if (!campaign.catch_phrase.trim()) newErrors.catch_phrase = "Catch phrase is required.";
   if (!campaign.call_script.trim()) newErrors.call_script = "Call script is required.";
+  if(campaign.catch_phrase.trim().length<20) newErrors.catch_phrase = "Minimum 20 characters required for catch phrase.";
+  if(campaign.call_script.trim().length<50) newErrors.call_script = "Minimum 50 characters required for call script.";
 
   setErrors(newErrors);
 
   return Object.keys(newErrors).length === 0;
 };
 
+
+ const removeRow = async (id) => {
+     try{
+        const response = await deletePhoneCampaign(id);
+        if (response.status === 200) {
+          console.log("Phone number status updated successfully");
+
+          handleGetPhoneCampaign();
+          setDeleteRow(null);
+        } else {
+          console.error("Failed to update phone number status:", response);
+        }
+
+     }catch(error){
+      console.error("Error removing row:", error);
+     }
+ }
 
      const handleCampaignForm=(e)=>{
         const { name, value } = e.target;
@@ -144,28 +165,7 @@ const validateForm = () => {
 
     }
 
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoader(true);
 
-  if (validateForm()) {
-
-  const response=await   createPhoneCampaign(campaign);
-
-
-    if (response.status === 200) {
-        console.log(response.data);
-
-     }
-     setShowModal(false);
-    // Submit logic here
-
-  } else {
-    console.log("Validation failed");
-    console.log("Errors:", errors);
-  }
-  setLoader(false);
-};
 
 
 const handleGetPhoneAgent=async()=>{
@@ -198,6 +198,72 @@ const handleGetPhoneCampaign=async()=>{
   }
 }
 
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoader(true);
+
+  if (validateForm()) {
+
+  const response=await   createPhoneCampaign(campaign);
+
+
+    if (response.status === 200) {
+        console.log(response.data);
+
+     }
+     setShowModal(false);
+     handleGetPhoneCampaign();
+    // Submit logic here
+
+  } else {
+    console.log("Validation failed");
+    console.log("Errors:", errors);
+  }
+  setLoader(false);
+};
+
+
+const handleGetPhoneCampaignDetail=async (id)=>{
+  try{
+    const response = await getPhoneCampaignDetail(id);
+    if (response.status === 200) {
+      setCampaign(response.data.campaign_data);
+      setShowModal(true)
+
+
+    } else {
+      console.error("Failed to fetch campaign details:", response);
+    }
+  }catch(error){
+    console.error("Error fetching campaign details:", error);
+  }finally{
+      setActiveDropdown(null);
+  }
+}
+
+
+const handleEditCampaign=async ()=>{
+  try{
+
+    if(!validateForm()) {
+      console.log("Validation failed");
+      return ;
+
+    }
+    const response = await updatePhoneCampaign(campaign);
+    if (response.status === 200) {
+      console.log("Campaign details:", response.data);
+      setShowModal(false);
+      getPhoneCampaign();
+    } else {
+      console.error("Failed to fetch campaign details:", response);
+    }
+  }catch(error){
+    console.error("Error fetching campaign details:", error);
+  }finally{
+      setActiveDropdown(null);
+  }
+}
 
 const handleGetPhoneNumber=async()=>{
   try{
@@ -213,6 +279,23 @@ const handleGetPhoneNumber=async()=>{
   }
 }
 
+const handleDuplicate = async (id) => {
+  try {
+    const response = await duplicateCampaign(id);
+
+    if (response.status === 201) {
+      console.log("Campaign duplicated successfully:", response.data);
+      handleGetPhoneCampaign();
+    } else {
+      console.error("Failed to duplicate campaign:", response);
+     }
+    setActiveDropdown(null);
+  }catch(error){
+    console.error("Error duplicating campaign:", error);
+  }
+
+}
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -224,8 +307,7 @@ const handleGetPhoneNumber=async()=>{
   handleGetPhoneAgent();
   handleGetPhoneCampaign();
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showModal]);
-
+  }, []);
 
 
 
@@ -242,7 +324,7 @@ const handleGetPhoneNumber=async()=>{
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-semibold text-black">Call Campaign</h1>
             <button
-              className="bg-[#7065F0] text-white font-medium px-5 py-2 rounded-lg shadow"
+              className="bg-[#7065F0] text-white font-medium px-5 py-2 rounded-lg shadow cursor-pointer"
               onClick={() => {
                 dispatch(getNavbarData("Tom, Phone"))
                 setShowModal(true)
@@ -287,7 +369,7 @@ const handleGetPhoneNumber=async()=>{
                   >
                     <td className="px-6 py-4 font-medium text-gray-900">{agent.campaign_name}</td>
                     <td className="px-6 py-4">{agent.agent_name}</td>
-                    <td className="px-6 py-4">{agent.creation_date}</td>
+                    <td className="px-6 py-4">{ format(agent.creation_date,"dd-mm-yy hh:mm a")}</td>
                     <td className="px-6 py-4">{agent.language}</td>
                     <td className="px-6 py-4">{agent.total_calls}</td>
                     <td className="px-6 py-4">
@@ -297,32 +379,33 @@ const handleGetPhoneNumber=async()=>{
                     </td>
                     <td className="px-6 py-4">
                       <div className='flex items-center gap-2'>
-                        <button className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg' onClick={()=>setShowReport(true)}>
+                        <button className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg cursor-pointer'  onClick={()=>setShowReport(true)}>
                           View Report
                         </button>
-                        <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
-                          <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
-                        </button>
-                      </div>
-                      {activeDropdown === index && (
-                        <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                        <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative">
+                          <div className='bg-[#F4F5F6] p-2 rounded-lg cursor-pointer'><ThreeDots /></div>
+                           {activeDropdown === index && (
+                        <div className="absolute right-0   w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                           <div className="py-1">
                             <button
-                              className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-gray-100"
+                              className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-gray-100 cursor-pointer"
                               onClick={() => {
                                 // Handle edit action
                                 setEditData(agent.id)
-                                setShowModal(true)
-                                setActiveDropdown(null);
+
+                                handleGetPhoneCampaignDetail(agent.id);
+
+
                               }}
                             >
                               <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
                             </button>
                             <button
-                              className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6]"
+                              className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] cursor-pointer"
                               onClick={() => {
                                 // Handle delete action
-                                setActiveDropdown(null);
+
+                                handleDuplicate(agent.id);
                               }}
                             >
                               <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
@@ -333,13 +416,18 @@ const handleGetPhoneNumber=async()=>{
                               onClick={() => {
                                 // Handle delete action
                                 setActiveDropdown(null);
+                                setDeleteRow(agent.id);
+
                               }}
                             >
-                              <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                              <div className="flex items-center gap-2 cursor-pointer">{<Delete />} <span>Delete</span> </div>
                             </button>
                           </div>
                         </div>
                       )}
+                        </button>
+                      </div>
+
                     </td>
                   </tr>
                 ))}
@@ -591,7 +679,9 @@ const handleGetPhoneNumber=async()=>{
               </div>
 
               {editData ? <div className="flex gap-4 mt-6">
-                <button className="w-[195px]  text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]">
+                <button className="w-[195px]  text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+                onClick={handleEditCampaign} disabled={loader}
+                >
                   Save Campaign
                 </button>
                 <button onClick={() => {
@@ -699,6 +789,36 @@ const handleGetPhoneNumber=async()=>{
   </div>
 </div>
 
+      }
+
+
+      {
+        deleteRow && (
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl w-[400px] p-6 relative shadow-lg">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Delete Call Campaign</h2>
+              <p className="text-gray-500 mb-4">Are you sure you want to delete this call cmapagin?</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setDeleteRow(null)}
+                  className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    removeRow(deleteRow);
+
+                  }}
+                  className="w-full text-[16px] text-white rounded-[8px] bg-red-500 h-[38px] flex justify-center items-center gap-2 relative"
+                >
+                  Delete
+                  {/* <span className="loader"></span> */}
+                </button>
+              </div>
+            </div>
+          </div>
+        )
       }
     </div>
   );

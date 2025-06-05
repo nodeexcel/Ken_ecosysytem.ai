@@ -5,7 +5,7 @@ import { FaChevronDown } from "react-icons/fa";
 import uk_flag from "../assets/images/uk_flag.png"
 import us_flag from "../assets/images/us_flag.png"
 import fr_flag from "../assets/images/fr_flag.png"
-import {getPhoneNumber,createPhoneAgent,getCallAgent} from "../api/callAgent";
+import {getPhoneNumber,createPhoneAgent,getCallAgent,updatePhoneNumberAgentStatus} from "../api/callAgent";
 
 
 
@@ -28,12 +28,20 @@ export default function CallAgentsPage() {
     const [phoneNumbers,setPhoneNumbers]=useState([]);
     const [loader,setLoader]=useState(false);
 
-   const toggleActive = (id) => {
-    setAgents((prev) =>
-      prev.map((r) =>
-        r.id === id ? { ...r, active: !r.active } : r
-      )
-    );
+   const toggleActive = async (id) => {
+     try{
+      const response=await updatePhoneNumberAgentStatus(id);
+      if(response.status === 200){
+        fetchAgents();
+      }
+      else{
+        console.error("Failed to update agent status");
+      }
+     }catch(error){
+      console.error("Error toggling agent status:", error);
+      return error;
+     }
+
   };
 
   const fetchPhoneNumbers = async () => {
@@ -87,7 +95,7 @@ const fetchAgents = async () => {
     const response=await getCallAgent();
     if(response.status === 200){
       setAgents(response.data.agents_info||[]);
-      console.log("Agents fetched successfully:", response.data.agents_info);
+    
     }else{
       console.error("Failed to fetch agents");
     }
@@ -151,10 +159,11 @@ const fetchAgents = async () => {
                 <td className="px-6 py-4">{agent.voice}</td>
                 <td className="px-6 py-4">{agent.phone_numbers}</td>
                   <td className="px-6 py-5">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 ">
                     <ToggleSwitch
-                      checked={agent.active}
+                      checked={agent.status}
                       onChange={() => toggleActive(agent.id)}
+                      className="cursor-pointer"
                     />
                   </div>
                 </td>

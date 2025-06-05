@@ -6,7 +6,7 @@ import { FaChevronDown } from "react-icons/fa";
 import uk_flag from "../assets/images/uk_flag.png"
 import us_flag from "../assets/images/us_flag.png"
 import fr_flag from "../assets/images/fr_flag.png"
-import {addPhoneNumber, getPhoneNumber} from "../api/callAgent"
+import {addPhoneNumber, getPhoneNumber,updatePhoneNumberStatus,deletePhoneNumber} from "../api/callAgent"
 import { set } from "date-fns";
 const initialRows = [
   {
@@ -76,18 +76,29 @@ export default function PhoneNumbers() {
   const [loader,setLoader] = useState(false);
   const [error,setError]=useState({});
   const[responseError,setResponseError]=useState();
+  const [deleteRow,setDeleteRow]=useState(null);
 
   const tabs = [
     { label: "Outbound Number", key: "outbound", icon: <OutboundCall active={activeTab == "outbound"} /> },
     { label: "Inbound Number", key: "inbound", icon: <InboundCall active={activeTab == "inbound"} /> },
   ]
 
-  const toggleActive = (id) => {
-    setRows((prev) =>
-      prev.map((r) =>
-        r.id === id ? { ...r, active: !r.active } : r
-      )
-    );
+  const toggleActive = async (id) => {
+  try{
+
+    const response = await updatePhoneNumberStatus(id);
+
+    if(response.status === 200){
+      console.log("Phone number status updated successfully");
+      fetchPhoneNumbers();
+    }else{
+      console.error("Failed to update phone number status");
+    }
+  }catch(error){
+    console.log("Error updating phone number status:", error);
+  }
+
+
   };
 
   const ValidateSubmit=()=>{
@@ -125,8 +136,24 @@ export default function PhoneNumbers() {
        }
   }
 
-  const removeRow = (id) => {
-    setRows((prev) => prev.filter((r) => r.id !== id));
+  const removeRow = async (id) => {
+       try{
+
+       const response = await deletePhoneNumber(id);
+       console.log("RESPONSE:",response);
+       if(response.status === 200){
+        console.log("Phone number removed successfully");
+        fetchPhoneNumbers();
+       }else{
+        console.error("Failed to remove phone number");
+       }
+
+       }catch(error){
+        console.error("Error removing phone number:", error);
+       }
+
+         setDeleteRow(null);
+
 
   };
 
@@ -134,7 +161,6 @@ export default function PhoneNumbers() {
     try {
       const response = await getPhoneNumber();
       if (response.status === 200) {
-        console.log(response.data.phone_numbers);
         setRows(response.data.phone_numbers);
       } else {
         console.error("Failed to fetch phone numbers");
@@ -190,15 +216,15 @@ export default function PhoneNumbers() {
                 <td className="px-6 py-5">
                   <div className="flex items-center gap-3">
                     <span
-                      className={`text-xs px-3 py-1 rounded-full border ${row.active
+                      className={`text-xs px-3 py-1 rounded-full border ${row.status
                         ? "border-green-500 text-green-600"
                         : "border-gray-400 text-gray-500"
                         }`}
                     >
-                      {row.active ? "Active" : "Inactive"}
+                      {row.status ? "Active" : "Inactive"}
                     </span>
                     <ToggleSwitch
-                      checked={row.active}
+                      checked={row.status}
                       onChange={() => toggleActive(row.id)}
                     />
                   </div>
@@ -211,7 +237,7 @@ export default function PhoneNumbers() {
 
                 <td className="px-6 py-5 text-center">
                   <button
-                    onClick={() => removeRow(row.id)}
+                    onClick={() => setDeleteRow(row.id)}
                     className="text-red-500 hover:text-red-600"
                   >
                     <Trash2 size={18} />
@@ -379,6 +405,35 @@ export default function PhoneNumbers() {
           </div>
         </div>
       )}
+
+      {
+        deleteRow && (
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl w-[400px] p-6 relative shadow-lg">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Delete Phone Number</h2>
+              <p className="text-gray-500 mb-4">Are you sure you want to delete this phone number?</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setDeleteRow(null)}
+                  className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    removeRow(deleteRow);
+
+                  }}
+                  className="w-full text-[16px] text-white rounded-[8px] bg-red-500 h-[38px] flex justify-center items-center gap-2 relative"
+                >
+                  Delete
+                  {/* <span className="loader"></span> */}
+                </button>
+              </div>
+            </div>
+          </div>
+        )
+      }
     </div>
   );
 }

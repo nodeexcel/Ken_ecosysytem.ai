@@ -59,7 +59,7 @@ export const getPhoneCampaign= async () => {
 
 export const getPhoneCampaignDetail= async (id) => {
     try {
-        const response = await axiosInstance.get(`http://116.202.210.102:8000/get-campaign-detial${id}`);
+        const response = await axiosInstance.get(`http://116.202.210.102:8000/phone-campaign-detail/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -75,4 +75,72 @@ export const getCallAgent=async()=>{
         console.error(error);
         return error;
 }
+}
+
+
+export const updatePhoneNumberStatus=async (id)=>{
+      try{
+      const response = await axiosInstance.patch(`http://116.202.210.102:8000/phone-number-status/${id}`);
+      return response;
+      }catch(error){
+        console.error(error);
+        return error;
+      }
+}
+
+export const updatePhoneNumberAgentStatus=async (id)=>{
+
+      try{
+      const response = await axiosInstance.patch(`http://116.202.210.102:8000/phone-agent-status/${id}`);
+      return response;
+      }catch(error){
+        console.error(error);
+        return error;
+      }
+}
+
+export const deletePhoneNumber=async (id)=>{
+      try{
+      const response = await axiosInstance.delete(`http://116.202.210.102:8000/phone-number/${id}`);
+      return response;
+      }
+      catch(error){
+        console.error(error);
+        return error;
+      }
+}
+
+export const deletePhoneCampaign=async(id)=>{
+
+      try{
+      const response = await axiosInstance.delete(`http://116.202.210.102:8000/phone-campaign/${id}`);
+      return response;
+      }
+      catch(error){
+        console.error(error);
+        return error;
+      }
+
+}
+
+export const updatePhoneCampaign=async ( payload)=>{
+      try{
+      const response = await axiosInstance.put("http://116.202.210.102:8000/update-phone-campaign/"+payload.id, payload);
+        return response;
+        }
+        catch(error){
+        console.error(error);
+        return error;
+        }
+}
+
+export const duplicateCampaign=async (id)=>{
+      try{
+      const response = await axiosInstance.post(`http://116.202.210.102:8000/duplicate-phone-campaign/${id}`);
+      return response;
+      }
+      catch(error){
+        console.error(error);
+        return error;
+      }
 }
