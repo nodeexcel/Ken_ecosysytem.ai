@@ -1,4 +1,4 @@
-import { useEffect, useState ,useRef} from 'react'
+import { useEffect, useState, useRef } from 'react'
 import trigger from '../assets/svg/sequence_trigger.svg'
 import delay from '../assets/svg/sequence_delay.svg'
 import channel from '../assets/svg/sequence_channel.svg'
@@ -8,6 +8,7 @@ import { LuRefreshCw } from 'react-icons/lu';
 import { AddPlus, CheckedCheckbox, CrossDelete, EmptyCheckbox, RequestSend } from '../icons/icons'
 import { appointmentSetter, getAppointmentSetterById, updateAppointmentSetter } from '../api/appointmentSetter'
 import AgentPreviewModal from './AgentPreview'
+import { getInstaAccounts } from '../api/brainai'
 
 function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentStatus }) {
 
@@ -28,7 +29,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         // directness: 2,a
         webpage_link: "",
         // webpage_type: "",
-        whatsapp_number: ''
+        whatsapp_number: '',
+        platform_unique_id:''
     })
     const [loadingStatus, setLoadingStatus] = useState(true)
     const [dataRenderStatus, setDataRenderStatus] = useState(true)
@@ -38,20 +40,39 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const [errors, setErrors] = useState({});
     const [showLanguageSelector, setShowLanguageSelector] = useState(false);
     const [previewAgent, setPreviewAgent] = useState(false)
+    const [instagramData, setInstagramData] = useState([])
 
+    const handleInstagram = async () => {
+        try {
 
+            const response = await getInstaAccounts();
+            if (response?.status === 200) {
+                console.log(response?.data?.insta_account_info)
+                setInstagramData(response?.data?.insta_account_info);
+            }
 
-    const dropdownRef= useRef(null);
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     useEffect(() => {
-                const handleClickOutside = (event) => {
-                    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                        setShowLanguageSelector(false);
-                    }
-                };
-                document.addEventListener('mousedown', handleClickOutside);
-                return () => document.removeEventListener('mousedown', handleClickOutside);
-            }, []);
+        handleInstagram()
+    }, [])
+
+
+
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShowLanguageSelector(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     useEffect(() => {
         if (editData) {
@@ -853,6 +874,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                                             const { name, value } = e.target;
                                                                             setFormData((prev) => ({
                                                                                 ...prev,
+                                                                                // platform_unique_id:'',
                                                                                 sequence: {
                                                                                     ...prev.sequence,
                                                                                     [name]: name === "delay" ? parseInt(value) : value,
@@ -863,6 +885,28 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                                     >
                                                                         {renderOptions(card)}
                                                                     </select>
+                                                                    {((card.key === "trigger" || card.key === "channel") && (formData.sequence.trigger === "Instagram" || formData.sequence.channel === "Channel")) &&
+                                                                        <select
+                                                                            name="platform_unique_id"
+                                                                            className="w-full my-2 h-8 py-1 px-3 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e] shadow-sm"
+                                                                            value={formData.platform_unique_id}
+                                                                            onChange={(e) => {
+                                                                                const { name, value } = e.target;
+                                                                                setFormData((prev) => ({
+                                                                                    ...prev,
+                                                                                    platform_unique_id: value,
+                                                                                }));
+                                                                            }}
+                                                                            disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
+                                                                        >
+                                                                            <option value="" disabled>Select</option>
+                                                                            {instagramData?.length > 0 && instagramData.map((e) => (
+                                                                                <option key={e.instagram_user_id} value={e.instagram_user_id}>
+                                                                                    {e.username}
+                                                                                </option>
+                                                                            ))}
+                                                                        </select>
+                                                                    }
 
                                                                     {card.unit && (
                                                                         <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-400">

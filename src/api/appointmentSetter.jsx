@@ -65,7 +65,7 @@ export const updateAppointmentSetter = async (payload) => {
 
 export const chatAgent = async (payload,id) => {
     try {
-        const response= await axiosInstance.post(`http://116.202.210.102:8000/chat-with-agent/${id}`,payload);
+        const response= await axiosInstance.post(`http://116.202.210.102:8000/chat-with-lead/${id}`,payload);
         return response
     } catch (error) {
         console.log(error)
@@ -99,6 +99,17 @@ export const getChatHistory = async (id) => {
 export const getLeadAnalytics = async (path) => {
     try {
         const response= await axiosInstance.get(`http://116.202.210.102:8000/get-lead-analytics${path}`);
+        return response
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}
+
+
+export const agentStatusChat = async (id) => {
+    try {
+        const response= await axiosInstance.patch(`http://116.202.210.102:8000/agent-status-for-chat/${id}`);
         return response
     } catch (error) {
         console.log(error)

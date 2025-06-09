@@ -5,7 +5,7 @@ import { RiCheckDoubleLine } from "react-icons/ri"
 import { FaRegSmile } from "react-icons/fa";
 import { PiImageBold } from "react-icons/pi"
 import { FiMic, FiPaperclip } from "react-icons/fi"
-import { chatAgent, getAppointmentSetter, getChatHistory, getChats } from "../api/appointmentSetter";
+import { agentStatusChat, chatAgent, getAppointmentSetter, getChatHistory, getChats } from "../api/appointmentSetter";
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -18,6 +18,7 @@ const DemoChat = () => {
     const [loading, setLoading] = useState(false);
     const [loadingChats, setLoadingChats] = useState(false);
     const [agentId, setAgentId] = useState();
+    const [agentEnabled, setAgentEnabled] = useState(false)
     const chatRef = useRef()
 
     useEffect(() => {
@@ -97,13 +98,27 @@ const DemoChat = () => {
     };
 
 
+    const agentStatus = async (id) => {
+        try {
+            const response = await agentStatusChat(id)
+            if (response?.status === 200) {
+                setAgentEnabled(!agentEnabled)
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
     const handleChatById = async (id) => {
         setLoadingChats(true)
         try {
             const response = await getChatHistory(id);
             console.log(response.data)
             if (response.status === 200) {
-                const data = await transformApiMessages(response?.data?.success)
+                const data = await transformApiMessages(response?.data?.chat)
+                setAgentEnabled(response?.data?.agent_is_enabled)
                 setMessages(data)
             }
         } catch (error) {
@@ -118,9 +133,9 @@ const DemoChat = () => {
 
         const userMessage = {
             id: uuidv4(),
-            isUser: true,
+            isUser: false,
             content: input,
-            sender: "User",
+            sender: "Ecosystem.ai",
             time: "Just now",
             status: "Read",
         };
@@ -128,39 +143,39 @@ const DemoChat = () => {
         setMessages((prev) => [...prev, userMessage]);
         setInput("");
 
-        const typingMessage = {
-            id: "typing",
-            isUser: false,
-            content: "...",
-            sender: "Ecosystem.ai",
-            time: "Typing...",
-            status: "",
-        };
-        setMessages((prev) => [...prev, typingMessage]);
+        // const typingMessage = {
+        //     id: "typing",
+        //     isUser: false,
+        //     content: "...",
+        //     sender: "Ecosystem.ai",
+        //     time: "Typing...",
+        //     status: "",
+        // };
+        // setMessages((prev) => [...prev, typingMessage]);
 
         try {
             const payload = { message: input };
-            const response = await chatAgent(payload, agentId);
+            const response = await chatAgent(payload, activeConversation);
             console.log(response.data);
 
-            if (response.status === 200) {
-                const agentMessage = {
-                    id: uuidv4(),
-                    isUser: false,
-                    content: response?.data?.success?.agent,
-                    sender: "Ecosystem.ai",
-                    time: "Just now",
-                    status: "Read",
-                };
+            // if (response.status === 200) {
+            //     const agentMessage = {
+            //         id: uuidv4(),
+            //         isUser: false,
+            //         content: response?.data?.success?.agent,
+            //         sender: "Ecosystem.ai",
+            //         time: "Just now",
+            //         status: "Read",
+            //     };
 
-                setMessages((prev) =>
-                    prev.map((msg) =>
-                        msg.id === "typing" ? agentMessage : msg
-                    )
-                );
-            } else {
-                setMessages((prev) => prev.filter((msg) => msg.id !== "typing"));
-            }
+            //     setMessages((prev) =>
+            //         prev.map((msg) =>
+            //             msg.id === "typing" ? agentMessage : msg
+            //         )
+            //     );
+            // } else {
+            //     setMessages((prev) => prev.filter((msg) => msg.id !== "typing"));
+            // }
 
         } catch (error) {
             console.log(error);
@@ -208,7 +223,7 @@ const DemoChat = () => {
                         {messages.map((message) => (
                             <div key={message.id} className="flex flex-col">
                                 {!message.isUser && (
-                                    <div className="flex items-center gap-2 mb-1">
+                                    <div className="flex items-center gap-2 mb-1 ml-auto">
                                         <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] font-[600] text-[#675FFF]">E</div>
                                         <span className="text-sm font-medium">{message.sender}</span>
                                         <span className="text-[12px] text-[#5A687C] flex items-center gap-1"><GoDotFill color="#E1E4EA" />
@@ -219,7 +234,7 @@ const DemoChat = () => {
 
 
                                 {message.isUser && (
-                                    <div className="flex items-center gap-1 mt-1 ml-auto">
+                                    <div className="flex items-center gap-1 mt-1">
                                         <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] text-[#675FFF] font-[600]">U</div>
                                         <span className="text-xs text-gray-500">{message.sender}</span>
                                         <span className="text-[12px] text-[#5A687C] flex items-center gap-1"><GoDotFill color="#E1E4EA" />
@@ -228,7 +243,7 @@ const DemoChat = () => {
                                     </div>
                                 )}
                                 {message.id === "typing" ? <div className="pl-[50px] pt-3 flex "><span className="three-dots" /></div> : <div
-                                    className={`max-w-md text-[12px] font-[400] p-3 rounded-lg ${message.isUser ? "ml-auto my-1 bg-[#675FFF] text-white" : "bg-[#F2F2F7] text-[#5A687C]"
+                                    className={`max-w-md w-fit text-[12px] font-[400] p-3 rounded-lg ${!message.isUser ? "ml-auto my-1 bg-[#675FFF] text-white" : "my-1 bg-[#F2F2F7] text-[#5A687C]"
                                         }`}
                                 >
                                     <p className="text-sm">{message.content}</p>
@@ -327,6 +342,8 @@ const DemoChat = () => {
                                     <input
                                         type="checkbox"
                                         className="sr-only peer"
+                                        checked={agentEnabled}
+                                        onChange={() => agentStatus(activeConversation)}
                                     />
                                     <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-400 rounded-full peer dark:bg-gray-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#675FFF]"></div>
                                 </label>
@@ -340,7 +357,7 @@ const DemoChat = () => {
                                 {messages.map((message) => (
                                     <div key={message.id} className="flex flex-col">
                                         {!message.isUser && (
-                                            <div className="flex items-center gap-2 mb-1">
+                                            <div className="flex items-center gap-2 mb-1 ml-auto">
                                                 <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] font-[600] text-[#675FFF]">E</div>
                                                 <span className="text-sm font-medium">{message.sender}</span>
                                                 <span className="text-[12px] text-[#5A687C] flex items-center gap-1"><GoDotFill color="#E1E4EA" />
@@ -351,7 +368,7 @@ const DemoChat = () => {
 
 
                                         {message.isUser && (
-                                            <div className="flex items-center gap-1 mt-1 ml-auto">
+                                            <div className="flex items-center gap-1 mt-1">
                                                 <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] text-[#675FFF] font-[600]">U</div>
                                                 <span className="text-xs text-gray-500">{message.sender}</span>
                                                 <span className="text-[12px] text-[#5A687C] flex items-center gap-1"><GoDotFill color="#E1E4EA" />
@@ -360,7 +377,7 @@ const DemoChat = () => {
                                             </div>
                                         )}
                                         {message.id === "typing" ? <div className="pl-[50px] pt-3 flex "><span className="three-dots" /></div> : <div
-                                            className={`max-w-md text-[12px] font-[400] p-3 rounded-lg ${message.isUser ? "ml-auto my-1 bg-[#675FFF] text-white" : "bg-[#F2F2F7] text-[#5A687C]"
+                                            className={`max-w-md w-fit text-[12px] font-[400] p-3 rounded-lg ${!message.isUser ? "ml-auto my-1 bg-[#675FFF] text-white" : "my-1 bg-[#F2F2F7] text-[#5A687C]"
                                                 }`}
                                         >
                                             <p className="text-sm">{message.content}</p>
@@ -379,6 +396,7 @@ const DemoChat = () => {
                                     type="text"
                                     className="flex-1 w-full px-4 py-2 outline-none border-none text-sm"
                                     placeholder="Type your message here ...."
+                                    disabled={agentEnabled}
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                 />

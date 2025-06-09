@@ -123,7 +123,7 @@ function AgentsSeth() {
                                                 </label>
                                             </div>
                                         </td>
-                                        <td className='bg-[#F6F7F9]'>
+                                        <td className='bg-[#FAFBFD]'>
                                             <button
                                                 onClick={() => handleDropdownClick(index)}
                                                 className="text-gray-500 hover:text-gray-700"

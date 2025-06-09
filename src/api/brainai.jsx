@@ -156,7 +156,7 @@ export const deleteList = async (id) => {
 }
 
 
-export const instagramCallback = async () => {
+export const getInstaAccounts = async () => {
     try {
         const response = await axiosInstance.get(`http://116.202.210.102:8000/get-insta-accounts`);
         return response;

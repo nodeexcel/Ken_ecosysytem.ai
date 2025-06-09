@@ -15,7 +15,7 @@ import click_funnels from '../assets/svg/click-funnels.svg'
 import AdditionalIntegration from './AdditionalIntegrations';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNavbarData } from '../store/navbarSlice'
-import { instagramCallback } from '../api/brainai';
+import { getInstaAccounts } from '../api/brainai';
 // Define the integrations data
 
 
@@ -29,7 +29,7 @@ const Integration = () => {
   const handleInstagram = async () => {
     try {
 
-      const response = await instagramCallback();
+      const response = await getInstaAccounts();
       if(response?.status === 200) {
         console.log(response?.data?.insta_account_info)
         setInstagramData(response?.data?.insta_account_info);

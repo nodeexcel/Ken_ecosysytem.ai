@@ -21,13 +21,13 @@ function AppointmentSetter() {
         { label: "Agents", icon: <TeamMemberIcon status={activeSidebarItem == "agents"} />, path: "agents" },
         { label: "Conversations", icon: <ConversationIcon status={activeSidebarItem == "conversations"} />, path: "conversations" },
         { label: "Analytics", icon: <AnalyticsIcon status={activeSidebarItem == "analytics"} />, path: "analytics" },
-        { label: "Demo Chat", icon: <ConversationIcon status={activeSidebarItem == "demo"} />, path: "demo" },
+        // { label: "Demo Chat", icon: <ConversationIcon status={activeSidebarItem == "demo"} />, path: "demo" },
     ]
 
     const renderMainContent = () => {
         switch (activeSidebarItem) {
             case "conversations":
-                return <Conversation />
+                return <DemoChat />
             case "analytics":
                 return <Analytics />;
             case "demo":
