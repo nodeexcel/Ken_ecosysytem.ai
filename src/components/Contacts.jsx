@@ -2,9 +2,20 @@ import { Contact, Download, Mail, Phone, SquarePen, Trash2, Upload, X } from "lu
 import { useEffect, useRef, useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi";
 import { Delete, Duplicate, Edit, Notes, ThreeDots, UploadIcon } from "../icons/icons";
-import { addContactsToList, createContactList, getContactList, uploadContacts,getLists } from "../api/brainai";
+import { addContactsToList, createContactList, getContactList, uploadContacts, getLists, newContactAdd, deleteList, duplicateList, updateList, deleteContact, updateContact } from "../api/brainai";
 import { DateFormat } from "../utils/TimeFormat";
 import { format } from "date-fns";
+import { FaChevronDown } from "react-icons/fa";
+import uk_flag from "../assets/images/uk_flag.png"
+import us_flag from "../assets/images/us_flag.png"
+import fr_flag from "../assets/images/fr_flag.png"
+
+const countries = [
+  { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
+  { name: "United Kingdom", code: "GB", dial_code: "+44", flag: uk_flag }, ,
+  { name: "France", code: "FR", dial_code: "+33", flag: fr_flag }, ,
+  // Add more countries as needed
+];
 
 const ContactsPage = () => {
   const [activeTab, setActiveTab] = useState("all-contacts");
@@ -29,13 +40,54 @@ const ContactsPage = () => {
   const [allContactsMessage, setAllContactsMessage] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
- const [totalContacts, setTotalContacts] = useState(0);
-  const [contactLists,setContactLists]=useState([]);
+  const [totalContacts, setTotalContacts] = useState(0);
+  const [contactLists, setContactLists] = useState([]);
+  const [listLoading, setListLoading] = useState(false);
+  const [addContactModal, setAddContactModal] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+  const [addNewContact, setAddNewContact] = useState({
+    firstName: '',
+    lastName: '',
+    phoneCode: selectedCountry.dial_code,
+    number: '',
+    email: '',
+    companyName: '',
+  });
+  const [error, setError] = useState({});
+  const [listMessage, setListMessage] = useState("");
 
   const [totalPages, setTotalPages] = useState(0);
+  const [isEdit, setIsEdit] = useState("");
+  const [contactIsEdit, setContactIsEdit] = useState("")
 
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
+
+
+  const validateSubmit = () => {
+    const errors = {};
+    if (!addNewContact.firstName) {
+      errors.firstName = "First name is required";
+    }
+    if (!addNewContact.lastName) {
+      errors.lastName = "Last name is required";
+    }
+    if (!addNewContact.phone) {
+      errors.phone = "Phone number is required";
+    }
+    if (addNewContact.phone && !/^\+?[0-9\s]+$/.test(addNewContact.phone)) {
+      errors.phone = "Invalid phone number format";
+    }
+    if (!addNewContact.email) {
+      errors.email = "Email is required";
+    }
+    if (!addNewContact.companyName) {
+      errors.companyName = "Company Name is required";
+    }
+    setError(errors);
+    return Object.keys(errors).length === 0;
+  }
 
 
   const handleRowsPerPageChange = (e) => {
@@ -44,12 +96,75 @@ const ContactsPage = () => {
   };
 
 
+  const handleAddContactChange = (e) => {
+    const { name, value } = e.target;
+    setAddNewContact((prev) => ({ ...prev, [name]: value }));
+    setError((prev) => ({ ...prev, [name]: '' }));
+  }
+
 
   // useEffect(() => {
   //   if (currentContacts?.length > 0) {
   //     setLoadingStatus(false)
   //   }
   // }, [currentContacts])
+
+  const handleNewContactSubmit = async () => {
+    if (!validateSubmit()) {
+      return;
+    }
+    setLoading(true)
+    try {
+      const response = await newContactAdd(addNewContact)
+      if (response?.status === 201) {
+        setAddContactModal(false);
+        setAddNewContact({
+          firstName: '',
+          lastName: '',
+          phoneCode: '',
+          phone: '',
+          email: '',
+          companyName: '',
+        });
+        getAllContacts();
+      } else {
+        console.log(response)
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleUpdateContactSubmit = async () => {
+    if (!validateSubmit()) {
+      return;
+    }
+    setLoading(true)
+    try {
+      const response = await updateContact({ ...addNewContact, contactId: contactIsEdit })
+      if (response?.status === 200) {
+        setAddContactModal(false);
+        setAddNewContact({
+          firstName: '',
+          lastName: '',
+          phoneCode: '',
+          phone: '',
+          email: '',
+          companyName: '',
+        });
+        setContactIsEdit("");
+        getAllContacts();
+      } else {
+        console.log(response)
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
 
   const handleClick = () => {
@@ -123,6 +238,12 @@ const ContactsPage = () => {
 
   const selectedStatus = statusOptions.find((a) => a.key == statusSelect)?.label;
 
+  useEffect(() => {
+    if (contactLists?.length > 0) {
+      setListLoading(false);
+    }
+  }, [contactLists])
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -166,28 +287,87 @@ const ContactsPage = () => {
     }))
   }
 
+  const handleDeleteContact = async (contactId) => {
+    setActiveDropdown(null);
+    try {
+      const response = await deleteContact(contactId);
+      if (response?.status === 200) {
+        getAllContacts();
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
+  const handleDeleteList = async (listId) => {
+    setActiveDropdown(null);
+    try {
+      const response = await deleteList(listId);
+      if (response?.status === 200) {
+        handleGetLists();
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleDuplicateList = async (listId) => {
+    setActiveDropdown(null);
+    try {
+      const response = await duplicateList({ listId: listId });
+      if (response?.status === 200) {
+        handleGetLists();
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleUpdateList = async () => {
+    if (!validateListForm()) {
+      return;
+    }
+    setLoading(true)
+    try {
+      const response = await updateList({ ...formData, listId: isEdit });
+      if (response?.status === 200) {
+        handleGetLists();
+        setOpen(false);
+        setIsEdit("");
+      } else {
+        console.log(response)
+        setFormErrors((prev) => ({ ...prev, listName: response?.response?.data?.message }))
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const getAllContacts = async () => {
     setAllContactsMessage("")
     try {
-      const response = await getContactList(currentPage,rowsPerPage);
+      const response = await getContactList(currentPage, rowsPerPage);
       if (response?.status === 200) {
         console.log(response?.data)
 
         if (response?.data?.contacts?.length == 0) {
 
-          setAllContactsMessage("No Data Found")
+          setAllContactsMessage("No Contacts Found")
           setAllContacts([])
-        }else{
-            setAllContacts( response?.data?.contacts);
-            setTotalPages(response?.data?.totalPages);
-            setTotalContacts(response?.data?.totalContacts);
+        } else {
+          setAllContacts(response?.data?.contacts);
+          setTotalPages(response?.data?.totalPages);
+          setTotalContacts(response?.data?.totalContacts);
 
         }
       }
     } catch (error) {
       console.log(error)
-    }finally {
-         setLoadingStatus(false)
+    } finally {
+      setLoadingStatus(false)
     }
   }
 
@@ -201,6 +381,7 @@ const ContactsPage = () => {
       if (response?.status === 200) {
         setCreateList(false)
         setFormCreateList({ listName: '', contactsId: [], channel: '' })
+        handleGetLists()
       }
     } catch (error) {
       console.log(error)
@@ -209,18 +390,24 @@ const ContactsPage = () => {
     }
   }
 
-  const handleGetLists=async()=>{
-     try{
 
+  const handleGetLists = async () => {
+    setListMessage("");
+    try {
+      setListLoading(true);
       const response = await getLists();
       if (response?.status === 200) {
-          setContactLists(response?.data?.lists);
-          console.log(response?.data?.lists)
+        setContactLists(response?.data?.lists);
+        console.log(response?.data?.lists)
+        if (response?.data?.lists?.length === 0) {
+          setListLoading(false);
+          setListMessage("No Lists Found");
+        }
       }
 
-     }catch(error){
+    } catch (error) {
       console.log(error)
-     }
+    }
   }
 
 
@@ -324,12 +511,20 @@ const ContactsPage = () => {
     }
   }
 
-    useEffect(() => {
+  const handleEditList = (list) => {
+    console.log(list)
+    setIsEdit(list.id);
+    setActiveDropdown(null);
+    setOpen(true)
+    setFormData({ listName: list.listName, description: list.description, channel: list.channel })
+  }
+
+  useEffect(() => {
 
     handleGetLists()
   }, [])
 
-  useEffect(() => {    getAllContacts()},[currentPage, rowsPerPage]);
+  useEffect(() => { getAllContacts() }, [currentPage, rowsPerPage]);
 
 
 
@@ -354,7 +549,7 @@ const ContactsPage = () => {
               <span className="font-[500] text-[16px] leading-6 text-[#675FFF]">Import</span>
             </button>}
 
-            <button onClick={activeTab === "lists" ? () => setOpen(true) : undefined} className="flex items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
+            <button onClick={activeTab === "lists" ? () => setOpen(true) : () => setAddContactModal(true)} className="flex items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
               <span className="font-medium text-base leading-6">
                 {activeTab === "lists" ? "Create List" : "Add Contact"}
               </span>
@@ -413,7 +608,7 @@ const ContactsPage = () => {
                   className="w-full pl-10 pr-3.5 pt-[7px] pb-[6px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg"
                 />
               </div>
-              {activeTab !== "lists" && <button disabled={formCreateList.contactsId?.length === 0} onClick={()=>setCreateList(true)} className="flex items-center gap-2.5 px-5 py-[6px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
+              {activeTab !== "lists" && <button disabled={formCreateList.contactsId?.length === 0} onClick={() => setCreateList(true)} className="flex items-center gap-2.5 px-5 py-[6px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
                 <span className="font-medium text-base leading-6">
                   Create List
                 </span>
@@ -473,8 +668,16 @@ const ContactsPage = () => {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700">
                         <div className="flex items-center gap-3.5">
-                          <Edit />
-                          <Delete className="text-red-500" />
+                          <div onClick={() => {
+                            setContactIsEdit(contact.id);
+                            setAddContactModal(true);
+                            setAddNewContact(({ ...contact, phoneCode: selectedCountry.dial_code }))
+                          }}>
+                            <Edit />
+                          </div>
+                          <div onClick={() => handleDeleteContact(contact.id)}>
+                            <Delete className="text-red-500" />
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -484,7 +687,7 @@ const ContactsPage = () => {
             <div className="flex justify-between items-center mt-4 px-4 flex-wrap gap-3">
               <div className="flex items-center gap-2 text-[16px] text-[#5A687C]">
                 <div>
-                  Showing {(currentPage-1)*rowsPerPage+1} - {Math.min((currentPage)*rowsPerPage,totalContacts)} of {totalContacts}
+                  Showing {(currentPage - 1) * rowsPerPage + 1} - {Math.min((currentPage) * rowsPerPage, totalContacts)} of {totalContacts}
 
                 </div>
                 |
@@ -597,70 +800,71 @@ const ContactsPage = () => {
                 </tr>
               </thead>
               <tbody className="bg-white border border-[#E1E4EA] rounded-[16px]">
-                {contactLists.map((list, index) => (
-                  <tr key={list.name} className={`${contacts.length - 1 !== index && 'border border-[#E1E4EA] px-4 text-[16px]'}`}>
-                    <td className="px-6 py-4 font-[600] whitespace-nowrap">{list.listName}</td>
-                    <td className="px-6 py-4 font-[400] text-[#5A687C] whitespace-nowrap">{list.activeContacts.toLocaleString()}</td>
-                    <td className="px-6 py-4 font-[400] whitespace-nowrap">
-                      {list.channel.toLowerCase() === "email" ? (
-                        <div className="flex items-center gap-1.5 bg-[#fff5e6] text-[#ff9500] px-3 py-1 rounded-md w-fit">
-                          <Mail className="h-4 w-4" />
-                          <span>Email</span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1.5 bg-[#f0f0ff] text-[#675fff] px-3 py-1 rounded-md w-fit">
-                          <Phone className="h-4 w-4" />
-                          <span>Phone No</span>
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 font-[400] text-[#5A687C] whitespace-nowrap">{format(list.createdDate, 'dd/MM/yyyy hh:mm a')}</td>
-                    <td className="px-6 py-4">
-                      <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
-                        <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
-                      </button>
-                      {activeDropdown === index && (
-                        <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
-                          <div className="py-1">
-                            <button
-                              className="block group w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-gray-100"
-                              onClick={() => {
-                                setActiveDropdown(null);
-                              }}
-                            >
-                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
-                            </button>
-                            <button
-                              className="block group w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
-                              onClick={() => {
-                                setActiveDropdown(null);
-                              }}
-                            >
-                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>View Contacts</span> </div>
-                            </button>
-                            <button
-                              className="block group w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
-                              onClick={() => {
-                                setActiveDropdown(null);
-                              }}
-                            >
-                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
-                            </button>
-                            <hr style={{ color: "#E6EAEE" }} />
-                            <button
-                              className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
-                              onClick={() => {
-                                setActiveDropdown(null);
-                              }}
-                            >
-                              <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">Delete</span> </div>
-                            </button>
+                {listLoading ? <tr className='h-34'><td ></td><td ></td><td><span className='loader' /></td></tr> : listMessage ? <tr className='h-34'><td></td><td ></td><td>{listMessage}</td></tr> : <>
+                  {contactLists.map((list, index) => (
+                    <tr key={list.name} className={`${contacts.length - 1 !== index && 'border border-[#E1E4EA] px-4 text-[16px]'}`}>
+                      <td className="px-6 py-4 font-[600] whitespace-nowrap">{list.listName}</td>
+                      <td className="px-6 py-4 font-[400] text-[#5A687C] whitespace-nowrap">{list.activeContacts.toLocaleString()}</td>
+                      <td className="px-6 py-4 font-[400] whitespace-nowrap">
+                        {list.channel.toLowerCase() === "email" ? (
+                          <div className="flex items-center gap-1.5 bg-[#fff5e6] text-[#ff9500] px-3 py-1 rounded-md w-fit">
+                            <Mail className="h-4 w-4" />
+                            <span>Email</span>
                           </div>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                        ) : (
+                          <div className="flex items-center gap-1.5 bg-[#f0f0ff] text-[#675fff] px-3 py-1 rounded-md w-fit">
+                            <Phone className="h-4 w-4" />
+                            <span>Phone No</span>
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 font-[400] text-[#5A687C] whitespace-nowrap">{format(list.createdDate, 'dd/MM/yyyy hh:mm a')}</td>
+                      <td className="px-6 py-4">
+                        <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative">
+                          <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
+                          {activeDropdown === index && (
+                            <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                              <div className="py-1">
+                                <button
+                                  className="block group w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-gray-100"
+                                  onClick={() => {
+                                    handleEditList(list);
+                                  }}
+                                >
+                                  <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                                </button>
+                                <button
+                                  className="block group w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
+                                  onClick={() => {
+                                    setActiveDropdown(null);
+                                  }}
+                                >
+                                  <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>View Contacts</span> </div>
+                                </button>
+                                <button
+                                  className="block group w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
+                                  onClick={() => {
+                                    handleDuplicateList(list.id);
+                                  }}
+                                >
+                                  <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
+                                </button>
+                                <hr style={{ color: "#E6EAEE" }} />
+                                <button
+                                  className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
+                                  onClick={() => {
+                                    handleDeleteList(list.id);
+                                  }}
+                                >
+                                  <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">Delete</span> </div>
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}</>}
               </tbody>
             </table>
           </div>
@@ -676,18 +880,19 @@ const ContactsPage = () => {
                 setOpen(false)
                 setFormData({ listName: '', description: '', channel: '' })
                 setFormErrors({})
+                setIsEdit("");
               }}
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <h2 className="text-[#1E1E1E] font-semibold text-[20px] mb-2">Create a List</h2>
+            <h2 className="text-[#1E1E1E] font-semibold text-[20px] mb-2">{isEdit ? 'Update' : 'Create'} a List</h2>
 
             <div className="flex flex-col gap-2">
               <div>
                 <label className="block text-[14px] font-medium text-[#292D32] mb-1">Name</label>
-                <div className={`flex items-center border ${formData.listName ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-3`}>
+                <div className={`flex items-center border ${formErrors.listName ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-3`}>
                   <input
                     type="text"
                     name="listName"
@@ -736,10 +941,11 @@ const ContactsPage = () => {
                 setOpen(false)
                 setFormData({ listName: '', description: '', channel: '' })
                 setFormErrors({})
+                setIsEdit("");
               }} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                 Cancel
               </button>
-              <button onClick={handleSubmit} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
+              <button onClick={!isEdit ? () => handleSubmit() : () => handleUpdateList()} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
                 {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save"}
               </button>
             </div>
@@ -908,6 +1114,194 @@ const ContactsPage = () => {
                 Cancel
               </button>
               <button onClick={handleUploadFile} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
+                {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {addContactModal && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl w-[510px] max-h-[85vh] overflow-auto  p-6 relative shadow-lg">
+            <button
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              onClick={() => {
+                setAddContactModal(false)
+                setContactIsEdit("")
+                setAddNewContact({
+                  firstName: '',
+                  lastName: '',
+                  phoneCode: '',
+                  phone: '',
+                  email: '',
+                  companyName: '',
+                });
+              }}
+            >
+              <X size={20} />
+            </button>
+
+            <h2 className="text-xl font-semibold text-gray-800 mb-5">
+              {contactIsEdit ? 'Update' : 'Add New'} Contact
+            </h2>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={addNewContact.firstName}
+                    onChange={handleAddContactChange}
+                    placeholder="Enter first name"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                  />
+
+                  {error.firstName && (
+                    <p className="text-red-500 text-sm mt-1">{error.firstName}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    placeholder="Enter last name"
+                    value={addNewContact.lastName}
+                    onChange={handleAddContactChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                  />
+
+                  {error.lastName && (
+                    <p className="text-red-500 text-sm mt-1">{error.lastName}</p>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
+                  Number
+                </label>
+                <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-4 py-2">
+                  <div className="relative">
+                    <button
+                      onClick={() => setIsOpen(!isOpen)}
+                      className="w-fit flex border-none justify-between gap-2 items-center border pl-1 py-1 text-left"
+                    >
+                      <img src={selectedCountry?.flag} alt={selectedCountry?.name} width={16} />
+                      <FaChevronDown color="#5A687C" className="w-[10px]" />
+                      <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />
+                    </button>
+                    {isOpen && (
+                      <div className="absolute z-10  w-full left-[-13px] bg-white mt-1">
+                        {countries.map((country) => (
+                          <div
+                            key={country.code}
+                            onClick={() => {
+                              setSelectedCountry(country);
+                              setIsOpen(false);
+                              setAddNewContact((prev) => ({ ...prev, phoneCode: country.dial_code }));
+                            }}
+                            className={`px-4 py-2 hover:bg-gray-100 ${selectedCountry?.code === country?.code && 'bg-[#EDF3FF]'} cursor-pointer flex items-center`}
+                          >
+                            <img src={country.flag} alt={country.name} width={16} />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={addNewContact.phone}
+                    onChange={handleAddContactChange}
+                    placeholder="Enter number"
+                    className="w-full outline-none"
+                  // onChange={(e) => {
+                  //   setNumber(e.target.value);
+                  //   setError((prev) => ({ ...prev, number: "" }));
+                  // }}
+                  // value={number}
+                  />
+
+
+                </div>
+                {error.phone && (
+                  <p className="text-red-500 text-sm mt-1">{error.phone}</p>
+                )}
+              </div>
+              <div>
+                <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
+                  Email Address
+                </label>
+                <input
+                  type="text"
+                  name="email"
+                  value={addNewContact.email}
+                  onChange={handleAddContactChange}
+                  placeholder="Enter email address"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                />
+
+                {error.email && (
+                  <p className="text-red-500 text-sm mt-1">{error.email}</p>
+                )}
+              </div>
+              <div>
+                <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
+                  Company Name
+                </label>
+                <input
+                  type="text"
+                  name="companyName"
+                  value={addNewContact.companyName}
+                  onChange={handleAddContactChange}
+                  placeholder="Enter company Name "
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                />
+
+                {error.companyName && (
+                  <p className="text-red-500 text-sm mt-1">{error.companyName}</p>
+                )}
+              </div>
+            </div>
+            {/*
+            {responseError && (
+              <div className="mt-4 text-red-500 text-sm">
+                {responseError}
+              </div>
+            )} */}
+
+            {/* Footer */}
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={() => {
+                  setAddContactModal(false)
+                  setContactIsEdit("")
+                  setAddNewContact({
+                    firstName: '',
+                    lastName: '',
+                    phoneCode: '',
+                    phone: '',
+                    email: '',
+                    companyName: '',
+                  });
+                }}
+                className="w-full text-[16px] text-[#5A687C] bg-white border-[1.5px] border-[#E1E4EA] rounded-[8px] h-[38px]"
+              >
+                Cancel
+              </button>
+              <button
+                className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
+                disabled={loading}
+                onClick={contactIsEdit ? () => handleUpdateContactSubmit() : () => handleNewContactSubmit()}
+              >
                 {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save"}
               </button>
             </div>

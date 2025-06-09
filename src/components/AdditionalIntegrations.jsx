@@ -22,7 +22,7 @@ const staticData = [
     { label: "orsay—sample", status: "Approved", description: "This message confirms that you've successfully set up your WhatsApp notifications. From now on, you'll be able to receive updates, alerts, and important info directly in your chat." }
 ]
 
-const AdditionalIntegration = ({ integartionData, setFirstRender }) => {
+const AdditionalIntegration = ({ instagramData, integartionData, setFirstRender }) => {
     const [open, setOpen] = useState(false);
     const [createTemplateOpen, setCreateTemplateOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("insta");
@@ -65,22 +65,24 @@ const AdditionalIntegration = ({ integartionData, setFirstRender }) => {
             case 1:
                 return (
                     <div>
-                        <div className="w-full gap-3 p-3 flex justify-between border border-solid border-[#e1e4ea] bg-white rounded-lg">
-                            <div className="flex flex-col gap-2 pl-2">
-                                <div className="flex items-center gap-2">
-                                    <div>
-                                        <img
-                                            className="w-5 h-5"
-                                            alt={integartionData.name}
-                                            src={integartionData.icon}
-                                        />
+                        {instagramData?.length > 0 && instagramData.map((e,i) => (
+                            <div key={i} className="w-full gap-3 p-3 flex justify-between border border-solid border-[#e1e4ea] bg-white rounded-lg">
+                                <div className="flex flex-col gap-2 pl-2">
+                                    <div className="flex items-center gap-2">
+                                        <div>
+                                            <img
+                                                className="w-5 h-5"
+                                                alt={integartionData.name}
+                                                src={integartionData.icon}
+                                            />
+                                        </div>
+                                        <h1 className="text-[16px] font-[500] font-inter">{integartionData.name === "WhatsApp" ? "15557158822" : `@${e.username}`}</h1>
                                     </div>
-                                    <h1 className="text-[16px] font-[500] font-inter">{integartionData.name === "WhatsApp" ? "15557158822" : "@Abcxyz"}</h1>
+                                    <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">Read and write using the {integartionData.name}.</li>
                                 </div>
-                                <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">Read and write using the {integartionData.name}.</li>
+                                <BiDotsVerticalRounded />
                             </div>
-                            <BiDotsVerticalRounded />
-                        </div>
+                        ))}
                     </div>
                 )
         }
@@ -100,7 +102,7 @@ const AdditionalIntegration = ({ integartionData, setFirstRender }) => {
             <div className=''>
                 <div className='flex justify-between px-2 items-center'>
                     <div className="flex gap-4 items-center h-[45px] pb-2 pl-5 cursor-pointer" onClick={handleBack}>
-                         <LeftArrow/>
+                        <LeftArrow />
                         <h1 className="text-[20px] font-[600]">Integrations</h1>
                     </div>
                 </div>
@@ -267,16 +269,16 @@ const AdditionalIntegration = ({ integartionData, setFirstRender }) => {
                                         </p>
                                     </div>
                                     <div className="flex flex-col gap-5 w-full mt-4">
-                                        <a  href={integartionData.path}   target="_blank">
-                                             <button
-                                            // onClick={handleNext}
-                                            className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+                                        <a href={integartionData.path} target="_blank">
+                                            <button
+                                                // onClick={handleNext}
+                                                className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
 
 
-                                        >
-                                            Go To {integartionData.name}
+                                            >
+                                                Go To {integartionData.name}
 
-                                        </button>
+                                            </button>
                                         </a>
 
                                         <button

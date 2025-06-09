@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ChevronRight } from "lucide-react";
 import instagram from '../assets/svg/instagram.svg'
 import google from '../assets/svg/google.svg'
@@ -13,77 +13,100 @@ import hubspot from '../assets/svg/hubspot.svg'
 import mailchimp from '../assets/svg/mailchimp.svg'
 import click_funnels from '../assets/svg/click-funnels.svg'
 import AdditionalIntegration from './AdditionalIntegrations';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getNavbarData } from '../store/navbarSlice'
+import { instagramCallback } from '../api/brainai';
 // Define the integrations data
-const integrations = [
-  {
-    icon: instagram,
-    name: "Instagram",
-    connectedAccounts: 1,
-    path: import.meta.env.VITE_INSTA_URL
-  },
-  {
-    icon: google,
-    name: "Google",
-    connectedAccounts: 0,
-  },
-  {
-    icon: linkedin,
-    name: "LinkedIn",
-    connectedAccounts: 0,
-  },
-  {
-    icon: facebook,
-    name: "Facebook",
-    connectedAccounts: 0,
-  },
-  {
-    icon: systemio,
-    name: "System.io",
-    connectedAccounts: 0,
-  },
-  {
-    icon: calendly,
-    name: "Calendly",
-    connectedAccounts: 0,
-  },
-  {
-    icon: google_calender,
-    name: "Google Calendar",
-    connectedAccounts: 0,
-  },
-  {
-    icon: whatsapp,
-    name: "WhatsApp",
-    connectedAccounts: 1,
-  },
-  {
-    icon: active_campaign,
-    name: "Active Campaign",
-    connectedAccounts: 0,
-  },
-  {
-    icon: hubspot,
-    name: "Hubspot",
-    connectedAccounts: 0,
-  },
-  {
-    icon: mailchimp,
-    name: "Mailchimp",
-    connectedAccounts: 0,
-  },
-  {
-    icon: click_funnels,
-    name: "Clickfunnels",
-    connectedAccounts: 0,
-  },
-];
+
 
 const Integration = () => {
   const [firstRender, setFirstRender] = useState(true)
   const [integartionData, setIntegrationData] = useState({})
+  const [instagramData, setInstagramData] = useState([])
   const dispatch = useDispatch();
+  const userDetails = useSelector((state) => state.profile.user)
+
+  const handleInstagram = async () => {
+    try {
+
+      const response = await instagramCallback();
+      if(response?.status === 200) {
+        console.log(response?.data?.insta_account_info)
+        setInstagramData(response?.data?.insta_account_info);
+      }
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    handleInstagram()
+  }, [])
+
+  const integrations = [
+    {
+      icon: instagram,
+      name: "Instagram",
+      connectedAccounts: instagramData.length,
+      path: import.meta.env.VITE_INSTA_URL + `&state=${userDetails.id}`,
+    },
+    {
+      icon: google,
+      name: "Google",
+      connectedAccounts: 0,
+    },
+    {
+      icon: linkedin,
+      name: "LinkedIn",
+      connectedAccounts: 0,
+    },
+    {
+      icon: facebook,
+      name: "Facebook",
+      connectedAccounts: 0,
+    },
+    {
+      icon: systemio,
+      name: "System.io",
+      connectedAccounts: 0,
+    },
+    {
+      icon: calendly,
+      name: "Calendly",
+      connectedAccounts: 0,
+    },
+    {
+      icon: google_calender,
+      name: "Google Calendar",
+      connectedAccounts: 0,
+    },
+    {
+      icon: whatsapp,
+      name: "WhatsApp",
+      connectedAccounts: 1,
+    },
+    {
+      icon: active_campaign,
+      name: "Active Campaign",
+      connectedAccounts: 0,
+    },
+    {
+      icon: hubspot,
+      name: "Hubspot",
+      connectedAccounts: 0,
+    },
+    {
+      icon: mailchimp,
+      name: "Mailchimp",
+      connectedAccounts: 0,
+    },
+    {
+      icon: click_funnels,
+      name: "Clickfunnels",
+      connectedAccounts: 0,
+    },
+  ];
 
   const handleClick = (data) => {
     dispatch(getNavbarData("integrations"))
@@ -133,7 +156,7 @@ const Integration = () => {
             </div>
           ))}
         </div>
-      </> : <AdditionalIntegration integartionData={integartionData} setFirstRender={setFirstRender} />}
+      </> : <AdditionalIntegration instagramData={instagramData} integartionData={integartionData} setFirstRender={setFirstRender} />}
     </div>
   )
 }
