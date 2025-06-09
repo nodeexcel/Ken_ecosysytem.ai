@@ -8,8 +8,8 @@ import uk_flag from "../assets/images/uk_flag.png"
 import us_flag from "../assets/images/us_flag.png"
 import fr_flag from "../assets/images/fr_flag.png"
 import { FaChevronDown } from "react-icons/fa";
-import {createPhoneCampaign} from "../api/callAgent";
-import { getCallAgent,getPhoneNumber,getPhoneCampaign,deletePhoneCampaign,getPhoneCampaignDetail ,updatePhoneCampaign,duplicateCampaign} from "../api/callAgent";
+import { createPhoneCampaign } from "../api/callAgent";
+import { getCallAgent, getPhoneNumber, getPhoneCampaign, deletePhoneCampaign, getPhoneCampaignDetail, updatePhoneCampaign, duplicateCampaign } from "../api/callAgent";
 import { format } from "date-fns";
 
 
@@ -67,234 +67,251 @@ export default function CallCampaign() {
   const [isOpen, setIsOpen] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const dispatch = useDispatch()
-  const [agents,setAgent]=useState([]);
-  const[phoneNumbers,setPhoneNumbers]=useState([]);
-  const [loader,setLoader] = useState(false);
-  const [deleteRow,setDeleteRow]=useState(null);
+  const [agents, setAgent] = useState([]);
+  const [phoneNumbers, setPhoneNumbers] = useState([]);
+  const [loader, setLoader] = useState(false);
+  const [deleteRow, setDeleteRow] = useState(null);
 
-     const [campaign,setCampaign] = useState(
-        {
-  campaign_name: "",
-  language: "",
-  voice: "",
-  choose_calendar:"",
-  max_call_time: 10,
-  target_lists: ["0"],
-  agent: 0,
-  country: "USA",
-  phone_number:"",
-  catch_phrase: "",
-  call_script :"",
-  tom_engages: true
-}
+  const [campaign, setCampaign] = useState(
+    {
+      campaign_name: "",
+      language: "",
+      voice: "",
+      choose_calendar: "",
+      max_call_time: 10,
+      target_lists: ["0"],
+      agent: 0,
+      country: "USA",
+      phone_number: "",
+      catch_phrase: "",
+      call_script: "",
+      tom_engages: true
+    }
 
-    );
+  );
 
-    const [campaigns, setCampaigns] = useState([]);
-
-
-
-    const [errors, setErrors] = useState({
-  campaign_name: "",
-  language: "",
-  voice: "",
-  choose_calendar: "",
-  max_call_time: "",
-  target_lists: "",
-  agent: "",
-  country: "",
-  phone_number: "",
-  catch_phrase: "",
-  call_script: ""
-});
+  const [campaigns, setCampaigns] = useState([]);
 
 
 
-const validateForm = () => {
-  const newErrors = {};
-
-  if (!campaign.campaign_name.trim()) newErrors.campaign_name = "Campaign name is required.";
-  if (!campaign.language) newErrors.language = "Language is required.";
-  if (!campaign.voice) newErrors.voice = "Voice selection is required.";
-  if (!campaign.choose_calendar) newErrors.choose_calendar = "Calendar selection is required.";
-  if (!campaign.max_call_time || campaign.max_call_time <= 0) newErrors.max_call_time = "Enter a valid call time.";
-  if (!campaign.target_lists || campaign.target_lists.length === 0) newErrors.target_lists = "At least one target list is required.";
-  if (!campaign.agent) newErrors.agent = "Agent selection is required.";
-  // if (!campaign.country) newErrors.country = "Country is required.";
-  if (!campaign.phone_number) newErrors.phone_number = "Phone number is required.";
-  if (!campaign.catch_phrase.trim()) newErrors.catch_phrase = "Catch phrase is required.";
-  if (!campaign.call_script.trim()) newErrors.call_script = "Call script is required.";
-  if(campaign.catch_phrase.trim().length<20) newErrors.catch_phrase = "Minimum 20 characters required for catch phrase.";
-  if(campaign.call_script.trim().length<50) newErrors.call_script = "Minimum 50 characters required for call script.";
-
-  setErrors(newErrors);
-
-  return Object.keys(newErrors).length === 0;
-};
+  const [errors, setErrors] = useState({
+    campaign_name: "",
+    language: "",
+    voice: "",
+    choose_calendar: "",
+    max_call_time: "",
+    target_lists: "",
+    agent: "",
+    country: "",
+    phone_number: "",
+    catch_phrase: "",
+    call_script: ""
+  });
 
 
- const removeRow = async (id) => {
-     try{
-        const response = await deletePhoneCampaign(id);
-        if (response.status === 200) {
-          console.log("Phone number status updated successfully");
 
-          handleGetPhoneCampaign();
-          setDeleteRow(null);
-        } else {
-          console.error("Failed to update phone number status:", response);
-        }
+  const validateForm = () => {
+    const newErrors = {};
 
-     }catch(error){
+    if (!campaign.campaign_name.trim()) newErrors.campaign_name = "Campaign name is required.";
+    if (!campaign.language) newErrors.language = "Language is required.";
+    if (!campaign.voice) newErrors.voice = "Voice selection is required.";
+    if (!campaign.choose_calendar) newErrors.choose_calendar = "Calendar selection is required.";
+    if (!campaign.max_call_time || campaign.max_call_time <= 0) newErrors.max_call_time = "Enter a valid call time.";
+    if (!campaign.target_lists || campaign.target_lists.length === 0) newErrors.target_lists = "At least one target list is required.";
+    if (!campaign.agent) newErrors.agent = "Agent selection is required.";
+    // if (!campaign.country) newErrors.country = "Country is required.";
+    if (!campaign.phone_number) newErrors.phone_number = "Phone number is required.";
+    if (!campaign.catch_phrase.trim()) newErrors.catch_phrase = "Catch phrase is required.";
+    if (!campaign.call_script.trim()) newErrors.call_script = "Call script is required.";
+    if (campaign.catch_phrase.trim().length < 20) newErrors.catch_phrase = "Minimum 20 characters required for catch phrase.";
+    if (campaign.call_script.trim().length < 50) newErrors.call_script = "Minimum 50 characters required for call script.";
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+
+  const removeRow = async (id) => {
+    try {
+      const response = await deletePhoneCampaign(id);
+      if (response.status === 200) {
+        console.log("Phone number status updated successfully");
+
+        handleGetPhoneCampaign();
+        setDeleteRow(null);
+      } else {
+        console.error("Failed to update phone number status:", response);
+      }
+
+    } catch (error) {
       console.error("Error removing row:", error);
-     }
- }
-
-     const handleCampaignForm=(e)=>{
-        const { name, value } = e.target;
-        setCampaign((prev) => ({
-            ...prev,
-            [name]: value
-        }));
-        if(errors[name]) {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            [name]: ""
-          }));
-        }
-
     }
-
-
-
-
-const handleGetPhoneAgent=async()=>{
-   try{
-    const response = await getCallAgent();
-
-    if (response.status === 200) {
-      setAgent(response.data.agents_info||[]);
-    } else {
-      console.error("Failed to fetch agents:", response);
-    }
-
-   }catch(error){
-    console.error("Error fetching agents:", error);
-   }
-}
-
-
-const handleGetPhoneCampaign=async()=>{
-  try{
-    const response = await getPhoneCampaign();
-
-    if (response.status === 200) {
-      setCampaigns(response.data.campaigns_info||[]);
-    } else {
-      console.error("Failed to fetch phone campaigns:", response);
-    }
-  }catch(error){
-    console.error("Error fetching phone campaigns:", error);
   }
-}
+
+  const handleCampaignForm = (e) => {
+    const { name, value } = e.target;
+    setCampaign((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+    if (errors[name]) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: ""
+      }));
+    }
+
+  }
+
+
+
+
+  const handleGetPhoneAgent = async () => {
+    try {
+      const response = await getCallAgent();
+
+      if (response.status === 200) {
+        setAgent(response.data.agents_info || []);
+      } else {
+        console.error("Failed to fetch agents:", response);
+      }
+
+    } catch (error) {
+      console.error("Error fetching agents:", error);
+    }
+  }
+
+  const resetForm = () => {
+    setCampaign({
+      campaign_name: "",
+      language: "",
+      voice: "",
+      choose_calendar: "",
+      max_call_time: 10,
+      target_lists: ["0"],
+      agent: 0,
+      country: "USA",
+      phone_number: "",
+      catch_phrase: "",
+      call_script: "",
+      tom_engages: true
+    })
+  }
+
+
+  const handleGetPhoneCampaign = async () => {
+    try {
+      const response = await getPhoneCampaign();
+
+      if (response.status === 200) {
+        setCampaigns(response.data.campaigns_info || []);
+      } else {
+        console.error("Failed to fetch phone campaigns:", response);
+      }
+    } catch (error) {
+      console.error("Error fetching phone campaigns:", error);
+    }
+  }
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoader(true);
+    e.preventDefault();
+    setLoader(true);
 
-  if (validateForm()) {
+    if (validateForm()) {
 
-  const response=await   createPhoneCampaign(campaign);
+      const response = await createPhoneCampaign(campaign);
 
 
-    if (response.status === 200) {
+      if (response.status === 200) {
         console.log(response.data);
 
-     }
-     setShowModal(false);
-     handleGetPhoneCampaign();
-    // Submit logic here
-
-  } else {
-    console.log("Validation failed");
-    console.log("Errors:", errors);
-  }
-  setLoader(false);
-};
-
-
-const handleGetPhoneCampaignDetail=async (id)=>{
-  try{
-    const response = await getPhoneCampaignDetail(id);
-    if (response.status === 200) {
-      setCampaign(response.data.campaign_data);
-      setShowModal(true)
-
-
-    } else {
-      console.error("Failed to fetch campaign details:", response);
-    }
-  }catch(error){
-    console.error("Error fetching campaign details:", error);
-  }finally{
-      setActiveDropdown(null);
-  }
-}
-
-
-const handleEditCampaign=async ()=>{
-  try{
-
-    if(!validateForm()) {
-      console.log("Validation failed");
-      return ;
-
-    }
-    const response = await updatePhoneCampaign(campaign);
-    if (response.status === 200) {
-      console.log("Campaign details:", response.data);
+      }
       setShowModal(false);
-      getPhoneCampaign();
-    } else {
-      console.error("Failed to fetch campaign details:", response);
-    }
-  }catch(error){
-    console.error("Error fetching campaign details:", error);
-  }finally{
-      setActiveDropdown(null);
-  }
-}
-
-const handleGetPhoneNumber=async()=>{
-  try{
-    const response = await getPhoneNumber();
-    // console.log("Response from getPhoneNumber API:", response);
-    if (response.status === 200) {
-      setPhoneNumbers(response.data.phone_numbers||[]);
-    } else {
-      console.error("Failed to fetch phone numbers:", response);
-    }
-  }catch(error){
-    console.error("Error fetching phone numbers:", error);
-  }
-}
-
-const handleDuplicate = async (id) => {
-  try {
-    const response = await duplicateCampaign(id);
-
-    if (response.status === 201) {
-      console.log("Campaign duplicated successfully:", response.data);
       handleGetPhoneCampaign();
+      // Submit logic here
+
     } else {
-      console.error("Failed to duplicate campaign:", response);
-     }
-    setActiveDropdown(null);
-  }catch(error){
-    console.error("Error duplicating campaign:", error);
+      console.log("Validation failed");
+      console.log("Errors:", errors);
+    }
+    setLoader(false);
+  };
+
+
+  const handleGetPhoneCampaignDetail = async (id) => {
+    try {
+      const response = await getPhoneCampaignDetail(id);
+      if (response.status === 200) {
+        setCampaign(response.data.campaign_data);
+        setShowModal(true)
+
+
+      } else {
+        console.error("Failed to fetch campaign details:", response);
+      }
+    } catch (error) {
+      console.error("Error fetching campaign details:", error);
+    } finally {
+      setActiveDropdown(null);
+    }
   }
 
-}
+
+  const handleEditCampaign = async () => {
+    try {
+
+      if (!validateForm()) {
+        console.log("Validation failed");
+        return;
+
+      }
+      const response = await updatePhoneCampaign(campaign);
+      if (response.status === 200) {
+        console.log("Campaign details:", response.data);
+        setShowModal(false);
+        getPhoneCampaign();
+      } else {
+        console.error("Failed to fetch campaign details:", response);
+      }
+    } catch (error) {
+      console.error("Error fetching campaign details:", error);
+    } finally {
+      setActiveDropdown(null);
+    }
+  }
+
+  const handleGetPhoneNumber = async () => {
+    try {
+      const response = await getPhoneNumber();
+      // console.log("Response from getPhoneNumber API:", response);
+      if (response.status === 200) {
+        setPhoneNumbers(response.data.phone_numbers || []);
+      } else {
+        console.error("Failed to fetch phone numbers:", response);
+      }
+    } catch (error) {
+      console.error("Error fetching phone numbers:", error);
+    }
+  }
+
+  const handleDuplicate = async (id) => {
+    try {
+      const response = await duplicateCampaign(id);
+
+      if (response.status === 201) {
+        console.log("Campaign duplicated successfully:", response.data);
+        handleGetPhoneCampaign();
+      } else {
+        console.error("Failed to duplicate campaign:", response);
+      }
+      setActiveDropdown(null);
+    } catch (error) {
+      console.error("Error duplicating campaign:", error);
+    }
+
+  }
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -303,9 +320,9 @@ const handleDuplicate = async (id) => {
       }
     }
     if (showModal) document.addEventListener("mousedown", handleClickOutside);
-      handleGetPhoneNumber();
-  handleGetPhoneAgent();
-  handleGetPhoneCampaign();
+    handleGetPhoneNumber();
+    handleGetPhoneAgent();
+    handleGetPhoneCampaign();
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
@@ -369,7 +386,7 @@ const handleDuplicate = async (id) => {
                   >
                     <td className="px-6 py-4 font-medium text-gray-900">{agent.campaign_name}</td>
                     <td className="px-6 py-4">{agent.agent_name}</td>
-                    <td className="px-6 py-4">{ format(agent.creation_date,"dd-mm-yy hh:mm a")}</td>
+                    <td className="px-6 py-4">{format(agent.creation_date, "dd-mm-yy hh:mm a")}</td>
                     <td className="px-6 py-4">{agent.language}</td>
                     <td className="px-6 py-4">{agent.total_calls}</td>
                     <td className="px-6 py-4">
@@ -379,52 +396,52 @@ const handleDuplicate = async (id) => {
                     </td>
                     <td className="px-6 py-4">
                       <div className='flex items-center gap-2'>
-                        <button className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg cursor-pointer'  onClick={()=>setShowReport(true)}>
+                        <button className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg cursor-pointer' onClick={() => setShowReport(true)}>
                           View Report
                         </button>
                         <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative">
                           <div className='bg-[#F4F5F6] p-2 rounded-lg cursor-pointer'><ThreeDots /></div>
-                           {activeDropdown === index && (
-                        <div className="absolute right-0   w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
-                          <div className="py-1">
-                            <button
-                              className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-gray-100 cursor-pointer"
-                              onClick={() => {
-                                // Handle edit action
-                                setEditData(agent.id)
+                          {activeDropdown === index && (
+                            <div className="absolute right-0   w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                              <div className="py-1">
+                                <button
+                                  className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-gray-100 cursor-pointer"
+                                  onClick={() => {
+                                    // Handle edit action
+                                    setEditData(agent.id)
 
-                                handleGetPhoneCampaignDetail(agent.id);
+                                    handleGetPhoneCampaignDetail(agent.id);
 
 
-                              }}
-                            >
-                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
-                            </button>
-                            <button
-                              className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] cursor-pointer"
-                              onClick={() => {
-                                // Handle delete action
+                                  }}
+                                >
+                                  <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                                </button>
+                                <button
+                                  className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] cursor-pointer"
+                                  onClick={() => {
+                                    // Handle delete action
 
-                                handleDuplicate(agent.id);
-                              }}
-                            >
-                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
-                            </button>
-                            <hr style={{ color: "#E6EAEE" }} />
-                            <button
-                              className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
-                              onClick={() => {
-                                // Handle delete action
-                                setActiveDropdown(null);
-                                setDeleteRow(agent.id);
+                                    handleDuplicate(agent.id);
+                                  }}
+                                >
+                                  <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
+                                </button>
+                                <hr style={{ color: "#E6EAEE" }} />
+                                <button
+                                  className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
+                                  onClick={() => {
+                                    // Handle delete action
+                                    setActiveDropdown(null);
+                                    setDeleteRow(agent.id);
 
-                              }}
-                            >
-                              <div className="flex items-center gap-2 cursor-pointer">{<Delete />} <span>Delete</span> </div>
-                            </button>
-                          </div>
-                        </div>
-                      )}
+                                  }}
+                                >
+                                  <div className="flex items-center gap-2 cursor-pointer">{<Delete />} <span>Delete</span> </div>
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </button>
                       </div>
 
@@ -475,7 +492,8 @@ const handleDuplicate = async (id) => {
             <h1 onClick={() => {
               setShowModal(false)
               setEditData()
-            }} className="text-[14px] font-[400] text-[#5A687C] hover:text-[#5a687cdb] cursor-pointer">{`Call Campaigns > ${editData ? 'Campaign Name' : 'New Campaign'}`}</h1>
+              resetForm()
+            }} className="text-[14px] font-[400] text-[#5A687C] hover:text-[#5a687cdb] cursor-pointer">{`Call Campaigns > ${editData ? `${campaign.campaign_name}` : 'New Campaign'}`}</h1>
             <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{editData ? 'Edit' : 'Add New'} Campaigns</h1>
           </div>
           <div className="w-full"
@@ -506,7 +524,7 @@ const handleDuplicate = async (id) => {
                     <option value="English">English</option>
                     <option value="French">French</option>
                   </select>
-                    {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
+                  {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
                 </div>
                 <div>
                   <label className="block text-sm text-gray-700 mb-1">Voice</label>
@@ -557,9 +575,9 @@ const handleDuplicate = async (id) => {
                 <select className="w-full px-4 py-2 border rounded-lg border-gray-300"
 
                   name="target_lists"
-                  // value={campaign.target_lists}
-                  // onChange={handleCampaignForm}
-                  >
+                // value={campaign.target_lists}
+                // onChange={handleCampaignForm}
+                >
                   <option value="">Select</option>
                   <option value="0">0</option>
                   <option value="1">1</option>
@@ -575,13 +593,13 @@ const handleDuplicate = async (id) => {
                   value={campaign.agent}
                   onChange={handleCampaignForm}>
                   <option>Select</option>
-                   {
+                  {
                     agents.map((agent) => (
                       <option key={agent.id} value={agent.id}>
                         {agent.agent_name}
                       </option>
                     ))
-                   }
+                  }
                 </select>
                 {errors.agent && <p className="text-red-500 text-sm mt-1">{errors.agent}</p>}
               </div>
@@ -619,22 +637,22 @@ const handleDuplicate = async (id) => {
                   </div>
 
 
-                  <select className="w-full focus:outline-none px-4 py-2  rounded-lg border-gray-300" name="phone_number"
+                  <select className="w-full focus:outline-none px-4 rounded-lg border-gray-300" name="phone_number"
                     value={campaign.phone_number}
                     onChange={handleCampaignForm}>
 
-                      <option value="" >Select</option>
-                      {
-                       phoneNumbers.map((phone) => {
-                      return   <option key={phone.id} value={phone.phone_number}>
-                        {phone.phone_number}
-                      </option>
+                    <option value="" >Select</option>
+                    {
+                      phoneNumbers.map((phone) => {
+                        return <option key={phone.id} value={phone.phone_number}>
+                          {phone.phone_number}
+                        </option>
                       })
-                     }
+                    }
                   </select>
 
                 </div>
-                  {errors.phone_number && <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>}
+                {errors.phone_number && <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>}
               </div>
 
               <div className="flex items-center justify-between mt-2">
@@ -680,13 +698,14 @@ const handleDuplicate = async (id) => {
 
               {editData ? <div className="flex gap-4 mt-6">
                 <button className="w-[195px]  text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
-                onClick={handleEditCampaign} disabled={loader}
+                  onClick={handleEditCampaign} disabled={loader}
                 >
                   Save Campaign
                 </button>
                 <button onClick={() => {
                   setShowModal(false)
                   setEditData()
+                  resetForm()
                 }} className="w-[195px]  text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                   Cancel
                 </button>
@@ -699,17 +718,17 @@ const handleDuplicate = async (id) => {
                 </button>
 
 
-                     <button
-                className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
-                disabled={loader}
-                onClick={handleSubmit}
-              >
+                <button
+                  className="w-[195px] text-[16px] text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
+                  disabled={loader}
+                  onClick={handleSubmit}
+                >
 
-                <p>   Launch Calls</p>
-              { loader&& <span className="loader text-[#5E54FF]"></span>}
+                  <p>   Launch Calls</p>
+                  {loader && <span className="loader text-[#5E54FF]"></span>}
 
 
-              </button>
+                </button>
 
               </div>}
             </div>
@@ -754,40 +773,40 @@ const handleDuplicate = async (id) => {
       </div>}
 
       {
-        showReport &&  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-     <div class="bg-white rounded-xl shadow-lg p-6 w-[500px]">
-    <div class="flex justify-between items-start mb-4">
-      <div>
-        <h4 className="text-md font-semibold text-gray-800">Campaign Name :  Inbound.4d74997e-2c17-4024-98c4-5fbca9d4f5d1</h4>
+        showReport && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div class="bg-white rounded-xl shadow-lg p-6 w-[500px]">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h4 className="text-md font-semibold text-gray-800">Campaign Name :  Inbound.4d74997e-2c17-4024-98c4-5fbca9d4f5d1</h4>
 
 
 
-      </div>
-      <button class="text-gray-400 hover:text-gray-600 text-xl relative -top-4 -right-4 cursor-pointer" onClick={()=>setShowReport(false)}><X/></button>
-    </div>
+              </div>
+              <button class="text-gray-400 hover:text-gray-600 text-xl relative -top-4 -right-4 cursor-pointer" onClick={() => setShowReport(false)}><X /></button>
+            </div>
 
-    <div class="grid grid-cols-2 gap-4 mb-8">
-      <div class=" rounded-lg border border-gray-200 ">
-        <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">Total calls</p>
-        <p class="text-xl font-semibold text-gray-900 m-2">0</p>
-      </div>
+            <div class="grid grid-cols-2 gap-4 mb-8">
+              <div class=" rounded-lg border border-gray-200 ">
+                <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">Total calls</p>
+                <p class="text-xl font-semibold text-gray-900 m-2">0</p>
+              </div>
 
-      <div class=" rounded-lg border border-gray-200 ">
-        <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">Unsuccessful calls</p>
-        <p class="text-xl font-semibold text-gray-900 m-2">0</p>
-      </div>
- <div class=" rounded-lg border border-gray-200 ">
-        <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">Average call duration</p>
-        <p class="text-xl font-semibold text-gray-900 m-2">0</p>
-      </div>
+              <div class=" rounded-lg border border-gray-200 ">
+                <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">Unsuccessful calls</p>
+                <p class="text-xl font-semibold text-gray-900 m-2">0</p>
+              </div>
+              <div class=" rounded-lg border border-gray-200 ">
+                <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">Average call duration</p>
+                <p class="text-xl font-semibold text-gray-900 m-2">0</p>
+              </div>
 
-    <div class=" rounded-lg border border-gray-200 ">
-        <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">Total call time</p>
-        <p class="text-xl font-semibold text-gray-900 m-2">00:00:00</p>
-      </div>
-    </div>
-  </div>
-</div>
+              <div class=" rounded-lg border border-gray-200 ">
+                <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">Total call time</p>
+                <p class="text-xl font-semibold text-gray-900 m-2">00:00:00</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
       }
 

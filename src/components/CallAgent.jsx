@@ -1,5 +1,5 @@
-import React,{useEffect, useState} from "react";
-import { MoreHorizontal, X } from "lucide-react";
+import React,{useEffect, useState,useRef} from "react";
+import { ChevronDown, Info, MoreHorizontal, X } from "lucide-react";
 import { ThreeDots } from "../icons/icons";
 import { FaChevronDown } from "react-icons/fa";
 import uk_flag from "../assets/images/uk_flag.png"
@@ -95,7 +95,7 @@ const fetchAgents = async () => {
     const response=await getCallAgent();
     if(response.status === 200){
       setAgents(response.data.agents_info||[]);
-    
+
     }else{
       console.error("Failed to fetch agents");
     }
@@ -110,6 +110,48 @@ const fetchAgents = async () => {
     fetchAgents();
   },[]);
 
+
+const Dropdown = ({ name, options, placeholder = 'Select', value, onChange, className = '' }) => {
+
+        const [isOpen, setIsOpen] = useState(false);
+
+        const dropdownRef = useRef(null);
+
+        useEffect(() => {
+            const handleClickOutside = (event) => {
+                if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                    setIsOpen(false);
+                }
+            };
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => document.removeEventListener('mousedown', handleClickOutside);
+        }, []);
+
+        const handleSelect = (option) => {
+            onChange(option);
+            setIsOpen(false);
+        };
+
+        const optionLabel = value && options.find((e) => e.key === value)
+
+        return (
+            <div ref={dropdownRef} className={`relative w-full ${className}`}>
+                <button type="button" onClick={() => setIsOpen(!isOpen)} className={`flex justify-between items-center w-full border ${error[name] ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 bg-white text-left focus:outline-none focus:ring-1 focus:ring-[#675FFF]`}>
+                    <span className={`block truncate ${!optionLabel ? 'text-gray-500' : 'text-gray-900'}`}>{optionLabel?.label || placeholder}</span>
+                    <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
+                </button>
+                {isOpen && (
+                    <div className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg border border-gray-200 max-h-60 overflow-auto">
+                        <ul className="py-1">
+                            {options.map((option) => (
+                                <li key={option.key} className={`cursor-pointer select-none relative px-4 py-2 hover:bg-[#F4F5F6] ${value === option.key ? 'text-[#675FFF]' : 'text-gray-900'}`} onClick={() => handleSelect(option.key)}>{option.label}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+            </div>
+        );
+    };
 
   return (
     <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
@@ -229,50 +271,63 @@ const fetchAgents = async () => {
                       <label className="text-sm font-medium block mb-1">
                        Language
                       </label>
-                      <select
-
-                        placeholder="Enter number name"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                        value={agent.language}
-                        name="language"
-                        onChange={(e) =>{setAgent({ ...agent, language: e.target.value }); setError({...error, language:""})}
-                        }
-
-                      >
-                        <option value="">Select </option>
-                          <option value="english">English</option>
-                          <option value="french">French</option>
-                      </select>
-
-                      {error.language && <p className="text-red-500 text-sm mt-1">{error.language}</p>}
+                      <Dropdown
+  name="language"
+  options={[
+    { key: '', label: 'Select' },
+    { key: 'english', label: 'English' },
+    { key: 'french', label: 'French' },
+  ]}
+  value={agent.language}
+  onChange={(selectedLanguage) => {
+    setAgent({ ...agent, language: selectedLanguage });
+    setError({ ...error, language: '' });
+  }}
+  className="mt-2"
+/>
+      {error.language && <p className="text-red-500 text-sm mt-1">{error.language}</p>}
                     </div>
 
                       <div>
                       <label className="text-sm font-medium block mb-1">
                        Voice
                       </label>
-                      <select
+                   <Dropdown
+  name="voice"
+  options={[
+    { key: '', label: 'Select' },
+    { key: 'English', label: 'English' },
+    { key: 'French', label: 'French' },
+  ]}
+  value={agent.voice}
+  onChange={(selectedVoice) => {
+    setAgent({ ...agent, voice: selectedVoice });
+    setError({ ...error, voice: '' });
+  }}
+  className="mt-2"
+/>
+     {error.voice && <p className="text-red-500 text-sm mt-1">{error.voice}</p>}
 
-                        placeholder="Enter number name"
-                        className="w-full px-4 py-2 border border-gray-300  text-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                        value={agent.voice}
-                        name="voice"
-                        onChange={(e) =>{ setAgent({ ...agent, voice: e.target.value }); setError({...error, voice:""})}}
-                      >
-                        <option value="">Select </option>
-                          <option value="English">English</option>
-                          <option value="French">French</option>
-                      </select>
-
-                      {error.voice && <p className="text-red-500 text-sm mt-1">{error.voice}</p>}
                     </div>
 
                     <div>
-                      <label className="text-sm text-gray-600 font-medium block mb-1">
+
+                      <div className="flex items-center gap-2 ">
+                           <label className="text-sm text-gray-600 font-medium block mb-1">
                         Phone Number
                       </label>
-                      <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-4 py-2">
-                        <div className="relative">
+
+                       <div className="relative group">
+                         <Info className="text-gray-500 cursor-pointer mb-1" size={16} />
+                        <div className="absolute bottom-full flex-col mb-1 gap-1 w-60 left-3 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:flex transition-opacity duration-200 z-10">
+                          {`For inbound user can choose one number but for outbound user can choose multiples.`}
+                         </div>
+                        </div>
+                      </div>
+
+
+
+                        {/* <div className="relative">
                           <button
                             onClick={() => setIsOpen(!isOpen)}
                             className="w-fit flex border-none justify-between gap-2 items-center border pl-1 py-1 text-left"
@@ -297,23 +352,24 @@ const fetchAgents = async () => {
                               ))}
                             </div>
                           )}
-                        </div>
-                         <select id="" className="w-full focus:border-none focus:outline-none  text-black"
-                         value={agent.phone_number}
-                         onChange={(e) =>{ setAgent({ ...agent, phone_number: e.target.value });setError({...error, phone_number:""})}}
-                         name="phone_number"
-
-                         >
-                            <option value="">Select</option>
-                          {phoneNumbers.map((number) => (
-                            <option key={number.id} value={number.phone_number}>
-                              {number.phone_number}
-                            </option>
-                          ))}
-                         </select>
+                        </div> */}
 
 
-                      </div>
+                          <Dropdown
+  name="phone_number"
+  options={[ { key: '', label: 'Select' }, ...phoneNumbers.map((number) => ({
+    key: number.phone_number,
+    label: number.phone_number
+  }))]}
+  value={agent.phone_number}
+  onChange={(selectedPhone) => {
+    setAgent({ ...agent, phone_number: selectedPhone });
+    setError({ ...error, phone_number: '' });
+  }}
+  placeholder="Select"
+  className="mt-2"
+/>
+
                       {error.phone_number && <p className="text-red-500 text-sm mt-1">{error.phone_number}</p>}
                     </div>
 
@@ -362,3 +418,5 @@ function ToggleSwitch({ checked, onChange }) {
     </button>
   );
 }
+
+

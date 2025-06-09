@@ -10,6 +10,7 @@ import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useDispatch } from "react-redux";
 import { getNavbarData } from "../store/navbarSlice";
 import { LeftArrow } from "../icons/icons";
+import Integration from "./Integration";
 
 const tabs = [
     { label: "Account" },
@@ -266,12 +267,18 @@ const AdditionalIntegration = ({ integartionData, setFirstRender }) => {
                                         </p>
                                     </div>
                                     <div className="flex flex-col gap-5 w-full mt-4">
-                                        <button
+                                        <a  href={integartionData.path}   target="_blank">
+                                             <button
                                             // onClick={handleNext}
                                             className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+
+
                                         >
                                             Go To {integartionData.name}
+
                                         </button>
+                                        </a>
+
                                         <button
                                             onClick={() => setActiveTab("meta")}
                                             className="w-full text-[16px] text-[#5E54FF] mt-3 bg-white"
