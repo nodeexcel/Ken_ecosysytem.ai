@@ -13,22 +13,28 @@ const DemoChat = () => {
     const [activeConversation, setActiveConversation] = useState()
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
-    const [chatList, setChatList] = useState();
+    const [chatList, setChatList] = useState([]);
     const [message, setMessage] = useState("")
     const [loading, setLoading] = useState(false);
     const [loadingChats, setLoadingChats] = useState(false);
     const [agentId, setAgentId] = useState();
     const [agentEnabled, setAgentEnabled] = useState(false)
+    const [leadStatus, setLeadStatus] = useState("positive")
+    const [loadingChatsList, setLoadingChatsList] = useState(false)
     const chatRef = useRef()
 
     useEffect(() => {
-        handleChatBox()
         handleGetAgents()
     }, [])
 
     useEffect(() => {
+        handleChatBox()
+    }, [leadStatus])
+
+    useEffect(() => {
         if (chatList?.length > 0) {
             setLoading(false)
+            setLoadingChatsList(false)
         }
     }, [chatList])
 
@@ -63,20 +69,19 @@ const DemoChat = () => {
 
     const handleChatBox = async () => {
         try {
-            const response = await getChats();
+            setLoadingChatsList(true)
+            const response = await getChats(leadStatus);
             console.log(response.data)
             if (response.status === 200) {
                 setChatList(response.data.success)
-                // if (response.data.success.length == 0) {
-
-                // }
-            } else if (response?.status === 404) {
-                setChatList([])
+                if (response.data.success.length == 0) {
+                    setLoadingChatsList(false)
+                    setLoading(false)
+                }
             }
-
         } catch (error) {
             console.log(error)
-        } finally {
+            setLoadingChatsList(false)
             setLoading(false)
         }
     }
@@ -206,7 +211,7 @@ const DemoChat = () => {
                             <p className="text-[16px] font-[400] text-[#5A687C]">Explore conversation with your leads</p>
 
                             <div className="flex items-center gap-2 mt-3">
-                                <select className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-[#335BFB] bg-white shadow rounded-md">
+                                <select value={leadStatus} onChange={(e) => setLeadStatus(e.target.value)} className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-[#335BFB] bg-white shadow rounded-md">
                                     <option value="positive" className="text-[#5A687C]">Positive</option>
                                     <option value="engaged" className="text-[#5A687C]">Engaged</option>
                                     <option value="no_answer" className="text-[#5A687C]">No Answer</option>
@@ -221,7 +226,7 @@ const DemoChat = () => {
                     </div>
 
                     <div className="w-80 mt-2 p-2 h-[460px] overflow-y-auto">
-                        {chatList?.length > 0 && chatList.map((conversation, index) => (
+                        {loadingChatsList ? <div className="flex justify-center items-center w-full"><span className="loader" /> </div> : chatList?.length > 0 ? chatList.map((conversation, index) => (
                             <div
                                 key={index}
                                 className={`flex items-center gap-3 my-1 p-4 cursor-pointer hover:bg-white hover:rounded-2xl ${activeConversation === conversation ? "bg-white rounded-2xl" : ""
@@ -236,7 +241,7 @@ const DemoChat = () => {
                                     {/* <p className="text-sm text-gray-500 truncate">{conversation.message}</p> */}
                                 </div>
                             </div>
-                        ))}
+                        )) : <h1 className="text-[#5A687C] text-[18px] font-[400] flex justify-center items-center w-full">No users found</h1>}
                     </div>
                 </div>
                 {/* Main Content */}

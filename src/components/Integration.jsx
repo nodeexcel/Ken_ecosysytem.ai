@@ -66,6 +66,7 @@ const Integration = () => {
       icon: google,
       name: "Google",
       connectedAccounts: 0,
+      path: import.meta.env.VITE_GOOGLE_URL + `&state=${userDetails.id}`,
     },
     {
       icon: linkedin,

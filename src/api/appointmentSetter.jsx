@@ -74,9 +74,9 @@ export const chatAgent = async (payload,id) => {
 }
 
 
-export const getChats = async () => {
+export const getChats = async (status) => {
     try {
-        const response= await axiosInstance.get(`http://116.202.210.102:8000/get-chats`);
+        const response= await axiosInstance.get(`http://116.202.210.102:8000/get-chats?lead_status=${status}`);
         return response
     } catch (error) {
         console.log(error)
