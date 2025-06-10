@@ -49,8 +49,7 @@ const ContactsPage = () => {
   const [addNewContact, setAddNewContact] = useState({
     firstName: '',
     lastName: '',
-    phoneCode: selectedCountry.dial_code,
-    number: '',
+    // phoneCode: selectedCountry.dial_code,
     email: '',
     companyName: '',
   });
@@ -115,13 +114,13 @@ const ContactsPage = () => {
     }
     setLoading(true)
     try {
-      const response = await newContactAdd(addNewContact)
+      const response = await newContactAdd({ ...addNewContact, phone: selectedCountry.dial_code + " " + addNewContact.phone })
       if (response?.status === 201) {
         setAddContactModal(false);
         setAddNewContact({
           firstName: '',
           lastName: '',
-          phoneCode: '',
+          // phoneCode: '',
           phone: '',
           email: '',
           companyName: '',
@@ -143,13 +142,13 @@ const ContactsPage = () => {
     }
     setLoading(true)
     try {
-      const response = await updateContact({ ...addNewContact, contactId: contactIsEdit })
+      const response = await updateContact({ ...addNewContact, phone: selectedCountry.dial_code + " " + addNewContact.phone, contactId: contactIsEdit })
       if (response?.status === 200) {
         setAddContactModal(false);
         setAddNewContact({
           firstName: '',
           lastName: '',
-          phoneCode: '',
+          // phoneCode: '',
           phone: '',
           email: '',
           companyName: '',
@@ -511,6 +510,24 @@ const ContactsPage = () => {
     }
   }
 
+  const extractPhoneDetails = (phoneNumber) => {
+    const regex = /^(\+\d+)\s*(\d+)$/;
+    const match = phoneNumber.match(regex);
+
+    if (match) {
+      const countryCode = match[1];
+      const number = match[2];
+      return { countryCode, number };
+    }
+    return { countryCode: "", number: "" };
+  };
+
+
+  const renderPhoneNumber = (phone) => {
+    const { countryCode, number } = extractPhoneDetails(phone);
+    return `${countryCode}${number}`
+  }
+
   const handleEditList = (list) => {
     console.log(list)
     setIsEdit(list.id);
@@ -623,13 +640,13 @@ const ContactsPage = () => {
                     <th key={index} className="px-6 py-3 text-[16px] font-[400] whitespace-nowrap">
                       {header.name === 'Full Name' ? (
                         <div className="flex items-center gap-2">
-                          <label class="checkbox-container">
+                          <label className="checkbox-container">
                             <input
                               type="checkbox"
                               checked={allSelected}
                               onChange={toggleSelectAll}
                             />
-                            <span class="checkmark"></span>
+                            <span className="checkmark"></span>
                           </label>
                           {header.name}
                         </div>
@@ -646,13 +663,13 @@ const ContactsPage = () => {
                     <tr key={index} className={`${contacts.length - 1 !== index && 'border border-[#E1E4EA] px-4'}`}>
                       <td className="px-6 py-4 text-sm text-gray-800 font-semibold whitespace-nowrap">
                         <div className="flex items-center gap-2">
-                          <label class="checkbox-container">
+                          <label className="checkbox-container">
                             <input
                               type="checkbox"
                               checked={formCreateList.contactsId.includes(contact.id)}
                               onChange={() => toggleSelectOne(contact.id)}
                             />
-                            <span class="checkmark"></span>
+                            <span className="checkmark"></span>
                           </label>
                           {contact?.firstName}{" "}{contact?.lastName}
                         </div>
@@ -661,7 +678,7 @@ const ContactsPage = () => {
                         {contact?.email}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
-                        {contact?.phone}
+                        {renderPhoneNumber(contact?.phone)}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
                         {DateFormat(contact?.created_at)}
@@ -671,7 +688,10 @@ const ContactsPage = () => {
                           <div onClick={() => {
                             setContactIsEdit(contact.id);
                             setAddContactModal(true);
-                            setAddNewContact(({ ...contact, phoneCode: selectedCountry.dial_code }))
+                            const { countryCode, number } = extractPhoneDetails(contact.phone);
+                            setAddNewContact(({ ...contact, phone: number }))
+                            const filterCountry = countries.filter((e) => e.dial_code == countryCode)
+                            setSelectedCountry(filterCountry[0])
                           }}>
                             <Edit />
                           </div>
@@ -1132,7 +1152,7 @@ const ContactsPage = () => {
                 setAddNewContact({
                   firstName: '',
                   lastName: '',
-                  phoneCode: '',
+                  // phoneCode: '',
                   phone: '',
                   email: '',
                   companyName: '',
@@ -1206,7 +1226,7 @@ const ContactsPage = () => {
                             onClick={() => {
                               setSelectedCountry(country);
                               setIsOpen(false);
-                              setAddNewContact((prev) => ({ ...prev, phoneCode: country.dial_code }));
+                              // setAddNewContact((prev) => ({ ...prev, phoneCode: country.dial_code }));
                             }}
                             className={`px-4 py-2 hover:bg-gray-100 ${selectedCountry?.code === country?.code && 'bg-[#EDF3FF]'} cursor-pointer flex items-center`}
                           >
@@ -1287,7 +1307,7 @@ const ContactsPage = () => {
                   setAddNewContact({
                     firstName: '',
                     lastName: '',
-                    phoneCode: '',
+                    // phoneCode: '',
                     phone: '',
                     email: '',
                     companyName: '',
