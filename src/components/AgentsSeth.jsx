@@ -93,8 +93,8 @@ function AgentsSeth() {
                     <table className="min-w-full rounded-2xl border-separate border-spacing-y-2">
                         <thead className="bg-transparent">
                             <tr className="text-[#5A687C]">
-                                <th className="px-6 text-start py-3 text-[16px] font-medium">Name</th>
-                                <th className="px-6 text-end py-3 text-[16px] font-medium">Status</th>
+                                <th className="px-6 text-start py-3 text-[16px] font-[400]">Name</th>
+                                <th className="px-6 text-end py-3 text-[16px] font-[400]">Status</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -103,8 +103,8 @@ function AgentsSeth() {
                                 return (
                                     <tr key={index} className="text-center bg-white">
                                         <td className="px-6 py-4 text-sm text-gray-800 font-semibold border-l-1 border-t-1 border-b-1 border-[#E1E4EA] rounded-l-lg">
-                                            <div className='flex items-center gap-2'>
-                                                <p className='flex justify-center items-center rounded-full h-[30px] w-[30px] bg-[#dce9f8] text-[#675FFF]'>{item.agent_name[0]}</p>
+                                            <div className='flex items-center gap-2 text-[16px] font-[600]'>
+                                                <p className='flex justify-center items-center rounded-[12px] h-[40px] w-[40px] text-[16px] font-[600] bg-[#EBEFFF] text-[#675FFF]'>{item.agent_name[0]}</p>
                                                 {item.agent_name}
                                             </div>
                                         </td>
@@ -121,7 +121,7 @@ function AgentsSeth() {
                                                         checked={item.is_active}
                                                         onChange={() => toggleStatus(index, 'is_active', item.agent_id)}
                                                     />
-                                                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-400 rounded-full peer dark:bg-gray-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                                    <div className="w-9 h-5 bg-[#F2F4F7] rounded-full peer dark:bg-[#F2F4F7] peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#675FFF]"></div>
                                                 </label>
                                             </div>
                                         </td>
