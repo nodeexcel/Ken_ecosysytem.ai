@@ -2,7 +2,8 @@ import { EllipsisVertical } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import CreateNewAgent from './CreateNewAgent';
 import { deleteAppointmentSetter, getAppointmentSetter, updateAppointmentSetterStatus } from '../api/appointmentSetter';
-import { Delete, Edit } from '../icons/icons';
+import { CallAgent, Delete, Edit } from '../icons/icons';
+import AgentPreviewModal from './AgentPreview';
 
 function AgentsSeth() {
     const [activeDropdown, setActiveDropdown] = useState(null);
@@ -11,6 +12,7 @@ function AgentsSeth() {
     const [loading, setLoading] = useState(true)
     const [message, setMessage] = useState("")
     const [editData, setEditData] = useState()
+    const [previewAgent, setPreviewAgent] = useState('')
 
     const [open, setOpen] = useState(true)
 
@@ -92,7 +94,7 @@ function AgentsSeth() {
                         <thead className="bg-transparent">
                             <tr className="text-[#5A687C]">
                                 <th className="px-6 text-start py-3 text-[16px] font-medium">Name</th>
-                                <th className="px-6 text-center py-3 text-[16px] font-medium">Status</th>
+                                <th className="px-6 text-end py-3 text-[16px] font-medium">Status</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -107,10 +109,10 @@ function AgentsSeth() {
                                             </div>
                                         </td>
 
-                                        <td className="px-6 py-4 text-sm items-center gap-2 border-r-1 border-t-1 border-b-1 rounded-r-lg border-[#E1E4EA]">
+                                        <td className="px-6 py-4 text-sm text-end flex justify-end gap-2 border-r-1 border-t-1 border-b-1 rounded-r-lg border-[#E1E4EA]">
                                             <div className='flex justify-center items-center gap-2'>
-                                                <p className={`${item.is_active ? "text-[#34C759] bg-green-100" : "text-[#FF9500] bg-amber-100"} px-2 py-1 text-xs rounded-full`}>
-                                                    {item.is_active ? 'Active' : 'Paused'}
+                                                <p className={`${item.is_active ? "text-[#34C759] border-[#34C759] bg-[#EBF9EE]" : "text-[#FF9500] border-[#FF9500] bg-[#FFF4E6]"} px-2 py-1 text-[14px] font-[500] border rounded-full`}>
+                                                    {item.is_active ? 'Active' : 'Inactive'}
                                                 </p>
                                                 <label className="relative inline-flex items-center cursor-pointer">
                                                     <input
@@ -145,6 +147,15 @@ function AgentsSeth() {
                                                         >
                                                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
                                                         </button>
+                                                        <button
+                                                            className="block w-full group text-left pr-4 pl-[14px] py-2 text-sm text-gray-700 hover:text-[#675FFF] hover:bg-gray-100"
+                                                            onClick={() => {
+                                                                setActiveDropdown(null);
+                                                                setPreviewAgent(item.agent_id)
+                                                            }}
+                                                        >
+                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><CallAgent /></div> <div className='hidden group-hover:block'><CallAgent status={true} /></div> <span>Test Agent</span> </div>
+                                                        </button>
                                                         <hr style={{ color: "#E6EAEE" }} />
                                                         <button
                                                             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
@@ -167,6 +178,7 @@ function AgentsSeth() {
                     </table>
                 </div>
             </div> : <CreateNewAgent editData={editData} setOpen={setOpen} setUpdateAgentStatus={setUpdateAgent} updateAgentStatus={updateAgent} />}
+            {previewAgent && <AgentPreviewModal setPreviewAgent={setPreviewAgent} previewAgent={previewAgent} />}
         </div>
     );
 }

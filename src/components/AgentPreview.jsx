@@ -1,6 +1,9 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { X } from "lucide-react"
 import sethImg from "../assets/svg/seth.svg"
+import { testAgentChat } from "../api/appointmentSetter"
+import { v4 as uuidv4 } from 'uuid';
+
 
 
 const staticData = [{ label: "Agent Name", key: "agent_name", value: "Seth" }, { label: "Personality", key: "personality", value: "Friendly" }, { label: "Language(s)", key: "language", value: "English, French" },
@@ -8,23 +11,64 @@ const staticData = [{ label: "Agent Name", key: "agent_name", value: "Seth" }, {
 { label: "Trigger & Channel", key: "trigger_and_channel", value: "Systeme.io → Instagram" }, { label: "Delay", key: "delay", value: "15 Min" }, { label: "Calendar Integration", key: "calendar_integration", value: "Enabled" }
 ]
 
-export default function AgentPreviewModal({ setPreviewAgent }) {
+export default function AgentPreviewModal({ setPreviewAgent, previewAgent }) {
     const [message, setMessage] = useState("")
     const [messages, setMessages] = useState([
-        { sender: "agent", text: "I'm Seth, your appointment setter. How can I assist you today?" }
+        { id: uuidv4(), sender: "agent", isUser: false, text: "I'm Seth, your appointment setter. How can I assist you today?" }
     ]);
+
+    const agentChatRef = useRef()
+
+    useEffect(() => {
+        if (agentChatRef.current) {
+            agentChatRef.current.scrollTo({
+                top: agentChatRef.current.scrollHeight,
+                behavior: 'smooth',
+            });
+        }
+    }, [messages]);
 
 
     const closeModal = () => {
-        setPreviewAgent(false)
+        setPreviewAgent("")
     }
+    const handleSendMessage = async () => {
+        if (!message.trim()) return;
 
-    const handleSendMessage = () => {
-        if (message.trim()) {
-            setMessages([...messages, { sender: "user", text: message }]);
-            setMessage("");
+        const userMessage = { id: uuidv4(), sender: "user", isUser: true, text: message };
+        setMessages(prev => [...prev, userMessage]);
+        setMessage("");
+
+        const typingMessage = {
+            id: 'typing', sender: "agent", isUser: false, text: "..."
+        };
+        setMessages((prev) => [...prev, typingMessage]);
+
+        try {
+            const payload = { message };
+            const response = await testAgentChat(payload, previewAgent);
+            if (response?.status === 200 && response?.data?.response) {
+                const agentMessage = {
+                    id: uuidv4(),
+                    isUser: false,
+                    sender: "agent",
+                    text: response.data.response
+                };
+
+                setMessages((prev) =>
+                    prev.map((msg) =>
+                        msg.id === "typing" ? agentMessage : msg
+                    )
+                );
+            } else {
+                setMessages((prev) => prev.filter((msg) => msg.id !== "typing"));
+            }
+        } catch (error) {
+            console.error(error);
+            setMessages((prev) => prev.filter((msg) => msg.id !== "typing"));
         }
     };
+
 
 
 
@@ -32,7 +76,7 @@ export default function AgentPreviewModal({ setPreviewAgent }) {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg w-full max-w-5xl max-h-[80vh] overflow-auto shadow-xl">
                 <div className="p-6 flex justify-between items-center">
-                    <h2 className="text-xl font-semibold text-gray-800">Preview Agent</h2>
+                    <h2 className="text-xl font-semibold text-gray-800">Test Agent</h2>
                     <button onClick={closeModal} className="text-gray-500 hover:text-gray-700">
                         <X size={24} />
                     </button>
@@ -46,14 +90,27 @@ export default function AgentPreviewModal({ setPreviewAgent }) {
                             <div className="font-[600] text-[18px] text-[#1E1E1E]">Seth (AI Agent)</div>
                         </div>
                         <div className="flex flex-col justify-between h-full">
-                            <div className="px-4 overflow-auto max-h-[300px] mb-2">
-                                {messages.map((msg, index) => (
-                                    <div
-                                        key={index}
-                                        className={`p-3 rounded-lg mb-2 w-fit max-w-[80%] ${msg.sender === "agent" ? "bg-[#F1F1FF] mr-auto" : "bg-[#E7F9ED] ml-auto"
-                                            }`}
-                                    >
-                                        <p className="text-[14px] text-[#1E1E1E]">{msg.text}</p>
+                            <div ref={agentChatRef} className="px-4 overflow-auto max-h-[300px] mb-2">
+                                {messages.map((msg,) => (
+                                    <div key={msg.id} className="flex flex-col">
+                                        {!msg.isUser && (
+                                            <div className="flex items-center gap-2 mb-1 mr-auto w-fit max-w-[80%]">
+                                                <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] font-[600] text-[#675FFF]">E</div>
+                                                <span className="text-sm font-medium">Ecosystem.ai</span>
+                                            </div>
+                                        )}
+                                        {msg.isUser && (
+                                            <div className="flex items-center gap-1 mt-1 ml-auto w-fit max-w-[80%]">
+                                                <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] text-[#675FFF] font-[600]">U</div>
+                                                <span className="text-xs text-gray-500">User</span>
+                                            </div>
+                                        )}
+                                        {msg.id === "typing" ? <div className="pl-[40px] pt-3 flex "><span className="three-dots" /></div> : <div
+                                            className={`w-fit max-w-[80%] text-[12px] font-[400] p-3 rounded-lg ${!msg.isUser ? "mr-auto my-1 bg-[#675FFF] text-white" : "my-1 ml-auto bg-[#F2F2F7] text-[#5A687C]"
+                                                }`}
+                                        >
+                                            <p className="text-sm">{msg.text}</p>
+                                        </div>}
                                     </div>
                                 ))}
                             </div>
@@ -93,13 +150,13 @@ export default function AgentPreviewModal({ setPreviewAgent }) {
                         onClick={closeModal}
                         className="px-6 py-2 font-[500] text-[16px] border-[1.5px] border-[#E1E4EA] rounded-lg text-[#5A687C]"
                     >
-                        Back to Edit
+                        Close
                     </button>
-                    <button className="px-6 py-2 font-[500] text-[16px] bg-[#675FFF] border-[1.5px] border-[#5F58E8]  text-white rounded-lg">
+                    {/* <button className="px-6 py-2 font-[500] text-[16px] bg-[#675FFF] border-[1.5px] border-[#5F58E8]  text-white rounded-lg">
                         Create Agent
-                    </button>
+                    </button> */}
                 </div>
             </div>
-        </div>
+        </div >
     )
 }

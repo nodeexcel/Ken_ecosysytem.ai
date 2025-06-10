@@ -116,3 +116,14 @@ export const agentStatusChat = async (id) => {
         return error
     }
 }
+
+
+export const testAgentChat = async (payload,id) => {
+    try {
+        const response= await axiosInstance.post(`http://116.202.210.102:8000/test-agent/${id}`,payload);
+        return response
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}
