@@ -26,9 +26,12 @@ const ContactsPage = () => {
   const [loading, setLoading] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [channelSelect, setChannelSelect] = useState("all")
+  const [channelSelectList, setChannelSelectList] = useState("all")
   const [statusSelect, setStatusSelect] = useState("any");
   const [createList, setCreateList] = useState(false);
   const [fileUploadError, setFileUploadError] = useState("")
+  const [contactSearch, setContactSearch] = useState("")
+  const [listSearch, setListSearch] = useState("")
 
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -231,9 +234,10 @@ const ContactsPage = () => {
   ];
 
   const statusOptions = [{ label: "Any", key: "any" }, { label: "Active", key: "active" }, { label: "Unconfirmed", key: "unconfirmed" }, { label: "Unsubscribed", key: "unsubscribed" }, { label: "Bounced", key: "bounced" }]
-  const channelOptions = [{ label: "All", key: "all" }, { label: "Email", key: "email" }, { label: "Phone No", key: "phone_no" }]
+  const channelOptions = [{ label: "All", key: "all" }, { label: "Email", key: "email" }, { label: "Phone No", key: "phone" }]
 
   const selectedChannel = channelOptions.find((a) => a.key == channelSelect)?.label;
+  const selectedChannelList = channelOptions.find((a) => a.key == channelSelectList)?.label;
 
   const selectedStatus = statusOptions.find((a) => a.key == statusSelect)?.label;
 
@@ -348,7 +352,7 @@ const ContactsPage = () => {
   const getAllContacts = async () => {
     setAllContactsMessage("")
     try {
-      const response = await getContactList(currentPage, rowsPerPage);
+      const response = await getContactList(currentPage, rowsPerPage, channelSelect, contactSearch);
       if (response?.status === 200) {
         console.log(response?.data)
 
@@ -394,7 +398,7 @@ const ContactsPage = () => {
     setListMessage("");
     try {
       setListLoading(true);
-      const response = await getLists();
+      const response = await getLists(channelSelectList, listSearch);
       if (response?.status === 200) {
         setContactLists(response?.data?.lists);
         console.log(response?.data?.lists)
@@ -537,11 +541,25 @@ const ContactsPage = () => {
   }
 
   useEffect(() => {
+    const handler = setTimeout(() => {
+      handleGetLists()
+    }, 300);
 
-    handleGetLists()
-  }, [])
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [selectedChannelList, listSearch])
 
-  useEffect(() => { getAllContacts() }, [currentPage, rowsPerPage]);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      getAllContacts()
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+
+  }, [currentPage, rowsPerPage, channelSelect, contactSearch]);
 
 
 
@@ -622,6 +640,8 @@ const ContactsPage = () => {
                 <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   placeholder="Search"
+                  value={contactSearch}
+                  onChange={(e) => setContactSearch(e.target.value.trim())}
                   className="w-full pl-10 pr-3.5 pt-[7px] pb-[6px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg"
                 />
               </div>
@@ -791,17 +811,19 @@ const ContactsPage = () => {
         (<>
           <div className="flex items-center justify-between w-full">
             <div className="flex items-start gap-3">
-              <select value={channelSelect} onChange={(e) => setChannelSelect(e.target.value)} className="text-[#5A687C] min-w-[147px] px-3.5 py-[8px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg">
-                <option value={channelSelect} disabled>
-                  Channel: {selectedChannel}
+              <select value={channelSelectList} onChange={(e) => setChannelSelectList(e.target.value)} className="text-[#5A687C] min-w-[147px] px-3.5 py-[8px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg">
+                <option value={channelSelectList} disabled>
+                  Channel: {selectedChannelList}
                 </option>
                 {channelOptions.map(e => (
-                  <option className={`${channelSelect == e.key && 'hidden'}`} key={e.key} value={e.key}>{e.label}</option>
+                  <option className={`${channelSelectList == e.key && 'hidden'}`} key={e.key} value={e.key}>{e.label}</option>
                 ))}
               </select>
               <div className="relative w-[179px]">
                 <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
+                  value={listSearch}
+                  onChange={(e) => setListSearch(e.target.value.trim())}
                   placeholder="Search"
                   className="w-full pl-10 pr-3.5 pt-[7px] pb-[6px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg"
                 />

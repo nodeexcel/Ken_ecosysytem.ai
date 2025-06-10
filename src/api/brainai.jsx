@@ -70,9 +70,9 @@ export const createContactList = async (payload) => {
     }
 };
 
-export const getContactList = async (page = 1, rows) => {
+export const getContactList = async (page = 1, rows, channel, search = null) => {
     try {
-        const response = await axiosInstance.get(`/api/contacts/get-contact-list?page=${page}&rows=${rows}`);
+        const response = await axiosInstance.get(`/api/contacts/get-contact-list?page=${page}&rows=${rows}&channel=${channel}&search=${search}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -80,9 +80,9 @@ export const getContactList = async (page = 1, rows) => {
     }
 };
 
-export const getLists = async () => {
+export const getLists = async (channel, search = null) => {
     try {
-        const response = await axiosInstance.get(`/api/contacts/get-lists`);
+        const response = await axiosInstance.get(`/api/contacts/get-lists?channel=${channel}&search=${search}`);
         return response;
     } catch (error) {
         console.error(error);
