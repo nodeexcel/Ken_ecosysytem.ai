@@ -61,12 +61,35 @@ const AdditionalIntegration = ({ instagramData, integartionData, setFirstRender 
 
 
     const renderMainContent = () => {
-        switch (integartionData.connectedAccounts) {
-            case 1:
+        switch (integartionData.name) {
+            case "WhatsApp":
                 return (
                     <div>
-                        {instagramData?.length > 0 && instagramData.map((e,i) => (
+                        {instagramData?.length > 0 && instagramData.map((e, i) => (
                             <div key={i} className="w-full gap-3 p-3 flex justify-between border border-solid border-[#e1e4ea] bg-white rounded-lg">
+                                <div className="flex flex-col gap-2 pl-2">
+                                    <div className="flex items-center gap-2">
+                                        <div>
+                                            <img
+                                                className="w-5 h-5"
+                                                alt={integartionData.name}
+                                                src={integartionData.icon}
+                                            />
+                                        </div>
+                                        <h1 className="text-[16px] font-[500] font-inter">{integartionData.name === "WhatsApp" ? "15557158822" : `@${e.username}`}</h1>
+                                    </div>
+                                    <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">Read and write using the {integartionData.name}.</li>
+                                </div>
+                                <BiDotsVerticalRounded />
+                            </div>
+                        ))}
+                    </div>
+                )
+            case "Instagram":
+                return (
+                    <div>
+                        {instagramData?.length > 0 && instagramData.map((e, i) => (
+                            <div key={i} className="w-full gap-3 mb-2 p-3 flex justify-between border border-solid border-[#e1e4ea] bg-white rounded-lg">
                                 <div className="flex flex-col gap-2 pl-2">
                                     <div className="flex items-center gap-2">
                                         <div>

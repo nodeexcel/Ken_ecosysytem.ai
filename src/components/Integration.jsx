@@ -25,20 +25,31 @@ const Integration = () => {
   const [instagramData, setInstagramData] = useState([])
   const dispatch = useDispatch();
   const userDetails = useSelector((state) => state.profile.user)
+  const [loading, setLoading] = useState(true)
 
   const handleInstagram = async () => {
     try {
 
       const response = await getInstaAccounts();
-      if(response?.status === 200) {
+      if (response?.status === 200) {
         console.log(response?.data?.insta_account_info)
         setInstagramData(response?.data?.insta_account_info);
+        if (response?.data?.insta_account_info?.length === 0) {
+          setLoading(false)
+        }
       }
 
     } catch (error) {
       console.log(error)
+      setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (instagramData?.length > 0) {
+      setLoading(false)
+    }
+  }, [instagramData])
 
   useEffect(() => {
     handleInstagram()
@@ -113,6 +124,9 @@ const Integration = () => {
     setFirstRender(false)
     setIntegrationData(data)
   }
+
+  if (loading) return <p className='flex justify-center items-center h-full'><span className='loader' /></p>
+
   return (
     <div className={`flex flex-col  ${firstRender ? 'py-4' : 'pb-4'}  pr-4 w-full items-start gap-6 `}>
       {firstRender ? <>
