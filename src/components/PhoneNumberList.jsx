@@ -6,8 +6,9 @@ import { FaChevronDown } from "react-icons/fa";
 import uk_flag from "../assets/images/uk_flag.png"
 import us_flag from "../assets/images/us_flag.png"
 import fr_flag from "../assets/images/fr_flag.png"
-import {addPhoneNumber, getPhoneNumber,updatePhoneNumberStatus,deletePhoneNumber} from "../api/callAgent"
+import { addPhoneNumber, getPhoneNumber, updatePhoneNumberStatus, deletePhoneNumber } from "../api/callAgent"
 import { set } from "date-fns";
+import { DateFormat } from "../utils/TimeFormat";
 const initialRows = [
   {
     id: "1",
@@ -72,11 +73,11 @@ export default function PhoneNumbers() {
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
   const [isOpen, setIsOpen] = useState(false);
   const [number, setNumber] = useState("");
-  const[phoneName, setPhoneName] = useState("");
-  const [loader,setLoader] = useState(false);
-  const [error,setError]=useState({});
-  const[responseError,setResponseError]=useState();
-  const [deleteRow,setDeleteRow]=useState(null);
+  const [phoneName, setPhoneName] = useState("");
+  const [loader, setLoader] = useState(false);
+  const [error, setError] = useState({});
+  const [responseError, setResponseError] = useState();
+  const [deleteRow, setDeleteRow] = useState(null);
 
   const tabs = [
     { label: "Outbound Number", key: "outbound", icon: <OutboundCall active={activeTab == "outbound"} /> },
@@ -84,24 +85,24 @@ export default function PhoneNumbers() {
   ]
 
   const toggleActive = async (id) => {
-  try{
+    try {
 
-    const response = await updatePhoneNumberStatus(id);
+      const response = await updatePhoneNumberStatus(id);
 
-    if(response.status === 200){
-      console.log("Phone number status updated successfully");
-      fetchPhoneNumbers();
-    }else{
-      console.error("Failed to update phone number status");
+      if (response.status === 200) {
+        console.log("Phone number status updated successfully");
+        fetchPhoneNumbers();
+      } else {
+        console.error("Failed to update phone number status");
+      }
+    } catch (error) {
+      console.log("Error updating phone number status:", error);
     }
-  }catch(error){
-    console.log("Error updating phone number status:", error);
-  }
 
 
   };
 
-  const ValidateSubmit=()=>{
+  const ValidateSubmit = () => {
     const errors = {};
     if (!phoneName) {
       errors.phoneName = "Phone name is required";
@@ -116,43 +117,43 @@ export default function PhoneNumbers() {
     return Object.keys(errors).length === 0;
   }
 
-  const handleAddNumber = async(e) => {
-        e.preventDefault();
-       if(!ValidateSubmit()) {
-        return;
-       }
-       setLoader(true);
-       const response=await addPhoneNumber({name:phoneName, phone_number:number, country: selectedCountry.name,number_type:activeTab});
+  const handleAddNumber = async (e) => {
+    e.preventDefault();
+    if (!ValidateSubmit()) {
+      return;
+    }
+    setLoader(true);
+    const response = await addPhoneNumber({ name: phoneName, phone_number: number, country: selectedCountry.name, number_type: activeTab });
 
-       if(response.status === 201){
-        console.log("Phone number added successfully");
-        fetchPhoneNumbers();
-         setShowModal(false);
-         setLoader(false);
+    if (response.status === 201) {
+      console.log("Phone number added successfully");
+      fetchPhoneNumbers();
+      setShowModal(false);
+      setLoader(false);
 
-       }else{
-        setLoader(false);
-        setResponseError(response.response.data.error || "Failed to add phone number");
-       }
+    } else {
+      setLoader(false);
+      setResponseError(response.response.data.error || "Failed to add phone number");
+    }
   }
 
   const removeRow = async (id) => {
-       try{
+    try {
 
-       const response = await deletePhoneNumber(id);
-       console.log("RESPONSE:",response);
-       if(response.status === 200){
+      const response = await deletePhoneNumber(id);
+      console.log("RESPONSE:", response);
+      if (response.status === 200) {
         console.log("Phone number removed successfully");
         fetchPhoneNumbers();
-       }else{
+      } else {
         console.error("Failed to remove phone number");
-       }
+      }
 
-       }catch(error){
-        console.error("Error removing phone number:", error);
-       }
+    } catch (error) {
+      console.error("Error removing phone number:", error);
+    }
 
-         setDeleteRow(null);
+    setDeleteRow(null);
 
 
   };
@@ -170,11 +171,16 @@ export default function PhoneNumbers() {
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
 
     fetchPhoneNumbers();
 
-  },[]);
+  }, []);
+
+  const renderPhoneNumber = (phone, country) => {
+    const filterCode = countries.filter((e) => e.name === country)
+    return `${filterCode[0]?.dial_code}${phone}`
+  }
 
   return (
     <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
@@ -193,67 +199,69 @@ export default function PhoneNumbers() {
       <div className="overflow-auto w-full rounded-2xl">
         <table className="w-full rounded-2xl">
           <thead>
-            <tr className="text-left text-[#5a687c] text-[16px]">
-              <th className="px-6 py-3 font-medium whitespace-nowrap">Phone Number</th>
-              <th className="px-6 py-3 font-medium whitespace-nowrap">Country</th>
-              <th className="px-6 py-3 font-medium whitespace-nowrap">Status</th>
-              <th className="px-6 py-3 font-medium whitespace-nowrap">Total Calls</th>
-              <th className="px-6 py-3 font-medium whitespace-nowrap">Direction</th>
-              <th className="px-6 py-3 font-medium whitespace-nowrap">Creation Date</th>
-              <th className="px-6 py-3 font-medium whitespace-nowrap">Actions</th>
+            <tr className="text-left text-[#5A687C] text-[16px]">
+              <th className="px-6 py-3 font-[400] whitespace-nowrap">Phone Number</th>
+              <th className="px-6 py-3 font-[400] whitespace-nowrap">Country</th>
+              <th className="px-6 py-3 font-[400] whitespace-nowrap">Status</th>
+              <th className="px-6 py-3 font-[400] whitespace-nowrap">Total Calls</th>
+              <th className="px-6 py-3 font-[400] whitespace-nowrap">Direction</th>
+              <th className="px-6 py-3 font-[400] whitespace-nowrap">Creation Date</th>
+              <th className="px-6 py-3 font-[400] whitespace-nowrap">Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white shadow-sm">
 
-            { rows.length !== 0 ? (
-            rows.map((row) => (
-              <tr
-                key={row.id}
-                className="text-sm text-[#1e1e1e]"
-              >
-                <td className="px-6 py-5 font-medium text-gray-900">{row.phone_number}</td>
-                <td className="px-6 py-5 text-gray-600">{row.country }</td>
-                <td className="px-6 py-5">
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`text-xs px-3 py-1 rounded-full border ${row.status
-                        ? "border-green-500 text-green-600"
-                        : "border-gray-400 text-gray-500"
-                        }`}
-                    >
-                      {row.status ? "Active" : "Inactive"}
-                    </span>
-                    <ToggleSwitch
-                      checked={row.status}
-                      onChange={() => toggleActive(row.id)}
-                    />
-                  </div>
-                </td>
-                <td className="px-6 py-5 text-center text-gray-600">{row.total_calls}</td>
-                <td className="px-6 py-5 text-center">
-                  <PhoneOutgoing size={18} className="text-green-600 inline" />
-                </td>
-                <td className="px-6 py-5 text-gray-600">{format(row.creation_date,"mm-dd-yyyy hh:mm a")}</td>
+            {rows.length !== 0 ? (
+              rows.map((row,index) => (
+                <tr
+                  key={row.id}
+                  className={`text-[16px] text-[#1E1E1E] ${index !== rows?.length - 1 ? 'border-b border-gray-200' : ''}`}
+                >
+                  <td className="px-6 py-5 font-[600] text-gray-900">{renderPhoneNumber(row.phone_number, row.country)}</td>
+                  <td className="px-6 py-5 text-[#5A687C]">{row.country}</td>
+                  <td className="px-6 py-5">
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`text-[14px] font-[500] px-2.5 py-0.5 rounded-full border-[1.5px] ${row.status
+                          ? "border-[#34C759] text-[#34C759] bg-[#EBF9EE]"
+                          : "text-[#FF9500] border-[#FF9500] bg-[#FFF4E6]"
+                          }`}
+                      >
+                        {row.status ? "Active" : "Inactive"}
+                      </span>
+                      <ToggleSwitch
+                        checked={row.status}
+                        onChange={() => toggleActive(row.id)}
+                      />
+                    </div>
+                  </td>
+                  <td className="px-6 py-5 text-center text-[#5A687C]">{row.total_calls}</td>
+                  <td className="px-6 py-5 text-center">
+                    <div className="flex justify-center">
+                      {row.direction === "inbound" ? <InboundCall active={true} /> : <OutboundCall active={true} />}
+                    </div>
+                  </td>
+                  <td className="px-6 py-5 text-[#5A687C]">{DateFormat(row.creation_date)}</td>
 
-                <td className="px-6 py-5 text-center">
-                  <button
-                    onClick={() => setDeleteRow(row.id)}
-                    className="text-red-500 hover:text-red-600"
-                  >
-                    <Trash2 size={18} />
-                  </button>
+                  <td className="px-6 py-5 text-center">
+                    <button
+                      onClick={() => setDeleteRow(row.id)}
+                      className="text-red-500 hover:text-red-600"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr className="text-sm text-[#1e1e1e]">
+                <td colSpan="7" className="px-6 py-5 text-center text-gray-500">
+                  No phone numbers found.
                 </td>
               </tr>
-            ))
-          ):(
-            <tr className="text-sm text-[#1e1e1e]">
-              <td colSpan="7" className="px-6 py-5 text-center text-gray-500">
-                No phone numbers found.
-              </td>
-            </tr>
-          )
+            )
 
-          }
+            }
 
 
 
@@ -307,7 +315,8 @@ export default function PhoneNumbers() {
                   type="text"
                   placeholder="Enter number name"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                  onChange={(e) =>{ setPhoneName(e.target.value);
+                  onChange={(e) => {
+                    setPhoneName(e.target.value);
                     setError((prev) => ({ ...prev, phoneName: "" }));
                   }}
                   value={phoneName}
@@ -353,7 +362,8 @@ export default function PhoneNumbers() {
                     type="tel"
                     placeholder="Enter number"
                     className="w-full outline-none"
-                    onChange={(e) =>{ setNumber(e.target.value);
+                    onChange={(e) => {
+                      setNumber(e.target.value);
                       setError((prev) => ({ ...prev, number: "" }));
                     }}
                     value={number}
@@ -361,9 +371,9 @@ export default function PhoneNumbers() {
 
 
                 </div>
-                 {error.number && (
-                    <p className="text-red-500 text-sm mt-1">{error.number}</p>
-                  )}
+                {error.number && (
+                  <p className="text-red-500 text-sm mt-1">{error.number}</p>
+                )}
               </div>
 
               <div className="bg-[#FFF4E6] text-[#5A687C] text-sm rounded-lg px-4 py-3 flex items-center gap-2">
@@ -374,7 +384,7 @@ export default function PhoneNumbers() {
               </div>
             </div>
 
-              {responseError && (
+            {responseError && (
               <div className="mt-4 text-red-500 text-sm">
                 {responseError}
               </div>
@@ -395,7 +405,7 @@ export default function PhoneNumbers() {
               >
 
                 <p>  Add Number</p>
-              { loader&& <span className="loader text-[#5E54FF]"></span>}
+                {loader && <span className="loader text-[#5E54FF]"></span>}
 
 
               </button>

@@ -2,7 +2,7 @@ import { EllipsisVertical } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import CreateNewAgent from './CreateNewAgent';
 import { deleteAppointmentSetter, getAppointmentSetter, updateAppointmentSetterStatus } from '../api/appointmentSetter';
-import { CallAgent, Delete, Edit } from '../icons/icons';
+import { CallAgent, CancelIcon, CorrectIcon, Delete, Duplicate, Edit } from '../icons/icons';
 import AgentPreviewModal from './AgentPreview';
 
 function AgentsSeth() {
@@ -31,6 +31,7 @@ function AgentsSeth() {
                 const updated = [...campaignData];
                 updated[index][key] = !updated[index][key];
                 setCampaignData(updated);
+                setActiveDropdown(null);
             }
         } catch (error) {
             console.log(error)
@@ -114,7 +115,7 @@ function AgentsSeth() {
                                                 <p className={`${item.is_active ? "text-[#34C759] border-[#34C759] bg-[#EBF9EE]" : "text-[#FF9500] border-[#FF9500] bg-[#FFF4E6]"} px-2 py-1 text-[14px] font-[500] border rounded-full`}>
                                                     {item.is_active ? 'Active' : 'Inactive'}
                                                 </p>
-                                                <label className="relative inline-flex items-center cursor-pointer">
+                                                {/* <label className="relative inline-flex items-center cursor-pointer">
                                                     <input
                                                         type="checkbox"
                                                         className="sr-only peer"
@@ -122,7 +123,7 @@ function AgentsSeth() {
                                                         onChange={() => toggleStatus(index, 'is_active', item.agent_id)}
                                                     />
                                                     <div className="w-9 h-5 bg-[#F2F4F7] rounded-full peer dark:bg-[#F2F4F7] peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#675FFF]"></div>
-                                                </label>
+                                                </label> */}
                                             </div>
                                         </td>
                                         <td className='bg-[#FAFBFD]'>
@@ -136,7 +137,7 @@ function AgentsSeth() {
                                                 <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                                                     <div className="py-1">
                                                         <button
-                                                            className="block w-full group text-left px-4 py-2 text-sm text-gray-700 hover:text-[#675FFF] hover:bg-gray-100"
+                                                            className="block w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
                                                             onClick={() => {
                                                                 // Handle edit action
                                                                 setEditData(item.agent_id)
@@ -147,8 +148,34 @@ function AgentsSeth() {
                                                         >
                                                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
                                                         </button>
+                                                        {item.is_active ?
+                                                            <button
+                                                                className="block w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                                                onClick={() => {
+                                                                    toggleStatus(index, 'is_active', item.agent_id)
+                                                                }}
+                                                            >
+                                                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><CancelIcon /></div> <div className='hidden group-hover:block'><CancelIcon status={true} /></div> <span>Mark As Inactive</span> </div>
+                                                            </button> :
+                                                            <button
+                                                                className="block w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                                                onClick={() => {
+                                                                    toggleStatus(index, 'is_active', item.agent_id)
+                                                                }}
+                                                            >
+                                                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><CorrectIcon /></div> <div className='hidden group-hover:block'><CorrectIcon status={true} /></div> <span>Mark As Active</span> </div>
+                                                            </button>
+                                                        }
                                                         <button
-                                                            className="block w-full group text-left pr-4 pl-[14px] py-2 text-sm text-gray-700 hover:text-[#675FFF] hover:bg-gray-100"
+                                                            className="block w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                                            onClick={() => {
+                                                                setActiveDropdown(null);
+                                                            }}
+                                                        >
+                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
+                                                        </button>
+                                                        <button
+                                                            className="block w-full group text-left pr-4 pl-[14px] py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
                                                             onClick={() => {
                                                                 setActiveDropdown(null);
                                                                 setPreviewAgent(item.agent_id)
@@ -158,7 +185,7 @@ function AgentsSeth() {
                                                         </button>
                                                         <hr style={{ color: "#E6EAEE" }} />
                                                         <button
-                                                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                                                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] font-[500]"
                                                             onClick={() => {
                                                                 // Handle delete action
                                                                 handleDelete(index, item.agent_id)
