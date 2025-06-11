@@ -16,8 +16,13 @@ export default function AgentPreviewModal({ setPreviewAgent, previewAgent }) {
     const [messages, setMessages] = useState([
         { id: uuidv4(), sender: "agent", isUser: false, text: "I'm Seth, your appointment setter. How can I assist you today?" }
     ]);
+    const [chat_id, setChatId] = useState("")
 
     const agentChatRef = useRef()
+
+    useEffect(() => {
+        setChatId(uuidv4())
+    }, [])
 
     useEffect(() => {
         if (agentChatRef.current) {
@@ -45,7 +50,7 @@ export default function AgentPreviewModal({ setPreviewAgent, previewAgent }) {
         setMessages((prev) => [...prev, typingMessage]);
 
         try {
-            const payload = { message };
+            const payload = { message,chat_id };
             const response = await testAgentChat(payload, previewAgent);
             if (response?.status === 200 && response?.data?.response) {
                 const agentMessage = {
