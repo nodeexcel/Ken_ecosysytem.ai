@@ -205,21 +205,26 @@ const DemoChat = () => {
             </div>
             {message ? <p>{message}</p> : <div className="flex bg-white rounded-2xl shadow">
                 {/* Sidebar */}
-                <div className="w-80 bg-[#F2F2F7]">
+                <div className="w-80 bg-[#FFFFFF] rounded-l-2xl border-[#E1E4EA] border">
                     <div className="px-4 py-2">
                         <div className="mt-4">
                             <p className="text-[16px] font-[400] text-[#5A687C]">Explore conversation with your leads</p>
 
                             <div className="flex items-center gap-2 mt-3">
-                                <select value={leadStatus} onChange={(e) => setLeadStatus(e.target.value)} className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-[#335BFB] bg-white shadow rounded-md">
+                                <select value={leadStatus}
+                                    onChange={(e) => {
+                                        setLeadStatus(e.target.value)
+                                        setActiveConversation("")
+                                    }}
+                                    className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-[#675FFF] bg-white border border-[#E1E4EA] rounded-md">
                                     <option value="positive" className="text-[#5A687C]">Positive</option>
                                     <option value="engaged" className="text-[#5A687C]">Engaged</option>
                                     <option value="no_answer" className="text-[#5A687C]">No Answer</option>
                                     <option value="negative" className="text-[#5A687C]">Negative</option>
                                 </select>
                                 <div className="relative flex-1">
-                                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                                    <input type="text" placeholder="Search" className="w-full pl-9 pr-3 py-[7px] text-sm shadow bg-white rounded-md" />
+                                    <Search className="absolute left-3 top-2 h-4 w-4 text-gray-400" />
+                                    <input type="text" placeholder="Search" className="w-full pl-9 pr-3 py-[6px] text-sm border border-[#E1E4EA] bg-white rounded-md" />
                                 </div>
                             </div>
                         </div>
@@ -229,7 +234,7 @@ const DemoChat = () => {
                         {loadingChatsList ? <div className="flex justify-center items-center w-full"><span className="loader" /> </div> : chatList?.length > 0 ? chatList.map((conversation, index) => (
                             <div
                                 key={index}
-                                className={`flex items-center gap-3 my-1 p-4 cursor-pointer hover:bg-white hover:rounded-2xl ${activeConversation === conversation ? "bg-white rounded-2xl" : ""
+                                className={`flex items-center gap-3 my-1 p-3 cursor-pointer hover:bg-[#F6F6FF]  hover:rounded-2xl ${activeConversation === conversation ? "bg-[#F6F6FF]  rounded-xl" : ""
                                     }`}
                                 onClick={() => handleSelectChat(conversation)}
                             >
@@ -237,7 +242,7 @@ const DemoChat = () => {
                                     <span className="text-[16px] text-[#675FFF] font-[600]">U</span>
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="font-medium text-gray-900">User {conversation}</p>
+                                    <p className="font-[600] text-[14px] text-[#1E1E1E]">User {conversation}</p>
                                     {/* <p className="text-sm text-gray-500 truncate">{conversation.message}</p> */}
                                 </div>
                             </div>
@@ -246,7 +251,7 @@ const DemoChat = () => {
                 </div>
                 {/* Main Content */}
                 {activeConversation ?
-                    <>{loadingChats ? <div className="flex justify-center items-center w-full"><span className="loader" /> </div> : <div className="flex-1 flex flex-col shadow rounded-r-2xl">
+                    <>{loadingChats ? <div className="flex justify-center items-center w-full"><span className="loader" /> </div> : <div className="flex-1 flex flex-col border border-[#E1E4EA] border-l-0 rounded-r-2xl">
                         {/* Header */}
                         <div className="flex items-center justify-between p-4">
                             <div>
