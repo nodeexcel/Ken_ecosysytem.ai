@@ -78,6 +78,7 @@ export default function PhoneNumbers() {
   const [error, setError] = useState({});
   const [responseError, setResponseError] = useState();
   const [deleteRow, setDeleteRow] = useState(null);
+  const [loading, setLoading] = useState(true)
 
   const tabs = [
     { label: "Outbound Number", key: "outbound", icon: <OutboundCall active={activeTab == "outbound"} /> },
@@ -163,13 +164,24 @@ export default function PhoneNumbers() {
       const response = await getPhoneNumber();
       if (response.status === 200) {
         setRows(response.data.phone_numbers);
+        if (response?.data?.phone_numbers?.length === 0) {
+          setLoading(false)
+        }
       } else {
         console.error("Failed to fetch phone numbers");
+        setLoading(false)
       }
     } catch (error) {
       console.error("Error fetching phone numbers:", error);
+      setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (rows.length > 0) {
+      setLoading(false)
+    }
+  }, [rows])
 
   useEffect(() => {
 
@@ -211,8 +223,8 @@ export default function PhoneNumbers() {
           </thead>
           <tbody className="bg-white shadow-sm">
 
-            {rows.length !== 0 ? (
-              rows.map((row,index) => (
+            {loading ? <tr className='h-34'><td ></td><td ></td><td ></td><td><span className='loader' /></td></tr> : rows.length !== 0 ? (
+              rows.map((row, index) => (
                 <tr
                   key={row.id}
                   className={`text-[16px] text-[#1E1E1E] ${index !== rows?.length - 1 ? 'border-b border-gray-200' : ''}`}

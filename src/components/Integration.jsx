@@ -96,6 +96,7 @@ const Integration = () => {
       icon: whatsapp,
       name: "WhatsApp",
       connectedAccounts: 1,
+      path: import.meta.env.VITE_WHATS_APP_URL + `&state=${userDetails.id}`,
     },
     {
       icon: active_campaign,
