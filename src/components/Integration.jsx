@@ -91,6 +91,7 @@ const Integration = () => {
       icon: google_calender,
       name: "Google Calendar",
       connectedAccounts: 0,
+      path: import.meta.env.VITE_GOOGLE_CALENDAR_URL + `&state=${userDetails.id}`,
     },
     {
       icon: whatsapp,
