@@ -165,3 +165,14 @@ export const getInstaAccounts = async () => {
         return error;
     }
 }
+
+
+export const deleteInstaAccount = async (id) => {
+    try {
+        const response = await axiosInstance.delete(`http://116.202.210.102:8000/delete-insta-account/${id}`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+}

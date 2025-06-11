@@ -170,7 +170,7 @@ const Integration = () => {
             </div>
           ))}
         </div>
-      </> : <AdditionalIntegration instagramData={instagramData} integartionData={integartionData} setFirstRender={setFirstRender} />}
+      </> : <AdditionalIntegration setInstagramData={setInstagramData} instagramData={instagramData} integartionData={integartionData} setFirstRender={setFirstRender} />}
     </div>
   )
 }

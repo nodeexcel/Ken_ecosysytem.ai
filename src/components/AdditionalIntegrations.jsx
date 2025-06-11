@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { getNavbarData } from "../store/navbarSlice";
 import { LeftArrow } from "../icons/icons";
 import Integration from "./Integration";
+import { deleteInstaAccount } from "../api/brainai";
 
 const tabs = [
     { label: "Account" },
@@ -22,11 +23,28 @@ const staticData = [
     { label: "orsay—sample", status: "Approved", description: "This message confirms that you've successfully set up your WhatsApp notifications. From now on, you'll be able to receive updates, alerts, and important info directly in your chat." }
 ]
 
-const AdditionalIntegration = ({ instagramData, integartionData, setFirstRender }) => {
+const AdditionalIntegration = ({ setInstagramData, instagramData, integartionData, setFirstRender }) => {
     const [open, setOpen] = useState(false);
     const [createTemplateOpen, setCreateTemplateOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("insta");
+    const [errorMessage, setErrorMessage] = useState("")
     const dispatch = useDispatch()
+
+    const handleDeleteInsta = async (id) => {
+        try {
+            const response = await deleteInstaAccount(id)
+            if (response?.status === 200) {
+                const filterData = instagramData.filter((e) => e.instagram_user_id !== id)
+                setInstagramData(filterData)
+            } else if (response?.status === 400) {
+                if (response?.response?.data?.success) {
+                    setErrorMessage(response?.response?.data?.success)
+                }
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
 
     const renderMainContent2 = () => {
@@ -66,24 +84,24 @@ const AdditionalIntegration = ({ instagramData, integartionData, setFirstRender 
                 return (
                     <div>
                         {/* {instagramData?.length > 0 && instagramData.map((e, i) => ( */}
-                            <div className="w-full gap-3 mb-2 p-3 flex justify-between border border-solid border-[#e1e4ea] bg-white rounded-lg">
-                                <div className="flex flex-col gap-2 pl-2">
-                                    <div className="flex items-center gap-2">
-                                        <div>
-                                            <img
-                                                className="w-5 h-5"
-                                                alt={integartionData.name}
-                                                src={integartionData.icon}
-                                            />
-                                        </div>
-                                        <h1 className="text-[16px] font-[500] font-inter">15557158822</h1>
+                        <div className="w-full gap-3 mb-2 p-3 flex justify-between border border-solid border-[#e1e4ea] bg-white rounded-lg">
+                            <div className="flex flex-col gap-2 pl-2">
+                                <div className="flex items-center gap-2">
+                                    <div>
+                                        <img
+                                            className="w-5 h-5"
+                                            alt={integartionData.name}
+                                            src={integartionData.icon}
+                                        />
                                     </div>
-                                    <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">Read and write using the {integartionData.name}.</li>
+                                    <h1 className="text-[16px] font-[500] font-inter">15557158822</h1>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <button className="text-[#FF3B30] border-[1.5px] border-[#FF3B30] rounded-lg px-[20px] py-[7px] text-[16px] font-[500]" >Delete</button>
-                                </div>
+                                <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">Read and write using the {integartionData.name}.</li>
                             </div>
+                            <div className="flex items-center gap-3">
+                                <button className="text-[#FF3B30] border-[1.5px] border-[#FF3B30] rounded-lg px-[20px] py-[7px] text-[16px] font-[500]" >Delete</button>
+                            </div>
+                        </div>
                         {/* ))} */}
                     </div>
                 )
@@ -106,7 +124,7 @@ const AdditionalIntegration = ({ instagramData, integartionData, setFirstRender 
                                     <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">Read and write using the {integartionData.name}.</li>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <button className="text-[#FF3B30] border-[1.5px] border-[#FF3B30] rounded-lg px-[20px] py-[7px] text-[16px] font-[500]" >Delete</button>
+                                    <button onClick={() => handleDeleteInsta(e.instagram_user_id)} className="text-[#FF3B30] border-[1.5px] border-[#FF3B30] rounded-lg px-[20px] py-[7px] text-[16px] font-[500]" >Delete</button>
                                 </div>
                             </div>
                         ))}
@@ -151,8 +169,8 @@ const AdditionalIntegration = ({ instagramData, integartionData, setFirstRender 
                 </div>
 
                 <div className="flex items-start relative self-stretch w-full flex-[0_0_auto] border-b border-[#e1e4ea]">
-                    {tabs.map((e) => <button
-                        key={e.key}
+                    {tabs.map((e, i) => <button
+                        key={i}
                         className={`inline-flex items-center justify-center gap-1 p-2.5 relative flex-[0_0_auto] border-b-2 ${integartionData.connectedAccounts > 0
                             ? "border-[black] text-black"
                             : "border-[#e1e4ea] text-text-grey"
@@ -160,7 +178,7 @@ const AdditionalIntegration = ({ instagramData, integartionData, setFirstRender 
                     >
                         <span className={`font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${integartionData.connectedAccounts > 0 ? "text-[black]"
                             : "text-[#5A687C] "}`}>
-                            {integartionData.connectedAccounts} {e.label}
+                            {integartionData.name === "Instagram" ? instagramData?.length : integartionData.connectedAccounts} {e.label}
                         </span>
                     </button>)}
                 </div>
@@ -421,6 +439,33 @@ const AdditionalIntegration = ({ instagramData, integartionData, setFirstRender 
                         </div>
                     </div>
                 </div>}
+
+                {errorMessage && <div className="inter fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
+                    <div className="bg-white max-h-[300px] flex flex-col gap-4 w-full max-w-md rounded-2xl shadow-xl p-6 relative">
+                        <button
+                            onClick={() => {
+                                setErrorMessage('')
+                            }}
+                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+
+                        <div className="space-y-6 mt-6">
+                            <h2 className="text-[20px] font-[600] text-center text-[#292D32]">{errorMessage}</h2>
+                            <div className="flex justify-center">
+                                <button
+                                    type="submit"
+                                    onClick={() => setErrorMessage('')}
+                                    className={`w-fit bg-[#675FFF] cursor-pointer text-white py-[7px] px-[20px] rounded-[8px] font-semibold  transition`}
+                                >
+                                    Ok
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>}
+
             </div>
         </div>
     );
