@@ -65,8 +65,8 @@ const AdditionalIntegration = ({ instagramData, integartionData, setFirstRender 
             case "WhatsApp":
                 return (
                     <div>
-                        {instagramData?.length > 0 && instagramData.map((e, i) => (
-                            <div key={i} className="w-full gap-3 mb-2 p-3 flex justify-between border border-solid border-[#e1e4ea] bg-white rounded-lg">
+                        {/* {instagramData?.length > 0 && instagramData.map((e, i) => ( */}
+                            <div className="w-full gap-3 mb-2 p-3 flex justify-between border border-solid border-[#e1e4ea] bg-white rounded-lg">
                                 <div className="flex flex-col gap-2 pl-2">
                                     <div className="flex items-center gap-2">
                                         <div>
@@ -76,7 +76,7 @@ const AdditionalIntegration = ({ instagramData, integartionData, setFirstRender 
                                                 src={integartionData.icon}
                                             />
                                         </div>
-                                        <h1 className="text-[16px] font-[500] font-inter">{integartionData.name === "WhatsApp" ? "15557158822" : `@${e.username}`}</h1>
+                                        <h1 className="text-[16px] font-[500] font-inter">15557158822</h1>
                                     </div>
                                     <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">Read and write using the {integartionData.name}.</li>
                                 </div>
@@ -84,7 +84,7 @@ const AdditionalIntegration = ({ instagramData, integartionData, setFirstRender 
                                     <button className="text-[#FF3B30] border-[1.5px] border-[#FF3B30] rounded-lg px-[20px] py-[7px] text-[16px] font-[500]" >Delete</button>
                                 </div>
                             </div>
-                        ))}
+                        {/* ))} */}
                     </div>
                 )
             case "Instagram":

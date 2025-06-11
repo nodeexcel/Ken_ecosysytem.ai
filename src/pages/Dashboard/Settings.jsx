@@ -498,7 +498,7 @@ const SettingsPage = () => {
                           ))}
                         </select> */}
                       </td>
-                      <td className="px-6 py-4 text-left">
+                      <td className="px-6 py-4 text-left bg-[#FAFBFD]">
                         <button
                           onClick={() => handleDropdownClick(index)}
                           className="text-gray-500 hover:text-gray-700"
