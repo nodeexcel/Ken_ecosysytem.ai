@@ -7,6 +7,14 @@ import { PiImageBold } from "react-icons/pi"
 import { FiMic, FiPaperclip } from "react-icons/fi"
 import { agentStatusChat, chatAgent, getAppointmentSetter, getChatHistory, getChats } from "../api/appointmentSetter";
 import { v4 as uuidv4 } from 'uuid';
+import { SelectDropdown } from "./Dropdown";
+
+const options = [
+    { label: "Positive", key: "positive" },
+    { label: "Engaged", key: "engaged" },
+    { label: "No Answer", key: "no_answer" },
+    { label: "Negative", key: "negative" }
+]
 
 
 const DemoChat = () => {
@@ -205,13 +213,24 @@ const DemoChat = () => {
             </div>
             {message ? <p>{message}</p> : <div className="flex bg-white rounded-2xl shadow">
                 {/* Sidebar */}
-                <div className="w-80 bg-[#FFFFFF] rounded-l-2xl border-[#E1E4EA] border">
+                <div className="w-[372px] bg-[#FFFFFF] rounded-l-2xl border-[#E1E4EA] border">
                     <div className="px-4 py-2">
                         <div className="mt-4">
                             <p className="text-[16px] font-[400] text-[#5A687C]">Explore conversation with your leads</p>
 
                             <div className="flex items-center gap-2 mt-3">
-                                <select value={leadStatus}
+                                <SelectDropdown
+                                    name="lead_status"
+                                    options={options}
+                                    value={leadStatus}
+                                    onChange={(updated) => {
+                                        setLeadStatus(updated)
+                                        setActiveConversation("")
+                                    }}
+                                    placeholder="Select"
+                                    className="w-[40%]"
+                                />
+                                {/* <select value={leadStatus}
                                     onChange={(e) => {
                                         setLeadStatus(e.target.value)
                                         setActiveConversation("")
@@ -221,16 +240,16 @@ const DemoChat = () => {
                                     <option value="engaged" className="text-[#5A687C]">Engaged</option>
                                     <option value="no_answer" className="text-[#5A687C]">No Answer</option>
                                     <option value="negative" className="text-[#5A687C]">Negative</option>
-                                </select>
+                                </select> */}
                                 <div className="relative flex-1">
-                                    <Search className="absolute left-3 top-2 h-4 w-4 text-gray-400" />
-                                    <input type="text" placeholder="Search" className="w-full pl-9 pr-3 py-[6px] text-sm border border-[#E1E4EA] bg-white rounded-md" />
+                                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                    <input type="text" placeholder="Search" className="w-full pl-9 pr-3 py-[10px] text-sm border border-[#E1E4EA] bg-white rounded-md" />
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="w-80 mt-2 p-2 h-[460px] overflow-y-auto">
+                    <div className="w-[372px] mt-2 p-2 h-[460px] overflow-y-auto">
                         {loadingChatsList ? <div className="flex justify-center items-center w-full"><span className="loader" /> </div> : chatList?.length > 0 ? chatList.map((conversation, index) => (
                             <div
                                 key={index}
