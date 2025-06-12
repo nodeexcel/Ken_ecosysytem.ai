@@ -134,10 +134,10 @@ function AgentsSeth() {
                                                 <EllipsisVertical />
                                             </button>
                                             {activeDropdown === index && (
-                                                <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                                                <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                                                     <div className="py-1">
                                                         <button
-                                                            className="block w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                                            className="block w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500]"
                                                             onClick={() => {
                                                                 // Handle edit action
                                                                 setEditData(item.agent_id)
@@ -150,7 +150,7 @@ function AgentsSeth() {
                                                         </button>
                                                         {item.is_active ?
                                                             <button
-                                                                className="block w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                                                className="block w-full group text-left hover:rounded-lg px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
                                                                 onClick={() => {
                                                                     toggleStatus(index, 'is_active', item.agent_id)
                                                                 }}
@@ -158,7 +158,7 @@ function AgentsSeth() {
                                                                 <div className="flex items-center gap-2"><div className='group-hover:hidden'><CancelIcon /></div> <div className='hidden group-hover:block'><CancelIcon status={true} /></div> <span>Mark As Inactive</span> </div>
                                                             </button> :
                                                             <button
-                                                                className="block w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                                                className="block w-full group text-left hover:rounded-lg px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
                                                                 onClick={() => {
                                                                     toggleStatus(index, 'is_active', item.agent_id)
                                                                 }}
@@ -167,7 +167,7 @@ function AgentsSeth() {
                                                             </button>
                                                         }
                                                         <button
-                                                            className="block w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                                            className="block w-full group text-left px-4 hover:rounded-lg py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
                                                             onClick={() => {
                                                                 setActiveDropdown(null);
                                                             }}
@@ -175,7 +175,7 @@ function AgentsSeth() {
                                                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
                                                         </button>
                                                         <button
-                                                            className="block w-full group text-left pr-4 pl-[14px] py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                                            className="block w-full group text-left hover:rounded-lg pr-4 pl-[14px] py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
                                                             onClick={() => {
                                                                 setActiveDropdown(null);
                                                                 setPreviewAgent(item.agent_id)
@@ -183,16 +183,18 @@ function AgentsSeth() {
                                                         >
                                                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><CallAgent /></div> <div className='hidden group-hover:block'><CallAgent status={true} /></div> <span>Test Agent</span> </div>
                                                         </button>
-                                                        <hr style={{ color: "#E6EAEE" }} />
-                                                        <button
-                                                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] font-[500]"
-                                                            onClick={() => {
-                                                                // Handle delete action
-                                                                handleDelete(index, item.agent_id)
-                                                            }}
-                                                        >
-                                                            <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
-                                                        </button>
+                                                        <hr style={{ color: "#E6EAEE", marginTop:"5px" }} />
+                                                        <div className='py-2'>
+                                                            <button
+                                                                className="block w-full text-left px-4 hover:rounded-lg py-2 text-sm text-red-600 hover:bg-[#F4F5F6] font-[500]"
+                                                                onClick={() => {
+                                                                    // Handle delete action
+                                                                    handleDelete(index, item.agent_id)
+                                                                }}
+                                                            >
+                                                                <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             )}
