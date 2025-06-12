@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import trigger from '../assets/svg/sequence_trigger.svg'
 import delay from '../assets/svg/sequence_delay.svg'
 import channel from '../assets/svg/sequence_channel.svg'
@@ -8,7 +8,8 @@ import { LuRefreshCw } from 'react-icons/lu';
 import { AddPlus, CheckedCheckbox, CrossDelete, EmptyCheckbox, RequestSend } from '../icons/icons'
 import { appointmentSetter, getAppointmentSetterById, updateAppointmentSetter } from '../api/appointmentSetter'
 import AgentPreviewModal from './AgentPreview'
-import { getInstaAccounts } from '../api/brainai'
+import { getInstaAccounts, getWhatsappAccounts } from '../api/brainai'
+import { SelectDropdown } from './Dropdown'
 
 function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentStatus }) {
 
@@ -30,7 +31,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         webpage_link: "",
         // webpage_type: "",
         whatsapp_number: '',
-        platform_unique_id:''
+        platform_unique_id: ''
     })
     const [loadingStatus, setLoadingStatus] = useState(true)
     const [dataRenderStatus, setDataRenderStatus] = useState(true)
@@ -41,6 +42,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const [showLanguageSelector, setShowLanguageSelector] = useState(false);
     const [previewAgent, setPreviewAgent] = useState(false)
     const [instagramData, setInstagramData] = useState([])
+    const [whatsappData, setWhatsappData] = useState([])
 
     const handleInstagram = async () => {
         try {
@@ -48,7 +50,17 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             const response = await getInstaAccounts();
             if (response?.status === 200) {
                 console.log(response?.data?.insta_account_info)
-                setInstagramData(response?.data?.insta_account_info);
+                const data = response?.data?.insta_account_info
+                if (data?.length > 0) {
+                    const updatedFormat = data.map((e) => ({
+                        label: e.username,
+                        key: e.instagram_user_id
+                    }));
+                    setInstagramData(updatedFormat)
+                } else {
+                    setInstagramData(data);
+                }
+
             }
 
         } catch (error) {
@@ -56,8 +68,34 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         }
     }
 
+
+    const handleWhatsapp = async () => {
+        try {
+
+            const response = await getWhatsappAccounts();
+            if (response?.status === 200) {
+                console.log(response?.data?.whatsapp_account_info)
+                const data = response?.data?.whatsapp_account_info
+                if (data?.length > 0) {
+                    const updatedFormat = data.map((e) => ({
+                        label: e.username,
+                        key: e.whatsapp_phone_id
+                    }));
+                    setWhatsappData(updatedFormat)
+                } else {
+                    setWhatsappData(data);
+                }
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
     useEffect(() => {
         handleInstagram()
+        handleWhatsapp()
     }, [])
 
 
@@ -214,8 +252,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     ];
 
     const messageTimeRange = [
-        { label: "Min. Message time range", key: "min_time", options: [5, 10, 15, 30] },
-        { label: "Max. Message time range", key: "max_time", options: [30, 45, 60, 90] }
+        { label: "Min. Message time range", key: "min_time", options: [{ label: "5", key: 5 }, { label: "10", key: 10 }, { label: "15", key: 15 }, { label: "30", key: 30 }] },
+        { label: "Max. Message time range", key: "max_time", options: [{ label: "30", key: 30 }, { label: "45", key: 45 }, { label: "60", key: 60 }, { label: "90", key: 90 }] }
     ];
 
     const globalMessageTimeRange = [
@@ -231,6 +269,16 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         { label: "Results-Oriented", key: "results_oriented" },
         { label: "Direct", key: "direct" },
         { label: "Emphatic", key: "emphatic" },
+    ]
+
+    const genderOptions = [
+        { label: "Male", key: "male" },
+        { label: "Female", key: "female" }
+    ]
+
+    const calendarOptions = [
+        { label: "Calendly", key: "calendly" },
+        { label: "Google Calendar", key: "google_calendar" }
     ]
 
     const getAppointementSetter = async () => {
@@ -423,19 +471,11 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const renderOptions = (list) => {
         if ((formData.sequence.trigger === "systeme.io" || formData.sequence.trigger === "clickfunnels") && list.key === "channel") {
             return (
-                list.options2.map((e) => (
-                    <option key={e.key} value={e.key}>
-                        {e.label}
-                    </option>
-                ))
+                list.options2
             )
         } else {
             return (
-                list.options.map((e) => (
-                    <option key={e.key} value={e.key}>
-                        {e.label}
-                    </option>
-                ))
+                list.options
             )
         }
     }
@@ -519,7 +559,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                         <div className="flex-1">
                             <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
                                 <label className="font-medium text-[#1e1e1e] text-sm">Select Calendar</label>
-                                <select
+                                {/* <select
                                     name="calendar"
                                     value={formData.calendar_choosed}
                                     onChange={(e) => {
@@ -535,7 +575,22 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     <option value="" disabled>Select</option>
                                     <option value="calendly">Calendly</option>
                                     <option value="google_calendar">Google Calendar</option>
-                                </select>
+                                </select> */}
+                                <SelectDropdown
+                                    name="calendar"
+                                    options={calendarOptions}
+                                    value={formData.calendar_choosed}
+                                    onChange={(updated) => {
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            calendar_choosed: updated,
+                                        }))
+                                        setErrors((prev) => ({ ...prev, calendar_choosed: '' }))
+                                    }}
+                                    placeholder="Select"
+                                    className="w-full"
+                                    errors={errors}
+                                />
                                 {errors.calendar_choosed && <p className="text-red-500 text-sm mt-1">{errors.calendar_choosed}</p>}
                             </div>
                         </div>
@@ -551,7 +606,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         <>
             <div className="w-full py-4 pr-4 flex flex-col gap-4 ">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">{updateAgentStatus?'Update':'Create New'} Agent</h1>
+                    <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">{updateAgentStatus ? 'Update' : 'Create New'} Agent</h1>
                     <div className='flex gap-2'>
                         {/* <button onClick={() => setPreviewAgent(true)} className="bg-white text-[16px] font-[500] text-[#5A687C] border-[1.5px] border-[#E1E4EA] rounded-md text-sm md:text-base px-4 py-2">
                             Preview Agent
@@ -592,7 +647,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     <label className="text-sm font-medium text-[#1e1e1e]">
                                         Gender<span className="text-[#675fff]">*</span>
                                     </label>
-                                    <select
+                                    {/* <select
                                         name='gender'
                                         value={formData?.gender}
                                         onChange={handleChange}
@@ -600,7 +655,23 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         <option value="" disabled>Select</option>
                                         <option value="male">Male</option>
                                         <option value="female">Female</option>
-                                    </select>
+                                    </select> */}
+                                    <SelectDropdown
+                                        name="gender"
+                                        options={genderOptions}
+                                        value={formData?.gender}
+                                        onChange={(updated) => {
+                                            setFormData((prev) => ({
+                                                ...prev, gender: updated
+                                            }))
+                                            setErrors((prev) => ({
+                                                ...prev, gender: ""
+                                            }))
+                                        }}
+                                        placeholder="Select"
+                                        className=""
+                                        errors={errors}
+                                    />
                                     {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
                                 </div>
                                 <div className="flex flex-col gap-1.5 w-full">
@@ -639,7 +710,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     </label>
                                     <a href='/agent-personality-documentation' target='_blank' className='flex items-center hover:underline gap-1 text-[14px] text-[#675FFF] font-[500]'>Learn more<RequestSend status={true} /></a>
                                 </div>
-                                <select
+                                {/* <select
                                     name='agent_personality'
                                     value={formData?.agent_personality}
                                     onChange={handleChange}
@@ -648,7 +719,24 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     {agentsPersonalityOptions.map((e) => (
                                         <option key={e.key} value={e.key}>{e.label}</option>
                                     ))}
-                                </select>
+                                </select> */}
+
+                                <SelectDropdown
+                                    name="agent_personality"
+                                    options={agentsPersonalityOptions}
+                                    value={formData?.agent_personality}
+                                    onChange={(updated) => {
+                                        setFormData((prev) => ({
+                                            ...prev, agent_personality: updated
+                                        }))
+                                        setErrors((prev) => ({
+                                            ...prev, agent_personality: ""
+                                        }))
+                                    }}
+                                    placeholder="Choose your agent personality"
+                                    className=""
+                                    errors={errors}
+                                />
                                 {errors.agent_personality && <p className="text-red-500 text-sm mt-1">{errors.agent_personality}</p>}
                             </div>
                             {/* <div className="flex flex-col gap-1.5 flex-1">
@@ -672,7 +760,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     </label>
                                     <div
                                         onClick={() => setShowLanguageSelector((prev) => !prev)}
-                                        className={`w-full bg-white border ${errors.agent_language ? 'border-red-500' : 'border-[#e1e4ea]'} rounded-lg px-3 py-2 cursor-pointer`}
+                                        className={`w-full bg-white border ${errors.agent_language ? 'border-red-500' : 'border-[#e1e4ea]'} rounded-lg px-3 py-2 cursor-pointer text-[#5A687C]`}
                                     >
                                         {formData.agent_language?.length > 0
                                             ? formData.agent_language.join(', ')
@@ -816,57 +904,42 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                         </div>
 
                         {/* Sequence Section */}
+                        <div className="p-3 w-full relative bg-white rounded-2xl  border border-solid border-[#e1e4ea]">
+                            <div className="font-medium text-[#1e1e1e] text-base py-2">
+                                Sequence
+                            </div>
 
-                        <div className="flex flex-col items-start gap-3 w-full">
-                            <div className="flex items-start gap-[30px] w-full">
-                                <div className="flex-1 bg-white rounded-2xl overflow-hidden border border-solid border-[#e1e4ea]">
-                                    <div className="relative w-full h-full">
-                                        {/* <div className="absolute w-full h-full top-0 left-0 opacity-40">
-                                        <img
-                                            className="w-full h-full object-cover"
-                                            alt="Light grey dots"
-                                            src="/light-grey-dots-background-6.png"
-                                        />
-                                    </div> */}
+                            <div className="flex items-center justify-between">
+                                {sequenceCards.map((card, index) => (
+                                    <React.Fragment key={card.id}>
+                                        {index > 0 && (
+                                            <div className="h-[2px] w-[25px] mx-1 bg-[#e1e4ea]" />
+                                        )}
 
-                                        <div className="p-3 h-full flex flex-col relative z-10">
-                                            <div className="flex items-center mb-2">
-                                                <div className="font-medium text-[#1e1e1e] text-base">
-                                                    Sequence
+                                        <div
+                                            className={`flex flex-col w-[25%] items-center justify-center gap-2.5 p-2 bg-[#f9fafb] rounded-[11px] border ${card.selected ? "border-[#335bfb66]" : "border-[#e1e4ea]"
+                                                }`}
+                                        >
+                                            <div className="flex items-center gap-2 w-full">
+                                                <div
+                                                    className={`flex items-center gap-2.5 p-[7px] rounded-[10px]`}
+                                                >
+                                                    <img
+                                                        alt={card.title}
+                                                        src={card.iconSrc}
+                                                    />
+
+                                                </div>
+                                                <div className="font-semibold text-[#1e1e1e] text-base">
+                                                    {card.title}
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center gap-3 overflow-x-auto">
-                                                {sequenceCards.map((card, index) => (
-                                                    <div key={card.id} className="flex items-center gap-3">
-                                                        {index > 0 && (
-                                                            <div className="h-[2px] w-[25px] bg-[#e1e4ea]" />
-                                                        )}
+                                            <div className="w-full h-px bg-[#e1e4ea]" />
 
-                                                        <div
-                                                            className={`flex flex-col w-[206px] items-center justify-center gap-2.5 p-2 bg-[#f9fafb] rounded-[11px] border ${card.selected ? "border-[#335bfb66]" : "border-[#e1e4ea]"
-                                                                }`}
-                                                        >
-                                                            <div className="flex items-center gap-2 w-full">
-                                                                <div
-                                                                    className={`flex items-center gap-2.5 p-[7px] rounded-[10px]`}
-                                                                >
-                                                                    <img
-                                                                        alt={card.title}
-                                                                        src={card.iconSrc}
-                                                                    />
-
-                                                                </div>
-                                                                <div className="font-semibold text-[#1e1e1e] text-base">
-                                                                    {card.title}
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="w-full h-px bg-[#e1e4ea]" />
-
-                                                            <div className="flex items-center gap-2 w-full">
-                                                                <div className="relative w-full">
-                                                                    <select
+                                            <div className="flex items-center gap-2 w-full">
+                                                <div className="relative w-full">
+                                                    {/* <select
                                                                         name={card.key}
                                                                         className="w-full h-8 py-1 px-3 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e] shadow-sm"
                                                                         value={formData.sequence[card.key]}
@@ -884,44 +957,74 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                                         disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
                                                                     >
                                                                         {renderOptions(card)}
-                                                                    </select>
-                                                                    {((card.key === "trigger" || card.key === "channel") && (formData.sequence.trigger === "Instagram" || formData.sequence.channel === "Channel")) &&
-                                                                        <select
-                                                                            name="platform_unique_id"
-                                                                            className="w-full my-2 h-8 py-1 px-3 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e] shadow-sm"
-                                                                            value={formData.platform_unique_id}
-                                                                            onChange={(e) => {
-                                                                                const { name, value } = e.target;
-                                                                                setFormData((prev) => ({
-                                                                                    ...prev,
-                                                                                    platform_unique_id: value,
-                                                                                }));
-                                                                            }}
-                                                                            disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
-                                                                        >
-                                                                            <option value="" disabled>Select</option>
-                                                                            {instagramData?.length > 0 && instagramData.map((e) => (
-                                                                                <option key={e.instagram_user_id} value={e.instagram_user_id}>
-                                                                                    {e.username}
-                                                                                </option>
-                                                                            ))}
-                                                                        </select>
-                                                                    }
+                                                                    </select> */}
+                                                    <SelectDropdown
+                                                        name={card.key}
+                                                        options={renderOptions(card)}
+                                                        value={formData.sequence[card.key]}
+                                                        onChange={(updated) => {
+                                                            console.log(updated)
+                                                            setFormData((prev) => ({
+                                                                ...prev,
+                                                                sequence: {
+                                                                    ...prev.sequence,
+                                                                    [card.key]: card.key === "delay" ? parseInt(updated) : updated,
+                                                                },
+                                                            }));
+                                                        }}
+                                                        placeholder="Select"
+                                                        className=""
+                                                        errors={errors}
+                                                        disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
+                                                    />
+                                                    {((card.key === "trigger" || card.key === "channel") && (formData.sequence.trigger === "Instagram" || formData.sequence.trigger === "Whatsapp" || formData.sequence.channel === "Channel")) &&
+                                                        // <select
+                                                        //     name="platform_unique_id"
+                                                        //     className="w-full my-2 h-8 py-1 px-3 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e] shadow-sm"
+                                                        //     value={formData.platform_unique_id}
+                                                        //     onChange={(e) => {
+                                                        //         const { name, value } = e.target;
+                                                        //         setFormData((prev) => ({
+                                                        //             ...prev,
+                                                        //             platform_unique_id: value,
+                                                        //         }));
+                                                        //     }}
+                                                        //     disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
+                                                        // >
+                                                        //     <option value="" disabled>Select</option>
+                                                        //     {instagramData?.length > 0 && instagramData.map((e) => (
+                                                        //         <option key={e.instagram_user_id} value={e.instagram_user_id}>
+                                                        //             {e.username}
+                                                        //         </option>
+                                                        //     ))}
+                                                        // </select>
+                                                        <SelectDropdown
+                                                            name="platform_unique_id"
+                                                            options={formData.sequence.trigger === "instagram" ? instagramData?.length > 0 && instagramData : whatsappData?.length > 0 && whatsappData}
+                                                            value={formData.platform_unique_id}
+                                                            onChange={(updated) => {
+                                                                setFormData((prev) => ({
+                                                                    ...prev, platform_unique_id: updated
+                                                                }))
+                                                            }}
+                                                            placeholder="Account"
+                                                            className="mt-2"
+                                                            errors={errors}
+                                                            disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
+                                                        />
 
-                                                                    {card.unit && (
-                                                                        <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-400">
-                                                                            {card.unit}
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ))}
+                                                    }
+
+                                                    {card.unit && (
+                                                        <span className="absolute right-8 top-1/2 transform -translate-y-1/2 text-sm text-[#5A687C]">
+                                                            {card.unit}
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
+                                    </React.Fragment>
+                                ))}
                             </div>
                         </div>
 
@@ -1032,7 +1135,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 </label>
                                 <input
                                     type="number"
-                                    min="0"
+                                    min="1"
                                     max="10"
                                     disabled={!formData.is_followups_enabled}
                                     name="number_of_followups"
@@ -1044,7 +1147,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         if (value === '') {
                                             parsedValue = '';
                                         } else if (!isNaN(parsedValue)) {
-                                            parsedValue = Math.max(0, Math.min(10, parsedValue));
+                                            parsedValue = Math.max(1, Math.min(10, parsedValue));
                                         }
                                         console.log(parsedValue)
 
@@ -1065,7 +1168,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     }}
 
                                     className={`w-full p-2 bg-white rounded-lg border ${errors.number_of_followups ? 'border-red-500' : 'border-[#e1e4ea]'} no-spinner`}
-                                    placeholder="Please enter a number from 0 to 10"
+                                    placeholder="Please enter a number from 1 to 10"
                                 />
 
                                 {errors.number_of_followups && <p className="text-red-500 text-sm mt-1">{errors.number_of_followups}</p>}
@@ -1100,8 +1203,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             {each.label}<span className="text-[#675fff]">*</span>
                                         </label>
                                         <div className="flex items-center w-full">
-                                            <div className="flex items-center justify-between w-full bg-white rounded-lg border border-[#e1e4ea] px-3 py-2">
-                                                <select
+                                            <div className="flex relative items-center justify-between w-full">
+                                                {/* <select
                                                     className="flex-1 bg-transparent text-text-black text-base focus:outline-none appearance-none"
                                                     name={each.key}
                                                     value={formData.follow_up_details[each.key]}
@@ -1120,8 +1223,26 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                     {each.options.map((e) => (
                                                         <option key={e} value={e}>{e}</option>
                                                     ))}
-                                                </select>
-                                                <span className="text-text-grey text-base">Minutes</span>
+                                                </select> */}
+                                                <SelectDropdown
+                                                    name={each.key}
+                                                    options={each.options}
+                                                    value={formData.follow_up_details[each.key]}
+                                                    onChange={(updated) => {
+                                                        setFormData((prev) => ({
+                                                            ...prev,
+                                                            follow_up_details: {
+                                                                ...prev.follow_up_details,
+                                                                [each.key]: parseInt(updated),
+                                                            },
+                                                        }));
+                                                    }}
+                                                    placeholder="Select"
+                                                    className="w-full"
+                                                    errors={errors}
+                                                    disabled={!formData.is_followups_enabled}
+                                                />
+                                                <span className="text-[#5A687C] absolute right-8 text-[16px] font-[400]">Minutes</span>
                                             </div>
                                         </div>
                                     </div>
