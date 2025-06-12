@@ -1000,7 +1000,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                         // </select>
                                                         <SelectDropdown
                                                             name="platform_unique_id"
-                                                            options={formData.sequence.trigger === "instagram" ? instagramData?.length > 0 && instagramData : whatsappData?.length > 0 && whatsappData}
+                                                            options={formData.sequence.trigger === "Instagram" ? instagramData?.length > 0 && instagramData : whatsappData?.length > 0 && whatsappData}
                                                             value={formData.platform_unique_id}
                                                             onChange={(updated) => {
                                                                 setFormData((prev) => ({
