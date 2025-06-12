@@ -13,6 +13,7 @@ import response_rate from '../assets/svg/analytics_response_rate.svg'
 import positive_rate from '../assets/svg/analytics_positive_rate.svg'
 import { getAppointmentSetter, getLeadAnalytics } from '../api/appointmentSetter'
 import { format } from 'date-fns'
+import { SelectDropdown } from './Dropdown'
 
 
 const staticData1 = [
@@ -81,7 +82,7 @@ function Analytics() {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [leadAnalytics, setLeadAnalytics] = useState({});
     const [agentSelect, setAgentSelect] = useState("all");
-    const [agentsList, setAgentList] = useState();
+    const [agentsList, setAgentList] = useState([]);
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
@@ -113,7 +114,13 @@ function Analytics() {
             const response = await getAppointmentSetter();
             if (response.status === 200) {
                 if (response?.data?.agent?.length > 0) {
-                    setAgentList(response.data.agent)
+                    const updatedData = response.data.agent.map((e) => ({
+                        label: e.agent_name,
+                        key: e.agent_id
+                    }))
+                    setAgentList([{ label: "All", key: "all" }, ...updatedData]);
+                } else {
+                    setAgentList([{ label: "All", key: "all" }]);
                 }
                 console.log(response?.data)
             }
@@ -123,10 +130,10 @@ function Analytics() {
         }
     }
 
-    const selectedAgentName =
-        agentSelect === "all"
-            ? "All"
-            : agentsList?.length > 0 && agentsList.find((a) => a.agent_id == agentSelect)?.agent_name || "";
+    // const selectedAgentName =
+    //     agentSelect === "all"
+    //         ? "All"
+    //         : agentsList?.length > 0 && agentsList.find((a) => a.agent_id == agentSelect)?.agent_name || "";
 
 
     return (
@@ -142,7 +149,7 @@ function Analytics() {
                             selected={selectedDate}
                             onChange={(date) => setSelectedDate(date)}
                             customInput={
-                                <button className="flex w-full items-center gap-2 px-2 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[14px]">
+                                <button className="flex w-full items-center gap-2 px-2 py-[10px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[14px]">
 
                                     {format(selectedDate, 'yyyy-MM-dd')}
                                     <LuCalendarDays className="text-[16px]" />
@@ -151,7 +158,7 @@ function Analytics() {
                             className='w-full'
                         />
                     </div>
-                    <select
+                    {/* <select
                         value={agentSelect}
                         onChange={(e) => {
                             setAgentSelect(e.target.value);
@@ -168,9 +175,22 @@ function Analytics() {
                                     {e.agent_name}
                                 </option>
                             ))}
-                    </select>
+                    </select> */}
 
-                    <div onClick={() => handleLeadAnalytics(`?date=${format(selectedDate, 'yyyy-MM-dd')}&agent_id=${agentSelect}`)} className="flex items-center px-3 gap-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                    <SelectDropdown
+                        name="analytics"
+                        options={agentsList}
+                        value={agentSelect}
+                        onChange={(updated) => {
+                            setAgentSelect(updated)
+                        }}
+                        placeholder="Select"
+                        className=""
+                        extraName="Agent"
+                    />
+
+
+                    <div onClick={() => handleLeadAnalytics(`?date=${format(selectedDate, 'yyyy-MM-dd')}&agent_id=${agentSelect}`)} className="flex items-center px-3 gap-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-[8px] h-[40px]">
                         <LuRefreshCw color="#5E54FF" />
                         <button className="text-[16px] cursor-pointer text-[#5A687C]">
                             Refresh
