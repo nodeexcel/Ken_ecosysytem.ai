@@ -15,7 +15,7 @@ import click_funnels from '../assets/svg/click-funnels.svg'
 import AdditionalIntegration from './AdditionalIntegrations';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNavbarData } from '../store/navbarSlice'
-import { getInstaAccounts } from '../api/brainai';
+import { getInstaAccounts, getWhatsappAccounts } from '../api/brainai';
 // Define the integrations data
 
 
@@ -23,9 +23,10 @@ const Integration = () => {
   const [firstRender, setFirstRender] = useState(true)
   const [integartionData, setIntegrationData] = useState({})
   const [instagramData, setInstagramData] = useState([])
+  const [whatsappData, setWhatsappData] = useState([])
   const dispatch = useDispatch();
   const userDetails = useSelector((state) => state.profile.user)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState({ instagram: true, whatsapp: true })
 
   const handleInstagram = async () => {
     try {
@@ -35,24 +36,58 @@ const Integration = () => {
         console.log(response?.data?.insta_account_info)
         setInstagramData(response?.data?.insta_account_info);
         if (response?.data?.insta_account_info?.length === 0) {
-          setLoading(false)
+          setLoading((prev) => ({
+            ...prev, instagram: false
+          }))
         }
       }
 
     } catch (error) {
       console.log(error)
-      setLoading(false)
+      setLoading((prev) => ({
+        ...prev, instagram: false
+      }))
+    }
+  }
+
+  const handleWhatsapp = async () => {
+    try {
+
+      const response = await getWhatsappAccounts();
+      if (response?.status === 200) {
+        console.log(response?.data?.whatsapp_account_info)
+        setWhatsappData(response?.data?.whatsapp_account_info);
+        if (response?.data?.whatsapp_account_info?.length === 0) {
+          setLoading((prev) => ({
+            ...prev, whatsapp: false
+          }))
+        }
+      }
+
+    } catch (error) {
+      console.log(error)
+      setLoading((prev) => ({
+        ...prev, whatsapp: false
+      }))
     }
   }
 
   useEffect(() => {
     if (instagramData?.length > 0) {
-      setLoading(false)
+      setLoading((prev) => ({
+        ...prev, instagram: false
+      }))
     }
-  }, [instagramData])
+    if (whatsappData?.length > 0) {
+      setLoading((prev) => ({
+        ...prev, whatsapp: false
+      }))
+    }
+  }, [instagramData, whatsappData])
 
   useEffect(() => {
     handleInstagram()
+    handleWhatsapp()
   }, [])
 
   const integrations = [
@@ -96,7 +131,7 @@ const Integration = () => {
     {
       icon: whatsapp,
       name: "WhatsApp",
-      connectedAccounts: 1,
+      connectedAccounts: whatsappData.length,
       path: import.meta.env.VITE_WHATS_APP_URL + `&state=${userDetails.id}`,
     },
     {
@@ -127,7 +162,7 @@ const Integration = () => {
     setIntegrationData(data)
   }
 
-  if (loading) return <p className='flex justify-center items-center h-full'><span className='loader' /></p>
+  if (loading.whatsapp && loading.instagram) return <p className='flex justify-center items-center h-full'><span className='loader' /></p>
 
   return (
     <div className={`flex flex-col  ${firstRender ? 'py-4' : 'pb-4'}  pr-4 w-full items-start gap-6 `}>
@@ -172,7 +207,7 @@ const Integration = () => {
             </div>
           ))}
         </div>
-      </> : <AdditionalIntegration setInstagramData={setInstagramData} instagramData={instagramData} integartionData={integartionData} setFirstRender={setFirstRender} />}
+      </> : <AdditionalIntegration setInstagramData={setInstagramData} instagramData={instagramData} integartionData={integartionData} setFirstRender={setFirstRender} whatsappData={whatsappData} setWhatsappData={setWhatsappData}/>}
     </div>
   )
 }

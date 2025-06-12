@@ -176,3 +176,25 @@ export const deleteInstaAccount = async (id) => {
         return error;
     }
 }
+
+
+export const getWhatsappAccounts = async () => {
+    try {
+        const response = await axiosInstance.get(`http://116.202.210.102:8000/get-whatsapp-accounts`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+}
+
+
+export const deleteWhatsappAccount = async (id) => {
+    try {
+        const response = await axiosInstance.delete(`http://116.202.210.102:8000/delete-whatsapp-account/${id}`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+}

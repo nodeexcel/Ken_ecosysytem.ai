@@ -11,7 +11,7 @@ import { useDispatch } from "react-redux";
 import { getNavbarData } from "../store/navbarSlice";
 import { LeftArrow } from "../icons/icons";
 import Integration from "./Integration";
-import { deleteInstaAccount } from "../api/brainai";
+import { deleteInstaAccount, deleteWhatsappAccount } from "../api/brainai";
 
 const tabs = [
     { label: "Account" },
@@ -23,7 +23,7 @@ const staticData = [
     { label: "orsay—sample", status: "Approved", description: "This message confirms that you've successfully set up your WhatsApp notifications. From now on, you'll be able to receive updates, alerts, and important info directly in your chat." }
 ]
 
-const AdditionalIntegration = ({ setInstagramData, instagramData, integartionData, setFirstRender }) => {
+const AdditionalIntegration = ({ setInstagramData, instagramData, integartionData, setFirstRender, whatsappData, setWhatsappData }) => {
     const [open, setOpen] = useState(false);
     const [createTemplateOpen, setCreateTemplateOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("insta");
@@ -36,6 +36,22 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
             if (response?.status === 200) {
                 const filterData = instagramData.filter((e) => e.instagram_user_id !== id)
                 setInstagramData(filterData)
+            } else if (response?.status === 400) {
+                if (response?.response?.data?.success) {
+                    setErrorMessage(response?.response?.data?.success)
+                }
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handleDeleteWhatsapp = async (id) => {
+        try {
+            const response = await deleteWhatsappAccount(id)
+            if (response?.status === 200) {
+                const filterData = whatsappData.filter((e) => e.whatsapp_phone_id !== id)
+                setWhatsappData(filterData)
             } else if (response?.status === 400) {
                 if (response?.response?.data?.success) {
                     setErrorMessage(response?.response?.data?.success)
@@ -83,26 +99,26 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
             case "WhatsApp":
                 return (
                     <div>
-                        {/* {instagramData?.length > 0 && instagramData.map((e, i) => ( */}
-                        <div className="w-full gap-3 mb-2 p-3 flex justify-between border border-solid border-[#e1e4ea] bg-white rounded-lg">
-                            <div className="flex flex-col gap-2 pl-2">
-                                <div className="flex items-center gap-2">
-                                    <div>
-                                        <img
-                                            className="w-5 h-5"
-                                            alt={integartionData.name}
-                                            src={integartionData.icon}
-                                        />
+                        {whatsappData?.length > 0 && whatsappData.map((e, i) => (
+                            <div key={i} className="w-full gap-3 mb-2 p-3 flex justify-between border border-solid border-[#e1e4ea] bg-white rounded-lg">
+                                <div className="flex flex-col gap-2 pl-2">
+                                    <div className="flex items-center gap-2">
+                                        <div>
+                                            <img
+                                                className="w-5 h-5"
+                                                alt={integartionData.name}
+                                                src={integartionData.icon}
+                                            />
+                                        </div>
+                                        <h1 className="text-[16px] font-[500] font-inter">+{e.username}</h1>
                                     </div>
-                                    <h1 className="text-[16px] font-[500] font-inter">15557158822</h1>
+                                    <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">Read and write using the {integartionData.name}.</li>
                                 </div>
-                                <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">Read and write using the {integartionData.name}.</li>
+                                <div className="flex items-center gap-3">
+                                    <button onClick={() => handleDeleteWhatsapp(e.whatsapp_phone_id)} className="text-[#FF3B30] border-[1.5px] border-[#FF3B30] rounded-lg px-[20px] py-[7px] text-[16px] font-[500]" >Delete</button>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <button className="text-[#FF3B30] border-[1.5px] border-[#FF3B30] rounded-lg px-[20px] py-[7px] text-[16px] font-[500]" >Delete</button>
-                            </div>
-                        </div>
-                        {/* ))} */}
+                        ))}
                     </div>
                 )
             case "Instagram":
@@ -178,7 +194,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                     >
                         <span className={`font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${integartionData.connectedAccounts > 0 ? "text-[black]"
                             : "text-[#5A687C] "}`}>
-                            {integartionData.name === "Instagram" ? instagramData?.length : integartionData.connectedAccounts} {e.label}
+                            {integartionData.name === "Instagram" ? instagramData?.length : integartionData.name === "WhatsApp" ? whatsappData?.length : integartionData.connectedAccounts} {e.label}
                         </span>
                     </button>)}
                 </div>
