@@ -82,7 +82,7 @@ function Analytics() {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [leadAnalytics, setLeadAnalytics] = useState({});
     const [agentSelect, setAgentSelect] = useState("all");
-    const [agentsList, setAgentList] = useState([]);
+    const [agentsList, setAgentList] = useState([{ label: "All", key: "all" }]);
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
@@ -119,8 +119,6 @@ function Analytics() {
                         key: e.agent_id
                     }))
                     setAgentList([{ label: "All", key: "all" }, ...updatedData]);
-                } else {
-                    setAgentList([{ label: "All", key: "all" }]);
                 }
                 console.log(response?.data)
             }
