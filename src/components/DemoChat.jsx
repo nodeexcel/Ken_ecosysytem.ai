@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { Search } from "lucide-react"
+import { Search, X } from "lucide-react"
 import { GoDotFill } from "react-icons/go"
 import { RiCheckDoubleLine } from "react-icons/ri"
 import { FaRegSmile } from "react-icons/fa";
@@ -29,6 +29,7 @@ const DemoChat = () => {
     const [agentEnabled, setAgentEnabled] = useState(false)
     const [leadStatus, setLeadStatus] = useState("positive")
     const [loadingChatsList, setLoadingChatsList] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
     const chatRef = useRef()
 
     useEffect(() => {
@@ -171,6 +172,11 @@ const DemoChat = () => {
             const response = await chatAgent(payload, activeConversation);
             console.log(response.data);
 
+            if (response?.status === 400) {
+                if (response?.response?.data?.error) {
+                    setErrorMessage(response?.response?.data?.error)
+                }
+            }
             // if (response.status === 200) {
             //     const agentMessage = {
             //         id: uuidv4(),
@@ -363,6 +369,32 @@ const DemoChat = () => {
                             </div>
                         </div>
                     </div>}</> : <h1 className="text-[#5A687C] text-[18px] font-[400] flex justify-center items-center w-full">No conversation selected</h1>}
+            </div>}
+
+            {errorMessage && <div className="inter fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
+                <div className="bg-white max-h-[300px] flex flex-col gap-4 w-full max-w-md rounded-2xl shadow-xl p-6 relative">
+                    <button
+                        onClick={() => {
+                            setErrorMessage('')
+                        }}
+                        className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
+
+                    <div className="space-y-6 mt-6">
+                        <h2 className="text-[20px] font-[600] text-center text-[#292D32]">{errorMessage}</h2>
+                        <div className="flex justify-center">
+                            <button
+                                type="submit"
+                                onClick={() => setErrorMessage('')}
+                                className={`w-fit bg-[#675FFF] cursor-pointer text-white py-[7px] px-[20px] rounded-[8px] font-semibold  transition`}
+                            >
+                                Ok
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>}
         </div>
     )

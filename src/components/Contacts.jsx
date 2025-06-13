@@ -623,7 +623,7 @@ const ContactsPage = () => {
                 value={channelSelect}
                 onChange={(updated) => setChannelSelect(updated)}
                 placeholder="Select"
-                className=""
+                className="w-[198px]"
                 extraName="Channel"
               />
               <SelectDropdown
@@ -632,7 +632,7 @@ const ContactsPage = () => {
                 value={statusSelect}
                 onChange={(updated) => setStatusSelect(updated)}
                 placeholder="Select"
-                className=""
+                className="w-[215px]"
                 extraName="Status"
               />
               <div className="relative w-[179px]">
@@ -814,7 +814,7 @@ const ContactsPage = () => {
                 value={channelSelectList}
                 onChange={(updated) => setChannelSelectList(updated)}
                 placeholder="Select"
-                className=""
+                className="w-[198px]"
                 extraName="Channel"
               />
               <div className="relative w-[179px]">

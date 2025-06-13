@@ -183,7 +183,7 @@ function Analytics() {
                             setAgentSelect(updated)
                         }}
                         placeholder="Select"
-                        className=""
+                        className="w-[187px]"
                         extraName="Agent"
                     />
 
