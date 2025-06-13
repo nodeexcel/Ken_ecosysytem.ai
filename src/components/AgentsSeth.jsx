@@ -132,7 +132,6 @@ function AgentsSeth() {
                                                 className="text-gray-500 hover:text-gray-700"
                                             >
                                                 <EllipsisVertical />
-                                            </button>
                                             {activeDropdown === index && (
                                                 <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                                                     <div className="py-1">
@@ -198,6 +197,7 @@ function AgentsSeth() {
                                                     </div>
                                                 </div>
                                             )}
+                                            </button>
                                         </td>
                                     </tr>
                                 )

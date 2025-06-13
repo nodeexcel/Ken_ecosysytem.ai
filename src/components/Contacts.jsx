@@ -9,6 +9,7 @@ import { FaChevronDown } from "react-icons/fa";
 import uk_flag from "../assets/images/uk_flag.png"
 import us_flag from "../assets/images/us_flag.png"
 import fr_flag from "../assets/images/fr_flag.png"
+import { SelectDropdown } from "./Dropdown";
 
 const countries = [
   { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
@@ -235,11 +236,8 @@ const ContactsPage = () => {
 
   const statusOptions = [{ label: "Any", key: "any" }, { label: "Active", key: "active" }, { label: "Unconfirmed", key: "unconfirmed" }, { label: "Unsubscribed", key: "unsubscribed" }, { label: "Bounced", key: "bounced" }]
   const channelOptions = [{ label: "All", key: "all" }, { label: "Email", key: "email" }, { label: "Phone No", key: "phone" }]
-
-  const selectedChannel = channelOptions.find((a) => a.key == channelSelect)?.label;
-  const selectedChannelList = channelOptions.find((a) => a.key == channelSelectList)?.label;
-
-  const selectedStatus = statusOptions.find((a) => a.key == statusSelect)?.label;
+  const listChannelOptions = [{ label: "Email", key: "email" }, { label: "Phone No", key: "phone" }]
+  const rowsPerPageOptions = [{ label: "10", key: 10 }, { label: "20", key: 20 }, { label: "50", key: 50 }, { label: "75", key: 75 }, { label: "100", key: 100 }]
 
   useEffect(() => {
     if (contactLists?.length > 0) {
@@ -548,7 +546,7 @@ const ContactsPage = () => {
     return () => {
       clearTimeout(handler);
     };
-  }, [selectedChannelList, listSearch])
+  }, [listSearch])
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -619,36 +617,35 @@ const ContactsPage = () => {
         <>
           <div className="flex items-center justify-between w-full">
             <div className="flex items-start gap-3">
-              <select value={channelSelect} onChange={(e) => setChannelSelect(e.target.value)} className="text-[#5A687C] min-w-[147px] px-3.5 py-[8px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg">
-                <option value={channelSelect} disabled>
-                  Channel: {selectedChannel}
-                </option>
-                {channelOptions.map(e => (
-                  <option className={`${channelSelect == e.key && 'hidden'}`} key={e.key} value={e.key}>{e.label}</option>
-                ))}
-              </select>
-
-              <select value={statusSelect} onChange={(e) => setStatusSelect(e.target.value)} className="text-[#5A687C] min-w-[147px] px-3.5 py-[8px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg">
-                <option value={statusSelect} disabled>
-                  Status: {selectedStatus}
-                </option>
-                {statusOptions.map(e => (
-                  <option className={`${statusSelect == e.key && 'hidden'}`} key={e.key} value={e.key}>{e.label}</option>
-                ))}
-              </select>
+              <SelectDropdown
+                name="all_contacts_channel"
+                options={channelOptions}
+                value={channelSelect}
+                onChange={(updated) => setChannelSelect(updated)}
+                placeholder="Select"
+                className=""
+                extraName="Channel"
+              />
+              <SelectDropdown
+                name="all_contacts_status"
+                options={statusOptions}
+                value={statusSelect}
+                onChange={(updated) => setStatusSelect(updated)}
+                placeholder="Select"
+                className=""
+                extraName="Status"
+              />
               <div className="relative w-[179px]">
                 <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   placeholder="Search"
                   value={contactSearch}
                   onChange={(e) => setContactSearch(e.target.value.trim())}
-                  className="w-full pl-10 pr-3.5 pt-[7px] pb-[6px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg"
+                  className="w-full pl-10 pr-3.5 pt-[8px] pb-[8px] bg-white border border-[#e1e4ea] focus:outline-none focus:ring-1 focus:ring-[#675FFF] rounded-lg"
                 />
               </div>
-              {activeTab !== "lists" && <button disabled={formCreateList.contactsId?.length === 0} onClick={() => setCreateList(true)} className="flex items-center gap-2.5 px-5 py-[6px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
-                <span className="font-medium text-base leading-6">
-                  Create List
-                </span>
+              {activeTab !== "lists" && <button disabled={formCreateList.contactsId?.length === 0} onClick={() => setCreateList(true)} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
+                Create List
               </button>}
             </div>
           </div>
@@ -732,17 +729,17 @@ const ContactsPage = () => {
                 </div>
                 |
                 <span>Rows per page:</span>
-                <select
+                <SelectDropdown
+                  name="rowsPerPage"
+                  options={rowsPerPageOptions}
                   value={rowsPerPage}
-                  onChange={handleRowsPerPageChange}
-                  className="border border-[#E1E4EA] rounded-lg px-2 py-1"
-                >
-                  {[10, 20, 50, 75, 100].map((value) => (
-                    <option key={value} value={value}>
-                      {value}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(updated) => {
+                    setRowsPerPage(Number(updated));
+                    setCurrentPage(1);
+                  }}
+                  placeholder="Select"
+                  className=""
+                />
               </div>
               <div className="flex items-center gap-1">
                 <button
@@ -811,21 +808,22 @@ const ContactsPage = () => {
         (<>
           <div className="flex items-center justify-between w-full">
             <div className="flex items-start gap-3">
-              <select value={channelSelectList} onChange={(e) => setChannelSelectList(e.target.value)} className="text-[#5A687C] min-w-[147px] px-3.5 py-[8px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg">
-                <option value={channelSelectList} disabled>
-                  Channel: {selectedChannelList}
-                </option>
-                {channelOptions.map(e => (
-                  <option className={`${channelSelectList == e.key && 'hidden'}`} key={e.key} value={e.key}>{e.label}</option>
-                ))}
-              </select>
+              <SelectDropdown
+                name="list_channel"
+                options={channelOptions}
+                value={channelSelectList}
+                onChange={(updated) => setChannelSelectList(updated)}
+                placeholder="Select"
+                className=""
+                extraName="Channel"
+              />
               <div className="relative w-[179px]">
                 <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   value={listSearch}
                   onChange={(e) => setListSearch(e.target.value.trim())}
                   placeholder="Search"
-                  className="w-full pl-10 pr-3.5 pt-[7px] pb-[6px] bg-white border border-[#e1e4ea] shadow-shadows-shadow-xs rounded-lg"
+                  className="w-full pl-10 pr-3.5 pt-[8px] pb-[8px] bg-white border border-[#e1e4ea] focus:outline-none focus:ring-1 focus:ring-[#675FFF] rounded-lg"
                 />
               </div>
             </div>
@@ -865,10 +863,10 @@ const ContactsPage = () => {
                         <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative">
                           <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
                           {activeDropdown === index && (
-                            <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                            <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                               <div className="py-1">
                                 <button
-                                  className="block group w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-gray-100"
+                                  className="block group w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
                                   onClick={() => {
                                     handleEditList(list);
                                   }}
@@ -876,7 +874,7 @@ const ContactsPage = () => {
                                   <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
                                 </button>
                                 <button
-                                  className="block group w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
+                                  className="block group w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
                                   onClick={() => {
                                     setActiveDropdown(null);
                                   }}
@@ -884,22 +882,24 @@ const ContactsPage = () => {
                                   <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>View Contacts</span> </div>
                                 </button>
                                 <button
-                                  className="block group w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
+                                  className="block group w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
                                   onClick={() => {
                                     handleDuplicateList(list.id);
                                   }}
                                 >
                                   <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
                                 </button>
-                                <hr style={{ color: "#E6EAEE" }} />
-                                <button
-                                  className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
-                                  onClick={() => {
-                                    handleDeleteList(list.id);
-                                  }}
-                                >
-                                  <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">Delete</span> </div>
-                                </button>
+                                <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                                <div className='py-2'>
+                                  <button
+                                    className="block w-full text-left hover:rounded-lg  px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
+                                    onClick={() => {
+                                      handleDeleteList(list.id);
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">Delete</span> </div>
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           )}
@@ -934,7 +934,7 @@ const ContactsPage = () => {
             <div className="flex flex-col gap-2">
               <div>
                 <label className="block text-[14px] font-medium text-[#292D32] mb-1">Name</label>
-                <div className={`flex items-center border ${formErrors.listName ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-3`}>
+                <div className={`flex items-center border ${formErrors.listName ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-2`}>
                   <input
                     type="text"
                     name="listName"
@@ -963,18 +963,22 @@ const ContactsPage = () => {
                 {formErrors.description && <p className="text-sm text-red-500 mt-1">{formErrors.description}</p>}
               </div>
               <label className="block mt-2 text-[14px] font-medium text-[#292D32]">Channel</label>
-              <div className={`w-full flex items-center border ${formErrors.channel ? 'border-red-500' : 'border-gray-300'} rounded-lg pb-1`}>
-                <select
-                  value={formData?.channel}
-                  name="channel"
-                  onChange={handleChange}
-                  className="w-full bg-white px-4 py-2 text-[#5A687C] rounded-lg "
-                >
-                  <option value="" disabled>Select</option>
-                  <option value="email">Email</option>
-                  <option value="phone">Phone</option>
-                </select>
-              </div>
+              <SelectDropdown
+                name="channel"
+                options={listChannelOptions}
+                value={formData?.channel}
+                onChange={(updated) => {
+                  setFormData((prev) => ({
+                    ...prev, channel: updated
+                  }))
+                  setFormErrors((prev) => ({
+                    ...prev, channel: ''
+                  }))
+                }}
+                placeholder="Select"
+                className=""
+                errors={formErrors}
+              />
               {formErrors.channel && <p className="text-sm text-red-500">{formErrors.channel}</p>}
             </div>
 
@@ -1018,7 +1022,7 @@ const ContactsPage = () => {
               <div className="flex flex-col gap-2">
                 <div>
                   <label className="block text-[14px] font-medium text-[#292D32] mb-1">List Name</label>
-                  <div className={`flex items-center border ${createListErrors.listName ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-3`}>
+                  <div className={`flex items-center border ${createListErrors.listName ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-2`}>
                     <input
                       type="text"
                       name="listName"
@@ -1032,18 +1036,22 @@ const ContactsPage = () => {
                 </div>
                 <div>
                   <label className="block mt-2 text-[14px] font-medium text-[#292D32]">Channel</label>
-                  <div className={`w-full flex items-center border ${createListErrors.channel ? 'border-red-500' : 'border-gray-300'} rounded-lg pb-1`}>
-                    <select
-                      value={formCreateList?.channel}
-                      name="channel"
-                      onChange={handleCreateListChange}
-                      className="w-full bg-white px-4 py-2 text-[#5A687C] rounded-lg "
-                    >
-                      <option value="" disabled>Select</option>
-                      <option value="email">Email</option>
-                      <option value="phone">Phone</option>
-                    </select>
-                  </div>
+                  <SelectDropdown
+                    name="channel"
+                    options={listChannelOptions}
+                    value={formCreateList?.channel}
+                    onChange={(updated) => {
+                      setFormCreateList((prev) => ({
+                        ...prev, channel: updated
+                      }))
+                      setCreateListErrors((prev) => ({
+                        ...prev, channel: ''
+                      }))
+                    }}
+                    placeholder="Select"
+                    className=""
+                    errors={createListErrors}
+                  />
                   {createListErrors.channel && <p className="text-sm text-red-500">{createListErrors.channel}</p>}
                 </div>
               </div>
@@ -1237,11 +1245,11 @@ const ContactsPage = () => {
                       className="w-fit flex border-none justify-between gap-2 items-center border pl-1 py-1 text-left"
                     >
                       <img src={selectedCountry?.flag} alt={selectedCountry?.name} width={16} />
-                      <FaChevronDown color="#5A687C" className="w-[10px]" />
+                      <FaChevronDown color="#5A687C" className={`w-[10px] transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
                       <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />
                     </button>
                     {isOpen && (
-                      <div className="absolute z-10  w-full left-[-13px] bg-white mt-1">
+                      <div className="absolute px-1 z-10 rounded-md shadow-lg border border-gray-200 max-h-30 overflow-auto top-6 w-full left-[-13px] bg-white mt-1">
                         {countries.map((country) => (
                           <div
                             key={country.code}
@@ -1250,7 +1258,7 @@ const ContactsPage = () => {
                               setIsOpen(false);
                               // setAddNewContact((prev) => ({ ...prev, phoneCode: country.dial_code }));
                             }}
-                            className={`px-4 py-2 hover:bg-gray-100 ${selectedCountry?.code === country?.code && 'bg-[#EDF3FF]'} cursor-pointer flex items-center`}
+                            className={`flex justify-center hover:bg-[#F4F5F6] hover:rounded-lg pr-1 my-1 py-2 ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6] rounded-lg'} cursor-pointer flex items-center`}
                           >
                             <img src={country.flag} alt={country.name} width={16} />
                           </div>
