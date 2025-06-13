@@ -17,7 +17,7 @@ const staticData = [
 ]
 
 function EmailDashboard() {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [campaignData, setCampaignData] = useState({})
 
     useEffect(() => {
@@ -31,7 +31,6 @@ function EmailDashboard() {
     }, [campaignData])
 
     const getCampaignData = async () => {
-        setLoading(true)
         try {
             const response = await campaignStatics();
             if (response?.status === 200) {

@@ -155,7 +155,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                                     <div
                                         key={key}
                                         onClick={() => handleLanguageSelect(key)}
-                                        className='flex items-center gap-2 py-1 hover:bg-gray-100 px-2 rounded cursor-pointer'
+                                        className={`flex items-center gap-2 py-2 hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF] px-3 my-1 cursor-pointer ${value.flag === languages[selectedLang].flag && 'bg-[#F4F5F6] rounded-lg text-[#675FFF]'}`}
                                     >
                                         <img src={value.flag} alt={value.label} width={20} />
                                         <span className='text-sm'>{value.label}</span>

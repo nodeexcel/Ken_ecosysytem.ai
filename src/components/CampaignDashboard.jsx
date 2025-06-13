@@ -181,7 +181,7 @@ function CampaignDashboard() {
                             </tr>
                         </thead>
                         <tbody className={`${!message && !loading && 'bg-white'} border border-[#E1E4EA]`}>
-                            {loading ? <tr className='h-34'><td></td><td></td><td><span className='loader' /></td></tr> : message ? <tr className='h-34'><td></td><td></td><td>{message}</td></tr> :
+                            {loading ? <tr className='h-34'><td></td><td></td><td></td><td><span className='loader' /></td></tr> : message ? <tr className='h-34'><td></td><td></td><td>{message}</td></tr> :
                                 campaignData?.length > 0 && campaignData.map((item, index) => (
                                     <tr key={index} className={`${index !== campaignData.length - 1 ? 'border-b border-gray-200' : ''}`}>
                                         <td className="px-6 py-4 text-sm text-gray-800 font-semibold">{item.campaign_name}</td>
@@ -205,7 +205,7 @@ function CampaignDashboard() {
                                                     checked={item.is_active}
                                                     onChange={item.campaign_status !== "draft" || item.campaign_status !== "issue_detected" ? () => toggleStatus(index, 'is_active', item.campaign_id) : undefined}
                                                 />
-                                                <div className={`w-9 h-5 bg-gray-200  rounded-full ${(item.campaign_status === "draft" || item.campaign_status === "issue_detected")?'dark:bg-[#F1F3F6] cursor-not-allowed':'dark:bg-[#D9D7FF] peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-400'} peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600`}></div>
+                                                <div className={`w-9 h-5 bg-gray-200  rounded-full ${(item.campaign_status === "draft" || item.campaign_status === "issue_detected") ? 'dark:bg-[#F1F3F6] cursor-not-allowed' : 'dark:bg-[#D9D7FF] peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-400'} peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600`}></div>
                                             </label>
                                         </td>
 
@@ -217,39 +217,41 @@ function CampaignDashboard() {
                                                 </button>
                                                 <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
                                                     <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
+                                                    {activeDropdown === index && (
+                                                        <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                                                            <div className="py-1">
+                                                                <button
+                                                                    className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
+                                                                    onClick={() => {
+                                                                        handleEdit(item.campaign_id)
+                                                                    }}
+                                                                >
+                                                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                                                                </button>
+                                                                <button
+                                                                    className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
+                                                                    onClick={() => {
+                                                                        handleDuplicate(item.campaign_id)
+                                                                    }}
+                                                                >
+                                                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
+                                                                </button>
+                                                                <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                                                                <div className='py-2'>
+                                                                    <button
+                                                                        className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6] hover:rounded-lg"
+                                                                        onClick={() => {
+                                                                            handleDelete(index, item.campaign_id)
+                                                                        }}
+                                                                    >
+                                                                        <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                 </button>
                                             </div>
-                                            {activeDropdown === index && (
-                                                <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
-                                                    <div className="py-1">
-                                                        <button
-                                                            className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-gray-100"
-                                                            onClick={() => {
-                                                                handleEdit(item.campaign_id)
-                                                            }}
-                                                        >
-                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
-                                                        </button>
-                                                        <button
-                                                            className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6]"
-                                                            onClick={() => {
-                                                                handleDuplicate(item.campaign_id)
-                                                            }}
-                                                        >
-                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
-                                                        </button>
-                                                        <hr style={{ color: "#E6EAEE" }} />
-                                                        <button
-                                                            className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
-                                                            onClick={() => {
-                                                                handleDelete(index, item.campaign_id)
-                                                            }}
-                                                        >
-                                                            <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            )}
                                         </td>
                                     </tr>
                                 ))}

@@ -200,7 +200,7 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
     };
 
     return (
-        <div className="bg-white rounded-lg shadow-lg p-4 w-64">
+        <div className="bg-white rounded-lg shadow-lg p-4 w-full">
             <div className="relative mb-4">
                 <div className="absolute w-full h-[170px] pointer-events-none">
                     <div className="absolute top-[72px] left-0 right-0 h-[36px] bg-[#F0EFFF] rounded-md z-0"></div>
@@ -340,7 +340,7 @@ const CustomSelector = ({ options, setShowSelector, value = [], onChange }) => {
     };
     return (
         <div ref={dropdownRef} className="bg-white rounded-lg shadow-lg p-4">
-            <div className="space-y-2">
+            <div className="space-y-2 max-h-60 overflow-auto">
                 {options.map((e) => (
                     <div
                         key={e.key}
@@ -656,7 +656,9 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
     // Dropdown Component
     const Dropdown = ({ name, options, placeholder = 'Select', value, onChange, className = '' }) => {
         const [isOpen, setIsOpen] = useState(false);
+        const [openUpward, setOpenUpward] = useState(false);
         const dropdownRef = useRef(null);
+        const buttonRef = useRef(null);
 
         useEffect(() => {
             const handleClickOutside = (event) => {
@@ -668,6 +670,20 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
             return () => document.removeEventListener('mousedown', handleClickOutside);
         }, []);
 
+        useEffect(() => {
+            if (isOpen && buttonRef.current) {
+                const rect = buttonRef.current.getBoundingClientRect();
+                const dropdownHeight = 240;
+                const spaceBelow = window.innerHeight - rect.bottom;
+                const spaceAbove = rect.top;
+                if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
+                    setOpenUpward(true);
+                } else {
+                    setOpenUpward(false);
+                }
+            }
+        }, [isOpen]);
+
         const handleSelect = (option) => {
             onChange(option);
             setIsOpen(false);
@@ -677,12 +693,12 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
         return (
             <div ref={dropdownRef} className={`relative w-full ${className}`}>
-                <button type="button" onClick={() => setIsOpen(!isOpen)} className={`flex justify-between items-center w-full border ${errors[name] ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 bg-white text-left focus:outline-none focus:ring-1 focus:ring-[#675FFF]`}>
+                <button ref={buttonRef} type="button" onClick={() => setIsOpen(!isOpen)} className={`flex justify-between items-center w-full border ${errors[name] ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 bg-white text-left focus:outline-none focus:border-[#675FFF]`}>
                     <span className={`block truncate ${!optionLabel ? 'text-gray-500' : 'text-gray-900'}`}>{optionLabel.label || placeholder}</span>
                     <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
                 </button>
                 {isOpen && (
-                    <div className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg border border-gray-200 max-h-60 overflow-auto">
+                    <div className={`absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg border border-gray-200 max-h-60 overflow-auto ${openUpward ? 'bottom-full mb-1' : 'mt-1'}`}>
                         <ul className="py-1">
                             {options.map((option) => (
                                 <li key={option.key} className={`cursor-pointer select-none relative px-4 py-2 hover:bg-[#F4F5F6] ${value === option.key ? 'text-[#675FFF]' : 'text-gray-900'}`} onClick={() => handleSelect(option.key)}>{option.label}</li>
@@ -728,7 +744,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                             }
                             placeholder="Select"
                         /> */}
-                        <input type="text" value={formData.calender_choosed} name='calender_choosed' onChange={handleChange} placeholder="Enter Meeting Link" className={`w-full border ${errors.calender_choosed ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
+                        <input type="text" value={formData.calender_choosed} name='calender_choosed' onChange={handleChange} placeholder="Enter Meeting Link" className={`w-full border ${errors.calender_choosed ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF] bg-white`} />
                         {errors.calender_choosed && <p className='my-1 text-[#FF3B30]'>{errors.calender_choosed}</p>}
                     </div>
                 );
@@ -774,7 +790,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                 return (
                     <div>
                         <label className="block text-sm font-medium mb-1">URL</label>
-                        <input type="text" value={formData.url} name='url' onChange={handleChange} placeholder="http:// Enter URL" className={`w-full border ${errors.url ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
+                        <input type="text" value={formData.url} name='url' onChange={handleChange} placeholder="http:// Enter URL" className={`w-full border ${errors.url ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF] bg-white`} />
                         {errors.url && <p className='my-1 text-[#FF3B30]'>{errors.url}</p>}
                     </div>
                 )
@@ -782,7 +798,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                 return (
                     <div>
                         <label className="block text-sm font-medium mb-1">URL</label>
-                        <input type="text" value={formData.url} name='url' onChange={handleChange} placeholder="http:// Enter URL" className={`w-full border ${errors.url ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
+                        <input type="text" value={formData.url} name='url' onChange={handleChange} placeholder="http:// Enter URL" className={`w-full border ${errors.url ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF] bg-white`} />
                         {errors.url && <p className='my-1 text-[#FF3B30]'>{errors.url}</p>}
                     </div>
                 )
@@ -795,7 +811,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
         }
     }
 
-    if (loading) return <p className='flex justify-center items-center h-[70vh]'><span className='loader' /></p>
+    if (loading) return <p className='flex justify-center items-center h-[100vh]'><span className='loader' /></p>
 
     return (
         <>
@@ -880,7 +896,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium mb-1">Campaign Title</label>
-                            <input type="text" onChange={handleChange} name='campaign_title' value={formData.campaign_title} placeholder="Enter campaign title" className={`w-full border bg-white ${errors.campaign_title ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
+                            <input type="text" onChange={handleChange} name='campaign_title' value={formData.campaign_title} placeholder="Enter campaign title" className={`w-full border bg-white ${errors.campaign_title ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
                             {errors.campaign_title && <p className='my-1 text-[#FF3B30]'>{errors.campaign_title}</p>}
                         </div>
 
@@ -907,14 +923,14 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
                             <div>
                                 <label className="block text-sm font-medium mb-1">Main Subject</label>
-                                <input type="text" placeholder="Enter main subject" value={formData.main_subject} name='main_subject' onChange={handleChange} className={`w-full border bg-white ${errors.main_subject ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
+                                <input type="text" placeholder="Enter main subject" value={formData.main_subject} name='main_subject' onChange={handleChange} className={`w-full border bg-white ${errors.main_subject ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
                                 {errors.main_subject && <p className='my-1 text-[#FF3B30]'>{errors.main_subject}</p>}
                             </div>
                         </div>
 
                         {formData.campaign_objective === "other" && <div>
                             <label className="block text-sm font-medium mb-1">Other</label>
-                            <input type="text" placeholder="Enter Campaign Objective Other" value={formData.campaign_objective_other} name='campaign_objective_other' onChange={handleChange} className={`w-full border ${errors.campaign_objective_other ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
+                            <input type="text" placeholder="Enter Campaign Objective Other" value={formData.campaign_objective_other} name='campaign_objective_other' onChange={handleChange} className={`w-full bg-white border ${errors.campaign_objective_other ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
                             {errors.campaign_objective_other && <p className='my-1 text-[#FF3B30]'>{errors.campaign_objective_other}</p>}
                         </div>}
 
@@ -943,17 +959,18 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="relative">
                                 <label className="block text-sm font-medium mb-1">List Of Target</label>
-                                <div
+                                <button
                                     onClick={() => setShowListTargetSelector((prev) => !prev)}
-                                    className={`w-full bg-white border ${errors.list_of_target ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
+                                    className={`w-full flex items-center justify-between focus:outline-none focus:border-[#675FFF] bg-white border ${errors.list_of_target ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
                                 >
-                                    {formData.list_of_target?.length > 0
+                                    <span>{formData.list_of_target?.length > 0
                                         ? formData.list_of_target.map(dayKey => {
                                             const found = listOfTargetOptions.find(d => d.key === dayKey);
                                             return found?.label;
                                         }).join(', ')
-                                        : 'Select'}
-                                </div>
+                                        : 'Select'}</span>
+                                    <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showListTargetSelector ? 'transform rotate-180' : ''}`} />
+                                </button>
                                 {showListTargetSelector && (
                                     <div className="absolute z-50 mt-1 w-full">
                                         <CustomSelector
@@ -1017,14 +1034,15 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="relative">
                                 <label className="block text-sm font-medium mb-1">Send Time Window</label>
-                                <div
-                                    onClick={() => setShowTimeSelector(true)}
-                                    className={`w-full bg-white border ${errors.send_time_window ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
+                                <button
+                                    onClick={() => setShowTimeSelector((prev) => !prev)}
+                                    className={`w-full flex justify-between items-center bg-white focus:border-[#675FFF] border ${errors.send_time_window ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
                                 >
-                                    {formData.send_time_window || "Select Time"}
-                                </div>
+                                    <span>{formData.send_time_window || "Select Time"}</span>
+                                    <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showTimeSelector ? 'transform rotate-180' : ''}`} />
+                                </button>
                                 {showTimeSelector && (
-                                    <div className="absolute z-50 mt-1">
+                                    <div className="absolute z-50 mt-1 w-full">
                                         <TimeSelector
                                             initialTime={formData.send_time_window}
                                             onSave={handleTimeSelect}
@@ -1055,23 +1073,24 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
                                     }
                                     }
-                                    className={`w-full bg-white border ${errors.start_date ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`}
+                                    className={`w-full bg-white border ${errors.start_date ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`}
                                 />
                                 {errors.start_date && <p className='my-1 text-[#FF3B30]'>{errors.start_date}</p>}
                             </div>
                             <div className="relative">
                                 <label className="block text-sm font-medium mb-1">Frequency</label>
-                                <div
+                                <button
                                     onClick={() => setShowWeekSelector((prev) => !prev)}
-                                    className={`w-full bg-white border truncate ${errors.frequency ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
+                                    className={`w-full flex justify-between items-center bg-white border truncate ${errors.frequency ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer focus:outline-none focus:border-[#675FFF]`}
                                 >
-                                    {formData.frequency?.length > 0
+                                    <span>{formData.frequency?.length > 0
                                         ? formData.frequency.map(dayKey => {
                                             const found = daysOptions.find(d => d.key === dayKey);
                                             return found?.label;
                                         }).join(', ')
-                                        : 'Select Days'}
-                                </div>
+                                        : 'Select Days'}</span>
+                                    <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showWeekSelector ? 'transform rotate-180' : ''}`} />
+                                </button>
                                 {showWeekSelector && (
                                     <div className="absolute z-50 mt-1 w-full">
                                         <CustomSelector
@@ -1137,7 +1156,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
                         <div>
                             <label className="block text-sm font-medium mb-1">Custom prompt for AI</label>
-                            <textarea value={formData.custom_prompt} name='custom_prompt' onChange={handleChange} placeholder="e.g. Write a re-engagement email for cold leads about my AI training offer" className={`w-full bg-white border ${errors.custom_prompt ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded px-3 py-2 resize-none`} rows={3}></textarea>
+                            <textarea value={formData.custom_prompt} name='custom_prompt' onChange={handleChange} placeholder="e.g. Write a re-engagement email for cold leads about my AI training offer" className={`w-full bg-white border ${errors.custom_prompt ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded px-3 py-2 resize-none focus:outline-none focus:border-[#675FFF]`} rows={3}></textarea>
                             {errors.custom_prompt && <p className='my-1 text-[#FF3B30]'>{errors.custom_prompt}</p>}
                         </div>
 
@@ -1171,7 +1190,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
                             <div>
                                 <label className="block text-sm font-medium mb-1">Products/Service to feature</label>
-                                <input type="text" value={formData.product_or_service_feature} name='product_or_service_feature' onChange={handleChange} placeholder="Enter Products/Service to feature" className={`w-full bg-white border ${errors.product_or_service_feature ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2`} />
+                                <input type="text" value={formData.product_or_service_feature} name='product_or_service_feature' onChange={handleChange} placeholder="Enter Products/Service to feature" className={`w-full bg-white border ${errors.product_or_service_feature ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
                                 {errors.product_or_service_feature && <p className='my-1 text-[#FF3B30]'>{errors.product_or_service_feature}</p>}
                             </div>
                         </div>
