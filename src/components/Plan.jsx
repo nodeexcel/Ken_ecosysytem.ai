@@ -4,6 +4,7 @@ import { addCredits, updateSubscriptionPaymentStatus } from "../api/payment";
 import { useSelector } from "react-redux";
 import { loadStripe } from "@stripe/stripe-js";
 import { CheckedCircle, EmptyCircle, OfferIcon } from "../icons/icons";
+import { SelectDropdown } from "./Dropdown";
 
 const CreditPopup = ({ onClose, onOpen, stripePromise, userDetails }) => {
   const staticCredits = [{ label: 500, value: "35€", priceId: import.meta.env.VITE_CREDITS_500_ID }, { label: 1000, value: "65€", priceId: import.meta.env.VITE_CREDITS_1000_ID }, { label: 2000, value: "110€", priceId: import.meta.env.VITE_CREDITS_2000_ID }]
@@ -436,7 +437,7 @@ const PlanManagementPopup = ({ onClose, onOpen, stripePromise }) => {
 const CancelSubscriptionPopup = ({ onClose }) => {
   const [initialTab, setInitailTab] = useState(true)
   const [selectedData, setSelectedData] = useState()
-  const options = [{ label: "Select", value: " " }, { label: "Too expensive", value: "too_expensive" }, { label: "Not enough value", value: "not_enough_value" }, { label: "Other", value: "other" }]
+  const options = [{ label: "Too expensive", key: "too_expensive" }, { label: "Not enough value", key: "not_enough_value" }, { label: "Other", key: "other" }]
   const [otherIssue, setOtherIssue] = useState("")
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
@@ -527,19 +528,20 @@ const CancelSubscriptionPopup = ({ onClose }) => {
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-2">
             <label className="text-[14px] font-[500] mb-1">Why are you cancelling?</label>
-            <select
+            <SelectDropdown
+              name="cancel_plan"
+              options={options}
               value={selectedData}
-              onChange={(e) => setSelectedData(e.target.value)}
-              className="w-full p-2 rounded-lg border border-[#E1E4EA]"
-            >
-              {options.map((each) => (
-                <option disabled={each.value == " "} value={each.value} key={each.value}>{each.label}</option>
-              ))}
-            </select>
+              onChange={(updated) => {
+                setSelectedData(updated)
+              }}
+              placeholder="Select"
+              className=""
+            />
           </div>
           {selectedData === "other" && <div>
             <label className="text-[14px] font-[500]">Reason</label>
-            <textarea className="mt-1 w-full rounded-lg resize-none border border-[#E1E4EA] p-2" placeholder="Enter Reason" rows={3} value={otherIssue} onChange={(e) => setOtherIssue(e.target.value)} />
+            <textarea className="mt-1 w-full rounded-lg resize-none border border-[#E1E4EA] p-2 text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none" placeholder="Enter Reason" rows={3} value={otherIssue} onChange={(e) => setOtherIssue(e.target.value)} />
           </div>}
         </div>
 
@@ -562,8 +564,11 @@ const CancelSubscriptionPopup = ({ onClose }) => {
 const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
   const [showCreditPopup, setShowCreditPopup] = useState(false);
   const [cancelPopup, setCancelPopup] = useState(false);
+  const [roleSelect, setRoleSelect] = useState("All");
+  const [pastMonths, setPastMonths] = useState(6);
   const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
   const userDetails = useSelector((state) => state.profile.user)
+
   const creditUsageData = [
     {
       item: "AI Agents - LLM and Tool Cost",
@@ -597,6 +602,9 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
     },
   ];
   const role = useSelector((state) => state.profile.user.role)
+
+  const roleOptions = [{ label: "All", key: "All" }, { label: "Admin", key: "Admin" }, { label: "Member", key: "Member" }, { label: "Guest", key: "Guest" }]
+  const pastMonthOptions = [{ label: "Past 6 Months", key: 6 }, { label: "Past 3 Months", key: 3 }, { label: "Past 2 Months", key: 2 }]
 
   return (
     <div className="py-2 pr-4 w-full">
@@ -701,31 +709,33 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
           <h2 className="text-[20px] sm:text-[24px] font-[600] ">
             Credit used
           </h2>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-            <div className="relative w-full sm:w-auto">
-              <select className="w-full sm:w-[120px] appearance-none border border-[#E1E4EA] rounded-lg px-4 py-2 text-gray-600 text-sm bg-white pr-10">
-                <option>User</option>
-              </select>
-              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                <ChevronDown />
-              </div>
-            </div>
-
-            <div className="relative w-full sm:w-auto">
-              <select className="w-full sm:w-[160px] appearance-none border border-[#E1E4EA] rounded-lg px-4 py-2 text-gray-600 text-sm bg-white pr-10">
-                <option>Past 6 Months</option>
-                <option>Past 3 Months</option>
-                <option>Past 2 Months</option>
-              </select>
-              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                <ChevronDown />
-              </div>
-            </div>
-
-            <button className="w-full sm:w-auto flex border border-[#E1E4EA] items-center justify-center gap-2 text-[#5E54FF] hover:bg-[#5E54FF]/5 px-3 py-2 rounded-lg text-sm">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
+            <SelectDropdown
+              name="role_select"
+              options={roleOptions}
+              value={roleSelect}
+              onChange={(updated) => {
+                setRoleSelect(updated)
+              }}
+              placeholder="Select"
+              className="w-[115px]"
+            />
+            <SelectDropdown
+              name="past_month"
+              options={pastMonthOptions}
+              value={pastMonths}
+              onChange={(updated) => {
+                setPastMonths(updated)
+              }}
+              placeholder="Select"
+              className="w-[160px]"
+            />
+            <div className="flex items-center px-3 gap-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-[8px] py-[8px]">
               <img src="/src/assets/svg/refresh.svg" alt="" />
-              <span className="text-[#5A687C]">Refresh</span>
-            </button>
+              <button className="text-[16px] cursor-pointer text-[#5A687C]">
+                Refresh
+              </button>
+            </div>
           </div>
         </div>
 

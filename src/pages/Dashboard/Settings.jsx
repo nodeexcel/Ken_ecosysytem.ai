@@ -14,6 +14,7 @@ import { getTeamMembers, sendInviteEmail } from "../../api/teamMember";
 import TransactionHistory from "../../components/TransactionHistory";
 import { Delete, Edit, LeftArrow, PasswordLock, PlanIcon, Settings, TeamMemberIcon } from "../../icons/icons";
 import { discardData } from "../../store/profileSlice";
+import { SelectDropdown } from "../../components/Dropdown";
 
 
 // User profile data
@@ -133,7 +134,8 @@ const SettingsPage = () => {
 
   const users = useSelector((state) => state.auth);
 
-  const roleOptions = ["All", "Admin", "Member", "Guest"]
+  const roleOptions = [{ label: "All", key: "All" }, { label: "Admin", key: "Admin" }, { label: "Member", key: "Member" }, { label: "Guest", key: "Guest" }]
+  const roleEmailOptions = [{ label: "Admin", key: "Admin" }, { label: "Member", key: "Member" }, { label: "Guest", key: "Guest" }]
 
   useEffect(() => {
     setTimeout(() => {
@@ -435,26 +437,20 @@ const SettingsPage = () => {
               <button className="bg-[#5E54FF] text-white rounded-md text-[14px] md:text-[16px] p-2" onClick={handleInviteTeam}>Invite A Team Member</button>
             </div>
             <div className="flex justify-between">
-              <div className="w-[157px] flex items-center border border-gray-300 rounded-lg ">
-                <select
-                  value={role}
-                  onChange={(e) => handleChangeRole(e.target.value)}
-                  className="w-full bg-white border text-[#5A687C] text-[16px] font-[400] border-[#E1E4EA] px-3 py-2 rounded-lg "
-                >
-                  <option value={role} disabled>
-                    Role: {role}
-                  </option>
-                  {
-                    roleOptions.map((e) => (
-                      <option className={`${role == e && 'hidden'}`} key={e} value={e}>
-                        {e}
-                      </option>
-                    ))}
-                </select>
-              </div>
-              <div onClick={renderTeamMembers} className="flex items-center px-3 gap-2 border border-[#E1E4EA] rounded-[8px] h-[38px]">
-                <LuRefreshCw color="#5E54FF" />
-                <button className="text-[16px] text-[#5A687C]">
+              <SelectDropdown
+                name="role"
+                options={roleOptions}
+                value={role}
+                onChange={(updated) => {
+                  handleChangeRole(updated)
+                }}
+                placeholder="Select"
+                className="w-[157px]"
+                extraName="Role"
+              />
+              <div onClick={renderTeamMembers} className="flex items-center px-3 gap-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-[8px] py-[8px]">
+                <img src="/src/assets/svg/refresh.svg" alt="" />
+                <button className="text-[16px] cursor-pointer text-[#5A687C]">
                   Refresh
                 </button>
               </div>
@@ -506,10 +502,10 @@ const SettingsPage = () => {
                           <EllipsisVertical />
                         </button>
                         {activeDropdown === index && (
-                          <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                          <div className="absolute right-6 px-2  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                             <div className="py-1">
                               <button
-                                className="block group w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-[#675FFF]"
+                                className="block group w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
                                 onClick={() => {
                                   // Handle edit action
                                   setActiveDropdown(null);
@@ -517,15 +513,18 @@ const SettingsPage = () => {
                               >
                                 <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
                               </button>
-                              <button
-                                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                                onClick={() => {
-                                  // Handle delete action
-                                  setActiveDropdown(null);
-                                }}
-                              >
-                                <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
-                              </button>
+                              <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                              <div className="py-2">
+                                <button
+                                  className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
+                                  onClick={() => {
+                                    // Handle delete action
+                                    setActiveDropdown(null);
+                                  }}
+                                >
+                                  <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                                </button>
+                              </div>
                             </div>
                           </div>
                         )}
@@ -542,7 +541,10 @@ const SettingsPage = () => {
             <div className="fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
               <div className="bg-white max-h-[364px] flex flex-col gap-3 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
                 <button
-                  onClick={() => setOpen(false)}
+                  onClick={() => {
+                    setInviteErrors({})
+                    setOpen(false)
+                  }}
                   className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
                 >
                   <X className="w-5 h-5" />
@@ -552,7 +554,7 @@ const SettingsPage = () => {
 
                 <div>
                   <label className="block text-[14px] font-medium text-[#292D32] mb-1">Email Address</label>
-                  <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
+                  <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] rounded-[8px] px-4 py-2">
                     <input
                       type="email"
                       placeholder="Enter email address"
@@ -566,18 +568,16 @@ const SettingsPage = () => {
                   </div>
                   {inviteErrors.email && <p className="text-sm text-red-500 mt-1">{inviteErrors.email}</p>}
                   <label className="block my-2 text-[14px] font-medium text-[#292D32]">Invite as</label>
-                  <div className="w-full flex items-center border border-gray-300 rounded-lg py-1">
-                    <select
-                      value={emailInviteRole}
-                      onChange={(e) => setEmailInviteRole(e.target.value)}
-                      className="w-full bg-white px-4 py-2 rounded-lg "
-                    >
-                      <option value="" disabled>Role</option>
-                      <option value="Admin">Admin</option>
-                      <option value="Member">Member</option>
-                      <option value="Guest">Guest</option>
-                    </select>
-                  </div>
+                  < SelectDropdown
+                    name="role_options"
+                    options={roleEmailOptions}
+                    value={emailInviteRole}
+                    onChange={(updated) => {
+                      setEmailInviteRole(updated)
+                    }}
+                    placeholder="Select"
+                    className=""
+                  />
                 </div>
 
                 {inviteErrors.limit && <p className="text-sm text-red-500 mt-1">{inviteErrors.limit}</p>}
@@ -585,7 +585,10 @@ const SettingsPage = () => {
                 {success.emailInvite && <p className="text-sm text-green-500 mt-1">{success.emailInvite}</p>}
 
                 <div className="flex gap-2 mt-3">
-                  <button onClick={() => setOpen(false)} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                  <button onClick={() => {
+                    setOpen(false)
+                    setInviteErrors({})
+                  }} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                     Close
                   </button>
                   <button onClick={handleInvite} className={`w-full text-[16px] text-white rounded-[8px] ${inviteEmailLoading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
@@ -705,7 +708,7 @@ const SettingsPage = () => {
                             value={profileFormData[field] === "null" ? '' : profileFormData[field]}
 
                             onChange={handleProfileChange}
-                            className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors[field] ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} shadow-shadows-shadow-xs text-base text-text-black leading-6`}
+                            className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors[field] ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none`}
                           />
                           {profileErrors[field] && <p className="text-[#FF3B30] py-1">{profileErrors[field]}</p>}
                         </div>
@@ -721,7 +724,7 @@ const SettingsPage = () => {
                           name="email"
                           value={profileFormData.email === "null" ? '' : profileFormData.email}
                           disabled
-                          className="w-full px-3.5 py-2.5 bg-[#E1E4EA] rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-[#5A687C] leading-6"
+                          className="w-full px-3.5 py-2.5 bg-[#E1E4EA] rounded-lg border border-solid border-[#e1e4ea]  text-[16px] text-[#5A687C]"
                         />
                       </div>
                       <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
@@ -732,7 +735,7 @@ const SettingsPage = () => {
                           value={profileFormData.phoneNumber === "null" ? '' : profileFormData.phoneNumber}
 
                           onChange={handleProfileChange}
-                          className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors.phoneNumber ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} shadow-shadows-shadow-xs text-base text-text-black leading-6`}
+                          className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors.phoneNumber ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'}  text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none`}
                         />
                         {profileErrors.phoneNumber && <p className="text-[#FF3B30] py-1">{profileErrors.phoneNumber}</p>}
                       </div>
@@ -750,7 +753,7 @@ const SettingsPage = () => {
                           value={profileFormData.company === "null" ? '' : profileFormData.company}
 
                           onChange={handleProfileChange}
-                          className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors.company ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} shadow-shadows-shadow-xs text-base text-text-black leading-6`}
+                          className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors.company ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'}  text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none`}
                         />
                         {profileErrors.company && <p className="text-[#FF3B30] py-1">{profileErrors.company}</p>}
                       </div>
@@ -762,7 +765,7 @@ const SettingsPage = () => {
                           name="role"
                           disabled
                           value={profileFormData.role === "null" ? '' : profileFormData.role}
-                          className="w-full px-3.5 py-2.5 bg-[#E1E4EA] rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs text-base text-[#5A687C] leading-6"
+                          className="w-full px-3.5 py-2.5 bg-[#E1E4EA] rounded-lg border border-solid border-[#e1e4ea]  text-[16px] text-[#5A687C]"
                         />
                         {/* <select
                           name="role"
@@ -792,7 +795,7 @@ const SettingsPage = () => {
                             value={profileFormData[field] === "null" ? '' : profileFormData[field]}
 
                             onChange={handleProfileChange}
-                            className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors[field] ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} shadow-shadows-shadow-xs text-base text-text-black leading-6`}
+                            className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors[field] ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none`}
                           />
                           {profileErrors[field] && <p className="text-[#FF3B30] py-1">{profileErrors[field]}</p>}
                         </div>
@@ -871,7 +874,7 @@ const SettingsPage = () => {
                           name="currentPassword"
                           value={formData.currentPassword}
                           onChange={handlePasswordChange}
-                          className="w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs font-normal text-text-black text-base leading-6"
+                          className="w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none"
                           placeholder="Enter current password"
                         />
                         <button
@@ -904,7 +907,7 @@ const SettingsPage = () => {
                           name="newPassword"
                           value={formData.newPassword}
                           onChange={handlePasswordChange}
-                          className="w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs font-normal text-text-black text-base leading-6"
+                          className="w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none"
                           placeholder="Enter new password"
                         />
                         <button
@@ -930,14 +933,14 @@ const SettingsPage = () => {
                       </label>
                       <div className="relative">
                         <div className="absolute left-3.5 top-1/2 transform -translate-y-1/2">
-                          <PasswordLock/>
+                          <PasswordLock />
                         </div>
                         <input
                           type={showPasswords.confirmPassword ? "text" : "password"}
                           name="confirmPassword"
                           value={formData.confirmPassword}
                           onChange={handlePasswordChange}
-                          className="w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] shadow-shadows-shadow-xs font-normal text-text-black text-base leading-6"
+                          className="w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none"
                           placeholder="Confirm password"
                         />
                         <button

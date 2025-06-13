@@ -219,36 +219,38 @@ const Knowledge = () => {
                       <a href={e.url} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C]">{e.url}</a>
                     </div>
                   </div>
-                  <div className='bg-[#fff] rounded-lg'>
+                  <div className='bg-[#fff] relative rounded-lg'>
                     <button
                       onClick={() => handleDropdownClick(i)}
                       className="text-gray-500 p-2"
                     >
                       <ThreeDots />
-                    </button>
-                    {activeDropdown === i && (
-                      <div className="absolute right-1 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
-                        <div className="py-1">
-                          <button
-                            className="block w-full group text-left px-4 py-2 text-sm text-gray-700 hover:text-[#675FFF] hover:bg-gray-100"
-                            onClick={() => {
-                              setActiveDropdown(null);
-                            }}
-                          >
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
-                          </button>
-                          <hr style={{ color: "#E6EAEE" }} />
-                          <button
-                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                            onClick={() => {
-                              handleDelete(i, e.id)
-                            }}
-                          >
-                            <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
-                          </button>
+                      {activeDropdown === i && (
+                        <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                          <div className="py-1">
+                            <button
+                              className="block w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
+                              onClick={() => {
+                                setActiveDropdown(null);
+                              }}
+                            >
+                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                            </button>
+                            <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                            <div className="py-1">
+                              <button
+                                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
+                                onClick={() => {
+                                  handleDelete(i, e.id)
+                                }}
+                              >
+                                <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </button>
                   </div>
                 </div>)}
               </div>
@@ -271,36 +273,38 @@ const Knowledge = () => {
                       <p className="text-[14px] font-[400] font-inter text-[#5A687C]">{e.data}</p>
                     </div>
                   </div>
-                  <div className='bg-[#fff] rounded-lg'>
+                  <div className='bg-[#fff] relative rounded-lg'>
                     <button
                       onClick={() => handleDropdownClick(i)}
                       className="text-gray-500 p-2"
                     >
                       <ThreeDots />
-                    </button>
-                    {activeDropdown === i && (
-                      <div className="absolute w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
-                        <div className="py-1">
-                          <button
-                            className="block w-full group text-left px-4 py-2 text-sm text-gray-700 hover:text-[#675FFF] hover:bg-gray-100"
-                            onClick={() => {
-                              setActiveDropdown(null);
-                            }}
-                          >
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
-                          </button>
-                          <hr style={{ color: "#E6EAEE" }} />
-                          <button
-                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                            onClick={() => {
-                              handleDelete(i, e.id)
-                            }}
-                          >
-                            <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
-                          </button>
+                      {activeDropdown === i && (
+                        <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                          <div className="py-1">
+                            <button
+                              className="block w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
+                              onClick={() => {
+                                setActiveDropdown(null);
+                              }}
+                            >
+                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                            </button>
+                            <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                            <div className="py-1">
+                              <button
+                                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
+                                onClick={() => {
+                                  handleDelete(i, e.id)
+                                }}
+                              >
+                                <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </button>
                   </div>
                 </div>)}
               </div>
@@ -321,36 +325,38 @@ const Knowledge = () => {
                       <a href={e.path} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C]">{e.path}</a>
                     </div>
                   </div>
-                  <div className='bg-[#fff] rounded-lg'>
+                  <div className='bg-[#fff] relative rounded-lg'>
                     <button
                       onClick={() => handleDropdownClick(i)}
                       className="text-gray-500 p-2"
                     >
                       <ThreeDots />
-                    </button>
-                    {activeDropdown === i && (
-                      <div className="absolute  rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10 ">
-                        <div className="py-1">
-                          <button
-                            className="block w-full group text-left px-4 py-2 text-sm text-gray-700 hover:text-[#675FFF] hover:bg-gray-100"
-                            onClick={() => {
-                              setActiveDropdown(null);
-                            }}
-                          >
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
-                          </button>
-                          <hr style={{ color: "#E6EAEE" }} />
-                          <button
-                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                            onClick={() => {
-                              handleDelete(i, e.id)
-                            }}
-                          >
-                            <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
-                          </button>
+                      {activeDropdown === i && (
+                        <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                          <div className="py-1">
+                            <button
+                              className="block w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
+                              onClick={() => {
+                                setActiveDropdown(null);
+                              }}
+                            >
+                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                            </button>
+                            <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                            <div className="py-1">
+                              <button
+                                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
+                                onClick={() => {
+                                  handleDelete(i, e.id)
+                                }}
+                              >
+                                <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </button>
                   </div>
                 </div>)}
               </div>
