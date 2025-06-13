@@ -15,7 +15,7 @@ import click_funnels from '../assets/svg/click-funnels.svg'
 import AdditionalIntegration from './AdditionalIntegrations';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNavbarData } from '../store/navbarSlice'
-import { getInstaAccounts, getWhatsappAccounts } from '../api/brainai';
+import { getGoogleCalendarAccounts, getInstaAccounts, getWhatsappAccounts } from '../api/brainai';
 // Define the integrations data
 
 
@@ -24,9 +24,10 @@ const Integration = () => {
   const [integartionData, setIntegrationData] = useState({})
   const [instagramData, setInstagramData] = useState([])
   const [whatsappData, setWhatsappData] = useState([])
+  const [googleCalendarData, setGoogleCalendarData] = useState([])
   const dispatch = useDispatch();
   const userDetails = useSelector((state) => state.profile.user)
-  const [loading, setLoading] = useState({ instagram: true, whatsapp: true })
+  const [loading, setLoading] = useState({ instagram: true, whatsapp: true, google_calendar: true })
 
   const handleInstagram = async () => {
     try {
@@ -72,6 +73,28 @@ const Integration = () => {
     }
   }
 
+
+  const handleGoogleCalender = async () => {
+    try {
+      const response = await getGoogleCalendarAccounts();
+      if (response?.status === 200) {
+        console.log(response?.data?.google_calendar_info)
+        setGoogleCalendarData(response?.data?.google_calendar_info);
+        if (response?.data?.google_calendar_info?.length === 0) {
+          setLoading((prev) => ({
+            ...prev, google_calendar: false
+          }))
+        }
+      }
+
+    } catch (error) {
+      console.log(error)
+      setLoading((prev) => ({
+        ...prev, google_calendar: false
+      }))
+    }
+  }
+
   useEffect(() => {
     if (instagramData?.length > 0) {
       setLoading((prev) => ({
@@ -88,6 +111,7 @@ const Integration = () => {
   useEffect(() => {
     handleInstagram()
     handleWhatsapp()
+    handleGoogleCalender()
   }, [])
 
   const integrations = [
@@ -125,7 +149,7 @@ const Integration = () => {
     {
       icon: google_calender,
       name: "Google Calendar",
-      connectedAccounts: 0,
+      connectedAccounts: googleCalendarData.length,
       path: import.meta.env.VITE_GOOGLE_CALENDAR_URL + `&state=${userDetails.id}`,
     },
     {
@@ -207,7 +231,7 @@ const Integration = () => {
             </div>
           ))}
         </div>
-      </> : <AdditionalIntegration setInstagramData={setInstagramData} instagramData={instagramData} integartionData={integartionData} setFirstRender={setFirstRender} whatsappData={whatsappData} setWhatsappData={setWhatsappData}/>}
+      </> : <AdditionalIntegration setInstagramData={setInstagramData} instagramData={instagramData} integartionData={integartionData} setFirstRender={setFirstRender} whatsappData={whatsappData} setWhatsappData={setWhatsappData} googleCalendarData={googleCalendarData} setGoogleCalendarData={setGoogleCalendarData} />}
     </div>
   )
 }

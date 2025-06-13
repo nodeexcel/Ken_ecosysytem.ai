@@ -8,7 +8,7 @@ import { LuRefreshCw } from 'react-icons/lu';
 import { AddPlus, CheckedCheckbox, CrossDelete, EmptyCheckbox, RequestSend } from '../icons/icons'
 import { appointmentSetter, getAppointmentSetterById, updateAppointmentSetter } from '../api/appointmentSetter'
 import AgentPreviewModal from './AgentPreview'
-import { getInstaAccounts, getWhatsappAccounts } from '../api/brainai'
+import { getGoogleCalendarAccounts, getInstaAccounts, getWhatsappAccounts } from '../api/brainai'
 import { SelectDropdown } from './Dropdown'
 
 function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentStatus }) {
@@ -31,7 +31,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         webpage_link: "",
         // webpage_type: "",
         whatsapp_number: '',
-        platform_unique_id: ''
+        platform_unique_id: '',
+        calendar_id: ''
     })
     const [loadingStatus, setLoadingStatus] = useState(true)
     const [dataRenderStatus, setDataRenderStatus] = useState(true)
@@ -43,6 +44,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const [previewAgent, setPreviewAgent] = useState(false)
     const [instagramData, setInstagramData] = useState([])
     const [whatsappData, setWhatsappData] = useState([])
+    const [googleCalendarData, setGoogleCalendarData] = useState([])
+    const [errorMessage, setErrorMessage] = useState("")
 
     const handleInstagram = async () => {
         try {
@@ -92,10 +95,35 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         }
     }
 
+    const handleGoogleCalender = async () => {
+        try {
+            const response = await getGoogleCalendarAccounts();
+            if (response?.status === 200) {
+                console.log(response?.data?.google_calendar_info)
+                const data = response?.data?.google_calendar_info
+                if (data?.length > 0) {
+                    const updatedFormat = data.map((e) => ({
+                        label: `${e.google_calendar_id.length > 30
+                            ? `${e.google_calendar_id.slice(0, 30)}...`
+                            : e.google_calendar_id}`,
+                        key: e.google_calendar_id
+                    }));
+                    setGoogleCalendarData(updatedFormat)
+                } else {
+                    setGoogleCalendarData(data);
+                }
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
     useEffect(() => {
         handleInstagram()
         handleWhatsapp()
+        handleGoogleCalender()
     }, [])
 
 
@@ -149,6 +177,14 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         if (formData.objective_of_the_agent === "book_call") {
             if (!formData.calendar_choosed) {
                 newErrors.calendar_choosed = "Calendar must be chosen.";
+            }
+        }
+
+        if (formData.objective_of_the_agent === "book_call") {
+            if (formData.calendar_choosed === "google_calendar") {
+                if (!formData.calendar_id) {
+                    newErrors.calendar_id = "Calendar Account must be chosen.";
+                }
             }
         }
 
@@ -387,8 +423,10 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 setOpen(true)
             } else {
                 setLoading(false)
+                if (response?.response?.data?.error) {
+                    setErrorMessage(response?.response?.data?.error)
+                }
             }
-
         } catch (error) {
             console.log(error)
         } finally {
@@ -417,8 +455,10 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 setOpen(true)
             } else {
                 setLoading(false)
+                if (response?.response?.data?.error) {
+                    setErrorMessage(response?.response?.data?.error)
+                }
             }
-
         } catch (error) {
             console.log(error)
         } finally {
@@ -556,7 +596,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             default:
                 return (
                     <div className="flex items-start gap-3 w-full mt-2">
-                        <div className="flex-1">
+                        <div className="flex flex-col gap-2 w-full">
                             <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
                                 <label className="font-medium text-[#1e1e1e] text-sm">Select Calendar</label>
                                 {/* <select
@@ -593,13 +633,35 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 />
                                 {errors.calendar_choosed && <p className="text-red-500 text-sm mt-1">{errors.calendar_choosed}</p>}
                             </div>
+                            {formData.calendar_choosed === "google_calendar" &&
+                                <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
+                                    <label className="font-medium text-[#1e1e1e] text-sm">Select Google Calendar Account</label>
+                                    <SelectDropdown
+                                        name="calendar_id"
+                                        options={googleCalendarData}
+                                        value={formData.calendar_id}
+                                        onChange={(updated) => {
+                                            console.log(updated)
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                calendar_id: updated,
+                                            }))
+                                            setErrors((prev) => ({ ...prev, calendar_id: '' }))
+                                        }}
+                                        placeholder="Select"
+                                        className="w-full"
+                                        errors={errors}
+                                    />
+                                    {errors.calendar_id && <p className="text-red-500 text-sm mt-1">{errors.calendar_id}</p>}
+                                </div>
+                            }
                         </div>
                     </div>
                 )
         }
     }
 
-    if (dataRenderStatus) return <p className='flex justify-center items-center h-[70vh]'><span className='loader' /></p>
+    if (dataRenderStatus) return <p className='flex justify-center items-center h-[100vh]'><span className='loader' /></p>
 
 
     return (
@@ -1360,6 +1422,31 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 )}
             </div>
             {previewAgent && <AgentPreviewModal setPreviewAgent={setPreviewAgent} />}
+            {errorMessage && <div className="inter fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
+                <div className="bg-white max-h-[300px] flex flex-col gap-4 w-full max-w-md rounded-2xl shadow-xl p-6 relative">
+                    <button
+                        onClick={() => {
+                            setErrorMessage('')
+                        }}
+                        className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
+
+                    <div className="space-y-6 mt-6">
+                        <h2 className="text-[20px] font-[600] text-center text-[#292D32]">{errorMessage}</h2>
+                        <div className="flex justify-center">
+                            <button
+                                type="submit"
+                                onClick={() => setErrorMessage('')}
+                                className={`w-fit bg-[#675FFF] cursor-pointer text-white py-[7px] px-[20px] rounded-[8px] font-semibold  transition`}
+                            >
+                                Ok
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>}
         </>
     )
 }

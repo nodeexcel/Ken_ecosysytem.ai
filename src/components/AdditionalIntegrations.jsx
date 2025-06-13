@@ -11,7 +11,7 @@ import { useDispatch } from "react-redux";
 import { getNavbarData } from "../store/navbarSlice";
 import { LeftArrow } from "../icons/icons";
 import Integration from "./Integration";
-import { deleteInstaAccount, deleteWhatsappAccount } from "../api/brainai";
+import { deleteGoogleCalendarAccount, deleteInstaAccount, deleteWhatsappAccount } from "../api/brainai";
 
 const tabs = [
     { label: "Account" },
@@ -23,7 +23,7 @@ const staticData = [
     { label: "orsay—sample", status: "Approved", description: "This message confirms that you've successfully set up your WhatsApp notifications. From now on, you'll be able to receive updates, alerts, and important info directly in your chat." }
 ]
 
-const AdditionalIntegration = ({ setInstagramData, instagramData, integartionData, setFirstRender, whatsappData, setWhatsappData }) => {
+const AdditionalIntegration = ({ setInstagramData, instagramData, integartionData, setFirstRender, whatsappData, setWhatsappData, googleCalendarData, setGoogleCalendarData }) => {
     const [open, setOpen] = useState(false);
     const [createTemplateOpen, setCreateTemplateOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("insta");
@@ -52,6 +52,23 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
             if (response?.status === 200) {
                 const filterData = whatsappData.filter((e) => e.whatsapp_phone_id !== id)
                 setWhatsappData(filterData)
+            } else if (response?.status === 400) {
+                if (response?.response?.data?.success) {
+                    setErrorMessage(response?.response?.data?.success)
+                }
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    const handleDeleteGoogleCalendar = async (id) => {
+        try {
+            const response = await deleteGoogleCalendarAccount(id)
+            if (response?.status === 200) {
+                const filterData = googleCalendarData.filter((e) => e.google_calendar_id !== id)
+                setGoogleCalendarData(filterData)
             } else if (response?.status === 400) {
                 if (response?.response?.data?.success) {
                     setErrorMessage(response?.response?.data?.success)
@@ -146,6 +163,33 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                         ))}
                     </div>
                 )
+            case "Google Calendar":
+                return (
+                    <div>
+                        {googleCalendarData?.length > 0 && googleCalendarData.map((e, i) => (
+                            <div key={i} className="w-full gap-3 mb-2 p-3 flex justify-between border border-solid border-[#e1e4ea] bg-white rounded-lg">
+                                <div className="flex flex-col gap-2 pl-2">
+                                    <div className="flex items-center gap-2">
+                                        <div>
+                                            <img
+                                                className="w-5 h-5"
+                                                alt={integartionData.name}
+                                                src={integartionData.icon}
+                                            />
+                                        </div>
+                                        <h1 className="text-[16px] truncate font-[500] font-inter">  {e.google_calendar_id.length > 30
+                                            ? `${e.google_calendar_id.slice(0, 30)}...`
+                                            : e.google_calendar_id}</h1>
+                                    </div>
+                                    <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">Read and write using the {integartionData.name}.</li>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <button onClick={() => handleDeleteGoogleCalendar(e.google_calendar_id)} className="text-[#FF3B30] border-[1.5px] border-[#FF3B30] rounded-lg px-[20px] py-[7px] text-[16px] font-[500]" >Delete</button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )
         }
     }
 
@@ -156,6 +200,19 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
     const handleBack = () => {
         dispatch(getNavbarData("Brain AI"));
         setFirstRender(true)
+    }
+
+    const renderNumberOfAccounts = () => {
+        switch (integartionData.name) {
+            case "Instagram":
+                return instagramData?.length
+            case "WhatsApp":
+                return whatsappData?.length
+            case "Google Calendar":
+                return googleCalendarData?.length
+            default:
+                return integartionData.connectedAccounts
+        }
     }
 
     return (
@@ -194,7 +251,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                     >
                         <span className={`font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${integartionData.connectedAccounts > 0 ? "text-[black]"
                             : "text-[#5A687C] "}`}>
-                            {integartionData.name === "Instagram" ? instagramData?.length : integartionData.name === "WhatsApp" ? whatsappData?.length : integartionData.connectedAccounts} {e.label}
+                            {renderNumberOfAccounts()} {e.label}
                         </span>
                     </button>)}
                 </div>
