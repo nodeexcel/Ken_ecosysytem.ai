@@ -472,7 +472,7 @@ const Knowledge = () => {
             {activeTab === "snippets" && (
               <div>
                 <label className="block text-[14px] font-medium text-[#292D32] mb-1">Details</label>
-                <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
+                <div className="flex items-center border focus-within:border-[#675FFF] border-gray-300 rounded-[8px] px-4 py-3">
                   <textarea
                     type="text"
                     name="snippet"
@@ -488,7 +488,7 @@ const Knowledge = () => {
             {activeTab === "website" && (
               <div>
                 <label className="block text-[14px] font-medium text-[#292D32] mb-1">Website</label>
-                <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
+                <div className="flex items-center border focus-within:border-[#675FFF] border-gray-300 rounded-[8px] px-4 py-3">
                   <input
                     type="text"
                     name="website"

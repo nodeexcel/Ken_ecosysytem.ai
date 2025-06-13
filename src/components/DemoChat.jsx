@@ -249,7 +249,7 @@ const DemoChat = () => {
                                 </select> */}
                                 <div className="relative flex-1">
                                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                    <input type="text" placeholder="Search" className="w-full pl-9 pr-3 py-[10px] text-sm border border-[#E1E4EA] bg-white rounded-md" />
+                                    <input type="text" placeholder="Search" className="w-full pl-9 pr-3 py-[10px] text-sm border border-[#E1E4EA] bg-white focus:outline-none focus:border-[#675FFF] rounded-md" />
                                 </div>
                             </div>
                         </div>

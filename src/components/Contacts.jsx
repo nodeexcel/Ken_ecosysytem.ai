@@ -641,7 +641,7 @@ const ContactsPage = () => {
                   placeholder="Search"
                   value={contactSearch}
                   onChange={(e) => setContactSearch(e.target.value.trim())}
-                  className="w-full pl-10 pr-3.5 pt-[8px] pb-[8px] bg-white border border-[#e1e4ea] focus:outline-none focus:ring-1 focus:ring-[#675FFF] rounded-lg"
+                  className="w-full pl-10 pr-3.5 pt-[8px] pb-[8px] bg-white border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] rounded-lg"
                 />
               </div>
               {activeTab !== "lists" && <button disabled={formCreateList.contactsId?.length === 0} onClick={() => setCreateList(true)} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
@@ -823,7 +823,7 @@ const ContactsPage = () => {
                   value={listSearch}
                   onChange={(e) => setListSearch(e.target.value.trim())}
                   placeholder="Search"
-                  className="w-full pl-10 pr-3.5 pt-[8px] pb-[8px] bg-white border border-[#e1e4ea] focus:outline-none focus:ring-1 focus:ring-[#675FFF] rounded-lg"
+                  className="w-full pl-10 pr-3.5 pt-[8px] pb-[8px] bg-white border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] rounded-lg"
                 />
               </div>
             </div>
@@ -934,32 +934,28 @@ const ContactsPage = () => {
             <div className="flex flex-col gap-2">
               <div>
                 <label className="block text-[14px] font-medium text-[#292D32] mb-1">Name</label>
-                <div className={`flex items-center border ${formErrors.listName ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-2`}>
-                  <input
-                    type="text"
-                    name="listName"
-                    placeholder="e.g. Monthly Newsletter, Sales Leads, etc."
-                    value={formData?.listName}
-                    onChange={handleChange}
-                    className="w-full focus:outline-none"
-                  />
-                </div>
+                <input
+                  type="text"
+                  name="listName"
+                  placeholder="e.g. Monthly Newsletter, Sales Leads, etc."
+                  value={formData?.listName}
+                  onChange={handleChange}
+                  className={`flex w-full items-center border ${formErrors.listName ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-2 focus:outline-none focus:border-[#675FFF]`}
+                />
                 <p className="text-[12px] pt-2 text-[#5A687C] font-[400]">List names are visible to contacts</p>
               </div>
               {formErrors.listName && <p className="text-sm text-red-500">{formErrors.listName}</p>}
               <div>
                 <label className="block text-[14px] font-medium text-[#292D32] mb-1">List Description</label>
-                <div className={`flex items-center border ${formErrors.description ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-3`}>
-                  <textarea
-                    type="text"
-                    name="description"
-                    placeholder="Describe your list to your team. This description will not be visible to your contacts. "
-                    value={formData?.description}
-                    rows={4}
-                    onChange={handleChange}
-                    className="w-full focus:outline-none resize-none"
-                  />
-                </div>
+                <textarea
+                  type="text"
+                  name="description"
+                  placeholder="Describe your list to your team. This description will not be visible to your contacts. "
+                  value={formData?.description}
+                  rows={4}
+                  onChange={handleChange}
+                  className={`flex w-full items-center border ${formErrors.description ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-3 focus:outline-none focus:border-[#675FFF] resize-none`}
+                />
                 {formErrors.description && <p className="text-sm text-red-500 mt-1">{formErrors.description}</p>}
               </div>
               <label className="block mt-2 text-[14px] font-medium text-[#292D32]">Channel</label>
@@ -1022,16 +1018,14 @@ const ContactsPage = () => {
               <div className="flex flex-col gap-2">
                 <div>
                   <label className="block text-[14px] font-medium text-[#292D32] mb-1">List Name</label>
-                  <div className={`flex items-center border ${createListErrors.listName ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-2`}>
-                    <input
-                      type="text"
-                      name="listName"
-                      placeholder="Enter list name"
-                      value={formCreateList?.listName}
-                      onChange={handleCreateListChange}
-                      className="w-full focus:outline-none"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    name="listName"
+                    placeholder="Enter list name"
+                    value={formCreateList?.listName}
+                    onChange={handleCreateListChange}
+                    className={`flex w-full items-center border ${createListErrors.listName ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-2 focus:outline-none focus:border-[#675FFF]`}
+                  />
                   {createListErrors.listName && <p className="text-sm text-red-500 mt-1">{createListErrors.listName}</p>}
                 </div>
                 <div>
@@ -1187,6 +1181,7 @@ const ContactsPage = () => {
                   email: '',
                   companyName: '',
                 });
+                setError({})
               }}
             >
               <X size={20} />
@@ -1208,7 +1203,7 @@ const ContactsPage = () => {
                     value={addNewContact.firstName}
                     onChange={handleAddContactChange}
                     placeholder="Enter first name"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#675FFF]"
                   />
 
                   {error.firstName && (
@@ -1225,7 +1220,7 @@ const ContactsPage = () => {
                     placeholder="Enter last name"
                     value={addNewContact.lastName}
                     onChange={handleAddContactChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#675FFF]"
                   />
 
                   {error.lastName && (
@@ -1238,11 +1233,11 @@ const ContactsPage = () => {
                 <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
                   Number
                 </label>
-                <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-4 py-2">
+                <div className="flex group items-center focus-within:border-[#675FFF] gap-2 border border-gray-300 rounded-lg px-4 py-2">
                   <div className="relative">
                     <button
                       onClick={() => setIsOpen(!isOpen)}
-                      className="w-fit flex border-none justify-between gap-2 items-center border pl-1 py-1 text-left"
+                      className="w-fit flex hover:cursor-pointer border-none justify-between gap-2 items-center border pl-1 py-1 text-left"
                     >
                       <img src={selectedCountry?.flag} alt={selectedCountry?.name} width={16} />
                       <FaChevronDown color="#5A687C" className={`w-[10px] transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
@@ -1296,7 +1291,7 @@ const ContactsPage = () => {
                   value={addNewContact.email}
                   onChange={handleAddContactChange}
                   placeholder="Enter email address"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#675FFF]"
                 />
 
                 {error.email && (
@@ -1313,7 +1308,7 @@ const ContactsPage = () => {
                   value={addNewContact.companyName}
                   onChange={handleAddContactChange}
                   placeholder="Enter company Name "
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#675FFF]"
                 />
 
                 {error.companyName && (
@@ -1342,6 +1337,7 @@ const ContactsPage = () => {
                     email: '',
                     companyName: '',
                   });
+                  setError({})
                 }}
                 className="w-full text-[16px] text-[#5A687C] bg-white border-[1.5px] border-[#E1E4EA] rounded-[8px] h-[38px]"
               >

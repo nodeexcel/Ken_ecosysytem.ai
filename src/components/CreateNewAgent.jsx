@@ -3,7 +3,7 @@ import trigger from '../assets/svg/sequence_trigger.svg'
 import delay from '../assets/svg/sequence_delay.svg'
 import channel from '../assets/svg/sequence_channel.svg'
 import template from '../assets/svg/sequence_template.svg'
-import { X } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
 import { LuRefreshCw } from 'react-icons/lu';
 import { AddPlus, CheckedCheckbox, CrossDelete, EmptyCheckbox, RequestSend } from '../icons/icons'
 import { appointmentSetter, getAppointmentSetterById, updateAppointmentSetter } from '../api/appointmentSetter'
@@ -445,8 +445,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             key={lang}
                             onClick={() => toggleLanguage(lang)}
                             className={`p-2 rounded-lg cursor-pointer flex items-center gap-2 ${value.includes(lang)
-                                ? 'bg-[#F0EFFF] text-[#675FFF]'
-                                : 'hover:bg-gray-50'
+                                ? 'bg-[#F4F5F6] text-[#675FFF]'
+                                : 'hover:bg-[#F4F5F6] hover:text-[#675FFF]'
                                 }`}
                         >
                             <div
@@ -505,7 +505,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     //         setErrors((prev) => ({ ...prev, [name]: '' }))
                                     //     }
                                     // }}
-                                    className={`w-full p-2 rounded-lg border ${errors.whatsapp_number ? 'border-red-500' : 'border-[#e1e4ea]'} bg-white`}
+                                    className={`w-full p-2 rounded-lg border ${errors.whatsapp_number ? 'border-red-500' : 'border-[#e1e4ea]'} bg-white focus:outline-none focus:border-[#675FFF]`}
                                     placeholder="Enter your WhatsApp Number"
                                 />
                                 {errors.whatsapp_number && <p className="text-red-500 text-sm mt-1">{errors.whatsapp_number}</p>}
@@ -525,7 +525,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 name='webpage_link'
                                 value={formData?.webpage_link}
                                 onChange={handleChange}
-                                className={`w-full p-2 rounded-lg border ${errors.webpage_link ? 'border-red-500' : 'border-[#e1e4ea]'} bg-white`}
+                                className={`w-full p-2 rounded-lg border ${errors.webpage_link ? 'border-red-500' : 'border-[#e1e4ea]'} bg-white focus:outline-none focus:border-[#675FFF]`}
                                 placeholder="http://  Enter link"
                             />
                             {errors.webpage_link && <p className="text-red-500 text-sm mt-1">{errors.webpage_link}</p>}
@@ -637,7 +637,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     name='agent_name'
                                     value={formData?.agent_name}
                                     onChange={handleChange}
-                                    className={`w-full bg-white p-2 rounded-lg border ${errors.agent_name ? 'border-red-500' : 'border-[#e1e4ea]'}`}
+                                    className={`w-full bg-white p-2 rounded-lg border ${errors.agent_name ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
                                     placeholder="Enter your agent name"
                                 />
                                 {errors.agent_name && <p className="text-red-500 text-sm mt-1">{errors.agent_name}</p>}
@@ -692,7 +692,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                 setErrors((prev) => ({ ...prev, [name]: '' }))
                                             }
                                         }}
-                                        className={`w-full bg-white p-2 rounded-lg border ${errors.age ? 'border-red-500' : 'border-[#e1e4ea]'}`}
+                                        className={`w-full bg-white p-2 rounded-lg border ${errors.age ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
                                         placeholder="Enter your agent age"
                                     />
                                     {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
@@ -758,14 +758,15 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     <label className="text-sm font-medium text-[#1e1e1e]">
                                         Agent Language<span className="text-[#675fff]">*</span>
                                     </label>
-                                    <div
+                                    <button
                                         onClick={() => setShowLanguageSelector((prev) => !prev)}
-                                        className={`w-full bg-white border ${errors.agent_language ? 'border-red-500' : 'border-[#e1e4ea]'} rounded-lg px-3 py-2 cursor-pointer text-[#5A687C]`}
+                                        className={`w-full flex justify-between items-center mt-1 bg-white border ${errors.agent_language ? 'border-red-500' : 'border-[#e1e4ea]'} rounded-lg px-3 py-[7.5px] cursor-pointer text-[#5A687C] focus:outline-none focus:border-[#675FFF]`}
                                     >
-                                        {formData.agent_language?.length > 0
+                                        <span>{formData.agent_language?.length > 0
                                             ? formData.agent_language.join(', ')
-                                            : 'Select Languages'}
-                                    </div>
+                                            : 'Select Languages'}</span>
+                                        <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showLanguageSelector ? 'transform rotate-180' : ''}`} />
+                                    </button>
                                     {showLanguageSelector && (
                                         <div className="absolute z-50 mt-1 w-full">
                                             <LanguageSelector
@@ -835,7 +836,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     onChange={handleChange}
                                     value={formData?.business_description}
                                     rows={4}
-                                    className={`w-full bg-white p-2 rounded-lg border  ${errors.business_description ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none`}
+                                    className={`w-full bg-white p-2 rounded-lg border  ${errors.business_description ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
                                     placeholder="Enter your business description"
                                 />
                                 {errors.business_description && <p className="text-red-500 text-sm mt-1">{errors.business_description}</p>}
@@ -849,7 +850,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     onChange={handleChange}
                                     value={formData?.your_business_offer}
                                     rows={4}
-                                    className={`w-full bg-white p-2 rounded-lg border  ${errors.your_business_offer ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none`}
+                                    className={`w-full bg-white p-2 rounded-lg border  ${errors.your_business_offer ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
                                     placeholder="Share everything you want the AI to know about your offer"
                                 />
                                 {errors.your_business_offer && <p className="text-red-500 text-sm mt-1">{errors.your_business_offer}</p>}
@@ -868,7 +869,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 onChange={handleChange}
                                 value={formData?.prompt}
                                 rows={3}
-                                className={`w-full bg-white p-2 rounded-lg border  ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none`}
+                                className={`w-full bg-white p-2 rounded-lg border  ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
                                 placeholder="Enter your prompt here"
                             />
                             {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
@@ -887,7 +888,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         value={question}
                                         onChange={handleChange}
                                         placeholder="Enter your Question"
-                                        className={`flex-1 bg-white p-2 rounded-lg border ${errors[`qualification_questions[${index}]`] ? "border-red-500" : "border-[#e1e4ea]"}`} />
+                                        className={`flex-1 bg-white p-2 rounded-lg border ${errors[`qualification_questions[${index}]`] ? "border-red-500" : "border-[#e1e4ea]"} focus:outline-none focus:border-[#675FFF]`} />
                                     {index === formData.qualification_questions.length - 1 ? (
                                         <button type="button" onClick={addQuestion}>
                                             <AddPlus />
@@ -1167,7 +1168,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         }
                                     }}
 
-                                    className={`w-full p-2 bg-white rounded-lg border ${errors.number_of_followups ? 'border-red-500' : 'border-[#e1e4ea]'} no-spinner`}
+                                    className={`w-full p-2 bg-white rounded-lg border ${errors.number_of_followups ? 'border-red-500' : 'border-[#e1e4ea]'} no-spinner focus:outline-none focus:border-[#675FFF]`}
                                     placeholder="Please enter a number from 1 to 10"
                                 />
 

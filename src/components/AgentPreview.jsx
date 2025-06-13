@@ -125,7 +125,7 @@ export default function AgentPreviewModal({ setPreviewAgent, previewAgent }) {
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
                                     placeholder="Type your message here..."
-                                    className="flex w-full border bg-white border-[#E1E4EA] rounded-lg px-4 py-2 text-[#5A687C]"
+                                    className="flex w-full border bg-white border-[#E1E4EA] focus:outline-none focus:border-[#675FFF] rounded-lg px-4 py-2 text-[#5A687C]"
                                 />
                                 <button
                                     onClick={handleSendMessage}
