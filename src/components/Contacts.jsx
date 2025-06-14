@@ -78,9 +78,10 @@ const ContactsPage = () => {
     }
     if (!addNewContact.phone) {
       errors.phone = "Phone number is required";
-    }
-    if (addNewContact.phone && !/^\+?[0-9\s]+$/.test(addNewContact.phone)) {
+    } else if (!/^\+?[0-9\s]+$/.test(addNewContact.phone)) {
       errors.phone = "Invalid phone number format";
+    } else if (addNewContact.phone.replace(/\D/g, "").length !== 10) {
+      errors.phone = "Phone number must be exactly 10 digits";
     }
     if (!addNewContact.email) {
       errors.email = "Email is required";
@@ -527,7 +528,7 @@ const ContactsPage = () => {
 
   const renderPhoneNumber = (phone) => {
     const { countryCode, number } = extractPhoneDetails(phone);
-    return `${countryCode}${number}`
+    return `${countryCode}-${number.slice(0, 3)}-${number.slice(3, 6)}-${number.slice(6)}`
   }
 
   const handleEditList = (list) => {
@@ -546,7 +547,7 @@ const ContactsPage = () => {
     return () => {
       clearTimeout(handler);
     };
-  }, [listSearch])
+  }, [channelSelectList,listSearch])
 
   useEffect(() => {
     const handler = setTimeout(() => {
