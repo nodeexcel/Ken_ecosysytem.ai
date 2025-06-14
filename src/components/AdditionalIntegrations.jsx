@@ -110,85 +110,63 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
         }
     }
 
+    const RenderAccountData = ({ accountsData, label, id, specialCharacter }) => {
+        return (
+            <div>
+                {accountsData?.length > 0 && accountsData.map((e, i) => (
+                    <div key={i} className="w-full gap-3 mb-2 p-3 flex justify-between border border-solid border-[#e1e4ea] bg-white rounded-lg">
+                        <div className="flex flex-col gap-2 pl-2">
+                            <div className="flex items-center gap-2">
+                                <div>
+                                    <img
+                                        className="w-5 h-5"
+                                        alt={integartionData.name}
+                                        src={integartionData.icon}
+                                    />
+                                </div>
+                                <h1 className="text-[16px] font-[500] font-inter">{specialCharacter}{e[label].length > 30
+                                    ? `${e[label].slice(0, 30)}...`
+                                    : e[label]}</h1>
+                            </div>
+                            <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">Read and write using the {integartionData.name}.</li>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <button onClick={() => handleDeleteWhatsapp(e[id])} className="text-[#FF3B30] border-[1.5px] border-[#FF3B30] rounded-lg px-[20px] py-[7px] text-[16px] font-[500]" >Delete</button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
 
     const renderMainContent = () => {
         switch (integartionData.name) {
             case "WhatsApp":
                 return (
-                    <div>
-                        {whatsappData?.length > 0 && whatsappData.map((e, i) => (
-                            <div key={i} className="w-full gap-3 mb-2 p-3 flex justify-between border border-solid border-[#e1e4ea] bg-white rounded-lg">
-                                <div className="flex flex-col gap-2 pl-2">
-                                    <div className="flex items-center gap-2">
-                                        <div>
-                                            <img
-                                                className="w-5 h-5"
-                                                alt={integartionData.name}
-                                                src={integartionData.icon}
-                                            />
-                                        </div>
-                                        <h1 className="text-[16px] font-[500] font-inter">+{e.username}</h1>
-                                    </div>
-                                    <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">Read and write using the {integartionData.name}.</li>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <button onClick={() => handleDeleteWhatsapp(e.whatsapp_phone_id)} className="text-[#FF3B30] border-[1.5px] border-[#FF3B30] rounded-lg px-[20px] py-[7px] text-[16px] font-[500]" >Delete</button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    <RenderAccountData
+                        accountsData={whatsappData}
+                        label={"username"}
+                        id={"whatsapp_phone_id"}
+                        specialCharacter={"+"}
+                    />
                 )
             case "Instagram":
                 return (
-                    <div>
-                        {instagramData?.length > 0 && instagramData.map((e, i) => (
-                            <div key={i} className="w-full gap-3 mb-2 p-3 flex justify-between border border-solid border-[#e1e4ea] bg-white rounded-lg">
-                                <div className="flex flex-col gap-2 pl-2">
-                                    <div className="flex items-center gap-2">
-                                        <div>
-                                            <img
-                                                className="w-5 h-5"
-                                                alt={integartionData.name}
-                                                src={integartionData.icon}
-                                            />
-                                        </div>
-                                        <h1 className="text-[16px] font-[500] font-inter">{integartionData.name === "WhatsApp" ? "15557158822" : `@${e.username}`}</h1>
-                                    </div>
-                                    <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">Read and write using the {integartionData.name}.</li>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <button onClick={() => handleDeleteInsta(e.instagram_user_id)} className="text-[#FF3B30] border-[1.5px] border-[#FF3B30] rounded-lg px-[20px] py-[7px] text-[16px] font-[500]" >Delete</button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    <RenderAccountData
+                        accountsData={instagramData}
+                        label={"username"}
+                        id={"instagram_user_id"}
+                        specialCharacter={"@"}
+                    />
                 )
             case "Google Calendar":
                 return (
-                    <div>
-                        {googleCalendarData?.length > 0 && googleCalendarData.map((e, i) => (
-                            <div key={i} className="w-full gap-3 mb-2 p-3 flex justify-between border border-solid border-[#e1e4ea] bg-white rounded-lg">
-                                <div className="flex flex-col gap-2 pl-2">
-                                    <div className="flex items-center gap-2">
-                                        <div>
-                                            <img
-                                                className="w-5 h-5"
-                                                alt={integartionData.name}
-                                                src={integartionData.icon}
-                                            />
-                                        </div>
-                                        <h1 className="text-[16px] truncate font-[500] font-inter">  {e.google_calendar_id.length > 30
-                                            ? `${e.google_calendar_id.slice(0, 30)}...`
-                                            : e.google_calendar_id}</h1>
-                                    </div>
-                                    <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">Read and write using the {integartionData.name}.</li>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <button onClick={() => handleDeleteGoogleCalendar(e.google_calendar_id)} className="text-[#FF3B30] border-[1.5px] border-[#FF3B30] rounded-lg px-[20px] py-[7px] text-[16px] font-[500]" >Delete</button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    <RenderAccountData
+                        accountsData={googleCalendarData}
+                        label={"google_calendar_id"}
+                        id={"google_calendar_id"}
+                    />
                 )
         }
     }
