@@ -3,6 +3,7 @@ import { Delete, Notes, ThreeDots, UploadIcon } from '../icons/icons';
 import { ChevronDown, Info, X } from 'lucide-react';
 import { format, isValid } from 'date-fns';
 import { createEmailCampaign, getEmailCampaignById, updateEmailCampaign } from '../api/emailCampaign';
+import { getLists } from '../api/brainai';
 
 
 
@@ -318,13 +319,11 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
 };
 
 
-const CustomSelector = ({ options, setShowSelector, value = [], onChange }) => {
-
-    const dropdownRef = useRef(null);
+const CustomSelector = ({ options, setShowSelector, value = [], onChange, ref }) => {
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            if (ref.current && !ref.current.contains(event.target)) {
                 setShowSelector(false);
             }
         };
@@ -339,30 +338,31 @@ const CustomSelector = ({ options, setShowSelector, value = [], onChange }) => {
         onChange(newSelection);
     };
     return (
-        <div ref={dropdownRef} className="bg-white rounded-lg shadow-lg p-4">
-            <div className="space-y-2 max-h-60 overflow-auto">
-                {options.map((e) => (
-                    <div
-                        key={e.key}
-                        onClick={() => toggleChange(e.key)}
-                        className={`p-2 rounded-lg cursor-pointer flex items-center gap-2 ${value.includes(e.key)
-                            ? 'bg-[#F0EFFF] text-[#675FFF]'
-                            : 'hover:bg-gray-50'
-                            }`}
-                    >
-                        <div
-                            className={`w-4 h-4 rounded border flex items-center justify-center ${value.includes(e.key)
-                                ? 'border-[#675FFF] bg-[#675FFF]'
-                                : 'border-[#E1E4EA]'
+        <div className="bg-white rounded-lg shadow-lg">
+            <div className="max-h-60 overflow-auto">
+                <ul className="py-1 px-2 flex flex-col gap-1 my-1">
+                    {options?.length > 0 && options.map((e) => (
+                        <li
+                            key={e.key}
+                            onClick={() => toggleChange(e.key)}
+                            className={`py-2 px-4 rounded-lg cursor-pointer flex items-center hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF] gap-2 ${value.includes(e.key)
+                                ? 'bg-[#F4F5F6] rounded-lg text-[#675FFF]' : 'text-[#5A687C]'
                                 }`}
                         >
-                            {value.includes(e.key) && (
-                                <span className="text-white text-xs">✓</span>
-                            )}
-                        </div>
-                        <span>{e.label}</span>
-                    </div>
-                ))}
+                            <div
+                                className={`w-4 h-4 rounded border flex items-center justify-center ${value.includes(e.key)
+                                    ? 'border-[#675FFF] bg-[#675FFF]'
+                                    : 'border-[#E1E4EA]'
+                                    }`}
+                            >
+                                {value.includes(e.key) && (
+                                    <span className="text-white text-xs">✓</span>
+                                )}
+                            </div>
+                            <span>{e.label}</span>
+                        </li>
+                    ))}
+                </ul>
             </div>
         </div>
     );
@@ -388,6 +388,9 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
     const [loading, setLoading] = useState(false);
     const [saveDraftStatus, setSaveDraftStatus] = useState(false);
     const [updateSaveDraftStatus, setUpdateSaveDraftStatus] = useState(false)
+    const [contactLists, setContactLists] = useState([]);
+    const targetListRef = useRef()
+    const frequencyDaysRef = useRef()
 
     const [formData, setFormData] = useState({
         campaign_title: "",
@@ -475,6 +478,10 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
             getEmailCampaigndData()
         }
     }, [isEdit])
+
+    useEffect(() => {
+        handleGetListsContacts()
+    }, [])
 
     const deleteRow = (index) => {
         const updated = [...campaignData];
@@ -578,6 +585,25 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
             console.log(error)
         } finally {
             setLoading(false)
+        }
+    }
+
+    const handleGetListsContacts = async () => {
+        try {
+            const response = await getLists("all",'');
+            if (response?.status === 200) {
+                console.log(response?.data?.lists)
+                const data = response?.data?.lists
+                if (data?.length > 0) {
+                    const formatData = data.map((e) => ({
+                        label: e.listName,
+                        key: e.id
+                    }))
+                    setContactLists(formatData)
+                }
+            }
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -699,9 +725,9 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                 </button>
                 {isOpen && (
                     <div className={`absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg border border-gray-200 max-h-60 overflow-auto ${openUpward ? 'bottom-full mb-1' : 'mt-1'}`}>
-                        <ul className="py-1">
+                        <ul className="py-1 px-2 flex flex-col gap-1 my-1">
                             {options.map((option) => (
-                                <li key={option.key} className={`cursor-pointer select-none relative px-4 py-2 hover:bg-[#F4F5F6] ${value === option.key ? 'text-[#675FFF]' : 'text-gray-900'}`} onClick={() => handleSelect(option.key)}>{option.label}</li>
+                                <li key={option.key} className={`cursor-pointer select-none relative px-4 py-2 hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF] ${value === option.key ? 'text-[#675FFF] bg-[#F4F5F6] rounded-lg' : 'text-[#5A687C]'}`} onClick={() => handleSelect(option.key)}>{option.label}</li>
                             ))}
                         </ul>
                     </div>
@@ -957,15 +983,15 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                         </div>
                         {renderCTAField()}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="relative">
+                            <div className="relative" ref={targetListRef}>
                                 <label className="block text-sm font-medium mb-1">List Of Target</label>
                                 <button
                                     onClick={() => setShowListTargetSelector((prev) => !prev)}
                                     className={`w-full flex items-center justify-between focus:outline-none focus:border-[#675FFF] bg-white border ${errors.list_of_target ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
                                 >
-                                    <span>{formData.list_of_target?.length > 0
+                                    <span className='truncate'>{formData.list_of_target?.length > 0
                                         ? formData.list_of_target.map(dayKey => {
-                                            const found = listOfTargetOptions.find(d => d.key === dayKey);
+                                            const found = contactLists?.length > 0 && contactLists.find(d => d.key === dayKey);
                                             return found?.label;
                                         }).join(', ')
                                         : 'Select'}</span>
@@ -974,7 +1000,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                 {showListTargetSelector && (
                                     <div className="absolute z-50 mt-1 w-full">
                                         <CustomSelector
-                                            options={listOfTargetOptions}
+                                            options={contactLists?.length > 0 && contactLists}
                                             setShowSelector={setShowListTargetSelector}
                                             value={formData.list_of_target}
                                             onChange={(updated) => {
@@ -985,6 +1011,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                                 setErrors((prev) => ({ ...prev, list_of_target: "" }))
                                             }
                                             }
+                                            ref={targetListRef}
                                         />
                                     </div>
                                 )}
@@ -1077,13 +1104,13 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                 />
                                 {errors.start_date && <p className='my-1 text-[#FF3B30]'>{errors.start_date}</p>}
                             </div>
-                            <div className="relative">
+                            <div className="relative" ref={frequencyDaysRef}>
                                 <label className="block text-sm font-medium mb-1">Frequency</label>
                                 <button
                                     onClick={() => setShowWeekSelector((prev) => !prev)}
                                     className={`w-full flex justify-between items-center bg-white border truncate ${errors.frequency ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer focus:outline-none focus:border-[#675FFF]`}
                                 >
-                                    <span>{formData.frequency?.length > 0
+                                    <span className='truncate'>{formData.frequency?.length > 0
                                         ? formData.frequency.map(dayKey => {
                                             const found = daysOptions.find(d => d.key === dayKey);
                                             return found?.label;
@@ -1105,6 +1132,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                                 setErrors((prev) => ({ ...prev, frequency: "" }))
                                             }
                                             }
+                                            ref={frequencyDaysRef}
                                         />
                                     </div>
                                 )}

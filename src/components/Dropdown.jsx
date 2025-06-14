@@ -56,8 +56,8 @@ export const SelectDropdown = ({ name, options, placeholder = 'Select', value, o
                 <div
                     className={`absolute z-10 w-full rounded-md bg-white shadow-lg border border-gray-200 max-h-60 overflow-auto ${openUpward ? 'bottom-full mb-1' : 'mt-1'}`}
                 >
-                    <ul className="py-1 px-2 flex flex-col gap-1">
-                        {options.map((option) => (
+                    <ul className="py-1 px-2 flex flex-col gap-1 my-1">
+                        {options?.length > 0 && options.map((option) => (
                             <li
                                 key={option.key}
                                 className={`cursor-pointer font-[500] select-none relative px-4 py-2 hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF] ${value === option.key ? 'text-[#675FFF] bg-[#F4F5F6] rounded-lg' : 'text-[#5A687C]'}`}

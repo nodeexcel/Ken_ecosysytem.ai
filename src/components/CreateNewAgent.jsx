@@ -478,30 +478,31 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         };
 
         return (
-            <div className="bg-white rounded-lg shadow-lg p-4">
-                <div className="space-y-2">
-                    {languages.map((lang) => (
-                        <div
-                            key={lang}
-                            onClick={() => toggleLanguage(lang)}
-                            className={`p-2 rounded-lg cursor-pointer flex items-center gap-2 ${value.includes(lang)
-                                ? 'bg-[#F4F5F6] text-[#675FFF]'
-                                : 'hover:bg-[#F4F5F6] hover:text-[#675FFF]'
-                                }`}
-                        >
-                            <div
-                                className={`w-4 h-4 rounded border flex items-center justify-center ${value.includes(lang)
-                                    ? 'border-[#675FFF] bg-[#675FFF]'
-                                    : 'border-[#E1E4EA]'
+            <div className="bg-white rounded-lg shadow-lg">
+                <div className="max-h-60 overflow-auto">
+                    <ul className="py-1 px-2 flex flex-col gap-1 my-1">
+                        {languages.map((lang) => (
+                            <li
+                                key={lang}
+                                onClick={() => toggleLanguage(lang)}
+                                className={`py-2 px-4 rounded-lg cursor-pointer flex items-center hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF] gap-2 ${value.includes(lang)
+                                    ? 'bg-[#F4F5F6] rounded-lg text-[#675FFF]' : 'text-[#5A687C]'
                                     }`}
                             >
-                                {value.includes(lang) && (
-                                    <span className="text-white text-xs">✓</span>
-                                )}
-                            </div>
-                            <span>{lang}</span>
-                        </div>
-                    ))}
+                                <div
+                                    className={`w-4 h-4 rounded border flex items-center justify-center ${value.includes(lang)
+                                        ? 'border-[#675FFF] bg-[#675FFF]'
+                                        : 'border-[#E1E4EA]'
+                                        }`}
+                                >
+                                    {value.includes(lang) && (
+                                        <span className="text-white text-xs">✓</span>
+                                    )}
+                                </div>
+                                <span>{lang}</span>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
             </div>
         );
