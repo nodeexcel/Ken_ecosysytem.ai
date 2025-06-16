@@ -32,7 +32,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         // webpage_type: "",
         whatsapp_number: '',
         platform_unique_id: '',
-        calendar_id: ''
+        google_calendar_id: ''
     })
     const [loadingStatus, setLoadingStatus] = useState(true)
     const [dataRenderStatus, setDataRenderStatus] = useState(true)
@@ -182,8 +182,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
         if (formData.objective_of_the_agent === "book_call") {
             if (formData.calendar_choosed === "google_calendar") {
-                if (!formData.calendar_id) {
-                    newErrors.calendar_id = "Calendar Account must be chosen.";
+                if (!formData.google_calendar_id) {
+                    newErrors.google_calendar_id = "Calendar Account must be chosen.";
                 }
             }
         }
@@ -638,22 +638,22 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
                                     <label className="font-medium text-[#1e1e1e] text-sm">Select Google Calendar Account</label>
                                     <SelectDropdown
-                                        name="calendar_id"
+                                        name="google_calendar_id"
                                         options={googleCalendarData}
-                                        value={formData.calendar_id}
+                                        value={formData.google_calendar_id}
                                         onChange={(updated) => {
                                             console.log(updated)
                                             setFormData((prev) => ({
                                                 ...prev,
-                                                calendar_id: updated,
+                                                google_calendar_id: updated,
                                             }))
-                                            setErrors((prev) => ({ ...prev, calendar_id: '' }))
+                                            setErrors((prev) => ({ ...prev, google_calendar_id: '' }))
                                         }}
                                         placeholder="Select"
                                         className="w-full"
                                         errors={errors}
                                     />
-                                    {errors.calendar_id && <p className="text-red-500 text-sm mt-1">{errors.calendar_id}</p>}
+                                    {errors.google_calendar_id && <p className="text-red-500 text-sm mt-1">{errors.google_calendar_id}</p>}
                                 </div>
                             }
                         </div>
@@ -825,7 +825,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         onClick={() => setShowLanguageSelector((prev) => !prev)}
                                         className={`w-full flex justify-between items-center mt-1 bg-white border ${errors.agent_language ? 'border-red-500' : 'border-[#e1e4ea]'} rounded-lg px-3 py-[7.5px] cursor-pointer text-[#5A687C] focus:outline-none focus:border-[#675FFF]`}
                                     >
-                                        <span>{formData.agent_language?.length > 0
+                                        <span className={`${formData.agent_language?.length > 0 ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`} >{formData.agent_language?.length > 0
                                             ? formData.agent_language.join(', ')
                                             : 'Select Languages'}</span>
                                         <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showLanguageSelector ? 'transform rotate-180' : ''}`} />

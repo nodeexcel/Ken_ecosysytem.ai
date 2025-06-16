@@ -391,7 +391,7 @@ export default function CallCampaign() {
                 onChange={(value) => setFilters({ ...filters, country: value })}
               />
             </div>
-            
+
             <div className="w-48">
               <SelectDropdown
                 name="language"
@@ -401,7 +401,7 @@ export default function CallCampaign() {
                 onChange={(value) => setFilters({ ...filters, language: value })}
               />
             </div>
-            
+
             <div className="w-48">
               <SelectDropdown
                 name="voice"
@@ -451,10 +451,10 @@ export default function CallCampaign() {
                         <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative">
                           <div className='bg-[#F4F5F6] p-2 rounded-lg cursor-pointer'><ThreeDots /></div>
                           {activeDropdown === index && (
-                            <div className="absolute right-0   w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                            <div className="absolute right-0 px-2  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                               <div className="py-1">
                                 <button
-                                  className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-gray-100 cursor-pointer"
+                                  className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500] cursor-pointer"
                                   onClick={() => {
                                     // Handle edit action
                                     setEditData(agent.id)
@@ -467,7 +467,7 @@ export default function CallCampaign() {
                                   <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
                                 </button>
                                 <button
-                                  className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] cursor-pointer"
+                                  className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500] cursor-pointer"
                                   onClick={() => {
                                     // Handle delete action
 
@@ -476,18 +476,20 @@ export default function CallCampaign() {
                                 >
                                   <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
                                 </button>
-                                <hr style={{ color: "#E6EAEE" }} />
-                                <button
-                                  className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
-                                  onClick={() => {
-                                    // Handle delete action
-                                    setActiveDropdown(null);
-                                    setDeleteRow(agent.id);
+                                <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                                <div className="py-2">
+                                  <button
+                                    className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6] hover:rounded-lg font-[500]"
+                                    onClick={() => {
+                                      // Handle delete action
+                                      setActiveDropdown(null);
+                                      setDeleteRow(agent.id);
 
-                                  }}
-                                >
-                                  <div className="flex items-center gap-2 cursor-pointer">{<Delete />} <span>Delete</span> </div>
-                                </button>
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-2 cursor-pointer">{<Delete />} <span>Delete</span> </div>
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           )}
@@ -553,7 +555,7 @@ export default function CallCampaign() {
                 <input
                   type="text"
                   placeholder="Enter campaign name"
-                  className="w-full px-4 py-2 border rounded-lg border-[#E1E4EA] focus:outline-none focus:border-[#675FFF]"
+                  className="w-full px-4 py-2 bg-white border rounded-lg border-[#E1E4EA] focus:outline-none focus:border-[#675FFF]"
 
                   name="campaign_name"
                   value={campaign.campaign_name}

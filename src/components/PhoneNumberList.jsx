@@ -79,6 +79,7 @@ export default function PhoneNumbers() {
   const [responseError, setResponseError] = useState();
   const [deleteRow, setDeleteRow] = useState(null);
   const [loading, setLoading] = useState(true)
+  const [otpModal, setOtpModal] = useState(false)
 
   const tabs = [
     { label: "Outbound Number", key: "outbound", icon: <OutboundCall active={activeTab == "outbound"} /> },
@@ -110,9 +111,10 @@ export default function PhoneNumbers() {
     }
     if (!number) {
       errors.number = "Phone number is required";
-    }
-    if (number && !/^\+?[0-9\s]+$/.test(number)) {
+    } else if (!/^\+?[0-9\s]+$/.test(number)) {
       errors.number = "Invalid phone number format";
+    } else if (number.replace(/\D/g, "").length !== 10) {
+      errors.number = "Phone number must be exactly 10 digits";
     }
     setError(errors);
     return Object.keys(errors).length === 0;
@@ -131,6 +133,7 @@ export default function PhoneNumbers() {
       fetchPhoneNumbers();
       setShowModal(false);
       setLoader(false);
+      setOtpModal(true)
 
     } else {
       setLoader(false);
@@ -284,10 +287,13 @@ export default function PhoneNumbers() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl w-[610px] p-6 relative shadow-lg">
+          <div className="bg-white rounded-2xl w-[610px] max-h-[85vh] overflow-auto p-6 relative shadow-lg">
             <button
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-              onClick={() => setShowModal(false)}
+              onClick={() => {
+                setShowModal(false)
+                setError({})
+              }}
             >
               <X size={20} />
             </button>
@@ -329,7 +335,7 @@ export default function PhoneNumbers() {
                   className="w-full px-4 py-2 border rounded-lg resize-none border-[#E1E4EA] focus:outline-none focus:border-[#675FFF]"
                   onChange={(e) => {
                     setPhoneName(e.target.value);
-                    setError((prev) => ({ ...prev, phoneName: "" }));
+                    ((prev) => ({ ...prev, phoneName: "" }));
                   }}
                   value={phoneName}
                 />
@@ -403,7 +409,10 @@ export default function PhoneNumbers() {
             {/* Footer */}
             <div className="flex gap-2 mt-4">
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  setShowModal(false)
+                  setError({})
+                }}
                 className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
               >
                 Cancel
@@ -425,6 +434,42 @@ export default function PhoneNumbers() {
           </div>
         </div>
       )}
+
+      {
+        otpModal && (
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl w-full max-w-[610px] max-h-[357px] overflow-auto p-6 relative shadow-lg">
+              <button
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                onClick={() => setOtpModal(false)}
+              >
+                <X size={20} />
+              </button>
+              <div className="flex flex-col gap-7">
+                <p className="text-[#5A687C] font-[400] text-[16px]">XXXXXX{number.slice(6)}</p>
+                <div className="h-[87px] max-w-[562px] w-full bg-[#F0EFFF] flex justify-center items-center">
+                  <p className="text-[#1E1E1E] font-[700] text-[44px]">0600525</p>
+                </div>
+                <p className="text-[#5A687C] text-[16px] font-[400] mb-4">Please enter the code on your phone’s keypad to activate this number.</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setOtpModal(false)}
+                    className="w-full  px-[20px] py-[7px] text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px]"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => setOtpModal(false)}
+                    className="w-full text-[16px] text-white rounded-[8px] bg-[#675FFF] px-[20px] py-[7px] flex justify-center items-center gap-2 relative"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
 
       {
         deleteRow && (

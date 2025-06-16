@@ -147,7 +147,7 @@ function Analytics() {
                             selected={selectedDate}
                             onChange={(date) => setSelectedDate(date)}
                             customInput={
-                                <button className="flex w-full items-center gap-2 px-2 py-[10px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[14px]">
+                                <button className="flex w-full items-center focus-within:border-[#675FFF] gap-2 px-2 py-[10px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[14px]">
 
                                     {format(selectedDate, 'yyyy-MM-dd')}
                                     <LuCalendarDays className="text-[16px]" />

@@ -86,7 +86,7 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
     const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
     const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
     const periods = ['AM', 'PM'];
-    
+
     const circularHours = [...hours, ...hours, ...hours];
     const circularMinutes = [...minutes, ...minutes, ...minutes];
     const paddedPeriods = ['', '', ...periods, '', ''];
@@ -99,7 +99,7 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
 
         const scrollTop = ref.current.scrollTop;
         const itemsLength = originalItems.length;
-        const centerPosition = scrollTop + 72; 
+        const centerPosition = scrollTop + 72;
         const centerIndex = Math.round(centerPosition / itemHeight);
         const actualIndex = centerIndex % itemsLength;
         const selectedItem = originalItems[actualIndex];
@@ -143,14 +143,14 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
         if (isCircular) {
             const index = items.indexOf(value);
             if (index !== -1) {
-                const centerOffset = 2; 
+                const centerOffset = 2;
                 ref.current.scrollTop = (items.length + index - centerOffset) * height;
             }
         } else {
             const index = items.indexOf(value);
             if (index !== -1) {
-                const paddedIndex = index + 2; 
-                const centerOffset = 2; 
+                const paddedIndex = index + 2;
+                const centerOffset = 2;
                 ref.current.scrollTop = (paddedIndex - centerOffset) * height;
             }
         }
@@ -206,7 +206,7 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
 
         ref.current.addEventListener('scroll', handleScrollEnd);
         ref.current.addEventListener('scroll', handleScroll);
-        
+
         return () => {
             if (ref.current) {
                 ref.current.removeEventListener('scroll', handleScrollEnd);
@@ -633,7 +633,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
     const handleGetListsContacts = async () => {
         try {
-            const response = await getLists("all",'');
+            const response = await getLists("all", '');
             if (response?.status === 200) {
                 console.log(response?.data?.lists)
                 const data = response?.data?.lists
@@ -763,7 +763,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
         return (
             <div ref={dropdownRef} className={`relative w-full ${className}`}>
                 <button ref={buttonRef} type="button" onClick={() => setIsOpen(!isOpen)} className={`flex justify-between items-center w-full border ${errors[name] ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 bg-white text-left focus:outline-none focus:border-[#675FFF]`}>
-                    <span className={`block truncate ${!optionLabel ? 'text-gray-500' : 'text-gray-900'}`}>{optionLabel.label || placeholder}</span>
+                    <span className={`block truncate ${!optionLabel ? 'text-[#5A687C]' : 'text-[#1E1E1E]'}`}>{optionLabel.label || placeholder}</span>
                     <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
                 </button>
                 {isOpen && (
@@ -1032,7 +1032,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                     onClick={() => setShowListTargetSelector((prev) => !prev)}
                                     className={`w-full flex items-center justify-between focus:outline-none focus:border-[#675FFF] bg-white border ${errors.list_of_target ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
                                 >
-                                    <span className='truncate'>{formData.list_of_target?.length > 0
+                                    <span className={`truncate ${formData.list_of_target?.length > 0 ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{formData.list_of_target?.length > 0
                                         ? formData.list_of_target.map(dayKey => {
                                             const found = contactLists?.length > 0 && contactLists.find(d => d.key === dayKey);
                                             return found?.label;
@@ -1108,7 +1108,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                     onClick={() => setShowTimeSelector((prev) => !prev)}
                                     className={`w-full flex justify-between items-center bg-white focus:border-[#675FFF] border ${errors.send_time_window ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
                                 >
-                                    <span>{formData.send_time_window || "Select Time"}</span>
+                                    <span  className={`${formData.send_time_window ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{formData.send_time_window || "Select Time"}</span>
                                     <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showTimeSelector ? 'transform rotate-180' : ''}`} />
                                 </button>
                                 {showTimeSelector && (
@@ -1143,7 +1143,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
                                     }
                                     }
-                                    className={`w-full bg-white border ${errors.start_date ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`}
+                                    className={`w-full ${formData.start_date ? 'text-[#1E1E1E]' : 'text-[#5A687C]'} bg-white border ${errors.start_date ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`}
                                 />
                                 {errors.start_date && <p className='my-1 text-[#FF3B30]'>{errors.start_date}</p>}
                             </div>
@@ -1153,7 +1153,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                     onClick={() => setShowWeekSelector((prev) => !prev)}
                                     className={`w-full flex justify-between items-center bg-white border truncate ${errors.frequency ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer focus:outline-none focus:border-[#675FFF]`}
                                 >
-                                    <span className='truncate'>{formData.frequency?.length > 0
+                                    <span className={`truncate ${formData.frequency?.length > 0 ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{formData.frequency?.length > 0
                                         ? formData.frequency.map(dayKey => {
                                             const found = daysOptions.find(d => d.key === dayKey);
                                             return found?.label;

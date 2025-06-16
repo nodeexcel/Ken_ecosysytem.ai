@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { ChevronLeft, ChevronRight, X } from "lucide-react"
 import successImg from "../assets/svg/success.svg"
 import { getCampaignSchedule, getScheduledContent, updateContentStatus } from "../api/emailCampaign"
+import { SelectDropdown } from "./Dropdown"
 
 export default function Calendar() {
   // Get current date information
@@ -192,6 +193,8 @@ export default function Calendar() {
     "10PM",
     "11PM",
   ]
+
+  const calendarOptions = [{ label: "Month View", key: "month" }, { label: "Week View", key: "week" }, { label: "Day View", key: "day" }]
 
   const getScheduleDate = async () => {
     try {
@@ -660,7 +663,7 @@ export default function Calendar() {
             {monthNames[currentMonth]} {currentYear}
           </h2>
           <div className="flex items-center gap-2">
-            <div className="flex items-center border border-[#E1E4EA] py-1 rounded-lg">
+            <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] py-[6px] bg-white rounded-lg">
               <button
                 onClick={handlePrevMonth}
                 className="p-1 rounded-md hover:bg-gray-100"
@@ -675,18 +678,16 @@ export default function Calendar() {
                 <ChevronRight className="h-5 w-5 text-[#5A687C]" />
               </button>
             </div>
-
-            <div>
-              <select
-                onChange={(e) => setCurrentView(e.target.value)}
-                value={currentView}
-                className="flex text-[#5A687C] border-[#E1E4EA] items-center gap-1 px-3 py-1.5 border rounded-md"
-              >
-                <option value="month">Month View</option>
-                <option value="week">Week View</option>
-                <option value="day">Day View</option>
-              </select>
-            </div>
+            <SelectDropdown
+              name="calendar"
+              options={calendarOptions}
+              value={currentView}
+              onChange={(updated) => {
+                setCurrentView(updated)
+              }}
+              placeholder="Select"
+              className="w-[147px]"
+            />
           </div>
         </div>
       )
@@ -697,7 +698,7 @@ export default function Calendar() {
             {monthNames[currentMonth]} {currentYear} (Mon {selectedWeekStart} - Sun {selectedWeekEnd})
           </h2>
           <div className="flex items-center gap-2">
-            <div className="flex items-center border border-[#E1E4EA] py-1 rounded-lg">
+            <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] py-[6px] bg-white rounded-lg">
               <button onClick={handlePrevWeek} className="p-1 rounded-md hover:bg-gray-100" aria-label="Previous week">
                 <ChevronLeft className="h-5 w-5 text-[#5A687C]" />
               </button>
@@ -709,17 +710,16 @@ export default function Calendar() {
               </button>
             </div>
 
-            <div>
-              <select
-                onChange={(e) => setCurrentView(e.target.value)}
-                value={currentView}
-                className="flex text-[#5A687C] border-[#E1E4EA] items-center gap-1 px-3 py-1.5 border rounded-md"
-              >
-                <option value="month">Month View</option>
-                <option value="week">Week View</option>
-                <option value="day">Day View</option>
-              </select>
-            </div>
+            <SelectDropdown
+              name="calendar"
+              options={calendarOptions}
+              value={currentView}
+              onChange={(updated) => {
+                setCurrentView(updated)
+              }}
+              placeholder="Select"
+              className="w-[147px]"
+            />
           </div>
         </div>
       )
@@ -730,7 +730,7 @@ export default function Calendar() {
             {currentDay} {monthNames[currentMonth]} {currentYear}
           </h2>
           <div className="flex items-center gap-2">
-            <div className="flex items-center border border-[#E1E4EA] py-1 rounded-lg">
+            <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] py-[6px] bg-white rounded-lg">
               <button onClick={handlePrevDay} className="p-1 rounded-md hover:bg-gray-100" aria-label="Previous day">
                 <ChevronLeft className="h-5 w-5 text-[#5A687C]" />
               </button>
@@ -742,17 +742,16 @@ export default function Calendar() {
               </button>
             </div>
 
-            <div>
-              <select
-                onChange={(e) => setCurrentView(e.target.value)}
-                value={currentView}
-                className="flex text-[#5A687C] border-[#E1E4EA] items-center gap-1 px-3 py-1.5 border rounded-md"
-              >
-                <option value="month">Month View</option>
-                <option value="week">Week View</option>
-                <option value="day">Day View</option>
-              </select>
-            </div>
+            <SelectDropdown
+              name="calendar"
+              options={calendarOptions}
+              value={currentView}
+              onChange={(updated) => {
+                setCurrentView(updated)
+              }}
+              placeholder="Select"
+              className="w-[147px]"
+            />
           </div>
         </div>
       )
