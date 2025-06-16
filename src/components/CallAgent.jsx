@@ -163,7 +163,7 @@ export default function CallAgentsPage() {
             onChange={(value) => setFilters({ ...filters, country: value })}
           />
         </div>
-        
+
         <div className="w-48">
           <SelectDropdown
             name="language"
@@ -173,7 +173,7 @@ export default function CallAgentsPage() {
             onChange={(value) => setFilters({ ...filters, language: value })}
           />
         </div>
-        
+
         <div className="w-48">
           <SelectDropdown
             name="voice"
@@ -315,7 +315,7 @@ export default function CallAgentsPage() {
 
               <div>
                 <div className="flex items-center gap-2 ">
-                  <label className="text-sm text-gray-600 font-medium block mb-1">
+                  <label className="text-sm font-medium block mb-1">
                     Phone Number
                   </label>
 
@@ -329,7 +329,7 @@ export default function CallAgentsPage() {
 
                 <SelectDropdown
                   name="phone_number"
-                  options={[{ key: '', label: 'Select' }, ...phoneNumbers.map((number) => ({
+                  options={phoneNumbers?.length > 0 && [...phoneNumbers.map((number) => ({
                     key: number.phone_number,
                     label: number.phone_number
                   }))]}

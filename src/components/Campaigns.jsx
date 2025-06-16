@@ -434,6 +434,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
     const [contactLists, setContactLists] = useState([]);
     const targetListRef = useRef()
     const frequencyDaysRef = useRef()
+    const timeSelectorRef = useRef()
 
     const [formData, setFormData] = useState({
         campaign_title: "",
@@ -525,6 +526,16 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
     useEffect(() => {
         handleGetListsContacts()
     }, [])
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (timeSelectorRef.current && !timeSelectorRef.current.contains(event.target)) {
+                setShowTimeSelector(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     const deleteRow = (index) => {
         const updated = [...campaignData];
@@ -633,7 +644,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
     const handleGetListsContacts = async () => {
         try {
-            const response = await getLists("all", '');
+            const response = await getLists("email", '');
             if (response?.status === 200) {
                 console.log(response?.data?.lists)
                 const data = response?.data?.lists
@@ -1102,7 +1113,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="relative">
+                            <div className="relative" ref={timeSelectorRef}>
                                 <label className="block text-sm font-medium mb-1">Send Time Window</label>
                                 <button
                                     onClick={() => setShowTimeSelector((prev) => !prev)}
