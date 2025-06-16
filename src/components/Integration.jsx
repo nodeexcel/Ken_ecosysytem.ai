@@ -210,6 +210,7 @@ const Integration = () => {
                 <div className="flex items-center gap-2.5">
                   {integration.icon ? (
                     <img
+                      loading='lazy'
                       className="w-5 h-5"
                       alt={integration.name}
                       src={integration.icon}
