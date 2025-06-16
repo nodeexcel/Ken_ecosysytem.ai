@@ -204,7 +204,7 @@ const Integration = () => {
             <div
               key={index}
               onClick={() => handleClick(integration)}
-              className=" w-full md:max-w-[763px] mx-auto border-[0.5px] border-solid border-[#e1e4ea] rounded-lg"
+              className="w-full md:max-w-[763px] mx-auto bg-white border-[0.5px] border-solid border-[#e1e4ea] rounded-lg"
             >
               <div className="flex items-center justify-between p-5">
                 <div className="flex items-center gap-2.5">
@@ -217,12 +217,12 @@ const Integration = () => {
                   ) : (
                     <div className="w-5 h-5 bg-[url(${integration.iconBg})] bg-[100%_100%]" />
                   )}
-                  <span className="font-medium text-[#1E1E1E] text-base leading-5">
+                  <span className="font-medium text-[#1E1E1E] text-base">
                     {integration.name}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-[#5A687C] text-base leading-5">
+                  <span className="font-medium text-[#5A687C] text-base">
                     {integration.connectedAccounts} connected account
                   </span>
                   <ChevronRight className="w-5 h-5" color='#5A687C' />

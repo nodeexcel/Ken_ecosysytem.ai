@@ -452,7 +452,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             <div>
                                 <label className="text-[14px] flex items-center gap-2 font-medium text-[#292D32] mb-1">Heading <TfiHelpAlt />
                                 </label>
-                                <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
+                                <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] rounded-[8px] px-4 py-3">
                                     <input
                                         type="text"
                                         name="heading"
@@ -463,7 +463,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             </div>
                             <div>
                                 <label className="block text-[14px] font-medium text-[#292D32] mb-1">Message</label>
-                                <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
+                                <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] rounded-[8px] px-4 py-3">
                                     <textarea
                                         rows={4}
                                         type="text"

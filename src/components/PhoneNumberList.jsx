@@ -336,6 +336,7 @@ export default function PhoneNumbers() {
                   onChange={(e) => {
                     setPhoneName(e.target.value);
                     ((prev) => ({ ...prev, phoneName: "" }));
+                    setError((prev) => ({ ...prev, phoneName: "" }));
                   }}
                   value={phoneName}
                 />
@@ -446,15 +447,13 @@ export default function PhoneNumbers() {
                 <X size={20} />
               </button>
               <div className="flex flex-col gap-7">
-                <p className="text-[#5A687C] font-[400] text-[16px]">XXXXXX{number.slice(6)}</p>
-                <div className="h-[87px] max-w-[562px] w-full bg-[#F0EFFF] flex justify-center items-center">
-                  <p className="text-[#1E1E1E] font-[700] text-[44px]">0600525</p>
-                </div>
+                <p className="text-[#1E1E1E] font-[500] text-[20px]">Verification Code</p>
+                <p className="text-[#1E1E1E] font-[700] bg-[#F0EFFF] w-full text-center text-[44px] px-[12px] py-[17px] rounded-[10px]">0600525</p>
                 <p className="text-[#5A687C] text-[16px] font-[400] mb-4">Please enter the code on your phone’s keypad to activate this number.</p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setOtpModal(false)}
-                    className="w-full  px-[20px] py-[7px] text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px]"
+                    className="w-full  px-[20px] py-[7px] text-[16px] text-[#5A687C] bg-white border-[1.5px] border-[#E1E4EA] rounded-[8px]"
                   >
                     Cancel
                   </button>
