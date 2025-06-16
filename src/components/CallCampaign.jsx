@@ -11,8 +11,7 @@ import { FaChevronDown } from "react-icons/fa";
 import { createPhoneCampaign } from "../api/callAgent";
 import { getCallAgent, getPhoneNumber, getPhoneCampaign, deletePhoneCampaign, getPhoneCampaignDetail, updatePhoneCampaign, duplicateCampaign } from "../api/callAgent";
 import { format } from "date-fns";
-
-
+import { SelectDropdown } from "./Dropdown";
 
 const staticData = [
   {
@@ -71,6 +70,35 @@ export default function CallCampaign() {
   const [phoneNumbers, setPhoneNumbers] = useState([]);
   const [loader, setLoader] = useState(false);
   const [deleteRow, setDeleteRow] = useState(null);
+
+  // Add filter state
+  const [filters, setFilters] = useState({
+    country: "",
+    language: "",
+    voice: ""
+  });
+
+  // Define options for filters
+  const countryOptions = [
+    // { key: "", label: "Country" },
+    { key: "US", label: "United States" },
+    { key: "GB", label: "United Kingdom" },
+    { key: "FR", label: "France" }
+  ];
+
+  const languageOptions = [
+    // { key: "", label: "Language" },
+    { key: "english", label: "English" },
+    { key: "french", label: "French" },
+    { key: "spanish", label: "Spanish" }
+  ];
+
+  const voiceOptions = [
+    // { key: "", label: "Voice" },
+    { key: "male", label: "Male" },
+    { key: "female", label: "Female" },
+    { key: "neutral", label: "Neutral" }
+  ];
 
   const [campaign, setCampaign] = useState(
     {
@@ -354,14 +382,35 @@ export default function CallCampaign() {
 
           {/* Filters */}
           <div className="flex flex-wrap gap-4 mb-3">
-            {['Country', 'Language', 'Voice'].map((label) => (
-              <select
-                key={label}
-                className="px-4 py-2 w-48 bg-white text-[#5A687C] border border-gray-300 rounded-lg shadow-sm"
-              >
-                <option>{label}</option>
-              </select>
-            ))}
+            <div className="w-48">
+              <SelectDropdown
+                name="country"
+                options={countryOptions}
+                placeholder="Country"
+                value={filters.country}
+                onChange={(value) => setFilters({ ...filters, country: value })}
+              />
+            </div>
+            
+            <div className="w-48">
+              <SelectDropdown
+                name="language"
+                options={languageOptions}
+                placeholder="Language"
+                value={filters.language}
+                onChange={(value) => setFilters({ ...filters, language: value })}
+              />
+            </div>
+            
+            <div className="w-48">
+              <SelectDropdown
+                name="voice"
+                options={voiceOptions}
+                placeholder="Voice"
+                value={filters.voice}
+                onChange={(value) => setFilters({ ...filters, voice: value })}
+              />
+            </div>
           </div>
 
           {/* Table */}
@@ -504,7 +553,7 @@ export default function CallCampaign() {
                 <input
                   type="text"
                   placeholder="Enter campaign name"
-                  className="w-full px-4 py-2 border rounded-lg border-gray-300"
+                  className="w-full px-4 py-2 border rounded-lg border-[#E1E4EA] focus:outline-none focus:border-[#675FFF]"
 
                   name="campaign_name"
                   value={campaign.campaign_name}
@@ -516,27 +565,32 @@ export default function CallCampaign() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm text-gray-700 mb-1">Language</label>
-                  <select className="w-full px-4 py-2 border rounded-lg border-gray-300"
+                  <SelectDropdown
                     name="language"
+                    options={[
+                      { key: "English", label: "English" },
+                      { key: "French", label: "French" }
+                    ]}
+                    placeholder="Select"
                     value={campaign.language}
-                    onChange={handleCampaignForm}>
-                    <option>Select</option>
-                    <option value="English">English</option>
-                    <option value="French">French</option>
-                  </select>
+                    onChange={(value) => handleCampaignForm({ target: { name: 'language', value } })}
+                    errors={errors}
+                  />
                   {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
                 </div>
                 <div>
                   <label className="block text-sm text-gray-700 mb-1">Voice</label>
-                  <select className="w-full px-4 py-2 border rounded-lg border-gray-300"
+                  <SelectDropdown
                     name="voice"
+                    options={[
+                      { key: "English", label: "English" },
+                      { key: "French", label: "French" }
+                    ]}
+                    placeholder="Select"
                     value={campaign.voice}
-                    onChange={handleCampaignForm}>
-                    <option>Select</option>
-                    <option value="English">English</option>
-                    <option value="French">French</option>
-
-                  </select>
+                    onChange={(value) => handleCampaignForm({ target: { name: 'voice', value } })}
+                    errors={errors}
+                  />
                   {errors.voice && <p className="text-red-500 text-sm mt-1">{errors.voice}</p>}
                 </div>
               </div>
@@ -544,63 +598,64 @@ export default function CallCampaign() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm text-gray-700 mb-1">Choose Calendar</label>
-                  <select className="w-full px-4 py-2 border rounded-lg border-gray-300"
+                  <SelectDropdown
                     name="choose_calendar"
+                    options={[
+                      { key: "Google Calendar", label: "Google Calendar" },
+                      { key: "Outlook Calendar", label: "Outlook Calendar" }
+                    ]}
+                    placeholder="Select"
                     value={campaign.choose_calendar}
-                    onChange={handleCampaignForm}>
-                    <option>Select</option>
-                    <option value="Google Calendar">Google Calendar</option>
-                    <option value="Outlook Calendar">Outlook Calendar</option>
-                  </select>
+                    onChange={(value) => handleCampaignForm({ target: { name: 'choose_calendar', value } })}
+                    errors={errors}
+                  />
                   {errors.choose_calendar && <p className="text-red-500 text-sm mt-1">{errors.choose_calendar}</p>}
                 </div>
                 <div>
                   <label className="block text-sm text-gray-700 mb-1">Max Call Time (Minutes)</label>
-                  <select className="w-full px-4 py-2 border rounded-lg border-gray-300"
+                  <SelectDropdown
                     name="max_call_time"
-                    value={campaign.max_call_time}
-                    onChange={handleCampaignForm}>
-                    <option>Select</option>
-
-                    <option value={30}>30</option>
-                    <option value={40}>40</option>
-                    <option value={60}>60</option>
-                  </select>
+                    options={[
+                      { key: "30", label: "30" },
+                      { key: "40", label: "40" },
+                      { key: "60", label: "60" }
+                    ]}
+                    placeholder="Select"
+                    value={campaign.max_call_time.toString()}
+                    onChange={(value) => handleCampaignForm({ target: { name: 'max_call_time', value: parseInt(value) } })}
+                    errors={errors}
+                  />
                   {errors.max_call_time && <p className="text-red-500 text-sm mt-1">{errors.max_call_time}</p>}
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm text-gray-700 mb-1">Target Lists</label>
-                <select className="w-full px-4 py-2 border rounded-lg border-gray-300"
-
+                <SelectDropdown
                   name="target_lists"
-                // value={campaign.target_lists}
-                // onChange={handleCampaignForm}
-                >
-                  <option value="">Select</option>
-                  <option value="0">0</option>
-                  <option value="1">1</option>
-                </select>
+                  options={[
+                    { key: "0", label: "0" },
+                    { key: "1", label: "1" }
+                  ]}
+                  placeholder="Select"
+                  value={campaign.target_lists[0]}
+                  onChange={(value) => setCampaign(prev => ({ ...prev, target_lists: [value] }))}
+                  errors={errors}
+                />
                 {errors.target_lists && <p className="text-red-500 text-sm mt-1">{errors.target_lists}</p>}
                 <button className="text-[#7065F0] text-sm font-medium mt-1">+ Create New Contact List</button>
               </div>
 
               <div>
                 <label className="block text-sm text-gray-700 mb-1">Choose an Agent</label>
-                <select className="w-full px-4 py-2 border rounded-lg border-gray-300"
+                <SelectDropdown
                   name="agent"
-                  value={campaign.agent}
-                  onChange={handleCampaignForm}>
-                  <option>Select</option>
-                  {
-                    agents.map((agent) => (
-                      <option key={agent.id} value={agent.id}>
-                        {agent.agent_name}
-                      </option>
-                    ))
-                  }
-                </select>
+                  options={agents.map(agent => ({ key: agent.id.toString(), label: agent.agent_name }))}
+                  placeholder="Select"
+                  value={campaign.agent.toString()}
+                  onChange={(value) => handleCampaignForm({ target: { name: 'agent', value: parseInt(value) } })}
+                  errors={errors}
+                />
                 {errors.agent && <p className="text-red-500 text-sm mt-1">{errors.agent}</p>}
               </div>
 
@@ -608,18 +663,18 @@ export default function CallCampaign() {
                 <label className="text-sm text-gray-600 font-medium block mb-1">
                   Phone Number
                 </label>
-                <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-4 py-2">
+                <div className="flex group items-center focus-within:border-[#675FFF] gap-2 border border-[#E1E4EA] rounded-lg px-4 py-2">
                   <div className="relative">
                     <button
                       onClick={() => setIsOpen(!isOpen)}
-                      className="w-fit flex border-none justify-between gap-2 items-center border py-1 text-left"
+                      className="w-fit flex hover:cursor-pointer border-none justify-between gap-2 items-center border pl-1 py-1 text-left"
                     >
-                      <img src={selectedCountry.flag} alt={selectedCountry.name} width={16} />
-                      <FaChevronDown color="#5A687C" className="w-[10px]" />
+                      <img src={selectedCountry?.flag} alt={selectedCountry?.name} width={16} />
+                      <FaChevronDown color="#5A687C" className={`w-[10px] transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
                       <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />
                     </button>
                     {isOpen && (
-                      <div className="absolute z-10 w-full left-[-13px] bg-white mt-1">
+                      <div className="absolute px-1 z-10 rounded-md shadow-lg border border-gray-200 max-h-30 overflow-auto top-6 w-full left-[-13px] bg-white mt-1">
                         {countries.map((country) => (
                           <div
                             key={country.code}
@@ -627,7 +682,7 @@ export default function CallCampaign() {
                               setSelectedCountry(country);
                               setIsOpen(false);
                             }}
-                            className={`px-4 py-2 hover:bg-gray-100 ${selectedCountry.code === country.code && 'bg-[#EDF3FF]'} cursor-pointer flex items-center`}
+                            className={`flex justify-center hover:bg-[#F4F5F6] hover:rounded-lg pr-1 my-1 py-2 ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6] rounded-lg'} cursor-pointer flex items-center`}
                           >
                             <img src={country.flag} alt={country.name} width={16} />
                           </div>
@@ -635,22 +690,19 @@ export default function CallCampaign() {
                       </div>
                     )}
                   </div>
-
-
-                  <select className="w-full focus:outline-none px-4 rounded-lg border-gray-300" name="phone_number"
+                  <select
+                    name="phone_number"
                     value={campaign.phone_number}
-                    onChange={handleCampaignForm}>
-
-                    <option value="" >Select</option>
-                    {
-                      phoneNumbers.map((phone) => {
-                        return <option key={phone.id} value={phone.phone_number}>
-                          {phone.phone_number}
-                        </option>
-                      })
-                    }
+                    onChange={handleCampaignForm}
+                    className="w-full outline-none bg-transparent text-[#5A687C] px-2"
+                  >
+                    <option value="" className="text-gray-500">Select</option>
+                    {phoneNumbers.map((phone) => (
+                      <option key={phone.phone_number} value={phone.phone_number} className="text-[#5A687C]">
+                        {phone.phone_number}
+                      </option>
+                    ))}
                   </select>
-
                 </div>
                 {errors.phone_number && <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>}
               </div>
@@ -675,7 +727,7 @@ export default function CallCampaign() {
                 <label className="block text-sm text-gray-700 mb-1">Your Catch Phrase</label>
                 <textarea
                   placeholder="Enter your catch phrase"
-                  className="w-full px-4 py-2 border rounded-lg resize-none border-gray-300"
+                  className="w-full px-4 py-2 border rounded-lg resize-none border-[#E1E4EA] focus:outline-none focus:border-[#675FFF]"
                   rows={4}
                   value={campaign.catch_phrase}
                   onChange={handleCampaignForm}
@@ -687,7 +739,7 @@ export default function CallCampaign() {
                 <label className="block text-sm text-gray-700 mb-1">Your Call Script</label>
                 <textarea
                   placeholder="Enter your call script"
-                  className="w-full px-4 py-2 border rounded-lg resize-none border-gray-300"
+                  className="w-full px-4 py-2 border rounded-lg resize-none border-[#E1E4EA] focus:outline-none focus:border-[#675FFF]"
                   rows={4}
                   value={campaign.call_script}
                   onChange={handleCampaignForm}
@@ -761,7 +813,7 @@ export default function CallCampaign() {
               onClick={() => setSecondModel(false)}
               className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
             >
-              I Haven’t Received A Call
+              I Haven't Received A Call
             </button>
             <button
               className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"

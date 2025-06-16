@@ -6,9 +6,7 @@ import uk_flag from "../assets/images/uk_flag.png"
 import us_flag from "../assets/images/us_flag.png"
 import fr_flag from "../assets/images/fr_flag.png"
 import { getPhoneNumber, createPhoneAgent, getCallAgent, updatePhoneNumberAgentStatus } from "../api/callAgent";
-
-
-
+import { SelectDropdown } from "./Dropdown";
 
 const countries = [
   { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
@@ -18,7 +16,6 @@ const countries = [
 ];
 
 export default function CallAgentsPage() {
-
   const [agents, setAgents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
@@ -27,7 +24,36 @@ export default function CallAgentsPage() {
   const [error, setError] = useState("");
   const [phoneNumbers, setPhoneNumbers] = useState([]);
   const [loader, setLoader] = useState(false);
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
+  
+  // Add filter state
+  const [filters, setFilters] = useState({
+    country: "",
+    language: "",
+    voice: ""
+  });
+
+  // Define options for filters
+  const countryOptions = [
+    // { key: "", label: "Country" },
+    { key: "US", label: "United States" },
+    { key: "GB", label: "United Kingdom" },
+    { key: "FR", label: "France" }
+  ];
+
+  const languageOptions = [
+    // { key: "", label: "Language" },
+    { key: "english", label: "English" },
+    { key: "french", label: "French" },
+    { key: "spanish", label: "Spanish" }
+  ];
+
+  const voiceOptions = [
+    // { key: "", label: "Voice" },
+    { key: "male", label: "Male" },
+    { key: "female", label: "Female" },
+    { key: "neutral", label: "Neutral" }
+  ];
 
   const toggleActive = async (id) => {
     try {
@@ -42,7 +68,6 @@ export default function CallAgentsPage() {
       console.error("Error toggling agent status:", error);
       return error;
     }
-
   };
 
   const fetchPhoneNumbers = async () => {
@@ -58,7 +83,6 @@ export default function CallAgentsPage() {
     }
   }
 
-
   const isValidForm = () => {
     const error = {};
     if (!agent.agent_name) error.agent_name = "Agent name is required";
@@ -67,8 +91,7 @@ export default function CallAgentsPage() {
     if (!agent.phone_number) error.phone_number = "Phone number is required";
     setError({ ...error });
     return Object.keys(error).length === 0;
-
-  }
+  };
 
   const submitForm = async (e) => {
     e.preventDefault();
@@ -82,7 +105,6 @@ export default function CallAgentsPage() {
         setLoader(true);
         setAgent({ name: "", language: "", voice: "", phone: "" });
         fetchAgents();
-
       } else {
         console.log("Error creating agent:", response);
       }
@@ -92,14 +114,12 @@ export default function CallAgentsPage() {
 
   const fetchAgents = async () => {
     try {
-
       const response = await getCallAgent();
       if (response.status === 200) {
         setAgents(response.data.agents_info || []);
         if (response?.data?.agents_info?.length === 0) {
           setLoading(false)
         }
-
       } else {
         console.error("Failed to fetch agents");
         setLoading(false)
@@ -122,49 +142,6 @@ export default function CallAgentsPage() {
     fetchAgents();
   }, []);
 
-
-  const Dropdown = ({ name, options, placeholder = 'Select', value, onChange, className = '' }) => {
-
-    const [isOpen, setIsOpen] = useState(false);
-
-    const dropdownRef = useRef(null);
-
-    useEffect(() => {
-      const handleClickOutside = (event) => {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-          setIsOpen(false);
-        }
-      };
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
-
-    const handleSelect = (option) => {
-      onChange(option);
-      setIsOpen(false);
-    };
-
-    const optionLabel = value && options.find((e) => e.key === value)
-
-    return (
-      <div ref={dropdownRef} className={`relative w-full ${className}`}>
-        <button type="button" onClick={() => setIsOpen(!isOpen)} className={`flex justify-between items-center w-full border ${error[name] ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 bg-white text-left focus:outline-none focus:ring-1 focus:ring-[#675FFF]`}>
-          <span className={`block truncate ${!optionLabel ? 'text-gray-500' : 'text-gray-900'}`}>{optionLabel?.label || placeholder}</span>
-          <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
-        </button>
-        {isOpen && (
-          <div className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg border border-gray-200 max-h-60 overflow-auto">
-            <ul className="py-1">
-              {options.map((option) => (
-                <li key={option.key} className={`cursor-pointer select-none relative px-4 py-2 hover:bg-[#F4F5F6] ${value === option.key ? 'text-[#675FFF]' : 'text-gray-900'}`} onClick={() => handleSelect(option.key)}>{option.label}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-    );
-  };
-
   return (
     <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
       {/* Header */}
@@ -177,14 +154,35 @@ export default function CallAgentsPage() {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-4 mb-3">
-        {["Country", "Language", "Voice"].map((label) => (
-          <select
-            key={label}
-            className="px-4 py-2 w-48 bg-white text-[#5A687C] border border-gray-300 rounded-lg shadow appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M5%207L10%2012L15%207%22%20stroke%3D%22%23333%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E')] bg-no-repeat bg-[right_1rem_center] bg-[length:1rem_1rem]"
-          >
-            <option>{label}</option>
-          </select>
-        ))}
+        <div className="w-48">
+          <SelectDropdown
+            name="country"
+            options={countryOptions}
+            placeholder="Country"
+            value={filters.country}
+            onChange={(value) => setFilters({ ...filters, country: value })}
+          />
+        </div>
+        
+        <div className="w-48">
+          <SelectDropdown
+            name="language"
+            options={languageOptions}
+            placeholder="Language"
+            value={filters.language}
+            onChange={(value) => setFilters({ ...filters, language: value })}
+          />
+        </div>
+        
+        <div className="w-48">
+          <SelectDropdown
+            name="voice"
+            options={voiceOptions}
+            placeholder="Voice"
+            value={filters.voice}
+            onChange={(value) => setFilters({ ...filters, voice: value })}
+          />
+        </div>
       </div>
 
       {/* Table */}
@@ -201,8 +199,6 @@ export default function CallAgentsPage() {
             </tr>
           </thead>
           <tbody className="bg-white border rounded-2xl border-[#E1E4EA]  p-3 ">
-
-
             {loading ? <tr className='h-34'><td ></td><td ></td><td ></td><td><span className='loader' /></td></tr> : agents.length !== 0 ? (agents.map((agent, index) => (
               <tr
                 key={agent.id}
@@ -240,10 +236,8 @@ export default function CallAgentsPage() {
               </tr>
             )}
           </tbody>
-
         </table>
       </div>
-
 
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -259,8 +253,6 @@ export default function CallAgentsPage() {
               Add a New Call Agent
             </h2>
 
-
-
             {/* Form */}
             <div className="space-y-4">
               <div>
@@ -270,7 +262,7 @@ export default function CallAgentsPage() {
                 <input
                   type="text"
                   placeholder="Enter number name"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                  className="w-full px-4 py-2 border rounded-lg resize-none border-[#E1E4EA] focus:outline-none focus:border-[#675FFF]"
                   value={agent.agent_name}
                   name="agent_name"
                   onChange={(e) => { setAgent({ ...agent, agent_name: e.target.value }); setError({ ...error, agent_name: "" }) }
@@ -283,7 +275,7 @@ export default function CallAgentsPage() {
                 <label className="text-sm font-medium block mb-1">
                   Language
                 </label>
-                <Dropdown
+                <SelectDropdown
                   name="language"
                   options={[
                     { key: '', label: 'Select' },
@@ -304,7 +296,7 @@ export default function CallAgentsPage() {
                 <label className="text-sm font-medium block mb-1">
                   Voice
                 </label>
-                <Dropdown
+                <SelectDropdown
                   name="voice"
                   options={[
                     { key: '', label: 'Select' },
@@ -319,11 +311,9 @@ export default function CallAgentsPage() {
                   className="mt-2"
                 />
                 {error.voice && <p className="text-red-500 text-sm mt-1">{error.voice}</p>}
-
               </div>
 
               <div>
-
                 <div className="flex items-center gap-2 ">
                   <label className="text-sm text-gray-600 font-medium block mb-1">
                     Phone Number
@@ -337,37 +327,7 @@ export default function CallAgentsPage() {
                   </div>
                 </div>
 
-
-
-                {/* <div className="relative">
-                          <button
-                            onClick={() => setIsOpen(!isOpen)}
-                            className="w-fit flex border-none justify-between gap-2 items-center border pl-1 py-1 text-left"
-                          >
-                            <img src={selectedCountry.flag} alt={selectedCountry.name} width={16} />
-                            <FaChevronDown color="#5A687C" className="w-[10px]" />
-                            <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />
-                          </button>
-                          {isOpen && (
-                            <div className="absolute z-10  w-full left-[-13px] bg-white mt-1">
-                              {countries.map((country) => (
-                                <div
-                                  key={country.code}
-                                  onClick={() => {
-                                    setSelectedCountry(country);
-                                    setIsOpen(false);
-                                  }}
-                                  className={`px-4 py-2 hover:bg-gray-100 ${selectedCountry.code === country.code && 'bg-[#EDF3FF]'} cursor-pointer flex items-center`}
-                                >
-                                  <img src={country.flag} alt={country.name} width={16} />
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div> */}
-
-
-                <Dropdown
+                <SelectDropdown
                   name="phone_number"
                   options={[{ key: '', label: 'Select' }, ...phoneNumbers.map((number) => ({
                     key: number.phone_number,
@@ -384,8 +344,6 @@ export default function CallAgentsPage() {
 
                 {error.phone_number && <p className="text-red-500 text-sm mt-1">{error.phone_number}</p>}
               </div>
-
-
             </div>
 
             {/* Footer */}
@@ -401,11 +359,8 @@ export default function CallAgentsPage() {
                 disabled={loader}
                 onClick={submitForm}
               >
-
                 <p>  Add Number</p>
                 {loader && <span className="loader text-[#5E54FF]"></span>}
-
-
               </button>
             </div>
           </div>
@@ -414,7 +369,6 @@ export default function CallAgentsPage() {
     </div>
   );
 }
-
 
 function ToggleSwitch({ checked, onChange }) {
   return (

@@ -326,7 +326,7 @@ export default function PhoneNumbers() {
                 <input
                   type="text"
                   placeholder="Enter number name"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                  className="w-full px-4 py-2 border rounded-lg resize-none border-[#E1E4EA] focus:outline-none focus:border-[#675FFF]"
                   onChange={(e) => {
                     setPhoneName(e.target.value);
                     setError((prev) => ({ ...prev, phoneName: "" }));
@@ -343,18 +343,18 @@ export default function PhoneNumbers() {
                 <label className="text-sm text-gray-600 font-medium block mb-1">
                   Number
                 </label>
-                <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-4 py-2">
+                <div className="flex group items-center focus-within:border-[#675FFF] gap-2 border border-[#E1E4EA] rounded-lg px-4 py-2">
                   <div className="relative">
                     <button
                       onClick={() => setIsOpen(!isOpen)}
-                      className="w-fit flex border-none justify-between gap-2 items-center border pl-1 py-1 text-left"
+                      className="w-fit flex hover:cursor-pointer border-none justify-between gap-2 items-center border pl-1 py-1 text-left"
                     >
-                      <img src={selectedCountry.flag} alt={selectedCountry.name} width={16} />
-                      <FaChevronDown color="#5A687C" className="w-[10px]" />
+                      <img src={selectedCountry?.flag} alt={selectedCountry?.name} width={16} />
+                      <FaChevronDown color="#5A687C" className={`w-[10px] transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
                       <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />
                     </button>
                     {isOpen && (
-                      <div className="absolute z-10  w-full left-[-13px] bg-white mt-1">
+                      <div className="absolute px-1 z-10 rounded-md shadow-lg border border-gray-200 max-h-30 overflow-auto top-6 w-full left-[-13px] bg-white mt-1">
                         {countries.map((country) => (
                           <div
                             key={country.code}
@@ -362,7 +362,7 @@ export default function PhoneNumbers() {
                               setSelectedCountry(country);
                               setIsOpen(false);
                             }}
-                            className={`px-4 py-2 hover:bg-gray-100 ${selectedCountry.code === country.code && 'bg-[#EDF3FF]'} cursor-pointer flex items-center`}
+                            className={`flex justify-center hover:bg-[#F4F5F6] hover:rounded-lg pr-1 my-1 py-2 ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6] rounded-lg'} cursor-pointer flex items-center`}
                           >
                             <img src={country.flag} alt={country.name} width={16} />
                           </div>
@@ -380,8 +380,6 @@ export default function PhoneNumbers() {
                     }}
                     value={number}
                   />
-
-
                 </div>
                 {error.number && (
                   <p className="text-red-500 text-sm mt-1">{error.number}</p>
@@ -392,7 +390,7 @@ export default function PhoneNumbers() {
                 <svg width="21" height="22" viewBox="0 0 21 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M9.84375 10.3438L9.87963 10.3262C9.99183 10.2702 10.1177 10.2475 10.2425 10.2608C10.3672 10.2741 10.4855 10.3228 10.5833 10.4012C10.6812 10.4797 10.7545 10.5845 10.7947 10.7034C10.8348 10.8222 10.84 10.95 10.8098 11.0717L10.1902 13.5533C10.1598 13.675 10.1648 13.803 10.2049 13.922C10.2449 14.0409 10.3182 14.146 10.4161 14.2245C10.514 14.3031 10.6324 14.3519 10.7572 14.3652C10.8821 14.3785 11.0081 14.3558 11.1204 14.2996L11.1562 14.2812M18.375 11C18.375 12.0342 18.1713 13.0582 17.7756 14.0136C17.3798 14.9691 16.7997 15.8372 16.0685 16.5685C15.3372 17.2997 14.4691 17.8798 13.5136 18.2756C12.5582 18.6713 11.5342 18.875 10.5 18.875C9.46584 18.875 8.44181 18.6713 7.48637 18.2756C6.53093 17.8798 5.6628 17.2997 4.93153 16.5685C4.20027 15.8372 3.6202 14.9691 3.22445 14.0136C2.82869 13.0582 2.625 12.0342 2.625 11C2.625 8.91142 3.45469 6.90838 4.93153 5.43153C6.40838 3.95469 8.41142 3.125 10.5 3.125C12.5886 3.125 14.5916 3.95469 16.0685 5.43153C17.5453 6.90838 18.375 8.91142 18.375 11ZM10.5 7.71875H10.507V7.72575H10.5V7.71875Z" stroke="#FF9500" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
-                {activeTab === 'outbound' ? "You Will Receive a Call on This Number to Validate It" : `“Message text here @sami”`}
+                {activeTab === 'outbound' ? "You Will Receive a Call on This Number to Validate It" : `"Message text here @sami"`}
               </div>
             </div>
 

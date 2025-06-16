@@ -86,13 +86,33 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
     const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
     const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
     const periods = ['AM', 'PM'];
-    const paddedHours = ['', '', ...hours, '', ''];
-    const paddedMinutes = ['', '', ...minutes, '', ''];
+    
+    const circularHours = [...hours, ...hours, ...hours];
+    const circularMinutes = [...minutes, ...minutes, ...minutes];
     const paddedPeriods = ['', '', ...periods, '', ''];
 
     const itemHeight = 36;
 
     const handleSave = () => onSave(`${selectedHour}:${selectedMinute} ${selectedPeriod}`);
+    const handleCircularScroll = (ref, originalItems, circularItems, setValue) => {
+        if (!ref.current) return;
+
+        const scrollTop = ref.current.scrollTop;
+        const itemsLength = originalItems.length;
+        const centerPosition = scrollTop + 72; 
+        const centerIndex = Math.round(centerPosition / itemHeight);
+        const actualIndex = centerIndex % itemsLength;
+        const selectedItem = originalItems[actualIndex];
+        setValue(selectedItem);
+        const totalItems = circularItems.length;
+        const threshold = itemHeight * 2;
+        if (scrollTop < threshold) {
+            ref.current.scrollTop = itemsLength * itemHeight + (scrollTop % (itemsLength * itemHeight));
+        }
+        else if (scrollTop > (totalItems - itemsLength - 2) * itemHeight) {
+            ref.current.scrollTop = itemsLength * itemHeight + (scrollTop % (itemsLength * itemHeight));
+        }
+    };
 
     const handleScroll = (ref, items, setValue, height = itemHeight) => {
         if (!ref.current) return;
@@ -117,22 +137,34 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
         }
     };
 
-    const scrollToItem = (ref, items, value, height = itemHeight) => {
+    const scrollToItem = (ref, items, value, height = itemHeight, isCircular = false) => {
         if (!ref.current) return;
 
-        const index = items.indexOf(value);
-        if (index !== -1) {
-            ref.current.scrollTop = index * height;
+        if (isCircular) {
+            const index = items.indexOf(value);
+            if (index !== -1) {
+                const centerOffset = 2; 
+                ref.current.scrollTop = (items.length + index - centerOffset) * height;
+            }
+        } else {
+            const index = items.indexOf(value);
+            if (index !== -1) {
+                const paddedIndex = index + 2; 
+                const centerOffset = 2; 
+                ref.current.scrollTop = (paddedIndex - centerOffset) * height;
+            }
         }
     };
 
     useEffect(() => {
-        scrollToItem(hoursRef, hours, selectedHour);
-        scrollToItem(minutesRef, minutes, selectedMinute);
-        scrollToItem(periodRef, periods, selectedPeriod);
+        if (hoursRef.current && minutesRef.current && periodRef.current) {
+            scrollToItem(hoursRef, hours, selectedHour, itemHeight, true);
+            scrollToItem(minutesRef, minutes, selectedMinute, itemHeight, true);
+            scrollToItem(periodRef, periods, selectedPeriod);
+        }
     }, []);
 
-    const setupScrollEndDetection = (ref, items, setValue, height = itemHeight) => {
+    const setupScrollEndDetection = (ref, items, setValue, height = itemHeight, isCircular = false, circularItems = null) => {
         if (!ref.current) return;
 
         let timeout;
@@ -141,56 +173,69 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
             timeout = setTimeout(() => {
                 if (!ref.current) return;
 
-                const scrollTop = ref.current.scrollTop;
-                const index = Math.round(scrollTop / height);
+                if (isCircular && circularItems) {
+                    handleCircularScroll(ref, items, circularItems, setValue);
+                } else {
+                    const scrollTop = ref.current.scrollTop;
+                    const index = Math.round(scrollTop / height);
+                    if (index < 0) {
+                        ref.current.scrollTop = 0;
+                        setValue(items[0]);
+                        return;
+                    }
 
-                // Prevent scrolling past limits
-                if (index < 0) {
-                    ref.current.scrollTop = 0;
-                    setValue(items[0]);
-                    return;
-                }
+                    if (index >= items.length) {
+                        ref.current.scrollTop = (items.length - 1) * height;
+                        setValue(items[items.length - 1]);
+                        return;
+                    }
 
-                if (index >= items.length) {
-                    ref.current.scrollTop = (items.length - 1) * height;
-                    setValue(items[items.length - 1]);
-                    return;
+                    if (index >= 0 && index < items.length) {
+                        setValue(items[index]);
+                        ref.current.scrollTop = index * height;
+                    }
                 }
+            }, 50);
+        };
 
-                if (index >= 0 && index < items.length) {
-                    setValue(items[index]);
-                    ref.current.scrollTop = index * height;
-                }
-            }, 100);
+        const handleScroll = () => {
+            if (isCircular && circularItems) {
+                handleCircularScroll(ref, items, circularItems, setValue);
+            }
         };
 
         ref.current.addEventListener('scroll', handleScrollEnd);
+        ref.current.addEventListener('scroll', handleScroll);
+        
         return () => {
             if (ref.current) {
                 ref.current.removeEventListener('scroll', handleScrollEnd);
+                ref.current.removeEventListener('scroll', handleScroll);
             }
         };
     };
 
     useEffect(() => {
-        const cleanupHours = setupScrollEndDetection(hoursRef, hours, setSelectedHour);
-        const cleanupMinutes = setupScrollEndDetection(minutesRef, minutes, setSelectedMinute);
-        const cleanupPeriod = setupScrollEndDetection(periodRef, periods, setSelectedPeriod);
+        const setupTimer = setTimeout(() => {
+            const cleanupHours = setupScrollEndDetection(hoursRef, hours, setSelectedHour, itemHeight, true, circularHours);
+            const cleanupMinutes = setupScrollEndDetection(minutesRef, minutes, setSelectedMinute, itemHeight, true, circularMinutes);
+            const cleanupPeriod = setupScrollEndDetection(periodRef, periods, setSelectedPeriod);
 
-        return () => {
-            cleanupHours();
-            cleanupMinutes();
-            cleanupPeriod();
-        };
+            return () => {
+                cleanupHours();
+                cleanupMinutes();
+                cleanupPeriod();
+            };
+        }, 50);
+
+        return () => clearTimeout(setupTimer);
     }, []);
 
-    // AM/PM scrolling
     const handlePeriodScroll = () => {
         if (!periodRef.current) return;
         const scrollTop = periodRef.current.scrollTop;
         const index = Math.round(scrollTop / itemHeight);
 
-        // Ensure index is within bounds
         if (index >= 0 && index < periods.length) {
             setSelectedPeriod(periods[index]);
         }
@@ -213,10 +258,9 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
                         <div
                             ref={hoursRef}
                             className="h-full overflow-auto scrollbar-hide gap-19"
-                            onScroll={() => handleScroll(hoursRef, hours, setSelectedHour)}
                         >
                             <div className="px-2">
-                                {paddedHours.map((hour, index) => (
+                                {circularHours.map((hour, index) => (
                                     <div
                                         key={`hour-${index}`}
                                         className={`h-[36px] flex items-center justify-center text-[14px]
@@ -225,7 +269,7 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
                                         onClick={() => {
                                             if (hour && !isTimeBeforeMinAllowed(hour, selectedMinute, selectedPeriod)) {
                                                 setSelectedHour(hour);
-                                                scrollToItem(hoursRef, hours, hour);
+                                                scrollToItem(hoursRef, hours, hour, itemHeight, true);
                                             }
                                         }}
                                     >
@@ -246,10 +290,9 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
                         <div
                             ref={minutesRef}
                             className="h-full overflow-auto scrollbar-hide"
-                            onScroll={() => handleScroll(minutesRef, minutes, setSelectedMinute)}
                         >
                             <div className="px-2">
-                                {paddedMinutes.map((minute, index) => (
+                                {circularMinutes.map((minute, index) => (
                                     <div
                                         key={`minute-${index}`}
                                         className={`h-[36px] flex items-center justify-center text-[14px]
@@ -258,7 +301,7 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
                                         onClick={() => {
                                             if (minute && !isTimeBeforeMinAllowed(selectedHour, minute, selectedPeriod)) {
                                                 setSelectedMinute(minute);
-                                                scrollToItem(minutesRef, minutes, minute);
+                                                scrollToItem(minutesRef, minutes, minute, itemHeight, true);
                                             }
                                         }}
                                     >

@@ -52,7 +52,7 @@ export default function InBoundCalls() {
     const [startDate, setStartDate] = useState(new Date())
     const [endDate, setEndDate] = useState(new Date())
     const [activeDropdown, setActiveDropdown] = useState(null);
-
+    const [recipient, setRecipient] = useState("");
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -88,7 +88,7 @@ export default function InBoundCalls() {
                         selected={startDate}
                         onChange={(date) => setStartDate(date)}
                         customInput={
-                            <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[14px]">
+                            <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px]  focus:border-[#675FFF] focus:outline-none">
                                 Start Date
                                 <LuCalendarDays className="text-[16px]" />
                             </button>
@@ -100,7 +100,7 @@ export default function InBoundCalls() {
                         selected={endDate}
                         onChange={(date) => setEndDate(date)}
                         customInput={
-                            <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[14px]">
+                            <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px] focus:border-[#675FFF] focus:outline-none">
                                 End Date
                                 <LuCalendarDays className="text-[16px]" />
                             </button>
@@ -108,7 +108,12 @@ export default function InBoundCalls() {
                     />
                 </div>
                 <div>
-                    <input value="Recipient" className="bg-white border text-[#5A687C] max-w-[152px] text-[16px] font-[400] w-fit border-[#E1E4EA] px-4 py-2 rounded-lg " />
+                    <input 
+                        value={recipient} 
+                        onChange={(e) => setRecipient(e.target.value)}
+                        placeholder="Recipient" 
+                        className="bg-white border text-[#5A687C] max-w-[152px] text-[16px] font-[400] w-fit border-[#E1E4EA] px-4 py-2 rounded-lg  focus:border-[#675FFF] focus:outline-none" 
+                    />
                 </div>
             </div>
             {/* Table */}
@@ -148,10 +153,10 @@ export default function InBoundCalls() {
                                         <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
                                     </button>
                                     {activeDropdown === index && (
-                                        <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                                        <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                                             <div className="py-1">
                                                 <button
-                                                    className="block w-full text-left px-4 py-2 group text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-gray-100"
+                                                    className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
                                                     onClick={() => {
                                                         // Handle edit action
                                                         setActiveDropdown(null);
@@ -160,7 +165,7 @@ export default function InBoundCalls() {
                                                     <div className="flex items-center gap-2"><div className='group-hover:hidden'><Phone /></div> <div className='hidden group-hover:block'><Phone active={true} /></div> <span>Listen the call</span> </div>
                                                 </button>
                                                 <button
-                                                    className="block w-full text-left px-4 py-2 group text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6]"
+                                                    className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
                                                     onClick={() => {
                                                         // Handle delete action
                                                         setActiveDropdown(null);
@@ -168,16 +173,18 @@ export default function InBoundCalls() {
                                                 >
                                                     <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>Notes</span> </div>
                                                 </button>
-                                                <hr style={{ color: "#E6EAEE" }} />
-                                                <button
-                                                    className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
-                                                    onClick={() => {
-                                                        // Handle delete action
-                                                        setActiveDropdown(null);
-                                                    }}
-                                                >
-                                                    <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
-                                                </button>
+                                                <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                                                <div className='py-2'>
+                                                    <button
+                                                        className="block w-full text-left hover:rounded-lg px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
+                                                        onClick={() => {
+                                                            // Handle delete action
+                                                            setActiveDropdown(null);
+                                                        }}
+                                                    >
+                                                        <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">Delete</span> </div>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     )}
@@ -211,20 +218,20 @@ export default function InBoundCalls() {
                                 <input
                                     type="text"
                                     placeholder="Enter campaign name"
-                                    className="w-full px-4 py-2 border rounded-lg border-gray-300"
+                                    className="w-full px-4 py-2 border rounded-lg border-gray-300  focus:border-[#675FFF] focus:outline-none"
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm text-gray-700 mb-1">Language</label>
-                                    <select className="w-full px-4 py-2 border rounded-lg border-gray-300">
+                                    <select className="w-full px-4 py-2 border rounded-lg border-gray-300 focus:border-[#675FFF] focus:outline-none">
                                         <option>Select</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label className="block text-sm text-gray-700 mb-1">Voice</label>
-                                    <select className="w-full px-4 py-2 border rounded-lg border-gray-300">
+                                    <select className="w-full px-4 py-2 border rounded-lg border-gray-300  focus:border-[#675FFF] focus:outline-none">
                                         <option>Select</option>
                                     </select>
                                 </div>
@@ -233,13 +240,13 @@ export default function InBoundCalls() {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm text-gray-700 mb-1">Choose Calendar</label>
-                                    <select className="w-full px-4 py-2 border rounded-lg border-gray-300">
+                                    <select className="w-full px-4 py-2 border rounded-lg border-gray-300  focus:border-[#675FFF] focus:outline-none">
                                         <option>Select</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label className="block text-sm text-gray-700 mb-1">Max Call Time (Minutes)</label>
-                                    <select className="w-full px-4 py-2 border rounded-lg border-gray-300">
+                                    <select className="w-full px-4 py-2 border rounded-lg border-gray-300  focus:border-[#675FFF] focus:outline-none">
                                         <option>Select</option>
                                     </select>
                                 </div>
@@ -247,7 +254,7 @@ export default function InBoundCalls() {
 
                             <div>
                                 <label className="block text-sm text-gray-700 mb-1">Target Lists</label>
-                                <select className="w-full px-4 py-2 border rounded-lg border-gray-300">
+                                <select className="w-full px-4 py-2 border rounded-lg border-gray-300 hover:border-[#675FFF] focus:border-[#675FFF] focus:outline-none">
                                     <option>Select</option>
                                 </select>
                                 <button className="text-[#7065F0] text-sm font-medium mt-1">+ Create New Contact List</button>
@@ -255,7 +262,7 @@ export default function InBoundCalls() {
 
                             <div>
                                 <label className="block text-sm text-gray-700 mb-1">Choose an Agent</label>
-                                <select className="w-full px-4 py-2 border rounded-lg border-gray-300">
+                                <select className="w-full px-4 py-2 border rounded-lg border-gray-300 hover:border-[#675FFF] focus:border-[#675FFF] focus:outline-none">
                                     <option>Select</option>
                                 </select>
                             </div>
@@ -264,9 +271,9 @@ export default function InBoundCalls() {
                                 <label className="text-sm text-gray-600 font-medium block mb-1">
                                     Phone Number
                                 </label>
-                                <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-4 py-2">
+                                <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-4 py-2 hover:border-[#675FFF] focus-within:border-[#675FFF]">
                                     <select
-                                        className="outline-none bg-transparent pr-2 text-xl"
+                                        className="outline-none bg-transparent pr-2 text-xl focus:outline-none"
                                         value={countries[0].code}
                                     >
                                         {countries.map((country) => (
@@ -278,7 +285,7 @@ export default function InBoundCalls() {
                                     <input
                                         type="tel"
                                         placeholder="Enter number"
-                                        className="w-full outline-none"
+                                        className="w-full outline-none focus:outline-none"
                                     />
                                 </div>
                             </div>
@@ -303,7 +310,7 @@ export default function InBoundCalls() {
                                 <label className="block text-sm text-gray-700 mb-1">Your Catch Phrase</label>
                                 <textarea
                                     placeholder="Enter your catch phrase"
-                                    className="w-full px-4 py-2 border rounded-lg border-gray-300"
+                                    className="w-full px-4 py-2 border rounded-lg border-gray-300 hover:border-[#675FFF] focus:border-[#675FFF] focus:outline-none resize-none"
                                     rows={2}
                                 />
                             </div>
@@ -311,16 +318,16 @@ export default function InBoundCalls() {
                                 <label className="block text-sm text-gray-700 mb-1">Your Call Script</label>
                                 <textarea
                                     placeholder="Enter your call script"
-                                    className="w-full px-4 py-2 border rounded-lg border-gray-300"
+                                    className="w-full px-4 py-2 border rounded-lg border-gray-300 hover:border-[#675FFF] focus:border-[#675FFF] focus:outline-none resize-none"
                                     rows={4}
                                 />
                             </div>
 
                             <div className="flex gap-4 mt-6 justify-between">
-                                <button onClick={() => setSecondModel(true)} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                                <button onClick={() => setSecondModel(true)} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px] hover:border-[#675FFF] focus:border-[#675FFF] focus:outline-none">
                                     Test Call
                                 </button>
-                                <button className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]">
+                                <button className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px] hover:bg-[#5A52E5] focus:bg-[#5A52E5] focus:outline-none">
                                     Launch Calls
                                 </button>
                             </div>
@@ -351,7 +358,7 @@ export default function InBoundCalls() {
                                 onClick={() => setShowModal(false)}
                                 className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
                             >
-                                I Haven’t Received A Call
+                                I Haven't Received A Call
                             </button>
                             <button
                                 className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
