@@ -1248,7 +1248,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                     <p>Text Length</p>
                                     <div className="relative group">
                                         <Info className="text-gray-500 cursor-pointer" size={16} />
-                                        <div className="absolute bottom-full mb-1 w-60 left-3 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:flex transition-opacity duration-200 z-10">
+                                        <div className="absolute bottom-full mb-1 w-60 left-8 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:flex transition-opacity duration-200 z-10">
                                             Choose the optimal length for your emails — see industry benchmarks in our Help Center.
                                         </div>
                                     </div>

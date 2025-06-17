@@ -164,3 +164,6 @@ body {
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
+.react-datepicker-popper {
+  left: 45% !important;
+}
