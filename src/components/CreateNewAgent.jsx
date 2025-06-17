@@ -5,7 +5,7 @@ import channel from '../assets/svg/sequence_channel.svg'
 import template from '../assets/svg/sequence_template.svg'
 import { ChevronDown, X } from 'lucide-react';
 import { LuRefreshCw } from 'react-icons/lu';
-import { AddPlus, CheckedCheckbox, CrossDelete, EmptyCheckbox, RequestSend } from '../icons/icons'
+import { AddPlus, CheckedCheckbox, CrossDelete, EmptyCheckbox, RequestSend, CheckIcon, RightArrowIcon } from '../icons/icons'
 import { appointmentSetter, getAppointmentSetterById, updateAppointmentSetter } from '../api/appointmentSetter'
 import AgentPreviewModal from './AgentPreview'
 import { getGoogleCalendarAccounts, getInstaAccounts, getWhatsappAccounts } from '../api/brainai'
@@ -46,6 +46,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const [whatsappData, setWhatsappData] = useState([])
     const [googleCalendarData, setGoogleCalendarData] = useState([])
     const [errorMessage, setErrorMessage] = useState("")
+    const [step, setStep] = useState(1)
+    const [statusSteps, setStatusSteps] = useState({ step1: false, step2: false, step3: false })
 
     const handleInstagram = async () => {
         try {
@@ -674,9 +676,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                         {/* <button onClick={() => setPreviewAgent(true)} className="bg-white text-[16px] font-[500] text-[#5A687C] border-[1.5px] border-[#E1E4EA] rounded-md text-sm md:text-base px-4 py-2">
                             Preview Agent
                         </button> */}
-                        <button disabled={loading} onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()} className="bg-[#675FFF] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
+                        {/* <button disabled={loading} onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()} className="bg-[#675FFF] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
                             {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : updateAgentStatus ? "Update Agent" : " Create Agent"}
-                        </button>
+                        </button> */}
                     </div>
                 </div>
                 <div className="flex flex-col gap-8 w-full">
@@ -688,29 +690,42 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                         Adjust agent conversation behavior based on your need
                     </p>
                 </header> */}
-                    <div className="flex flex-col gap-8 w-full">
-                        {/* Agent Name */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                            <div className="flex flex-col gap-1.5 w-full">
-                                <label className="text-sm font-medium text-[#1e1e1e]">
-                                    Agent Name<span className="text-[#675fff]">*</span>
-                                </label>
-                                <input
-                                    type="text"
-                                    name='agent_name'
-                                    value={formData?.agent_name}
-                                    onChange={handleChange}
-                                    className={`w-full bg-white p-2 rounded-lg border ${errors.agent_name ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                                    placeholder="Enter your agent name"
-                                />
-                                {errors.agent_name && <p className="text-red-500 text-sm mt-1">{errors.agent_name}</p>}
+                    <div className="flex flex-col gap-4 w-full">
+                        <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
+                            <div className="flex justify-between items-center" onClick={() => {
+                                setStep(1)
+                                setStatusSteps((prev) => ({ ...prev, step1: false }))
+                            }}>
+                                <div className='flex items-center gap-2'>
+                                    <p className={`${step === 1 ? 'bg-[#675FFF]' : statusSteps.step1 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step1 ? <CheckIcon /> : '1'}</p>
+                                    <p className={`text-[14px] font-[600] ${step === 1 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>Identity</p>
+                                </div>
+                                {step !== 1 && <RightArrowIcon />}
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                                <div className="flex flex-col gap-1.5 flex-1">
-                                    <label className="text-sm font-medium text-[#1e1e1e]">
-                                        Gender<span className="text-[#675fff]">*</span>
-                                    </label>
-                                    {/* <select
+                            {step === 1 && <div className="flex flex-col gap-5">
+                                <hr style={{ color: "#E1E4EA" }} />
+                                {/* Agent Name */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                                    <div className="flex flex-col gap-1.5 w-full">
+                                        <label className="text-sm font-medium text-[#1e1e1e]">
+                                            Agent Name<span className="text-[#675fff]">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name='agent_name'
+                                            value={formData?.agent_name}
+                                            onChange={handleChange}
+                                            className={`w-full bg-white p-2 rounded-lg border ${errors.agent_name ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
+                                            placeholder="Enter your agent name"
+                                        />
+                                        {errors.agent_name && <p className="text-red-500 text-sm mt-1">{errors.agent_name}</p>}
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                                        <div className="flex flex-col gap-1.5 flex-1">
+                                            <label className="text-sm font-medium text-[#1e1e1e]">
+                                                Gender<span className="text-[#675fff]">*</span>
+                                            </label>
+                                            {/* <select
                                         name='gender'
                                         value={formData?.gender}
                                         onChange={handleChange}
@@ -719,61 +734,61 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         <option value="male">Male</option>
                                         <option value="female">Female</option>
                                     </select> */}
-                                    <SelectDropdown
-                                        name="gender"
-                                        options={genderOptions}
-                                        value={formData?.gender}
-                                        onChange={(updated) => {
-                                            setFormData((prev) => ({
-                                                ...prev, gender: updated
-                                            }))
-                                            setErrors((prev) => ({
-                                                ...prev, gender: ""
-                                            }))
-                                        }}
-                                        placeholder="Select"
-                                        className=""
-                                        errors={errors}
-                                    />
-                                    {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
+                                            <SelectDropdown
+                                                name="gender"
+                                                options={genderOptions}
+                                                value={formData?.gender}
+                                                onChange={(updated) => {
+                                                    setFormData((prev) => ({
+                                                        ...prev, gender: updated
+                                                    }))
+                                                    setErrors((prev) => ({
+                                                        ...prev, gender: ""
+                                                    }))
+                                                }}
+                                                placeholder="Select"
+                                                className=""
+                                                errors={errors}
+                                            />
+                                            {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
+                                        </div>
+                                        <div className="flex flex-col gap-1.5 w-full">
+                                            <label className="text-sm font-medium text-[#1e1e1e]">
+                                                Age<span className="text-[#675fff]">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name='age'
+                                                value={formData?.age}
+                                                onChange={(e) => {
+                                                    const { name, value } = e.target;
+                                                    if (value === '' || /^\d+$/.test(value)) {
+                                                        setFormData((prev) => ({
+                                                            ...prev,
+                                                            [name]: value === '' ? '' : parseInt(value, 10)
+                                                        }));
+                                                        setErrors((prev) => ({ ...prev, [name]: '' }))
+                                                    }
+                                                }}
+                                                className={`w-full bg-white p-2 rounded-lg border ${errors.age ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
+                                                placeholder="Enter your agent age"
+                                            />
+                                            {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col gap-1.5 w-full">
-                                    <label className="text-sm font-medium text-[#1e1e1e]">
-                                        Age<span className="text-[#675fff]">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name='age'
-                                        value={formData?.age}
-                                        onChange={(e) => {
-                                            const { name, value } = e.target;
-                                            if (value === '' || /^\d+$/.test(value)) {
-                                                setFormData((prev) => ({
-                                                    ...prev,
-                                                    [name]: value === '' ? '' : parseInt(value, 10)
-                                                }));
-                                                setErrors((prev) => ({ ...prev, [name]: '' }))
-                                            }
-                                        }}
-                                        className={`w-full bg-white p-2 rounded-lg border ${errors.age ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                                        placeholder="Enter your agent age"
-                                    />
-                                    {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
-                                </div>
-                            </div>
-                        </div>
 
 
-                        {/* Agent Personality and Language */}
-                        <div className="flex flex-col md:flex-row  gap-4 w-full">
-                            <div className="flex flex-col gap-1.5 flex-1">
-                                <div className='flex justify-between items-center'>
-                                    <label className="text-sm font-medium text-[#1e1e1e]">
-                                        Agent personality<span className="text-[#675fff]">*</span>
-                                    </label>
-                                    <a href='/agent-personality-documentation' target='_blank' className='flex items-center hover:underline gap-1 text-[14px] text-[#675FFF] font-[500]'>Learn more<RequestSend status={true} /></a>
-                                </div>
-                                {/* <select
+                                {/* Agent Personality and Language */}
+                                <div className="flex flex-col md:flex-row  gap-4 w-full">
+                                    <div className="flex flex-col gap-1.5 flex-1">
+                                        <div className='flex justify-between items-center'>
+                                            <label className="text-sm font-medium text-[#1e1e1e]">
+                                                Agent personality<span className="text-[#675fff]">*</span>
+                                            </label>
+                                            <a href='/agent-personality-documentation' target='_blank' className='flex items-center hover:underline gap-1 text-[14px] text-[#675FFF] font-[500]'>Learn more<RequestSend status={true} /></a>
+                                        </div>
+                                        {/* <select
                                     name='agent_personality'
                                     value={formData?.agent_personality}
                                     onChange={handleChange}
@@ -784,25 +799,25 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     ))}
                                 </select> */}
 
-                                <SelectDropdown
-                                    name="agent_personality"
-                                    options={agentsPersonalityOptions}
-                                    value={formData?.agent_personality}
-                                    onChange={(updated) => {
-                                        setFormData((prev) => ({
-                                            ...prev, agent_personality: updated
-                                        }))
-                                        setErrors((prev) => ({
-                                            ...prev, agent_personality: ""
-                                        }))
-                                    }}
-                                    placeholder="Choose your agent personality"
-                                    className=""
-                                    errors={errors}
-                                />
-                                {errors.agent_personality && <p className="text-red-500 text-sm mt-1">{errors.agent_personality}</p>}
-                            </div>
-                            {/* <div className="flex flex-col gap-1.5 flex-1">
+                                        <SelectDropdown
+                                            name="agent_personality"
+                                            options={agentsPersonalityOptions}
+                                            value={formData?.agent_personality}
+                                            onChange={(updated) => {
+                                                setFormData((prev) => ({
+                                                    ...prev, agent_personality: updated
+                                                }))
+                                                setErrors((prev) => ({
+                                                    ...prev, agent_personality: ""
+                                                }))
+                                            }}
+                                            placeholder="Choose your agent personality"
+                                            className=""
+                                            errors={errors}
+                                        />
+                                        {errors.agent_personality && <p className="text-red-500 text-sm mt-1">{errors.agent_personality}</p>}
+                                    </div>
+                                    {/* <div className="flex flex-col gap-1.5 flex-1">
                             <label className="text-sm font-medium text-[#1e1e1e]">
                                 Agent Language<span className="text-[#675fff]">*</span>
                             </label>
@@ -816,194 +831,437 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <option value="french">French</option>
                             </select>
                         </div> */}
-                            <div className='flex flex-col gap-1.5 flex-1'>
-                                <div className="relative" ref={dropdownRef}>
+                                    <div className='flex flex-col gap-1.5 flex-1'>
+                                        <div className="relative" ref={dropdownRef}>
+                                            <label className="text-sm font-medium text-[#1e1e1e]">
+                                                Agent Language<span className="text-[#675fff]">*</span>
+                                            </label>
+                                            <button
+                                                onClick={() => setShowLanguageSelector((prev) => !prev)}
+                                                className={`w-full flex justify-between items-center mt-1 bg-white border ${errors.agent_language ? 'border-red-500' : 'border-[#e1e4ea]'} rounded-lg px-3 py-[7.5px] cursor-pointer text-[#5A687C] focus:outline-none focus:border-[#675FFF]`}
+                                            >
+                                                <span className={`${formData.agent_language?.length > 0 ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`} >{formData.agent_language?.length > 0
+                                                    ? formData.agent_language.join(', ')
+                                                    : 'Select Languages'}</span>
+                                                <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showLanguageSelector ? 'transform rotate-180' : ''}`} />
+                                            </button>
+                                            {showLanguageSelector && (
+                                                <div className="absolute z-50 mt-1 w-full">
+                                                    <LanguageSelector
+                                                        value={formData.agent_language}
+                                                        onChange={(updated) =>
+                                                            setFormData((prev) => ({
+                                                                ...prev,
+                                                                agent_language: updated,
+                                                            }))
+                                                        }
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+                                        {errors.agent_language && <p className="text-red-500 text-sm mt-1">{errors.agent_language}</p>}
+                                    </div>
+
+                                </div>
+
+                                {/* Emoji Frequency */}
+                                <div className="flex flex-col gap-3 p-3.5 bg-[#fff] border border-[#E1E4EA] rounded-[10px] w-full">
+                                    <div className='flex gap-1'>
+                                        <div className="text-base font-medium text-[#1e1e1e]">
+                                            Emoji Frequency<span className="text-[#675fff]">*</span>
+                                        </div>
+                                        <div className="text-xs text-gray-500">
+                                            (100% is implemented on every message)
+                                        </div>
+                                    </div>
                                     <label className="text-sm font-medium text-[#1e1e1e]">
-                                        Agent Language<span className="text-[#675fff]">*</span>
+                                        Number of followups
                                     </label>
-                                    <button
-                                        onClick={() => setShowLanguageSelector((prev) => !prev)}
-                                        className={`w-full flex justify-between items-center mt-1 bg-white border ${errors.agent_language ? 'border-red-500' : 'border-[#e1e4ea]'} rounded-lg px-3 py-[7.5px] cursor-pointer text-[#5A687C] focus:outline-none focus:border-[#675FFF]`}
-                                    >
-                                        <span className={`${formData.agent_language?.length > 0 ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`} >{formData.agent_language?.length > 0
-                                            ? formData.agent_language.join(', ')
-                                            : 'Select Languages'}</span>
-                                        <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showLanguageSelector ? 'transform rotate-180' : ''}`} />
-                                    </button>
-                                    {showLanguageSelector && (
-                                        <div className="absolute z-50 mt-1 w-full">
-                                            <LanguageSelector
-                                                value={formData.agent_language}
-                                                onChange={(updated) =>
+
+                                    {/* Using grid layout */}
+                                    <div className="grid grid-col-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 w-full">
+                                        {emojiOptions.map((option) => (
+                                            <div
+                                                key={option.id}
+                                                value={formData.emoji_frequency}
+                                                className={`p-2 cursor-pointer  text-center rounded-lg border  ${formData.emoji_frequency === option.value
+                                                    ? "bg-[#335bfb1a] border-[#675fff]"
+                                                    : "bg-white border-[#e1e4ea]"
+                                                    }`}
+                                                onClick={() =>
                                                     setFormData((prev) => ({
                                                         ...prev,
-                                                        agent_language: updated,
+                                                        emoji_frequency: option.value,
                                                     }))
                                                 }
-                                            />
-                                        </div>
-                                    )}
-                                </div>
-                                {errors.agent_language && <p className="text-red-500 text-sm mt-1">{errors.agent_language}</p>}
-                            </div>
+                                            >
+                                                {option.label === "25%" ? `${option.label} (Recommended)` : option.label}
 
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <hr style={{ color: "#E1E4EA" }} />
+
+                                <div className="flex items-center gap-2">
+                                    <button onClick={() => {
+                                        setStatusSteps((prev) => ({ ...prev, step1: true }))
+                                        setStep(2)
+                                    }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
+                                    <button className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                                </div>
+
+                            </div>}
                         </div>
 
-                        {/* Emoji Frequency */}
-                        <div className="flex flex-col gap-3 p-3.5 bg-[#fff] border border-[#E1E4EA] rounded-[10px] w-full">
-                            <div className='flex gap-1'>
-                                <div className="text-base font-medium text-[#1e1e1e]">
-                                    Emoji Frequency<span className="text-[#675fff]">*</span>
+                        <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
+                            <div className="flex justify-between items-center" onClick={() => {
+                                setStep(2)
+                                setStatusSteps((prev) => ({ ...prev, step2: false }))
+                            }}>
+                                <div className='flex items-center gap-2'>
+                                    <p className={`${step === 2 ? 'bg-[#675FFF]' : statusSteps.step2 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step2 ? <CheckIcon /> : '2'}</p>
+                                    <p className={`text-[14px] font-[600] ${step === 2 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>Objective</p>
                                 </div>
-                                <div className="text-xs text-gray-500">
-                                    (100% is implemented on every message)
-                                </div>
+                                {step !== 2 && <RightArrowIcon />}
                             </div>
-                            <label className="text-sm font-medium text-[#1e1e1e]">
-                                Number of followups
-                            </label>
+                            {step === 2 && <div className="flex flex-col gap-5">
+                                <hr style={{ color: "#E1E4EA" }} />
 
-                            {/* Using grid layout */}
-                            <div className="grid grid-col-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 w-full">
-                                {emojiOptions.map((option) => (
-                                    <div
-                                        key={option.id}
-                                        value={formData.emoji_frequency}
-                                        className={`p-2 cursor-pointer  text-center rounded-lg border  ${formData.emoji_frequency === option.value
-                                            ? "bg-[#335bfb1a] border-[#675fff]"
-                                            : "bg-white border-[#e1e4ea]"
-                                            }`}
-                                        onClick={() =>
+                                {/* Business Description and Offer */}
+                                <div className="flex flex-col md:flex-row gap-4 w-full">
+                                    <div className="flex flex-col gap-1.5 flex-1">
+                                        <label className="text-sm font-medium text-[#1e1e1e]">
+                                            Business description in 1 sentence
+                                            <span className="text-[#675fff]">*</span>
+                                        </label>
+                                        <textarea
+                                            name='business_description'
+                                            onChange={handleChange}
+                                            value={formData?.business_description}
+                                            rows={4}
+                                            className={`w-full bg-white p-2 rounded-lg border  ${errors.business_description ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
+                                            placeholder="Enter your business description"
+                                        />
+                                        {errors.business_description && <p className="text-red-500 text-sm mt-1">{errors.business_description}</p>}
+                                    </div>
+                                    <div className="flex flex-col gap-1.5 flex-1">
+                                        <label className="text-sm font-medium text-[#1e1e1e]">
+                                            Your business offer<span className="text-[#675fff]">*</span>
+                                        </label>
+                                        <textarea
+                                            name='your_business_offer'
+                                            onChange={handleChange}
+                                            value={formData?.your_business_offer}
+                                            rows={4}
+                                            className={`w-full bg-white p-2 rounded-lg border  ${errors.your_business_offer ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
+                                            placeholder="Share everything you want the AI to know about your offer"
+                                        />
+                                        {errors.your_business_offer && <p className="text-red-500 text-sm mt-1">{errors.your_business_offer}</p>}
+                                    </div>
+                                </div>
+
+                                {/* Objective of the agent */}
+                                <div className="flex flex-col items-start gap-3 p-3.5 w-full bg-[#fff] border border-[#E1E4EA] rounded-[10px]">
+                                    <div className="flex items-center gap-2.5 w-full">
+                                        <div className="flex-1">
+                                            <div className="font-medium text-[#1e1e1e] text-base">Objective of the agent</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col md:flex-row items-start gap-4">
+                                        {objectiveAgent.map((each) => (
+                                            <div key={each.key} className="flex items-center gap-2 cursor-pointer" onClick={() => {
+                                                setFormData((prev) => ({
+                                                    ...prev, objective_of_the_agent: each.key,
+                                                    webpage_link: "",
+                                                    // webpage_type: "",
+                                                    calendar_choosed: '',
+                                                    whatsapp_number: ""
+                                                }))
+                                                setErrors((prev) => ({ ...prev, objective_of_the_agent: "" }))
+                                            }}
+                                            >
+                                                {/* <input
+                                        type="radio"
+                                        name="objective_type"
+                                        value={each.key}
+                                        checked={formData.objective_of_the_agent === each.key}
+                                        onChange={(e) =>
                                             setFormData((prev) => ({
                                                 ...prev,
-                                                emoji_frequency: option.value,
+                                                objective_of_the_agent: e.target.value,
+                                            }))
+                                        }
+                                    /> */}
+                                                <div>{formData.objective_of_the_agent === each.key ? <CheckedCheckbox /> : <EmptyCheckbox />}</div>
+
+                                                <span className="text-sm font-medium text-gray-700">{each.label}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {errors.objective_of_the_agent && <p className="text-red-500 text-sm mt-1">{errors.objective_of_the_agent}</p>}
+                                    {renderObjectiveAgent()}
+                                </div>
+
+
+                                {/* Followup Options */}
+                                <div className="flex flex-col gap-3 p-3.5 bg-[#fff] border border-[#E1E4EA] rounded-[10px] w-full">
+                                    <div className="flex items-center gap-2.5">
+                                        <button
+                                            onClick={() => setFormData((prev) => ({
+                                                ...prev,
+                                                is_followups_enabled: !formData.is_followups_enabled
+                                            }))}
+                                            className={`relative w-11 h-6 flex items-center rounded-full transition-colors duration-300 ${formData.is_followups_enabled ? "bg-[#675fff]" : "bg-gray-300"
+                                                }`}
+                                        >
+                                            <span
+                                                className={`inline-block w-5 h-5 transform bg-white rounded-full transition-transform duration-300 ${formData.is_followups_enabled ? "translate-x-5" : "translate-x-1"
+                                                    }`}
+                                            />
+                                        </button>
+                                        <span className="font-medium text-base text-black">
+                                            Enable followups
+                                        </span>
+                                    </div>
+
+
+                                    <div className="flex flex-col gap-1.5 w-full">
+                                        <label className="text-sm font-medium text-[#1e1e1e]">
+                                            Number of followups
+                                        </label>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            max="10"
+                                            disabled={!formData.is_followups_enabled}
+                                            name="number_of_followups"
+                                            value={formData?.follow_up_details?.number_of_followups ?? ''}
+                                            onChange={(e) => {
+                                                const { name, value } = e.target;
+                                                let parsedValue = parseInt(value);
+
+                                                if (value === '') {
+                                                    parsedValue = '';
+                                                } else if (!isNaN(parsedValue)) {
+                                                    parsedValue = Math.max(1, Math.min(10, parsedValue));
+                                                }
+                                                console.log(parsedValue)
+
+                                                setFormData((prev) => ({
+                                                    ...prev,
+                                                    follow_up_details: {
+                                                        ...prev.follow_up_details,
+                                                        [name]: parsedValue
+                                                    }
+                                                }));
+
+                                                // Clear error if value is valid (including 0)
+                                                if (value === '' || isNaN(parsedValue)) {
+                                                    setErrors((prev) => ({ ...prev, [name]: 'This field is required' }));
+                                                } else {
+                                                    setErrors((prev) => ({ ...prev, [name]: '' }));
+                                                }
+                                            }}
+
+                                            className={`w-full p-2 bg-white rounded-lg border ${errors.number_of_followups ? 'border-red-500' : 'border-[#e1e4ea]'} no-spinner focus:outline-none focus:border-[#675FFF]`}
+                                            placeholder="Please enter a number from 1 to 10"
+                                        />
+
+                                        {errors.number_of_followups && <p className="text-red-500 text-sm mt-1">{errors.number_of_followups}</p>}
+
+                                        {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
+                                {followupOptions.map((option) => (
+                                    <div
+                                        key={option.id}
+                                        className={`p-2 cursor-pointer text-center rounded-lg border  ${formData.follow_up_details.number_of_followups === option.value ? "bg-[#335bfb1a] border-[#675fff]" : "bg-white border-[#e1e4ea]"
+                                            }`}
+                                        onClick={() =>
+                                            formData.is_followups_enabled &&
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                follow_up_details: {
+                                                    ...prev.follow_up_details,
+                                                    number_of_followups: option.value
+                                                },
                                             }))
                                         }
                                     >
-                                        {option.label === "25%" ? `${option.label} (Recommended)` : option.label}
-
+                                        {option.value === 2 ? `${option.value} (Recommended)` : option.value}
                                     </div>
                                 ))}
-                            </div>
-                        </div>
+                            </div> */}
+                                    </div>
 
-                        {/* Business Description and Offer */}
-                        <div className="flex flex-col md:flex-row gap-4 w-full">
-                            <div className="flex flex-col gap-1.5 flex-1">
-                                <label className="text-sm font-medium text-[#1e1e1e]">
-                                    Business description in 1 sentence
-                                    <span className="text-[#675fff]">*</span>
-                                </label>
-                                <textarea
-                                    name='business_description'
-                                    onChange={handleChange}
-                                    value={formData?.business_description}
-                                    rows={4}
-                                    className={`w-full bg-white p-2 rounded-lg border  ${errors.business_description ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                    placeholder="Enter your business description"
-                                />
-                                {errors.business_description && <p className="text-red-500 text-sm mt-1">{errors.business_description}</p>}
-                            </div>
-                            <div className="flex flex-col gap-1.5 flex-1">
-                                <label className="text-sm font-medium text-[#1e1e1e]">
-                                    Your business offer<span className="text-[#675fff]">*</span>
-                                </label>
-                                <textarea
-                                    name='your_business_offer'
-                                    onChange={handleChange}
-                                    value={formData?.your_business_offer}
-                                    rows={4}
-                                    className={`w-full bg-white p-2 rounded-lg border  ${errors.your_business_offer ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                    placeholder="Share everything you want the AI to know about your offer"
-                                />
-                                {errors.your_business_offer && <p className="text-red-500 text-sm mt-1">{errors.your_business_offer}</p>}
-                            </div>
-                        </div>
-
-                        {/* Prompt */}
-                        <div className="flex flex-col gap-1.5 flex-1">
-                            <label className="text-sm font-medium text-[#1e1e1e]">
-                                Prompt
-                                <span className="text-[#675fff]">*</span>
-                            </label>
-                            <p className='text-[#5A687C] text-[14px] font-[400]'>Provide any guidelines, instructions, or relevant context to shape your AI agent’s behavior.</p>
-                            <textarea
-                                name='prompt'
-                                onChange={handleChange}
-                                value={formData?.prompt}
-                                rows={3}
-                                className={`w-full bg-white p-2 rounded-lg border  ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                placeholder="Enter your prompt here"
-                            />
-                            {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
-                        </div>
-
-                        {/* Qualification Questions */}
-                        <div className="flex flex-col gap-1.5 w-full">
-                            <label className="text-sm font-medium text-[#1e1e1e]">
-                                Qualification questions<span className="text-[#675fff]">*</span>
-                            </label>
-                            {formData.qualification_questions.map((question, index) => (
-                                <div key={index} className="flex items-center gap-2 w-full">
-                                    <input
-                                        type="text"
-                                        name={`qualification_questions[${index}]`}
-                                        value={question}
-                                        onChange={handleChange}
-                                        placeholder="Enter your Question"
-                                        className={`flex-1 bg-white p-2 rounded-lg border ${errors[`qualification_questions[${index}]`] ? "border-red-500" : "border-[#e1e4ea]"} focus:outline-none focus:border-[#675FFF]`} />
-                                    {index === formData.qualification_questions.length - 1 ? (
-                                        <button type="button" onClick={addQuestion}>
-                                            <AddPlus />
-                                        </button>
-                                    ) : (
-                                        <button type="button" onClick={() =>
-                                            deleteQuestion(index)
-                                        }>
-                                            <CrossDelete />
-                                        </button>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Sequence Section */}
-                        <div className="p-3 w-full relative bg-white rounded-2xl  border border-solid border-[#e1e4ea]">
-                            <div className="font-medium text-[#1e1e1e] text-base py-2">
-                                Sequence
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                                {sequenceCards.map((card, index) => (
-                                    <React.Fragment key={card.id}>
-                                        {index > 0 && (
-                                            <div className="h-[2px] w-[25px] mx-1 bg-[#e1e4ea]" />
-                                        )}
-
-                                        <div
-                                            className={`flex flex-col w-[25%] items-center justify-center gap-2.5 p-2 bg-[#f9fafb] rounded-[11px] border ${card.selected ? "border-[#335bfb66]" : "border-[#e1e4ea]"
-                                                }`}
-                                        >
-                                            <div className="flex items-center gap-2 w-full">
-                                                <div
-                                                    className={`flex items-center gap-2.5 p-[7px] rounded-[10px]`}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                                        {messageTimeRange.map((each) => (
+                                            <div key={each.key} className="flex flex-col items-start gap-1.5 w-full">
+                                                <label className="font-medium text-[#1e1e1e] text-sm">
+                                                    {each.label}<span className="text-[#675fff]">*</span>
+                                                </label>
+                                                <div className="flex items-center w-full">
+                                                    <div className="flex relative items-center justify-between w-full">
+                                                        {/* <select
+                                                    className="flex-1 bg-transparent text-text-black text-base focus:outline-none appearance-none"
+                                                    name={each.key}
+                                                    value={formData.follow_up_details[each.key]}
+                                                    disabled={!formData.is_followups_enabled}
+                                                    onChange={(e) => {
+                                                        const { name, value } = e.target;
+                                                        setFormData((prev) => ({
+                                                            ...prev,
+                                                            follow_up_details: {
+                                                                ...prev.follow_up_details,
+                                                                [name]: parseInt(value),
+                                                            },
+                                                        }));
+                                                    }}
                                                 >
-                                                    <img
-                                                        alt={card.title}
-                                                        src={card.iconSrc}
-                                                    />
-
-                                                </div>
-                                                <div className="font-semibold text-[#1e1e1e] text-base">
-                                                    {card.title}
+                                                    {each.options.map((e) => (
+                                                        <option key={e} value={e}>{e}</option>
+                                                    ))}
+                                                </select> */}
+                                                        <SelectDropdown
+                                                            name={each.key}
+                                                            options={each.options}
+                                                            value={formData.follow_up_details[each.key]}
+                                                            onChange={(updated) => {
+                                                                setFormData((prev) => ({
+                                                                    ...prev,
+                                                                    follow_up_details: {
+                                                                        ...prev.follow_up_details,
+                                                                        [each.key]: parseInt(updated),
+                                                                    },
+                                                                }));
+                                                            }}
+                                                            placeholder="Select"
+                                                            className="w-full"
+                                                            errors={errors}
+                                                            disabled={!formData.is_followups_enabled}
+                                                        />
+                                                        <span className="text-[#5A687C] absolute right-8 text-[16px] font-[400]">Minutes</span>
+                                                    </div>
                                                 </div>
                                             </div>
+                                        ))}
 
-                                            <div className="w-full h-px bg-[#e1e4ea]" />
+                                    </div>
 
-                                            <div className="flex items-center gap-2 w-full">
-                                                <div className="relative w-full">
-                                                    {/* <select
+
+                                </div>
+
+                                <hr style={{ color: "#E1E4EA" }} />
+
+                                <div className="flex items-center gap-2">
+                                    <button onClick={() => {
+                                        setStatusSteps((prev) => ({ ...prev, step2: true }))
+                                        setStep(3)
+                                    }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
+                                    <button className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                                </div>
+                            </div>}
+                        </div>
+
+                        <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
+                            <div className="flex justify-between items-center" onClick={() => {
+                                setStep(3)
+                                setStatusSteps((prev) => ({ ...prev, step3: false }))
+                            }}>
+                                <div className='flex items-center gap-2'>
+                                    <p className={`${step === 3 ? 'bg-[#675FFF]' : statusSteps.step3 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step3 ? <CheckIcon /> : '3'}</p>
+                                    <p className={`text-[14px] font-[600] ${step === 3 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>Behavior</p>
+                                </div>
+                                {step !== 3 && <RightArrowIcon />}
+                            </div>
+                            {step === 3 && <div className="flex flex-col gap-5">
+                                <hr style={{ color: "#E1E4EA" }} />
+
+                                {/* Prompt */}
+                                <div className="flex flex-col gap-1.5 flex-1">
+                                    <label className="text-sm font-medium text-[#1e1e1e]">
+                                        Prompt
+                                        <span className="text-[#675fff]">*</span>
+                                    </label>
+                                    <p className='text-[#5A687C] text-[14px] font-[400]'>Provide any guidelines, instructions, or relevant context to shape your AI agent’s behavior.</p>
+                                    <textarea
+                                        name='prompt'
+                                        onChange={handleChange}
+                                        value={formData?.prompt}
+                                        rows={3}
+                                        className={`w-full bg-white p-2 rounded-lg border  ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
+                                        placeholder="Enter your prompt here"
+                                    />
+                                    {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
+                                </div>
+
+                                {/* Qualification Questions */}
+                                <div className="flex flex-col gap-1.5 w-full">
+                                    <label className="text-sm font-medium text-[#1e1e1e]">
+                                        Qualification questions<span className="text-[#675fff]">*</span>
+                                    </label>
+                                    {formData.qualification_questions.map((question, index) => (
+                                        <div key={index} className="flex items-center gap-2 w-full">
+                                            <input
+                                                type="text"
+                                                name={`qualification_questions[${index}]`}
+                                                value={question}
+                                                onChange={handleChange}
+                                                placeholder="Enter your Question"
+                                                className={`flex-1 bg-white p-2 rounded-lg border ${errors[`qualification_questions[${index}]`] ? "border-red-500" : "border-[#e1e4ea]"} focus:outline-none focus:border-[#675FFF]`} />
+                                            {index === formData.qualification_questions.length - 1 ? (
+                                                <button type="button" onClick={addQuestion}>
+                                                    <AddPlus />
+                                                </button>
+                                            ) : (
+                                                <button type="button" onClick={() =>
+                                                    deleteQuestion(index)
+                                                }>
+                                                    <CrossDelete />
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Sequence Section */}
+                                <div className="p-3 w-full relative bg-white rounded-2xl  border border-solid border-[#e1e4ea]">
+                                    <div className="font-medium text-[#1e1e1e] text-base py-2">
+                                        Sequence
+                                    </div>
+
+                                    <div className="flex items-center justify-between">
+                                        {sequenceCards.map((card, index) => (
+                                            <React.Fragment key={card.id}>
+                                                {index > 0 && (
+                                                    <div className="h-[2px] w-[25px] mx-1 bg-[#e1e4ea]" />
+                                                )}
+
+                                                <div
+                                                    className={`flex flex-col w-[25%] items-center justify-center gap-2.5 p-2 bg-[#f9fafb] rounded-[11px] border ${card.selected ? "border-[#335bfb66]" : "border-[#e1e4ea]"
+                                                        }`}
+                                                >
+                                                    <div className="flex items-center gap-2 w-full">
+                                                        <div
+                                                            className={`flex items-center gap-2.5 p-[7px] rounded-[10px]`}
+                                                        >
+                                                            <img
+                                                                alt={card.title}
+                                                                src={card.iconSrc}
+                                                            />
+
+                                                        </div>
+                                                        <div className="font-semibold text-[#1e1e1e] text-base">
+                                                            {card.title}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="w-full h-px bg-[#e1e4ea]" />
+
+                                                    <div className="flex items-center gap-2 w-full">
+                                                        <div className="relative w-full">
+                                                            {/* <select
                                                                         name={card.key}
                                                                         className="w-full h-8 py-1 px-3 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e] shadow-sm"
                                                                         value={formData.sequence[card.key]}
@@ -1022,119 +1280,84 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                                     >
                                                                         {renderOptions(card)}
                                                                     </select> */}
-                                                    <SelectDropdown
-                                                        name={card.key}
-                                                        options={renderOptions(card)}
-                                                        value={formData.sequence[card.key]}
-                                                        onChange={(updated) => {
-                                                            console.log(updated)
-                                                            setFormData((prev) => ({
-                                                                ...prev,
-                                                                sequence: {
-                                                                    ...prev.sequence,
-                                                                    [card.key]: card.key === "delay" ? parseInt(updated) : updated,
-                                                                },
-                                                            }));
-                                                        }}
-                                                        placeholder="Select"
-                                                        className=""
-                                                        errors={errors}
-                                                        disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
-                                                    />
-                                                    {((card.key === "trigger" || card.key === "channel") && (formData.sequence.trigger === "Instagram" || formData.sequence.trigger === "Whatsapp" || formData.sequence.channel === "Channel")) &&
-                                                        // <select
-                                                        //     name="platform_unique_id"
-                                                        //     className="w-full my-2 h-8 py-1 px-3 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e] shadow-sm"
-                                                        //     value={formData.platform_unique_id}
-                                                        //     onChange={(e) => {
-                                                        //         const { name, value } = e.target;
-                                                        //         setFormData((prev) => ({
-                                                        //             ...prev,
-                                                        //             platform_unique_id: value,
-                                                        //         }));
-                                                        //     }}
-                                                        //     disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
-                                                        // >
-                                                        //     <option value="" disabled>Select</option>
-                                                        //     {instagramData?.length > 0 && instagramData.map((e) => (
-                                                        //         <option key={e.instagram_user_id} value={e.instagram_user_id}>
-                                                        //             {e.username}
-                                                        //         </option>
-                                                        //     ))}
-                                                        // </select>
-                                                        <SelectDropdown
-                                                            name="platform_unique_id"
-                                                            options={formData.sequence.trigger === "Instagram" ? instagramData?.length > 0 && instagramData : whatsappData?.length > 0 && whatsappData}
-                                                            value={formData.platform_unique_id}
-                                                            onChange={(updated) => {
-                                                                setFormData((prev) => ({
-                                                                    ...prev, platform_unique_id: updated
-                                                                }))
-                                                            }}
-                                                            placeholder="Account"
-                                                            className="mt-2"
-                                                            errors={errors}
-                                                            disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
-                                                        />
+                                                            <SelectDropdown
+                                                                name={card.key}
+                                                                options={renderOptions(card)}
+                                                                value={formData.sequence[card.key]}
+                                                                onChange={(updated) => {
+                                                                    console.log(updated)
+                                                                    setFormData((prev) => ({
+                                                                        ...prev,
+                                                                        sequence: {
+                                                                            ...prev.sequence,
+                                                                            [card.key]: card.key === "delay" ? parseInt(updated) : updated,
+                                                                        },
+                                                                    }));
+                                                                }}
+                                                                placeholder="Select"
+                                                                className=""
+                                                                errors={errors}
+                                                                disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
+                                                            />
+                                                            {((card.key === "trigger" || card.key === "channel") && (formData.sequence.trigger === "Instagram" || formData.sequence.trigger === "Whatsapp" || formData.sequence.channel === "Channel")) &&
+                                                                // <select
+                                                                //     name="platform_unique_id"
+                                                                //     className="w-full my-2 h-8 py-1 px-3 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e] shadow-sm"
+                                                                //     value={formData.platform_unique_id}
+                                                                //     onChange={(e) => {
+                                                                //         const { name, value } = e.target;
+                                                                //         setFormData((prev) => ({
+                                                                //             ...prev,
+                                                                //             platform_unique_id: value,
+                                                                //         }));
+                                                                //     }}
+                                                                //     disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
+                                                                // >
+                                                                //     <option value="" disabled>Select</option>
+                                                                //     {instagramData?.length > 0 && instagramData.map((e) => (
+                                                                //         <option key={e.instagram_user_id} value={e.instagram_user_id}>
+                                                                //             {e.username}
+                                                                //         </option>
+                                                                //     ))}
+                                                                // </select>
+                                                                <SelectDropdown
+                                                                    name="platform_unique_id"
+                                                                    options={formData.sequence.trigger === "Instagram" ? instagramData?.length > 0 && instagramData : whatsappData?.length > 0 && whatsappData}
+                                                                    value={formData.platform_unique_id}
+                                                                    onChange={(updated) => {
+                                                                        setFormData((prev) => ({
+                                                                            ...prev, platform_unique_id: updated
+                                                                        }))
+                                                                    }}
+                                                                    placeholder="Account"
+                                                                    className="mt-2"
+                                                                    errors={errors}
+                                                                    disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
+                                                                />
 
-                                                    }
+                                                            }
 
-                                                    {card.unit && (
-                                                        <span className="absolute right-8 top-1/2 transform -translate-y-1/2 text-sm text-[#5A687C]">
-                                                            {card.unit}
-                                                        </span>
-                                                    )}
+                                                            {card.unit && (
+                                                                <span className="absolute right-8 top-1/2 transform -translate-y-1/2 text-sm text-[#5A687C]">
+                                                                    {card.unit}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </React.Fragment>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Objective of the agent */}
-                        <div className="flex flex-col items-start gap-3 p-3.5 w-full bg-[#fff] border border-[#E1E4EA] rounded-[10px]">
-                            <div className="flex items-center gap-2.5 w-full">
-                                <div className="flex-1">
-                                    <div className="font-medium text-[#1e1e1e] text-base">Objective of the agent</div>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col md:flex-row items-start gap-4">
-                                {objectiveAgent.map((each) => (
-                                    <div key={each.key} className="flex items-center gap-2 cursor-pointer" onClick={() => {
-                                        setFormData((prev) => ({
-                                            ...prev, objective_of_the_agent: each.key,
-                                            webpage_link: "",
-                                            // webpage_type: "",
-                                            calendar_choosed: '',
-                                            whatsapp_number: ""
-                                        }))
-                                        setErrors((prev) => ({ ...prev, objective_of_the_agent: "" }))
-                                    }}
-                                    >
-                                        {/* <input
-                                        type="radio"
-                                        name="objective_type"
-                                        value={each.key}
-                                        checked={formData.objective_of_the_agent === each.key}
-                                        onChange={(e) =>
-                                            setFormData((prev) => ({
-                                                ...prev,
-                                                objective_of_the_agent: e.target.value,
-                                            }))
-                                        }
-                                    /> */}
-                                        <div>{formData.objective_of_the_agent === each.key ? <CheckedCheckbox /> : <EmptyCheckbox />}</div>
-
-                                        <span className="text-sm font-medium text-gray-700">{each.label}</span>
+                                            </React.Fragment>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
-                            {errors.objective_of_the_agent && <p className="text-red-500 text-sm mt-1">{errors.objective_of_the_agent}</p>}
-                            {renderObjectiveAgent()}
-                        </div>
+                                </div>
 
+                            </div>}
+                        </div>
+                        {step === 3 && <div className="flex items-center gap-2 py-3">
+                            <button disabled={loading} onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()} className="bg-[#675FFF] w-[162px] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
+                                {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : updateAgentStatus ? "Update Agent" : " Create Agent"}
+                            </button>
+                            <button className="px-5 rounded-[7px] w-[162px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                        </div>}
 
                         {/* Message Time Range */}
 
@@ -1171,151 +1394,6 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     </div> */}
 
 
-                        {/* Followup Options */}
-                        <div className="flex flex-col gap-3 p-3.5 bg-[#fff] border border-[#E1E4EA] rounded-[10px] w-full">
-                            <div className="flex items-center gap-2.5">
-                                <button
-                                    onClick={() => setFormData((prev) => ({
-                                        ...prev,
-                                        is_followups_enabled: !formData.is_followups_enabled
-                                    }))}
-                                    className={`relative w-11 h-6 flex items-center rounded-full transition-colors duration-300 ${formData.is_followups_enabled ? "bg-[#675fff]" : "bg-gray-300"
-                                        }`}
-                                >
-                                    <span
-                                        className={`inline-block w-5 h-5 transform bg-white rounded-full transition-transform duration-300 ${formData.is_followups_enabled ? "translate-x-5" : "translate-x-1"
-                                            }`}
-                                    />
-                                </button>
-                                <span className="font-medium text-base text-black">
-                                    Enable followups
-                                </span>
-                            </div>
-
-
-                            <div className="flex flex-col gap-1.5 w-full">
-                                <label className="text-sm font-medium text-[#1e1e1e]">
-                                    Number of followups
-                                </label>
-                                <input
-                                    type="number"
-                                    min="1"
-                                    max="10"
-                                    disabled={!formData.is_followups_enabled}
-                                    name="number_of_followups"
-                                    value={formData?.follow_up_details?.number_of_followups ?? ''}
-                                    onChange={(e) => {
-                                        const { name, value } = e.target;
-                                        let parsedValue = parseInt(value);
-
-                                        if (value === '') {
-                                            parsedValue = '';
-                                        } else if (!isNaN(parsedValue)) {
-                                            parsedValue = Math.max(1, Math.min(10, parsedValue));
-                                        }
-                                        console.log(parsedValue)
-
-                                        setFormData((prev) => ({
-                                            ...prev,
-                                            follow_up_details: {
-                                                ...prev.follow_up_details,
-                                                [name]: parsedValue
-                                            }
-                                        }));
-
-                                        // Clear error if value is valid (including 0)
-                                        if (value === '' || isNaN(parsedValue)) {
-                                            setErrors((prev) => ({ ...prev, [name]: 'This field is required' }));
-                                        } else {
-                                            setErrors((prev) => ({ ...prev, [name]: '' }));
-                                        }
-                                    }}
-
-                                    className={`w-full p-2 bg-white rounded-lg border ${errors.number_of_followups ? 'border-red-500' : 'border-[#e1e4ea]'} no-spinner focus:outline-none focus:border-[#675FFF]`}
-                                    placeholder="Please enter a number from 1 to 10"
-                                />
-
-                                {errors.number_of_followups && <p className="text-red-500 text-sm mt-1">{errors.number_of_followups}</p>}
-
-                                {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
-                                {followupOptions.map((option) => (
-                                    <div
-                                        key={option.id}
-                                        className={`p-2 cursor-pointer text-center rounded-lg border  ${formData.follow_up_details.number_of_followups === option.value ? "bg-[#335bfb1a] border-[#675fff]" : "bg-white border-[#e1e4ea]"
-                                            }`}
-                                        onClick={() =>
-                                            formData.is_followups_enabled &&
-                                            setFormData((prev) => ({
-                                                ...prev,
-                                                follow_up_details: {
-                                                    ...prev.follow_up_details,
-                                                    number_of_followups: option.value
-                                                },
-                                            }))
-                                        }
-                                    >
-                                        {option.value === 2 ? `${option.value} (Recommended)` : option.value}
-                                    </div>
-                                ))}
-                            </div> */}
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                                {messageTimeRange.map((each) => (
-                                    <div key={each.key} className="flex flex-col items-start gap-1.5 w-full">
-                                        <label className="font-medium text-[#1e1e1e] text-sm">
-                                            {each.label}<span className="text-[#675fff]">*</span>
-                                        </label>
-                                        <div className="flex items-center w-full">
-                                            <div className="flex relative items-center justify-between w-full">
-                                                {/* <select
-                                                    className="flex-1 bg-transparent text-text-black text-base focus:outline-none appearance-none"
-                                                    name={each.key}
-                                                    value={formData.follow_up_details[each.key]}
-                                                    disabled={!formData.is_followups_enabled}
-                                                    onChange={(e) => {
-                                                        const { name, value } = e.target;
-                                                        setFormData((prev) => ({
-                                                            ...prev,
-                                                            follow_up_details: {
-                                                                ...prev.follow_up_details,
-                                                                [name]: parseInt(value),
-                                                            },
-                                                        }));
-                                                    }}
-                                                >
-                                                    {each.options.map((e) => (
-                                                        <option key={e} value={e}>{e}</option>
-                                                    ))}
-                                                </select> */}
-                                                <SelectDropdown
-                                                    name={each.key}
-                                                    options={each.options}
-                                                    value={formData.follow_up_details[each.key]}
-                                                    onChange={(updated) => {
-                                                        setFormData((prev) => ({
-                                                            ...prev,
-                                                            follow_up_details: {
-                                                                ...prev.follow_up_details,
-                                                                [each.key]: parseInt(updated),
-                                                            },
-                                                        }));
-                                                    }}
-                                                    placeholder="Select"
-                                                    className="w-full"
-                                                    errors={errors}
-                                                    disabled={!formData.is_followups_enabled}
-                                                />
-                                                <span className="text-[#5A687C] absolute right-8 text-[16px] font-[400]">Minutes</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-
-                            </div>
-
-
-                        </div>
 
 
                         {/* Directness */}
@@ -1353,6 +1431,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
 
                     </div> */}
+
 
                     </div>
                 </div>
@@ -1421,33 +1500,36 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                         </div>
                     </div>
                 )}
-            </div>
-            {previewAgent && <AgentPreviewModal setPreviewAgent={setPreviewAgent} />}
-            {errorMessage && <div className="inter fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
-                <div className="bg-white max-h-[300px] flex flex-col gap-4 w-full max-w-md rounded-2xl shadow-xl p-6 relative">
-                    <button
-                        onClick={() => {
-                            setErrorMessage('')
-                        }}
-                        className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
+            </div >
+            {previewAgent && <AgentPreviewModal setPreviewAgent={setPreviewAgent} />
+            }
+            {
+                errorMessage && <div className="inter fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
+                    <div className="bg-white max-h-[300px] flex flex-col gap-4 w-full max-w-md rounded-2xl shadow-xl p-6 relative">
+                        <button
+                            onClick={() => {
+                                setErrorMessage('')
+                            }}
+                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
 
-                    <div className="space-y-6 mt-6">
-                        <h2 className="text-[20px] font-[600] text-center text-[#292D32]">{errorMessage}</h2>
-                        <div className="flex justify-center">
-                            <button
-                                type="submit"
-                                onClick={() => setErrorMessage('')}
-                                className={`w-fit bg-[#675FFF] cursor-pointer text-white py-[7px] px-[20px] rounded-[8px] font-semibold  transition`}
-                            >
-                                Ok
-                            </button>
+                        <div className="space-y-6 mt-6">
+                            <h2 className="text-[20px] font-[600] text-center text-[#292D32]">{errorMessage}</h2>
+                            <div className="flex justify-center">
+                                <button
+                                    type="submit"
+                                    onClick={() => setErrorMessage('')}
+                                    className={`w-fit bg-[#675FFF] cursor-pointer text-white py-[7px] px-[20px] rounded-[8px] font-semibold  transition`}
+                                >
+                                    Ok
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>}
+            }
         </>
     )
 }

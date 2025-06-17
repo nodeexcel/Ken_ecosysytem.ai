@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Delete, Notes, ThreeDots, UploadIcon } from '../icons/icons';
+import { Delete, Notes, ThreeDots, UploadIcon, CheckIcon, RightArrowIcon } from '../icons/icons';
 import { ChevronDown, Info, X } from 'lucide-react';
 import { format, isValid } from 'date-fns';
 import { createEmailCampaign, getEmailCampaignById, updateEmailCampaign } from '../api/emailCampaign';
@@ -435,6 +435,8 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
     const targetListRef = useRef()
     const frequencyDaysRef = useRef()
     const timeSelectorRef = useRef()
+    const [step, setStep] = useState(1)
+    const [statusSteps, setStatusSteps] = useState({ step1: false, step2: false, step3: false })
 
     const [formData, setFormData] = useState({
         campaign_title: "",
@@ -974,343 +976,415 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
                 <div className="w-full relative overflow-auto">
                     <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Campaign Title</label>
-                            <input type="text" onChange={handleChange} name='campaign_title' value={formData.campaign_title} placeholder="Enter campaign title" className={`w-full border bg-white ${errors.campaign_title ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
-                            {errors.campaign_title && <p className='my-1 text-[#FF3B30]'>{errors.campaign_title}</p>}
-                        </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Campaign Objective</label>
-                                <Dropdown
-                                    name="campaign_objective"
-                                    options={campaignObjectiveOptions}
-                                    value={formData.campaign_objective}
-                                    onChange={(updated) => {
-                                        setFormData((prev) => ({
-                                            ...prev,
-                                            campaign_objective: updated,
-                                            campaign_objective_other: ""
-                                        }))
-                                        setErrors((prev) => ({ ...prev, campaign_objective: "" }))
-                                    }
-                                    }
-                                    placeholder="Select"
-                                />
-                                {errors.campaign_objective && <p className='my-1 text-[#FF3B30]'>{errors.campaign_objective}</p>}
+                        <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
+                            <div className="flex justify-between items-center" onClick={() => {
+                                setStep(1)
+                                setStatusSteps((prev) => ({ ...prev, step1: false }))
+                            }}>
+                                <div className='flex items-center gap-2'>
+                                    <p className={`${step === 1 ? 'bg-[#675FFF]' : statusSteps.step1 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step1 ? <CheckIcon /> : '1'}</p>
+                                    <p className={`text-[14px] font-[600] ${step === 1 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>Campaign Basics</p>
+                                </div>
+                                {step !== 1 && <RightArrowIcon />}
                             </div>
+                            {step === 1 && <div className="flex flex-col gap-5">
+                                <hr style={{ color: "#E1E4EA" }} />
 
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Main Subject</label>
-                                <input type="text" placeholder="Enter main subject" value={formData.main_subject} name='main_subject' onChange={handleChange} className={`w-full border bg-white ${errors.main_subject ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
-                                {errors.main_subject && <p className='my-1 text-[#FF3B30]'>{errors.main_subject}</p>}
-                            </div>
-                        </div>
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">Campaign Title</label>
+                                    <input type="text" onChange={handleChange} name='campaign_title' value={formData.campaign_title} placeholder="Enter campaign title" className={`w-full border bg-white ${errors.campaign_title ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
+                                    {errors.campaign_title && <p className='my-1 text-[#FF3B30]'>{errors.campaign_title}</p>}
+                                </div>
 
-                        {formData.campaign_objective === "other" && <div>
-                            <label className="block text-sm font-medium mb-1">Other</label>
-                            <input type="text" placeholder="Enter Campaign Objective Other" value={formData.campaign_objective_other} name='campaign_objective_other' onChange={handleChange} className={`w-full bg-white border ${errors.campaign_objective_other ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
-                            {errors.campaign_objective_other && <p className='my-1 text-[#FF3B30]'>{errors.campaign_objective_other}</p>}
-                        </div>}
-
-                        <div>
-                            <label className="block text-sm font-medium mb-1">CTA Type</label>
-                            <Dropdown
-                                name="cta_type"
-                                options={ctaTypeOptions}
-                                value={formData.cta_type}
-                                onChange={(updated) => {
-                                    setFormData((prev) => ({
-                                        ...prev,
-                                        cta_type: updated,
-                                        url: "",
-                                        calender_choosed: "",
-                                        file: ""
-                                    }))
-                                    setErrors((prev) => ({ ...prev, cta_type: "" }))
-                                }
-                                }
-                                placeholder="Select"
-                            />
-                            {errors.cta_type && <p className='my-1 text-[#FF3B30]'>{errors.cta_type}</p>}
-                        </div>
-                        {renderCTAField()}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="relative" ref={targetListRef}>
-                                <label className="block text-sm font-medium mb-1">List Of Target</label>
-                                <button
-                                    onClick={() => setShowListTargetSelector((prev) => !prev)}
-                                    className={`w-full flex items-center justify-between focus:outline-none focus:border-[#675FFF] bg-white border ${errors.list_of_target ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
-                                >
-                                    <span className={`truncate ${formData.list_of_target?.length > 0 ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{formData.list_of_target?.length > 0
-                                        ? formData.list_of_target.map(dayKey => {
-                                            const found = contactLists?.length > 0 && contactLists.find(d => d.key === dayKey);
-                                            return found?.label;
-                                        }).join(', ')
-                                        : 'Select'}</span>
-                                    <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showListTargetSelector ? 'transform rotate-180' : ''}`} />
-                                </button>
-                                {showListTargetSelector && (
-                                    <div className="absolute z-50 mt-1 w-full">
-                                        <CustomSelector
-                                            options={contactLists?.length > 0 && contactLists}
-                                            setShowSelector={setShowListTargetSelector}
-                                            value={formData.list_of_target}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1">Campaign Goals</label>
+                                        <Dropdown
+                                            name="campaign_objective"
+                                            options={campaignObjectiveOptions}
+                                            value={formData.campaign_objective}
                                             onChange={(updated) => {
                                                 setFormData((prev) => ({
                                                     ...prev,
-                                                    list_of_target: updated,
+                                                    campaign_objective: updated,
+                                                    campaign_objective_other: ""
                                                 }))
-                                                setErrors((prev) => ({ ...prev, list_of_target: "" }))
+                                                setErrors((prev) => ({ ...prev, campaign_objective: "" }))
                                             }
                                             }
-                                            ref={targetListRef}
+                                            placeholder="Select"
                                         />
+                                        {errors.campaign_objective && <p className='my-1 text-[#FF3B30]'>{errors.campaign_objective}</p>}
                                     </div>
-                                )}
-                                {errors.list_of_target && <p className='my-1 text-[#FF3B30]'>{errors.list_of_target}</p>}
-                                <p className="text-sm mt-1 ">Estimated Segment Size: 12</p>
-                            </div>
 
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Desired Tone</label>
-                                <Dropdown
-                                    name="desired_tone"
-                                    options={toneOptions}
-                                    value={formData.desired_tone}
-                                    onChange={(updated) => {
-                                        setFormData((prev) => ({
-                                            ...prev,
-                                            desired_tone: updated,
-                                        }))
-                                        setErrors((prev) => ({ ...prev, desired_tone: "" }))
-                                    }
-                                    }
-                                    placeholder="Select"
-                                />
-                                {errors.desired_tone && <p className='my-1 text-[#FF3B30]'>{errors.desired_tone}</p>}
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Language</label>
-                                <Dropdown
-                                    name="language"
-                                    options={languageOptions}
-                                    value={formData.language}
-                                    onChange={(updated) => {
-                                        setFormData((prev) => ({
-                                            ...prev,
-                                            language: updated,
-                                        }))
-                                        setErrors((prev) => ({ ...prev, language: "" }))
-                                    }
-                                    }
-                                    placeholder="Select"
-                                />
-                                {errors.language && <p className='my-1 text-[#FF3B30]'>{errors.language}</p>}
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="relative" ref={timeSelectorRef}>
-                                <label className="block text-sm font-medium mb-1">Send Time Window</label>
-                                <button
-                                    onClick={() => setShowTimeSelector((prev) => !prev)}
-                                    className={`w-full flex justify-between items-center bg-white focus:border-[#675FFF] border ${errors.send_time_window ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
-                                >
-                                    <span  className={`${formData.send_time_window ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{formData.send_time_window || "Select Time"}</span>
-                                    <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showTimeSelector ? 'transform rotate-180' : ''}`} />
-                                </button>
-                                {showTimeSelector && (
-                                    <div className="absolute z-50 mt-1 w-full">
-                                        <TimeSelector
-                                            initialTime={formData.send_time_window}
-                                            onSave={handleTimeSelect}
-                                            onCancel={() => setShowTimeSelector(false)}
-                                            start_date={formData.start_date}
-                                        />
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1">Subject</label>
+                                        <input type="text" placeholder="Enter main subject" value={formData.main_subject} name='main_subject' onChange={handleChange} className={`w-full border bg-white ${errors.main_subject ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
+                                        {errors.main_subject && <p className='my-1 text-[#FF3B30]'>{errors.main_subject}</p>}
                                     </div>
-                                )}
-                                {errors.send_time_window && <p className='my-1 text-[#FF3B30]'>{errors.send_time_window}</p>}
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Start Date</label>
-                                <input
-                                    type="date"
-                                    min={format(new Date(), 'yyyy-MM-dd')}
-                                    value={formData.start_date}
-                                    onChange={(e) => {
-                                        const selectedDate = new Date(e.target.value);
-                                        if (isValid(selectedDate)) {
+                                </div>
+
+                                {formData.campaign_objective === "other" && <div>
+                                    <label className="block text-sm font-medium mb-1">Other</label>
+                                    <input type="text" placeholder="Enter Campaign Objective Other" value={formData.campaign_objective_other} name='campaign_objective_other' onChange={handleChange} className={`w-full bg-white border ${errors.campaign_objective_other ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
+                                    {errors.campaign_objective_other && <p className='my-1 text-[#FF3B30]'>{errors.campaign_objective_other}</p>}
+                                </div>}
+
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">CTA Type</label>
+                                    <Dropdown
+                                        name="cta_type"
+                                        options={ctaTypeOptions}
+                                        value={formData.cta_type}
+                                        onChange={(updated) => {
                                             setFormData((prev) => ({
-                                                ...prev, start_date: format(selectedDate, 'yyyy-MM-dd'),
-                                                send_time_window: ""
+                                                ...prev,
+                                                cta_type: updated,
+                                                url: "",
+                                                calender_choosed: "",
+                                                file: ""
                                             }))
-                                            setErrors((prev) => ({ ...prev, start_date: "" }))
-                                        } else {
-                                            setFormData((prev) => ({ ...prev, start_date: "" }))
+                                            setErrors((prev) => ({ ...prev, cta_type: "" }))
                                         }
+                                        }
+                                        placeholder="Select"
+                                    />
+                                    {errors.cta_type && <p className='my-1 text-[#FF3B30]'>{errors.cta_type}</p>}
+                                </div>
+                                {renderCTAField()}
 
-                                    }
-                                    }
-                                    className={`w-full ${formData.start_date ? 'text-[#1E1E1E]' : 'text-[#5A687C]'} bg-white border ${errors.start_date ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`}
-                                />
-                                {errors.start_date && <p className='my-1 text-[#FF3B30]'>{errors.start_date}</p>}
+                                <hr style={{ color: "#E1E4EA" }} />
+
+                                <div className="flex items-center gap-2">
+                                    <button onClick={() => {
+                                        setStatusSteps((prev) => ({ ...prev, step1: true }))
+                                        setStep(2)
+                                    }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
+                                    <button className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                                </div>
+                            </div>}
+                        </div>
+
+
+                        <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
+                            <div className="flex justify-between items-center" onClick={() => {
+                                setStep(2)
+                                setStatusSteps((prev) => ({ ...prev, step2: false }))
+                            }}>
+                                <div className='flex items-center gap-2'>
+                                    <p className={`${step === 2 ? 'bg-[#675FFF]' : statusSteps.step2 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step2 ? <CheckIcon /> : '2'}</p>
+                                    <p className={`text-[14px] font-[600] ${step === 2 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>Targeting & Scheduling</p>
+                                </div>
+                                {step !== 2 && <RightArrowIcon />}
                             </div>
-                            <div className="relative" ref={frequencyDaysRef}>
-                                <label className="block text-sm font-medium mb-1">Frequency</label>
-                                <button
-                                    onClick={() => setShowWeekSelector((prev) => !prev)}
-                                    className={`w-full flex justify-between items-center bg-white border truncate ${errors.frequency ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer focus:outline-none focus:border-[#675FFF]`}
-                                >
-                                    <span className={`truncate ${formData.frequency?.length > 0 ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{formData.frequency?.length > 0
-                                        ? formData.frequency.map(dayKey => {
-                                            const found = daysOptions.find(d => d.key === dayKey);
-                                            return found?.label;
-                                        }).join(', ')
-                                        : 'Select Days'}</span>
-                                    <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showWeekSelector ? 'transform rotate-180' : ''}`} />
-                                </button>
-                                {showWeekSelector && (
-                                    <div className="absolute z-50 mt-1 w-full">
-                                        <CustomSelector
-                                            options={daysOptions}
-                                            setShowSelector={setShowWeekSelector}
-                                            value={formData.frequency}
+                            {step === 2 && <div className="flex flex-col gap-5">
+                                <hr style={{ color: "#E1E4EA" }} />
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="relative" ref={targetListRef}>
+                                        <label className="block text-sm font-medium mb-1">List Of Target</label>
+                                        <button
+                                            onClick={() => setShowListTargetSelector((prev) => !prev)}
+                                            className={`w-full flex items-center justify-between focus:outline-none focus:border-[#675FFF] bg-white border ${errors.list_of_target ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
+                                        >
+                                            <span className={`truncate ${formData.list_of_target?.length > 0 ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{formData.list_of_target?.length > 0
+                                                ? formData.list_of_target.map(dayKey => {
+                                                    const found = contactLists?.length > 0 && contactLists.find(d => d.key === dayKey);
+                                                    return found?.label;
+                                                }).join(', ')
+                                                : 'Select'}</span>
+                                            <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showListTargetSelector ? 'transform rotate-180' : ''}`} />
+                                        </button>
+                                        {showListTargetSelector && (
+                                            <div className="absolute z-50 mt-1 w-full">
+                                                <CustomSelector
+                                                    options={contactLists?.length > 0 && contactLists}
+                                                    setShowSelector={setShowListTargetSelector}
+                                                    value={formData.list_of_target}
+                                                    onChange={(updated) => {
+                                                        setFormData((prev) => ({
+                                                            ...prev,
+                                                            list_of_target: updated,
+                                                        }))
+                                                        setErrors((prev) => ({ ...prev, list_of_target: "" }))
+                                                    }
+                                                    }
+                                                    ref={targetListRef}
+                                                />
+                                            </div>
+                                        )}
+                                        {errors.list_of_target && <p className='my-1 text-[#FF3B30]'>{errors.list_of_target}</p>}
+                                        <p className="text-sm mt-1 ">Estimated Segment Size: 12</p>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1">Desired Tone</label>
+                                        <Dropdown
+                                            name="desired_tone"
+                                            options={toneOptions}
+                                            value={formData.desired_tone}
                                             onChange={(updated) => {
                                                 setFormData((prev) => ({
                                                     ...prev,
-                                                    frequency: updated,
+                                                    desired_tone: updated,
                                                 }))
-                                                setErrors((prev) => ({ ...prev, frequency: "" }))
+                                                setErrors((prev) => ({ ...prev, desired_tone: "" }))
                                             }
                                             }
-                                            ref={frequencyDaysRef}
+                                            placeholder="Select"
                                         />
+                                        {errors.desired_tone && <p className='my-1 text-[#FF3B30]'>{errors.desired_tone}</p>}
                                     </div>
-                                )}
-                                {errors.frequency && <p className='my-1 text-[#FF3B30]'>{errors.frequency}</p>}
-                            </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1">Language</label>
+                                        <Dropdown
+                                            name="language"
+                                            options={languageOptions}
+                                            value={formData.language}
+                                            onChange={(updated) => {
+                                                setFormData((prev) => ({
+                                                    ...prev,
+                                                    language: updated,
+                                                }))
+                                                setErrors((prev) => ({ ...prev, language: "" }))
+                                            }
+                                            }
+                                            placeholder="Select"
+                                        />
+                                        {errors.language && <p className='my-1 text-[#FF3B30]'>{errors.language}</p>}
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="relative" ref={timeSelectorRef}>
+                                        <label className="block text-sm font-medium mb-1">Send Time Window</label>
+                                        <button
+                                            onClick={() => setShowTimeSelector((prev) => !prev)}
+                                            className={`w-full flex justify-between items-center bg-white focus:border-[#675FFF] border ${errors.send_time_window ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
+                                        >
+                                            <span className={`${formData.send_time_window ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{formData.send_time_window || "Select Time"}</span>
+                                            <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showTimeSelector ? 'transform rotate-180' : ''}`} />
+                                        </button>
+                                        {showTimeSelector && (
+                                            <div className="absolute z-50 mt-1 w-full">
+                                                <TimeSelector
+                                                    initialTime={formData.send_time_window}
+                                                    onSave={handleTimeSelect}
+                                                    onCancel={() => setShowTimeSelector(false)}
+                                                    start_date={formData.start_date}
+                                                />
+                                            </div>
+                                        )}
+                                        {errors.send_time_window && <p className='my-1 text-[#FF3B30]'>{errors.send_time_window}</p>}
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1">Start Date</label>
+                                        <input
+                                            type="date"
+                                            min={format(new Date(), 'yyyy-MM-dd')}
+                                            value={formData.start_date}
+                                            onChange={(e) => {
+                                                const selectedDate = new Date(e.target.value);
+                                                if (isValid(selectedDate)) {
+                                                    setFormData((prev) => ({
+                                                        ...prev, start_date: format(selectedDate, 'yyyy-MM-dd'),
+                                                        send_time_window: ""
+                                                    }))
+                                                    setErrors((prev) => ({ ...prev, start_date: "" }))
+                                                } else {
+                                                    setFormData((prev) => ({ ...prev, start_date: "" }))
+                                                }
+
+                                            }
+                                            }
+                                            className={`w-full ${formData.start_date ? 'text-[#1E1E1E]' : 'text-[#5A687C]'} bg-white border ${errors.start_date ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`}
+                                        />
+                                        {errors.start_date && <p className='my-1 text-[#FF3B30]'>{errors.start_date}</p>}
+                                    </div>
+                                    <div className="relative" ref={frequencyDaysRef}>
+                                        <label className="block text-sm font-medium mb-1">Frequency</label>
+                                        <button
+                                            onClick={() => setShowWeekSelector((prev) => !prev)}
+                                            className={`w-full flex justify-between items-center bg-white border truncate ${errors.frequency ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer focus:outline-none focus:border-[#675FFF]`}
+                                        >
+                                            <span className={`truncate ${formData.frequency?.length > 0 ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{formData.frequency?.length > 0
+                                                ? formData.frequency.map(dayKey => {
+                                                    const found = daysOptions.find(d => d.key === dayKey);
+                                                    return found?.label;
+                                                }).join(', ')
+                                                : 'Select Days'}</span>
+                                            <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showWeekSelector ? 'transform rotate-180' : ''}`} />
+                                        </button>
+                                        {showWeekSelector && (
+                                            <div className="absolute z-50 mt-1 w-full">
+                                                <CustomSelector
+                                                    options={daysOptions}
+                                                    setShowSelector={setShowWeekSelector}
+                                                    value={formData.frequency}
+                                                    onChange={(updated) => {
+                                                        setFormData((prev) => ({
+                                                            ...prev,
+                                                            frequency: updated,
+                                                        }))
+                                                        setErrors((prev) => ({ ...prev, frequency: "" }))
+                                                    }
+                                                    }
+                                                    ref={frequencyDaysRef}
+                                                />
+                                            </div>
+                                        )}
+                                        {errors.frequency && <p className='my-1 text-[#FF3B30]'>{errors.frequency}</p>}
+                                    </div>
+                                </div>
+                                <hr style={{ color: "#E1E4EA" }} />
+
+                                <div className="flex items-center gap-2">
+                                    <button onClick={() => {
+                                        setStatusSteps((prev) => ({ ...prev, step2: true }))
+                                        setStep(3)
+                                    }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
+                                    <button className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                                </div>
+                            </div>}
                         </div>
 
-                        <div className='flex flex-col gap-5'>
-                            <div className="flex items-center justify-between">
-                                <label className="text-sm font-medium">Include branding (Brain AI)?</label>
-                                <div className='flex items-center gap-6'>
-                                    {/* <div className='relative group'>
+
+                        <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
+                            <div className="flex justify-between items-center" onClick={() => {
+                                setStep(3)
+                                setStatusSteps((prev) => ({ ...prev, step3: false }))
+                            }}>
+                                <div className='flex items-center gap-2'>
+                                    <p className={`${step === 3 ? 'bg-[#675FFF]' : statusSteps.step3 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step3 ? <CheckIcon /> : '3'}</p>
+                                    <p className={`text-[14px] font-[600] ${step === 3 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>AI Setup & Prompting</p>
+                                </div>
+                                {step !== 3 && <RightArrowIcon />}
+                            </div>
+                            {step === 3 && <div className="flex flex-col gap-5">
+                                <hr style={{ color: "#E1E4EA" }} />
+
+                                <div className='flex flex-col gap-5'>
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-sm font-medium">Include branding (Brain AI)?</label>
+                                        <div className='flex items-center gap-6'>
+                                            {/* <div className='relative group'>
                                         <Info className="text-gray-500 cursor-pointer" size={16} />
                                         <div className="absolute bottom-full mb-1 w-60 -right-50 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:flex transition-opacity duration-200 z-10">
                                             Continue in the same spirit, format, tone, style, and overall vibe as your previous emails. To enable this, integrate your email platform or upload your past emails as a PDF in the "AI Brain
                                         </div>
                                     </div> */}
 
+                                            <button
+                                                onClick={() => setFormData((prev) => ({ ...prev, include_branding: !formData.include_branding }))}
+                                                className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${formData.include_branding ? "bg-[#7065F0]" : "bg-[#E1E4EA]"}`}
+                                            >
+                                                <span
+                                                    className={`block w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${formData.include_branding ? "translate-x-5" : "translate-x-0.5"}`}
+                                                ></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-sm font-medium mb-1 flex items-center gap-2">
+                                            <p>Use AI Brain as the reference for your emails</p>
+                                            <div className="relative group">
+                                                <Info className="text-gray-500 cursor-pointer" size={16} />
+                                                <div className="absolute bottom-full flex-col mb-1 gap-1 w-60 left-3 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:flex transition-opacity duration-200 z-10">
+                                                    {` Continue in the same spirit, format, tone, style, and overall vibe as your previous emails. To enable this, integrate your email platform or upload your past emails as a PDF in the “AI Brain > Files`}
+                                                </div>
+                                            </div>
+                                        </label>
+                                        <button
+                                            onClick={() => setFormData((prev) => ({ ...prev, include_brainai: !formData.include_brainai }))}
+                                            className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${formData.include_brainai ? "bg-[#7065F0]" : "bg-[#E1E4EA]"}`}
+                                        >
+                                            <span
+                                                className={`block w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${formData.include_brainai ? "translate-x-5" : "translate-x-0.5"}`}
+                                            ></span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">Custom prompt for AI</label>
+                                    <textarea value={formData.custom_prompt} name='custom_prompt' onChange={handleChange} placeholder="e.g. Write a re-engagement email for cold leads about my AI training offer" className={`w-full bg-white border ${errors.custom_prompt ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded px-3 py-2 resize-none focus:outline-none focus:border-[#675FFF]`} rows={3}></textarea>
+                                    {errors.custom_prompt && <p className='my-1 text-[#FF3B30]'>{errors.custom_prompt}</p>}
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-sm font-medium mb-1 flex items-center gap-2">
+                                            <p>Text Length</p>
+                                            <div className="relative group">
+                                                <Info className="text-gray-500 cursor-pointer" size={16} />
+                                                <div className="absolute bottom-full mb-1 w-60 left-8 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:flex transition-opacity duration-200 z-10">
+                                                    Choose the optimal length for your emails — see industry benchmarks in our Help Center.
+                                                </div>
+                                            </div>
+                                        </label>
+                                        <Dropdown
+                                            name="text_length"
+                                            options={wordOptions}
+                                            value={formData.text_length}
+                                            onChange={(updated) => {
+                                                setFormData((prev) => ({
+                                                    ...prev,
+                                                    text_length: updated,
+                                                }))
+                                                setErrors((prev) => ({ ...prev, text_length: "" }))
+                                            }
+                                            }
+                                            placeholder="Select"
+                                        />
+                                        {errors.text_length && <p className='my-1 text-[#FF3B30]'>{errors.text_length}</p>}
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1">Products/Service to feature</label>
+                                        <input type="text" value={formData.product_or_service_feature} name='product_or_service_feature' onChange={handleChange} placeholder="Enter Products/Service to feature" className={`w-full bg-white border ${errors.product_or_service_feature ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
+                                        {errors.product_or_service_feature && <p className='my-1 text-[#FF3B30]'>{errors.product_or_service_feature}</p>}
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-between">
+                                    {/* <label className="text-sm font-medium"></label> */}
+                                    <label className="text-sm font-medium mb-1 flex items-center gap-2">
+                                        <p>Review before sending</p>
+                                        <div className="relative group">
+                                            <Info className="text-gray-500 cursor-pointer" size={16} />
+                                            <div className="absolute bottom-full flex-col mb-1 gap-1 w-60 left-3 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:flex transition-opacity duration-200 z-10">
+                                                <p className='font-[700]'>ON – <span className='font-[500] text-[#E1E4EA]'>You’ll get a notification 24 h before each scheduled email. The email stays on hold until you approve it in the calendar.</span></p>
+                                                <p className='font-[700]'>OFF –  <span className='font-[500] text-[#E1E4EA]'>The email is sent automatically at the scheduled time.</span></p>
+                                                <p className='font-[500] text-[#fff]'>In both cases, you can still open the calendar at any moment and review or edit any email up to 24 h before it goes out.</p>
+                                            </div>
+                                        </div>
+                                    </label>
                                     <button
-                                        onClick={() => setFormData((prev) => ({ ...prev, include_branding: !formData.include_branding }))}
-                                        className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${formData.include_branding ? "bg-[#7065F0]" : "bg-[#E1E4EA]"}`}
+                                        onClick={() => setFormData((prev) => ({ ...prev, review: !formData.review }))}
+                                        className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${formData.review ? "bg-[#7065F0]" : "bg-[#E1E4EA]"}`}
                                     >
                                         <span
-                                            className={`block w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${formData.include_branding ? "translate-x-5" : "translate-x-0.5"}`}
+                                            className={`block w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${formData.review ? "translate-x-5" : "translate-x-0.5"}`}
                                         ></span>
                                     </button>
                                 </div>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <label className="text-sm font-medium mb-1 flex items-center gap-2">
-                                    <p>Use AI Brain as the reference for your emails</p>
-                                    <div className="relative group">
-                                        <Info className="text-gray-500 cursor-pointer" size={16} />
-                                        <div className="absolute bottom-full flex-col mb-1 gap-1 w-60 left-3 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:flex transition-opacity duration-200 z-10">
-                                            {` Continue in the same spirit, format, tone, style, and overall vibe as your previous emails. To enable this, integrate your email platform or upload your past emails as a PDF in the “AI Brain > Files`}
-                                        </div>
-                                    </div>
-                                </label>
-                                <button
-                                    onClick={() => setFormData((prev) => ({ ...prev, include_brainai: !formData.include_brainai }))}
-                                    className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${formData.include_brainai ? "bg-[#7065F0]" : "bg-[#E1E4EA]"}`}
-                                >
-                                    <span
-                                        className={`block w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${formData.include_brainai ? "translate-x-5" : "translate-x-0.5"}`}
-                                    ></span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Custom prompt for AI</label>
-                            <textarea value={formData.custom_prompt} name='custom_prompt' onChange={handleChange} placeholder="e.g. Write a re-engagement email for cold leads about my AI training offer" className={`w-full bg-white border ${errors.custom_prompt ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded px-3 py-2 resize-none focus:outline-none focus:border-[#675FFF]`} rows={3}></textarea>
-                            {errors.custom_prompt && <p className='my-1 text-[#FF3B30]'>{errors.custom_prompt}</p>}
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="text-sm font-medium mb-1 flex items-center gap-2">
-                                    <p>Text Length</p>
-                                    <div className="relative group">
-                                        <Info className="text-gray-500 cursor-pointer" size={16} />
-                                        <div className="absolute bottom-full mb-1 w-60 left-8 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:flex transition-opacity duration-200 z-10">
-                                            Choose the optimal length for your emails — see industry benchmarks in our Help Center.
-                                        </div>
-                                    </div>
-                                </label>
-                                <Dropdown
-                                    name="text_length"
-                                    options={wordOptions}
-                                    value={formData.text_length}
-                                    onChange={(updated) => {
-                                        setFormData((prev) => ({
-                                            ...prev,
-                                            text_length: updated,
-                                        }))
-                                        setErrors((prev) => ({ ...prev, text_length: "" }))
-                                    }
-                                    }
-                                    placeholder="Select"
-                                />
-                                {errors.text_length && <p className='my-1 text-[#FF3B30]'>{errors.text_length}</p>}
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Products/Service to feature</label>
-                                <input type="text" value={formData.product_or_service_feature} name='product_or_service_feature' onChange={handleChange} placeholder="Enter Products/Service to feature" className={`w-full bg-white border ${errors.product_or_service_feature ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
-                                {errors.product_or_service_feature && <p className='my-1 text-[#FF3B30]'>{errors.product_or_service_feature}</p>}
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                            {/* <label className="text-sm font-medium"></label> */}
-                            <label className="text-sm font-medium mb-1 flex items-center gap-2">
-                                <p>Review before sending</p>
-                                <div className="relative group">
-                                    <Info className="text-gray-500 cursor-pointer" size={16} />
-                                    <div className="absolute bottom-full flex-col mb-1 gap-1 w-60 left-3 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:flex transition-opacity duration-200 z-10">
-                                        <p className='font-[700]'>ON – <span className='font-[500] text-[#E1E4EA]'>You’ll get a notification 24 h before each scheduled email. The email stays on hold until you approve it in the calendar.</span></p>
-                                        <p className='font-[700]'>OFF –  <span className='font-[500] text-[#E1E4EA]'>The email is sent automatically at the scheduled time.</span></p>
-                                        <p className='font-[500] text-[#fff]'>In both cases, you can still open the calendar at any moment and review or edit any email up to 24 h before it goes out.</p>
-                                    </div>
-                                </div>
-                            </label>
-                            <button
-                                onClick={() => setFormData((prev) => ({ ...prev, review: !formData.review }))}
-                                className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${formData.review ? "bg-[#7065F0]" : "bg-[#E1E4EA]"}`}
-                            >
-                                <span
-                                    className={`block w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${formData.review ? "translate-x-5" : "translate-x-0.5"}`}
-                                ></span>
-                            </button>
-                        </div>
-                        {/* <p className='text-sm text-gray-500 -mt-4'>You receive a notification 24h before sending to review and approve the email.</p>
+                                {/* <p className='text-sm text-gray-500 -mt-4'>You receive a notification 24h before sending to review and approve the email.</p>
 
                         <div className="bg-orange-100 text-sm text-black rounded-md px-4 py-2">
                             You'll be able to review and edit each email 24 hours before it's sent, directly from your calendar.
                         </div> */}
 
-                        <div className="flex gap-4 pt-4">
+                            </div>}
+                        </div>
+
+                        {step === 3 && <div className="flex gap-4 pt-2">
                             {isEdit ? <button disabled={updateStatus} className="px-4 font-[500] w-[200px] py-2 bg-[#675FFF] text-white rounded-lg" onClick={() => handleUpdate(false)}>{updateStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Update Campaign"}</button> :
                                 <button disabled={submitStatus} className="px-4 font-[500] w-[200px] py-2 bg-[#675FFF] text-white rounded-lg" onClick={() => handleSubmit(false)}>{submitStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Launch Campaign"}</button>}
                             {isEdit ? <button disabled={updateSaveDraftStatus} className="px-4 font-[500] w-[200px] py-2 border text-[#5A687C] border-[#E1E4EA] rounded-lg" onClick={() => handleUpdate(true)}>{updateSaveDraftStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save As Draft"}</button> :
                                 <button disabled={saveDraftStatus} className="px-4 font-[500] w-[200px] py-2 border text-[#5A687C] border-[#E1E4EA] rounded-lg" onClick={() => handleSubmit(true)}>{saveDraftStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save As Draft"}</button>}
-                        </div>
+                        </div>}
+
                     </div>
                 </div>
             </div>
