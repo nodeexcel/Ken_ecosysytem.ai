@@ -60,7 +60,7 @@ const PhoneDashboard = () => {
             </div>
             <h3 className="text-2xl font-bold">1</h3>
             <p className="text-[#1E1E1E]">Agent</p>
-            <p className="text-sm text-gray-500">You have 1 agent active now</p>
+            <p className="text-sm text-[#5A687C]">You have 1 agent active now</p>
             <a href="#" className="text-[#675FFF] mt-2 inline-block text-sm font-[400] underline">See More</a>
           </div>
 
@@ -76,7 +76,7 @@ const PhoneDashboard = () => {
 
             <h3 className="text-2xl font-bold">0</h3>
             <p className="text-[#1E1E1E]">Campaigns</p>
-            <p className="text-sm text-gray-500">You don’t have campaigns yet</p>
+            <p className="text-sm text-[#5A687C]">You don’t have campaigns yet</p>
             <a href="#" className="text-[#675FFF] mt-2 inline-block text-sm font-[400] underline">See More</a>
           </div>
 
@@ -91,7 +91,7 @@ const PhoneDashboard = () => {
             </div>
             <h3 className="text-2xl font-bold">0</h3>
             <p className="text-[#1E1E1E]">Called clients</p>
-            <p className="text-sm text-gray-500">You don’t have calls yet</p>
+            <p className="text-sm text-[#5A687C]">You don’t have calls yet</p>
             <a href="#" className="text-[#675FFF] mt-2 inline-block text-sm font-[400] underline">See More</a>
           </div>
 
@@ -105,7 +105,7 @@ const PhoneDashboard = () => {
             </div>
             <h3 className="text-2xl font-bold">00:00:00</h3>
             <p className="text-[#1E1E1E]">Average call duration</p>
-            <p className="text-sm text-gray-500">You don’t have calls yet</p>
+            <p className="text-sm text-[#5A687C]">You don’t have calls yet</p>
             <a href="#" className="text-[#675FFF] mt-2 inline-block text-sm font-[400] underline">See More</a>
           </div>
 
@@ -119,9 +119,9 @@ const PhoneDashboard = () => {
 
 
             </div>
-            <h3 className="text-2xl font-bold">00:00:00</h3>
+            <h3 className="text-2xl font-bold">0</h3>
             <p className="text-[#1E1E1E]">Called Received</p>
-            <p className="text-sm text-gray-500">You don't have received calls yet</p>
+            <p className="text-sm text-[#5A687C]">You don't have received calls yet</p>
             <a href="#" className="text-[#675FFF] mt-2 inline-block text-sm font-[400] underline">See More</a>
           </div>
         </div>

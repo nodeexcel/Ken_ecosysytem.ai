@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Delete, Duplicate, Edit, ThreeDots } from '../icons/icons';
+import { ActiveIcon, DeactiveIcon, Delete, Duplicate, Edit, ThreeDots } from '../icons/icons';
 import { X } from 'lucide-react';
 import { deleteEmailCampaign, duplicateCampaign, getEmailCampaign, updateEmailCampaignStatus } from '../api/emailCampaign';
 import CampaignsTable from './Campaigns';
@@ -27,7 +27,7 @@ const staticData = [
     }
 ]
 function CampaignDashboard() {
-    const [campaignData, setCampaignData] = useState();
+    const [campaignData, setCampaignData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
     const [isEdit, setIsEdit] = useState();
@@ -110,7 +110,6 @@ function CampaignDashboard() {
                 if (response?.data?.campaign_info?.length > 0) {
                     setCampaignData(response?.data?.campaign_info)
                 } else {
-                    setCampaignData([])
                     setLoading(false)
                     setMessage("No Data Found")
                 }
@@ -168,94 +167,105 @@ function CampaignDashboard() {
                     </button>
                 </div>
 
-                <div className="overflow-auto w-full rounded-lg">
-                    <table className="w-full rounded-2xl">
-                        <thead>
-                            <tr className="text-left text-[#5A687C]">
-                                <th className="px-6 py-3 text-[16px] font-[400]">Name</th>
-                                <th className="px-6 py-3 text-[16px] font-[400]">Sent</th>
-                                <th className="px-6 py-3 text-[16px] font-[400]">Sent to</th>
-                                <th className="px-6 py-3 text-[16px] font-[400]">Campaign Status</th>
-                                <th className="px-6 py-3 text-[16px] font-[400]">Status</th>
-                                <th className="px-6 py-3 text-[16px] font-[400]">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className={`${!message && !loading && 'bg-white'} border border-[#E1E4EA]`}>
-                            {loading ? <tr className='h-34'><td></td><td></td><td></td><td><span className='loader' /></td></tr> : message ? <tr className='h-34'><td></td><td></td><td>{message}</td></tr> :
-                                campaignData?.length > 0 && campaignData.map((item, index) => (
-                                    <tr key={index} className={`${index !== campaignData.length - 1 ? 'border-b border-gray-200' : ''}`}>
-                                        <td className="px-6 py-4 text-sm text-gray-800 font-semibold">{item.campaign_name}</td>
-                                        <td className="px-6 py-4 text-sm text-[#5A687C]">{item.sent}</td>
-                                        <td className="px-6 py-4 text-sm text-[#5A687C]">{item.sent_to}</td>
+                <div className="overflow-auto w-full">
+                    <table className="w-full">
+                        <div className="px-5 w-full">
+                            <thead>
+                                <tr className="text-left text-[#5A687C]">
+                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">Name</th>
+                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">Sent</th>
+                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">Sent to</th>
+                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">Campaign Status</th>
+                                    {/* <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[17%] w-full text-[16px] font-[400]">Status</th> */}
+                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">Actions</th>
+                                </tr>
+                            </thead>
+                        </div>
+                        <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
+                            {loading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
+                                campaignData.length !== 0 ?
+                                    <tbody className="w-full">
+                                        {campaignData.map((item, index) => (
+                                            <tr key={index} className={`${index !== campaignData.length - 1 ? 'border-b border-gray-200' : ''}`}>
+                                                <td className={`p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] text-gray-800  font-semibold`}>{item.campaign_name}</td>
+                                                <td className={`p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] text-[#5A687C]`}>{item.sent}</td>
+                                                <td className={`p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] text-[#5A687C]`}>{item.sent_to}</td>
 
-                                        <td className="px-6 py-4 text-sm items-center gap-2">
-                                            <div className='flex justify-between items-center gap-2'>
-                                                <p className={`${renderColor(item.campaign_status)} border flex items-center gap-2 px-2 py-1 text-xs rounded-full`}>
-                                                    {renderStatus(item.campaign_status)}
-                                                </p>
-                                            </div>
-                                        </td>
+                                                <td className={`p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] items-center gap-2`}>
+                                                    <div className='flex justify-between items-center gap-2'>
+                                                        <p className={`${renderColor(item.campaign_status)} border flex items-center gap-2 px-2 py-1 text-xs rounded-full`}>
+                                                            {renderStatus(item.campaign_status)}
+                                                        </p>
+                                                    </div>
+                                                </td>
 
-                                        <td className='text-center'>
-                                            <label className="relative inline-flex items-center cursor-pointer">
-                                                <input
-                                                    type="checkbox"
-                                                    className="sr-only peer"
-                                                    disabled={(item.campaign_status === "draft" || item.campaign_status === "issue_detected")}
-                                                    checked={item.is_active}
-                                                    onChange={item.campaign_status !== "draft" || item.campaign_status !== "issue_detected" ? () => toggleStatus(index, 'is_active', item.campaign_id) : undefined}
-                                                />
-                                                <div className={`w-9 h-5 bg-gray-200  rounded-full ${(item.campaign_status === "draft" || item.campaign_status === "issue_detected") ? 'dark:bg-[#F1F3F6] cursor-not-allowed' : 'dark:bg-[#D9D7FF] peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-400'} peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600`}></div>
-                                            </label>
-                                        </td>
+                                                {/* <td className={`text-center`}>
+                                                    <label className="relative inline-flex items-center cursor-pointer">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="sr-only peer"
+                                                            disabled={(item.campaign_status === "draft" || item.campaign_status === "issue_detected")}
+                                                            checked={item.is_active}
+                                                            onChange={item.campaign_status !== "draft" || item.campaign_status !== "issue_detected" ? () => toggleStatus(index, 'is_active', item.campaign_id) : undefined}
+                                                        />
+                                                        <div className={`w-9 h-5 bg-gray-200  rounded-full ${(item.campaign_status === "draft" || item.campaign_status === "issue_detected") ? 'dark:bg-[#F1F3F6] cursor-not-allowed' : 'dark:bg-[#D9D7FF] peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-400'} peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600`}></div>
+                                                    </label>
+                                                </td> */}
 
 
-                                        <td className="px-6 py-4 text-sm text-[#5A687C]">
-                                            <div className='flex items-center gap-2'>
-                                                <button onClick={() => setViewReportModel(true)} className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg'>
-                                                    View Report
-                                                </button>
-                                                <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
-                                                    <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
-                                                    {activeDropdown === index && (
-                                                        <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
-                                                            <div className="py-1">
-                                                                <button
-                                                                    className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
-                                                                    onClick={() => {
-                                                                        handleEdit(item.campaign_id)
-                                                                    }}
-                                                                >
-                                                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
-                                                                </button>
-                                                                <button
-                                                                    className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
-                                                                    onClick={() => {
-                                                                        handleDuplicate(item.campaign_id)
-                                                                    }}
-                                                                >
-                                                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
-                                                                </button>
-                                                                <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                                                                <div className='py-2'>
-                                                                    <button
-                                                                        className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6] hover:rounded-lg"
-                                                                        onClick={() => {
-                                                                            handleDelete(index, item.campaign_id)
-                                                                        }}
-                                                                    >
-                                                                        <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
-                                                                    </button>
+                                                <td className={`p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px]  text-[#5A687C]`}>
+                                                    <div className='flex items-center gap-2'>
+                                                        <button onClick={() => setViewReportModel(true)} className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg'>
+                                                            View Report
+                                                        </button>
+                                                        <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
+                                                            <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
+                                                            {activeDropdown === index && (
+                                                                <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                                                                    <div className="py-1">
+                                                                        <button
+                                                                            className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
+                                                                            onClick={() => {
+                                                                                handleEdit(item.campaign_id)
+                                                                            }}
+                                                                        >
+                                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                                                                        </button>
+                                                                        <button
+                                                                            className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
+                                                                            onClick={item.campaign_status !== "draft" || item.campaign_status !== "issue_detected" ? () => toggleStatus(index, 'is_active', item.campaign_id) : undefined}
+                                                                        >
+                                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'>{item.is_active?<DeactiveIcon/>:<ActiveIcon/>}</div> <div className='hidden group-hover:block'>{item.is_active?<DeactiveIcon status={true}/>:<ActiveIcon status={true}/>}</div> <span>{item.is_active?'Deactive':'Active'}</span> </div>
+                                                                        </button>
+                                                                        <button
+                                                                            className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
+                                                                            onClick={() => {
+                                                                                handleDuplicate(item.campaign_id)
+                                                                            }}
+                                                                        >
+                                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
+                                                                        </button>
+                                                                        <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                                                                        <div className='py-2'>
+                                                                            <button
+                                                                                className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6] hover:rounded-lg"
+                                                                                onClick={() => {
+                                                                                    handleDelete(index, item.campaign_id)
+                                                                                }}
+                                                                            >
+                                                                                <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                        </tbody>
+                                                            )}
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Campaigns Listed</p>}
+                        </div>
                     </table>
                 </div>
                 <div onClick={() => setNewCampaignStatus(true)} className="w-full border rounded-lg border-dashed border-[#C0C0C0] mt-4 p-3 flex justify-center">

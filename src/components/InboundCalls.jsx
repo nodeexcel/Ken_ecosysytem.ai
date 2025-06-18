@@ -53,6 +53,13 @@ export default function InBoundCalls() {
     const [endDate, setEndDate] = useState(new Date())
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [recipient, setRecipient] = useState("");
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        if (agents.length > 0) {
+            setLoading(false)
+        }
+    }, [agents])
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -108,90 +115,96 @@ export default function InBoundCalls() {
                     />
                 </div>
                 <div>
-                    <input 
-                        value={recipient} 
+                    <input
+                        value={recipient}
                         onChange={(e) => setRecipient(e.target.value)}
-                        placeholder="Recipient" 
-                        className="bg-white border text-[#5A687C] max-w-[152px] text-[16px] font-[400] w-fit border-[#E1E4EA] px-4 py-2 rounded-lg  focus:border-[#675FFF] focus:outline-none" 
+                        placeholder="Recipient"
+                        className="bg-white border text-[#5A687C] max-w-[152px] text-[16px] font-[400] w-fit border-[#E1E4EA] px-4 py-2 rounded-lg  focus:border-[#675FFF] focus:outline-none"
                     />
                 </div>
             </div>
             {/* Table */}
-            <div className="overflow-auto w-full rounded-2xl">
-                <table className="w-full rounded-2xl">
-                    <thead>
-                        <tr className="text-left text-[#5a687c] text-[16px]">
-                            <th className="px-6 py-3 font-medium whitespace-nowrap">Agent Name</th>
-                            <th className="px-6 py-3 font-medium whitespace-nowrap">Date</th>
-                            <th className="px-6 py-3 font-medium whitespace-nowrap">Language</th>
-                            <th className="px-6 py-3 font-medium whitespace-nowrap">Voice</th>
-                            <th className="px-6 py-3 font-medium whitespace-nowrap">Caller no</th>
-                            <th className="px-6 py-3 font-medium whitespace-nowrap">Status</th>
-                            <th className="px-6 py-3 font-medium whitespace-nowrap">Duration</th>
-                            <th className="px-6 py-3 font-medium whitespace-nowrap">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white border border-[#E1E4EA] p-3">
-                        {agents.map((agent, index) => (
-                            <tr
-                                key={agent.id}
-                                className={`hover:bg-gray-50 ${index !== agents.length - 1 ? 'border-b border-gray-200' : ''}`}
-                            >
-                                <td className="px-6 py-4 text-[#1E1E1E] font-[600]">{agent.agent_name}</td>
-                                <td className="px-6 py-4 text-[#5A687C]">{agent.date}</td>
-                                <td className="px-6 py-4 text-[#5A687C]">{agent.language}</td>
-                                <td className="px-6 py-4 text-[#5A687C]">{agent.voice}</td>
-                                <td className="px-6 py-4 text-[#5A687C]">{agent.caller_no}</td>
-                                <td className="px-6 py-4">
-                                    <span className={`inline-block ${agent.status !== "Replied" ? "text-[#34C759]" : "text-[#FF3B30]"} text-[16px] font-[400] px-3 py-1 rounded-full`}>
-                                        {agent.status}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 text-[#5A687C]">{agent.duration}</td>
-                                <td className="px-6 py-4">
-                                    <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
-                                        <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
-                                    </button>
-                                    {activeDropdown === index && (
-                                        <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
-                                            <div className="py-1">
-                                                <button
-                                                    className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
-                                                    onClick={() => {
-                                                        // Handle edit action
-                                                        setActiveDropdown(null);
-                                                    }}
-                                                >
-                                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'><Phone /></div> <div className='hidden group-hover:block'><Phone active={true} /></div> <span>Listen the call</span> </div>
-                                                </button>
-                                                <button
-                                                    className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
-                                                    onClick={() => {
-                                                        // Handle delete action
-                                                        setActiveDropdown(null);
-                                                    }}
-                                                >
-                                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>Notes</span> </div>
-                                                </button>
-                                                <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                                                <div className='py-2'>
-                                                    <button
-                                                        className="block w-full text-left hover:rounded-lg px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
-                                                        onClick={() => {
-                                                            // Handle delete action
-                                                            setActiveDropdown(null);
-                                                        }}
-                                                    >
-                                                        <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">Delete</span> </div>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-                                </td>
+            <div className="overflow-auto w-full">
+                <table className="w-full">
+                    <div className="px-5 w-full">
+                        <thead>
+                            <tr className="text-left text-[#5a687c] text-[16px]">
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Agent Name</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Date</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Language</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Voice</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Caller no</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Status</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Duration</th>
+                                <th className="p-[14px]  w-full font-[400] whitespace-nowrap">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
+                        </thead>
+                    </div>
+                    <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
+                        {loading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
+                            agents.length !== 0 ?
+                                <tbody className="w-full">
+                                    {agents.map((agent, index) => (
+                                        <tr
+                                            key={agent.id}
+                                            className={`text-[16px] ${index !== agents.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
+                                        >
+                                            <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#1E1E1E] font-[600]">{agent.agent_name}</td>
+                                            <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.date}</td>
+                                            <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.language}</td>
+                                            <td className="py-[14px] pl-[10px] pr-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.voice}</td>
+                                            <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.caller_no}</td>
+                                            <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[17%] w-full">
+                                                <span className={`inline-block ${agent.status !== "Replied" ? "text-[#34C759]" : "text-[#FF3B30]"} text-[16px] font-[400] px-3 py-1 rounded-full`}>
+                                                    {agent.status}
+                                                </span>
+                                            </td>
+                                            <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.duration}</td>
+                                            <td className="p-[14px]  w-full">
+                                                <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
+                                                    <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
+                                                </button>
+                                                {activeDropdown === index && (
+                                                    <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                                                        <div className="py-1">
+                                                            <button
+                                                                className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
+                                                                onClick={() => {
+                                                                    // Handle edit action
+                                                                    setActiveDropdown(null);
+                                                                }}
+                                                            >
+                                                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><Phone /></div> <div className='hidden group-hover:block'><Phone active={true} /></div> <span>Listen the call</span> </div>
+                                                            </button>
+                                                            <button
+                                                                className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
+                                                                onClick={() => {
+                                                                    // Handle delete action
+                                                                    setActiveDropdown(null);
+                                                                }}
+                                                            >
+                                                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>Notes</span> </div>
+                                                            </button>
+                                                            <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                                                            <div className='py-2'>
+                                                                <button
+                                                                    className="block w-full text-left hover:rounded-lg px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
+                                                                    onClick={() => {
+                                                                        // Handle delete action
+                                                                        setActiveDropdown(null);
+                                                                    }}
+                                                                >
+                                                                    <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">Delete</span> </div>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Inbound Calls Listed</p>}
+                    </div>
 
                 </table>
             </div>

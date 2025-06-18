@@ -547,7 +547,7 @@ const ContactsPage = () => {
     return () => {
       clearTimeout(handler);
     };
-  }, [channelSelectList,listSearch])
+  }, [channelSelectList, listSearch])
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -651,156 +651,161 @@ const ContactsPage = () => {
             </div>
           </div>
           <div className="overflow-auto w-full">
-            <table className="min-w-full rounded-2xl">
-              <thead>
-                <tr className="text-left text-[#5A687C]">
-                  {tableHeaders.map((header, index) => (
-                    <th key={index} className="px-6 py-3 text-[16px] font-[400] whitespace-nowrap">
-                      {header.name === 'Full Name' ? (
-                        <div className="flex items-center gap-2">
-                          <label className="checkbox-container">
-                            <input
-                              type="checkbox"
-                              checked={allSelected}
-                              onChange={toggleSelectAll}
-                            />
-                            <span className="checkmark"></span>
-                          </label>
-                          {header.name}
-                        </div>
-                      ) : (
-                        header.name
-                      )}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="bg-white border border-[#E1E4EA] rounded-[16px]">
-                {loadingStatus ? <tr className='h-34'><td ></td><td ></td><td><span className='loader' /></td></tr> : allContactsMessage ? <tr className='h-34'><td></td><td ></td><td>{allContactsMessage}</td></tr> : <>
-                  {allContacts.map((contact, index) => (
-                    <tr key={index} className={`${contacts.length - 1 !== index && 'border border-[#E1E4EA] px-4'}`}>
-                      <td className="px-6 py-4 text-sm text-gray-800 font-semibold whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <label className="checkbox-container">
-                            <input
-                              type="checkbox"
-                              checked={formCreateList.contactsId.includes(contact.id)}
-                              onChange={() => toggleSelectOne(contact.id)}
-                            />
-                            <span className="checkmark"></span>
-                          </label>
-                          {contact?.firstName}{" "}{contact?.lastName}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
-                        {contact?.email}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
-                        {renderPhoneNumber(contact?.phone)}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
-                        {DateFormat(contact?.created_at)}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-700">
-                        <div className="flex items-center gap-3.5">
-                          <div onClick={() => {
-                            setContactIsEdit(contact.id);
-                            setAddContactModal(true);
-                            const { countryCode, number } = extractPhoneDetails(contact.phone);
-                            setAddNewContact(({ ...contact, phone: number }))
-                            const filterCountry = countries.filter((e) => e.dial_code == countryCode)
-                            setSelectedCountry(filterCountry[0])
-                          }}>
-                            <Edit />
+            <table className="min-w-full">
+              <div className="px-3 w-full">
+                <thead>
+                  <tr className="text-left text-[#5A687C]">
+                    {tableHeaders.map((header, index) => (
+                      <th key={index} className={`p-[14px] ${index !== tableHeaders.length - 1  && 'min-w-[200px] max-w-[25%]'} w-full text-[16px] font-[400] whitespace-nowrap`}>
+                        {header.name === 'Full Name' ? (
+                          <div className="flex items-center gap-2">
+                            <label className="checkbox-container">
+                              <input
+                                type="checkbox"
+                                checked={allSelected}
+                                onChange={toggleSelectAll}
+                              />
+                              <span className="checkmark"></span>
+                            </label>
+                            {header.name}
                           </div>
-                          <div onClick={() => handleDeleteContact(contact.id)}>
-                            <Delete className="text-red-500" />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}</>}
-              </tbody>
+                        ) : (
+                          header.name
+                        )}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+              </div>
+              <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
+                {loadingStatus ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
+                  allContacts.length !== 0 ?
+                    <tbody className="w-full">
+                      {allContacts.map((contact, index) => (
+                        <tr key={index} className={`${allContacts.length - 1 !== index && 'border-b border-[#E1E4EA]'}`}>
+                          <td className="p-[14px] min-w-[200px] max-w-[25%] w-full text-sm text-gray-800 font-semibold whitespace-nowrap">
+                            <div className="flex items-center gap-2">
+                              <label className="checkbox-container">
+                                <input
+                                  type="checkbox"
+                                  checked={formCreateList.contactsId.includes(contact.id)}
+                                  onChange={() => toggleSelectOne(contact.id)}
+                                />
+                                <span className="checkmark"></span>
+                              </label>
+                              {contact?.firstName}{" "}{contact?.lastName}
+                            </div>
+                          </td>
+                          <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[25%] w-full text-sm text-[#5A687C] whitespace-nowrap">
+                            {contact?.email}
+                          </td>
+                          <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[25%] w-full text-sm text-[#5A687C] whitespace-nowrap">
+                            {renderPhoneNumber(contact?.phone)}
+                          </td>
+                          <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[25%] w-full text-sm text-[#5A687C] whitespace-nowrap">
+                            {DateFormat(contact?.created_at)}
+                          </td>
+                          <td className="p-[14px]  w-full text-sm text-[#5A687C]">
+                            <div className="flex items-center gap-3.5">
+                              <div onClick={() => {
+                                setContactIsEdit(contact.id);
+                                setAddContactModal(true);
+                                const { countryCode, number } = extractPhoneDetails(contact.phone);
+                                setAddNewContact(({ ...contact, phone: number }))
+                                const filterCountry = countries.filter((e) => e.dial_code == countryCode)
+                                setSelectedCountry(filterCountry[0])
+                              }}>
+                                <Edit />
+                              </div>
+                              <div onClick={() => handleDeleteContact(contact.id)}>
+                                <Delete className="text-red-500" />
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Contacts Listed</p>}
+              </div>
             </table>
-            <div className="flex justify-between items-center mt-4 px-4 flex-wrap gap-3">
-              <div className="flex items-center gap-2 text-[16px] text-[#5A687C]">
-                <div>
-                  Showing {(currentPage - 1) * rowsPerPage + 1} - {Math.min((currentPage) * rowsPerPage, totalContacts)} of {totalContacts}
+          </div>
+          <div className="flex justify-between items-center mt-4 px-4 flex-wrap gap-3 w-full">
+            <div className="flex items-center gap-2 text-[16px] text-[#5A687C]">
+              <div>
+                Showing {(currentPage - 1) * rowsPerPage + 1} - {Math.min((currentPage) * rowsPerPage, totalContacts)} of {totalContacts}
 
-                </div>
-                |
-                <span>Rows per page:</span>
-                <SelectDropdown
-                  name="rowsPerPage"
-                  options={rowsPerPageOptions}
-                  value={rowsPerPage}
-                  onChange={(updated) => {
-                    setRowsPerPage(Number(updated));
-                    setCurrentPage(1);
-                  }}
-                  placeholder="Select"
-                  className=""
-                />
               </div>
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="text-gray-600 h-[32px] w-[32px] flex justify-center items-center rounded-md border border-[#E1E4EA] hover:text-black disabled:opacity-30"
-                >
-                  <FiChevronLeft />
-                </button>
+              |
+              <span>Rows per page:</span>
+              <SelectDropdown
+                name="rowsPerPage"
+                options={rowsPerPageOptions}
+                value={rowsPerPage}
+                onChange={(updated) => {
+                  setRowsPerPage(Number(updated));
+                  setCurrentPage(1);
+                }}
+                placeholder="Select"
+                className=""
+              />
+            </div>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="text-gray-600 h-[32px] w-[32px] flex justify-center items-center rounded-md border border-[#E1E4EA] hover:text-black disabled:opacity-30"
+              >
+                <FiChevronLeft />
+              </button>
 
-                {(() => {
-                  const buttons = [];
-                  const visiblePages = 5;
+              {(() => {
+                const buttons = [];
+                const visiblePages = 5;
 
-                  if (totalPages <= visiblePages) {
-                    for (let i = 1; i <= totalPages; i++) {
-                      buttons.push(i);
-                    }
-                  } else {
-                    buttons.push(1);
-                    const left = currentPage - 1;
-                    const right = currentPage + 1;
-                    if (currentPage > 3) {
-                      buttons.push("...");
-                    }
-                    for (let i = Math.max(2, left); i <= Math.min(totalPages - 1, right); i++) {
-                      buttons.push(i);
-                    }
-                    if (currentPage < totalPages - 2) {
-                      buttons.push("...");
-                    }
-                    buttons.push(totalPages);
+                if (totalPages <= visiblePages) {
+                  for (let i = 1; i <= totalPages; i++) {
+                    buttons.push(i);
                   }
-                  return buttons.map((page, index) =>
-                    page === "..." ? (
-                      <span key={`ellipsis-${index}`} className="mx-1 text-gray-500">...</span>
-                    ) : (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`h-[32px] w-[32px] flex justify-center items-center rounded-md text-[16px] border ${currentPage === page
-                          ? 'bg-[#675FFF] text-white'
-                          : 'bg-white text-[#5A687C] border-[#E1E4EA]'
-                          }`}
-                      >
-                        {page}
-                      </button>
-                    )
-                  );
-                })()}
+                } else {
+                  buttons.push(1);
+                  const left = currentPage - 1;
+                  const right = currentPage + 1;
+                  if (currentPage > 3) {
+                    buttons.push("...");
+                  }
+                  for (let i = Math.max(2, left); i <= Math.min(totalPages - 1, right); i++) {
+                    buttons.push(i);
+                  }
+                  if (currentPage < totalPages - 2) {
+                    buttons.push("...");
+                  }
+                  buttons.push(totalPages);
+                }
+                return buttons.map((page, index) =>
+                  page === "..." ? (
+                    <span key={`ellipsis-${index}`} className="mx-1 text-gray-500">...</span>
+                  ) : (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`h-[32px] w-[32px] flex justify-center items-center rounded-md text-[16px] border ${currentPage === page
+                        ? 'bg-[#675FFF] text-white'
+                        : 'bg-white text-[#5A687C] border-[#E1E4EA]'
+                        }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                );
+              })()}
 
 
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="text-gray-600 rounded-md  border border-[#E1E4EA] h-[32px] w-[32px] flex justify-center items-center hover:text-black disabled:opacity-30"
-                >
-                  <FiChevronRight />
-                </button>
-              </div>
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="text-gray-600 rounded-md  border border-[#E1E4EA] h-[32px] w-[32px] flex justify-center items-center hover:text-black disabled:opacity-30"
+              >
+                <FiChevronRight />
+              </button>
             </div>
           </div>
         </>
@@ -829,86 +834,91 @@ const ContactsPage = () => {
               </div>
             </div>
           </div>
-          <div className="overflow-auto w-full rounded-2xl">
-            <table className="w-full rounded-2xl">
-              <thead>
-                <tr className="text-left text-[#5A687C] text-[16px] font-[400]">
-                  <th className="px-6 py-3 font-[400] whitespace-nowrap">List Name</th>
-                  <th className="px-6 py-3 font-[400] whitespace-nowrap">Active Contacts</th>
-                  <th className="px-6 py-3 font-[400] whitespace-nowrap">Channel</th>
-                  <th className="px-6 py-3 font-[400] whitespace-nowrap">Created Date</th>
-                  <th className="px-6 py-3 font-[400] whitespace-nowrap">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white border border-[#E1E4EA] rounded-[16px]">
-                {listLoading ? <tr className='h-34'><td ></td><td ></td><td><span className='loader' /></td></tr> : listMessage ? <tr className='h-34'><td></td><td ></td><td>{listMessage}</td></tr> : <>
-                  {contactLists.map((list, index) => (
-                    <tr key={list.name} className={`${contacts.length - 1 !== index && 'border border-[#E1E4EA] px-4 text-[16px]'}`}>
-                      <td className="px-6 py-4 font-[600] whitespace-nowrap">{list.listName}</td>
-                      <td className="px-6 py-4 font-[400] text-[#5A687C] whitespace-nowrap">{list.activeContacts.toLocaleString()}</td>
-                      <td className="px-6 py-4 font-[400] whitespace-nowrap">
-                        {list.channel.toLowerCase() === "email" ? (
-                          <div className="flex items-center gap-1.5 bg-[#fff5e6] text-[#ff9500] px-3 py-1 rounded-md w-fit">
-                            <Mail className="h-4 w-4" />
-                            <span>Email</span>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-1.5 bg-[#f0f0ff] text-[#675fff] px-3 py-1 rounded-md w-fit">
-                            <Phone className="h-4 w-4" />
-                            <span>Phone No</span>
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 font-[400] text-[#5A687C] whitespace-nowrap">{format(list.createdDate, 'dd/MM/yyyy hh:mm a')}</td>
-                      <td className="px-6 py-4">
-                        <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative">
-                          <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
-                          {activeDropdown === index && (
-                            <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
-                              <div className="py-1">
-                                <button
-                                  className="block group w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
-                                  onClick={() => {
-                                    handleEditList(list);
-                                  }}
-                                >
-                                  <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
-                                </button>
-                                <button
-                                  className="block group w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
-                                  onClick={() => {
-                                    setActiveDropdown(null);
-                                  }}
-                                >
-                                  <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>View Contacts</span> </div>
-                                </button>
-                                <button
-                                  className="block group w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
-                                  onClick={() => {
-                                    handleDuplicateList(list.id);
-                                  }}
-                                >
-                                  <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
-                                </button>
-                                <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                                <div className='py-2'>
-                                  <button
-                                    className="block w-full text-left hover:rounded-lg  px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
-                                    onClick={() => {
-                                      handleDeleteList(list.id);
-                                    }}
-                                  >
-                                    <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">Delete</span> </div>
-                                  </button>
-                                </div>
+          <div className="overflow-auto w-full">
+            <table className="w-full">
+              <div className="px-5 w-full">
+                <thead>
+                  <tr className="text-left text-[#5A687C] text-[16px] font-[400]">
+                    <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">List Name</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">Active Contacts</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">Channel</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">Created Date</th>
+                    <th className="p-[14px] w-full font-[400] whitespace-nowrap">Actions</th>
+                  </tr>
+                </thead>
+              </div>
+              <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
+                {listLoading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
+                  contactLists.length !== 0 ?
+                    <tbody className="w-full">
+                      {contactLists.map((list, index) => (
+                        <tr key={list.name} className={`${contactLists.length - 1 !== index && 'border-b border-[#E1E4EA] text-[16px]'}`}>
+                          <td className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[600] whitespace-nowrap">{list.listName}</td>
+                          <td className="py-[14px] pl-[25px] pr-[14px] min-w-[200px] max-w-[25%] w-full font-[400] text-[#5A687C] whitespace-nowrap">{list.activeContacts.toLocaleString()}</td>
+                          <td className="py-[14px] pl-[10px] pr-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">
+                            {list.channel.toLowerCase() === "email" ? (
+                              <div className="flex items-center gap-1.5 bg-[#fff5e6] text-[#ff9500] px-3 py-1 rounded-md w-fit">
+                                <Mail className="h-4 w-4" />
+                                <span>Email</span>
                               </div>
-                            </div>
-                          )}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}</>}
-              </tbody>
+                            ) : (
+                              <div className="flex items-center gap-1.5 bg-[#f0f0ff] text-[#675fff] px-3 py-1 rounded-md w-fit">
+                                <Phone className="h-4 w-4" />
+                                <span>Phone No</span>
+                              </div>
+                            )}
+                          </td>
+                          <td className="py-[14px] pl-[5px] pr-[14px] min-w-[200px] max-w-[25%] w-full font-[400] text-[#5A687C] whitespace-nowrap">{format(list.createdDate, 'dd/MM/yyyy hh:mm a')}</td>
+                          <td className="p-[14px] w-full">
+                            <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative">
+                              <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
+                              {activeDropdown === index && (
+                                <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                                  <div className="py-1">
+                                    <button
+                                      className="block group w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
+                                      onClick={() => {
+                                        handleEditList(list);
+                                      }}
+                                    >
+                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                                    </button>
+                                    <button
+                                      className="block group w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
+                                      onClick={() => {
+                                        setActiveDropdown(null);
+                                      }}
+                                    >
+                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>View Contacts</span> </div>
+                                    </button>
+                                    <button
+                                      className="block group w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
+                                      onClick={() => {
+                                        handleDuplicateList(list.id);
+                                      }}
+                                    >
+                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
+                                    </button>
+                                    <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                                    <div className='py-2'>
+                                      <button
+                                        className="block w-full text-left hover:rounded-lg  px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
+                                        onClick={() => {
+                                          handleDeleteList(list.id);
+                                        }}
+                                      >
+                                        <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">Delete</span> </div>
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Contacts Listed</p>}
+              </div>
             </table>
           </div>
 

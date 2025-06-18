@@ -262,56 +262,56 @@ export default function CallAgentsPage() {
       </div>
 
       {/* Table */}
-      <div className="overflow-auto w-full rounded-2xl">
-        <table className="w-full rounded-2xl">
-          <thead>
-            <tr className="text-left text-[#5a687c] text-[16px]">
-              <th className="px-6 py-3 font-medium whitespace-nowrap">Agent Name</th>
-              <th className="px-6 py-3 font-medium whitespace-nowrap">Language</th>
-              <th className="px-6 py-3 font-medium whitespace-nowrap">Voice</th>
-              <th className="px-6 py-3 font-medium whitespace-nowrap">Phone No</th>
-              <th className="px-6 py-3 font-medium whitespace-nowrap">Status</th>
-              <th className="px-6 py-3 font-medium whitespace-nowrap">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white border rounded-2xl border-[#E1E4EA]  p-3 ">
-            {loading ? <tr className='h-34'><td ></td><td ></td><td ></td><td><span className='loader' /></td></tr> : agents.length !== 0 ? (agents.map((agent, index) => (
-              <tr
-                key={agent.id}
-                className={`hover:bg-gray-50 ${index !== agents.length - 1 ? 'border-b border-gray-200' : ''}`}
-              >
-                <td className="px-6 py-4 font-medium text-gray-900 ml-3">{agent.agent_name}</td>
-                <td className="px-6 py-4">{agent.language.charAt(0).toLocaleUpperCase() + agent.language.substring(1, agent.language.length)}</td>
-                <td className="px-6 py-4">{agent.voice}</td>
-                <td className="px-6 py-4">{agent.phone_numbers}</td>
-                <td className="px-6 py-5">
-                  <div className="flex items-center gap-3 ">
-                    <ToggleSwitch
-                      checked={agent.status}
-                      onChange={() => toggleActive(agent.id)}
-                      className="cursor-pointer"
-                    />
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className='flex items-center gap-2'>
-                    <button className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg'>
-                      View Report
-                    </button>
-                    <button className="p-2 rounded-lg">
-                      <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
-                    </button>
-                  </div>
-                </td>
+      <div className="overflow-auto w-full">
+        <table className="w-full">
+          <div className="px-5 w-full">
+            <thead>
+              <tr className="text-left text-[#5A687C] text-[16px]">
+                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">Agent Name</th>
+                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">Language</th>
+                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">Voice</th>
+                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">Phone No</th>
+                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">Status</th>
+                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">Actions</th>
               </tr>
-            ))) : (
-              <tr className="text-sm text-[#1e1e1e]">
-                <td colSpan="7" className="px-6 py-5 text-center text-gray-500">
-                  No phone numbers found.
-                </td>
-              </tr>
-            )}
-          </tbody>
+            </thead>
+          </div>
+          <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
+            {loading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
+              agents.length !== 0 ?
+                <tbody className="w-full">
+                  {agents.map((agent, index) => (
+                    <tr
+                      key={agent.id}
+                      className={`${index !== agents.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
+                    >
+                      <td className="p-[14px] min-w-[200px] max-w-[20%] w-full font-medium text-gray-900">{agent.agent_name}</td>
+                      <td className="py-[14px] pl-[20px] pr-[14px] min-w-[200px] max-w-[20%] w-full">{agent.language.charAt(0).toLocaleUpperCase() + agent.language.substring(1, agent.language.length)}</td>
+                      <td className="p-[14px] min-w-[200px] max-w-[20%] w-full">{agent.voice}</td>
+                      <td className="p-[14px] min-w-[200px] max-w-[20%] w-full">{agent.phone_numbers}</td>
+                      <td className="p-[14px] min-w-[200px] max-w-[20%] w-full">
+                        <div className="flex items-center gap-3 ">
+                          <ToggleSwitch
+                            checked={agent.status}
+                            onChange={() => toggleActive(agent.id)}
+                            className="cursor-pointer"
+                          />
+                        </div>
+                      </td>
+                      <td className="p-[14px] min-w-[200px] max-w-[20%] w-full whitespace-nowrap">
+                        <div className='flex items-center gap-2'>
+                          <button className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg'>
+                            View Report
+                          </button>
+                          <button className="p-2 rounded-lg">
+                            <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Call Agents Listed</p>}
+          </div>
         </table>
       </div>
 

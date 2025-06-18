@@ -1,6 +1,6 @@
 // Full-featured modal with pixel-perfect layout, click-outside-to-close, and toggle logic.
 import React, { useState, useRef, useEffect } from "react";
-import { MoreHorizontal, X } from "lucide-react";
+import { ChevronDown, MoreHorizontal, X } from "lucide-react";
 import { BritishFlag, Delete, Duplicate, Edit, Notes, TestCall, ThreeDots } from "../icons/icons";
 import { useDispatch } from "react-redux";
 import { getNavbarData } from "../store/navbarSlice";
@@ -12,6 +12,8 @@ import { createPhoneCampaign } from "../api/callAgent";
 import { getCallAgent, getPhoneNumber, getPhoneCampaign, deletePhoneCampaign, getPhoneCampaignDetail, updatePhoneCampaign, duplicateCampaign } from "../api/callAgent";
 import { format } from "date-fns";
 import { SelectDropdown } from "./Dropdown";
+import { getLists } from "../api/brainai";
+import { DateFormat } from "../utils/TimeFormat";
 
 const staticData = [
   {
@@ -70,6 +72,9 @@ export default function CallCampaign() {
   const [phoneNumbers, setPhoneNumbers] = useState([]);
   const [loader, setLoader] = useState(false);
   const [deleteRow, setDeleteRow] = useState(null);
+  const [contactLists, setContactLists] = useState([]);
+  const [showListTargetSelector, setShowListTargetSelector] = useState(false);
+  const targetListRef = useRef()
 
   // Add filter state
   const [filters, setFilters] = useState({
@@ -100,14 +105,20 @@ export default function CallCampaign() {
     { key: "neutral", label: "Neutral" }
   ];
 
+  const tagsOptions = [{ label: "Interested", key: "interested" }, { label: "Not Interested", key: "not_interested" },
+  { label: "Messaging", key: "messaging" }, { label: "No Answer", key: "no_answer" }, { label: "Recall Requested", key: "recall_requested" }
+  ]
+
   const [campaign, setCampaign] = useState(
     {
       campaign_name: "",
+      campaign_type: "",
       language: "",
       voice: "",
       choose_calendar: "",
       max_call_time: 10,
-      target_lists: ["0"],
+      tag: "",
+      target_lists: [],
       agent: 0,
       country: "USA",
       phone_number: "",
@@ -119,15 +130,18 @@ export default function CallCampaign() {
   );
 
   const [campaigns, setCampaigns] = useState([]);
+  const [loading, setLoading] = useState(true)
 
 
 
   const [errors, setErrors] = useState({
     campaign_name: "",
+    campaign_type: "",
     language: "",
     voice: "",
     choose_calendar: "",
     max_call_time: "",
+    tag: "",
     target_lists: "",
     agent: "",
     country: "",
@@ -142,10 +156,12 @@ export default function CallCampaign() {
     const newErrors = {};
 
     if (!campaign.campaign_name.trim()) newErrors.campaign_name = "Campaign name is required.";
-    if (!campaign.language) newErrors.language = "Language is required.";
-    if (!campaign.voice) newErrors.voice = "Voice selection is required.";
-    if (!campaign.choose_calendar) newErrors.choose_calendar = "Calendar selection is required.";
+    if (!campaign.campaign_type.trim()) newErrors.campaign_type = "Campaign Type is required.";
+    // if (!campaign.language) newErrors.language = "Language is required.";
+    // if (!campaign.voice) newErrors.voice = "Voice selection is required.";
+    // if (!campaign.choose_calendar) newErrors.choose_calendar = "Calendar selection is required.";
     if (!campaign.max_call_time || campaign.max_call_time <= 0) newErrors.max_call_time = "Enter a valid call time.";
+    if (!campaign.tag) newErrors.tag = "Tag is required.";
     if (!campaign.target_lists || campaign.target_lists.length === 0) newErrors.target_lists = "At least one target list is required.";
     if (!campaign.agent) newErrors.agent = "Agent selection is required.";
     // if (!campaign.country) newErrors.country = "Country is required.";
@@ -159,6 +175,26 @@ export default function CallCampaign() {
 
     return Object.keys(newErrors).length === 0;
   };
+
+
+  const handleGetListsContacts = async () => {
+    try {
+      const response = await getLists("phone", '');
+      if (response?.status === 200) {
+        console.log(response?.data?.lists)
+        const data = response?.data?.lists
+        if (data?.length > 0) {
+          const formatData = data.map((e) => ({
+            label: e.listName,
+            key: e.id
+          }))
+          setContactLists(formatData)
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 
   const removeRow = async (id) => {
@@ -214,11 +250,13 @@ export default function CallCampaign() {
   const resetForm = () => {
     setCampaign({
       campaign_name: "",
+      campaign_type: "",
       language: "",
       voice: "",
       choose_calendar: "",
       max_call_time: 10,
-      target_lists: ["0"],
+      tag: '',
+      target_lists: [],
       agent: 0,
       country: "USA",
       phone_number: "",
@@ -228,17 +266,28 @@ export default function CallCampaign() {
     })
   }
 
+  useEffect(() => {
+    if (campaigns?.length > 0) {
+      setLoading(false)
+    }
+  }, [campaigns])
+
 
   const handleGetPhoneCampaign = async () => {
     try {
       const response = await getPhoneCampaign();
 
       if (response.status === 200) {
-        setCampaigns(response.data.campaigns_info || []);
+        setCampaigns(response.data.campaigns_info);
+        if (response?.data?.campaigns_info?.length === 0) {
+          setLoading(false)
+        }
       } else {
+        setLoading(false)
         console.error("Failed to fetch phone campaigns:", response);
       }
     } catch (error) {
+      setLoading(false)
       console.error("Error fetching phone campaigns:", error);
     }
   }
@@ -351,8 +400,59 @@ export default function CallCampaign() {
     handleGetPhoneNumber();
     handleGetPhoneAgent();
     handleGetPhoneCampaign();
+    handleGetListsContacts();
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+
+  const CustomSelector = ({ options, setShowSelector, value = [], onChange, ref }) => {
+
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setShowSelector(false);
+        }
+      };
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const toggleChange = (e) => {
+      const newSelection = value.includes(e)
+        ? value.filter((d) => d !== e)
+        : [...value, e];
+      onChange(newSelection);
+    };
+    return (
+      <div className="bg-white rounded-lg shadow-lg">
+        <div className="max-h-60 overflow-auto">
+          <ul className="py-1 px-2 flex flex-col gap-1 my-1">
+            {options?.length > 0 && options.map((e) => (
+              <li
+                key={e.key}
+                onClick={() => toggleChange(e.key)}
+                className={`py-2 px-4 rounded-lg cursor-pointer flex items-center hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF] gap-2 ${value.includes(e.key)
+                  ? 'bg-[#F4F5F6] rounded-lg text-[#675FFF]' : 'text-[#5A687C]'
+                  }`}
+              >
+                <div
+                  className={`w-4 h-4 rounded border flex items-center justify-center ${value.includes(e.key)
+                    ? 'border-[#675FFF] bg-[#675FFF]'
+                    : 'border-[#E1E4EA]'
+                    }`}
+                >
+                  {value.includes(e.key) && (
+                    <span className="text-white text-xs">✓</span>
+                  )}
+                </div>
+                <span>{e.label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    );
+  };
 
 
 
@@ -362,9 +462,9 @@ export default function CallCampaign() {
   };
 
   return (
-    <div className="h-screen overflow-auto">
+    <div>
       {!showModal ?
-        <div className="py-4 pr-2 flex flex-col gap-4 w-full">
+        <div className="py-4 pr-2 flex flex-col gap-4 w-full h-screen overflow-auto">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-semibold text-black">Call Campaign</h1>
@@ -414,92 +514,97 @@ export default function CallCampaign() {
           </div>
 
           {/* Table */}
-          <div className="overflow-auto w-full rounded-2xl">
-            <table className="w-full rounded-2xl">
-              <thead>
-                <tr className="text-left text-[#5a687c] text-[16px]">
-                  <th className="px-6 py-3 font-medium whitespace-nowrap">Campaign Name</th>
-                  <th className="px-6 py-3 font-medium whitespace-nowrap">Agent Name</th>
-                  <th className="px-6 py-3 font-medium whitespace-nowrap">Creation Date</th>
-                  <th className="px-6 py-3 font-medium whitespace-nowrap">Language</th>
-                  <th className="px-6 py-3 font-medium whitespace-nowrap">Total Calls</th>
-                  <th className="px-6 py-3 font-medium whitespace-nowrap">Status</th>
-                  <th className="px-6 py-3 font-medium whitespace-nowrap">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white border border-[#E1E4EA] p-3">
-                {campaigns.map((agent, index) => (
-                  <tr
-                    key={agent.id}
-                    className={`hover:bg-gray-50 ${index !== agents.length - 1 ? 'border-b border-gray-200' : ''}`}
-                  >
-                    <td className="px-6 py-4 font-medium text-gray-900">{agent.campaign_name}</td>
-                    <td className="px-6 py-4">{agent.agent_name}</td>
-                    <td className="px-6 py-4">{format(agent.creation_date, "dd-mm-yy hh:mm a")}</td>
-                    <td className="px-6 py-4">{agent.language}</td>
-                    <td className="px-6 py-4">{agent.total_calls}</td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-block border ${renderColor(agent.status)} text-sm font-medium px-3 py-1 rounded-full`}>
-                        {agent.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className='flex items-center gap-2'>
-                        <button className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg cursor-pointer' onClick={() => setShowReport(true)}>
-                          View Report
-                        </button>
-                        <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative">
-                          <div className='bg-[#F4F5F6] p-2 rounded-lg cursor-pointer'><ThreeDots /></div>
-                          {activeDropdown === index && (
-                            <div className="absolute right-0 px-2  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
-                              <div className="py-1">
-                                <button
-                                  className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500] cursor-pointer"
-                                  onClick={() => {
-                                    // Handle edit action
-                                    setEditData(agent.id)
-
-                                    handleGetPhoneCampaignDetail(agent.id);
-
-
-                                  }}
-                                >
-                                  <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
-                                </button>
-                                <button
-                                  className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500] cursor-pointer"
-                                  onClick={() => {
-                                    // Handle delete action
-
-                                    handleDuplicate(agent.id);
-                                  }}
-                                >
-                                  <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
-                                </button>
-                                <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                                <div className="py-2">
-                                  <button
-                                    className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6] hover:rounded-lg font-[500]"
-                                    onClick={() => {
-                                      // Handle delete action
-                                      setActiveDropdown(null);
-                                      setDeleteRow(agent.id);
-
-                                    }}
-                                  >
-                                    <div className="flex items-center gap-2 cursor-pointer">{<Delete />} <span>Delete</span> </div>
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </button>
-                      </div>
-
-                    </td>
+          <div className="overflow-auto w-full">
+            <table className="w-full">
+              <div className="px-5 w-full">
+                <thead>
+                  <tr className="text-left text-[#5a687c] text-[16px]">
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Campaign Name</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Agent Name</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Creation Date</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Language</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Total Calls</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Status</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Actions</th>
                   </tr>
-                ))}
-              </tbody>
+                </thead>
+              </div>
+              <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
+                {loading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
+                  campaigns.length !== 0 ? <tbody className="w-full">
+                    {campaigns.map((agent, index) => (
+                      <tr
+                        key={agent.id}
+                        className={`${index !== campaigns.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
+                      >
+                        <td className="p-[14px] min-w-[200px] max-w-[17%] w-full font-medium text-[#1E1E1E]">{agent.campaign_name}</td>
+                        <td className="py-[14px] pl-[25px] pr-[14px] min-w-[200px] max-w-[17%] w-full">{agent.agent_name}</td>
+                        <td className="p-[14px] min-w-[200px] max-w-[17%] w-full whitespace-nowrap">{DateFormat(agent.creation_date)}</td>
+                        <td className="p-[14px] min-w-[200px] max-w-[17%] w-full">{agent.language}</td>
+                        <td className="py-[14px] pl-[35px] pr-[14px] min-w-[200px] max-w-[17%] w-full">{agent.total_calls}</td>
+                        <td className="py-[14px] pl-[5px] pr-[14px] min-w-[200px] max-w-[17%] w-full">
+                          <span className={`inline-block border ${renderColor(agent.status)} text-sm font-medium px-3 py-1 rounded-full`}>
+                            {agent.status}
+                          </span>
+                        </td>
+                        <td className="p-[14px] min-w-[200px] max-w-[17%] w-full whitespace-nowrap">
+                          <div className='flex items-center gap-2'>
+                            <button className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg cursor-pointer' onClick={() => setShowReport(true)}>
+                              View Report
+                            </button>
+                            <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative">
+                              <div className='bg-[#F4F5F6] p-2 rounded-lg cursor-pointer'><ThreeDots /></div>
+                              {activeDropdown === index && (
+                                <div className="absolute right-0 px-2  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                                  <div className="py-1">
+                                    <button
+                                      className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500] cursor-pointer"
+                                      onClick={() => {
+                                        // Handle edit action
+                                        setEditData(agent.id)
+
+                                        handleGetPhoneCampaignDetail(agent.id);
+
+
+                                      }}
+                                    >
+                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                                    </button>
+                                    <button
+                                      className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500] cursor-pointer"
+                                      onClick={() => {
+                                        // Handle delete action
+
+                                        handleDuplicate(agent.id);
+                                      }}
+                                    >
+                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
+                                    </button>
+                                    <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                                    <div className="py-2">
+                                      <button
+                                        className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6] hover:rounded-lg font-[500]"
+                                        onClick={() => {
+                                          // Handle delete action
+                                          setActiveDropdown(null);
+                                          setDeleteRow(agent.id);
+
+                                        }}
+                                      >
+                                        <div className="flex items-center gap-2 cursor-pointer">{<Delete />} <span>Delete</span> </div>
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </button>
+                          </div>
+
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Call Campaign Listed</p>}
+              </div>
 
             </table>
           </div>
@@ -537,7 +642,7 @@ export default function CallCampaign() {
             </div>
           </div>}
         </div> :
-        <div className="py-4 pr-2 flex flex-col gap-4 w-full">
+        <div className="py-4 pr-2 flex flex-col gap-4 w-full h-screen overflow-auto">
           {/* Header */}
           <div className="flex flex-col gap-2">
             <h1 onClick={() => {
@@ -551,11 +656,11 @@ export default function CallCampaign() {
           >
             <div className="space-y-4">
               <div>
-                <label className="block text-sm text-gray-700 mb-1">Campaign Name</label>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Campaign Name</label>
                 <input
                   type="text"
                   placeholder="Enter campaign name"
-                  className="w-full px-4 py-2 bg-white border rounded-lg border-[#E1E4EA] focus:outline-none focus:border-[#675FFF]"
+                  className={`w-full px-4 py-2 bg-white border rounded-lg ${errors.campaign_name ? 'border-red-500' : 'border-[#E1E4EA]'}  focus:outline-none focus:border-[#675FFF]`}
 
                   name="campaign_name"
                   value={campaign.campaign_name}
@@ -563,10 +668,25 @@ export default function CallCampaign() {
                 />
                 {errors.campaign_name && <p className="text-red-500 text-sm mt-1">{errors.campaign_name}</p>}
               </div>
+              <div>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Campaign Type</label>
+                <SelectDropdown
+                  name="campaign_type"
+                  options={[
+                    { key: "outbound", label: "Outbound call campaign" },
+                    { key: "inbound", label: "Inbound call campaign" }
+                  ]}
+                  placeholder="Select"
+                  value={campaign.campaign_type}
+                  onChange={(value) => handleCampaignForm({ target: { name: 'campaign_type', value } })}
+                  errors={errors}
+                />
+                {errors.campaign_type && <p className="text-red-500 text-sm mt-1">{errors.campaign_type}</p>}
+              </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              {/* <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-700 mb-1">Language</label>
+                  <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Language</label>
                   <SelectDropdown
                     name="language"
                     options={[
@@ -581,7 +701,7 @@ export default function CallCampaign() {
                   {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-700 mb-1">Voice</label>
+                  <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Voice</label>
                   <SelectDropdown
                     name="voice"
                     options={[
@@ -595,11 +715,11 @@ export default function CallCampaign() {
                   />
                   {errors.voice && <p className="text-red-500 text-sm mt-1">{errors.voice}</p>}
                 </div>
-              </div>
+              </div> */}
 
-              <div className="grid grid-cols-2 gap-4">
+              {/* <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-700 mb-1">Choose Calendar</label>
+                  <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Choose Calendar</label>
                   <SelectDropdown
                     name="choose_calendar"
                     options={[
@@ -614,7 +734,7 @@ export default function CallCampaign() {
                   {errors.choose_calendar && <p className="text-red-500 text-sm mt-1">{errors.choose_calendar}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-700 mb-1">Max Call Time (Minutes)</label>
+                  <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Maximum Call Time in Minutes</label>
                   <SelectDropdown
                     name="max_call_time"
                     options={[
@@ -629,27 +749,89 @@ export default function CallCampaign() {
                   />
                   {errors.max_call_time && <p className="text-red-500 text-sm mt-1">{errors.max_call_time}</p>}
                 </div>
-              </div>
+              </div> */}
 
               <div>
-                <label className="block text-sm text-gray-700 mb-1">Target Lists</label>
-                <SelectDropdown
-                  name="target_lists"
-                  options={[
-                    { key: "0", label: "0" },
-                    { key: "1", label: "1" }
-                  ]}
-                  placeholder="Select"
-                  value={campaign.target_lists[0]}
-                  onChange={(value) => setCampaign(prev => ({ ...prev, target_lists: [value] }))}
-                  errors={errors}
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Maximum Call Time in Minutes</label>
+                <input
+                  type="text"
+                  name='max_call_time'
+                  value={campaign.max_call_time}
+                  onChange={(e) => {
+                    const { name, value } = e.target;
+                    if (value === '' || /^\d+$/.test(value)) {
+                      setCampaign((prev) => ({
+                        ...prev,
+                        [name]: value === '' ? '' : parseInt(value, 10)
+                      }));
+                      setErrors((prev) => ({ ...prev, [name]: '' }))
+                    }
+                  }}
+                  className={`w-full bg-white p-2 rounded-lg border ${errors.max_call_time ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
+                  placeholder="Enter number"
                 />
+                {errors.max_call_time && <p className="text-red-500 text-sm mt-1">{errors.max_call_time}</p>}
+              </div>
+              <div>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Select Your Tags</label>
+                <div className="flex justify-between items-center px-3">
+                  {tagsOptions.map((e) => (
+                    <div key={e.key} className="flex items-center cursor-pointer" onClick={() => {
+                      setCampaign((prev) => ({ ...prev, tag: e.key }))
+                      setErrors((prev) => ({ ...prev, tag: "" }))
+                    }}>
+                      <label className="checkbox-container !pl-7">
+                        <input
+                          name="tag"
+                          type="checkbox"
+                          checked={campaign.tag == e.key}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                      <span className="pt-[5px]">{e.label}</span>
+                    </div>
+                  ))}
+                </div>
+                {errors.tag && <p className="text-red-500 text-sm mt-1">{errors.tag}</p>}
+              </div>
+              <div className="relative" ref={targetListRef}>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Target Contact Lists</label>
+                <button
+                  onClick={() => setShowListTargetSelector((prev) => !prev)}
+                  className={`w-full flex items-center justify-between focus:outline-none focus:border-[#675FFF] bg-white border ${errors.target_lists ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
+                >
+                  <span className={`truncate ${campaign.target_lists?.length > 0 ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{campaign.target_lists?.length > 0
+                    ? campaign.target_lists.map(dayKey => {
+                      const found = contactLists?.length > 0 && contactLists.find(d => d.key === dayKey);
+                      return found?.label;
+                    }).join(', ')
+                    : 'Select'}</span>
+                  <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showListTargetSelector ? 'transform rotate-180' : ''}`} />
+                </button>
+                {showListTargetSelector && (
+                  <div className="absolute z-50 mt-1 w-full">
+                    <CustomSelector
+                      options={contactLists?.length > 0 && contactLists}
+                      setShowSelector={setShowListTargetSelector}
+                      value={campaign.target_lists}
+                      onChange={(updated) => {
+                        setCampaign((prev) => ({
+                          ...prev,
+                          target_lists: updated,
+                        }))
+                        setErrors((prev) => ({ ...prev, target_lists: "" }))
+                      }
+                      }
+                      ref={targetListRef}
+                    />
+                  </div>
+                )}
                 {errors.target_lists && <p className="text-red-500 text-sm mt-1">{errors.target_lists}</p>}
                 <button className="text-[#7065F0] text-sm font-medium mt-1">+ Create New Contact List</button>
               </div>
 
               <div>
-                <label className="block text-sm text-gray-700 mb-1">Choose an Agent</label>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Choose an Agent</label>
                 <SelectDropdown
                   name="agent"
                   options={agents.map(agent => ({ key: agent.id.toString(), label: agent.agent_name }))}
@@ -661,8 +843,8 @@ export default function CallCampaign() {
                 {errors.agent && <p className="text-red-500 text-sm mt-1">{errors.agent}</p>}
               </div>
 
-              <div>
-                <label className="text-sm text-gray-600 font-medium block mb-1">
+              {/* <div>
+                <label className="text-[14px] font-[500] text-[#1E1E1E] block mb-1">
                   Phone Number
                 </label>
                 <div className="flex group items-center focus-within:border-[#675FFF] gap-2 border border-[#E1E4EA] rounded-lg px-4 py-2">
@@ -707,10 +889,10 @@ export default function CallCampaign() {
                   </select>
                 </div>
                 {errors.phone_number && <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>}
-              </div>
+              </div> */}
 
               <div className="flex items-center justify-between mt-2">
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-[14px] font-[500] text-[#1E1E1E]">
                   Tom, Engages the Conversation
                 </span>
                 <button
@@ -726,10 +908,10 @@ export default function CallCampaign() {
               </div>
 
               <div>
-                <label className="block text-sm text-gray-700 mb-1">Your Catch Phrase</label>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Your Catch Phrase</label>
                 <textarea
                   placeholder="Enter your catch phrase"
-                  className="w-full px-4 py-2 border rounded-lg resize-none border-[#E1E4EA] focus:outline-none focus:border-[#675FFF]"
+                  className={`w-full px-4 py-2 border rounded-lg resize-none  ${errors.catch_phrase ? 'border-red-500' : 'border-[#E1E4EA]'}  focus:outline-none focus:border-[#675FFF]`}
                   rows={4}
                   value={campaign.catch_phrase}
                   onChange={handleCampaignForm}
@@ -738,10 +920,10 @@ export default function CallCampaign() {
                 {errors.catch_phrase && <p className="text-red-500 text-sm mt-1">{errors.catch_phrase}</p>}
               </div>
               <div>
-                <label className="block text-sm text-gray-700 mb-1">Your Call Script</label>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Your Call Script</label>
                 <textarea
                   placeholder="Enter your call script"
-                  className="w-full px-4 py-2 border rounded-lg resize-none border-[#E1E4EA] focus:outline-none focus:border-[#675FFF]"
+                  className={`w-full px-4 py-2 border rounded-lg resize-none  ${errors.call_script ? 'border-red-500' : 'border-[#E1E4EA]'}  focus:outline-none focus:border-[#675FFF]`}
                   rows={4}
                   value={campaign.call_script}
                   onChange={handleCampaignForm}

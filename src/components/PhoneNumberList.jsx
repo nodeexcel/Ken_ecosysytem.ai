@@ -211,76 +211,66 @@ export default function PhoneNumbers() {
       </div>
 
       {/* Table */}
-      <div className="overflow-auto w-full rounded-2xl">
-        <table className="w-full rounded-2xl">
-          <thead>
-            <tr className="text-left text-[#5A687C] text-[16px]">
-              <th className="px-6 py-3 font-[400] whitespace-nowrap">Phone Number</th>
-              <th className="px-6 py-3 font-[400] whitespace-nowrap">Country</th>
-              <th className="px-6 py-3 font-[400] whitespace-nowrap">Status</th>
-              <th className="px-6 py-3 font-[400] whitespace-nowrap">Total Calls</th>
-              <th className="px-6 py-3 font-[400] whitespace-nowrap">Direction</th>
-              <th className="px-6 py-3 font-[400] whitespace-nowrap">Creation Date</th>
-              <th className="px-6 py-3 font-[400] whitespace-nowrap">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white shadow-sm">
-
-            {loading ? <tr className='h-34'><td ></td><td ></td><td ></td><td><span className='loader' /></td></tr> : rows.length !== 0 ? (
-              rows.map((row, index) => (
-                <tr
-                  key={row.id}
-                  className={`text-[16px] text-[#1E1E1E] ${index !== rows?.length - 1 ? 'border-b border-gray-200' : ''}`}
-                >
-                  <td className="px-6 py-5 font-[600] text-gray-900">{renderPhoneNumber(row.phone_number, row.country)}</td>
-                  <td className="px-6 py-5 text-[#5A687C]">{row.country}</td>
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={`text-[14px] font-[500] px-2.5 py-0.5 rounded-full border-[1.5px] ${row.status
-                          ? "border-[#34C759] text-[#34C759] bg-[#EBF9EE]"
-                          : "text-[#FF9500] border-[#FF9500] bg-[#FFF4E6]"
-                          }`}
-                      >
-                        {row.status ? "Active" : "Inactive"}
-                      </span>
-                      <ToggleSwitch
-                        checked={row.status}
-                        onChange={() => toggleActive(row.id)}
-                      />
-                    </div>
-                  </td>
-                  <td className="px-6 py-5 text-center text-[#5A687C]">{row.total_calls}</td>
-                  <td className="px-6 py-5 text-center">
-                    <div className="flex justify-center">
-                      {row.direction === "inbound" ? <InboundCall active={true} /> : <OutboundCall active={true} />}
-                    </div>
-                  </td>
-                  <td className="px-6 py-5 text-[#5A687C]">{DateFormat(row.creation_date)}</td>
-
-                  <td className="px-6 py-5 text-center">
-                    <button
-                      onClick={() => setDeleteRow(row.id)}
-                      className="text-red-500 hover:text-red-600"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr className="text-sm text-[#1e1e1e]">
-                <td colSpan="7" className="px-6 py-5 text-center text-gray-500">
-                  No phone numbers found.
-                </td>
+      <div className="overflow-auto w-full">
+        <table className="w-full">
+          <div className="px-5 w-full">
+            <thead>
+              <tr className="text-left text-[#5A687C] text-[16px]">
+                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Phone Number</th>
+                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Country</th>
+                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Status</th>
+                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Total Calls</th>
+                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Direction</th>
+                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Creation Date</th>
+                <th className="p-[14px] w-full font-[400] whitespace-nowrap">Actions</th>
               </tr>
-            )
+            </thead>
+          </div>
+          <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
+            {loading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
+              rows.length !== 0 ?
+                <tbody className="w-full">
+                  {rows.map((row, index) =>
+                    <tr
+                      key={row.id}
+                      className={`text-[16px] text-[#1E1E1E] ${index !== rows?.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
+                    >
+                      <td className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[600] text-[#1E1E1E]">{renderPhoneNumber(row.phone_number, row.country)}</td>
+                      <td className="py-[14px] pl-[24px] pr-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C] whitespace-nowrap">{row.country}</td>
+                      <td className="p-[14px] min-w-[200px] max-w-[17%] w-full">
+                        <div className="flex items-center gap-3">
+                          <span
+                            className={`text-[14px] font-[500] px-2.5 py-0.5 rounded-full border-[1.5px] ${row.status
+                              ? "border-[#34C759] text-[#34C759] bg-[#EBF9EE]"
+                              : "text-[#FF9500] border-[#FF9500] bg-[#FFF4E6]"
+                              }`}
+                          >
+                            {row.status ? "Active" : "Inactive"}
+                          </span>
+                          <ToggleSwitch
+                            checked={row.status}
+                            onChange={() => toggleActive(row.id)}
+                          />
+                        </div>
+                      </td>
+                      <td className="py-[14px] pl-[30px] pr-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{row.total_calls}</td>
+                      <td className="py-[14px] pl-[14px] pr-[14px] min-w-[186px] max-w-[17%] w-full">
+                        {row.direction === "inbound" ? <InboundCall active={true} /> : <OutboundCall active={true} />}
+                      </td>
+                      <td className="min-w-[210px] max-w-[17%] w-full text-[#5A687C] whitespace-nowrap">{DateFormat(row.creation_date)}</td>
 
-            }
-
-
-
-          </tbody>
+                      <td className="p-[14px] pr-[30px] w-full">
+                        <button
+                          onClick={() => setDeleteRow(row.id)}
+                          className="text-[#FF3B30] hover:text-[#ff3a30b7]"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </td>
+                    </tr>
+                  )}
+                </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Phone Numbers Listed</p>}
+          </div>
         </table>
       </div>
 
@@ -332,7 +322,7 @@ export default function PhoneNumbers() {
                 <input
                   type="text"
                   placeholder="Enter number name"
-                  className="w-full px-4 py-2 border rounded-lg resize-none border-[#E1E4EA] focus:outline-none focus:border-[#675FFF]"
+                  className={`w-full px-4 py-2 border rounded-lg resize-none ${error.phoneName ? 'border-red-500' : 'border-[#E1E4EA]'}  focus:outline-none focus:border-[#675FFF]`}
                   onChange={(e) => {
                     setPhoneName(e.target.value);
                     ((prev) => ({ ...prev, phoneName: "" }));
@@ -350,7 +340,7 @@ export default function PhoneNumbers() {
                 <label className="text-sm text-gray-600 font-medium block mb-1">
                   Number
                 </label>
-                <div className="flex group items-center focus-within:border-[#675FFF] gap-2 border border-[#E1E4EA] rounded-lg px-4 py-2">
+                <div className={`flex group items-center focus-within:border-[#675FFF] gap-2 border ${error.number ? 'border-red-500' : 'border-[#E1E4EA]'} rounded-lg px-4 py-2`}>
                   <div className="relative">
                     <button
                       onClick={() => setIsOpen(!isOpen)}
