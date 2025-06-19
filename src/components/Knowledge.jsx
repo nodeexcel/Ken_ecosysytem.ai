@@ -6,9 +6,9 @@ import { Delete, Edit, ThreeDots, UploadIcon } from "../icons/icons";
 import { deleteKnowledgeSnippets, getKnowledgeSnippets, knowledgeBase } from "../api/brainai";
 
 const tabs = [
-  { label: "Snippets", key: "snippets" },
-  { label: "Websites", key: "website" },
-  { label: "Files", key: "files" },
+  { label: "Snippets", key: "snippets", header: "Snippet" },
+  { label: "Websites", key: "website", header: "Website" },
+  { label: "Files", key: "files", header: "File" },
 ]
 
 const modelData = {
@@ -45,25 +45,19 @@ const Knowledge = () => {
   const [dragActive, setDragActive] = useState(false);
   const [snippetDetails, setSnippetDetail] = useState("")
   const [websiteUrl, setWebsiteUrl] = useState("")
-  const [formData, setFormData] = useState({})
+  const [formData, setFormData] = useState({ snippet: '', files: [], website: '' })
   const [loading, setLoading] = useState(false)
   const [knowledgeData, setKnowledgeData] = useState({})
   const [loadingData, setLoadingData] = useState(false);
   const [errors, setErrors] = useState({});
   const [activeDropdown, setActiveDropdown] = useState(null);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setErrors({})
-    }, 5000)
-  }, [errors])
-
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev, [name]: value
     }))
+    setErrors((prev) => ({ ...prev, [name]: '' }))
   }
 
   const handleClick = () => {
@@ -71,6 +65,7 @@ const Knowledge = () => {
   };
 
   const handleFileChange = (e) => {
+    setErrors((prev) => ({ ...prev, files: '' }))
     const file = e.target.files?.[0];
     if (file && file.type !== "application/pdf") {
       setErrors((prev) => ({ ...prev, files: "Only PDF files are allowed." }));
@@ -96,6 +91,7 @@ const Knowledge = () => {
 
   const handleDrop = (e) => {
     e.preventDefault();
+    setErrors((prev) => ({ ...prev, files: '' }))
     setDragActive(false);
     const file = e.dataTransfer.files?.[0];
     if (file && file.type !== "application/pdf") {
@@ -151,34 +147,50 @@ const Knowledge = () => {
   const handleSubmit = () => {
     switch (activeTab) {
       case "website":
+        if (!formData.website.trim()) {
+          setErrors((prev) => ({ ...prev, website: "Website is required" }))
+          return
+        }
+        if (!/^https?:\/\/\S+$/.test(formData.website)) {
+          setErrors((prev) => ({ ...prev, website: "Enter a valid Website (http:// or https://)." }))
+          return
+        }
         const payload = {
           data: formData.website,
           data_type: activeTab
         }
         handleKnowledge(payload)
-        break;
+        return;
       case "files":
+        if (formData.files?.length === 0) {
+          setErrors((prev) => ({ ...prev, files: "File is required" }))
+          return
+        }
         const filePayload = {
           data: formData.files.name,
           file: formData.files,
           data_type: activeTab
         }
         handleKnowledge(filePayload)
-        break;
+        return;
       default:
+        if (!formData.snippet.trim()) {
+          setErrors((prev) => ({ ...prev, snippet: "Snippet is required" }))
+          return
+        }
         const data = {
           data: formData.snippet,
           data_type: activeTab
         }
         handleKnowledge(data)
-        break;
+        return;
     }
   }
 
 
   const renderHeader = () => {
     const tab = tabs.find((e) => e.key === activeTab)
-    return tab.label
+    return tab.header
   }
 
   const handleDropdownClick = (index) => {
@@ -375,9 +387,9 @@ const Knowledge = () => {
         <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
           Knowledge Base
         </h1>
-        <button onClick={() => setOpen(true)} className="flex items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded text-white">
+        <button onClick={() => setOpen(true)} className="flex items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
           <span className="font-medium text-base leading-6">
-            Add Snippet
+            Add {renderHeader()}
           </span>
         </button>
       </div>
@@ -404,7 +416,12 @@ const Knowledge = () => {
       {open && <div className=" fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
         <div className="bg-white max-h-[600px] flex flex-col gap-4 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
           <button
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false)
+              setFormData({ snippet: '', files: [], website: '' })
+              setErrors({})
+              setSelectedFile(null)
+            }}
             className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
           >
             <X className="w-5 h-5" />
@@ -471,14 +488,14 @@ const Knowledge = () => {
                       <strong>Selected File:</strong> {selectedFile.name}
                     </div>
                   )}
-                  {errors.files && <p className="text-red-500 mt-5">{errors.files}</p>}
+                  {errors.files && <p className="text-red-500 mt-2">{errors.files}</p>}
                 </div>
               </div>
             )}
             {activeTab === "snippets" && (
               <div>
                 <label className="block text-[14px] font-medium text-[#292D32] mb-1">Details</label>
-                <div className="flex items-center border focus-within:border-[#675FFF] border-gray-300 rounded-[8px] px-4 py-3">
+                <div className={`flex items-center border focus-within:border-[#675FFF] ${errors.snippet ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-[8px] px-4 py-3`}>
                   <textarea
                     type="text"
                     name="snippet"
@@ -489,28 +506,35 @@ const Knowledge = () => {
                     className="w-full focus:outline-none resize-none"
                   />
                 </div>
+                {errors.snippet && <p className="text-red-500 mt-2">{errors.snippet}</p>}
               </div>
             )}
             {activeTab === "website" && (
               <div>
                 <label className="block text-[14px] font-medium text-[#292D32] mb-1">Website</label>
-                <div className="flex items-center border focus-within:border-[#675FFF] border-gray-300 rounded-[8px] px-4 py-3">
+                <div className={`flex items-center border focus-within:border-[#675FFF] ${errors.website ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-[8px] px-4 py-3`}>
                   <input
                     type="text"
                     name="website"
                     value={formData?.website}
                     onChange={handleChange}
-                    placeholder="https://ecosystem.ai.com"
+                    placeholder="https://ecosysteme.ai"
                     className="w-full focus:outline-none"
                   />
                 </div>
+                {errors.website && <p className="text-red-500 mt-2">{errors.website}</p>}
               </div>
             )}
           </div>
 
           <div className="flex gap-2 mt-4">
             <button
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                setOpen(false)
+                setFormData({ snippet: '', files: [], website: '' })
+                setErrors({})
+                setSelectedFile(null)
+              }}
               className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
             >
               Cancel

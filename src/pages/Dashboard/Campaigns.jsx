@@ -16,9 +16,9 @@ const Campaigns = () => {
     const navigate = useNavigate()
 
     const sideMenuList = [
-        { label: "Dashboard", icon: <FourBox status={activeSidebarItem == "dashboard"} />, path: "dashboard" },
-        { label: "Campaigns", icon: <PhoneCampaign status={activeSidebarItem == "campaigns"} />, path: "campaigns" },
-        { label: "Calendar", icon: <CalenderIcon status={activeSidebarItem == "calendar"} />, path: "calendar" },
+        { label: "Dashboard", icon: <FourBox status={activeSidebarItem == "dashboard"} />, hoverIcon: <FourBox status={true} />, path: "dashboard" },
+        { label: "Campaigns", icon: <PhoneCampaign status={activeSidebarItem == "campaigns"} />, hoverIcon: <PhoneCampaign status={true} />, path: "campaigns" },
+        { label: "Calendar", icon: <CalenderIcon status={activeSidebarItem == "calendar"} />, hoverIcon: <CalenderIcon status={true} />, path: "calendar" },
     ];
 
     const renderMainContent = () => {
@@ -40,7 +40,7 @@ const Campaigns = () => {
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
                             <div className="flex gap-4 pl-5 items-center h-[57px]">
-                                <LeftArrow/>
+                                <LeftArrow />
                                 <h1 className="text-[20px] font-[600]">Emailing</h1>
                             </div>
                         </div>
@@ -62,13 +62,13 @@ const Campaigns = () => {
                                 onClick={() => {
                                     setActiveSidebarItem(item.path)
                                 }}
-                                className={`flex items-center gap-2 px-3 py-2 rounded-md cursor-pointer w-full ${activeSidebarItem === item.path
+                                className={`flex items-center group hover:bg-[#F0EFFF] gap-2 px-3 py-2 rounded-md cursor-pointer w-full ${activeSidebarItem === item.path
                                     ? "bg-[#F0EFFF] text-[#675FFF]"
                                     : "text-[#5A687C]"
                                     }`}
                             >
-                                {item.icon}
-                                <span className="text-[16px] font-[400]">{item.label}</span>
+                                <div className="flex items-center gap-2"><div className='group-hover:hidden'>{item.icon}</div> <div className='hidden group-hover:block'>{item.hoverIcon}</div></div>
+                                <span className="text-[16px] font-[400] group-hover:text-[#675FFF]">{item.label}</span>
                             </div>
                         ))}
                     </div>

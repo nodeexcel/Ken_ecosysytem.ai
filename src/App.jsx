@@ -23,6 +23,7 @@ import Campaigns from './pages/Dashboard/Campaigns'
 import PrivacyPolicy from './components/PrivacyPolicy'
 import TermsAndConditions from './components/TermsAndConditions'
 import AgentPersonalityDocumentation from './components/AgentPersonalityDocumentation'
+import WebsocketComp from './components/Websocket'
 
 
 
@@ -41,6 +42,7 @@ function App() {
         <Route path='/terms-conditions' element={< TermsAndConditions />} />
         <Route path='/privacy-policy' element={< PrivacyPolicy />} />
         <Route path='/agent-personality-documentation' element={< AgentPersonalityDocumentation />} />
+        <Route path='/chat' element={< WebsocketComp />} />
         <Route path='/dashboard' element={<Dashboard />}>
           <Route path='' element={<Agents />} />
           <Route path="notification" element={<Notification />} />

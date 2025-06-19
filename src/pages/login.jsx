@@ -389,7 +389,7 @@ export default function Login() {
                     </div>
                     <input
                         type={showPassword ? "text" : "password"}
-                        placeholder="••••••••"
+                        placeholder="Enter Password"
                         value={password}
                         onChange={(e) => {
                             setPassword(e.target.value)

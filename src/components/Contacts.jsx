@@ -10,6 +10,7 @@ import uk_flag from "../assets/images/uk_flag.png"
 import us_flag from "../assets/images/us_flag.png"
 import fr_flag from "../assets/images/fr_flag.png"
 import { SelectDropdown } from "./Dropdown";
+import { useSelector } from "react-redux";
 
 const countries = [
   { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
@@ -33,6 +34,7 @@ const ContactsPage = () => {
   const [fileUploadError, setFileUploadError] = useState("")
   const [contactSearch, setContactSearch] = useState("")
   const [listSearch, setListSearch] = useState("")
+  const countryData = useSelector((state) => state.country.data)
 
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -49,7 +51,7 @@ const ContactsPage = () => {
   const [listLoading, setListLoading] = useState(false);
   const [addContactModal, setAddContactModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+  const [selectedCountry, setSelectedCountry] = useState(countryData[0]);
   const [addNewContact, setAddNewContact] = useState({
     firstName: '',
     lastName: '',
@@ -80,9 +82,10 @@ const ContactsPage = () => {
       errors.phone = "Phone number is required";
     } else if (!/^\+?[0-9\s]+$/.test(addNewContact.phone)) {
       errors.phone = "Invalid phone number format";
-    } else if (addNewContact.phone.replace(/\D/g, "").length !== 10) {
-      errors.phone = "Phone number must be exactly 10 digits";
     }
+    //  else if (addNewContact.phone.replace(/\D/g, "").length !== 10) {
+    //   errors.phone = "Phone number must be exactly 10 digits";
+    // }
     if (!addNewContact.email) {
       errors.email = "Email is required";
     }
@@ -656,7 +659,7 @@ const ContactsPage = () => {
                 <thead>
                   <tr className="text-left text-[#5A687C]">
                     {tableHeaders.map((header, index) => (
-                      <th key={index} className={`p-[14px] ${index !== tableHeaders.length - 1  && 'min-w-[200px] max-w-[25%]'} w-full text-[16px] font-[400] whitespace-nowrap`}>
+                      <th key={index} className={`p-[14px] ${index !== tableHeaders.length - 1 && 'min-w-[200px] max-w-[25%]'} w-full text-[16px] font-[400] whitespace-nowrap`}>
                         {header.name === 'Full Name' ? (
                           <div className="flex items-center gap-2">
                             <label className="checkbox-container">
@@ -712,7 +715,7 @@ const ContactsPage = () => {
                                 setAddContactModal(true);
                                 const { countryCode, number } = extractPhoneDetails(contact.phone);
                                 setAddNewContact(({ ...contact, phone: number }))
-                                const filterCountry = countries.filter((e) => e.dial_code == countryCode)
+                                const filterCountry = countryData.filter((e) => e.dial_code == countryCode)
                                 setSelectedCountry(filterCountry[0])
                               }}>
                                 <Edit />
@@ -1248,15 +1251,18 @@ const ContactsPage = () => {
                   <div className="relative">
                     <button
                       onClick={() => setIsOpen(!isOpen)}
-                      className="w-fit flex hover:cursor-pointer border-none justify-between gap-2 items-center border pl-1 py-1 text-left"
+                      className="w-fit flex hover:cursor-pointer relative border-none justify-between gap-1 items-center border py-1 text-left"
                     >
-                      <img src={selectedCountry?.flag} alt={selectedCountry?.name} width={16} />
-                      <FaChevronDown color="#5A687C" className={`w-[10px] transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
+                      <div className="flex items-center gap-2 mr-3">
+                        <img src={selectedCountry?.flag} alt={selectedCountry?.name} className='w-4 h-4 rounded-full' />
+                        <p className="text-[#5A687C] font-[400] text-[16px]">{selectedCountry.dial_code}</p>
+                      </div>
+                      <FaChevronDown color="#5A687C" className={`w-[10px]  transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
                       <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />
                     </button>
                     {isOpen && (
-                      <div className="absolute px-1 z-10 rounded-md shadow-lg border border-gray-200 max-h-30 overflow-auto top-6 w-full left-[-13px] bg-white mt-1">
-                        {countries.map((country) => (
+                      <div className="absolute px-1 z-10 rounded-md shadow-lg border border-gray-200 max-h-40 overflow-auto top-6 w-full left-[-13px] bg-white mt-1">
+                        {countryData.map((country) => (
                           <div
                             key={country.code}
                             onClick={() => {
@@ -1264,9 +1270,10 @@ const ContactsPage = () => {
                               setIsOpen(false);
                               // setAddNewContact((prev) => ({ ...prev, phoneCode: country.dial_code }));
                             }}
-                            className={`flex justify-center hover:bg-[#F4F5F6] hover:rounded-lg pr-1 my-1 py-2 ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6] rounded-lg'} cursor-pointer flex items-center`}
+                            className={`flex justify-center gap-2 hover:bg-[#F4F5F6] hover:rounded-lg pr-1 my-1 py-2 ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6] rounded-lg'} cursor-pointer flex items-center`}
                           >
-                            <img src={country.flag} alt={country.name} width={16} />
+                            <img src={country.flag} alt={country.name} className='w-4 h-4 rounded-full' />
+                            <p className="text-[#5A687C] font-[400] text-[16px]">{country.dial_code}</p>
                           </div>
                         ))}
                       </div>

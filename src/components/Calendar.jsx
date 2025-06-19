@@ -455,7 +455,7 @@ export default function Calendar() {
           return (
             <div
               key={index}
-              className={`min-h-[100px] p-2 border-r border-b border-[#E1E4EA] relative ${!day.isCurrentMonth ? "bg-gray-50" : ""}`}
+              className={`min-h-[100px] p-2 border-r border-b border-[#E1E4EA] relative ${!day.isCurrentMonth ? "bg-[#F0EFFF]" : ""}`}
               onClick={() => {
                 setCurrentDay(day.day)
                 setCurrentMonth(day.month)
@@ -470,7 +470,7 @@ export default function Calendar() {
                       <span className="text-white">{day.day}</span>
                     </div>
                   ) : (
-                    <span className={`text-sm ${!day.isCurrentMonth ? "text-gray-400" : ""}`}>{day.day}</span>
+                    <span className={`text-sm text-[#5A687C] font-[600]`}>{day.day}</span>
                   )}
                 </div>
               </div>
@@ -480,9 +480,9 @@ export default function Calendar() {
                 {dayEvents.map((event, eventIndex) => {
                   const statusStyles = getStatusStyles(event.status)
                   return (
-                    <div key={eventIndex} className={`text-xs ${statusStyles.bg} p-1 mb-1 rounded`}>
-                      <div className="font-medium">{event.name}</div>
-                      <div className="text-gray-500">{event.time}</div>
+                    <div key={eventIndex} className={`text-xs ${statusStyles.bg} flex items-center gap-1 p-1 mb-1 rounded`}>
+                      <div className="text-[12px] font-[600] text-[#000]">{event.name}</div>
+                      <div className="text-[#5A687C] text-[12px] font-[600]">{event.time}</div>
                     </div>
                   )
                 })}
@@ -525,7 +525,7 @@ export default function Calendar() {
               key={hour}
               className={`h-34 ${hours.length !== index + 1 && "border-b"} border-[#E1E4EA] flex items-start justify-end pr-2 pt-1`}
             >
-              <span className="text-xs text-gray-500">{hour}</span>
+              <span className="text-xs text-[#5A687C] font-[600]">{hour}</span>
             </div>
           ))}
         </div>
@@ -613,7 +613,7 @@ export default function Calendar() {
               <div
                 className={`w-20 py-2 border-r border-[#E1E4EA] ${hours.length !== index + 1 && "border-b"} flex items-start justify-end pr-2`}
               >
-                <span className="text-xs text-gray-500">{hour}</span>
+                <span className="text-xs text-[#5A687C] font-[600]">{hour}</span>
               </div>
 
               {/* Events column */}
@@ -763,7 +763,7 @@ export default function Calendar() {
   return (
     <div className="gap-6 h-screen overflow-auto py-4 pr-2">
       <h1 className="font-semibold text-[#1e1e1e] mb-5 text-2xl leading-8">Calendar</h1>
-      <div className="w-full max-w-5xl mx-auto bg-white rounded-xl border border-[#E1E4EA]">
+      <div className="w-full  mx-auto bg-white rounded-xl border border-[#E1E4EA]">
         {renderCalendarHeader()}
         {currentView === "month" && renderMonthView()}
         {currentView === "week" && renderWeekView()}

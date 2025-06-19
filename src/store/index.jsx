@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './authSlice';
 import profileReducer from './profileSlice';
 import navbarReducer from './navbarSlice'
+import countryReducer from './countryCodeSlice'
 
 /**
  * Configures the Redux store with application reducers.
@@ -19,7 +20,8 @@ const store = configureStore({
   reducer: {
     auth: authReducer,
     profile: profileReducer,
-    navbar:navbarReducer
+    navbar: navbarReducer,
+    country: countryReducer
   },
 });
 

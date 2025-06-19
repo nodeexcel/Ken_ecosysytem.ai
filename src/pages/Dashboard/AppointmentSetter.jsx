@@ -18,9 +18,9 @@ function AppointmentSetter() {
     const navigate = useNavigate()
 
     const sideMenuList = [
-        { label: "Agents", icon: <TeamMemberIcon status={activeSidebarItem == "agents"} />, path: "agents" },
-        { label: "Conversations", icon: <ConversationIcon status={activeSidebarItem == "conversations"} />, path: "conversations" },
-        { label: "Analytics", icon: <AnalyticsIcon status={activeSidebarItem == "analytics"} />, path: "analytics" },
+        { label: "Agents", icon: <TeamMemberIcon status={activeSidebarItem == "agents"} />, hoverIcon: <TeamMemberIcon status={true} />, path: "agents" },
+        { label: "Conversations", icon: <ConversationIcon status={activeSidebarItem == "conversations"} />, hoverIcon: <ConversationIcon status={true} />, path: "conversations" },
+        { label: "Analytics", icon: <AnalyticsIcon status={activeSidebarItem == "analytics"} />, hoverIcon: <AnalyticsIcon status={true} />, path: "analytics" },
         // { label: "Demo Chat", icon: <ConversationIcon status={activeSidebarItem == "demo"} />, path: "demo" },
     ]
 
@@ -64,11 +64,12 @@ function AppointmentSetter() {
                         {sideMenuList.map((e, i) => <div
                             key={i}
                             onClick={() => setActiveSidebarItem(e.path)}
-                            className={`flex justify-center md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#F0EFFF]" : ""
+                            className={`flex justify-center group hover:bg-[#F0EFFF] md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#F0EFFF]" : ""
                                 }`}
                         >
-                            {e.icon}
-                            <div className={`relative w-fit mt-[-1.00px] font-[400] text-[16px] tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === `${e.path}` ? "text-[#675FFF]" : "text-[#5A687C] "
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'>{e.icon}</div> <div className='hidden group-hover:block'>{e.hoverIcon}</div></div>
+
+                            <div className={`relative group-hover:text-[#675FFF] w-fit mt-[-1.00px] font-[400] text-[16px] tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === `${e.path}` ? "text-[#675FFF]" : "text-[#5A687C] "
                                 }`}>
                                 {e.label}
                             </div>

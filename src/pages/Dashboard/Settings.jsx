@@ -1023,38 +1023,35 @@ const SettingsPage = () => {
           <div className="flex inter flex-col w-full px-2 items-start gap-2 relative">
             <div
               onClick={() => handleSelect("general")}
-              className={`flex justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#F0EFFF]" : ""
+              className={`flex group hover:bg-[#F0EFFF] justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#F0EFFF]" : ""
                 }`}
             >
-              <Settings status={activeSidebarItem === "general"} />
-              <div className={`relative w-fit mt-[-1.00px] font-[400] text-[16px] tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "general" ? "text-[#675FFF]" : "text-[#5A687C] "
-                }`}>
+              <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<Settings status={activeSidebarItem === "general"} />}</div> <div className='hidden group-hover:block'>{<Settings status={true} />}</div></div>
+              <span className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${activeSidebarItem === "general" ? "text-[#675FFF]" : "text-[#5A687C]"}`}>
                 General Settings
-              </div>
+              </span>
             </div>
 
             <div
               onClick={() => handleSelect("billing")}
-              className={`flex justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#EDF3FF]" : ""
+              className={`flex group hover:bg-[#F0EFFF] justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#EDF3FF]" : ""
                 }`}
             >
-              <PlanIcon status={activeSidebarItem === "billing"} />
-              <div className={`relative w-fit mt-[-1.00px] font-[400] text-[16px] tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "billing" ? "text-[#675FFF]" : "text-[#5A687C] "
-                }`}>
+              <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<PlanIcon status={activeSidebarItem === "billing"} />}</div> <div className='hidden group-hover:block'>{<PlanIcon status={true} />}</div></div>
+              <span className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${activeSidebarItem === "billing" ? "text-[#675FFF]" : "text-[#5A687C]"}`}>
                 Plan &amp; Billing
-              </div>
+              </span>
             </div>
 
             <div
               onClick={() => handleSelect("team")}
-              className={`flex justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "team" ? "bg-[#EDF3FF]" : ""
+              className={`flex group hover:bg-[#F0EFFF] justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "team" ? "bg-[#EDF3FF]" : ""
                 }`}
             >
-              <TeamMemberIcon status={activeSidebarItem === "team"} />
-              <div className={`relative w-fit mt-[-1.00px] font-[400] text-[16px] tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === "team" ? "text-[#675FFF]" : "text-[#5A687C] "
-                }`}>
+              <div className="flex items-center gap-2"><div className='group-hover:hidden'><TeamMemberIcon status={activeSidebarItem === "team"} /></div> <div className='hidden group-hover:block'><TeamMemberIcon status={true} /></div></div>
+              <span className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${activeSidebarItem === "team" ? "text-[#675FFF]" : "text-[#5A687C]"}`}>
                 Team Members
-              </div>
+              </span>
             </div>
           </div>
         </div>

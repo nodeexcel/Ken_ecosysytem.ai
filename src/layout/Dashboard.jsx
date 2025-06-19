@@ -6,6 +6,8 @@ import { getProfileData } from '../store/profileSlice';
 import { getProfile } from '../api/profile';
 import { loginSuccess } from '../store/authSlice';
 import Navbar from '../components/Navbar';
+import { countryCode } from '../api/brainai';
+import { getCountryData } from '../store/countryCodeSlice';
 
 
 function Dashboard() {
@@ -19,6 +21,7 @@ function Dashboard() {
 
         if (token && userDetails.loading) {
             handleProfile()
+            getCountryCode()
             dispatch(loginSuccess({ token: token }))
         }
         if (!token && userDetails.loading) {
@@ -50,6 +53,25 @@ function Dashboard() {
         { id: "community", label: "Community" },
         { id: "notification", label: "Notification" },
     ]
+
+
+    const getCountryCode = async () => {
+        try {
+            const response = await countryCode()
+            if (response?.status === 200) {
+                const data = response?.data.map((e) => ({
+                    name: e.name.common,
+                    code: e.cca2,
+                    dial_code: `${e.idd.root}${(e.idd.suffixes.length > 0 && e.idd.suffixes.length === 1) ? `${e.idd.suffixes?.[0]}`:``}`,
+                    flag: e.flags.png
+                }))
+                dispatch(getCountryData(data))
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const handleProfile = async () => {
         try {

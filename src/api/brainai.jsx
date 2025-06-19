@@ -220,3 +220,13 @@ export const deleteGoogleCalendarAccount = async (id) => {
         return error;
     }
 }
+
+export const countryCode = async () => {
+    try {
+        const response = await axiosInstance.get('https://restcountries.com/v3.1/all?fields=name,flags,idd,cca2');
+        return response
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}
