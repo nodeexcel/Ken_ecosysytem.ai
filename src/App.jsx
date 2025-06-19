@@ -24,6 +24,7 @@ import PrivacyPolicy from './components/PrivacyPolicy'
 import TermsAndConditions from './components/TermsAndConditions'
 import AgentPersonalityDocumentation from './components/AgentPersonalityDocumentation'
 import WebsocketComp from './components/Websocket'
+import "/node_modules/flag-icons/css/flag-icons.min.css";
 
 
 

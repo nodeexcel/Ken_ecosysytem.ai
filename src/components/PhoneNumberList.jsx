@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Trash2, PhoneOutgoing, Plus, X, Info } from "lucide-react";
 import { InboundCall, OutboundCall } from "../icons/icons";
 import { format } from "date-fns";
@@ -9,6 +9,7 @@ import fr_flag from "../assets/images/fr_flag.png"
 import { addPhoneNumber, getPhoneNumber, updatePhoneNumberStatus, deletePhoneNumber } from "../api/callAgent"
 import { set } from "date-fns";
 import { DateFormat } from "../utils/TimeFormat";
+import { useSelector } from "react-redux";
 const initialRows = [
   {
     id: "1",
@@ -59,18 +60,19 @@ const initialRows = [
 
 
 
-const countries = [
-  { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
-  { name: "United Kingdom", code: "GB", dial_code: "+44", flag: uk_flag }, ,
-  { name: "France", code: "FR", dial_code: "+33", flag: fr_flag }, ,
-  // Add more countries as needed
-];
+// const countries = [
+//   { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
+//   { name: "United Kingdom", code: "GB", dial_code: "+44", flag: uk_flag }, ,
+//   { name: "France", code: "FR", dial_code: "+33", flag: fr_flag }, ,
+//   // Add more countries as needed
+// ];
 
 export default function PhoneNumbers() {
   const [rows, setRows] = useState([]);
+  const countries = useSelector((state) => state.country.data)
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState("outbound")
-  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+  const [selectedCountry, setSelectedCountry] = useState(countries[240]);
   const [isOpen, setIsOpen] = useState(false);
   const [number, setNumber] = useState("");
   const [phoneName, setPhoneName] = useState("");
@@ -80,6 +82,7 @@ export default function PhoneNumbers() {
   const [deleteRow, setDeleteRow] = useState(null);
   const [loading, setLoading] = useState(true)
   const [otpModal, setOtpModal] = useState(false)
+  const countryRef = useRef()
 
   const tabs = [
     { label: "Outbound Number", key: "outbound", icon: <OutboundCall active={activeTab == "outbound"} /> },
@@ -104,6 +107,16 @@ export default function PhoneNumbers() {
 
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (countryRef.current && !countryRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const ValidateSubmit = () => {
     const errors = {};
     if (!phoneName) {
@@ -113,9 +126,10 @@ export default function PhoneNumbers() {
       errors.number = "Phone number is required";
     } else if (!/^\+?[0-9\s]+$/.test(number)) {
       errors.number = "Invalid phone number format";
-    } else if (number.replace(/\D/g, "").length !== 10) {
-      errors.number = "Phone number must be exactly 10 digits";
     }
+    // else if (number.replace(/\D/g, "").length !== 10) {
+    //   errors.number = "Phone number must be exactly 10 digits";
+    // }
     setError(errors);
     return Object.keys(errors).length === 0;
   }
@@ -340,14 +354,17 @@ export default function PhoneNumbers() {
                 <label className="text-sm text-gray-600 font-medium block mb-1">
                   Number
                 </label>
-                <div className={`flex group items-center focus-within:border-[#675FFF] gap-2 border ${error.number ? 'border-red-500' : 'border-[#E1E4EA]'} rounded-lg px-4 py-2`}>
+                <div ref={countryRef} className={`flex group items-center focus-within:border-[#675FFF] gap-2 border ${error.number ? 'border-red-500' : 'border-[#E1E4EA]'} rounded-lg px-4 py-2`}>
                   <div className="relative">
                     <button
                       onClick={() => setIsOpen(!isOpen)}
-                      className="w-fit flex hover:cursor-pointer border-none justify-between gap-2 items-center border pl-1 py-1 text-left"
+                      className="w-[120px] flex hover:cursor-pointer relative border-none justify-between gap-1 items-center border py-1 text-left"
                     >
-                      <img src={selectedCountry?.flag} alt={selectedCountry?.name} width={16} />
-                      <FaChevronDown color="#5A687C" className={`w-[10px] transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
+                      <div className="flex items-center gap-2 mr-3">
+                        <p className={`fi fi-${selectedCountry.flag} fis w-4 h-4 rounded-full`}></p>
+                        <p className="text-[#5A687C] font-[400] text-[16px]">{selectedCountry.dial_code}</p>
+                      </div>
+                      <FaChevronDown color="#5A687C" className={`w-[10px]  transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
                       <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />
                     </button>
                     {isOpen && (
@@ -359,9 +376,10 @@ export default function PhoneNumbers() {
                               setSelectedCountry(country);
                               setIsOpen(false);
                             }}
-                            className={`flex justify-center hover:bg-[#F4F5F6] hover:rounded-lg pr-1 my-1 py-2 ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6] rounded-lg'} cursor-pointer flex items-center`}
+                            className={`flex gap-2 px-2 hover:bg-[#F4F5F6] hover:rounded-lg  my-1 py-2 ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6] rounded-lg'} cursor-pointer flex items-center`}
                           >
-                            <img src={country.flag} alt={country.name} width={16} />
+                            <p className={`fi fi-${country.flag} fis w-4 h-4 rounded-full`}></p>
+                            <p className="text-[#5A687C] font-[400] text-[16px]">{country.dial_code}</p>
                           </div>
                         ))}
                       </div>

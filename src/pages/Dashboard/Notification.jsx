@@ -65,7 +65,7 @@ const NotificationsComponent = ({ setNotification }) => {
   }, []);
 
   return (
-    <div className="fixed inset-0 bg-black/2 z-50 flex items-center justify-center">
+    // <div className="fixed inset-0 bg-black/2 z-50 flex items-center justify-center">
       <div className="flex flex-col inset-0 w-[512px] items-start bg-white rounded-xl  border border-solid border-[#e1e4ea] absolute z-50 left-18 top-25 h-[80%]">
         {/* Header */}
         <header className="flex items-center justify-between px-5 py-3.5 w-full border-b border-[#e1e4ea]">
@@ -158,7 +158,7 @@ const NotificationsComponent = ({ setNotification }) => {
           </div>
         </div>
       </div>
-    </div>
+    // </div>
   );
 };
 

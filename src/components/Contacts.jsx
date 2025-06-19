@@ -51,7 +51,7 @@ const ContactsPage = () => {
   const [listLoading, setListLoading] = useState(false);
   const [addContactModal, setAddContactModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState(countryData[0]);
+  const [selectedCountry, setSelectedCountry] = useState(countryData[240]);
   const [addNewContact, setAddNewContact] = useState({
     firstName: '',
     lastName: '',
@@ -65,9 +65,22 @@ const ContactsPage = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [isEdit, setIsEdit] = useState("");
   const [contactIsEdit, setContactIsEdit] = useState("")
+  const countryRef = useRef()
+
 
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
+
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (countryRef.current && !countryRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
 
   const validateSubmit = () => {
@@ -1247,14 +1260,14 @@ const ContactsPage = () => {
                 <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
                   Number
                 </label>
-                <div className="flex group items-center focus-within:border-[#675FFF] gap-2 border border-gray-300 rounded-lg px-4 py-2">
+                <div ref={countryRef} className="flex group items-center focus-within:border-[#675FFF] gap-2 border border-gray-300 rounded-lg px-4 py-2">
                   <div className="relative">
                     <button
                       onClick={() => setIsOpen(!isOpen)}
-                      className="w-fit flex hover:cursor-pointer relative border-none justify-between gap-1 items-center border py-1 text-left"
+                      className="w-[120px] flex hover:cursor-pointer relative border-none justify-between gap-1 items-center border py-1 text-left"
                     >
                       <div className="flex items-center gap-2 mr-3">
-                        <img src={selectedCountry?.flag} alt={selectedCountry?.name} className='w-4 h-4 rounded-full' />
+                        <p className={`fi fi-${selectedCountry.flag} fis w-4 h-4 rounded-full`}></p>
                         <p className="text-[#5A687C] font-[400] text-[16px]">{selectedCountry.dial_code}</p>
                       </div>
                       <FaChevronDown color="#5A687C" className={`w-[10px]  transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
@@ -1270,9 +1283,9 @@ const ContactsPage = () => {
                               setIsOpen(false);
                               // setAddNewContact((prev) => ({ ...prev, phoneCode: country.dial_code }));
                             }}
-                            className={`flex justify-center gap-2 hover:bg-[#F4F5F6] hover:rounded-lg pr-1 my-1 py-2 ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6] rounded-lg'} cursor-pointer flex items-center`}
+                            className={`flex px-2 gap-2 hover:bg-[#F4F5F6] hover:rounded-lg my-1 py-2 ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6] rounded-lg'} cursor-pointer flex items-center`}
                           >
-                            <img src={country.flag} alt={country.name} className='w-4 h-4 rounded-full' />
+                            <p className={`fi fi-${country.flag} fis w-4 h-4 rounded-full`}></p>
                             <p className="text-[#5A687C] font-[400] text-[16px]">{country.dial_code}</p>
                           </div>
                         ))}

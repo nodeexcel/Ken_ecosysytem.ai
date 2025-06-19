@@ -121,11 +121,14 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         />
                     </div>
                     <hr className='text-[#E1E4EA]' />
-                    <div className='text-xl flex group hover:cursor-pointer justify-center relative py-4' ref={noticationRef} onClick={handleNotification}>
-                        <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarNotificationIcon status={renderColor(6)} /></div> <div className='hidden group-hover:block'><SidebarNotificationIcon status={true} /></div> </div>
-                        <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[104px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[700]'>Notifications</p>
+                    <div ref={noticationRef}>
+                        <div className='text-xl flex group hover:cursor-pointer justify-center relative py-4' onClick={handleNotification}>
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarNotificationIcon status={renderColor(6)} /></div> <div className='hidden group-hover:block'><SidebarNotificationIcon status={true} /></div> </div>
+                            <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[104px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
+                                <p className='font-[700]'>Notifications</p>
+                            </div>
                         </div>
+                        {isNotification && <Notification setNotification={setIsNotification} />}
                     </div>
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-4' onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarBrainIcon status={renderColor(1)} /></div> <div className='hidden group-hover:block'><SidebarBrainIcon status={true} /></div> </div>
@@ -193,7 +196,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                 </div>
             </aside>
 
-            {isNotification && <Notification setNotification={setIsNotification} />}
+
             {modalStatus && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
                 <div className="bg-white rounded-2xl w-full max-w-[514px] p-6 relative shadow-lg">
                     <button

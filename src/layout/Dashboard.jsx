@@ -6,8 +6,8 @@ import { getProfileData } from '../store/profileSlice';
 import { getProfile } from '../api/profile';
 import { loginSuccess } from '../store/authSlice';
 import Navbar from '../components/Navbar';
-import { countryCode } from '../api/brainai';
 import { getCountryData } from '../store/countryCodeSlice';
+import CountryList from 'country-list-with-dial-code-and-flag'
 
 
 function Dashboard() {
@@ -57,13 +57,13 @@ function Dashboard() {
 
     const getCountryCode = async () => {
         try {
-            const response = await countryCode()
-            if (response?.status === 200) {
-                const data = response?.data.map((e) => ({
-                    name: e.name.common,
-                    code: e.cca2,
-                    dial_code: `${e.idd.root}${(e.idd.suffixes.length > 0 && e.idd.suffixes.length === 1) ? `${e.idd.suffixes?.[0]}`:``}`,
-                    flag: e.flags.png
+            const response = CountryList.getAll()
+            if (response?.length > 0) {
+                const data = response?.map((e) => ({
+                    name: e.data.name,
+                    code: e.data.code,
+                    dial_code: e.data.dial_code,
+                    flag: `${(e.data.code).toLowerCase()}`
                 }))
                 dispatch(getCountryData(data))
             }
