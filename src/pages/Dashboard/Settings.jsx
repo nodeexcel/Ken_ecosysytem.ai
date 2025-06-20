@@ -1,5 +1,5 @@
 import { CreditCardIcon, EllipsisVertical, EyeIcon, EyeOffIcon, SettingsIcon, UsersIcon, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md';
 import profile_pic from '../../assets/images/profile.png';
 import edit_icon from '../../assets/images/edit_icon.svg';
@@ -15,6 +15,7 @@ import TransactionHistory from "../../components/TransactionHistory";
 import { Delete, Edit, LeftArrow, PasswordLock, PlanIcon, Settings, TeamMemberIcon } from "../../icons/icons";
 import { discardData } from "../../store/profileSlice";
 import { SelectDropdown } from "../../components/Dropdown";
+import { FaChevronDown } from "react-icons/fa";
 
 
 // User profile data
@@ -63,6 +64,7 @@ const tableData = [
 
 
 const SettingsPage = () => {
+  const countryData = useSelector((state) => state.country.data)
   const [activeTab, setActiveTab] = useState("profile");
   const [activeSidebarItem, setActiveSidebarItem] = useState("general");
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -81,6 +83,7 @@ const SettingsPage = () => {
     city: "",
     country: "",
   });
+  const [selectedCountry, setSelectedCountry] = useState(countryData[240]);
 
   const [errors, setErrors] = useState({
     currentPassword: '',
@@ -93,6 +96,8 @@ const SettingsPage = () => {
   const [teamMembersData, setTeamMembersData] = useState({})
   const navigate = useNavigate();
   const dispatch = useDispatch()
+  const [isOpen, setIsOpen] = useState(false)
+  const countryRef = useRef()
 
 
   const token = useSelector((state) => state.auth.token);
@@ -104,11 +109,29 @@ const SettingsPage = () => {
 
   useEffect(() => {
     if (token && !userDetails.loading) {
-      setProfileFormData(userDetails?.user)
+      if (userDetails?.user.phoneNumber === null) {
+        setProfileFormData(userDetails?.user)
+      } else {
+        const formatPhoneNumber = extractPhoneDetails(userDetails?.user.phoneNumber)
+        const formatedData = { ...userDetails?.user, phoneNumber: formatPhoneNumber.number }
+        const filterCountryCode = countryData.filter((e) => e.dial_code === formatPhoneNumber.countryCode)
+        setSelectedCountry(filterCountryCode[0])
+        setProfileFormData(formatedData)
+      }
       renderTeamMembers()
     }
 
   }, [token, !userDetails.loading])
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (countryRef.current && !countryRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
 
   const [showPasswords, setShowPasswords] = useState({
@@ -228,6 +251,18 @@ const SettingsPage = () => {
     }
   };
 
+  const extractPhoneDetails = (phoneNumber) => {
+    const regex = /^(\+\d+)\s*(\d+)$/;
+    const match = phoneNumber.match(regex);
+
+    if (match) {
+      const countryCode = match[1];
+      const number = match[2];
+      return { countryCode, number };
+    }
+    return { countryCode: "", number: "" };
+  };
+
 
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
@@ -241,8 +276,9 @@ const SettingsPage = () => {
     console.log('Profile data to update:', profileFormData);
     try {
       setUpdateLoading(true)
+      const updatedForm = { ...profileFormData, phoneNumber: `${selectedCountry.dial_code} ${profileFormData.phoneNumber}` }
       const formData = new FormData();
-      Object.entries(profileFormData).forEach(([key, value]) => {
+      Object.entries(updatedForm).forEach(([key, value]) => {
         if (key === 'imageFile' && value) {
           formData.append('file', value);
         } else if (key !== "imagePath") {
@@ -690,7 +726,7 @@ const SettingsPage = () => {
                       <img className="w-[17px] h-[17px]" alt="Edit" src='/src/assets/svg/edit.svg' />
                     </button>
                   </div>
-                  {profileErrors.imageFile && <p className="text-[#FF3B30] text-center">{profileErrors.imageFile}</p>}
+                  {profileErrors.imageFile && <p className="text-[#FF3B30]">{profileErrors.imageFile}</p>}
 
                   {/* Profile Form */}
                   <div className="flex flex-col items-start gap-4 relative self-stretch w-full text-[#1E1E1E]">
@@ -706,7 +742,7 @@ const SettingsPage = () => {
                             type="text"
                             name={field}
                             value={profileFormData[field] === "null" ? '' : profileFormData[field]}
-
+                            placeholder={`Enter ${field === "firstName" ? "First Name" : "Last Name"}`}
                             onChange={handleProfileChange}
                             className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors[field] ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none`}
                           />
@@ -727,7 +763,7 @@ const SettingsPage = () => {
                           className="w-full px-3.5 py-2.5 bg-[#E1E4EA] rounded-lg border border-solid border-[#e1e4ea]  text-[16px] text-[#5A687C]"
                         />
                       </div>
-                      <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
+                      {/* <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
                         <label className="font-medium text-sm text-text-black">Phone No</label>
                         <input
                           type="text"
@@ -737,6 +773,57 @@ const SettingsPage = () => {
                           onChange={handleProfileChange}
                           className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors.phoneNumber ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'}  text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none`}
                         />
+                        {profileErrors.phoneNumber && <p className="text-[#FF3B30] py-1">{profileErrors.phoneNumber}</p>}
+                      </div> */}
+                      <div className=" flex-1 grow w-full">
+                        <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
+                          Phone No
+                        </label>
+                        <div ref={countryRef} className={`flex group items-center bg-white focus-within:border-[#675FFF] gap-2 border ${profileErrors.phoneNumber ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} rounded-lg px-4 py-1.5`}>
+                          <div className="relative">
+                            <button
+                              onClick={() => setIsOpen(!isOpen)}
+                              className="w-[120px] flex hover:cursor-pointer relative border-none justify-between gap-1 items-center border py-1 text-left"
+                            >
+                              <div className="flex items-center gap-2 mr-3">
+                                <p className={`fi fi-${selectedCountry.flag} fis w-4 h-4 rounded-full`}></p>
+                                <p className="text-[#5A687C] font-[400] text-[16px]">{selectedCountry.dial_code}</p>
+                              </div>
+                              <FaChevronDown color="#5A687C" className={`w-[10px]  transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
+                              <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />
+                            </button>
+                            {isOpen && (
+                              <div className="absolute px-1 z-10 rounded-md shadow-lg border border-gray-200 max-h-40 overflow-auto top-6 w-full left-[-13px] bg-white mt-1">
+                                {countryData.map((country) => (
+                                  <div
+                                    key={country.code}
+                                    onClick={() => {
+                                      setSelectedCountry(country);
+                                      setIsOpen(false);
+                                      // setAddNewContact((prev) => ({ ...prev, phoneCode: country.dial_code }));
+                                    }}
+                                    className={`flex px-2 gap-2 hover:bg-[#F4F5F6] hover:rounded-lg my-1 py-2 ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6] rounded-lg'} cursor-pointer flex items-center`}
+                                  >
+                                    <p className={`fi fi-${country.flag} fis w-4 h-4 rounded-full`}></p>
+                                    <p className="text-[#5A687C] font-[400] text-[16px]">{country.dial_code}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                          <input
+                            type="tel"
+                            name="phoneNumber"
+                            value={profileFormData.phoneNumber === "null" ? '' : profileFormData.phoneNumber}
+                            onChange={handleProfileChange}
+                            placeholder="Enter Phone Number"
+                            className="w-full outline-none"
+                          // onChange={(e) => {
+                          //   setNumber(e.target.value);
+                          //   setError((prev) => ({ ...prev, number: "" }));
+                          // }}
+                          />
+                        </div>
                         {profileErrors.phoneNumber && <p className="text-[#FF3B30] py-1">{profileErrors.phoneNumber}</p>}
                       </div>
                     </div>
@@ -751,7 +838,7 @@ const SettingsPage = () => {
                           type="text"
                           name="company"
                           value={profileFormData.company === "null" ? '' : profileFormData.company}
-
+                          placeholder="Enter Company"
                           onChange={handleProfileChange}
                           className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors.company ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'}  text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none`}
                         />
@@ -793,7 +880,7 @@ const SettingsPage = () => {
                             type="text"
                             name={field}
                             value={profileFormData[field] === "null" ? '' : profileFormData[field]}
-
+                            placeholder={`Enter ${field.charAt(0).toUpperCase() + field.slice(1)}`}
                             onChange={handleProfileChange}
                             className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors[field] ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none`}
                           />
@@ -1023,33 +1110,35 @@ const SettingsPage = () => {
           <div className="flex inter flex-col w-full px-2 items-start gap-2 relative">
             <div
               onClick={() => handleSelect("general")}
-              className={`flex group hover:bg-[#F0EFFF] justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#F0EFFF]" : ""
+              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#F0EFFF]" : "hover:bg-[#F9F8FF]"
                 }`}
             >
-              <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<Settings status={activeSidebarItem === "general"} />}</div> <div className='hidden group-hover:block'>{<Settings status={true} />}</div></div>
-              <span className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${activeSidebarItem === "general" ? "text-[#675FFF]" : "text-[#5A687C]"}`}>
+              {activeSidebarItem === "general" ? <Settings status={activeSidebarItem === "general"} /> : <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<Settings status={activeSidebarItem === "general"} />}</div> <div className='hidden group-hover:block'>{<Settings hover={true} />}</div></div>}
+              <span className={`font-[400] text-[16px] ${activeSidebarItem === "general" ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
                 General Settings
               </span>
             </div>
 
             <div
               onClick={() => handleSelect("billing")}
-              className={`flex group hover:bg-[#F0EFFF] justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#EDF3FF]" : ""
+              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#EDF3FF]" : "hover:bg-[#F9F8FF]"
                 }`}
             >
-              <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<PlanIcon status={activeSidebarItem === "billing"} />}</div> <div className='hidden group-hover:block'>{<PlanIcon status={true} />}</div></div>
-              <span className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${activeSidebarItem === "billing" ? "text-[#675FFF]" : "text-[#5A687C]"}`}>
+              {activeSidebarItem === "billing" ? <PlanIcon status={activeSidebarItem === "billing"} /> :
+                <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<PlanIcon status={activeSidebarItem === "billing"} />}</div> <div className='hidden group-hover:block'>{<PlanIcon hover={true} />}</div></div>}
+              <span className={`font-[400] text-[16px] ${activeSidebarItem === "billing" ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
                 Plan &amp; Billing
               </span>
             </div>
 
             <div
               onClick={() => handleSelect("team")}
-              className={`flex group hover:bg-[#F0EFFF] justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "team" ? "bg-[#EDF3FF]" : ""
+              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "team" ? "bg-[#EDF3FF]" : "hover:bg-[#F9F8FF]"
                 }`}
             >
-              <div className="flex items-center gap-2"><div className='group-hover:hidden'><TeamMemberIcon status={activeSidebarItem === "team"} /></div> <div className='hidden group-hover:block'><TeamMemberIcon status={true} /></div></div>
-              <span className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${activeSidebarItem === "team" ? "text-[#675FFF]" : "text-[#5A687C]"}`}>
+              {activeSidebarItem === "team" ? <TeamMemberIcon status={activeSidebarItem === "team"} /> :
+                <div className="flex items-center gap-2"><div className='group-hover:hidden'><TeamMemberIcon status={activeSidebarItem === "team"} /></div> <div className='hidden group-hover:block'><TeamMemberIcon hover={true} /></div></div>}
+              <span className={`font-[400] text-[16px] ${activeSidebarItem === "team" ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
                 Team Members
               </span>
             </div>

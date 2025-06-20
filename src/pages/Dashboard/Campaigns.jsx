@@ -16,9 +16,9 @@ const Campaigns = () => {
     const navigate = useNavigate()
 
     const sideMenuList = [
-        { label: "Dashboard", icon: <FourBox status={activeSidebarItem == "dashboard"} />, hoverIcon: <FourBox status={true} />, path: "dashboard" },
-        { label: "Campaigns", icon: <PhoneCampaign status={activeSidebarItem == "campaigns"} />, hoverIcon: <PhoneCampaign status={true} />, path: "campaigns" },
-        { label: "Calendar", icon: <CalenderIcon status={activeSidebarItem == "calendar"} />, hoverIcon: <CalenderIcon status={true} />, path: "calendar" },
+        { label: "Dashboard", icon: <FourBox status={activeSidebarItem == "dashboard"} />, hoverIcon: <FourBox hover={true} />, path: "dashboard" },
+        { label: "Campaigns", icon: <PhoneCampaign status={activeSidebarItem == "campaigns"} />, hoverIcon: <PhoneCampaign hover={true} />, path: "campaigns" },
+        { label: "Calendar", icon: <CalenderIcon status={activeSidebarItem == "calendar"} />, hoverIcon: <CalenderIcon hover={true} />, path: "calendar" },
     ];
 
     const renderMainContent = () => {
@@ -62,13 +62,14 @@ const Campaigns = () => {
                                 onClick={() => {
                                     setActiveSidebarItem(item.path)
                                 }}
-                                className={`flex items-center group hover:bg-[#F0EFFF] gap-2 px-3 py-2 rounded-md cursor-pointer w-full ${activeSidebarItem === item.path
+                                className={`flex items-center group gap-2 px-3 py-2 rounded-md cursor-pointer w-full ${activeSidebarItem === item.path
                                     ? "bg-[#F0EFFF] text-[#675FFF]"
-                                    : "text-[#5A687C]"
+                                    : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                     }`}
                             >
-                                <div className="flex items-center gap-2"><div className='group-hover:hidden'>{item.icon}</div> <div className='hidden group-hover:block'>{item.hoverIcon}</div></div>
-                                <span className="text-[16px] font-[400] group-hover:text-[#675FFF]">{item.label}</span>
+                                {activeSidebarItem === item.path ? item.icon :
+                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'>{item.icon}</div> <div className='hidden group-hover:block'>{item.hoverIcon}</div></div>}
+                                <span className={`text-[16px] font-[400] ${activeSidebarItem !== item.path && 'group-hover:text-[#1E1E1E]'}`}>{item.label}</span>
                             </div>
                         ))}
                     </div>

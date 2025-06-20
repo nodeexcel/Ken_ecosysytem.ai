@@ -544,7 +544,8 @@ const ContactsPage = () => {
 
   const renderPhoneNumber = (phone) => {
     const { countryCode, number } = extractPhoneDetails(phone);
-    return `${countryCode}-${number.slice(0, 3)}-${number.slice(3, 6)}-${number.slice(6)}`
+    // return `${countryCode}-${number.slice(0, 3)}-${number.slice(3, 6)}-${number.slice(6)}`
+    return `${countryCode + number}`
   }
 
   const handleEditList = (list) => {
@@ -661,9 +662,14 @@ const ContactsPage = () => {
                   className="w-full pl-10 pr-3.5 pt-[8px] pb-[8px] bg-white border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] rounded-lg"
                 />
               </div>
-              {activeTab !== "lists" && <button disabled={formCreateList.contactsId?.length === 0} onClick={() => setCreateList(true)} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
-                Create List
-              </button>}
+              {(activeTab !== "lists" && formCreateList.contactsId?.length > 0) && <div className="flex items-center gap-2">
+                <button onClick={() => setCreateList(true)} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5f58e8] rounded-[7px] text-[#675FFF]">
+                  Add to a list
+                </button>
+                <button onClick={() => setCreateList(true)} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#FF2D55] rounded-[7px] text-[#FF2D55]">
+                  Delete
+                </button>
+              </div>}
             </div>
           </div>
           <div className="overflow-auto w-full">

@@ -18,9 +18,9 @@ function AppointmentSetter() {
     const navigate = useNavigate()
 
     const sideMenuList = [
-        { label: "Agents", icon: <TeamMemberIcon status={activeSidebarItem == "agents"} />, hoverIcon: <TeamMemberIcon status={true} />, path: "agents" },
-        { label: "Conversations", icon: <ConversationIcon status={activeSidebarItem == "conversations"} />, hoverIcon: <ConversationIcon status={true} />, path: "conversations" },
-        { label: "Analytics", icon: <AnalyticsIcon status={activeSidebarItem == "analytics"} />, hoverIcon: <AnalyticsIcon status={true} />, path: "analytics" },
+        { label: "Agents", icon: <TeamMemberIcon status={activeSidebarItem == "agents"} />, hoverIcon: <TeamMemberIcon hover={true} />, path: "agents" },
+        { label: "Conversations", icon: <ConversationIcon status={activeSidebarItem == "conversations"} />, hoverIcon: <ConversationIcon hover={true} />, path: "conversations" },
+        { label: "Analytics", icon: <AnalyticsIcon status={activeSidebarItem == "analytics"} />, hoverIcon: <AnalyticsIcon hover={true} />, path: "analytics" },
         // { label: "Demo Chat", icon: <ConversationIcon status={activeSidebarItem == "demo"} />, path: "demo" },
     ]
 
@@ -64,15 +64,14 @@ function AppointmentSetter() {
                         {sideMenuList.map((e, i) => <div
                             key={i}
                             onClick={() => setActiveSidebarItem(e.path)}
-                            className={`flex justify-center group hover:bg-[#F0EFFF] md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#F0EFFF]" : ""
+                            className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                 }`}
                         >
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'>{e.icon}</div> <div className='hidden group-hover:block'>{e.hoverIcon}</div></div>
-
-                            <div className={`relative group-hover:text-[#675FFF] w-fit mt-[-1.00px] font-[400] text-[16px] tracking-[-0.28px] leading-5 whitespace-nowrap ${activeSidebarItem === `${e.path}` ? "text-[#675FFF]" : "text-[#5A687C] "
-                                }`}>
+                            {activeSidebarItem === `${e.path}` ? e.icon :
+                                <div className="flex items-center gap-2"><div className='group-hover:hidden'>{e.icon}</div> <div className='hidden group-hover:block'>{e.hoverIcon}</div></div>}
+                            <span className={`font-[400] text-[16px] ${activeSidebarItem === `${e.path}` ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
                                 {e.label}
-                            </div>
+                            </span>
                         </div>)}
                     </div>
                 </div>

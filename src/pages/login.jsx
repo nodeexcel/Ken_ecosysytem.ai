@@ -10,9 +10,10 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useDispatch, useSelector } from "react-redux";
 import { emailState, loginSuccess } from "../store/authSlice";
-import logo from '/ecosystem_logo.svg'
 import { X } from "lucide-react";
 import { PasswordLock } from "../icons/icons";
+import header from '../assets/svg/ecosysteme.ai_logo.svg'
+import logo from '../assets/svg/logo.svg'
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -441,9 +442,8 @@ export default function Login() {
         <div className="flex flex-col overflow-auto items-center h-screen bg-[#F6F7F9] p-3">
             <div className="flex items-center gap-2 my-2">
                 <div>
-                    <img src={logo} alt="logo" className="w-[47.15px] h-[52px]" />
+                    <img src={header} alt="logo" className="" />
                 </div>
-                <h1 className="text-[28px] onest font-semibold text-[#1E1E1E]">Ecosysteme.ai</h1>
             </div>
             <div className="bg-white p-8 inter rounded-2xl border border-[#E1E4EA] mt-3 w-full max-w-[500px]">
                 {step === "email" && renderEmailStep()}
@@ -496,7 +496,7 @@ export default function Login() {
 
                     {activeTabModal === "forgot-password" && <div div className="space-y-4 mt-6">
                         <div className="flex justify-center">
-                            <img src={logo} alt="logo" className="w-[47.15px] h-[52px]" />
+                            <img src={logo} alt="logo" className="" />
                         </div>
                         <div>
                             <h2 className="text-[28px] font-[700] text-center text-[#292D32]">Forgot Password</h2>
@@ -534,7 +534,7 @@ export default function Login() {
                     {activeTabModal === "verify-email" && <div div className="space-y-6 mt-6">
                         <div>
                             <div className="flex justify-center">
-                                <img src={logo} alt="logo" className="w-[47.15px] h-[52px]" />
+                                <img src={logo} alt="logo" className="" />
                             </div>
                             <h2 className="text-[28px] font-[700] text-center text-[#292D32]">Verify Email</h2>
                         </div>

@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { TbLockPassword } from 'react-icons/tb';
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { setPassword } from '../api/auth';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import logo from '/ecosystem_logo.svg'
 import { PasswordLock } from '../icons/icons';
+import header from '../assets/svg/ecosysteme.ai_logo.svg'
 
 export default function SetPassword() {
     const [showPasswords, setShowPasswords] = useState({
@@ -101,9 +100,8 @@ export default function SetPassword() {
         <div className="flex flex-col items-center overflow-auto h-screen bg-gray-50 p-3">
             <div className="flex items-center gap-2 my-2">
                 <div>
-                    <img src={logo} alt="logo" className="w-[47.15px] h-[52px]" />
+                    <img src={header} alt="logo" className="" />
                 </div>
-                <h1 className="text-[28px] onest font-semibold text-[#1E1E1E]">Ecosysteme.ai</h1>
             </div>
             <form onSubmit={handleSubmit} className="bg-white inter p-8 mt-2 rounded-2xl border border-[#E1E4EA] w-full max-w-[500px]">
                 <div className="space-y-3">

@@ -17,9 +17,9 @@ const BrainAI = () => {
   const [searchParams, setSearchParams] = useSearchParams()
 
   const sideMenuItems = [
-    { label: "Contacts", icon: <ContactIcon status={activePath == "contacts"} />, hoverIcon: <ContactIcon status={true} />, path: "contacts" },
-    { label: "Knowledge", icon: <KnowledgeIcon status={activePath == "knowledge"} />, hoverIcon: <KnowledgeIcon status={true} />, path: "knowledge" },
-    { label: "Integration", icon: <IntegrationIcon status={activePath == "integration"} />, hoverIcon: <IntegrationIcon status={true} />, path: "integration" },
+    { label: "Contacts", icon: <ContactIcon status={activePath == "contacts"} />, hoverIcon: <ContactIcon hover={true} />, path: "contacts" },
+    { label: "Knowledge", icon: <KnowledgeIcon status={activePath == "knowledge"} />, hoverIcon: <KnowledgeIcon hover={true} />, path: "knowledge" },
+    { label: "Integration", icon: <IntegrationIcon status={activePath == "integration"} />, hoverIcon: <IntegrationIcon hover={true} />, path: "integration" },
   ]
 
   const renderMainContent = () => {
@@ -213,11 +213,13 @@ const BrainAI = () => {
                   <button
                     key={i}
                     onClick={() => setActivePath(item.path)}
-                    className={`cursor-pointer group hover:bg-[#F0EFFF] flex items-center justify-start gap-1.5 px-2 py-2 w-full h-auto rounded ${isActive ? "bg-[#F0EFFF] text-[#675FFF]" : "text-[#5A687C]"
+                    className={`cursor-pointer group flex items-center justify-start gap-1.5 px-2 py-2 w-full h-auto rounded ${isActive ? "bg-[#F0EFFF] text-[#675FFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                       }`}
                   >
-                    <div className="flex items-center gap-2"><div className='group-hover:hidden'>{Icon}</div> <div className='hidden group-hover:block'>{hoverIcon}</div></div>
-                    <span className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${isActive ? "text-[#675FFF]" : "text-[#5A687C]"}`}>
+                    {isActive ? Icon
+                      : <div className="flex items-center gap-2"><div className='group-hover:hidden'>{Icon}</div> <div className='hidden group-hover:block'>{hoverIcon}</div></div>
+                    }
+                    <span className={`font-[400] text-[16px] ${isActive ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
                       {item.label}
                     </span>
                   </button>

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import person from '../assets/images/person.svg'
-import logo from '../assets/images/ecosystem_logo.svg'
 import switchuser from '../assets/images/switch_user.svg'
 import { GrAppsRounded } from 'react-icons/gr';
 import { IoNotificationsOutline, IoSettingsOutline } from 'react-icons/io5';
@@ -17,6 +16,7 @@ import Notification from '../pages/Dashboard/Notification';
 import { X } from 'lucide-react';
 import { getNavbarData } from '../store/navbarSlice';
 import { SidebarBrainIcon, SidebarDocumentIcon, SidebarFourBoxIcon, SidebarHelpCenterIcon, SidebarNotificationIcon, SidebarSettingIcon } from '../icons/icons';
+import logo from '../assets/svg/dashboard_logo.svg'
 
 const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     const navigate = useNavigate()

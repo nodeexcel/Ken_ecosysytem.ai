@@ -92,6 +92,14 @@ const employees = [
     label: "",
     image: finnImg
   },
+  {
+    name: "Name",
+    role: "SEO",
+    gradient: "bg-gradient-to-br from-[#F8DDFF] to-[#F8DDFF]",
+    path: "",
+    label: "",
+    image: constanceImg
+  },
 ];
 
 const Agents = () => {
@@ -174,7 +182,7 @@ const Agents = () => {
                   <CircleArrowRightIcon className="absolute w-5 h-5 top-0 right-0 text-[#1E1E1E]" />
                 </div>
                 <div>
-                  <img  loading='lazy' src={employee.image} alt={employee.label} className="object-fit max-w-[88.47px] max-h-[128.24px]" />
+                  <img loading='lazy' src={employee.image} alt={employee.label} className="object-fit max-w-[88.47px] max-h-[128.24px]" />
                 </div>
               </div>
             </div>
