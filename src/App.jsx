@@ -23,8 +23,8 @@ import Campaigns from './pages/Dashboard/Campaigns'
 import PrivacyPolicy from './components/PrivacyPolicy'
 import TermsAndConditions from './components/TermsAndConditions'
 import AgentPersonalityDocumentation from './components/AgentPersonalityDocumentation'
-import WebsocketComp from './components/Websocket'
 import "/node_modules/flag-icons/css/flag-icons.min.css";
+import Accounting from './pages/Dashboard/Accounting'
 
 
 
@@ -43,7 +43,6 @@ function App() {
         <Route path='/terms-conditions' element={< TermsAndConditions />} />
         <Route path='/privacy-policy' element={< PrivacyPolicy />} />
         <Route path='/agent-personality-documentation' element={< AgentPersonalityDocumentation />} />
-        <Route path='/chat' element={< WebsocketComp />} />
         <Route path='/dashboard' element={<Dashboard />}>
           <Route path='' element={<Agents />} />
           <Route path="notification" element={<Notification />} />
@@ -55,6 +54,7 @@ function App() {
           <Route path="support" element={<Support />} />
           <Route path="community" element={<Community />} />
           <Route path="appointment-setter" element={<AppointmentSetter />} />
+          <Route path="accounting" element={<Accounting />} />
         </Route>
       </Routes>
     </div>

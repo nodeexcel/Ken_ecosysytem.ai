@@ -159,57 +159,61 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const validateForm = () => {
         const newErrors = {};
 
-        if (!formData.agent_name.trim()) newErrors.agent_name = "Agent name is required.";
-        if (!formData.gender) newErrors.gender = "Gender is required.";
-        if (!formData.age) newErrors.age = "Age is required.";
-        if (formData.agent_language.length === 0) newErrors.agent_language = "Language is required.";
-        if (!formData.agent_personality) newErrors.agent_personality = "Agent personality is required.";
-        if (!formData.business_description.trim()) newErrors.business_description = "Business description is required.";
-        if (formData.business_description.trim().length > 1 && formData.business_description.length < 50) newErrors.business_description = "Min 50 characters are required.";
-        if (!formData.your_business_offer.trim()) newErrors.your_business_offer = "Business offer is required.";
-        if (formData.your_business_offer.trim().length > 1 && formData.your_business_offer.length < 50) newErrors.your_business_offer = "Min 50 characters are required.";
-        if (!formData.prompt) newErrors.prompt = "Prompt is required.";
-        if (!formData.objective_of_the_agent) newErrors.objective_of_the_agent = "Objective of the agent is required.";
-        formData.qualification_questions.forEach((e, i) => {
-            if (e === "") {
-                newErrors[`qualification_questions[${i}]`] = "Qualification must be chosen.";
-            }
-        });
 
-        if (formData.objective_of_the_agent === "book_call") {
-            if (!formData.calendar_choosed) {
-                newErrors.calendar_choosed = "Calendar must be chosen.";
-            }
+        if (step === 1) {
+            if (!formData.agent_name.trim()) newErrors.agent_name = "Agent name is required.";
+            if (!formData.gender) newErrors.gender = "Gender is required.";
+            if (!formData.age) newErrors.age = "Age is required.";
+            if (formData.agent_language.length === 0) newErrors.agent_language = "Language is required.";
+            if (!formData.agent_personality) newErrors.agent_personality = "Agent personality is required.";
         }
 
-        if (formData.objective_of_the_agent === "book_call") {
-            if (formData.calendar_choosed === "google_calendar") {
-                if (!formData.google_calendar_id) {
-                    newErrors.google_calendar_id = "Calendar Account must be chosen.";
+        if (step === 3) {
+            if (!formData.prompt) newErrors.prompt = "Prompt is required.";
+            formData.qualification_questions.forEach((e, i) => {
+                if (e === "") {
+                    newErrors[`qualification_questions[${i}]`] = "Qualification must be chosen.";
+                }
+            });
+        }
+
+        if (step === 2) {
+            if (!formData.business_description.trim()) newErrors.business_description = "Business description is required.";
+            if (formData.business_description.trim().length > 1 && formData.business_description.length < 50) newErrors.business_description = "Min 50 characters are required.";
+            if (!formData.your_business_offer.trim()) newErrors.your_business_offer = "Business offer is required.";
+            if (formData.your_business_offer.trim().length > 1 && formData.your_business_offer.length < 50) newErrors.your_business_offer = "Min 50 characters are required.";
+            if (!formData.objective_of_the_agent) newErrors.objective_of_the_agent = "Objective of the agent is required.";
+            if (formData.objective_of_the_agent === "book_call") {
+                if (!formData.calendar_choosed) {
+                    newErrors.calendar_choosed = "Calendar must be chosen.";
                 }
             }
-        }
-
-        if (formData.objective_of_the_agent === "whatsapp_number") {
-            if (!formData.whatsapp_number) {
-                newErrors.whatsapp_number = "Whatsapp Number is required.";
+            if (formData.objective_of_the_agent === "book_call") {
+                if (formData.calendar_choosed === "google_calendar") {
+                    if (!formData.google_calendar_id) {
+                        newErrors.google_calendar_id = "Calendar Account must be chosen.";
+                    }
+                }
             }
-        }
-
-        if (formData.objective_of_the_agent === "web_page") {
-            if (!formData.webpage_link.trim()) {
-                newErrors.webpage_link = "Webpage link is required.";
+            if (formData.objective_of_the_agent === "whatsapp_number") {
+                if (!formData.whatsapp_number) {
+                    newErrors.whatsapp_number = "Whatsapp Number is required.";
+                }
             }
-            // if (!formData.webpage_type.trim()) {
-            //     newErrors.webpage_type = "Webpage type is required.";
-            // }
-        }
-
-        if (formData.is_followups_enabled && (!formData.follow_up_details.number_of_followups)) {
-            if (formData.follow_up_details.number_of_followups === 0) {
-                newErrors.number_of_followups = "";
-            } else {
-                newErrors.number_of_followups = "followup is required.";
+            if (formData.objective_of_the_agent === "web_page") {
+                if (!formData.webpage_link.trim()) {
+                    newErrors.webpage_link = "Webpage link is required.";
+                }
+                // if (!formData.webpage_type.trim()) {
+                //     newErrors.webpage_type = "Webpage type is required.";
+                // }
+            }
+            if (formData.is_followups_enabled && (!formData.follow_up_details.number_of_followups)) {
+                if (formData.follow_up_details.number_of_followups === 0) {
+                    newErrors.number_of_followups = "";
+                } else {
+                    newErrors.number_of_followups = "followup is required.";
+                }
             }
         }
 
@@ -319,6 +323,101 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         { label: "Google Calendar", key: "google_calendar" }
     ]
 
+    const handleContinue = (nextStep) => {
+        if (!validateForm()) {
+            return
+        } else {
+            setStatusSteps((prev) => ({ ...prev, [`step${step}`]: true }))
+            setStep(nextStep)
+        }
+    }
+
+
+    const handleCancel = (value) => {
+        switch (value) {
+            case 1:
+                setFormData({
+                    agent_name: "",
+                    gender: '',
+                    age: '',
+                    agent_language: [], agent_personality: "", business_description: "", your_business_offer: "",
+                    qualification_questions: [""],
+                    sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
+                    objective_of_the_agent: '',
+                    calendar_choosed: '',
+                    // reply_min_time: 15,
+                    // reply_max_time: 60,
+                    is_followups_enabled: true,
+                    follow_up_details: { number_of_followups: '', min_time: 15, max_time: 60 },
+                    emoji_frequency: 25,
+                    // directness: 2,a
+                    webpage_link: "",
+                    // webpage_type: "",
+                    whatsapp_number: '',
+                    platform_unique_id: '',
+                    google_calendar_id: '',
+                    prompt: ''
+                })
+                setStatusSteps({ step1: false, step2: false, step3: false })
+                break;
+            case 2:
+                setFormData((prev) => ({
+                    ...prev, business_description: "", your_business_offer: "",
+                    qualification_questions: [""],
+                    sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
+                    objective_of_the_agent: '',
+                    calendar_choosed: '',
+                    is_followups_enabled: true,
+                    follow_up_details: { number_of_followups: '', min_time: 15, max_time: 60 },
+                    webpage_link: "",
+                    whatsapp_number: '',
+                    platform_unique_id: '',
+                    google_calendar_id: '',
+                    prompt: ''
+                }))
+                setStep(1)
+                setStatusSteps((prev) => ({ ...prev, step2: false, step3: false }))
+                break;
+            default:
+                setFormData((prev) => ({
+                    ...prev,
+                    qualification_questions: [""],
+                    sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
+                    platform_unique_id: '',
+                    prompt: ''
+                }))
+                setStep(2)
+                setStatusSteps((prev) => ({ ...prev, step3: false }))
+                break;
+        }
+    }
+
+    useEffect(() => {
+        if (errors.step1 || errors.step2) {
+            setTimeout(() => {
+                setErrors((prev) => ({ ...prev, step1: "", step2: "" }))
+            }, 10000)
+        }
+
+    }, [errors])
+
+    const handleSelectSteps = (selectStep) => {
+        if (statusSteps[`step${selectStep}`]) {
+            setStep(selectStep)
+        } else if (!statusSteps.step1) {
+            validateForm()
+            setErrors((prev) => ({ ...prev, step1: "First Please Complete Identity Section" }))
+            setStep(1)
+        }
+        else if (!statusSteps.step2) {
+            validateForm()
+            setErrors((prev) => ({ ...prev, step2: "First Please Complete Objective Section" }))
+            setStep(2)
+        } else {
+            setStep(selectStep)
+        }
+    }
+
     const getAppointementSetter = async () => {
         try {
             const response = await getAppointmentSetterById(editData)
@@ -332,6 +431,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                         : formData.follow_up_details,
                 };
                 setFormData(payload)
+                setStatusSteps({ step1: true, step2: true, step3: true })
             }
 
         } catch (error) {
@@ -693,8 +793,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     <div className="flex flex-col gap-4 w-full">
                         <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
                             <div className="flex justify-between items-center" onClick={() => {
-                                setStep(1)
-                                setStatusSteps((prev) => ({ ...prev, step1: false }))
+                                handleSelectSteps(1)
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 1 ? 'bg-[#675FFF]' : statusSteps.step1 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step1 ? <CheckIcon /> : '1'}</p>
@@ -906,19 +1005,18 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                                 <div className="flex items-center gap-2">
                                     <button onClick={() => {
-                                        setStatusSteps((prev) => ({ ...prev, step1: true }))
-                                        setStep(2)
+                                        handleContinue(2)
                                     }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
-                                    <button className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                                    <button onClick={() => handleCancel(1)} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
                                 </div>
 
                             </div>}
                         </div>
+                        {errors.step1 && <p className="text-red-500 text-sm mt-1">{errors.step1}</p>}
 
                         <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
                             <div className="flex justify-between items-center" onClick={() => {
-                                setStep(2)
-                                setStatusSteps((prev) => ({ ...prev, step2: false }))
+                                handleSelectSteps(2)
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 2 ? 'bg-[#675FFF]' : statusSteps.step2 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step2 ? <CheckIcon /> : '2'}</p>
@@ -1156,18 +1254,17 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                                 <div className="flex items-center gap-2">
                                     <button onClick={() => {
-                                        setStatusSteps((prev) => ({ ...prev, step2: true }))
-                                        setStep(3)
+                                        handleContinue(3)
                                     }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
-                                    <button className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                                    <button onClick={() => handleCancel(2)} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
                                 </div>
                             </div>}
                         </div>
+                        {errors.step2 && <p className="text-red-500 text-sm mt-1">{errors.step2}</p>}
 
                         <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
                             <div className="flex justify-between items-center" onClick={() => {
-                                setStep(3)
-                                setStatusSteps((prev) => ({ ...prev, step3: false }))
+                                handleSelectSteps(3)
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 3 ? 'bg-[#675FFF]' : statusSteps.step3 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step3 ? <CheckIcon /> : '3'}</p>
@@ -1356,7 +1453,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             <button disabled={loading} onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()} className="bg-[#675FFF] w-[162px] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
                                 {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : updateAgentStatus ? "Update Agent" : " Create Agent"}
                             </button>
-                            <button className="px-5 rounded-[7px] w-[162px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                            <button onClick={() => handleCancel(3)} className="px-5 rounded-[7px] w-[162px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
                         </div>}
 
                         {/* Message Time Range */}

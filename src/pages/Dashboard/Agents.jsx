@@ -88,8 +88,8 @@ const employees = [
     name: "Finn",
     role: "Accounting",
     gradient: "bg-gradient-to-br from-[#E3F6ED] to-[#E3F6ED]",
-    path: "",
-    label: "",
+    path: "/dashboard/accounting",
+    label: "Accounting",
     image: finnImg
   },
   {
