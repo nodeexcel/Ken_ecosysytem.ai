@@ -25,8 +25,8 @@ const employees = [
     name: "Tara",
     role: "COO",
     gradient: "bg-gradient-to-br from-[#CEBFFD] to-[#CEBFFD]",
-    path: "",
-    label: "",
+    path: "/dashboard/coo",
+    label: "Tara",
     image: taraImg,
   },
   {
@@ -78,11 +78,11 @@ const employees = [
     image: emileImg
   },
   {
-    name: "Assia",
+    name: "Rima",
     role: "HR",
     gradient: "bg-gradient-to-br from-[#FFE4C5] to-[#FFE4C5]",
-    path: "",
-    label: "",
+    path: "/dashboard/hr",
+    label: "Rima",
     image: assiaImg
   },
   {
@@ -97,8 +97,8 @@ const employees = [
     name: "Sandro",
     role: "SEO",
     gradient: "bg-gradient-to-br from-[#F8DDFF] to-[#F8DDFF]",
-    path: "",
-    label: "",
+    path: "/dashboard/seo",
+    label: "Sandro",
     image: sandroImg
   },
 ];
@@ -158,7 +158,7 @@ const Agents = () => {
       <div className="flex justify-center flex-col items-center text-center gap-2 pb-5">
         <h1 className="font-[600] text-2xl">Welcome {userDetails?.user?.firstName}{" "}{userDetails?.user?.lastName !== null && userDetails?.user?.lastName}</h1>
         <p className="font-[400] text-[16px] text-[#5A687C]">
-          Your AI agents are ready to boost your outreach.
+          Your AI agents are ready to boost your business.
         </p>
       </div>
 
@@ -183,7 +183,7 @@ const Agents = () => {
                   <CircleArrowRightIcon className="absolute w-5 h-5 top-0 right-0 text-[#1E1E1E]" />
                 </div>
                 <div>
-                  <img loading='lazy' src={employee.image} alt={employee.label} className="object-fit"/>
+                  <img loading='lazy' src={employee.image} alt={employee.label} className="object-fit" />
                 </div>
               </div>
             </div>

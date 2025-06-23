@@ -25,6 +25,9 @@ import TermsAndConditions from './components/TermsAndConditions'
 import AgentPersonalityDocumentation from './components/AgentPersonalityDocumentation'
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import Accounting from './pages/Dashboard/Accounting'
+import Hr from './pages/Dashboard/Hr'
+import Coo from './pages/Dashboard/Coo'
+import Seo from './pages/Dashboard/Seo'
 
 
 
@@ -55,6 +58,9 @@ function App() {
           <Route path="community" element={<Community />} />
           <Route path="appointment-setter" element={<AppointmentSetter />} />
           <Route path="accounting" element={<Accounting />} />
+          <Route path="hr" element={<Hr />} />
+          <Route path="coo" element={<Coo />} />
+          <Route path="seo" element={<Seo />} />
         </Route>
       </Routes>
     </div>

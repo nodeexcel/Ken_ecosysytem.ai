@@ -1,5 +1,5 @@
 import { EllipsisVertical } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import CreateNewAgent from './CreateNewAgent';
 import { deleteAppointmentSetter, getAppointmentSetter, updateAppointmentSetterStatus } from '../api/appointmentSetter';
 import { CallAgent, CancelIcon, CorrectIcon, Delete, Duplicate, Edit } from '../icons/icons';
@@ -13,6 +13,7 @@ function AgentsSeth() {
     const [message, setMessage] = useState("")
     const [editData, setEditData] = useState()
     const [previewAgent, setPreviewAgent] = useState('')
+    const moreActionsRef = useRef()
 
     const [open, setOpen] = useState(true)
 
@@ -23,6 +24,17 @@ function AgentsSeth() {
     const handleDropdownClick = (index) => {
         setActiveDropdown(activeDropdown === index ? null : index);
     };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (moreActionsRef.current && !moreActionsRef.current.contains(event.target)) {
+                setActiveDropdown(null);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
 
     const toggleStatus = async (index, key, id) => {
         try {
@@ -115,7 +127,7 @@ function AgentsSeth() {
                                         <td className="px-6 py-4 text-[16px] text-[#5A687C] font-[400] text-start border-t-1 border-b-1 border-[#E1E4EA]">{item.agent_language.map((e, i) => {
                                             return `${e}${i !== (item.agent_language.length - 1) ? ',' : ''}`
                                         })}</td>
-                                        <td className="px-6 py-4 text-[16px] text-end flex justify-end gap-2 border-r-1 border-t-1 border-b-1 rounded-r-lg border-[#E1E4EA]">
+                                        <td className="px-6 py-6 text-[16px] text-end flex justify-end gap-2 border-r-1 border-t-1 border-b-1 rounded-r-lg border-[#E1E4EA]">
                                             <div className='flex justify-center items-center gap-2'>
                                                 <p className={`${item.is_active ? "text-[#34C759] border-[#34C759] bg-[#EBF9EE]" : "text-[#FF9500] border-[#FF9500] bg-[#FFF4E6]"} px-2 py-1 text-[14px] font-[500] border rounded-full`}>
                                                     {item.is_active ? 'Active' : 'Inactive'}
@@ -133,6 +145,7 @@ function AgentsSeth() {
                                         </td>
                                         <td className='bg-[#FAFBFD]'>
                                             <button
+                                                ref={moreActionsRef}
                                                 onClick={() => handleDropdownClick(index)}
                                                 className="text-gray-500 hover:text-gray-700"
                                             >

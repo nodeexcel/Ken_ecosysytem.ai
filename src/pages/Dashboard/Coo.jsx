@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { ConversationIcon, LeftArrow } from '../../icons/icons'
-import finnImg from "../../assets/svg/finn_logo.svg"
+import taraImg from "../../assets/svg/tara_logo.svg"
 import { useNavigate } from 'react-router-dom'
 import AccountingChat from '../../components/AccountingChat'
-import finnMsgLogo from '../../assets/svg/finn_msg_logo.svg'
+import taraMsgLogo from '../../assets/svg/tara_msg_logo.svg'
 
-function Accounting() {
+function Coo() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
 
     const navigate = useNavigate()
@@ -17,7 +17,7 @@ function Accounting() {
     const renderMainContent = () => {
         switch (activeSidebarItem) {
             default:
-                return <AccountingChat agentLogo={finnMsgLogo} agentName={"Finn"} />
+                return <AccountingChat agentLogo={taraMsgLogo} agentName={"Tara"} />
         }
 
     }
@@ -30,7 +30,7 @@ function Accounting() {
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
                             <div className="flex gap-4 pl-5 items-center h-[57px]">
                                 <LeftArrow />
-                                <h1 className="text-[20px] font-[600]">Accounting</h1>
+                                <h1 className="text-[20px] font-[600]">COO</h1>
                             </div>
                         </div>
                         <hr className='text-[#E1E4EA]' />
@@ -38,11 +38,11 @@ function Accounting() {
                     <div className="flex flex-col w-full items-start gap-2 relative px-2">
                         <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
                             <div className="flex justify-center items-center">
-                                <img src={finnImg} alt={"finn"} className="object-fit" />
+                                <img src={taraImg} alt={"tara"} className="object-fit" />
                             </div>
                             <div className="flex flex-col">
-                                <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Finn</h1>
-                                <p className="text-[#5A687C] text-[14px] font-[400]">Accounting</p>
+                                <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Tara</h1>
+                                <p className="text-[#5A687C] text-[14px] font-[400]">COO</p>
                             </div>
                         </div>
                         {sideMenuList.map((e, i) => <div
@@ -69,4 +69,4 @@ function Accounting() {
     )
 }
 
-export default Accounting
+export default Coo

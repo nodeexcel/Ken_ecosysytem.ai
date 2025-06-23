@@ -1,16 +1,15 @@
 import { useEffect, useRef, useState } from "react"
 import { X } from "lucide-react"
 import { GoDotFill } from "react-icons/go"
-import { RiCheckDoubleLine } from "react-icons/ri"
 import { FaRegSmile } from "react-icons/fa";
 import { PiImageBold } from "react-icons/pi"
 import { FiMic, FiPaperclip } from "react-icons/fi"
 import { v4 as uuidv4 } from 'uuid';
-import { getAccountingChatById, getAccountingChats } from "../api/account";
-import { DateFormat } from "../utils/TimeFormat";
+import { deleteChat, getAccountingChatById, getAccountingChats, updateChatName } from "../api/account";
+import { Delete, DislikeIcon, Duplicate, Edit, LikeIcon, SearchIcon, SendIcon, SpeakerIcon, ThreeDots } from "../icons/icons";
 
 
-const AccountingChat = () => {
+const AccountingChat = ({ agentLogo, agentName }) => {
     const [activeConversation, setActiveConversation] = useState()
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
@@ -25,9 +24,64 @@ const AccountingChat = () => {
     const socketRef = useRef(null)
     const socket2Ref = useRef(null)
     const [openChat, setOpenChat] = useState(false)
+    const [editData, setEditData] = useState({})
+    const [activeDropdown, setActiveDropdown] = useState(null);
+    const [errors, setErrors] = useState({})
+    const [name, setName] = useState("")
+    const moreActionsRef = useRef()
+    const [updateNameLoading, setUpdateNameLoading] = useState(false)
 
     const newwebsocketurl = "ws://116.202.210.102:8000/new-accounting-chat"
     const websocketurl = "ws://116.202.210.102:8000/accounting"
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (moreActionsRef.current && !moreActionsRef.current.contains(event.target)) {
+                setActiveDropdown(null);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setName(value.trim())
+        setErrors((prev) => ({ ...prev, [name]: "" }))
+    }
+
+    const handleUpdateName = async () => {
+        if (!name) {
+            setErrors((prev) => ({ ...prev, name: "Enter the name" }))
+            return
+        }
+        try {
+            setUpdateNameLoading(true)
+            const response = await updateChatName(editData?.chat_id, { name })
+            if (response?.status === 200) {
+                setEditData({})
+                handleGetAccountChats()
+            }
+
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setUpdateNameLoading(false)
+        }
+    }
+
+    const handleDelete = async (id) => {
+        try {
+            const response = await deleteChat(id)
+            if (response?.status === 200) {
+                handleGetAccountChats()
+                setActiveConversation("")
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
 
     const sendToSocket = () => {
@@ -168,6 +222,10 @@ const AccountingChat = () => {
         }
     }, [messages]);
 
+    const handleDropdownClick = (index) => {
+        setActiveDropdown(activeDropdown === index ? null : index);
+    };
+
 
     const handleGetAccountChats = async () => {
         setLoadingChatsList(true)
@@ -258,50 +316,78 @@ const AccountingChat = () => {
     return (
         <div className="w-full py-4 pr-2 h-screen overflow-auto  flex flex-col gap-4 ">
             <div className="flex justify-between items-center">
-                <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">Accounting Chat</h1>
+                <h1 className="text-[#1E1E1E] font-semibold text-xl md:text-2xl">Chat</h1>
             </div>
             {message ? <p>{message}</p> : <div className="flex bg-white rounded-2xl shadow">
                 {/* Sidebar */}
-                <div className="w-[372px] bg-[#FFFFFF] rounded-l-2xl border-[#E1E4EA] border">
+                <div className="w-[240px] bg-[#FFFFFF] rounded-l-2xl border-[#E1E4EA] border">
                     <div className="px-4 py-2">
-                        <div className="mt-4">
-                            <p className="text-[16px] font-[400] text-[#5A687C]">Ecosysteme.ai chats history</p>
+                        <div className="relative flex-1">
+                            <div className="absolute left-3 top-[25%]">
+                                <SearchIcon />
+                            </div>
+                            <input type="text" placeholder="Search Chat" className="w-full text-[#5A687C] pl-9 pr-3 py-[6px] text-sm border border-[#E1E4EA] bg-white focus:outline-none focus:border-[#675FFF] rounded-md" />
                         </div>
                     </div>
 
-                    <div className="w-[372px] mt-2 p-2 h-[460px] overflow-y-auto">
-                        <div className="flex justify-center py-4">
-                            <button onClick={handleSelectNewChat} className="border-[1.5px] hover:cursor-pointer border-[#675FFF] text-[#675FFF] px-3 py-2 rounded-lg">New Chat</button>
+                    <div className="w-[240px] mt-2 h-[460px] overflow-y-auto">
+                        <div className="flex px-4 pb-4">
+                            <button onClick={handleSelectNewChat} className="text-[#1E1E1E] font-[400] text-[14px] flex items-center gap-2">
+                                <Edit chat={true} /> <span>New Chat</span>
+                            </button>
                         </div>
-                        {loadingChatsList ? <div className="flex justify-center items-center w-full"><span className="loader" /> </div> : chatList?.length > 0 && chatList.map((conversation, index) => (
-                            <div
-                                key={index}
-                                className={`flex items-center gap-3 my-1 p-3 cursor-pointer hover:bg-[#F6F6FF]  hover:rounded-2xl ${activeConversation === conversation.chat_id ? "bg-[#F6F6FF]  rounded-xl" : ""
-                                    }`}
-                                onClick={() => handleSelectChat(conversation.chat_id)}
-                            >
-                                <div className={`flex items-center bg-[#DFE3F7] justify-center w-10 h-10 rounded-xl`}>
-                                    <span className="text-[16px] text-[#675FFF] font-[600]">C</span>
+                        <hr style={{ color: "#E1E4EA" }} />
+                        <div ref={moreActionsRef} className="px-4 py-3">
+                            {loadingChatsList ? <div className="flex justify-center p-4 items-center w-full"><span className="loader" /> </div> : chatList?.length > 0 && chatList.map((conversation, index) => (
+                                <div
+                                    key={index}
+                                    className={`flex justify-between group items-center gap-3 my-1 py-1 px-4 cursor-pointer ${activeConversation === conversation.chat_id ? "bg-[#F0EFFF] text-[#1E1E1E] rounded-lg" : "hover:bg-[#F0EFFF]  hover:rounded-lg "
+                                        }`}
+                                    onClick={() => handleSelectChat(conversation.chat_id)}
+                                >
+                                    <p className={`text-[12px] font-[400] group-hover:text-[#1E1E1E] ${activeConversation === conversation.chat_id ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{conversation.name === null ? `Accounting Chat` : conversation.name}</p>
+                                    <div>
+                                        <button
+                                            onClick={() => handleDropdownClick(index)}
+                                            className={`py-1 px-1 relative hover:bg-[#fff] hover:rounded-sm ${activeDropdown && 'bg-[#fff] rounded-sm'}`}>
+                                            <ThreeDots />
+                                            {activeDropdown === index && (
+                                                <div className="absolute right-0 mt-2 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[99999]">
+                                                    <div className="py-1">
+                                                        <button
+                                                            className="flex w-full group text-left cursor-pointer px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500]"
+                                                            onClick={() => {
+                                                                setEditData(conversation)
+                                                                setName(conversation?.name !== null ? conversation?.name : 'Accounting Chat')
+                                                                setActiveDropdown(null);
+                                                            }}
+                                                        >
+                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Rename</span> </div>
+                                                        </button>
+                                                        <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                                                        <div className='py-2'>
+                                                            <button
+                                                                className="flex w-full cursor-pointer text-left px-4 hover:rounded-lg py-2 text-sm text-red-600 hover:bg-[#F4F5F6] font-[500]"
+                                                                onClick={() => {
+                                                                    handleDelete(conversation.chat_id)
+                                                                }}
+                                                            >
+                                                                <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="font-[600] text-[14px] text-[#1E1E1E]">Chat {conversation.chat_id}</p>
-                                    <p className="font-[600] text-[12px] text-gray-500">{DateFormat(conversation.created_at)}</p>
-                                </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 </div>
                 {/* Main Content */}
                 {openChat ?
-                    <>{loadingChats ? <div className="flex justify-center items-center w-full"><span className="loader" /> </div> : <div className="flex-1 flex flex-col border border-[#E1E4EA] border-l-0 rounded-r-2xl">
-                        {/* Header */}
-                        <div className="flex items-center justify-between p-4">
-                            <div>
-                                <h2 className="font-medium">{activeConversation ? `Chat ${activeConversation}` : 'New Chat'}</h2>
-                            </div>
-                        </div>
-                        <hr style={{ color: "#E1E4EA" }} />
-
+                    <>{loadingChats ? <div className="flex justify-center items-center w-full"><span className="loader" /> </div> : <div className="flex-1 flex flex-col border pt-2 border-[#E1E4EA] border-l-0 rounded-r-2xl">
                         {/* Messages */}
                         <div ref={chatRef} className="flex-1 p-4 overflow-y-auto max-h-[380px]">
                             <div className="space-y-6">
@@ -309,29 +395,36 @@ const AccountingChat = () => {
                                     <div key={message.id} className="flex flex-col">
                                         {!message.isUser && (
                                             <div className="flex items-center gap-2 mb-1">
-                                                <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] font-[600] text-[#675FFF]">E</div>
-                                                <span className="text-sm font-medium">{message.sender}</span>
+                                                <div>
+                                                    <img src={agentLogo} alt={agentName} className="object-fit" />
+                                                </div>
+                                                <p className="text-[12px] font-[600] text-[#5A687C]">{agentName}</p>
                                                 <span className="text-[12px] text-[#5A687C] flex items-center gap-1"><GoDotFill color="#E1E4EA" />
                                                     {message.time}</span>
-                                                <span className="text-[12px] text-[#5A687C] ml-1 flex items-center gap-1"> <RiCheckDoubleLine />{message.status}</span>
                                             </div>
                                         )}
 
                                         {message.isUser && (
                                             <div className="flex items-center gap-1 mt-1 ml-auto">
-                                                <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] text-[#675FFF] font-[600]">U</div>
-                                                <span className="text-xs text-gray-500">{message.sender}</span>
+                                                <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] text-[#675FFF] font-[600]">R</div>
+                                                <div className="text-[12px] font-[600] text-[#5A687C]">Robert</div>
                                                 <span className="text-[12px] text-[#5A687C] flex items-center gap-1"><GoDotFill color="#E1E4EA" />
                                                     {message.time}</span>
-                                                <span className="text-[12px] text-[#5A687C] ml-1 flex items-center gap-1"> <RiCheckDoubleLine />{message.status}</span>
                                             </div>
                                         )}
 
                                         {message.id === "typing" ? <div className="pl-[50px] pt-3 flex "><span className="three-dots" /></div> : <div
-                                            className={`max-w-md w-fit text-[12px] font-[400] p-3 rounded-lg ${!message.isUser ? "my-1 bg-[#675FFF] text-white" : "ml-auto my-1 bg-[#F2F2F7] text-[#5A687C]"
+                                            className={`max-w-md w-fit text-[12px] font-[400] p-3 ${!message.isUser ? "my-1 bg-[#F2F2F7] text-[#5A687C] rounded-b-[10px] rounded-r-[10px]" : "ml-auto my-1 bg-[#675FFF] text-[#fff] rounded-b-[10px] rounded-l-[10px]"
                                                 }`}
                                         >
                                             <p className="text-sm">{message.content}</p>
+                                        </div>}
+                                        {message.id !== "typing" && !message.isUser && <div className="my-1 flex items-center gap-1">
+                                            <Duplicate />
+                                            <LikeIcon />
+                                            <DislikeIcon />
+                                            <SpeakerIcon />
+                                            <SendIcon />
                                         </div>}
                                     </div>
                                 ))}
@@ -398,6 +491,56 @@ const AccountingChat = () => {
                     </div>
                 </div>
             </div>}
+
+            {editData?.chat_id && (
+                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-2xl w-full max-w-[514px] p-6 relative shadow-lg">
+                        <button
+                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                            onClick={() => {
+                                setEditData({})
+                            }}
+                        >
+                            <X size={20} />
+                        </button>
+
+                        <div className="flex flex-col gap-3">
+                            <h2 className="text-[20px] font-semibold text-[#1E1E1E] mb-4">
+                                Update the Chat Name
+                            </h2>
+                            <div>
+                                <label className="text-sm font-medium text-[#1e1e1e]">
+                                    Name
+                                </label>
+                                <input
+                                    type="text"
+                                    name='name'
+                                    value={name}
+                                    onChange={handleChange}
+                                    className={`w-full bg-white p-2 rounded-lg border ${errors.name ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
+                                    placeholder="Enter name"
+                                />
+                                {errors.name && <p className="text-[12px] font-[400] text-red-500 my-3">{errors.name}</p>}
+                            </div>
+                            <div className="flex gap-4 mt-2 w-full">
+                                <button
+                                    className="w-full bg-[#675FFF] text-white px-5 py-2 font-[500] test-[16px]  rounded-lg"
+                                    onClick={handleUpdateName}
+                                    disabled={updateNameLoading}
+                                >
+                                    {updateNameLoading ? <p className="flex items-center justify-center gap-1">Processing<span className="loader" /></p> : 'Update'}
+                                </button>
+                                <button
+                                    className="w-full bg-white text-[#5A687C] border-[1.5px] border-[#E1E4EA] font-[500] test-[16px] px-5 py-2 rounded-lg"
+                                    onClick={() => setEditData({})}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

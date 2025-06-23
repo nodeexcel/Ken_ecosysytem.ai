@@ -343,7 +343,7 @@ const DemoChat = () => {
                                 <input
                                     type="text"
                                     className="flex-1 w-full px-4 py-2 outline-none border-none text-sm"
-                                    placeholder="Type your message here ...."
+                                    placeholder={agentEnabled ? "Agent is enabled you are not able to chat!" : "Type your message here ...."}
                                     disabled={agentEnabled}
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
@@ -362,7 +362,7 @@ const DemoChat = () => {
                                     {/* Text Input */}
 
                                     {/* Send Button */}
-                                    <button onClick={handleSendMessage} className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 transition">
+                                    <button onClick={handleSendMessage} className={`${agentEnabled ? 'bg-[#5A687C] cursor-not-allowed' : 'bg-[#675FFF]'} text-white px-4 py-2 rounded-md transition`}>
                                         Send
                                     </button>
                                 </div>
