@@ -50,7 +50,7 @@ const PhonePage = () => {
   const renderImg = () => {
     if (navbarDetails.label === "Rebecca") {
       return <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] mb-5 flex gap-3 p-[12px] rounded-[9px]">
-        <div className="w-[35px] h-[45px] flex justify-center items-center">
+        <div className="flex justify-center items-center">
           <img src={rebeccaImg} alt={"rebecca"} className="object-fit" />
         </div>
         <div className="flex flex-col">
@@ -60,7 +60,7 @@ const PhonePage = () => {
       </div>
     } else if (navbarDetails.label === "Tom") {
       return <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] mb-5 flex gap-3 p-[12px] rounded-[9px]">
-        <div className="w-[35px] h-[45px] flex justify-center items-center">
+        <div className="flex justify-center items-center">
           <img src={tomImg} alt={"tome"} className="object-fit" />
         </div>
         <div className="flex flex-col">
@@ -70,7 +70,7 @@ const PhonePage = () => {
       </div>
     } else {
       return <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] mb-5 flex gap-3 p-[12px] rounded-[9px]">
-        <div className="w-[64.43pxpx] h-[39px] flex justify-center items-center">
+        <div className="flex justify-center items-center">
           <img src={tomImg} alt={"tome"} className="object-fit" />
           <img src={rebeccaImg} alt={"rebecca"} className="object-fit" />
         </div>

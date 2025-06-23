@@ -48,7 +48,7 @@ const Campaigns = () => {
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-2">
                         <div className="bg-[#F7F7FF] border border-[#E9E8FF] w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
-                            <div className="w-[35px] h-[45px] flex justify-center items-center">
+                            <div className="flex justify-center items-center">
                                 <img src={emileImg} alt={"emile"} className="object-fit" />
                             </div>
                             <div className="flex flex-col">

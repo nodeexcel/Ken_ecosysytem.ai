@@ -8,7 +8,7 @@ import Analytics from '../../components/Analytics'
 import DemoChat from '../../components/DemoChat'
 import dashboardProfile from '../../assets/svg/dashboard_profile.svg'
 import { AnalyticsIcon, ConversationIcon, LeftArrow, TeamMemberIcon } from '../../icons/icons'
-import sethImg from "../../assets/svg/seth_logo.svg"
+import finnImg from "../../assets/svg/finn_logo.svg"
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import AccountingChat from '../../components/AccountingChat'
@@ -45,8 +45,8 @@ function Accounting() {
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-2">
                         <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
-                            <div className="w-[35px] h-[45px] flex justify-center items-center">
-                                <img src={sethImg} alt={"seth"} className="w-full" />
+                            <div className="flex justify-center items-center">
+                                <img src={finnImg} alt={"finn"} className="object-fit" />
                             </div>
                             <div className="flex flex-col">
                                 <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Finn</h1>

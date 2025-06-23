@@ -15,6 +15,7 @@ import assiaImg from '../../assets/svg/assia.svg'
 import emileImg from '../../assets/svg/emile.svg'
 import calinaImg from '../../assets/svg/calina.svg'
 import finnImg from '../../assets/svg/finn.svg'
+import sandroImg from '../../assets/svg/sandro.svg'
 import { logoutState } from "../../store/authSlice";
 import { discardData } from "../../store/profileSlice";
 import { logout } from "../../api/auth";
@@ -93,12 +94,12 @@ const employees = [
     image: finnImg
   },
   {
-    name: "Name",
+    name: "Sandro",
     role: "SEO",
     gradient: "bg-gradient-to-br from-[#F8DDFF] to-[#F8DDFF]",
     path: "",
     label: "",
-    image: constanceImg
+    image: sandroImg
   },
 ];
 
@@ -182,7 +183,7 @@ const Agents = () => {
                   <CircleArrowRightIcon className="absolute w-5 h-5 top-0 right-0 text-[#1E1E1E]" />
                 </div>
                 <div>
-                  <img loading='lazy' src={employee.image} alt={employee.label} className="object-fit max-w-[88.47px] max-h-[128.24px]" />
+                  <img loading='lazy' src={employee.image} alt={employee.label} className="object-fit"/>
                 </div>
               </div>
             </div>
