@@ -113,9 +113,9 @@ export const updateContact = async (payload) => {
 }
 
 
-export const deleteContact = async (id) => {
+export const deleteContact = async (payload) => {
     try {
-        const response = await axiosInstance.delete(`/api/contacts/delete-contact/${id}`);
+        const response = await axiosInstance.patch(`/api/contacts/delete-contact`, payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -214,6 +214,28 @@ export const getGoogleCalendarAccounts = async () => {
 export const deleteGoogleCalendarAccount = async (id) => {
     try {
         const response = await axiosInstance.delete(`http://116.202.210.102:8000/delete-google-calendar-account/${id}`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+}
+
+
+export const getListedContacts = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/api/contacts/get-contact/${id}`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+}
+
+
+export const removeContactFromList = async (payload) => {
+    try {
+        const response = await axiosInstance.patch(`/api/contacts/remove-contact-from-list`, payload);
         return response;
     } catch (error) {
         console.error(error);

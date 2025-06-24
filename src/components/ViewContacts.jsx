@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 import { Delete } from '../icons/icons';
 import { DateFormat } from '../utils/TimeFormat';
 import { X } from 'lucide-react';
+import { getListedContacts, removeContactFromList } from '../api/brainai';
 
-function ViewContacts({ setSelectedName, selectedName }) {
+function ViewContacts({ setSelectedData, selectedData }) {
     const [allContacts, setAllContacts] = useState([]);
     const [loading, setLoading] = useState(true)
     const tableHeaders = [
@@ -13,95 +14,19 @@ function ViewContacts({ setSelectedName, selectedName }) {
         { name: "Date Created", width: "flex-1" },
         { name: "Actions", width: "w-[120px]" },
     ];
-    const [formCreateList, setFormCreateList] = useState({ listName: '', contactsId: [], channel: '' });
+    const [formCreateList, setFormCreateList] = useState({ listName: '', contactsId: [] });
 
     const getViewContactsList = async () => {
         try {
-            setAllContacts([{
-                "id": 134,
-                "firstName": "Emily",
-                "lastName": "Johnson",
-                "businessName": "Johnson Design",
-                "companyName": "Johnson Studio",
-                "phone": "+1 5554445555",
-                "email": "emily.j@example.com",
-                "created": "2023-04-01",
-                "lastActivity": "2023-08-22",
-                "tags": "Designer;Inbound",
-                "additionalEmails": "em.johnson@workmail.com",
-                "additionalPhones": "+1-555-333-2222",
-                "created_at": "2025-06-10T07:32:40.995Z",
-                "team_id": "f87092b6-3fb5-475b-a685-4836f8bbcd1d",
-                "status": null
-            },
-            {
-                "id": 141,
-                "firstName": "John",
-                "lastName": "Doe",
-                "businessName": "Doe Enterprises",
-                "companyName": "Doe Corp",
-                "phone": "+33 5551234567",
-                "email": "john.doe@example.com",
-                "created": "2023-01-15",
-                "lastActivity": "2023-05-12",
-                "tags": "Lead;Newsletter",
-                "additionalEmails": "j.doe@altmail.com",
-                "additionalPhones": "+1-555-765-4321",
-                "created_at": "2025-06-10T07:32:40.995Z",
-                "team_id": "f87092b6-3fb5-475b-a685-4836f8bbcd1d",
-                "status": null
-            },
-            {
-                "id": 142,
-                "firstName": "John",
-                "lastName": "Doe",
-                "businessName": "Doe Enterprises",
-                "companyName": "Doe Corp",
-                "phone": "+33 5551234567",
-                "email": "john.doe@example.com",
-                "created": "2023-01-15",
-                "lastActivity": "2023-05-12",
-                "tags": "Lead;Newsletter",
-                "additionalEmails": "j.doe@altmail.com",
-                "additionalPhones": "+1-555-765-4321",
-                "created_at": "2025-06-10T07:32:40.995Z",
-                "team_id": "f87092b6-3fb5-475b-a685-4836f8bbcd1d",
-                "status": null
-            },
-            {
-                "id": 130,
-                "firstName": "Emily",
-                "lastName": "Johnson",
-                "businessName": "Johnson Design",
-                "companyName": "Johnson Studio",
-                "phone": "+33 5554445555",
-                "email": "emily.j@example.com",
-                "created": "2023-04-01",
-                "lastActivity": "2023-08-22",
-                "tags": "Designer;Inbound",
-                "additionalEmails": "em.johnson@workmail.com",
-                "additionalPhones": "+1-555-333-2222",
-                "created_at": "2025-06-10T07:32:40.995Z",
-                "team_id": "f87092b6-3fb5-475b-a685-4836f8bbcd1d",
-                "status": null
-            },
-            {
-                "id": 137,
-                "firstName": "Jane",
-                "lastName": "Smith",
-                "businessName": "Smith Co.",
-                "companyName": "Smith & Partners",
-                "phone": "+33 5559876543",
-                "email": "jane.smith@example.com",
-                "created": "2023-02-10",
-                "lastActivity": "2023-06-01",
-                "tags": "Client",
-                "additionalEmails": "s.smith@backupmail.com",
-                "additionalPhones": "+1-555-111-2222",
-                "created_at": "2025-06-10T07:32:40.995Z",
-                "team_id": "f87092b6-3fb5-475b-a685-4836f8bbcd1d",
-                "status": null
-            },])
+            const response = await getListedContacts(selectedData?.id)
+            if (response?.status === 200) {
+                console.log(response?.data?.contacts)
+                if (response?.data?.contacts?.length === 0) {
+                    setLoading(false)
+                }
+                setAllContacts(response?.data?.contacts)
+                setFormCreateList({ listName: '', contactsId: [] })
+            }
         } catch (error) {
             console.log(error)
             setLoading(false)
@@ -109,9 +34,7 @@ function ViewContacts({ setSelectedName, selectedName }) {
     }
 
     useEffect(() => {
-        setTimeout(() => {
-            getViewContactsList()
-        }, 5000)
+        getViewContactsList()
     }, [])
 
     useEffect(() => {
@@ -162,12 +85,16 @@ function ViewContacts({ setSelectedName, selectedName }) {
         return `${countryCode + number}`
     }
 
-    const handleDeleteContact = async (contactId) => {
+    const handleDeleteContact = async (contactListId) => {
         try {
-            // const response = await deleteContact(contactId);
-            // if (response?.status === 200) {
-            //     getViewContactsList();
-            // }
+            const payload = {
+                listId: selectedData?.id,
+                contactId: contactListId
+            }
+            const response = await removeContactFromList(payload);
+            if (response?.status === 200) {
+                getViewContactsList();
+            }
         } catch (error) {
             console.log(error)
         }
@@ -179,17 +106,17 @@ function ViewContacts({ setSelectedName, selectedName }) {
                 <button
                     className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
                     onClick={() => {
-                        setSelectedName('')
+                        setSelectedData({})
                     }}
                 >
                     <X size={20} />
                 </button>
 
                 <div className='flex flex-col gap-5 py-5'>
-                    <h1 className='text-[#1E1E1E] font-[600] text-[16px]'>{selectedName} contacts</h1>
+                    <h1 className='text-[#1E1E1E] font-[600] text-[16px]'>{selectedData?.listName} contacts</h1>
                     {formCreateList.contactsId?.length > 0 && <div className='flex gap-4 items-center'>
                         <p className='text-[#1E1E1E] font-[600] text-[16px]'>{formCreateList.contactsId?.length + ' Contact Selected'}</p>
-                        <button onClick={handleDeleteContact} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#FF2D55] rounded-[7px] text-[#FF2D55]">
+                        <button onClick={() => handleDeleteContact(formCreateList.contactsId)} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#FF2D55] rounded-[7px] text-[#FF2D55]">
                             Delete
                         </button>
                     </div>}
@@ -250,7 +177,7 @@ function ViewContacts({ setSelectedName, selectedName }) {
                                                     </td>
                                                     <td className="p-[14px]  w-full text-sm text-[#5A687C]">
                                                         <div className="flex items-center gap-3.5">
-                                                            <div onClick={() => handleDeleteContact(contact.id)}>
+                                                            <div onClick={() => handleDeleteContact([contact.id])}>
                                                                 <Delete className="text-red-500" />
                                                             </div>
                                                         </div>

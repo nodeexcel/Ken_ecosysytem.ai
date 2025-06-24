@@ -40,7 +40,7 @@ const ContactsPage = () => {
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
-  const [formCreateList, setFormCreateList] = useState({ listName: '', contactsId: [], channel: '' });
+  const [formCreateList, setFormCreateList] = useState({ listName: '', contactsId: [] });
   const [createListErrors, setCreateListErrors] = useState({});
   const [allContacts, setAllContacts] = useState([]);
   const [loadingStatus, setLoadingStatus] = useState(true);
@@ -66,7 +66,7 @@ const ContactsPage = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [isEdit, setIsEdit] = useState("");
   const [contactIsEdit, setContactIsEdit] = useState("")
-  const [selectedName, setSelectedName] = useState("")
+  const [selectedData, setSelectedData] = useState({})
 
   const countryRef = useRef()
 
@@ -268,8 +268,8 @@ const ContactsPage = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formCreateList.listName.trim()) newErrors.listName = "List name is required.";
-    if (!formCreateList.channel) newErrors.channel = "Channel is required.";
+    if (!formCreateList.listName) newErrors.listName = "List name is required.";
+    // if (!formCreateList.channel) newErrors.channel = "Channel is required.";
 
     setCreateListErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -308,10 +308,13 @@ const ContactsPage = () => {
     }))
   }
 
-  const handleDeleteContact = async (contactId) => {
+  const handleDeleteContact = async (contactListId) => {
     setActiveDropdown(null);
     try {
-      const response = await deleteContact(contactId);
+      const payload = {
+        contactIds: contactListId
+      }
+      const response = await deleteContact(payload);
       if (response?.status === 200) {
         getAllContacts();
       }
@@ -384,6 +387,7 @@ const ContactsPage = () => {
           setTotalContacts(response?.data?.totalContacts);
 
         }
+        setFormCreateList({ listName: '', contactsId: [] })
       }
     } catch (error) {
       console.log(error)
@@ -398,10 +402,14 @@ const ContactsPage = () => {
     }
     setLoading(true)
     try {
-      const response = await addContactsToList(formCreateList);
+      const payload = {
+        listId: formCreateList?.listName,
+        contactIds: formCreateList?.contactsId
+      }
+      const response = await addContactsToList(payload);
       if (response?.status === 200) {
         setCreateList(false)
-        setFormCreateList({ listName: '', contactsId: [], channel: '' })
+        setFormCreateList({ listName: '', contactsId: [] })
         handleGetLists()
       }
     } catch (error) {
@@ -669,7 +677,7 @@ const ContactsPage = () => {
                 <button onClick={() => setCreateList(true)} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5f58e8] rounded-[7px] text-[#675FFF]">
                   Add to a list
                 </button>
-                <button onClick={() => setCreateList(true)} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#FF2D55] rounded-[7px] text-[#FF2D55]">
+                <button onClick={() => handleDeleteContact(formCreateList.contactsId)} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#FF2D55] rounded-[7px] text-[#FF2D55]">
                   Delete
                 </button>
               </div>}
@@ -742,7 +750,7 @@ const ContactsPage = () => {
                               }}>
                                 <Edit />
                               </div>
-                              <div onClick={() => handleDeleteContact(contact.id)}>
+                              <div onClick={() => handleDeleteContact([contact.id])}>
                                 <Delete className="text-red-500" />
                               </div>
                             </div>
@@ -911,7 +919,7 @@ const ContactsPage = () => {
                                     <button
                                       className="block group w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
                                       onClick={() => {
-                                        setSelectedName(list.listName)
+                                        setSelectedData(list)
                                         setActiveDropdown(null);
                                       }}
                                     >
@@ -1037,7 +1045,7 @@ const ContactsPage = () => {
             <button
               onClick={() => {
                 setCreateList(false)
-                setFormCreateList({ listName: "", channel: '', contactsId: [] })
+                setFormCreateList({ listName: "", contactsId: [] })
                 setCreateListErrors({})
               }}
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
@@ -1046,7 +1054,7 @@ const ContactsPage = () => {
             </button>
 
 
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-8">
               <div className="flex flex-col gap-1">
                 <h2 className="text-[#1E1E1E] font-[600] text-[20px]">Create List</h2>
                 <h2 className="text-[#5A687C] font-[400] text-[16px]">{formCreateList.contactsId?.length} Contact Selected</h2>
@@ -1055,17 +1063,36 @@ const ContactsPage = () => {
               <div className="flex flex-col gap-2">
                 <div>
                   <label className="block text-[14px] font-medium text-[#292D32] mb-1">List Name</label>
-                  <input
+                  {/* <input
                     type="text"
                     name="listName"
                     placeholder="Enter list name"
                     value={formCreateList?.listName}
                     onChange={handleCreateListChange}
                     className={`flex w-full items-center border ${createListErrors.listName ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-2 focus:outline-none focus:border-[#675FFF]`}
+                  /> */}
+                  <SelectDropdown
+                    name="listName"
+                    options={contactLists?.length > 0 && contactLists.map((e) => ({
+                      label: e.listName,
+                      key: e.id
+                    }))}
+                    value={formCreateList?.listName}
+                    onChange={(updated) => {
+                      setFormCreateList((prev) => ({
+                        ...prev, listName: updated
+                      }))
+                      setCreateListErrors((prev) => ({
+                        ...prev, listName: ''
+                      }))
+                    }}
+                    placeholder="Select"
+                    className=""
+                    errors={createListErrors}
                   />
                   {createListErrors.listName && <p className="text-sm text-red-500 mt-1">{createListErrors.listName}</p>}
                 </div>
-                <div>
+                {/* <div>
                   <label className="block mt-2 text-[14px] font-medium text-[#292D32]">Channel</label>
                   <SelectDropdown
                     name="channel"
@@ -1084,14 +1111,14 @@ const ContactsPage = () => {
                     errors={createListErrors}
                   />
                   {createListErrors.channel && <p className="text-sm text-red-500">{createListErrors.channel}</p>}
-                </div>
+                </div> */}
               </div>
 
               <div className="flex gap-2 mt-3">
                 <button onClick={() => {
                   {
                     setCreateList(false)
-                    setFormCreateList({ listName: "", channel: '', contactsId: [] })
+                    setFormCreateList({ listName: "", contactsId: [] })
                     setCreateListErrors({})
                   }
                 }} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
@@ -1396,7 +1423,7 @@ const ContactsPage = () => {
         </div>
       )}
 
-      {selectedName && <ViewContacts setSelectedName={setSelectedName} selectedName={selectedName} />}
+      {selectedData?.listName && <ViewContacts setSelectedData={setSelectedData} selectedData={selectedData} />}
 
     </div>
   );
