@@ -7,6 +7,7 @@ import { FiMic, FiPaperclip } from "react-icons/fi"
 import { v4 as uuidv4 } from 'uuid';
 import { deleteChat, getAccountingChatById, getAccountingChats, updateChatName } from "../api/account";
 import { Delete, DislikeIcon, Duplicate, Edit, LikeIcon, SearchIcon, SendIcon, SpeakerIcon, ThreeDots } from "../icons/icons";
+import { useSelector } from "react-redux";
 
 
 const AgentChatBox = ({ listedProps }) => {
@@ -43,6 +44,7 @@ const AgentChatBox = ({ listedProps }) => {
     const [activeDropdown, setActiveDropdown] = useState(null);
     const chatRef = useRef()
     const moreActionsRef = useRef()
+    const userDetails = useSelector((state) => state.profile);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -336,8 +338,8 @@ const AgentChatBox = ({ listedProps }) => {
 
                                         {message.isUser && (
                                             <div className="flex items-center gap-1 mt-1 ml-auto">
-                                                <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] text-[#675FFF] font-[600]">R</div>
-                                                <div className="text-[12px] font-[600] text-[#5A687C]">Robert</div>
+                                                <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] text-[#675FFF] font-[600]">{userDetails?.user?.firstName[0]}</div>
+                                                <div className="text-[12px] font-[600] text-[#5A687C]">{userDetails?.user?.firstName}</div>
                                                 <span className="text-[12px] text-[#5A687C] flex items-center gap-1"><GoDotFill color="#E1E4EA" />
                                                     {message.time}</span>
                                             </div>
