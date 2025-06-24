@@ -11,6 +11,7 @@ import us_flag from "../assets/images/us_flag.png"
 import fr_flag from "../assets/images/fr_flag.png"
 import { SelectDropdown } from "./Dropdown";
 import { useSelector } from "react-redux";
+import ViewContacts from "./ViewContacts";
 
 const countries = [
   { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
@@ -65,6 +66,8 @@ const ContactsPage = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [isEdit, setIsEdit] = useState("");
   const [contactIsEdit, setContactIsEdit] = useState("")
+  const [selectedName, setSelectedName] = useState("")
+
   const countryRef = useRef()
 
 
@@ -908,6 +911,7 @@ const ContactsPage = () => {
                                     <button
                                       className="block group w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
                                       onClick={() => {
+                                        setSelectedName(list.listName)
                                         setActiveDropdown(null);
                                       }}
                                     >
@@ -1391,6 +1395,8 @@ const ContactsPage = () => {
           </div>
         </div>
       )}
+
+      {selectedName && <ViewContacts setSelectedName={setSelectedName} selectedName={selectedName} />}
 
     </div>
   );

@@ -1,12 +1,31 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ConversationIcon, LeftArrow } from '../../icons/icons'
 import sandroImg from "../../assets/svg/sandro_logo.svg"
 import { useNavigate } from 'react-router-dom'
-import AccountingChat from '../../components/AccountingChat'
 import sandroMsgLogo from '../../assets/svg/sandro_msg_logo.svg'
+import { v4 as uuidv4 } from 'uuid';
+import { deleteSeoChat, getSeoChatById, getSeoChats, updateSeoChatName } from '../../api/seoAgent'
+import AgentChatBox from '../../components/AgentChatBox'
 
 function Seo() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
+    const [activeConversation, setActiveConversation] = useState()
+    const [messages, setMessages] = useState([]);
+    const [input, setInput] = useState('');
+    const [chatList, setChatList] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState({})
+    const [openChat, setOpenChat] = useState(false)
+    const [loadingChats, setLoadingChats] = useState(false);
+    const [loadingChatsList, setLoadingChatsList] = useState(false)
+    const [name, setName] = useState("")
+    const [updateNameLoading, setUpdateNameLoading] = useState(false)
+    const [editData, setEditData] = useState({})
+    const socketRef = useRef(null)
+    const socket2Ref = useRef(null)
+    const newwebsocketurl = "ws://116.202.210.102:8000/new-seo-agent-chat"
+    const websocketurl = "ws://116.202.210.102:8000/seo-agent"
+    const initialMessage = "Hi there! I’m Sandro, your SEO Expert. \n I’m here to help you boost your website’s visibility, generate high-quality traffic, and improve your search engine rankings — all automatically. \n I can research keywords, optimize blog posts, create SEO-friendly content, and publish directly to your CMS like WordPress, Wix, or Shopify. \n Want to start ranking higher on Google without lifting a finger? Just tell me your goal, and I’ll take it from there. \n Ready to grow your traffic? 🚀"
 
     const navigate = useNavigate()
 
@@ -14,10 +33,149 @@ function Seo() {
         { label: "Chat", icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
     ]
 
+    useEffect(() => {
+        if (chatList?.length > 0) {
+            setLoading(false)
+            setLoadingChatsList(false)
+        }
+    }, [chatList])
+
+    const handleGetAccountChats = async () => {
+        setLoadingChatsList(true)
+        try {
+            const response = await getSeoChats()
+            if (response?.status === 200) {
+                if (response?.data?.success?.length === 0) {
+                    setLoadingChatsList(false)
+                } else {
+                    const formatData = (response?.data?.success)
+                    setChatList(formatData)
+                    console.log(response?.data)
+
+                }
+            }
+        } catch (error) {
+            console.log(error)
+            setLoadingChatsList(false)
+        }
+    }
+
+    const transformApiMessages = (apiMessages) => {
+        return apiMessages.map((msg) => {
+            const isUser = !!msg.user;
+            const content = isUser ? msg.user : msg.agent;
+
+            return {
+                id: uuidv4(),
+                isUser,
+                content,
+                sender: isUser ? "User" : "Ecosystem.ai",
+                time: "Just now",
+                status: "Read"
+            };
+        });
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            const response = await deleteSeoChat(id)
+            if (response?.status === 200) {
+                handleGetAccountChats()
+                setActiveConversation("")
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    const handleUpdateName = async () => {
+        if (!name) {
+            setErrors((prev) => ({ ...prev, name: "Enter the name" }))
+            return
+        }
+        try {
+            setUpdateNameLoading(true)
+            const response = await updateSeoChatName(editData?.chat_id, { name })
+            if (response?.status === 200) {
+                setEditData({})
+                handleGetAccountChats()
+            }
+
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setUpdateNameLoading(false)
+        }
+    }
+
+    const handleChatHistoryId = async (id) => {
+        setOpenChat(true)
+        try {
+            setLoadingChats(true)
+            const response = await getSeoChatById(id);
+            console.log(response.data)
+            if (response.status === 200) {
+                const data = await transformApiMessages(response?.data?.success)
+                setMessages(data)
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoadingChats(false)
+        }
+    }
+
+
+    const listedProps = {
+        agentLogo: sandroMsgLogo,
+        agentName: "Sandro",
+        initialMessage: initialMessage,
+        setActiveConversation: setActiveConversation,
+        activeConversation: activeConversation,
+        setMessages: setMessages,
+        messages: messages,
+        setInput: setInput,
+        input: input,
+        chatList: chatList,
+        setLoading: setLoading,
+        loading: loading,
+        setErrors: setErrors,
+        errors: errors,
+        setOpenChat: setOpenChat,
+        openChat: openChat,
+        loadingChats: loadingChats,
+        setLoadingChatsList: setLoadingChatsList,
+        loadingChatsList: loadingChatsList,
+        setName: setName,
+        name: name,
+        updateNameLoading: updateNameLoading,
+        setEditData: setEditData,
+        editData: editData,
+        newwebsocketurl: newwebsocketurl,
+        websocketurl: websocketurl,
+        handleGetAccountChats: handleGetAccountChats,
+        handleDelete: handleDelete,
+        handleUpdateName: handleUpdateName,
+        handleChatHistoryId: handleChatHistoryId,
+        socketRef: socketRef,
+        socket2Ref: socket2Ref
+    }
+
+    const stopTranscription = () => {
+        if (socket2Ref.current && socket2Ref.current.readyState === WebSocket.OPEN) {
+            socket2Ref.current.close()
+        }
+        if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+            socketRef.current.close()
+        }
+    }
+
+
     const renderMainContent = () => {
         switch (activeSidebarItem) {
             default:
-                return <AccountingChat agentLogo={sandroMsgLogo} agentName={"Sandro"} />
+                return <AgentChatBox listedProps={listedProps} />
         }
 
     }
@@ -27,7 +185,10 @@ function Seo() {
                 {/* Sidebar */}
                 <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
                     <div className=''>
-                        <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
+                        <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
+                            navigate("/dashboard")
+                            stopTranscription()
+                        }}>
                             <div className="flex gap-4 pl-5 items-center h-[57px]">
                                 <LeftArrow />
                                 <h1 className="text-[20px] font-[600]">SEO</h1>

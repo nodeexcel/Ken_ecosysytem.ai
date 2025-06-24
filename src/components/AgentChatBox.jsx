@@ -9,30 +9,40 @@ import { deleteChat, getAccountingChatById, getAccountingChats, updateChatName }
 import { Delete, DislikeIcon, Duplicate, Edit, LikeIcon, SearchIcon, SendIcon, SpeakerIcon, ThreeDots } from "../icons/icons";
 
 
-const AccountingChat = ({ agentLogo, agentName }) => {
-    const [activeConversation, setActiveConversation] = useState()
-    const [messages, setMessages] = useState([]);
-    const [input, setInput] = useState('');
-    const [chatList, setChatList] = useState([]);
-    const [message, setMessage] = useState("")
-    const [loading, setLoading] = useState(false);
-    const [loadingChats, setLoadingChats] = useState(false);
-    const [agentEnabled, setAgentEnabled] = useState(false)
-    const [loadingChatsList, setLoadingChatsList] = useState(false)
+const AgentChatBox = ({ listedProps }) => {
+    const { agentLogo, agentName, initialMessage, setActiveConversation,
+        activeConversation,
+        setMessages,
+        messages,
+        setInput,
+        input,
+        chatList,
+        setLoading,
+        loading,
+        setErrors,
+        errors,
+        setOpenChat,
+        openChat,
+        loadingChats,
+        setLoadingChatsList,
+        loadingChatsList,
+        setName,
+        name,
+        updateNameLoading,
+        setEditData,
+        editData,
+        newwebsocketurl,
+        websocketurl,
+        handleGetAccountChats,
+        handleDelete,
+        handleUpdateName,
+        handleChatHistoryId,
+        socketRef,
+        socket2Ref } = listedProps
     const [errorMessage, setErrorMessage] = useState("")
-    const chatRef = useRef()
-    const socketRef = useRef(null)
-    const socket2Ref = useRef(null)
-    const [openChat, setOpenChat] = useState(false)
-    const [editData, setEditData] = useState({})
     const [activeDropdown, setActiveDropdown] = useState(null);
-    const [errors, setErrors] = useState({})
-    const [name, setName] = useState("")
+    const chatRef = useRef()
     const moreActionsRef = useRef()
-    const [updateNameLoading, setUpdateNameLoading] = useState(false)
-
-    const newwebsocketurl = "ws://116.202.210.102:8000/new-accounting-chat"
-    const websocketurl = "ws://116.202.210.102:8000/accounting"
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -50,39 +60,6 @@ const AccountingChat = ({ agentLogo, agentName }) => {
         setName(value.trim())
         setErrors((prev) => ({ ...prev, [name]: "" }))
     }
-
-    const handleUpdateName = async () => {
-        if (!name) {
-            setErrors((prev) => ({ ...prev, name: "Enter the name" }))
-            return
-        }
-        try {
-            setUpdateNameLoading(true)
-            const response = await updateChatName(editData?.chat_id, { name })
-            if (response?.status === 200) {
-                setEditData({})
-                handleGetAccountChats()
-            }
-
-        } catch (error) {
-            console.log(error)
-        } finally {
-            setUpdateNameLoading(false)
-        }
-    }
-
-    const handleDelete = async (id) => {
-        try {
-            const response = await deleteChat(id)
-            if (response?.status === 200) {
-                handleGetAccountChats()
-                setActiveConversation("")
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
 
     const sendToSocket = () => {
         console.log(WebSocket.OPEN, WebSocket.CONNECTING)
@@ -227,62 +204,6 @@ const AccountingChat = ({ agentLogo, agentName }) => {
     };
 
 
-    const handleGetAccountChats = async () => {
-        setLoadingChatsList(true)
-        setMessage("")
-        try {
-            const response = await getAccountingChats()
-            if (response?.status === 200) {
-                if (response?.data?.success?.length === 0) {
-                    setLoadingChatsList(false)
-                } else {
-                    const formatData = (response?.data?.success)
-                    setChatList(formatData)
-                    console.log(response?.data)
-
-                }
-            }
-        } catch (error) {
-            console.log(error)
-            setLoadingChatsList(false)
-        }
-    }
-
-    const handleChatHistoryId = async (id) => {
-        setOpenChat(true)
-        try {
-            setLoadingChats(true)
-            const response = await getAccountingChatById(id);
-            console.log(response.data)
-            if (response.status === 200) {
-                const data = await transformApiMessages(response?.data?.success)
-                setAgentEnabled(response?.data?.agent_is_enabled)
-                setMessages(data)
-            }
-        } catch (error) {
-            console.log(error)
-        } finally {
-            setLoadingChats(false)
-        }
-    }
-
-    const transformApiMessages = (apiMessages) => {
-        return apiMessages.map((msg) => {
-            const isUser = !!msg.user;
-            const content = isUser ? msg.user : msg.agent;
-
-            return {
-                id: uuidv4(),
-                isUser,
-                content,
-                sender: isUser ? "User" : "Ecosystem.ai",
-                time: "Just now",
-                status: "Read"
-            };
-        });
-    };
-
-
     const handleSelectChat = async (chat_id) => {
         stopTranscription()
         socket2Ref.current = new WebSocket(`${websocketurl}/${chat_id}?token=${localStorage.getItem("token")}`)
@@ -297,8 +218,15 @@ const AccountingChat = ({ agentLogo, agentName }) => {
 
         setOpenChat(true)
         setActiveConversation("")
-        setMessages([])
-        setMessage("")
+        const userMessage = [{
+            id: uuidv4(),
+            isUser: false,
+            content: initialMessage,
+            sender: "Ecosystem.ai",
+            time: "Just now",
+            status: "Read",
+        }];
+        setMessages(userMessage)
         socketRef.current = new WebSocket(`${newwebsocketurl}?token=${localStorage.getItem("token")}`)
     }
 
@@ -318,7 +246,7 @@ const AccountingChat = ({ agentLogo, agentName }) => {
             <div className="flex justify-between items-center">
                 <h1 className="text-[#1E1E1E] font-semibold text-xl md:text-2xl">Chat</h1>
             </div>
-            {message ? <p>{message}</p> : <div className="flex bg-white rounded-2xl shadow">
+            <div className="flex bg-white rounded-2xl shadow">
                 {/* Sidebar */}
                 <div className="w-[240px] bg-[#FFFFFF] rounded-l-2xl border-[#E1E4EA] border">
                     <div className="px-4 py-2">
@@ -439,7 +367,6 @@ const AccountingChat = ({ agentLogo, agentName }) => {
                                     type="text"
                                     className="flex-1 w-full px-4 py-2 outline-none border-none text-sm"
                                     placeholder="Type your message here ...."
-                                    disabled={agentEnabled}
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                 />
@@ -464,7 +391,7 @@ const AccountingChat = ({ agentLogo, agentName }) => {
                             </div>
                         </div>
                     </div>}</> : <h1 className="text-[#5A687C] text-[18px] font-[400] flex justify-center items-center w-full">Welcome, to Ecosysteme.ai Chats</h1>}
-            </div>}
+            </div>
 
             {errorMessage && <div className="inter fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
                 <div className="bg-white max-h-[300px] flex flex-col gap-4 w-full max-w-md rounded-2xl shadow-xl p-6 relative">
@@ -545,4 +472,4 @@ const AccountingChat = ({ agentLogo, agentName }) => {
     )
 }
 
-export default AccountingChat
+export default AgentChatBox

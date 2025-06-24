@@ -1,0 +1,271 @@
+import { useEffect, useState } from 'react'
+import { Delete } from '../icons/icons';
+import { DateFormat } from '../utils/TimeFormat';
+import { X } from 'lucide-react';
+
+function ViewContacts({ setSelectedName, selectedName }) {
+    const [allContacts, setAllContacts] = useState([]);
+    const [loading, setLoading] = useState(true)
+    const tableHeaders = [
+        { name: "Full Name", width: "flex-1" },
+        { name: "Email", width: "w-[290px]" },
+        { name: "Phone No", width: "flex-1" },
+        { name: "Date Created", width: "flex-1" },
+        { name: "Actions", width: "w-[120px]" },
+    ];
+    const [formCreateList, setFormCreateList] = useState({ listName: '', contactsId: [], channel: '' });
+
+    const getViewContactsList = async () => {
+        try {
+            setAllContacts([{
+                "id": 134,
+                "firstName": "Emily",
+                "lastName": "Johnson",
+                "businessName": "Johnson Design",
+                "companyName": "Johnson Studio",
+                "phone": "+1 5554445555",
+                "email": "emily.j@example.com",
+                "created": "2023-04-01",
+                "lastActivity": "2023-08-22",
+                "tags": "Designer;Inbound",
+                "additionalEmails": "em.johnson@workmail.com",
+                "additionalPhones": "+1-555-333-2222",
+                "created_at": "2025-06-10T07:32:40.995Z",
+                "team_id": "f87092b6-3fb5-475b-a685-4836f8bbcd1d",
+                "status": null
+            },
+            {
+                "id": 141,
+                "firstName": "John",
+                "lastName": "Doe",
+                "businessName": "Doe Enterprises",
+                "companyName": "Doe Corp",
+                "phone": "+33 5551234567",
+                "email": "john.doe@example.com",
+                "created": "2023-01-15",
+                "lastActivity": "2023-05-12",
+                "tags": "Lead;Newsletter",
+                "additionalEmails": "j.doe@altmail.com",
+                "additionalPhones": "+1-555-765-4321",
+                "created_at": "2025-06-10T07:32:40.995Z",
+                "team_id": "f87092b6-3fb5-475b-a685-4836f8bbcd1d",
+                "status": null
+            },
+            {
+                "id": 142,
+                "firstName": "John",
+                "lastName": "Doe",
+                "businessName": "Doe Enterprises",
+                "companyName": "Doe Corp",
+                "phone": "+33 5551234567",
+                "email": "john.doe@example.com",
+                "created": "2023-01-15",
+                "lastActivity": "2023-05-12",
+                "tags": "Lead;Newsletter",
+                "additionalEmails": "j.doe@altmail.com",
+                "additionalPhones": "+1-555-765-4321",
+                "created_at": "2025-06-10T07:32:40.995Z",
+                "team_id": "f87092b6-3fb5-475b-a685-4836f8bbcd1d",
+                "status": null
+            },
+            {
+                "id": 130,
+                "firstName": "Emily",
+                "lastName": "Johnson",
+                "businessName": "Johnson Design",
+                "companyName": "Johnson Studio",
+                "phone": "+33 5554445555",
+                "email": "emily.j@example.com",
+                "created": "2023-04-01",
+                "lastActivity": "2023-08-22",
+                "tags": "Designer;Inbound",
+                "additionalEmails": "em.johnson@workmail.com",
+                "additionalPhones": "+1-555-333-2222",
+                "created_at": "2025-06-10T07:32:40.995Z",
+                "team_id": "f87092b6-3fb5-475b-a685-4836f8bbcd1d",
+                "status": null
+            },
+            {
+                "id": 137,
+                "firstName": "Jane",
+                "lastName": "Smith",
+                "businessName": "Smith Co.",
+                "companyName": "Smith & Partners",
+                "phone": "+33 5559876543",
+                "email": "jane.smith@example.com",
+                "created": "2023-02-10",
+                "lastActivity": "2023-06-01",
+                "tags": "Client",
+                "additionalEmails": "s.smith@backupmail.com",
+                "additionalPhones": "+1-555-111-2222",
+                "created_at": "2025-06-10T07:32:40.995Z",
+                "team_id": "f87092b6-3fb5-475b-a685-4836f8bbcd1d",
+                "status": null
+            },])
+        } catch (error) {
+            console.log(error)
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        setTimeout(() => {
+            getViewContactsList()
+        }, 5000)
+    }, [])
+
+    useEffect(() => {
+        if (allContacts?.length > 0) {
+            setLoading(false)
+        }
+    }, [allContacts])
+
+
+    const allSelected = formCreateList.contactsId.length === allContacts.length && allContacts.length > 0;
+
+    const toggleSelectAll = () => {
+        if (allSelected) {
+            setFormCreateList((prev) => ({ ...prev, contactsId: [] }));
+        } else {
+            setFormCreateList((prev) => ({
+                ...prev, contactsId: allContacts.map((details) => details.id)
+            }))
+        }
+    };
+
+    const toggleSelectOne = (id) => {
+        if (formCreateList.contactsId.includes(id)) {
+            setFormCreateList((prev) => ({
+                ...prev, contactsId: formCreateList.contactsId.filter(i => i !== id)
+            }))
+        } else {
+            setFormCreateList((prev) => ({
+                ...prev, contactsId: [...formCreateList.contactsId, id]
+            }))
+        }
+    };
+
+    const extractPhoneDetails = (phoneNumber) => {
+        const regex = /^(\+\d+)\s*(\d+)$/;
+        const match = phoneNumber.match(regex);
+
+        if (match) {
+            const countryCode = match[1];
+            const number = match[2];
+            return { countryCode, number };
+        }
+        return { countryCode: "", number: "" };
+    };
+
+    const renderPhoneNumber = (phone) => {
+        const { countryCode, number } = extractPhoneDetails(phone);
+        return `${countryCode + number}`
+    }
+
+    const handleDeleteContact = async (contactId) => {
+        try {
+            // const response = await deleteContact(contactId);
+            // if (response?.status === 200) {
+            //     getViewContactsList();
+            // }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    return (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl w-full max-w-[80vw] max-h-[80vh] overflow-auto  p-6 relative shadow-lg">
+                <button
+                    className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                    onClick={() => {
+                        setSelectedName('')
+                    }}
+                >
+                    <X size={20} />
+                </button>
+
+                <div className='flex flex-col gap-5 py-5'>
+                    <h1 className='text-[#1E1E1E] font-[600] text-[16px]'>{selectedName} contacts</h1>
+                    {formCreateList.contactsId?.length > 0 && <div className='flex gap-4 items-center'>
+                        <p className='text-[#1E1E1E] font-[600] text-[16px]'>{formCreateList.contactsId?.length + ' Contact Selected'}</p>
+                        <button onClick={handleDeleteContact} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#FF2D55] rounded-[7px] text-[#FF2D55]">
+                            Delete
+                        </button>
+                    </div>}
+                    <div className="overflow-auto w-full">
+                        <table className="min-w-full">
+                            <div className="px-3 w-full">
+                                <thead>
+                                    <tr className="text-left text-[#5A687C]">
+                                        {tableHeaders.map((header, index) => (
+                                            <th key={index} className={`p-[14px] ${index !== tableHeaders.length - 1 && 'min-w-[200px] max-w-[25%]'} w-full text-[16px] font-[400] whitespace-nowrap`}>
+                                                {header.name === 'Full Name' ? (
+                                                    <div className="flex items-center gap-2">
+                                                        <label className="checkbox-container">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={allSelected}
+                                                                onChange={toggleSelectAll}
+                                                            />
+                                                            <span className="checkmark"></span>
+                                                        </label>
+                                                        {header.name}
+                                                    </div>
+                                                ) : (
+                                                    header.name
+                                                )}
+                                            </th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                            </div>
+                            <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
+                                {loading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
+                                    allContacts.length !== 0 ?
+                                        <tbody className="w-full">
+                                            {allContacts.map((contact, index) => (
+                                                <tr key={index} className={`${allContacts.length - 1 !== index && 'border-b border-[#E1E4EA]'}`}>
+                                                    <td className="p-[14px] min-w-[200px] max-w-[25%] w-full text-sm text-gray-800 font-semibold whitespace-nowrap">
+                                                        <div className="flex items-center gap-2">
+                                                            <label className="checkbox-container">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={formCreateList.contactsId.includes(contact.id)}
+                                                                    onChange={() => toggleSelectOne(contact.id)}
+                                                                />
+                                                                <span className="checkmark"></span>
+                                                            </label>
+                                                            {contact?.firstName}{" "}{contact?.lastName}
+                                                        </div>
+                                                    </td>
+                                                    <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[25%] w-full text-sm text-[#5A687C] whitespace-nowrap">
+                                                        {contact?.email}
+                                                    </td>
+                                                    <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[25%] w-full text-sm text-[#5A687C] whitespace-nowrap">
+                                                        {renderPhoneNumber(contact?.phone)}
+                                                    </td>
+                                                    <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[25%] w-full text-sm text-[#5A687C] whitespace-nowrap">
+                                                        {DateFormat(contact?.created_at)}
+                                                    </td>
+                                                    <td className="p-[14px]  w-full text-sm text-[#5A687C]">
+                                                        <div className="flex items-center gap-3.5">
+                                                            <div onClick={() => handleDeleteContact(contact.id)}>
+                                                                <Delete className="text-red-500" />
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Contacts Listed</p>}
+                            </div>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div >
+
+    )
+}
+
+export default ViewContacts
