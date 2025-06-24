@@ -69,6 +69,9 @@ const AgentChatBox = ({ listedProps }) => {
 
         try {
             console.log(socketRef)
+            if (socketRef.current === null) {
+                socketRef.current = new WebSocket(`${newwebsocketurl}?token=${localStorage.getItem("token")}`)
+            }
             if (socketRef.current?.readyState == WebSocket.OPEN) {
                 socketRef.current.send(messageToSend)
             }
@@ -227,7 +230,6 @@ const AgentChatBox = ({ listedProps }) => {
             status: "Read",
         }];
         setMessages(userMessage)
-        socketRef.current = new WebSocket(`${newwebsocketurl}?token=${localStorage.getItem("token")}`)
     }
 
     const stopTranscription = () => {
