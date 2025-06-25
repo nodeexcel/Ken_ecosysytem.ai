@@ -4,7 +4,7 @@ import taraImg from "../../assets/svg/tara_logo.svg"
 import { useNavigate } from 'react-router-dom'
 import taraMsgLogo from '../../assets/svg/tara_msg_logo.svg'
 import { v4 as uuidv4 } from 'uuid';
-import { deleteSeoChat, getSeoChatById, getSeoChats, updateSeoChatName } from '../../api/seoAgent'
+import { deleteCooChat, getCooChatById, getCooChats, updateCooChatName } from '../../api/cooAgent'
 import AgentChatBox from '../../components/AgentChatBox'
 
 function Coo() {
@@ -23,8 +23,8 @@ function Coo() {
     const [editData, setEditData] = useState({})
     const socketRef = useRef(null)
     const socket2Ref = useRef(null)
-    const newwebsocketurl = "ws://116.202.210.102:8000/new-seo-agent-chat"
-    const websocketurl = "ws://116.202.210.102:8000/seo-agent"
+    const newwebsocketurl = "ws://116.202.210.102:8000/new-coo-agent-chat"
+    const websocketurl = "ws://116.202.210.102:8000/coo-agent"
     const initialMessage = "Hi! I’m Tara, your Executive Assistant. \n I’m here to help you run your company and guide you through everything inside Ecosysteme.ai. \n Very soon, you’ll be able to message me directly on WhatsApp — by voice or text — to manage everything in one place. I’ll coordinate all your AI agents for you. Just a little more patience… it’s launching soon ⏳ \n In the meantime, I’m already connected to your AI Brain. I can analyze your business, answer your questions, and help you get the most out of every agent. \n So, where shall we start? 😊"
 
     const navigate = useNavigate()
@@ -43,7 +43,7 @@ function Coo() {
     const handleGetAccountChats = async () => {
         setLoadingChatsList(true)
         try {
-            const response = await getSeoChats()
+            const response = await getCooChats()
             if (response?.status === 200) {
                 if (response?.data?.success?.length === 0) {
                     setLoadingChatsList(false)
@@ -78,7 +78,7 @@ function Coo() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await deleteSeoChat(id)
+            const response = await deleteCooChat(id)
             if (response?.status === 200) {
                 handleGetAccountChats()
                 setActiveConversation("")
@@ -96,7 +96,7 @@ function Coo() {
         }
         try {
             setUpdateNameLoading(true)
-            const response = await updateSeoChatName(editData?.chat_id, { name })
+            const response = await updateCooChatName(editData?.chat_id, { name })
             if (response?.status === 200) {
                 setEditData({})
                 handleGetAccountChats()
@@ -113,7 +113,7 @@ function Coo() {
         setOpenChat(true)
         try {
             setLoadingChats(true)
-            const response = await getSeoChatById(id);
+            const response = await getCooChatById(id);
             console.log(response.data)
             if (response.status === 200) {
                 const data = await transformApiMessages(response?.data?.success)

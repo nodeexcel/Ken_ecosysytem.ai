@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
-import { ConversationIcon, LeftArrow } from '../../icons/icons'
+import { ArticleIcon, AuditIcon, AutomationIcon, ConversationIcon, LeftArrow } from '../../icons/icons'
 import sandroImg from "../../assets/svg/sandro_logo.svg"
 import { useNavigate } from 'react-router-dom'
 import sandroMsgLogo from '../../assets/svg/sandro_msg_logo.svg'
 import { v4 as uuidv4 } from 'uuid';
 import { deleteSeoChat, getSeoChatById, getSeoChats, updateSeoChatName } from '../../api/seoAgent'
 import AgentChatBox from '../../components/AgentChatBox'
+import SeoArticles from '../../components/SeoArticles'
+import SeoAudit from '../../components/SeoAudit'
+import SeoAutomation from '../../components/SeoAutomation'
 
 function Seo() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -31,6 +34,9 @@ function Seo() {
 
     const sideMenuList = [
         { label: "Chat", icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
+        { label: "Articles", icon: <ArticleIcon status={activeSidebarItem == "articles"} />, hoverIcon: <ArticleIcon hover={true} />, path: "articles" },
+        { label: "Start SEO Automation", icon: <AutomationIcon status={activeSidebarItem == "automation"} />, hoverIcon: <AutomationIcon hover={true} />, path: "automation" },
+        { label: "SEO Audit", icon: <AuditIcon status={activeSidebarItem == "audit"} />, hoverIcon: <AuditIcon hover={true} />, path: "audit" },
     ]
 
     useEffect(() => {
@@ -174,6 +180,12 @@ function Seo() {
 
     const renderMainContent = () => {
         switch (activeSidebarItem) {
+            case "articles":
+                return <SeoArticles />
+            case "audit":
+                return <SeoAudit />
+            case "automation":
+                return <SeoAutomation />
             default:
                 return <AgentChatBox listedProps={listedProps} />
         }

@@ -59,7 +59,7 @@ const AgentChatBox = ({ listedProps }) => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setName(value.trim())
+        setName(value)
         setErrors((prev) => ({ ...prev, [name]: "" }))
     }
 
