@@ -201,14 +201,14 @@ function Seo() {
                             navigate("/dashboard")
                             stopTranscription()
                         }}>
-                            <div className="flex gap-4 pl-5 items-center h-[57px]">
-                                <LeftArrow />
+                            <div className="flex gap-4 pl-3 items-center h-[57px]">
+                                {/* <LeftArrow /> */}
                                 <h1 className="text-[20px] font-[600]">SEO</h1>
                             </div>
                         </div>
                         <hr className='text-[#E1E4EA]' />
                     </div>
-                    <div className="flex flex-col w-full items-start gap-2 relative px-2">
+                    <div className="flex flex-col w-full items-start gap-2 relative px-3">
                         <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
                             <div className="flex justify-center items-center">
                                 <img src={sandroImg} alt={"sandro"} className="object-fit" />

@@ -89,14 +89,14 @@ const PhonePage = () => {
         <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
           <div className=''>
             <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
-              <div className="flex gap-4 pl-5 items-center h-[57px]">
-                <LeftArrow />
+              <div className="flex gap-4 pl-3 items-center h-[57px]">
+                {/* <LeftArrow /> */}
                 <h1 className="text-[20px] font-[600]">Phone</h1>
               </div>
             </div>
             <hr className='text-[#E1E4EA]' />
           </div>
-          <div className="flex flex-col w-full items-start gap-2 relative px-2">
+          <div className="flex flex-col w-full items-start gap-2 relative px-3">
             {renderImg()}
             {sideMenuList.map((item, i) => (
               <div

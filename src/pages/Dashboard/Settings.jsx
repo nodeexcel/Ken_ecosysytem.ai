@@ -1100,14 +1100,14 @@ const SettingsPage = () => {
           <div className=''>
             <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
               {/* <MdOutlineKeyboardArrowLeft size={25} /> */}
-              <div className="flex gap-4 pl-5 items-center h-[57px]">
-                <LeftArrow />
+              <div className="flex gap-4 pl-3 items-center h-[57px]">
+                {/* <LeftArrow /> */}
                 <h1 className="text-[20px] font-[600]">Settings</h1>
               </div>
             </div>
             <hr className='text-[#E1E4EA]' />
           </div>
-          <div className="flex inter flex-col w-full px-2 items-start gap-2 relative">
+          <div className="flex inter flex-col w-full px-3 items-start gap-2 relative">
             <div
               onClick={() => handleSelect("general")}
               className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#F0EFFF]" : "hover:bg-[#F9F8FF]"
