@@ -58,7 +58,8 @@ export default function Login() {
 
     }, [token, userDetails.loading])
 
-    const handleEmailSubmit = async () => {
+    const handleEmailSubmit = async (e) => {
+        e.preventDefault();
         setErrors({});
         if (!email) {
             setErrors({ email: "Email is required" });
@@ -135,7 +136,8 @@ export default function Login() {
     };
 
 
-    const handlePasswordSubmit = async () => {
+    const handlePasswordSubmit = async (e) => {
+        e.preventDefault();
         setErrors({});
         if (!password) {
             setErrors({ password: "Password is required" });
@@ -172,7 +174,8 @@ export default function Login() {
         // handle login logic
     };
 
-    const handleOtpSubmit = async (value) => {
+    const handleOtpSubmit = async (e, value) => {
+        e.preventDefault();
         setErrors({});
         if (!value) {
             setErrors({ otp: "Otp is required" });
@@ -205,7 +208,8 @@ export default function Login() {
         // handle login logic
     };
 
-    const handleForgot = async () => {
+    const handleForgot = async (e) => {
+        e.preventDefault();
         setErrors({});
         if (!email) {
             setErrors({ email: "Email is required" });
@@ -234,9 +238,9 @@ export default function Login() {
         }
     }
 
-    const handleResendOtp = async () => {
+    const handleResendOtp = async (e) => {
         setResentLoading(true)
-        await handleEmailSubmit()
+        await handleEmailSubmit(e)
         setSuccess({ otp: "Otp send successfully!" })
         setResentLoading(false)
     }
@@ -301,12 +305,12 @@ export default function Login() {
     };
 
     const renderEmailStep = () => (
-        <div className="space-y-2">
+        <form onSubmit={handleEmailSubmit} className="space-y-2">
             <h2 className="text-[28px] font-bold text-center text-[#292D32]">Welcome Back</h2>
             <p className="text-center text-[16px] text-[#777F90] mb-4">Please enter your details below.</p>
             <div>
                 <label className="block text-[16px] font-medium text-[#292D32] mb-1">Email</label>
-                <div className={`flex items-center border rounded-[8px] px-4 py-3 ${errors.email ? "border-red-500" : "border-gray-300"}`}>
+                <div className={`flex items-center focus-within:border-[#675FFF] border rounded-[8px] px-4 py-3 ${errors.email ? "border-red-500" : "border-gray-300"}`}>
                     <LuUserRound className="text-gray-400 mr-2 text-xl" />
                     <input
                         type="email"
@@ -324,17 +328,16 @@ export default function Login() {
 
             <button
                 type="submit"
-                onClick={handleEmailSubmit}
                 disabled={loading}
                 className={`w-full ${loading ? "bg-[#675fff79]" : "bg-[#675FFF] cursor-pointer"} text-white my-4 py-[14px] rounded-[8px] font-semibold  transition`}
             >
                 {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Continue"}
             </button>
-        </div>
+        </form>
     );
 
     const renderOtpStep = () => (
-        <div className="space-y-3">
+        <form onSubmit={(e) => handleOtpSubmit(e, otp.join(""))} className="space-y-3">
             <h2 className="text-[28px] font-bold text-center text-[#292D32]">Welcome Back</h2>
             <p className="text-center text-[16px] text-[#777F90] my-2">
                 Please enter your 4-digit code below.
@@ -370,21 +373,20 @@ export default function Login() {
             <button
                 type="submit"
                 disabled={loading && !resentLoading}
-                onClick={() => handleOtpSubmit(otp.join(""))}
                 className={`w-full ${(loading && !resentLoading) ? "bg-[#675fff79]" : "bg-[#675FFF] cursor-pointer"} my-4 text-white py-[14px] rounded-[8px] font-semibold transition`}
             >
                 {(loading && !resentLoading) ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Login"}
             </button>
-        </div>
+        </form>
     );
 
     const renderPasswordStep = () => (
-        <div className="space-y-4">
+        <form onSubmit={handlePasswordSubmit} className="space-y-4">
             <h2 className="text-[28px] font-bold text-center text-[#292D32]">Welcome Back</h2>
             <p className="text-center text-[16px] text-[#777F90] mb-4">Please enter your details below.</p>
             <div>
                 <label className="block text-[16px] font-medium text-[#292D32] mb-1">Password</label>
-                <div className={`flex items-center border rounded-[8px] px-4 py-3 ${errors.password ? "border-red-500" : "border-gray-300"}`}>
+                <div className={`flex items-center focus-within:border-[#675FFF] border rounded-[8px] px-4 py-3 ${errors.password ? "border-red-500" : "border-gray-300"}`}>
                     <div className="pr-2">
                         <PasswordLock />
                     </div>
@@ -427,12 +429,11 @@ export default function Login() {
             <button
                 type="submit"
                 disabled={loading}
-                onClick={handlePasswordSubmit}
                 className={`w-full ${loading ? "bg-[#675fff79]" : "bg-[#675FFF] cursor-pointer"} text-white my-4 py-[14px] rounded-[8px] font-semibold transition`}
             >
                 {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Login"}
             </button>
-        </div>
+        </form>
     );
 
     if (userDetails?.loading && token) return <p className='flex justify-center items-center h-full'><span className='loader' /></p>
@@ -494,7 +495,7 @@ export default function Login() {
                         <X className="w-5 h-5" />
                     </button>
 
-                    {activeTabModal === "forgot-password" && <div div className="space-y-4 mt-6">
+                    {activeTabModal === "forgot-password" && <form onSubmit={handleForgot} className="space-y-4 mt-6">
                         <div className="flex justify-center">
                             <img src={logo} alt="logo" className="" />
                         </div>
@@ -504,7 +505,7 @@ export default function Login() {
                         </div>
                         <div>
                             <label className="block text-[16px] font-medium text-[#292D32] mb-1">Email</label>
-                            <div className={`flex items-center border rounded-[8px] px-4 py-3 ${errors.email ? "border-red-500" : "border-gray-300"}`}>
+                            <div className={`flex items-center border focus-within:border-[#675FFF] rounded-[8px] px-4 py-3 ${errors.email ? "border-red-500" : "border-gray-300"}`}>
                                 <LuUserRound className="text-gray-400 mr-2 text-xl" />
                                 <input
                                     type="email"
@@ -522,7 +523,6 @@ export default function Login() {
 
                         <button
                             type="submit"
-                            onClick={handleForgot}
                             disabled={forgotLoading}
                             className={`w-full ${forgotLoading ? "bg-[#675fff79]" : "bg-[#675FFF] cursor-pointer"} text-white my-4 py-[14px] rounded-[8px] font-semibold  transition`}
                         >
@@ -530,7 +530,7 @@ export default function Login() {
                         </button>
                         <p className="text-[#5A687C] text-center font-[400] text-[14px]">Back to <span className="text-[#675FFF] font-[600] cursor-pointer"
                             onClick={handleBackToSignIn}>Sign In</span></p>
-                    </div>}
+                    </form>}
                     {activeTabModal === "verify-email" && <div div className="space-y-6 mt-6">
                         <div>
                             <div className="flex justify-center">

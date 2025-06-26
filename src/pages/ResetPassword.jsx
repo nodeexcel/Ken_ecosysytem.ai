@@ -115,14 +115,14 @@ export default function ResetPassword() {
                             <label className="font-medium text-black text-sm leading-5">New Password</label>
                             <div className="relative">
                                 <div className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                <PasswordLock />
+                                    <PasswordLock />
                                 </div>
                                 <input
                                     type={showPasswords.password ? 'text' : 'password'}
                                     name="password"
                                     value={formData.password}
                                     onChange={handlePasswordChange}
-                                    className={`w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border ${formErrors.password ? 'border-red-500' : 'border-[#e1e4ea]'
+                                    className={`w-full pl-10 pr-10 py-2.5 focus:border-[#675FFF] focus:outline-none bg-white rounded-lg border ${formErrors.password ? 'border-red-500' : 'border-[#e1e4ea]'
                                         } `}
                                     placeholder="Enter new password"
                                 />
@@ -148,14 +148,14 @@ export default function ResetPassword() {
                             <label className="font-medium text-black text-sm leading-5">Confirm Password</label>
                             <div className="relative">
                                 <div className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                <PasswordLock />
+                                    <PasswordLock />
                                 </div>
                                 <input
                                     type={showPasswords.confirmPassword ? 'text' : 'password'}
                                     name="confirmPassword"
                                     value={formData.confirmPassword}
                                     onChange={handlePasswordChange}
-                                    className={`w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border ${formErrors.confirmPassword ? 'border-red-500' : 'border-[#e1e4ea]'
+                                    className={`w-full pl-10 pr-10 py-2.5 focus:border-[#675FFF] focus:outline-none bg-white rounded-lg border ${formErrors.confirmPassword ? 'border-red-500' : 'border-[#e1e4ea]'
                                         } `}
                                     placeholder="Confirm new password"
                                 />
