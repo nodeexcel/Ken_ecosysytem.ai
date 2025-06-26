@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { ActiveIcon, DeactiveIcon, Delete, Duplicate, Edit, ThreeDots } from '../icons/icons';
+import { useEffect, useRef, useState } from 'react';
+import { ActiveIcon, DeactiveIcon, Delete, Duplicate, Edit, EndIcon, PauseIcon, ThreeDots } from '../icons/icons';
 import { X } from 'lucide-react';
 import { deleteEmailCampaign, duplicateCampaign, getEmailCampaign, updateEmailCampaignStatus } from '../api/emailCampaign';
 import CampaignsTable from './Campaigns';
@@ -36,10 +36,22 @@ function CampaignDashboard() {
     const [viewReportModel, setViewReportModel] = useState(false)
 
     const [activeDropdown, setActiveDropdown] = useState(null);
+    const moreActionsRef = useRef()
 
     useEffect(() => {
         getCampaignData()
     }, [newCampaignStatus])
+
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (moreActionsRef.current && !moreActionsRef.current.contains(event.target)) {
+                setActiveDropdown(null);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     const toggleStatus = async (index, key, id) => {
         try {
@@ -218,13 +230,13 @@ function CampaignDashboard() {
                                                         <button onClick={() => setViewReportModel(true)} className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg'>
                                                             View Report
                                                         </button>
-                                                        <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
+                                                        <button ref={moreActionsRef} onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
                                                             <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
                                                             {activeDropdown === index && (
                                                                 <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                                                                     <div className="py-1">
                                                                         <button
-                                                                            className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
+                                                                            className="block w-full text-left font-[500] group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
                                                                             onClick={() => {
                                                                                 handleEdit(item.campaign_id)
                                                                             }}
@@ -232,23 +244,39 @@ function CampaignDashboard() {
                                                                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
                                                                         </button>
                                                                         <button
-                                                                            className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
+                                                                            className="block w-full text-left font-[500] group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
                                                                             onClick={item.campaign_status !== "draft" || item.campaign_status !== "issue_detected" ? () => toggleStatus(index, 'is_active', item.campaign_id) : undefined}
                                                                         >
-                                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'>{item.is_active?<DeactiveIcon/>:<ActiveIcon/>}</div> <div className='hidden group-hover:block'>{item.is_active?<DeactiveIcon status={true}/>:<ActiveIcon status={true}/>}</div> <span>{item.is_active?'Deactive':'Active'}</span> </div>
+                                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'>{item.is_active ? <DeactiveIcon /> : <ActiveIcon />}</div> <div className='hidden group-hover:block'>{item.is_active ? <DeactiveIcon status={true} /> : <ActiveIcon status={true} />}</div> <span>{item.is_active ? 'Deactive' : 'Active'}</span> </div>
                                                                         </button>
                                                                         <button
-                                                                            className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
+                                                                            className="block w-full text-left font-[500] px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
                                                                             onClick={() => {
                                                                                 handleDuplicate(item.campaign_id)
                                                                             }}
                                                                         >
                                                                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
                                                                         </button>
+                                                                        <button
+                                                                            className="block w-full text-left font-[500] px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
+                                                                            onClick={() => {
+                                                                                setActiveDropdown(null);
+                                                                            }}
+                                                                        >
+                                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><PauseIcon /></div> <div className='hidden group-hover:block'><PauseIcon status={true} /></div> <span>Pause</span> </div>
+                                                                        </button>
+                                                                        <button
+                                                                            className="block w-full text-left font-[500] px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
+                                                                            onClick={() => {
+                                                                                setActiveDropdown(null);
+                                                                            }}
+                                                                        >
+                                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><EndIcon /></div> <div className='hidden group-hover:block'><EndIcon status={true} /></div> <span>End</span> </div>
+                                                                        </button>
                                                                         <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                                                                         <div className='py-2'>
                                                                             <button
-                                                                                className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6] hover:rounded-lg"
+                                                                                className="block w-full text-left font-[500] px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6] hover:rounded-lg"
                                                                                 onClick={() => {
                                                                                     handleDelete(index, item.campaign_id)
                                                                                 }}
