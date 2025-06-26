@@ -17,6 +17,7 @@ import { X } from 'lucide-react';
 import { getNavbarData } from '../store/navbarSlice';
 import { SidebarBrainIcon, SidebarDocumentIcon, SidebarFourBoxIcon, SidebarHelpCenterIcon, SidebarNotificationIcon, SidebarSettingIcon } from '../icons/icons';
 import logo from '../assets/svg/dashboard_logo.svg'
+import { changeLanguage } from '../api/profile';
 
 const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     const navigate = useNavigate()
@@ -30,20 +31,41 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     const [isNotification, setIsNotification] = useState(false);
 
     const [showDropdown, setShowDropdown] = useState(false);
-    const [selectedLang, setSelectedLang] = useState('en');
+    const [selectedLang, setSelectedLang] = useState('english');
     const [modalStatus, setModalStatus] = useState(false);
     const noticationRef = useRef()
 
-    const languages = {
-        en: { label: 'English', flag: uk_flag },
-        fr: { label: 'French', flag: fr_flag }
-    };
+    // const languages = {
+    //     en: { label: 'English', flag: uk_flag,key:"" },
+    //     fr: { label: 'French', flag: fr_flag }
+    // };
+
+    const languagesOptions = [{ label: "English", flag: uk_flag, key: "english" }, { label: "French", flag: fr_flag, key: "french" }]
+
+
+    useEffect(() => {
+        if (userDetails?.language !== null) {
+            setSelectedLang(userDetails?.language)
+        }
+    }, [userDetails])
+
+    const renderLangSrc = () => {
+        const filterSrc = languagesOptions.filter((e) => e.key === selectedLang)
+        return filterSrc[0].flag
+    }
 
     const toggleDropdown = () => setShowDropdown(!showDropdown);
 
-    const handleLanguageSelect = (lang) => {
-        setSelectedLang(lang);
-        setShowDropdown(false);
+    const handleLanguageSelect = async (lang) => {
+        try {
+            const response = await changeLanguage({ language: lang })
+            if (response?.status === 200) {
+                setSelectedLang(lang);
+                setShowDropdown(false);
+            }
+        } catch (error) {
+            console.log(error)
+        }
     };
 
     useEffect(() => {
@@ -130,16 +152,16 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         </div>
                         {isNotification && <Notification setNotification={setIsNotification} />}
                     </div>
-                    <div className='text-xl flex group hover:cursor-pointer relative justify-center py-4' onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
-                        <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarBrainIcon status={renderColor(1)} /></div> <div className='hidden group-hover:block'><SidebarBrainIcon status={true} /></div> </div>
-                        <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[89px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[700]'>Brain AI</p>
-                        </div>
-                    </div>
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-4' onClick={() => handleSelect(sidebarItems[0].id, sidebarItems[0].label)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarFourBoxIcon status={renderColor(0)} /></div> <div className='hidden group-hover:block'><SidebarFourBoxIcon status={true} /></div> </div>
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[84px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
                             <p className='font-[700]'>Home</p>
+                        </div>
+                    </div>
+                    <div className='text-xl flex group hover:cursor-pointer relative justify-center py-4' onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
+                        <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarBrainIcon status={renderColor(1)} /></div> <div className='hidden group-hover:block'><SidebarBrainIcon status={true} /></div> </div>
+                        <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[89px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
+                            <p className='font-[700]'>Brain AI</p>
                         </div>
                     </div>
                     <hr className='text-[#E1E4EA]' />
@@ -156,19 +178,19 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         className='relative group text-xl flex justify-center py-4 cursor-pointer'
                         onClick={toggleDropdown}
                     >
-                        <img src={languages[selectedLang].flag} alt={languages[selectedLang].label} width={20} />
+                        <img src={renderLangSrc()} alt={selectedLang} width={20} />
                         {showDropdown && (
                             <div
                                 className='fixed md:left-[59px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]'
                             >
-                                {Object.entries(languages).map(([key, value]) => (
+                                {languagesOptions.map(e => (
                                     <div
-                                        key={key}
-                                        onClick={() => handleLanguageSelect(key)}
-                                        className={`flex items-center gap-2 py-2 hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF] px-3 my-1 cursor-pointer ${value.flag === languages[selectedLang].flag && 'bg-[#F4F5F6] rounded-lg text-[#675FFF]'}`}
+                                        key={e.key}
+                                        onClick={() => handleLanguageSelect(e.key)}
+                                        className={`flex items-center gap-2 py-2 hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF] px-3 my-1 cursor-pointer ${e.key === selectedLang && 'bg-[#F4F5F6] rounded-lg text-[#675FFF]'}`}
                                     >
-                                        <img src={value.flag} alt={value.label} width={20} />
-                                        <span className='text-sm'>{value.label}</span>
+                                        <img src={e.flag} alt={e.key} width={20} />
+                                        <span className='text-sm'>{e.label}</span>
                                     </div>
                                 ))}
                             </div>

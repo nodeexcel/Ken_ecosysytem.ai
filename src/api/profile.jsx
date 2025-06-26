@@ -45,3 +45,14 @@ export const deleteProfile = async () => {
         return error;
     }
 };
+
+
+export const changeLanguage = async (payload) => {
+    try {
+        const response = await axiosInstance.post("/api/users/change-language", payload);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
