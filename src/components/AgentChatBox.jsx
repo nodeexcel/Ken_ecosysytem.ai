@@ -262,7 +262,7 @@ const AgentChatBox = ({ listedProps }) => {
                             </div>
                         </div>
 
-                        <div className="w-[240px] max-h-[90%] overflow-y-auto">
+                        <div className="w-[240px] h-full max-h-[90%] overflow-y-auto">
                             <div className="flex px-4 pb-4">
                                 <button onClick={handleSelectNewChat} className="text-[#1E1E1E] font-[400] text-[14px] flex items-center gap-2">
                                     <Edit chat={true} /> <span>New Chat</span>
