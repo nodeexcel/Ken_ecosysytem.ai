@@ -474,7 +474,7 @@ export const SidebarHelpCenterIcon = ({ status }) => {
 export const SearchIcon = () => {
     return (
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M14 14.0005L10.5353 10.5359M10.5353 10.5359C11.4731 9.59814 11.9999 8.32632 11.9999 7.00019C11.9999 5.67406 11.4731 4.40224 10.5353 3.46452C9.59762 2.5268 8.3258 2 6.99967 2C5.67354 2 4.40172 2.5268 3.464 3.46452C2.52629 4.40224 1.99948 5.67406 1.99948 7.00019C1.99948 8.32632 2.52629 9.59814 3.464 10.5359C4.40172 11.4736 5.67354 12.0004 6.99967 12.0004C8.3258 12.0004 9.59762 11.4736 10.5353 10.5359Z" stroke="#5A687C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M14 14.0005L10.5353 10.5359M10.5353 10.5359C11.4731 9.59814 11.9999 8.32632 11.9999 7.00019C11.9999 5.67406 11.4731 4.40224 10.5353 3.46452C9.59762 2.5268 8.3258 2 6.99967 2C5.67354 2 4.40172 2.5268 3.464 3.46452C2.52629 4.40224 1.99948 5.67406 1.99948 7.00019C1.99948 8.32632 2.52629 9.59814 3.464 10.5359C4.40172 11.4736 5.67354 12.0004 6.99967 12.0004C8.3258 12.0004 9.59762 11.4736 10.5353 10.5359Z" stroke="#5A687C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
     )
 }
@@ -511,7 +511,7 @@ export const SendIcon = () => {
     )
 }
 
-export const ArticleIcon = ({ status,hover }) => {
+export const ArticleIcon = ({ status, hover }) => {
     return (
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M13 9.5V7.75C13 7.15326 12.7629 6.58097 12.341 6.15901C11.919 5.73705 11.3467 5.5 10.75 5.5H9.75C9.55109 5.5 9.36032 5.42098 9.21967 5.28033C9.07902 5.13968 9 4.94891 9 4.75V3.75C9 3.15326 8.76295 2.58097 8.34099 2.15901C7.91903 1.73705 7.34674 1.5 6.75 1.5H5.5M6 11V11.5M8 9.5V11.5M10 8V11.5M7 1.5H3.75C3.336 1.5 3 1.836 3 2.25V13.75C3 14.164 3.336 14.5 3.75 14.5H12.25C12.664 14.5 13 14.164 13 13.75V7.5C13 5.9087 12.3679 4.38258 11.2426 3.25736C10.1174 2.13214 8.5913 1.5 7 1.5Z" stroke={status ? "#675FFF" : hover ? '#1E1E1E' : "#5A687C"} strokeLinecap="round" strokeLinejoin="round" />
@@ -519,7 +519,7 @@ export const ArticleIcon = ({ status,hover }) => {
     )
 }
 
-export const AutomationIcon = ({ status,hover }) => {
+export const AutomationIcon = ({ status, hover }) => {
     return (
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M2.5 2V9.5C2.5 9.89782 2.65804 10.2794 2.93934 10.5607C3.22064 10.842 3.60218 11 4 11H5.5M2.5 2H1.5M2.5 2H13.5M5.5 11H10.5M5.5 11L4.83333 13M13.5 2H14.5M13.5 2V9.5C13.5 9.89782 13.342 10.2794 13.0607 10.5607C12.7794 10.842 12.3978 11 12 11H10.5M10.5 11L11.1667 13M4.83333 13H11.1667M4.83333 13L4.5 14M11.1667 13L11.5 14M5 8L7 6L8.432 7.432C9.1048 6.4662 9.98144 5.65988 11 5.07" stroke={status ? "#675FFF" : hover ? '#1E1E1E' : "#5A687C"} strokeLinecap="round" strokeLinejoin="round" />
@@ -527,7 +527,7 @@ export const AutomationIcon = ({ status,hover }) => {
     )
 }
 
-export const AuditIcon = ({ status,hover }) => {
+export const AuditIcon = ({ status, hover }) => {
     return (
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M2 8.75C2 8.336 2.336 8 2.75 8H4.25C4.664 8 5 8.336 5 8.75V13.25C5 13.664 4.664 14 4.25 14H2.75C2.55109 14 2.36032 13.921 2.21967 13.7803C2.07902 13.6397 2 13.4489 2 13.25V8.75ZM6.5 5.75C6.5 5.336 6.836 5 7.25 5H8.75C9.164 5 9.5 5.336 9.5 5.75V13.25C9.5 13.664 9.164 14 8.75 14H7.25C7.05109 14 6.86032 13.921 6.71967 13.7803C6.57902 13.6397 6.5 13.4489 6.5 13.25V5.75ZM11 2.75C11 2.336 11.336 2 11.75 2H13.25C13.664 2 14 2.336 14 2.75V13.25C14 13.664 13.664 14 13.25 14H11.75C11.5511 14 11.3603 13.921 11.2197 13.7803C11.079 13.6397 11 13.4489 11 13.25V2.75Z" stroke={status ? "#675FFF" : hover ? '#1E1E1E' : "#5A687C"} strokeLinecap="round" strokeLinejoin="round" />
