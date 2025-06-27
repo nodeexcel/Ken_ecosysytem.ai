@@ -28,7 +28,7 @@ function Seo() {
     const socket2Ref = useRef(null)
     const newwebsocketurl = "ws://116.202.210.102:8000/new-seo-agent-chat"
     const websocketurl = "ws://116.202.210.102:8000/seo-agent"
-    const initialMessage = "Hi there! I’m Sandro, your SEO Expert. \n I’m here to help you boost your website’s visibility, generate high-quality traffic, and improve your search engine rankings — all automatically. \n I can research keywords, optimize blog posts, create SEO-friendly content, and publish directly to your CMS like WordPress, Wix, or Shopify. \n Want to start ranking higher on Google without lifting a finger? Just tell me your goal, and I’ll take it from there. \n Ready to grow your traffic? 🚀"
+    const initialMessage = "Hi there! I’m Sandro, your SEO Expert. \nI’m here to help you boost your website’s visibility, generate high-quality traffic, and improve your search engine rankings — all automatically. \nI can research keywords, optimize blog posts, create SEO-friendly content, and publish directly to your CMS like WordPress, Wix, or Shopify. \nWant to start ranking higher on Google without lifting a finger? Just tell me your goal, and I’ll take it from there. \nReady to grow your traffic? 🚀"
 
     const navigate = useNavigate()
 

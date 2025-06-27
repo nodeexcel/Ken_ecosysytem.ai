@@ -264,7 +264,7 @@ const AgentChatBox = ({ listedProps }) => {
 
                         <div className="w-[240px] h-full max-h-[90%] overflow-y-auto">
                             <div className="flex px-4 pb-4">
-                                <button onClick={handleSelectNewChat} className="text-[#1E1E1E] font-[400] text-[14px] flex items-center gap-2">
+                                <button onClick={handleSelectNewChat} className="text-[#1E1E1E] font-[400] px-1 cursor-pointer py-[6px] w-full text-[14px] flex items-center gap-2 hover:bg-[#F0EFFF] hover:rounded-lg">
                                     <Edit chat={true} /> <span>New Chat</span>
                                 </button>
                             </div>
@@ -351,10 +351,10 @@ const AgentChatBox = ({ listedProps }) => {
                                             )}
 
                                             {message.id === "typing" ? <div className="pl-[50px] pt-3 flex "><span className="three-dots" /></div> : <div
-                                                className={`max-w-md w-fit text-[12px] font-[400] p-3 ${!message.isUser ? "my-1 bg-[#F2F2F7] text-[#5A687C] rounded-b-[10px] rounded-r-[10px]" : "ml-auto my-1 bg-[#675FFF] text-[#fff] rounded-b-[10px] rounded-l-[10px]"
+                                                className={`max-w-[70%] w-fit text-[12px] font-[400] p-3 ${!message.isUser ? "my-1 bg-[#F2F2F7] text-[#5A687C] rounded-b-[10px] rounded-r-[10px]" : "ml-auto my-1 bg-[#675FFF] text-[#fff] rounded-b-[10px] rounded-l-[10px]"
                                                     }`}
                                             >
-                                                <p className="text-[16px]">{message.content}</p>
+                                                <p className="text-[16px] !whitespace-pre-wrap">{message.content}</p>
                                             </div>}
                                             {message.id !== "typing" && !message.isUser && <div className="my-1 flex items-center gap-1">
                                                 <Duplicate />

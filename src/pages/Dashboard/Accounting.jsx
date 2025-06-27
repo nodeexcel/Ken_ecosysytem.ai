@@ -25,7 +25,7 @@ function Accounting() {
     const socket2Ref = useRef(null)
     const newwebsocketurl = "ws://116.202.210.102:8000/new-accounting-chat"
     const websocketurl = "ws://116.202.210.102:8000/accounting"
-    const initialMessage = "Hi! I’m Finn, your Finance and Accounting expert.\n I’m here to help you manage your cash flow, track expenses, generate financial reports, and keep your books clean, without the headache.\n From invoicing and cost analysis to budgeting and tax prep, I’ve got your numbers covered.\n Just tell me what you need.I can analyze your data, highlight financial risks, and help you make smarter business decisions in real time. \n Ready to get your finances in order and grow with clarity ? Let’s dive in 💼"
+    const initialMessage = "Hi! I’m Finn, your Finance and Accounting expert. \nI’m here to help you manage your cash flow, track expenses, generate financial reports, and keep your books clean, without the headache.\nFrom invoicing and cost analysis to budgeting and tax prep, I’ve got your numbers covered. \nJust tell me what you need.I can analyze your data, highlight financial risks, and help you make smarter business decisions in real time. \nReady to get your finances in order and grow with clarity ? Let’s dive in 💼"
 
     const navigate = useNavigate()
 
