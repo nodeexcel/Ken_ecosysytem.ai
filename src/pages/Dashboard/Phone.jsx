@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PhoneNumberList from '../../components/PhoneNumberList'
 import CallAgentsPage from '../../components/CallAgent'
 import CallCampaign from '../../components/CallCampaign'
@@ -46,6 +46,14 @@ const PhonePage = () => {
         return <PhoneDashboard />;
     }
   };
+
+  useEffect(() => {
+    if (navbarDetails?.label === "Rebecca") {
+      setActiveSidebarItem("inbound-calls")
+      dispatch(getNavbarData('Rebecca'))
+    }
+
+  }, [navbarDetails])
 
   const renderImg = () => {
     if (navbarDetails.label === "Rebecca") {

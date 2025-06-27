@@ -89,14 +89,16 @@ export default function PhoneNumbers() {
     { label: "Inbound Number", key: "inbound", icon: <InboundCall active={activeTab == "inbound"} /> },
   ]
 
-  const toggleActive = async (id) => {
+  const toggleActive = async (index, id) => {
     try {
 
       const response = await updatePhoneNumberStatus(id);
 
       if (response.status === 200) {
         console.log("Phone number status updated successfully");
-        fetchPhoneNumbers();
+        const updated = [...rows];
+        updated[index]["status"] = !updated[index]["status"];
+        setRows(updated);
       } else {
         console.error("Failed to update phone number status");
       }
@@ -249,10 +251,10 @@ export default function PhoneNumbers() {
                       key={row.id}
                       className={`text-[16px] text-[#1E1E1E] ${index !== rows?.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
                     >
-                      <td className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[600] text-[#1E1E1E]">{renderPhoneNumber(row.phone_number, row.country)}</td>
+                      <td className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] text-[#1E1E1E]">{renderPhoneNumber(row.phone_number, row.country)}</td>
                       <td className="py-[14px] pl-[24px] pr-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C] whitespace-nowrap">{row.country}</td>
                       <td className="p-[14px] min-w-[200px] max-w-[17%] w-full">
-                        <div className="flex items-center gap-3">
+                        <div className="flex w-[120px] justify-between items-center">
                           <span
                             className={`text-[14px] font-[500] px-2.5 py-0.5 rounded-full border-[1.5px] ${row.status
                               ? "border-[#34C759] text-[#34C759] bg-[#EBF9EE]"
@@ -263,7 +265,7 @@ export default function PhoneNumbers() {
                           </span>
                           <ToggleSwitch
                             checked={row.status}
-                            onChange={() => toggleActive(row.id)}
+                            onChange={() => toggleActive(index, row.id)}
                           />
                         </div>
                       </td>
