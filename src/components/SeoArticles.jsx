@@ -63,7 +63,7 @@ function SeoArticles() {
                     </button>
                 </div>
                 <div>
-                    <input placeholder="Search" className="max-w-[399px] bg-white focus:border-[#675FFF] w-full rounded-[8px] border border-[#E1E4EA] py-[5px] px-[14px]" />
+                    <input placeholder="Search" className="max-w-[399px] bg-white focus:outline-none focus:border-[#675FFF] w-full rounded-[8px] border border-[#E1E4EA] py-[5px] px-[14px]" />
                 </div>
                 {/* Table */}
                 <div className="w-full">

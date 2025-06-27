@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
-import { ConversationIcon, LeftArrow } from '../../icons/icons'
+import { AutomationIcon, ConversationIcon, LeftArrow, WhatsappIcon } from '../../icons/icons'
 import taraImg from "../../assets/svg/tara_logo.svg"
 import { useNavigate } from 'react-router-dom'
 import taraMsgLogo from '../../assets/svg/tara_msg_logo.svg'
 import { v4 as uuidv4 } from 'uuid';
 import { deleteCooChat, getCooChatById, getCooChats, updateCooChatName } from '../../api/cooAgent'
 import AgentChatBox from '../../components/AgentChatBox'
+import CooPresentations from '../../components/CooPresentations'
+import CooConnectWhatsapp from '../../components/CooConnectWhatsapp'
 
 function Coo() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -31,6 +33,8 @@ function Coo() {
 
     const sideMenuList = [
         { label: "Chat", icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
+        { label: "Presentations", icon: <AutomationIcon status={activeSidebarItem == "presentations"} />, hoverIcon: <AutomationIcon hover={true} />, path: "presentations" },
+        { label: "Connect WhatsApp", icon: <WhatsappIcon status={activeSidebarItem == "connect_whatsApp"} />, hoverIcon: <WhatsappIcon hover={true} />, path: "connect_whatsApp" },
     ]
 
     useEffect(() => {
@@ -173,6 +177,10 @@ function Coo() {
 
     const renderMainContent = () => {
         switch (activeSidebarItem) {
+            case "presentations":
+                return <CooPresentations />
+            case "connect_whatsApp":
+                return <CooConnectWhatsapp />
             default:
                 return <AgentChatBox listedProps={listedProps} />
         }
