@@ -314,8 +314,8 @@ const AgentChatBox = ({ listedProps }) => {
                                                         <div className='py-2'>
                                                             <button
                                                                 className="flex w-full cursor-pointer text-left px-4 hover:rounded-lg py-2 text-sm text-red-600 hover:bg-[#F4F5F6] font-[500]"
-                                                                onClick={() => {
-                                                                    handleDelete(conversation.chat_id)
+                                                                onClick={async () => {
+                                                                    await handleDelete(conversation.chat_id)
                                                                     setActiveDropdown(null);
                                                                 }}
                                                             >
