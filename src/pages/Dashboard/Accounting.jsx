@@ -52,7 +52,7 @@ function Accounting() {
                     setOpenChat(false)
                 } else {
                     const formatData = (response?.data?.success)
-                    if (!activeConversation) {
+                    if (!activeConversation && openChat) {
                         const newChatActive = formatData.filter(element => {
                             return !chatList.some(chat => chat.chat_id === element.chat_id);
                         });
