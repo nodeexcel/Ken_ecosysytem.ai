@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ActiveIcon, DeactiveIcon, Delete, Duplicate, Edit, EndIcon, PauseIcon, ThreeDots } from '../icons/icons';
+import { ActiveIcon, DeactiveIcon, Delete, Duplicate, Edit, EndIcon, ThreeDots } from '../icons/icons';
 import { X } from 'lucide-react';
 import { deleteEmailCampaign, duplicateCampaign, getEmailCampaign, updateEmailCampaignStatus } from '../api/emailCampaign';
 import CampaignsTable from './Campaigns';
@@ -256,14 +256,6 @@ function CampaignDashboard() {
                                                                             }}
                                                                         >
                                                                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
-                                                                        </button>
-                                                                        <button
-                                                                            className="block w-full text-left font-[500] px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
-                                                                            onClick={() => {
-                                                                                setActiveDropdown(null);
-                                                                            }}
-                                                                        >
-                                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><PauseIcon /></div> <div className='hidden group-hover:block'><PauseIcon status={true} /></div> <span>Pause</span> </div>
                                                                         </button>
                                                                         <button
                                                                             className="block w-full text-left font-[500] px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
