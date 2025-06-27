@@ -60,9 +60,9 @@ function EmailDashboard() {
                             {e.list.map((each) => (
                                 <div
                                     key={each.label}
-                                    className={`flex flex-col gap-2 rounded-lg border shadow-shadows-shadow-xs transition bg-white border-[#e1e4ea]`}
+                                    className={`flex flex-col gap-2 rounded-[10px] border bg-white border-[#e1e4ea]`}
                                 >
-                                    <h1 className="text-[#1E1E1E] p-2 bg-[#F2F2F7] text-[14px] font-[400]">
+                                    <h1 className="text-[#1E1E1E] p-2 bg-[#F1F1FF] rounded-t-[9px] text-[14px] font-[400]">
                                         {each.label}
                                     </h1>
 
