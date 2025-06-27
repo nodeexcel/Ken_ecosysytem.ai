@@ -142,7 +142,7 @@ const AgentChatBox = ({ listedProps }) => {
             }
             else {
                 console.warn('Second WebSocket not ready to send')
-                socket2Ref.current = new WebSocket(`${websocketurl}/${activeDropdown}?token=${localStorage.getItem("token")}`)
+                socket2Ref.current = new WebSocket(`${websocketurl}/${activeConversation}?token=${localStorage.getItem("token")}`)
                 socket2Ref.current.onopen = () => {
                     socket2Ref.current.send(messageToSend)
                 }
@@ -363,7 +363,7 @@ const AgentChatBox = ({ listedProps }) => {
                                                 className={`max-w-[70%] w-fit text-[12px] font-[400] p-3 ${!message.isUser ? "my-1 bg-[#F2F2F7] text-[#5A687C] rounded-b-[10px] rounded-r-[10px]" : "ml-auto my-1 bg-[#675FFF] text-[#fff] rounded-b-[10px] rounded-l-[10px]"
                                                     }`}
                                             >
-                                                <p className="text-[16px] !whitespace-pre-wrap">{message.content}</p>
+                                                <p className="text-[16px] truncate !whitespace-pre-wrap">{message.content}</p>
                                             </div>}
                                             {message.id !== "typing" && !message.isUser && <div className="my-1 flex items-center gap-1">
                                                 <Duplicate />
