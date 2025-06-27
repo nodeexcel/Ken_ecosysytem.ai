@@ -98,12 +98,12 @@ export default function SetPassword() {
 
     return (
         <div className="flex flex-col items-center overflow-auto h-screen bg-gray-50 p-3">
-            <div className="flex items-center gap-2 my-2">
+            <div className="flex items-center gap-2 py-[30px]">
                 <div>
                     <img src={header} alt="logo" className="" />
                 </div>
             </div>
-            <form onSubmit={handleSubmit} className="bg-white inter p-8 mt-2 rounded-2xl border border-[#E1E4EA] w-full max-w-[500px]">
+            <form onSubmit={handleSubmit} className="bg-white inter p-8 mt-3 rounded-2xl border border-[#E1E4EA] w-full max-w-[500px]">
                 <div className="space-y-3">
                     <h2 className="text-[28px] font-bold text-center text-[#292D32]">Welcome Back</h2>
                     <p className="text-center text-[16px] text-[#777F90]">Please create your password below.</p>

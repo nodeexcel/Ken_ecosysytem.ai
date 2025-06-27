@@ -97,7 +97,7 @@ export default function ResetPassword() {
 
     return (
         <div className="flex flex-col items-center overflow-auto h-screen bg-gray-50 p-3">
-            <div className="flex items-center gap-2 my-2">
+            <div className="flex items-center gap-2 py-[30px]">
                 <div>
                     <img src={header} alt="logo" className="" />
                 </div>

@@ -441,7 +441,7 @@ export default function Login() {
 
     return (
         <div className="flex flex-col overflow-auto items-center h-screen bg-[#F6F7F9] p-3">
-            <div className="flex items-center gap-2 my-2">
+            <div className="flex items-center gap-2 py-[30px]">
                 <div>
                     <img src={header} alt="logo" className="" />
                 </div>
@@ -453,10 +453,10 @@ export default function Login() {
 
                 {step !== "otp" && (
                     <>
-                        <div className="mt-2 mb-6 flex items-center gap-2">
-                            <span><hr className="text-[#E1E4EA] min-w-[201px]" /></span>
+                        <div className="mt-2 mb-6 flex items-center gap-2 w-full">
+                            <hr className="text-[#E1E4EA] w-[50%]" />
                             <div className="text-sm text-gray-500">OR</div>
-                            <hr className="text-[#E1E4EA] min-w-[201px]" />
+                            <hr className="text-[#E1E4EA] w-[50%]" />
                         </div>
                         {errors.google_auth && <p className="text-red-500 text-sm my-1 text-center">{errors.google_auth}</p>}
                         <button onClick={() => loginGoogle()} className="w-full flex cursor-pointer items-center font-[600] text-[#5A687C] text-[14px] justify-center border border-gray-300 py-[14px] rounded-[8px] hover:bg-gray-100 transition">
@@ -474,7 +474,7 @@ export default function Login() {
                 )}
             </div>
 
-            <p className="text-center inter font-[400] my-6 text-[#5A687C] text-[12px]">
+            <p className="text-center inter font-[400] py-6 text-[#5A687C] text-[12px]">
                 By signing in you agree to our{" "}
                 <span onClick={() => navigate("/terms-conditions")} className="underline text-[#675FFF] text-[12px] font-[600] cursor-pointer">
                     Terms and Conditions
