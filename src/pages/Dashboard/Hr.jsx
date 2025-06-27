@@ -48,8 +48,18 @@ function Hr() {
             if (response?.status === 200) {
                 if (response?.data?.success?.length === 0) {
                     setLoadingChatsList(false)
+                    setChatList([])
+                    setOpenChat(false)
                 } else {
                     const formatData = (response?.data?.success)
+                    if (!activeConversation) {
+                        const newChatActive = formatData.filter(element => {
+                            return !chatList.some(chat => chat.chat_id === element.chat_id);
+                        });
+                        if (newChatActive?.length > 0) {
+                            setActiveConversation(newChatActive[0].chat_id)
+                        }
+                    }
                     setChatList(formatData)
                     console.log(response?.data)
 
@@ -82,6 +92,9 @@ function Hr() {
             const response = await deleteHrChat(id)
             if (response?.status === 200) {
                 handleGetAccountChats()
+                if (id === activeConversation) {
+                    setOpenChat(false)
+                }
                 setActiveConversation("")
             }
         } catch (error) {
