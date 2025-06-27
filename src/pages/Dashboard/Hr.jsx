@@ -4,7 +4,7 @@ import rimaImg from "../../assets/svg/rima_logo.svg"
 import { useNavigate } from 'react-router-dom'
 import rimaMsgLogo from '../../assets/svg/rima_msg_logo.svg'
 import { v4 as uuidv4 } from 'uuid';
-import { deleteSeoChat, getSeoChatById, getSeoChats, updateSeoChatName } from '../../api/seoAgent'
+import { deleteHrChat, getHrChatById, getHrChats, updateHrChatName } from '../../api/hrAgent'
 import AgentChatBox from '../../components/AgentChatBox'
 
 function Hr() {
@@ -23,8 +23,8 @@ function Hr() {
     const [editData, setEditData] = useState({})
     const socketRef = useRef(null)
     const socket2Ref = useRef(null)
-    const newwebsocketurl = "ws://116.202.210.102:8000/new-seo-agent-chat"
-    const websocketurl = "ws://116.202.210.102:8000/seo-agent"
+    const newwebsocketurl = "ws://116.202.210.102:8000/new-hr-agent-chat"
+    const websocketurl = "ws://116.202.210.102:8000/hr-agent"
     const initialMessage = "Hello! I’m Rima, your HR assistant. \nI’m here to support you across all your HR needs, from recruiting and screening candidates to onboarding, managing interviews, and beyond.\nI can also help you with day-to-day HR topics like policy clarification, employee onboarding support, FAQ responses, and internal coordination.\nJust tell me what you need, whether it's hiring your next top talent or streamlining your HR processes. and I’ll take care of it. \nReady to simplify your HR tasks and save time? Let’s get started 😊"
 
 
@@ -44,7 +44,7 @@ function Hr() {
     const handleGetAccountChats = async () => {
         setLoadingChatsList(true)
         try {
-            const response = await getSeoChats()
+            const response = await getHrChats()
             if (response?.status === 200) {
                 if (response?.data?.success?.length === 0) {
                     setLoadingChatsList(false)
@@ -79,7 +79,7 @@ function Hr() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await deleteSeoChat(id)
+            const response = await deleteHrChat(id)
             if (response?.status === 200) {
                 handleGetAccountChats()
                 setActiveConversation("")
@@ -97,7 +97,7 @@ function Hr() {
         }
         try {
             setUpdateNameLoading(true)
-            const response = await updateSeoChatName(editData?.chat_id, { name })
+            const response = await updateHrChatName(editData?.chat_id, { name })
             if (response?.status === 200) {
                 setEditData({})
                 handleGetAccountChats()
@@ -114,7 +114,7 @@ function Hr() {
         setOpenChat(true)
         try {
             setLoadingChats(true)
-            const response = await getSeoChatById(id);
+            const response = await getHrChatById(id);
             console.log(response.data)
             if (response.status === 200) {
                 const data = await transformApiMessages(response?.data?.success)

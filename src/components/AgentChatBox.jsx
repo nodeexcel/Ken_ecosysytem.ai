@@ -84,6 +84,10 @@ const AgentChatBox = ({ listedProps }) => {
                 }
             }
             else {
+                socketRef.current = new WebSocket(`${newwebsocketurl}?token=${localStorage.getItem("token")}`)
+                socketRef.current.onopen = () => {
+                    socketRef.current.send(messageToSend)
+                }
                 console.warn('Second WebSocket not ready to send')
             }
 
@@ -138,6 +142,10 @@ const AgentChatBox = ({ listedProps }) => {
             }
             else {
                 console.warn('Second WebSocket not ready to send')
+                socket2Ref.current = new WebSocket(`${websocketurl}/${activeDropdown}?token=${localStorage.getItem("token")}`)
+                socket2Ref.current.onopen = () => {
+                    socket2Ref.current.send(messageToSend)
+                }
             }
 
             const agentMessage = {
@@ -288,34 +296,34 @@ const AgentChatBox = ({ listedProps }) => {
                                                 onClick={() => handleDropdownClick(index)}
                                                 className={`py-1 px-1 cursor-pointer relative hover:bg-[#fff] hover:rounded-sm ${activeConversation === conversation.chat_id && 'bg-[#fff] rounded-sm'}`}>
                                                 <ThreeDots />
-                                                {activeDropdown === index && (
-                                                    <div className="absolute right-0 mt-2 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[99999]">
-                                                        <div className="py-1">
+                                            </button>
+                                            {activeDropdown === index && (
+                                                <div className="absolute right-0 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[99999]">
+                                                    <div className="py-1">
+                                                        <button
+                                                            className="flex w-full group text-left cursor-pointer px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500]"
+                                                            onClick={() => {
+                                                                setEditData(conversation)
+                                                                setName(conversation?.name !== null ? conversation?.name : 'Accounting Chat')
+                                                                setActiveDropdown(null);
+                                                            }}
+                                                        >
+                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Rename</span> </div>
+                                                        </button>
+                                                        <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                                                        <div className='py-2'>
                                                             <button
-                                                                className="flex w-full group text-left cursor-pointer px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500]"
+                                                                className="flex w-full cursor-pointer text-left px-4 hover:rounded-lg py-2 text-sm text-red-600 hover:bg-[#F4F5F6] font-[500]"
                                                                 onClick={() => {
-                                                                    setEditData(conversation)
-                                                                    setName(conversation?.name !== null ? conversation?.name : 'Accounting Chat')
-                                                                    setActiveDropdown(null);
+                                                                    handleDelete(conversation.chat_id)
                                                                 }}
                                                             >
-                                                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Rename</span> </div>
+                                                                <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
                                                             </button>
-                                                            <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                                                            <div className='py-2'>
-                                                                <button
-                                                                    className="flex w-full cursor-pointer text-left px-4 hover:rounded-lg py-2 text-sm text-red-600 hover:bg-[#F4F5F6] font-[500]"
-                                                                    onClick={() => {
-                                                                        handleDelete(conversation.chat_id)
-                                                                    }}
-                                                                >
-                                                                    <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
-                                                                </button>
-                                                            </div>
                                                         </div>
                                                     </div>
-                                                )}
-                                            </button>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))}

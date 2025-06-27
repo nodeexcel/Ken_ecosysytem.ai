@@ -437,6 +437,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
     const timeSelectorRef = useRef()
     const [step, setStep] = useState(1)
     const [statusSteps, setStatusSteps] = useState({ step1: false, step2: false, step3: false })
+    const [accountSelect, setAccountSelect] = useState("")
 
     const [formData, setFormData] = useState({
         campaign_title: "",
@@ -452,8 +453,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
     const campaignObjectiveOptions = [{ label: "Promote an offer", key: "promote_an_offer" }, { label: "Inform / Educate", key: "inform_educate" }, { label: "Re-engage leads", key: "re_engage_leads" }, { label: "Announce a new feature", key: "announce_a_new_feature" }, { label: "Other", key: "other" }]
 
-    const ctaTypeOptions = [{ label: "Book a Meeting", key: "book_a_meeting" }, { label: "Purchase", key: "purchase" },
-    { label: "Visit a Page", key: "visit_a_page" }, { label: "Reply", key: "reply" }, { label: "Download", key: "download" }];
+    const ctaTypeOptions = [{ label: "Book a Meeting", key: "book_a_meeting" }, { label: "Send to a link", key: "send_to_a_link" }, { label: "Ask for a reply", key: "reply" }];
 
     const toneOptions = [{ label: "Professional", key: "professional" }, { label: "Friendly", key: "friendly" }, { label: "Storytelling", key: "storytelling" }, { label: "Provocation", key: "provocation" },
     { label: "Educational", key: "educational" }, { label: "Inspiring", key: "inspiring" }];
@@ -473,50 +473,60 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
     const validateForm = () => {
         const newErrors = {};
 
-        if (!formData.campaign_title.trim()) newErrors.campaign_title = "Campaign title is required.";
-        if (!formData.campaign_objective) newErrors.campaign_objective = "Campaign objective is required.";
 
-        if (formData.campaign_objective === 'other' && !formData.campaign_objective_other.trim()) {
-            newErrors.campaign_objective_other = "Please specify the objective.";
-        }
+        if (step === 1) {
+            if (!formData.campaign_title.trim()) newErrors.campaign_title = "Campaign title is required.";
+            if (!formData.campaign_objective) newErrors.campaign_objective = "Campaign objective is required.";
 
-        if (!formData.main_subject.trim()) newErrors.main_subject = "Main subject is required.";
-        if (!formData.cta_type) newErrors.cta_type = "CTA type is required.";
-        if (formData.cta_type === "book_a_meeting") {
-            if (!formData.calender_choosed) newErrors.calender_choosed = "Meeting Link is required.";
-        } else if (formData.cta_type === "purchase" || formData.cta_type === "visit_a_page") {
-            if (!formData.url.trim()) {
-                newErrors.url = "URL is required.";
-            } else if (!/^https?:\/\/\S+$/.test(formData.url)) {
-                newErrors.url = "Enter a valid URL (http:// or https://).";
+            if (formData.campaign_objective === 'other' && !formData.campaign_objective_other.trim()) {
+                newErrors.campaign_objective_other = "Please specify the objective.";
             }
-        } else if (formData.cta_type === "download") {
-            newErrors.file = "Upload a file is required."
+
+            if (!formData.main_subject.trim()) newErrors.main_subject = "Main subject is required.";
+            if (!formData.cta_type) newErrors.cta_type = "CTA type is required.";
+            if (formData.cta_type === "book_a_meeting") {
+                if (!formData.calender_choosed) newErrors.calender_choosed = "Meeting Link is required.";
+            } else if (formData.cta_type === "purchase" || formData.cta_type === "visit_a_page") {
+                if (!formData.url.trim()) {
+                    newErrors.url = "URL is required.";
+                } else if (!/^https?:\/\/\S+$/.test(formData.url)) {
+                    newErrors.url = "Enter a valid URL (http:// or https://).";
+                }
+            } else if (formData.cta_type === "download") {
+                newErrors.file = "Upload a file is required."
+            }
         }
 
-        if (!formData.desired_tone) newErrors.desired_tone = "Desired tone is required.";
-        if (!formData.language) newErrors.language = "Language is required.";
-        if (!formData.send_time_window) newErrors.send_time_window = "Send time window is required.";
 
-        if (!formData.start_date) {
-            newErrors.start_date = "Start date is required.";
-        } else if (!/^\d{4}-\d{2}-\d{2}$/.test(formData.start_date)) {
-            newErrors.start_date = "Start date must be in YYYY-MM-DD format.";
+        if (step === 2) {
+            if (!formData.desired_tone) newErrors.desired_tone = "Desired tone is required.";
+            if (!formData.language) newErrors.language = "Language is required.";
+            if (!formData.send_time_window) newErrors.send_time_window = "Send time window is required.";
+
+            if (!formData.start_date) {
+                newErrors.start_date = "Start date is required.";
+            } else if (!/^\d{4}-\d{2}-\d{2}$/.test(formData.start_date)) {
+                newErrors.start_date = "Start date must be in YYYY-MM-DD format.";
+            }
+
+            if (!Array.isArray(formData.frequency) || formData.frequency.length === 0) {
+                newErrors.frequency = "At least one frequency option must be selected.";
+            }
+
+            if (!Array.isArray(formData.list_of_target) || formData.list_of_target.length === 0) {
+                newErrors.list_of_target = "At least one Target option must be selected.";
+            }
         }
 
-        if (!Array.isArray(formData.frequency) || formData.frequency.length === 0) {
-            newErrors.frequency = "At least one frequency option must be selected.";
+
+        if (step === 3) {
+            if (!formData.text_length) newErrors.text_length = "Text length is required.";
+            if (!formData.product_or_service_feature.trim()) newErrors.product_or_service_feature = "Product/service to feature is required.";
+            if (!formData.custom_prompt.trim()) newErrors.custom_prompt = "Custom prompt is required when using AI brain.";
         }
 
-        if (!Array.isArray(formData.list_of_target) || formData.list_of_target.length === 0) {
-            newErrors.list_of_target = "At least one Target option must be selected.";
-        }
-
-        if (!formData.text_length) newErrors.text_length = "Text length is required.";
-        if (!formData.product_or_service_feature.trim()) newErrors.product_or_service_feature = "Product/service to feature is required.";
-        if (!formData.custom_prompt.trim()) newErrors.custom_prompt = "Custom prompt is required when using AI brain.";
-
-        return newErrors;
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     useEffect(() => {
@@ -636,6 +646,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                     campaign_objective: isCustomObjective ? 'other' : campaign.campaign_objective,
                     campaign_objective_other: isCustomObjective ? campaign.campaign_objective : '',
                 });
+                setStatusSteps({ step1: true, step2: true, step3: true })
             }
         } catch (error) {
             console.log(error)
@@ -663,12 +674,70 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
         }
     }
 
-    const handleSubmit = async (status) => {
-        const validationErrors = validateForm();
+    const handleContinue = (nextStep) => {
+        if (!validateForm()) {
+            return
+        } else {
+            setStatusSteps((prev) => ({ ...prev, [`step${step}`]: true }))
+            setStep(nextStep)
+        }
+    }
 
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            console.log("Validation errors:", validationErrors);
+
+    const handleCancel = (value) => {
+        switch (value) {
+            case 1:
+                setFormData({
+                    campaign_title: "",
+                    campaign_objective: "",
+                    campaign_objective_other: "",
+                    main_subject: "", cta_type: "", calender_choosed: "", url: "", file: "", list_of_target: [], desired_tone: "", language: "",
+                    send_time_window: "", start_date: "", frequency: [], include_branding: false, include_brainai: false,
+                    custom_prompt: "", text_length: "", product_or_service_feature: "", review: false, is_draft: false
+                })
+                setStatusSteps({ step1: false, step2: false, step3: false })
+                break;
+            case 2:
+                setFormData((prev) => ({
+                    ...prev, list_of_target: [], desired_tone: "", language: "",
+                    send_time_window: "", start_date: "", frequency: [], include_branding: false, include_brainai: false,
+                    custom_prompt: "", text_length: "", product_or_service_feature: "", review: false, is_draft: false
+                }))
+                setStep(1)
+                setStatusSteps((prev) => ({ ...prev, step2: false, step3: false }))
+                break;
+        }
+    }
+
+    const handleSelectSteps = (selectStep) => {
+        if (statusSteps[`step${selectStep}`]) {
+            setStep(selectStep)
+        } else if (!statusSteps.step1) {
+            validateForm()
+            setErrors((prev) => ({ ...prev, step1: "First Please Complete Campaign Basics Section" }))
+            setStep(1)
+        }
+        else if (!statusSteps.step2) {
+            validateForm()
+            setErrors((prev) => ({ ...prev, step2: "First Please Complete Targeting & Scheduling Section" }))
+            setStep(2)
+        } else {
+            setStep(selectStep)
+        }
+    }
+
+    useEffect(() => {
+        if (errors.step1 || errors.step2) {
+            setTimeout(() => {
+                setErrors((prev) => ({ ...prev, step1: "", step2: "" }))
+            }, 10000)
+        }
+
+    }, [errors])
+
+    const handleSubmit = async (status) => {
+        if (!validateForm()) {
+            console.log("Form validation failed", errors);
             return;
         }
 
@@ -701,14 +770,10 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
 
     const handleUpdate = async (status) => {
-        const validationErrors = validateForm();
-
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            console.log("Validation errors:", validationErrors);
+        if (!validateForm()) {
+            console.log("Form validation failed", errors);
             return;
         }
-
         console.log(formData, "formData")
         { status ? setUpdateSaveDraftStatus(true) : setUpdateStatus(true) }
         try {
@@ -876,7 +941,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                         {errors.url && <p className='my-1 text-[#FF3B30]'>{errors.url}</p>}
                     </div>
                 )
-            case "purchase":
+            case "send_to_a_link":
                 return (
                     <div>
                         <label className="block text-sm font-medium mb-1">URL</label>
@@ -884,12 +949,12 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                         {errors.url && <p className='my-1 text-[#FF3B30]'>{errors.url}</p>}
                     </div>
                 )
-            default:
-                return (
-                    <div>
-                        <button className="text-[#675FFF] text-md ">+ Call to action link</button>
-                    </div>
-                )
+            // default:
+            //     return (
+            //         <div>
+            //             <button className="text-[#675FFF] text-md ">+ Call to action link</button>
+            //         </div>
+            //     )
         }
     }
 
@@ -979,8 +1044,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
                         <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
                             <div className="flex justify-between items-center" onClick={() => {
-                                setStep(1)
-                                setStatusSteps((prev) => ({ ...prev, step1: false }))
+                                handleSelectSteps(1)
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 1 ? 'bg-[#675FFF]' : statusSteps.step1 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step1 ? <CheckIcon /> : '1'}</p>
@@ -1032,6 +1096,21 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                 </div>}
 
                                 <div>
+                                    <label className="block text-sm font-medium mb-1">Account</label>
+                                    <Dropdown
+                                        name="account"
+                                        options={[{ label: "Account 1", key: "account_1" }, { label: "Account 2", key: "account_2" }]}
+                                        value={accountSelect}
+                                        onChange={(updated) => {
+                                            setAccountSelect(updated)
+                                            setErrors((prev) => ({ ...prev, account: "" }))
+                                        }
+                                        }
+                                        placeholder="Select your connected emailing accounts"
+                                    />
+                                    {errors.account && <p className='my-1 text-[#FF3B30]'>{errors.account}</p>}
+                                </div>
+                                <div>
                                     <label className="block text-sm font-medium mb-1">CTA Type</label>
                                     <Dropdown
                                         name="cta_type"
@@ -1058,19 +1137,17 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
                                 <div className="flex items-center gap-2">
                                     <button onClick={() => {
-                                        setStatusSteps((prev) => ({ ...prev, step1: true }))
-                                        setStep(2)
+                                        handleContinue(2)
                                     }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
-                                    <button className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                                    <button onClick={() => handleCancel(1)} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
                                 </div>
                             </div>}
                         </div>
-
+                        {errors.step1 && <p className="text-red-500 text-sm mt-1">{errors.step1}</p>}
 
                         <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
                             <div className="flex justify-between items-center" onClick={() => {
-                                setStep(2)
-                                setStatusSteps((prev) => ({ ...prev, step2: false }))
+                                handleSelectSteps(2)
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 2 ? 'bg-[#675FFF]' : statusSteps.step2 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step2 ? <CheckIcon /> : '2'}</p>
@@ -1241,19 +1318,17 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
                                 <div className="flex items-center gap-2">
                                     <button onClick={() => {
-                                        setStatusSteps((prev) => ({ ...prev, step2: true }))
-                                        setStep(3)
+                                        handleContinue(3)
                                     }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
-                                    <button className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                                    <button onClick={() => handleCancel(2)} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
                                 </div>
                             </div>}
                         </div>
-
+                        {errors.step2 && <p className="text-red-500 text-sm mt-1">{errors.step2}</p>}
 
                         <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
                             <div className="flex justify-between items-center" onClick={() => {
-                                setStep(3)
-                                setStatusSteps((prev) => ({ ...prev, step3: false }))
+                                handleSelectSteps(3)
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 3 ? 'bg-[#675FFF]' : statusSteps.step3 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step3 ? <CheckIcon /> : '3'}</p>
