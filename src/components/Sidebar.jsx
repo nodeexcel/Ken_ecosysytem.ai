@@ -18,6 +18,7 @@ import { getNavbarData } from '../store/navbarSlice';
 import { SidebarBrainIcon, SidebarDocumentIcon, SidebarFourBoxIcon, SidebarHelpCenterIcon, SidebarNotificationIcon, SidebarSettingIcon } from '../icons/icons';
 import logo from '../assets/svg/dashboard_logo.svg'
 import { changeLanguage } from '../api/profile';
+import i18n from '../i18n';
 
 const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     const navigate = useNavigate()
@@ -60,6 +61,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
         try {
             const response = await changeLanguage({ language: lang })
             if (response?.status === 200) {
+                i18n.changeLanguage(lang);
                 setSelectedLang(lang);
                 setShowDropdown(false);
             }

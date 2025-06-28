@@ -289,7 +289,7 @@ const AgentChatBox = ({ listedProps }) => {
                                                 setActiveDropdown(null)
                                             }}
                                         >
-                                            <p className={`text-[14px] font-[400] group-hover:text-[#1E1E1E] ${activeConversation === conversation.chat_id ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{conversation.name === null ? `Accounting Chat` : conversation.name}</p>
+                                            <p className={`text-[14px] truncate font-[400] group-hover:text-[#1E1E1E] ${activeConversation === conversation.chat_id ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{conversation.name === null ? `Accounting Chat` : conversation.name}</p>
                                         </div>
                                         <div className="absolute right-2">
                                             <button
@@ -363,7 +363,7 @@ const AgentChatBox = ({ listedProps }) => {
                                                 className={`max-w-[70%] w-fit text-[12px] font-[400] p-3 ${!message.isUser ? "my-1 bg-[#F2F2F7] text-[#5A687C] rounded-b-[10px] rounded-r-[10px]" : "ml-auto my-1 bg-[#675FFF] text-[#fff] rounded-b-[10px] rounded-l-[10px]"
                                                     }`}
                                             >
-                                                <p className="text-[16px] truncate !whitespace-pre-wrap">{message.content}</p>
+                                                <p className="text-[16px] !whitespace-pre-wrap">{message.content}</p>
                                             </div>}
                                             {message.id !== "typing" && !message.isUser && <div className="my-1 flex items-center gap-1">
                                                 <Duplicate />

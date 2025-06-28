@@ -19,6 +19,7 @@ import sandroImg from '../../assets/svg/sandro.svg'
 import { logoutState } from "../../store/authSlice";
 import { discardData } from "../../store/profileSlice";
 import { logout } from "../../api/auth";
+import { useTranslation } from "react-i18next";
 
 const employees = [
   {
@@ -108,6 +109,7 @@ const Agents = () => {
   const navigate = useNavigate();
   const userDetails = useSelector((state) => state.profile);
   const dispatch = useDispatch()
+  const { t } = useTranslation();
 
   const handleNavigate = (path, label) => {
     if (path !== "") {
@@ -145,8 +147,8 @@ const Agents = () => {
       </div>
       {/* Top Right Button */}
       <div className="flex justify-end items-end pt-3 pr-2">
-        <button className="bg-white gap-2 rounded-lg flex items-center p-3 text-[#5A687C] border-[1.5px] border-[#E1E4EA] font-[600] text-[16px]">
-          <span><img src={image1} alt="image1" /></span>
+        <button className="gap-2 rounded-lg flex items-center p-3 text-[#5A687C] font-[600] text-[16px]">
+          {/* <span><img src={image1} alt="image1" /></span> */}
           Request new feature
           <div className="pb-0.5">
             <RequestSend />
@@ -156,7 +158,7 @@ const Agents = () => {
 
       {/* Welcome Message */}
       <div className="flex justify-center flex-col items-center text-center gap-2 pb-5">
-        <h1 className="font-[600] text-2xl">Welcome {userDetails?.user?.firstName}{" "}{userDetails?.user?.lastName !== null && userDetails?.user?.lastName}</h1>
+        <h1 className="font-[600] text-2xl">{t("welcome")} {userDetails?.user?.firstName}{" "}{userDetails?.user?.lastName !== null && userDetails?.user?.lastName}</h1>
         <p className="font-[400] text-[16px] text-[#5A687C]">
           Your AI agents are ready to boost your business.
         </p>

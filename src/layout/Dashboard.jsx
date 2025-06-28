@@ -8,6 +8,7 @@ import { loginSuccess } from '../store/authSlice';
 import Navbar from '../components/Navbar';
 import { getCountryData } from '../store/countryCodeSlice';
 import CountryList from 'country-list-with-dial-code-and-flag'
+import i18n from '../i18n';
 
 
 function Dashboard() {
@@ -83,6 +84,8 @@ function Dashboard() {
                     navigate("settings")
                 }
                 dispatch(getProfileData(response?.data))
+                i18n.changeLanguage(response?.data?.language);
+
             }
         } catch (error) {
             console.log(error)
