@@ -56,7 +56,7 @@ const ContactsPage = () => {
   const [addNewContact, setAddNewContact] = useState({
     firstName: '',
     lastName: '',
-    // phoneCode: selectedCountry.dial_code,
+    countryCode: selectedCountry.code,
     email: '',
     companyName: '',
   });
@@ -148,11 +148,12 @@ const ContactsPage = () => {
         setAddNewContact({
           firstName: '',
           lastName: '',
-          // phoneCode: '',
+          countryCode: '',
           phone: '',
           email: '',
           companyName: '',
         });
+        setSelectedCountry(countryData[240])
         getAllContacts();
       } else {
         console.log(response)
@@ -182,11 +183,12 @@ const ContactsPage = () => {
         setAddNewContact({
           firstName: '',
           lastName: '',
-          // phoneCode: '',
+          countryCode: '',
           phone: '',
           email: '',
           companyName: '',
         });
+        setSelectedCountry(countryData[240])
         setContactIsEdit("");
         getAllContacts();
       } else {
@@ -768,7 +770,7 @@ const ContactsPage = () => {
                                 setAddContactModal(true);
                                 const { countryCode, number } = extractPhoneDetails(contact.phone);
                                 setAddNewContact(({ ...contact, phone: number }))
-                                const filterCountry = countryData.filter((e) => e.dial_code == countryCode)
+                                const filterCountry = countryData.filter((e) => e.code === contact?.countryCode)
                                 setSelectedCountry(filterCountry[0])
                               }}>
                                 <Edit />
@@ -1265,11 +1267,12 @@ const ContactsPage = () => {
                 setAddNewContact({
                   firstName: '',
                   lastName: '',
-                  // phoneCode: '',
+                  countryCode: '',
                   phone: '',
                   email: '',
                   companyName: '',
                 });
+                setSelectedCountry(countryData[240])
                 setError({})
               }}
             >
@@ -1342,8 +1345,8 @@ const ContactsPage = () => {
                             key={country.code}
                             onClick={() => {
                               setSelectedCountry(country);
+                              setAddNewContact((prev) => ({ ...prev, countryCode: country.code }))
                               setIsOpen(false);
-                              // setAddNewContact((prev) => ({ ...prev, phoneCode: country.dial_code }));
                             }}
                             className={`flex px-2 gap-2 hover:bg-[#F4F5F6] hover:rounded-lg my-1 py-2 ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6] rounded-lg'} cursor-pointer flex items-center`}
                           >
@@ -1431,11 +1434,12 @@ const ContactsPage = () => {
                   setAddNewContact({
                     firstName: '',
                     lastName: '',
-                    // phoneCode: '',
+                    countryCode: '',
                     phone: '',
                     email: '',
                     companyName: '',
                   });
+                  setSelectedCountry(countryData[240])
                   setError({})
                 }}
                 className="w-full text-[16px] text-[#5A687C] bg-white border-[1.5px] border-[#E1E4EA] rounded-[8px] h-[38px]"

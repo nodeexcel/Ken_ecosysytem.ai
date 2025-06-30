@@ -1,1 +1,4 @@
-First Name,Last Name,Business Name,Company Name,Phone,Email,Created,Last Activity,Tags,Additional Emails,Additional Phones
+First Name,Last Name,Business Name,Company Name,Phone,Country Code,Email,Created,Last Activity,Tags,Additional Emails,Additional Phones
+Sophie,Lane,Social Boost Agency,Social Boost Inc.,+33123456789,FR,sophie.lane@socialboost.com,2024-10-15,2025-06-29,"Marketing,Lead",sophie.backup@socialboost.com,+33798765432
+David,Nguyen,Tech Hive Solutions,Tech Hive Ltd.,+14165551234,US,david.nguyen@techhive.com,2024-12-01,2025-06-30,"Tech,Client",david.alt@techhive.com,+14165559876
+Isabelle,Durand,Café Express,Café Express SARL,+33611223344,FR,isabelle@cafeexpress.fr,2025-01-20,2025-06-28,"Food,B2B",isabelle.office@cafeexpress.fr,+33644556677
