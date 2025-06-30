@@ -140,7 +140,11 @@ const ContactsPage = () => {
     try {
       const response = await newContactAdd({ ...addNewContact, phone: selectedCountry.dial_code + " " + addNewContact.phone })
       if (response?.status === 201) {
-        setAddContactModal(false);
+        setError((prev) => ({ ...prev, success: response?.data?.message }))
+        setTimeout(() => {
+          setAddContactModal(false);
+          setError({})
+        }, 3000)
         setAddNewContact({
           firstName: '',
           lastName: '',
@@ -152,9 +156,11 @@ const ContactsPage = () => {
         getAllContacts();
       } else {
         console.log(response)
+        setError((prev) => ({ ...prev, error: response?.data?.message || 'Network Connection Error' }))
       }
     } catch (error) {
       console.log(error)
+      setError((prev) => ({ ...prev, error: 'Network Connection Error' }))
     } finally {
       setLoading(false)
     }
@@ -168,7 +174,11 @@ const ContactsPage = () => {
     try {
       const response = await updateContact({ ...addNewContact, phone: selectedCountry.dial_code + " " + addNewContact.phone, contactId: contactIsEdit })
       if (response?.status === 200) {
-        setAddContactModal(false);
+        setError((prev) => ({ ...prev, success: response?.data?.message }))
+        setTimeout(() => {
+          setAddContactModal(false);
+          setError({})
+        }, 3000)
         setAddNewContact({
           firstName: '',
           lastName: '',
@@ -181,9 +191,11 @@ const ContactsPage = () => {
         getAllContacts();
       } else {
         console.log(response)
+        setError((prev) => ({ ...prev, error: response?.data?.message || 'Network Connection Error' }))
       }
     } catch (error) {
       console.log(error)
+      setError((prev) => ({ ...prev, error: "Network Connection Error" }))
     } finally {
       setLoading(false)
     }
@@ -280,7 +292,7 @@ const ContactsPage = () => {
     const newErrors = {};
 
     if (!formData.listName.trim()) newErrors.listName = "List name is required.";
-    if (!formData.description.trim()) newErrors.description = "Description is required.";
+    if (!formData.description) newErrors.description = "Description is required.";
     if (!formData.channel) newErrors.channel = "Channel is required.";
 
     setFormErrors(newErrors);
@@ -356,14 +368,19 @@ const ContactsPage = () => {
     try {
       const response = await updateList({ ...formData, listId: isEdit });
       if (response?.status === 200) {
+        setFormErrors((prev) => ({ ...prev, success: response?.data?.message }))
+        setTimeout(() => {
+          setFormErrors({})
+          setOpen(false);
+        }, 3000)
         handleGetLists();
-        setOpen(false);
         setIsEdit("");
       } else {
         console.log(response)
         setFormErrors((prev) => ({ ...prev, listName: response?.response?.data?.message }))
       }
     } catch (error) {
+      setFormErrors((prev) => ({ ...prev, error: response?.data?.message || 'Network Connection Error' }))
       console.log(error)
     } finally {
       setLoading(false)
@@ -448,7 +465,12 @@ const ContactsPage = () => {
     try {
       const response = await createContactList(formData);
       if (response?.status === 201) {
-        setOpen(false)
+        setFormErrors((prev) => ({ ...prev, success: response?.data?.message || 'Added Create List' }))
+        setTimeout(() => {
+          setFormErrors({})
+          setOpen(false);
+        }, 3000)
+        setFormData({ listName: '', description: '', channel: '' })
         handleGetLists();
       } else {
         console.log(response)
@@ -456,6 +478,7 @@ const ContactsPage = () => {
       }
     } catch (error) {
       console.log(error)
+      setFormErrors((prev) => ({ ...prev, error: response?.data?.message || 'Network Connection Error' }))
     } finally {
       setLoading(false)
 
@@ -1022,6 +1045,8 @@ const ContactsPage = () => {
               />
               {formErrors.channel && <p className="text-sm text-red-500">{formErrors.channel}</p>}
             </div>
+            {formErrors.success && <p className="text-sm text-green-500">{formErrors.success}</p>}
+            {formErrors.error && <p className="text-sm text-red-500">{formErrors.error}</p>}
 
             <div className="flex gap-2 mt-3">
               <button onClick={() => {
@@ -1384,6 +1409,12 @@ const ContactsPage = () => {
                 )}
               </div>
             </div>
+            {error.success && (
+              <p className="text-green-500 text-sm mt-1">{error.success}</p>
+            )}
+            {error.error && (
+              <p className="text-red-500 text-sm mt-1">{error.error}</p>
+            )}
             {/*
             {responseError && (
               <div className="mt-4 text-red-500 text-sm">
