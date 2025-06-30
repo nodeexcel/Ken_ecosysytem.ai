@@ -32,7 +32,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     const [isNotification, setIsNotification] = useState(false);
 
     const [showDropdown, setShowDropdown] = useState(false);
-    const [selectedLang, setSelectedLang] = useState('english');
+    const [selectedLang, setSelectedLang] = useState('en');
     const [modalStatus, setModalStatus] = useState(false);
     const noticationRef = useRef()
     const languageRef = useRef()
@@ -42,7 +42,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     //     fr: { label: 'French', flag: fr_flag }
     // };
 
-    const languagesOptions = [{ label: "ENG", flag: uk_flag, key: "english" }, { label: "FR", flag: fr_flag, key: "french" }]
+    const languagesOptions = [{ label: "ENG", flag: uk_flag, key: "en" }, { label: "FR", flag: fr_flag, key: "fr" }]
 
 
     useEffect(() => {

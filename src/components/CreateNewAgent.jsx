@@ -32,7 +32,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         // webpage_type: "",
         whatsapp_number: '',
         platform_unique_id: '',
-        google_calendar_id: ''
+        calendar_id: ''
     })
     const [loadingStatus, setLoadingStatus] = useState(true)
     const [dataRenderStatus, setDataRenderStatus] = useState(true)
@@ -105,10 +105,10 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 const data = response?.data?.google_calendar_info
                 if (data?.length > 0) {
                     const updatedFormat = data.map((e) => ({
-                        label: `${e.google_calendar_id.length > 30
-                            ? `${e.google_calendar_id.slice(0, 30)}...`
-                            : e.google_calendar_id}`,
-                        key: e.google_calendar_id
+                        label: `${e.calendar_id.length > 30
+                            ? `${e.calendar_id.slice(0, 30)}...`
+                            : e.calendar_id}`,
+                        key: e.calendar_id
                     }));
                     setGoogleCalendarData(updatedFormat)
                 } else {
@@ -190,8 +190,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             }
             if (formData.objective_of_the_agent === "book_call") {
                 if (formData.calendar_choosed === "google_calendar") {
-                    if (!formData.google_calendar_id) {
-                        newErrors.google_calendar_id = "Calendar Account must be chosen.";
+                    if (!formData.calendar_id) {
+                        newErrors.calendar_id = "Calendar Account must be chosen.";
                     }
                 }
             }
@@ -355,7 +355,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     // webpage_type: "",
                     whatsapp_number: '',
                     platform_unique_id: '',
-                    google_calendar_id: '',
+                    calendar_id: '',
                     prompt: ''
                 })
                 setStatusSteps({ step1: false, step2: false, step3: false })
@@ -372,7 +372,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     webpage_link: "",
                     whatsapp_number: '',
                     platform_unique_id: '',
-                    google_calendar_id: '',
+                    calendar_id: '',
                     prompt: ''
                 }))
                 setStep(1)
@@ -522,7 +522,11 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             const response = await updateAppointmentSetter(finalPayload)
             console.log(response)
             if (response.status === 200) {
-                setOpen(true)
+                setErrors((prev) => ({ ...prev, success: response?.data?.success }))
+                setTimeout(() => {
+                    setOpen(true)
+                    setErrors({})
+                }, 3000)
             } else {
                 setLoading(false)
                 if (response?.response?.data?.error) {
@@ -530,6 +534,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 }
             }
         } catch (error) {
+            setErrors((prev) => ({ ...prev, error: 'Network Error' }))
             console.log(error)
         } finally {
             setLoading(false)
@@ -554,7 +559,11 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             const response = await appointmentSetter(finalPayload)
             console.log(response)
             if (response.status === 200) {
-                setOpen(true)
+                setErrors((prev) => ({ ...prev, success: response?.data?.success }))
+                setTimeout(() => {
+                    setOpen(true)
+                    setErrors({})
+                }, 3000)
             } else {
                 setLoading(false)
                 if (response?.response?.data?.error) {
@@ -562,13 +571,14 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 }
             }
         } catch (error) {
+            setErrors((prev) => ({ ...prev, error: 'Network Error' }))
             console.log(error)
         } finally {
             setLoading(false)
         }
     }
 
-    const languagesOptions = [{ label: 'ENG', key: "eng" }, { label: 'FR', key: 'fr' }];
+    const languagesOptions = [{ label: 'ENG', key: "en" }, { label: 'FR', key: 'fr' }];
 
     const LanguageSelector = ({ value = [], onChange }) => {
 
@@ -741,22 +751,22 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
                                     <label className="font-medium text-[#1e1e1e] text-sm">Select Google Calendar Account</label>
                                     <SelectDropdown
-                                        name="google_calendar_id"
+                                        name="calendar_id"
                                         options={googleCalendarData}
-                                        value={formData.google_calendar_id}
+                                        value={formData.calendar_id}
                                         onChange={(updated) => {
                                             console.log(updated)
                                             setFormData((prev) => ({
                                                 ...prev,
-                                                google_calendar_id: updated,
+                                                calendar_id: updated,
                                             }))
-                                            setErrors((prev) => ({ ...prev, google_calendar_id: '' }))
+                                            setErrors((prev) => ({ ...prev, calendar_id: '' }))
                                         }}
                                         placeholder="Select"
                                         className="w-full"
                                         errors={errors}
                                     />
-                                    {errors.google_calendar_id && <p className="text-red-500 text-sm mt-1">{errors.google_calendar_id}</p>}
+                                    {errors.calendar_id && <p className="text-red-500 text-sm mt-1">{errors.calendar_id}</p>}
                                 </div>
                             }
                         </div>
@@ -1453,6 +1463,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                             </div>}
                         </div>
+                        {errors.success && <p className="text-green-500 text-sm mt-1">{errors.success}</p>}
+                        {errors.error && <p className="text-red-500 text-sm mt-1">{errors.error}</p>}
+
                         {step === 3 && <div className="flex items-center gap-2 py-3">
                             <button disabled={loading} onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()} className="bg-[#675FFF] w-[162px] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
                                 {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : updateAgentStatus ? "Update Agent" : " Create Agent"}

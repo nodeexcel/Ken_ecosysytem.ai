@@ -1,4 +1,5 @@
 import axios from 'axios';
+import i18n from '../i18n';
 
 /**
  * Axios instance configured for the application.
@@ -20,6 +21,8 @@ axiosInstance.interceptors.request.use(
     const token = localStorage.getItem('token');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
+      const currentLang = i18n.language
+      config.headers['Accept-Language'] = currentLang;
     }
     return config;
   },

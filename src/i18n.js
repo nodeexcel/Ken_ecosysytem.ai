@@ -9,7 +9,7 @@ i18n
     //   .use(i18nBackend)
     .use(initReactI18next)
     .init({
-        fallbackLng: 'english',
+        fallbackLng: 'en',
         // lng: getCurrentLang(),
         interpolation: {
             escapeValue: false,
