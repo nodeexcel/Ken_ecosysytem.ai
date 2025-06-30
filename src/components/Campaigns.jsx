@@ -1032,14 +1032,14 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
             </div> */}
 
             {/* Modal Overlay */}
-            <div className="w-full pt-4 pb-6 pr-4 flex flex-col justify-center">
+            <div className="w-full h-full pt-4 pb-6 pr-4 flex flex-col">
                 <h1 onClick={() => {
                     setNewCampaignStatus(false)
                     setIsEdit("")
                 }} className="text-[#5A687C] hover:text-[#5a687cdc] cursor-pointer font-[400] text-[14px]">{`Campaigns > `}{isEdit ? `${formData.campaign_title}` : 'New Campaign'}</h1>
                 <h1 className="text-[#1E1E1E] font-[600] text-[24px] mt-2 my-4">{isEdit ? 'Update' : 'Add'} New Campaign</h1>
 
-                <div className="w-full relative overflow-auto">
+                <div className="w-full h-full relative overflow-auto">
                     <div className="space-y-4">
 
                         <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">

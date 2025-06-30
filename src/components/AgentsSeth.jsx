@@ -21,6 +21,8 @@ function AgentsSeth() {
         getAppointementSetterData()
     }, [open])
 
+    const languagesOptions = [{ label: 'ENG', key: "eng" }, { label: 'FR', key: 'fr' }];
+
     const handleDropdownClick = (index) => {
         setActiveDropdown(activeDropdown === index ? null : index);
     };
@@ -124,9 +126,11 @@ function AgentsSeth() {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-[16px] text-[#5A687C] font-[400] text-start border-t-1 border-b-1 border-[#E1E4EA]">{item.agent_channel}</td>
-                                        <td className="px-6 py-4 text-[16px] text-[#5A687C] font-[400] text-start border-t-1 border-b-1 border-[#E1E4EA]">{item.agent_language.map((e, i) => {
-                                            return `${e}${i !== (item.agent_language.length - 1) ? ',' : ''}`
-                                        })}</td>
+                                        <td className="px-6 py-4 text-[16px] text-[#5A687C] font-[400] text-start border-t-1 border-b-1 border-[#E1E4EA]">{item.agent_language.map(lan => {
+                                            const found = languagesOptions?.length > 0 && languagesOptions.find(d => d.key === lan);
+                                            return found?.label
+                                        }).join(', ')
+                                        }</td>
                                         <td className="px-6 py-6 text-[16px] text-end flex justify-end gap-2 border-r-1 border-t-1 border-b-1 rounded-r-lg border-[#E1E4EA]">
                                             <div className='flex justify-center items-center gap-2'>
                                                 <p className={`${item.is_active ? "text-[#34C759] border-[#34C759] bg-[#EBF9EE]" : "text-[#FF9500] border-[#FF9500] bg-[#FFF4E6]"} px-2 py-1 text-[14px] font-[500] border rounded-full`}>

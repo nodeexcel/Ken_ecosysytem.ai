@@ -568,8 +568,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         }
     }
 
+    const languagesOptions = [{ label: 'ENG', key: "eng" }, { label: 'FR', key: 'fr' }];
+
     const LanguageSelector = ({ value = [], onChange }) => {
-        const languages = ['English', 'French', 'Spanish'];
 
         const toggleLanguage = (lang) => {
             const newSelection = value.includes(lang)
@@ -583,25 +584,25 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             <div className="bg-white rounded-lg shadow-lg">
                 <div className="max-h-60 overflow-auto">
                     <ul className="py-1 px-2 flex flex-col gap-1 my-1">
-                        {languages.map((lang) => (
+                        {languagesOptions.map((lang) => (
                             <li
                                 key={lang}
-                                onClick={() => toggleLanguage(lang)}
-                                className={`py-2 px-4 rounded-lg cursor-pointer flex items-center hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF] gap-2 ${value.includes(lang)
+                                onClick={() => toggleLanguage(lang.key)}
+                                className={`py-2 px-4 rounded-lg cursor-pointer flex items-center hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF] gap-2 ${value.includes(lang.key)
                                     ? 'bg-[#F4F5F6] rounded-lg text-[#675FFF]' : 'text-[#5A687C]'
                                     }`}
                             >
                                 <div
-                                    className={`w-4 h-4 rounded border flex items-center justify-center ${value.includes(lang)
+                                    className={`w-4 h-4 rounded border flex items-center justify-center ${value.includes(lang.key)
                                         ? 'border-[#675FFF] bg-[#675FFF]'
                                         : 'border-[#E1E4EA]'
                                         }`}
                                 >
-                                    {value.includes(lang) && (
+                                    {value.includes(lang.key) && (
                                         <span className="text-white text-xs">✓</span>
                                     )}
                                 </div>
-                                <span>{lang}</span>
+                                <span>{lang.label}</span>
                             </li>
                         ))}
                     </ul>
@@ -940,7 +941,10 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                 className={`w-full flex justify-between items-center mt-1 bg-white border ${errors.agent_language ? 'border-red-500' : 'border-[#e1e4ea]'} rounded-lg px-3 py-[7.5px] cursor-pointer text-[#5A687C] focus:outline-none focus:border-[#675FFF]`}
                                             >
                                                 <span className={`${formData.agent_language?.length > 0 ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`} >{formData.agent_language?.length > 0
-                                                    ? formData.agent_language.join(', ')
+                                                    ? formData.agent_language.map(lan => {
+                                                        const found = languagesOptions?.length > 0 && languagesOptions.find(d => d.key === lan);
+                                                        return found?.label;
+                                                    }).join(', ')
                                                     : 'Select Languages'}</span>
                                                 <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showLanguageSelector ? 'transform rotate-180' : ''}`} />
                                             </button>

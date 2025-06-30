@@ -149,7 +149,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         <div className='text-xl flex group hover:cursor-pointer justify-center relative py-4' onClick={handleNotification}>
                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarNotificationIcon status={renderColor(6)} /></div> <div className='hidden group-hover:block'><SidebarNotificationIcon status={true} /></div> </div>
                             <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[104px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                                <p className='font-[700]'>Notifications</p>
+                                <p className='font-[400]'>Notifications</p>
                             </div>
                         </div>
                         {isNotification && <Notification setNotification={setIsNotification} />}
@@ -157,13 +157,13 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-4' onClick={() => handleSelect(sidebarItems[0].id, sidebarItems[0].label)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarFourBoxIcon status={renderColor(0)} /></div> <div className='hidden group-hover:block'><SidebarFourBoxIcon status={true} /></div> </div>
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[84px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[700]'>Home</p>
+                            <p className='font-[400]'>Home</p>
                         </div>
                     </div>
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-4' onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarBrainIcon status={renderColor(1)} /></div> <div className='hidden group-hover:block'><SidebarBrainIcon status={true} /></div> </div>
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[89px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[700]'>Brain AI</p>
+                            <p className='font-[400]'>Brain AI</p>
                         </div>
                     </div>
                     <hr className='text-[#E1E4EA]' />
@@ -173,7 +173,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-4' onClick={() => handleSelect(sidebarItems[2].id, sidebarItems[2].label)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarSettingIcon status={renderColor(2)} /></div> <div className='hidden group-hover:block'><SidebarSettingIcon status={true} /></div> </div>
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[91px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[700]'>Settings</p>
+                            <p className='font-[400]'>Settings</p>
                         </div>
                     </div>
                     <div
@@ -198,20 +198,20 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                             </div>
                         )}
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[96px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[700]'>Language</p>
+                            <p className='font-[400]'>Language</p>
                         </div>
                     </div>
                     <hr className='text-[#E1E4EA]' />
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-4' onClick={() => handleSelect(sidebarItems[3].id, sidebarItems[3].label)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarDocumentIcon status={renderColor(3)} /></div> <div className='hidden group-hover:block'><SidebarDocumentIcon status={true} /></div> </div>
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[111px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[700]'>Documentation</p>
+                            <p className='font-[400]'>Documentation</p>
                         </div>
                     </div>
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-4' onClick={() => handleSelect(sidebarItems[4].id, sidebarItems[4].label)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarHelpCenterIcon status={renderColor(4)} /></div> <div className='hidden group-hover:block'><SidebarHelpCenterIcon status={true} /></div> </div>
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[93px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[700]'>Suppport</p>
+                            <p className='font-[400]'>Suppport</p>
                         </div>
                     </div>
                     {/* <div className='text-xl flex justify-center py-4' onClick={() => handleSelect(sidebarItems[5].id)}>
