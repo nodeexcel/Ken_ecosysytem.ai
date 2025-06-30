@@ -35,13 +35,14 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     const [selectedLang, setSelectedLang] = useState('english');
     const [modalStatus, setModalStatus] = useState(false);
     const noticationRef = useRef()
+    const languageRef = useRef()
 
     // const languages = {
     //     en: { label: 'English', flag: uk_flag,key:"" },
     //     fr: { label: 'French', flag: fr_flag }
     // };
 
-    const languagesOptions = [{ label: "English", flag: uk_flag, key: "english" }, { label: "French", flag: fr_flag, key: "french" }]
+    const languagesOptions = [{ label: "ENG", flag: uk_flag, key: "english" }, { label: "FR", flag: fr_flag, key: "french" }]
 
 
     useEffect(() => {
@@ -74,6 +75,16 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
         const handleClickOutside = (event) => {
             if (noticationRef.current && !noticationRef.current.contains(event.target)) {
                 setIsNotification(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (languageRef.current && !languageRef.current.contains(event.target)) {
+                setShowDropdown(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -146,7 +157,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                     </div>
                     <hr className='text-[#E1E4EA]' />
                     <div ref={noticationRef}>
-                        <div className='text-xl flex group hover:cursor-pointer justify-center relative py-4' onClick={handleNotification}>
+                        <div className={`text-xl flex ${!isNotification && 'group'} hover:cursor-pointer justify-center relative py-4`} onClick={handleNotification}>
                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarNotificationIcon status={renderColor(6)} /></div> <div className='hidden group-hover:block'><SidebarNotificationIcon status={true} /></div> </div>
                             <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[104px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
                                 <p className='font-[400]'>Notifications</p>
@@ -177,7 +188,8 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         </div>
                     </div>
                     <div
-                        className='relative group text-xl flex justify-center py-4 cursor-pointer'
+                        ref={languageRef}
+                        className={`relative ${!showDropdown && 'group'} text-xl flex justify-center py-4 cursor-pointer`}
                         onClick={toggleDropdown}
                     >
                         <img src={renderLangSrc()} alt={selectedLang} width={20} />
