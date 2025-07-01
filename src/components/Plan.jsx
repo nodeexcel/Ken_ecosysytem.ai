@@ -6,7 +6,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { CheckedCircle, EmptyCircle, OfferIcon } from "../icons/icons";
 import { SelectDropdown } from "./Dropdown";
 
-const CreditPopup = ({ onClose, onOpen, stripePromise, userDetails }) => {
+const CreditPopup = ({ t, onClose, onOpen, stripePromise, userDetails }) => {
   const staticCredits = [{ label: 500, value: "35€", priceId: import.meta.env.VITE_CREDITS_500_ID }, { label: 1000, value: "65€", priceId: import.meta.env.VITE_CREDITS_1000_ID }, { label: 2000, value: "110€", priceId: import.meta.env.VITE_CREDITS_2000_ID }]
   const [selectedCredit, setSelectedCredit] = useState(staticCredits[2]);
   const [loading, setLoading] = useState(false)
@@ -40,7 +40,7 @@ const CreditPopup = ({ onClose, onOpen, stripePromise, userDetails }) => {
             <div className="p-2 bg-[#335BFB1A] rounded-lg">
               <img src="/src/assets/svg/coins.svg" alt="" />
             </div>
-            <span className="text-[20px]  font-[600] ">Your credit</span>
+            <span className="text-[20px]  font-[600] "> {t("settings.tab_2_list.yours_credits")}</span>
           </div>
           <button
             onClick={onClose}
@@ -58,7 +58,7 @@ const CreditPopup = ({ onClose, onOpen, stripePromise, userDetails }) => {
         </div> */}
 
         <div className="mb-6">
-          <h3 className="text-[17px] font-[600]  my-4">Add credit</h3>
+          <h3 className="text-[17px] font-[600]  my-4"> {t("settings.tab_2_list.add_credits")}</h3>
           {/* <div className="relative mb-4">
             <input
               type="range"
@@ -109,7 +109,7 @@ const CreditPopup = ({ onClose, onOpen, stripePromise, userDetails }) => {
             <div key={each.value} className="my-3" onClick={() => setSelectedCredit(each)}>
               <div className={`flex justify-between items-center px-4 py-3 rounded-lg ${selectedCredit.value === each.value ? 'bg-[#675FFF]' : 'bg-[#F2F2F7]'}`}>
                 <div className={`${selectedCredit.value === each.value ? 'text-[#fff]' : 'text-[#1E1E1E]'} flex items-center gap-2 text-[17px] font-[600]`}>
-                  <h2>{each.label} credits = </h2>
+                  <h2>{each.label}  {t("settings.tab_2_list.credits")} = </h2>
                   <h2>{each.value}</h2>
                 </div>
                 {selectedCredit.value === each.value ? <CheckedCircle /> : <EmptyCircle />}
@@ -123,7 +123,7 @@ const CreditPopup = ({ onClose, onOpen, stripePromise, userDetails }) => {
             }}
             className="flex-1 py-2 my-4 px-4 border-[1.5px] font-[500] border-[#675FFF] rounded-lg text-[#675FFF]"
           >
-            Upgrade Plan
+            {t("settings.tab_2_list.upgrade_plan")}
           </button>
         </div>
 
@@ -132,10 +132,10 @@ const CreditPopup = ({ onClose, onOpen, stripePromise, userDetails }) => {
             onClick={onClose}
             className="flex-1 py-2 px-4 border border-[#5A687C] rounded-lg text-[#5A687C]"
           >
-            Cancel
+            {t("cancel")}
           </button>
           <button disabled={loading} onClick={handleAddCredits} className="flex-1 py-2 px-4 bg-[#675FFF] text-white rounded-lg">
-            {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : `Add ${selectedCredit.label} Credits`}
+            {loading ? <div className="flex items-center justify-center gap-2"><p> {t("processing")}</p><span className="loader" /></div> : `${t("settings.tab_2_list.add") + " " + selectedCredit.label + " " + t("settings.tab_2_list.credits")}`}
           </button>
         </div>
       </div>
@@ -143,7 +143,7 @@ const CreditPopup = ({ onClose, onOpen, stripePromise, userDetails }) => {
   );
 };
 
-const PlanManagementPopup = ({ onClose, onOpen, stripePromise }) => {
+const PlanManagementPopup = ({ t, onClose, onOpen, stripePromise }) => {
   const [activeTab, setActiveTab] = useState("annual");
   const [activePlan, setActivePlan] = useState("");
   const [planIndex, setPlanIndex] = useState();
@@ -155,132 +155,137 @@ const PlanManagementPopup = ({ onClose, onOpen, stripePromise }) => {
     annual: [
       {
         id: import.meta.env.VITE_PRO_PLAN,
-        name: "Pro",
+        name: `${t("settings.tab_2_list.pro")}`,
         key: "pro",
         svg: '/src/assets/svg/table.svg',
         price: "€97",
-        period: "/ month",
+        period: `/ ${t("settings.tab_2_list.month")}`,
         description:
-          "Built for independent professionals: coaches, freelancers and consultants.",
+          `${t("settings.tab_2_list.pro_content")}`,
         features: [
-          "10 000 credits per month",
-          "1 user",
-          "100MB of Knowledge",
-          "5 Integrations",
-          "Schedule tool runs",
-          "Live-chat support",
+          `10000 ${t("settings.tab_2_list.credits_per_month")}`,
+          `1 ${t("settings.tab_2_list.user")}`,
+          `100MB ${t("settings.tab_2_list.of_knowledge")}`,
+          `5 ${t("settings.tab_2_list.integrations")}`,
+          `${t("settings.tab_2_list.schedule_tool_runs")}`,
+          `${t("settings.tab_2_list.live_chat")}`,
         ],
         selected: true,
-        discount: "10% Off",
+        discount: `10% ${t("settings.tab_2_list.off")}`,
       },
       {
         id: import.meta.env.VITE_TEAM_PLAN,
-        name: "Team",
+        name: `${t("settings.tab_2_list.team")}`,
         key: "team",
         svg: '/src/assets/svg/house.svg',
         price: "€179",
-        period: "/ month",
-        description: "For teams working collaboratively.",
+        period: `/ ${t("settings.tab_2_list.month")}`,
+        description: `${t("settings.tab_2_list.team_content")}`,
         features: [
-          "100 000 credits per month",
-          "5 users",
-          "1GB of Knowledge",
-          "Full integrations",
-          "Single account per platform",
-          "Live-chat support",
+          `100 000 ${t("settings.tab_2_list.credits_per_month")}`,
+          `5 ${t("settings.tab_2_list.users")}`,
+          `1GB ${t("settings.tab_2_list.of_knowledge")}`,
+          `${t("settings.tab_2_list.full_integrations")}`,
+          `${t("settings.tab_2_list.single_account_per_platform")}`,
+          `${t("settings.tab_2_list.live_chat")}`,
         ],
-        discount: "10% Off",
+        discount: `10% ${t("settings.tab_2_list.off")}`,
       },
       {
         id: import.meta.env.VITE_BUSINESS_PLAN,
-        name: "Business",
+        name: `${t("settings.tab_2_list.business")}`,
         key: "business",
         svg: '/src/assets/svg/building.svg',
         price: "€279",
-        period: "/ month",
-        description: "For companies organized into functional departments.",
+        period: `/ ${t("settings.tab_2_list.month")}`,
+        description: `${t("settings.tab_2_list.business_content")}`,
         features: [
-          "300 000 credits per month",
-          "10 users",
-          "Full Integration Access",
-          "Multi-Account Mode",
-          "Activity Centre",
-          "5GB of Knowledge",
-          "Dedicated Slack channel",
+          `300 000 ${t("settings.tab_2_list.credits_per_month")}`,
+          `10 ${t("settings.tab_2_list.users")}`,
+          `${t("settings.tab_2_list.full_integrations_access")}`,
+          `${t("settings.tab_2_list.multi_account_mode")}`,
+          `${t("settings.tab_2_list.activity_center")}`,
+          `5GB ${t("settings.tab_2_list.of_knowledge")}`,
+          `${t("settings.tab_2_list.dedicated_slack_channel")}`,
         ],
       },
       {
-        name: "Enterprise",
+        name: `${t("settings.tab_2_list.enterprise")}`,
         svg: '/src/assets/svg/buildings.svg',
-        price: "Custom",
+        key: "enterprise",
+        price: `${t("settings.tab_2_list.custom")}`,
         description: "Best performance, support and security.",
         features: [
-          "Priority support SLAs",
-          "Advanced authentication (SSO, RBAC)",
-          "Support for multi-region",
-          "Premier Support SLGs",
+          `${t("settings.tab_2_list.priority_support")}`,
+          `${t("settings.tab_2_list.advanced_auth")}`,
+          `${t("settings.tab_2_list.support_for_multi_region")}`,
+          `${t("settings.tab_2_list.premium_support")}`
         ],
       },
     ],
     monthly: [
       {
-        name: "Pro",
+        name: `${t("settings.tab_2_list.pro")}`,
         svg: '/src/assets/svg/table.svg',
         price: "€107",
-        period: "/ month",
+        key: "pro",
+        period: `/ ${t("settings.tab_2_list.month")}`,
         description:
-          "Built for independent professionals: coaches, freelancers and consultants.",
+          `${t("settings.tab_2_list.pro_content")}`,
         features: [
-          "10 000 credits per month",
-          "1 user",
-          "100MB of Knowledge",
-          "5 Integrations",
-          "Schedule tool runs",
-          "Live-chat support",
+          `10000 ${t("settings.tab_2_list.credits_per_month")}`,
+          `1 ${t("settings.tab_2_list.user")}`,
+          `100MB ${t("settings.tab_2_list.of_knowledge")}`,
+          `5 ${t("settings.tab_2_list.integrations")}`,
+          `${t("settings.tab_2_list.schedule_tool_runs")}`,
+          `${t("settings.tab_2_list.live_chat")}`,
         ],
         selected: true,
       },
       {
-        name: "Team",
+        name: `${t("settings.tab_2_list.team")}`,
         svg: '/src/assets/svg/house.svg',
+        key: "team",
         price: "€199",
-        period: "/ month",
-        description: "For teams working collaboratively.",
+        period: `/ ${t("settings.tab_2_list.month")}`,
+        description: `${t("settings.tab_2_list.team_content")}`,
         features: [
-          "100 000 credits per month",
-          "5 users",
-          "1GB of Knowledge",
-          "Full integrations",
-          "Single account per platform",
-          "Live-chat support",
+          `100 000 ${t("settings.tab_2_list.credits_per_month")}`,
+          `5 ${t("settings.tab_2_list.users")}`,
+          `1GB ${t("settings.tab_2_list.of_knowledge")}`,
+          `${t("settings.tab_2_list.full_integrations")}`,
+          `${t("settings.tab_2_list.single_account_per_platform")}`,
+          `${t("settings.tab_2_list.live_chat")}`,
         ],
       },
       {
-        name: "Business",
+        name: `${t("settings.tab_2_list.business")}`,
         svg: '/src/assets/svg/building.svg',
+        key: "business",
         price: "€309",
-        period: "/ month",
-        description: "For companies organized into functional departments.",
+        period: `/ ${t("settings.tab_2_list.month")}`,
+        description: `${t("settings.tab_2_list.business_content")}`,
         features: [
-          "300 000 credits per month",
-          "10 users",
-          "Full Integration Access",
-          "Multi-Account Mode",
-          "Activity Centre",
-          "5GB of Knowledge",
-          "Dedicated Slack channel",
+          `300 000 ${t("settings.tab_2_list.credits_per_month")}`,
+          `10 ${t("settings.tab_2_list.users")}`,
+          `${t("settings.tab_2_list.full_integrations_access")}`,
+          `${t("settings.tab_2_list.multi_account_mode")}`,
+          `${t("settings.tab_2_list.activity_center")}`,
+          `5GB ${t("settings.tab_2_list.of_knowledge")}`,
+          `${t("settings.tab_2_list.dedicated_slack_channel")}`,
         ],
       },
       {
-        name: "Enterprise",
+        name: `${t("settings.tab_2_list.enterprise")}`,
         svg: '/src/assets/svg/buildings.svg',
-        price: "Custom",
+        key: "enterprise",
+        price: `${t("settings.tab_2_list.custom")}`,
         description: "Best performance, support and security.",
         features: [
-          "Priority support SLAs",
-          "Advanced authentication (SSO, RBAC)",
-          "Support for multi-region",
-          "Premier Support SLGs",
+          `${t("settings.tab_2_list.priority_support")}`,
+          `${t("settings.tab_2_list.advanced_auth")}`,
+          `${t("settings.tab_2_list.support_for_multi_region")}`,
+          `${t("settings.tab_2_list.premium_support")}`
         ],
       },
     ],
@@ -330,7 +335,7 @@ const PlanManagementPopup = ({ onClose, onOpen, stripePromise }) => {
             <div className="p-2 bg-[#335BFB1A] rounded-lg">
               <img src="/src/assets/svg/MangePlan.svg" alt="" />
             </div>
-            <span className="text-[16px] sm:text-[20px] font-[600] ">Manage Plan</span>
+            <span className="text-[16px] sm:text-[20px] font-[600] ">{t("settings.tab_2_list.manage_plan")}</span>
             <div className="flex gap-2 bg-[#F2F2F7] p-1 rounded-lg">
               <button
                 className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium ${activeTab === "annual"
@@ -339,7 +344,7 @@ const PlanManagementPopup = ({ onClose, onOpen, stripePromise }) => {
                   }`}
                 onClick={() => setActiveTab("annual")}
               >
-                Annual
+                {t("settings.tab_2_list.annual")}
               </button>
               <button
                 className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium ${activeTab === "monthly"
@@ -348,7 +353,7 @@ const PlanManagementPopup = ({ onClose, onOpen, stripePromise }) => {
                   }`}
                 onClick={() => setActiveTab("monthly")}
               >
-                Monthly
+                {t("settings.tab_2_list.monthly")}
               </button>
             </div>
           </div>
@@ -362,13 +367,13 @@ const PlanManagementPopup = ({ onClose, onOpen, stripePromise }) => {
           </div>
           <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <button className="text-[#1E1E1E] text-[14px] font-[400]">
-              Manage payment method
+              {t("settings.tab_2_list.manage_payment_method")}
             </button>
             <button onClick={() => {
               onClose()
               onOpen()
             }} className="text-[#FF3B30] text-[14px] font-[400]">
-              Cancel Subscription
+              {t("settings.tab_2_list.cancel_subscription")}
             </button>
           </div>
         </div>
@@ -407,16 +412,16 @@ const PlanManagementPopup = ({ onClose, onOpen, stripePromise }) => {
                 onClick={() => handlePayment(plan.id)}
                 className={`w-full py-2 px-3 rounded-lg mb-4 text-[13px] sm:text-sm ${(plan.key === userDetails?.subscriptionType || index < planIndex)
                   ? "bg-gray-100 text-gray-700"
-                  : plan.name === "Enterprise"
+                  : plan.key === "enterprise"
                     ? "border border-[#5E54FF] text-[#5E54FF]"
                     : "bg-[#5E54FF] text-white"
                   }`}
               >
                 {plan.key === userDetails?.subscriptionType
-                  ? "Selected"
-                  : plan.name === "Enterprise"
-                    ? "Get a Quote"
-                    : "Upgrade"}
+                  ? `${t("settings.tab_2_list.selected")}`
+                  : plan.key === "enterprise"
+                    ? `${t("settings.tab_2_list.get_a_quote")}`
+                    : `${t("settings.tab_2_list.upgrade")}`}
               </button>
               <div className="space-y-2.5">
                 {plan.features.map((feature, idx) => (
@@ -434,17 +439,17 @@ const PlanManagementPopup = ({ onClose, onOpen, stripePromise }) => {
   );
 };
 
-const CancelSubscriptionPopup = ({ onClose }) => {
+const CancelSubscriptionPopup = ({ t, onClose }) => {
   const [initialTab, setInitailTab] = useState(true)
   const [selectedData, setSelectedData] = useState()
-  const options = [{ label: "Too expensive", key: "too_expensive" }, { label: "Not enough value", key: "not_enough_value" }, { label: "Other", key: "other" }]
+  const options = [{ label: `${t("settings.tab_2_list.too_expensive")}`, key: "too_expensive" }, { label: `${t("settings.tab_2_list.not_enough_value")}`, key: "not_enough_value" }, { label: `${t("settings.tab_2_list.other")}`, key: "other" }]
   const [otherIssue, setOtherIssue] = useState("")
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
       {initialTab ? <div className="bg-white rounded-xl p-4 sm:p-8 max-w-[590px] max-h-[90%] overflow-auto relative">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <span className="text-[20px] text-[#1E1E1E] font-[600] ">Cancel Subscription</span>
+            <span className="text-[20px] text-[#1E1E1E] font-[600] ">{t("settings.tab_2_list.cancel_subscription")}</span>
           </div>
           <button
             onClick={onClose}
@@ -464,23 +469,23 @@ const CancelSubscriptionPopup = ({ onClose }) => {
               <p className="text-white  font-[700] text-[40.26px] rotate-180 [writing-mode:vertical-rl]">off</p>
             </div>
           </div>
-          <h3 className="text-[17px] font-[600] ">We’re sorry to see you go! </h3>
-          <h2 className="text-[14px] text-center text-[#5A687C] font-[400]">Final chance to stay! We’re offering a <span className="text-[#675FFF]">lifetime 50% discount</span>—a one-time deal! Pay just €48.50/month for Starter (save €48.50/month forever) and continue boosting your sales with our AI agents. This offer expires in 48 hours. Still want to cancel?</h2>
+          <h3 className="text-[17px] font-[600] ">{t("settings.tab_2_list.were_sorry")} </h3>
+          <h2 className="text-[14px] text-center text-[#5A687C] font-[400]">{t("settings.tab_2_list.final_chance")}  <span className="text-[#675FFF]">{t("settings.tab_2_list.life_time")}  50% {t("settings.tab_2_list.discount")} </span>{t("settings.tab_2_list.one_time_deal")} </h2>
         </div>
 
         <div className="flex flex-col gap-3">
-          <h2 className="text-[18px] text-[#1E1E1E] font-[600] ">Pricing Impact</h2>
+          <h2 className="text-[18px] text-[#1E1E1E] font-[600] ">{t("settings.tab_2_list.price_impact")} </h2>
           <div className="border border-[#E1E4EA] rounded-lg p-2 flex flex-col gap-2">
             <div className="flex justify-between items-center">
               <div>
                 <img src='/src/assets/svg/house.svg' alt="" className="w-8 h-8 object-contain" />
               </div>
-              <p className="rounded-lg text-[#34C759] bg-[#EBF9EE] p-2">50% Off</p>
+              <p className="rounded-lg text-[#34C759] bg-[#EBF9EE] p-2">50% {t("settings.tab_2_list.off")} </p>
             </div>
             <div className="flex flex-col gap-2">
-              <h2 className="text-[#675FFF] font-[600] text-[18px]">Starter</h2>
-              <p className="text-[#1E1E1E] font-[600] text-[16px]">€97 → €48.50/month</p>
-              <p className="text-[#5A687C] font-[400] text-[14px]">saving €48.50/month indefinitely</p>
+              <h2 className="text-[#675FFF] font-[600] text-[18px]">{t("settings.tab_2_list.starter")} </h2>
+              <p className="text-[#1E1E1E] font-[600] text-[16px]">€97 → €48.50/{t("settings.tab_2_list.month")} </p>
+              <p className="text-[#5A687C] font-[400] text-[14px]">{t("settings.tab_2_list.saving")}  €48.50/{t("settings.tab_2_list.month")}  indefinitely</p>
             </div>
 
           </div>
@@ -488,19 +493,19 @@ const CancelSubscriptionPopup = ({ onClose }) => {
 
         <div className="flex gap-4 mt-5">
           <button className="flex-1 py-2 px-4 bg-[#675FFF] text-white rounded-lg">
-            Accept Discount & Stay
+            {t("settings.tab_2_list.accept_discount")}
           </button>
           <button
             onClick={() => setInitailTab(false)}
             className="flex-1 py-2 px-4 border border-[#FF3B30] rounded-lg text-[#FF3B30]"
           >
-            No, I still want to cancel
+            {t("settings.tab_2_list.no_i_cancel")}
           </button>
         </div>
       </div> : <div className="bg-white rounded-xl p-4 sm:p-8 max-w-[590px] max-h-[90%] overflow-auto relative">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <span className="text-[20px] text-[#1E1E1E] font-[600] ">Cancel Subscription</span>
+            <span className="text-[20px] text-[#1E1E1E] font-[600] ">{t("settings.tab_2_list.cancel_subscription")}</span>
           </div>
           <button
             onClick={onClose}
@@ -521,13 +526,13 @@ const CancelSubscriptionPopup = ({ onClose }) => {
             </div>
           </div>
 
-          <h3 className="text-[17px] font-[600] ">We’re sorry to see you go! </h3>
-          <h2 className="text-[14px] text-center text-[#5A687C] font-[400]">Your credits will be revoked immediately, even before the end of your billing period. Feel free to return anytime—we’d welcome you back! Confirm your cancellation below.</h2>
+          <h3 className="text-[17px] font-[600] ">{t("settings.tab_2_list.were_sorry")} </h3>
+          <h2 className="text-[14px] text-center text-[#5A687C] font-[400]">{t("settings.tab_2_list.yours_credits_will")}</h2>
         </div>
 
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-2">
-            <label className="text-[14px] font-[500] mb-1">Why are you cancelling?</label>
+            <label className="text-[14px] font-[500] mb-1">{t("settings.tab_2_list.why_are_you_cancelling")}</label>
             <SelectDropdown
               name="cancel_plan"
               options={options}
@@ -535,13 +540,13 @@ const CancelSubscriptionPopup = ({ onClose }) => {
               onChange={(updated) => {
                 setSelectedData(updated)
               }}
-              placeholder="Select"
+              placeholder={t("select")}
               className=""
             />
           </div>
           {selectedData === "other" && <div>
-            <label className="text-[14px] font-[500]">Reason</label>
-            <textarea className="mt-1 w-full rounded-lg resize-none border border-[#E1E4EA] p-2 text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none" placeholder="Enter Reason" rows={3} value={otherIssue} onChange={(e) => setOtherIssue(e.target.value)} />
+            <label className="text-[14px] font-[500]">{t("settings.tab_2_list.reason")}</label>
+            <textarea className="mt-1 w-full rounded-lg resize-none border border-[#E1E4EA] p-2 text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none" placeholder={t("settings.tab_2_list.reason_placeholder")} rows={3} value={otherIssue} onChange={(e) => setOtherIssue(e.target.value)} />
           </div>}
         </div>
 
@@ -550,10 +555,10 @@ const CancelSubscriptionPopup = ({ onClose }) => {
             onClick={onClose}
             className="flex-1 p-2 text-center bg-[#FF3B30] rounded-lg text-[#fff]"
           >
-            Confirm Cancellation
+            {t("settings.tab_2_list.confirm_cancel")}
           </button>
           <button onClick={onClose} className="flex-1 w-full text-center p-2 bg-trasparent border border-[#5A687C] text-[#5A687C] rounded-lg">
-            I’ve changed my mind—I’ll stay
+            {t("settings.tab_2_list.i_changed_my_mind")}
           </button>
         </div>
       </div>}
@@ -561,7 +566,7 @@ const CancelSubscriptionPopup = ({ onClose }) => {
   )
 }
 
-const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
+const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
   const [showCreditPopup, setShowCreditPopup] = useState(false);
   const [cancelPopup, setCancelPopup] = useState(false);
   const [roleSelect, setRoleSelect] = useState("All");
@@ -603,32 +608,32 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
   ];
   const role = useSelector((state) => state.profile.user.role)
 
-  const roleOptions = [{ label: "All", key: "All" }, { label: "Admin", key: "Admin" }, { label: "Member", key: "Member" }, { label: "Guest", key: "Guest" }]
-  const pastMonthOptions = [{ label: "Past 6 Months", key: 6 }, { label: "Past 3 Months", key: 3 }, { label: "Past 2 Months", key: 2 }]
+  const roleOptions = [{ label: `${t("settings.tab_3_list.all")}`, key: "All" }, { label: `${t("settings.tab_3_list.admin")}`, key: "Admin" }, { label: `${t("settings.tab_3_list.member")}`, key: "Member" }, { label: `${t("settings.tab_3_list.guest")}`, key: "Guest" }]
+  const pastMonthOptions = [{ label: `${t("settings.tab_2_list.past_6_months")}`, key: 6 }, { label: `${t("settings.tab_2_list.past_3_months")}`, key: 3 }, { label: `${t("settings.tab_2_list.past_2_months")}`, key: 2 }]
 
   return (
     <div className="py-2 pr-4 w-full">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h1 className="text-[20px] sm:text-[24px] font-semibold">
-          Plan &amp; Billing
+          {t("settings.tab_2")}
         </h1>
         <button
           onClick={() => setShowPlanPopup(true)}
           className="w-full sm:w-auto px-4 py-2 text-[#5E54FF] text-[16px]  border border-[#5E54FF] hover:bg-indigo-50 rounded-lg"
         >
-          Manage Plan
+          {t("settings.tab_2_list.manage_plan")}
         </button>
       </div>
 
       {showPlanPopup && (
-        <PlanManagementPopup onClose={() => setShowPlanPopup(false)} onOpen={() => setCancelPopup(true)} stripePromise={stripePromise} />
+        <PlanManagementPopup t={t} onClose={() => setShowPlanPopup(false)} onOpen={() => setCancelPopup(true)} stripePromise={stripePromise} />
       )}
       {showCreditPopup && (
-        <CreditPopup onClose={() => setShowCreditPopup(false)} onOpen={() => setShowPlanPopup(true)} stripePromise={stripePromise} userDetails={userDetails} />
+        <CreditPopup t={t} onClose={() => setShowCreditPopup(false)} onOpen={() => setShowPlanPopup(true)} stripePromise={stripePromise} userDetails={userDetails} />
       )}
       {cancelPopup && (
-        <CancelSubscriptionPopup onClose={() => setCancelPopup(false)} />
+        <CancelSubscriptionPopup t={t} onClose={() => setCancelPopup(false)} />
       )}
 
 
@@ -643,7 +648,7 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
               <div className="">
                 <img src="/src/assets/svg/plan.svg" alt="" />
               </div>
-              <span className="text-[16px] font-[600]   ">Plan</span>
+              <span className="text-[16px] font-[600]   "> {t("settings.tab_2_list.plan")}</span>
             </div>
             <button className="text-gray-400 hover:text-gray-600 cursor-pointer bg-[#F2F2F7] rounded-lg px-2 py-2"
               onClick={() => setShowCreditPopup(true)}
@@ -651,12 +656,12 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
               <img src="/src/assets/svg/planedit.svg" alt="" />
             </button>
           </div>
-          <h1 className=" mb-2 text-sm font-[400]  text-[#5A687C] " >Available Credits</h1>
+          <h1 className=" mb-2 text-sm font-[400]  text-[#5A687C] " > {t("settings.tab_2_list.available_credits")}</h1>
           <div className="flex items-center gap-2">
             <span className="text-[24px] font-[600]  ">{teamMembersData?.credits}</span>
             <button onClick={() => setShowCreditPopup(true)} className="px-2 rounded-[5px] py-2 text-[14px] flex items-center gap-1 bg-[#335BFB1A] text-[#675FFF] font-[600] ">
               <img src="/src/assets/svg/add.svg" alt="" />
-              <span>Add Credits</span>
+              <span> {t("settings.tab_2_list.add_credits")}</span>
             </button>
           </div>
         </div>
@@ -668,17 +673,17 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
               <div className="">
                 <img src="/src/assets/svg/payment.svg" alt="" />
               </div>
-              <span className="font-medium">Payment</span>
+              <span className="font-medium"> {t("settings.tab_2_list.payment")}</span>
             </div>
             <button onClick={() => setActiveSidebarItem("transaction-history")} className="text-[#5E54FF] font-[600] text-sm hover:underline flex items-center gap-2 ">
-              View Details{" "}
+              {t("settings.tab_2_list.view_details")}{" "}
               <span>
                 <img src="/src/assets/svg/details.svg" alt="" />
               </span>
             </button>
           </div>
           <div className="inline-block w-fit px-4 py-2 bg-green-50 text-[#34C759] font-[600] rounded-lg text-sm">
-            Pay By Invoice
+            {t("settings.tab_2_list.pay_by_invoice")}
           </div>
         </div>
 
@@ -689,11 +694,11 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
               <div className="">
                 <img src="/src/assets/svg/members.svg" alt="" />
               </div>
-              <span className="font-medium">Member Seats</span>
+              <span className="font-medium"> {t("settings.tab_2_list.members_seats")}</span>
             </div>
             <button className="text-[#5E54FF] font-[600] text-sm hover:underline flex items-center gap-1 ">
               <img src="/src/assets/svg/add.svg" alt="" />
-              Add Seats{" "}
+              {t("settings.tab_2_list.add_seats")}{" "}
             </button>
           </div>
           <div className="flex flex-col gap-2">
@@ -707,7 +712,7 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
       <div className="bg-white rounded-xl  border border-[#E1E4EA] p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <h2 className="text-[20px] sm:text-[24px] font-[600] ">
-            Credit used
+            {t("settings.tab_2_list.credits_used")}
           </h2>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
             <SelectDropdown
@@ -718,7 +723,7 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
                 setRoleSelect(updated)
               }}
               placeholder="Select"
-              className="w-[115px]"
+              className="w-[155px]"
             />
             <SelectDropdown
               name="past_month"
@@ -733,7 +738,7 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
             <div className="flex items-center px-3 gap-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-[8px] py-[8px]">
               <img src="/src/assets/svg/refresh.svg" alt="" />
               <button className="text-[16px] cursor-pointer text-[#5A687C]">
-                Refresh
+                {t("refresh")}
               </button>
             </div>
           </div>
@@ -745,19 +750,19 @@ const Plan = ({ teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPla
             <thead>
               <tr className="text-left text-gray-600">
                 <th className="pb-6 pr-8 text-[16px]  font-[400] text-[#5A687C]">
-                  Item
+                  {t("settings.tab_2_list.item")}
                 </th>
                 <th className="pb-6 px-8 text-[16px] text-nowrap  font-[400] text-[#5A687C] flex items-center gap-2">
-                  Credit{" "}
+                  {t("settings.tab_2_list.credit")}{" "}
                   <span>
                     <img src="/src/assets/svg/credit.svg" alt="" />
                   </span>
                 </th>
                 <th className="pb-6 px-8 text-[16px] text-nowrap  font-[400] text-[#5A687C]">
-                  Used By
+                  {t("settings.tab_2_list.used_by")}
                 </th>
                 <th className="pb-6 pl-8 text-[16px]  font-[400] text-[#5A687C]">
-                  Date And Time
+                  {t("settings.tab_2_list.date_time")}
                 </th>
               </tr>
             </thead>

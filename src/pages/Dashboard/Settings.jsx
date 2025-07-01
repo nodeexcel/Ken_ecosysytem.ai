@@ -471,7 +471,7 @@ const SettingsPage = () => {
     if (activeSidebarItem === "billing") {
       return (
         <div className="flex py-3 pr-4 flex-col w-full gap-6">
-          <Plan teamMembersData={teamMembersData} setActiveSidebarItem={setActiveSidebarItem} showPlanPopup={showPlanPopup} setShowPlanPopup={setShowPlanPopup} />
+          <Plan t={t} teamMembersData={teamMembersData} setActiveSidebarItem={setActiveSidebarItem} showPlanPopup={showPlanPopup} setShowPlanPopup={setShowPlanPopup} />
         </div>
       );
     }
