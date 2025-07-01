@@ -21,88 +21,7 @@ import { discardData } from "../../store/profileSlice";
 import { logout } from "../../api/auth";
 import { useTranslation } from "react-i18next";
 
-const employees = [
-  {
-    name: "Tara",
-    role: "COO",
-    gradient: "bg-gradient-to-br from-[#CEBFFD] to-[#CEBFFD]",
-    path: "/dashboard/coo",
-    label: "Tara",
-    image: taraImg,
-  },
-  {
-    name: "Constance",
-    role: "Content Creation",
-    gradient: "bg-gradient-to-br from-[#F8DDFF] to-[#F8DDFF]",
-    path: "",
-    label: "",
-    image: constanceImg
-  },
-  {
-    name: "Tom",
-    role: "Phone Outreach",
-    gradient: "bg-gradient-to-br from-[#DBE5FF] to-[#DBE5FF]",
-    path: "/dashboard/phone",
-    label: "Tom & Rebecca, Phone",
-    image: tomImg
-  },
-  {
-    name: "Seth",
-    role: "Appointment Setter",
-    gradient: "bg-gradient-to-br from-[#FFE4C5] to-[#FFE4C5]",
-    path: "/dashboard/appointment-setter",
-    label: "Seth, Appointment Setter",
-    image: sethImg
-  },
-  {
-    name: "Calina",
-    role: "Customer Support",
-    gradient: "bg-gradient-to-br from-[#E3F6ED] to-[#E3F6ED]",
-    path: "",
-    label: "",
-    image: calinaImg
-  },
-  {
-    name: "Rebecca",
-    role: "Receptionist",
-    gradient: "bg-gradient-to-br from-[#DBE5FF] to-[#DBE5FF]",
-    path: "/dashboard/phone",
-    label: "Rebecca",
-    image: rebeccaImg
-  },
-  {
-    name: "Emile",
-    role: "Emailing",
-    gradient: "bg-gradient-to-br from-[#CEBFFD] to-[#CEBFFD]",
-    path: "/dashboard/campaigns",
-    label: "Emailing",
-    image: emileImg
-  },
-  {
-    name: "Rima",
-    role: "HR",
-    gradient: "bg-gradient-to-br from-[#FFE4C5] to-[#FFE4C5]",
-    path: "/dashboard/hr",
-    label: "Rima",
-    image: assiaImg
-  },
-  {
-    name: "Finn",
-    role: "Accounting",
-    gradient: "bg-gradient-to-br from-[#E3F6ED] to-[#E3F6ED]",
-    path: "/dashboard/accounting",
-    label: "Accounting",
-    image: finnImg
-  },
-  {
-    name: "Sandro",
-    role: "SEO",
-    gradient: "bg-gradient-to-br from-[#F8DDFF] to-[#F8DDFF]",
-    path: "/dashboard/seo",
-    label: "Sandro",
-    image: sandroImg
-  },
-];
+
 
 const Agents = () => {
 
@@ -110,6 +29,90 @@ const Agents = () => {
   const userDetails = useSelector((state) => state.profile);
   const dispatch = useDispatch()
   const { t } = useTranslation();
+
+
+  const employees = [
+  {
+    name: "Tara",
+    role: `${t("coo")}`,
+    gradient: "bg-gradient-to-br from-[#CEBFFD] to-[#CEBFFD]",
+    path: "/dashboard/coo",
+    label: "Tara",
+    image: taraImg,
+  },
+  {
+    name: "Constance",
+    role: `${t("content_creation")}`,
+    gradient: "bg-gradient-to-br from-[#F8DDFF] to-[#F8DDFF]",
+    path: "",
+    label: "",
+    image: constanceImg
+  },
+  {
+    name: "Tom",
+    role: `${t("phone_outreach")}`,
+    gradient: "bg-gradient-to-br from-[#DBE5FF] to-[#DBE5FF]",
+    path: "/dashboard/phone",
+    label: "Tom & Rebecca, Phone",
+    image: tomImg
+  },
+  {
+    name: "Seth",
+    role: `${t("appointment_setter")}`,
+    gradient: "bg-gradient-to-br from-[#FFE4C5] to-[#FFE4C5]",
+    path: "/dashboard/appointment-setter",
+    label: "Seth, Appointment Setter",
+    image: sethImg
+  },
+  {
+    name: "Calina",
+    role:   `${t("customer_support")}`,
+    gradient: "bg-gradient-to-br from-[#E3F6ED] to-[#E3F6ED]",
+    path: "",
+    label: "",
+    image: calinaImg
+  },
+  {
+    name: "Rebecca",
+    role:   `${t("receptionist")}`,
+    gradient: "bg-gradient-to-br from-[#DBE5FF] to-[#DBE5FF]",
+    path: "/dashboard/phone",
+    label: "Rebecca",
+    image: rebeccaImg
+  },
+  {
+    name: "Emile",
+    role:   `${t("emailing")}`,
+    gradient: "bg-gradient-to-br from-[#CEBFFD] to-[#CEBFFD]",
+    path: "/dashboard/campaigns",
+    label: "Emailing",
+    image: emileImg
+  },
+  {
+    name: "Rima",
+    role:   `${t("hr")}`,
+    gradient: "bg-gradient-to-br from-[#FFE4C5] to-[#FFE4C5]",
+    path: "/dashboard/hr",
+    label: "Rima",
+    image: assiaImg
+  },
+  {
+    name: "Finn",
+    role: `${t("accouting")}`,
+    gradient: "bg-gradient-to-br from-[#E3F6ED] to-[#E3F6ED]",
+    path: "/dashboard/accounting",
+    label: "Accounting",
+    image: finnImg
+  },
+  {
+    name: "Sandro",
+    role: `${t("seo")}`,
+    gradient: "bg-gradient-to-br from-[#F8DDFF] to-[#F8DDFF]",
+    path: "/dashboard/seo",
+    label: "Sandro",
+    image: sandroImg
+  },
+];
 
   const handleNavigate = (path, label) => {
     if (path !== "") {
@@ -137,10 +140,10 @@ const Agents = () => {
         <div className='flex justify-between px-2 items-center'>
           {/* <MdOutlineKeyboardArrowLeft size={25} /> */}
           <div className="flex gap-2 items-center h-[57px]">
-            <h1 className="text-[20px] font-[600] pl-3">Home</h1>
+            <h1 className="text-[20px] font-[600] pl-3">{t("home")}</h1>
           </div>
           <div>
-            <button className='bg-[#675FFF] p-2 rounded-lg text-white cursor-pointer' onClick={handleLogout}>Logout</button>
+            <button className='bg-[#675FFF] p-2 rounded-lg text-white cursor-pointer' onClick={handleLogout}>{t("logout")}</button>
           </div>
         </div>
         <hr className='text-[#E1E4EA]' />
@@ -149,7 +152,7 @@ const Agents = () => {
       <div className="flex justify-end items-end pt-3 pr-2">
         <button className="gap-2 rounded-lg flex items-center p-3 text-[#5A687C] font-[600] text-[16px]">
           {/* <span><img src={image1} alt="image1" /></span> */}
-          Request new feature
+          {t("request_new_feature")}
           <div className="pb-0.5">
             <RequestSend />
           </div>
@@ -160,7 +163,7 @@ const Agents = () => {
       <div className="flex justify-center flex-col items-center text-center gap-2 pb-5">
         <h1 className="font-[600] text-2xl">{t("welcome")} {userDetails?.user?.firstName}{" "}{userDetails?.user?.lastName !== null && userDetails?.user?.lastName}</h1>
         <p className="font-[400] text-[16px] text-[#5A687C]">
-          Your AI agents are ready to boost your business.
+          {t("ai_agents_heading")}
         </p>
       </div>
 

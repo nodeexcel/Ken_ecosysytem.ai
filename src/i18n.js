@@ -15,10 +15,10 @@ i18n
             escapeValue: false,
         },
         resources: {
-            english: {
+            en: {
                 translation: englishTranslation,
             },
-            french: {
+            fr: {
                 translation: frenchTranslation,
             },
         },

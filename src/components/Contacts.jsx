@@ -12,6 +12,7 @@ import fr_flag from "../assets/images/fr_flag.png"
 import { SelectDropdown } from "./Dropdown";
 import { useSelector } from "react-redux";
 import ViewContacts from "./ViewContacts";
+import { useTranslation } from "react-i18next";
 
 const countries = [
   { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
@@ -36,6 +37,7 @@ const ContactsPage = () => {
   const [contactSearch, setContactSearch] = useState("")
   const [listSearch, setListSearch] = useState("")
   const countryData = useSelector((state) => state.country.data)
+  const { t } = useTranslation();
 
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -261,16 +263,16 @@ const ContactsPage = () => {
 
 
   const tableHeaders = [
-    { name: "Full Name", width: "flex-1" },
-    { name: "Email", width: "w-[290px]" },
-    { name: "Phone No", width: "flex-1" },
-    { name: "Date Created", width: "flex-1" },
-    { name: "Actions", width: "w-[120px]" },
+    { name: `${t("brain_ai.full_name")}`, width: "flex-1" },
+    { name: `${t("brain_ai.email")}`, width: "w-[290px]" },
+    { name: `${t("brain_ai.phone_no")}`, width: "flex-1" },
+    { name: `${t("brain_ai.date_created")}`, width: "flex-1" },
+    { name: `${t("brain_ai.actions")}`, width: "w-[120px]" },
   ];
 
-  const statusOptions = [{ label: "Any", key: "any" }, { label: "Active", key: "active" }, { label: "Unconfirmed", key: "unconfirmed" }, { label: "Unsubscribed", key: "unsubscribed" }, { label: "Bounced", key: "bounced" }]
-  const channelOptions = [{ label: "All", key: "all" }, { label: "Email", key: "email" }, { label: "Phone No", key: "phone" }]
-  const listChannelOptions = [{ label: "Email", key: "email" }, { label: "Phone No", key: "phone" }]
+  const statusOptions = [{ label: `${t("brain_ai.any")}`, key: "any" }, { label: `${t("brain_ai.active")}`, key: "active" }, { label: `${t("brain_ai.unconfirmed")}`, key: "unconfirmed" }, { label: `${t("brain_ai.unsubscribed")}`, key: "unsubscribed" }, { label: `${t("brain_ai.bounced")}`, key: "bounced" }]
+  const channelOptions = [{ label: `${t("brain_ai.all")}`, key: "all" }, { label: `${t("brain_ai.email")}`, key: "email" }, { label: `${t("brain_ai.phone_no")}`, key: "phone" }]
+  const listChannelOptions = [{ label: `${t("brain_ai.email")}`, key: "email" }, { label: `${t("brain_ai.phone_no")}`, key: "phone" }]
   const rowsPerPageOptions = [{ label: "10", key: 10 }, { label: "20", key: 20 }, { label: "50", key: 50 }, { label: "75", key: 75 }, { label: "100", key: 100 }]
 
   useEffect(() => {
@@ -897,11 +899,11 @@ const ContactsPage = () => {
               <div className="px-5 w-full">
                 <thead>
                   <tr className="text-left text-[#5A687C] text-[16px] font-[400]">
-                    <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">List Name</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">Active Contacts</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">Channel</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">Created Date</th>
-                    <th className="p-[14px] w-full font-[400] whitespace-nowrap">Actions</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">{t("brain_ai.list_name")}</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">{t("brain_ai.active_contacts")}</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">{t("brain_ai.channel")}</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">{t("brain_ai.created_date")}</th>
+                    <th className="p-[14px] w-full font-[400] whitespace-nowrap">{t("brain_ai.actions")}</th>
                   </tr>
                 </thead>
               </div>
@@ -917,12 +919,12 @@ const ContactsPage = () => {
                             {list.channel.toLowerCase() === "email" ? (
                               <div className="flex items-center gap-1.5 bg-[#fff5e6] text-[#ff9500] px-3 py-1 rounded-md w-fit">
                                 <Mail className="h-4 w-4" />
-                                <span>Email</span>
+                                <span>{t("brain_ai.email")}</span>
                               </div>
                             ) : (
                               <div className="flex items-center gap-1.5 bg-[#f0f0ff] text-[#675fff] px-3 py-1 rounded-md w-fit">
                                 <Phone className="h-4 w-4" />
-                                <span>Phone No</span>
+                                <span>{t("brain_ai.phone_no")}</span>
                               </div>
                             )}
                           </td>
@@ -939,7 +941,7 @@ const ContactsPage = () => {
                                         handleEditList(list);
                                       }}
                                     >
-                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("brain_ai.edit")}</span> </div>
                                     </button>
                                     <button
                                       className="block group w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
@@ -948,7 +950,7 @@ const ContactsPage = () => {
                                         setActiveDropdown(null);
                                       }}
                                     >
-                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>View Contacts</span> </div>
+                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>{t("brain_ai.view_contacts")}</span> </div>
                                     </button>
                                     <button
                                       className="block group w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
@@ -956,7 +958,7 @@ const ContactsPage = () => {
                                         handleDuplicateList(list.id);
                                       }}
                                     >
-                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
+                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>{t("brain_ai.duplicate")}</span> </div>
                                     </button>
                                     <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                                     <div className='py-2'>
@@ -966,7 +968,7 @@ const ContactsPage = () => {
                                           handleDeleteList(list.id);
                                         }}
                                       >
-                                        <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">Delete</span> </div>
+                                        <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">{t("brain_ai.delete")}</span> </div>
                                       </button>
                                     </div>
                                   </div>
@@ -1028,7 +1030,7 @@ const ContactsPage = () => {
                 />
                 {formErrors.description && <p className="text-sm text-red-500 mt-1">{formErrors.description}</p>}
               </div>
-              <label className="block mt-2 text-[14px] font-medium text-[#292D32]">Channel</label>
+              <label className="block mt-2 text-[14px] font-medium text-[#292D32]">{t("brain_ai.channel")}</label>
               <SelectDropdown
                 name="channel"
                 options={listChannelOptions}

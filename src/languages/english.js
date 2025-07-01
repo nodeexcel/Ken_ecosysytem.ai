@@ -1,4 +1,47 @@
 const englishTranslation = {
-    welcome: "Welcome"
+    welcome: "Welcome",
+    coo: "COO",
+    content_creation: "Content Creation",
+    phone_outreach: "Phone Outreach",
+    appointment_setter: "Appointment Setter",
+    customer_support: "Customer Support",
+    receptionist: "Receptionist",
+    emailing: "Emailing",
+    hr: "HR",
+    accouting: "Accounting",
+    seo: "SEO",
+    logout: "Logout",
+    request_new_feature: "Request New Feature",
+    ai_agents_heading:"Your AI agents are ready to boost your business.",
+    home:"Home",
+    tara_coo:{
+        coo_auto_generated:"Hi! I’m Tara, your Executive Assistant. \nI’m here to help you run your company and guide you through everything inside Ecosysteme.ai.\nVery soon, you’ll be able to message me directly on WhatsApp — by voice or text — to manage everything in one place. \nI’ll coordinate all your AI agents for you. Just a little more patience… it’s launching soon ⏳ In the meantime, I’m already connected to your AI Brain. \nI can analyze your business, answer your questions, and help you get the most out of every agent. So, where shall we start? 😊"
+    },
+    brain_ai:{
+        full_name:"Full Name",
+        email:"Email",
+        phone_no:"Phone No",
+        date_created:"Date Created",
+        actions:"Actions",
+        any:"Any",
+        active:"Active",
+        unconfirmed:"Unconfirmed",
+        unsubscribed:"Unsubscribed",
+        bounced:"Bounced",
+        all:"All",
+        list_name:"List Name",
+        active_contacts:"Active Contacts",
+        channel:"Channel",
+        created_date:"Created Date",
+        edit:"Edit",
+        view_contacts:"View Contacts",
+        duplicate:"Duplicate",
+        delete:"Delete",
+        no_contact_message:"No Contacts Listed",
+        update:"Update",
+        create:"Create",
+        a_list:"a List",
+        
+        }
 }
 export default englishTranslation;

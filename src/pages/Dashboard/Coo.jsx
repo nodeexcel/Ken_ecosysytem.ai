@@ -8,6 +8,7 @@ import { deleteCooChat, getCooChatById, getCooChats, updateCooChatName } from '.
 import AgentChatBox from '../../components/AgentChatBox'
 import CooPresentations from '../../components/CooPresentations'
 import CooConnectWhatsapp from '../../components/CooConnectWhatsapp'
+import { useTranslation } from "react-i18next";
 
 function Coo() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -25,9 +26,10 @@ function Coo() {
     const [editData, setEditData] = useState({})
     const socketRef = useRef(null)
     const socket2Ref = useRef(null)
+    const { t } = useTranslation();
     const newwebsocketurl = "ws://116.202.210.102:8000/new-coo-agent-chat"
     const websocketurl = "ws://116.202.210.102:8000/coo-agent"
-    const initialMessage = "Hi! I’m Tara, your Executive Assistant. \nI’m here to help you run your company and guide you through everything inside Ecosysteme.ai.\nVery soon, you’ll be able to message me directly on WhatsApp — by voice or text — to manage everything in one place. \nI’ll coordinate all your AI agents for you. Just a little more patience… it’s launching soon ⏳ In the meantime, I’m already connected to your AI Brain. \nI can analyze your business, answer your questions, and help you get the most out of every agent. So, where shall we start? 😊"
+    const initialMessage = `${t("tara_coo.coo_auto_generated")}`
 
     const navigate = useNavigate()
 
