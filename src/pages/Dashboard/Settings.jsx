@@ -16,6 +16,7 @@ import { Delete, Edit, LeftArrow, PasswordLock, PlanIcon, Settings, TeamMemberIc
 import { discardData } from "../../store/profileSlice";
 import { SelectDropdown } from "../../components/Dropdown";
 import { FaChevronDown } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 
 // User profile data
@@ -74,6 +75,7 @@ const SettingsPage = () => {
     confirmPassword: "",
   });
   const [selectedCountry, setSelectedCountry] = useState(countryData[240]);
+  const { t } = useTranslation()
 
   const [profileFormData, setProfileFormData] = useState({
     firstName: "",
@@ -167,8 +169,8 @@ const SettingsPage = () => {
 
   const users = useSelector((state) => state.auth);
 
-  const roleOptions = [{ label: "All", key: "All" }, { label: "Admin", key: "Admin" }, { label: "Member", key: "Member" }, { label: "Guest", key: "Guest" }]
-  const roleEmailOptions = [{ label: "Admin", key: "Admin" }, { label: "Member", key: "Member" }, { label: "Guest", key: "Guest" }]
+  const roleOptions = [{ label: `${t("settings.tab_3_list.all")}`, key: "All" }, { label: `${t("settings.tab_3_list.admin")}`, key: "Admin" }, { label: `${t("settings.tab_3_list.member")}`, key: "Member" }, { label: `${t("settings.tab_3_list.guest")}`, key: "Guest" }]
+  const roleEmailOptions = [{ label: `${t("settings.tab_3_list.admin")}`, key: "Admin" }, { label: `${t("settings.tab_3_list.member")}`, key: "Member" }, { label: `${t("settings.tab_3_list.guest")}`, key: "Guest" }]
 
   useEffect(() => {
     setTimeout(() => {
@@ -192,13 +194,13 @@ const SettingsPage = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (profileFormData.firstName === null) newErrors.firstName = "First Name is required.";
-    if (profileFormData.lastName === null) newErrors.lastName = "Last Name is required.";
-    if (profileFormData.phoneNumber === null) newErrors.phoneNumber = "Phone Number is required.";
-    if (profileFormData.company === null) newErrors.company = "Company is required.";
-    if (profileFormData.city === null) newErrors.city = "City is required.";
-    if (profileFormData.country === null) newErrors.country = "Country is required.";
-    if (profileFormData.image === null && !profileFormData.imageFile) newErrors.imageFile = "Profile Image is required.";
+    if (profileFormData.firstName === null || profileFormData.firstName === "") newErrors.firstName = `${t("settings.tab_1_list.first_name_required")}`;
+    if (profileFormData.lastName === null || profileFormData.lastName === "") newErrors.lastName = `${t("settings.tab_1_list.last_name_required")}`;
+    if (profileFormData.phoneNumber === null || profileFormData.phoneNumber === "") newErrors.phoneNumber = `${t("settings.tab_1_list.phone_required")}`;
+    if (profileFormData.company === null || profileFormData.company === "") newErrors.company = `${t("settings.tab_1_list.company_required")}`;
+    if (profileFormData.city === null || profileFormData.city === "") newErrors.city = `${t("settings.tab_1_list.city_required")}`;
+    if (profileFormData.country === null || profileFormData.country === "") newErrors.country = `${t("settings.tab_1_list.country_required")}`;
+    if (profileFormData.image === null && !profileFormData.imageFile) newErrors.imageFile = `${t("settings.tab_1_list.profile_image_required")}`;
 
     return newErrors;
   };
@@ -213,7 +215,7 @@ const SettingsPage = () => {
         setTeamMembersData(response?.data?.data)
         if (response?.data?.data?.membersData?.length == 0) {
           setTeamMembersDataLoading(false)
-          setTeamMembersDataMessage("No Data Found")
+          setTeamMembersDataMessage(`${t("no_data")}`)
         } else {
           setFilteredMembers(response?.data?.data?.membersData)
         }
@@ -322,17 +324,17 @@ const SettingsPage = () => {
     let hasError = false;
 
     if (!formData.currentPassword) {
-      newErrors.currentPassword = 'Current password is required';
+      newErrors.currentPassword = `${t("settings.tab_1_list.current_password_required")}`;
       hasError = true;
     }
 
     if (!formData.newPassword || formData.newPassword.length < 6) {
-      newErrors.newPassword = 'New password must be at least 6 characters';
+      newErrors.newPassword = `${t("settings.tab_1_list.new_password_required")}`;
       hasError = true;
     }
 
     if (formData.confirmPassword !== formData.newPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = `${t("settings.tab_1_list.confirm_password_required")}`;
       hasError = true;
     }
 
@@ -387,10 +389,10 @@ const SettingsPage = () => {
     setInviteErrors(newErrors)
 
     if ((teamMembersData?.teamSize - teamMembersData?.teamMembers) === 0) {
-      newErrors.limit = `You’ve reached the limit for your plan (${teamMembersData?.teamSize} members).`;
+      newErrors.limit = `${t("settings.tab_3_list.invite_error")} (${teamMembersData?.teamSize} ${t("settings.tab_3_list.members")}).`;
     }
     if (!emailInvite || !emailInvite.includes("@")) {
-      newErrors.email = "Please enter a valid email address.";
+      newErrors.email = `${t("settings.tab_3_list.email_error")}`;
     }
 
     // If there are errors, set them and return early
@@ -479,8 +481,8 @@ const SettingsPage = () => {
         <>
           <div className="w-full py-4 flex flex-col gap-3 pr-4">
             <div className="flex justify-between">
-              <h1 className="text-[#1E1E1E] font-semibold text-[20px] md:text-[24px]">Team Members</h1>
-              <button className="bg-[#5E54FF] text-white rounded-md text-[14px] md:text-[16px] p-2" onClick={handleInviteTeam}>Invite A Team Member</button>
+              <h1 className="text-[#1E1E1E] font-semibold text-[20px] md:text-[24px]">{t("settings.tab_3")}</h1>
+              <button className="bg-[#5E54FF] text-white rounded-md text-[14px] md:text-[16px] p-2" onClick={handleInviteTeam}>{t("settings.tab_3_list.invite_team_member")}</button>
             </div>
             <div className="flex justify-between">
               <SelectDropdown
@@ -492,12 +494,12 @@ const SettingsPage = () => {
                 }}
                 placeholder="Select"
                 className="w-[157px]"
-                extraName="Role"
+                extraName={t("settings.tab_3_list.role")}
               />
               <div onClick={renderTeamMembers} className="flex items-center px-3 gap-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-[8px] py-[8px]">
                 <img src="/src/assets/svg/refresh.svg" alt="" />
                 <button className="text-[16px] cursor-pointer text-[#5A687C]">
-                  Refresh
+                  {t("refresh")}
                 </button>
               </div>
             </div>
@@ -505,10 +507,10 @@ const SettingsPage = () => {
               <table className="min-w-full border-separate border-spacing-y-3">
                 <thead className="bg-transparent">
                   <tr>
-                    <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]">Name</th>
-                    <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]">Email</th>
-                    <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]">Role</th>
-                    <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]">Agents</th>
+                    <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]"> {t("settings.tab_3_list.name")}</th>
+                    <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]"> {t("settings.tab_3_list.email")}</th>
+                    <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]"> {t("settings.tab_3_list.role")}</th>
+                    <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]"> {t("settings.tab_3_list.agents")}</th>
                     <th className="px-6 py-3"></th>
                   </tr>
                 </thead>
@@ -557,7 +559,7 @@ const SettingsPage = () => {
                                   setActiveDropdown(null);
                                 }}
                               >
-                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span> {t("edit")}</span> </div>
                               </button>
                               <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                               <div className="py-2">
@@ -568,7 +570,7 @@ const SettingsPage = () => {
                                     setActiveDropdown(null);
                                   }}
                                 >
-                                  <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                                  <div className="flex items-center gap-2">{<Delete />} <span> {t("delete")}</span> </div>
                                 </button>
                               </div>
                             </div>
@@ -576,7 +578,7 @@ const SettingsPage = () => {
                         )}
                       </td>
                     </tr>
-                  )) : <tr className='h-34'><td></td><td></td><td>No Data Found</td></tr>}</>}
+                  )) : <tr className='h-34'><td></td><td></td><td>{t("no_data")}</td></tr>}</>}
                 </tbody>
               </table>
             </div>
@@ -596,14 +598,14 @@ const SettingsPage = () => {
                   <X className="w-5 h-5" />
                 </button>
 
-                <h2 className="text-[#1E1E1E] font-semibold text-[20px] mb-2">Invite a team member</h2>
+                <h2 className="text-[#1E1E1E] font-semibold text-[20px] mb-2">{t("settings.tab_3_list.invite_team_member")}</h2>
 
                 <div>
-                  <label className="block text-[14px] font-medium text-[#292D32] mb-1">Email Address</label>
+                  <label className="block text-[14px] font-medium text-[#292D32] mb-1"> {t("settings.tab_3_list.email_address")}</label>
                   <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] rounded-[8px] px-4 py-2">
                     <input
                       type="email"
-                      placeholder="Enter email address"
+                      placeholder={t("settings.tab_3_list.email_placeholder")}
                       value={emailInvite}
                       onChange={(e) => {
                         setEmailInvite(e.target.value)
@@ -613,7 +615,7 @@ const SettingsPage = () => {
                     />
                   </div>
                   {inviteErrors.email && <p className="text-sm text-red-500 mt-1">{inviteErrors.email}</p>}
-                  <label className="block my-2 text-[14px] font-medium text-[#292D32]">Invite as</label>
+                  <label className="block my-2 text-[14px] font-medium text-[#292D32]">{t("settings.tab_3_list.invite_as")}</label>
                   < SelectDropdown
                     name="role_options"
                     options={roleEmailOptions}
@@ -635,10 +637,10 @@ const SettingsPage = () => {
                     setOpen(false)
                     setInviteErrors({})
                   }} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
-                    Close
+                    {t("settings.tab_3_list.close")}
                   </button>
                   <button onClick={handleInvite} className={`w-full text-[16px] text-white rounded-[8px] ${inviteEmailLoading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
-                    {inviteEmailLoading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Invite"}
+                    {inviteEmailLoading ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : `${t("settings.tab_3_list.invite")}`}
                   </button>
                 </div>
               </div>
@@ -660,18 +662,9 @@ const SettingsPage = () => {
             <div className="inline-flex items-center gap-2 relative flex-[0_0_auto]">
               <div className="relative w-fit mt-[-1.00px] font-semibold text-[#1e1e1e] text-xl sm:text-2xl tracking-[0] leading-8 whitespace-nowrap">
                 <h1 className="text-[20px] sm:text-[24px] font-[600]">
-                  General Settings
+                  {t("settings.tab_1")}
                 </h1>
               </div>
-            </div>
-
-            <div className="inline-flex items-center gap-4 relative flex-[0_0_auto] opacity-0">
-              <button className="px-4 py-2 bg-[#f5f7ff] text-primary-color border border-[#335bfb] rounded-lg">
-                Save Draft
-              </button>
-              <button className="px-4 py-2 bg-primary-color text-white rounded-lg">
-                Submit Campaign
-              </button>
             </div>
           </div>
         </div>
@@ -688,7 +681,7 @@ const SettingsPage = () => {
             >
               <span className={`text-[14px] inter font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === "profile" ? "text-[#675FFF]"
                 : "text-[#5A687C] "}`}>
-                My Profile
+                {t("settings.tab_1_list.tab_1")}
               </span>
             </button>
             <button
@@ -700,7 +693,7 @@ const SettingsPage = () => {
             >
               <span className={`inter font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === "password" ? "text-[#5E54FF]"
                 : "text-[#5A687C] "}`}>
-                Change Password
+                {t("settings.tab_1_list.tab_2")}
               </span>
             </button>
           </div>
@@ -746,13 +739,13 @@ const SettingsPage = () => {
                       {["firstName", "lastName"].map((field, i) => (
                         <div key={field} className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
                           <label className="font-medium text-text-black text-sm leading-5">
-                            {field === "firstName" ? "First Name" : "Last Name"}
+                            {field === "firstName" ? `${t("settings.tab_1_list.first_name")}` : `${t("settings.tab_1_list.last_name")}`}
                           </label>
                           <input
                             type="text"
                             name={field}
                             value={profileFormData[field] === "null" ? '' : profileFormData[field]}
-                            placeholder={`Enter ${field === "firstName" ? "First Name" : "Last Name"}`}
+                            placeholder={`${t("settings.tab_1_list.enter")} ${field === "firstName" ? `${t("settings.tab_1_list.first_name")}` : `${t("settings.tab_1_list.last_name")}`}`}
                             onChange={handleProfileChange}
                             className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors[field] ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none`}
                           />
@@ -764,7 +757,7 @@ const SettingsPage = () => {
                     {/* Contact Fields */}
                     <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-[17px] relative self-stretch w-full">
                       <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
-                        <label className="font-medium text-sm text-text-black">Email Address</label>
+                        <label className="font-medium text-sm text-text-black">{t("settings.tab_1_list.email_address")}</label>
                         <input
                           type="email"
                           name="email"
@@ -787,7 +780,7 @@ const SettingsPage = () => {
                       </div> */}
                       <div className=" flex-1 grow w-full">
                         <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
-                          Phone No
+                          {t("settings.tab_1_list.phone")}
                         </label>
                         <div ref={countryRef} className={`flex group items-center bg-white focus-within:border-[#675FFF] gap-2 border ${profileErrors.phoneNumber ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} rounded-lg px-4 py-1.5`}>
                           <div className="relative">
@@ -826,7 +819,7 @@ const SettingsPage = () => {
                             name="phoneNumber"
                             value={profileFormData.phoneNumber === "null" ? '' : profileFormData.phoneNumber}
                             onChange={handleProfileChange}
-                            placeholder="Enter Phone Number"
+                            placeholder={t("settings.tab_1_list.phone_placeholder")}
                             className="w-full outline-none"
                           // onChange={(e) => {
                           //   setNumber(e.target.value);
@@ -842,13 +835,13 @@ const SettingsPage = () => {
                     <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-[17px] relative self-stretch w-full">
                       <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
                         <label className="font-medium text-sm text-text-black">
-                          Company
+                          {t("settings.tab_1_list.company")}
                         </label>
                         <input
                           type="text"
                           name="company"
                           value={profileFormData.company === "null" ? '' : profileFormData.company}
-                          placeholder="Enter Company"
+                          placeholder={t("settings.tab_1_list.company_placeholder")}
                           onChange={handleProfileChange}
                           className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors.company ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'}  text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none`}
                         />
@@ -856,7 +849,7 @@ const SettingsPage = () => {
                       </div>
                       <div className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
                         <label className="font-medium text-sm text-text-black">
-                          Role
+                          {t("settings.tab_1_list.role")}
                         </label>
                         <input
                           name="role"
@@ -884,13 +877,13 @@ const SettingsPage = () => {
                       {["city", "country"].map((field) => (
                         <div key={field} className="flex flex-col items-start gap-1.5 relative flex-1 grow w-full">
                           <label className="font-medium text-sm text-text-black">
-                            {field.charAt(0).toUpperCase() + field.slice(1)}
+                            {field === "city" ? `${t("settings.tab_1_list.city")}` : `${t("settings.tab_1_list.country")}`}
                           </label>
                           <input
                             type="text"
                             name={field}
                             value={profileFormData[field] === "null" ? '' : profileFormData[field]}
-                            placeholder={`Enter ${field.charAt(0).toUpperCase() + field.slice(1)}`}
+                            placeholder={`Enter ${field === "city" ? `${t("settings.tab_1_list.city")}` : `${t("settings.tab_1_list.country")}`} `}
                             onChange={handleProfileChange}
                             className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors[field] ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none`}
                           />
@@ -915,11 +908,11 @@ const SettingsPage = () => {
                       >
                         {updateLoading ? (
                           <div className="flex items-center justify-center gap-2">
-                            <p>Processing...</p>
+                            <p>{t("processing")}</p>
                             <span className="loader" />
                           </div>
                         ) : (
-                          "Update Profile"
+                          t("settings.tab_1_list.update_profile")
                         )}
                       </button>
                       {/* <button
@@ -934,7 +927,9 @@ const SettingsPage = () => {
                     </div>
                     <div>
                       <button onClick={() => setDeleteModalStatus(true)} className="w-full text-[13px] font-[500] bg-transparent text-[#5A687C]">
-                        Delete Profile
+                        {
+                          t("settings.tab_1_list.delete_profile")
+                        }
                       </button>
                     </div>
                   </div>
@@ -960,7 +955,9 @@ const SettingsPage = () => {
                   <div className="flex flex-col gap-4 w-full">
                     <div className="flex flex-col gap-1.5">
                       <label className="font-medium text-text-black text-sm leading-5">
-                        Current Password
+                        {
+                          t("settings.tab_1_list.current_password")
+                        }
                       </label>
                       <div className="relative">
                         <div className="absolute left-3.5 top-1/2 transform -translate-y-1/2">
@@ -972,7 +969,7 @@ const SettingsPage = () => {
                           value={formData.currentPassword}
                           onChange={handlePasswordChange}
                           className="w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none"
-                          placeholder="Enter current password"
+                          placeholder={t("settings.tab_1_list.current_password_placeholder")}
                         />
                         <button
                           type="button"
@@ -993,7 +990,9 @@ const SettingsPage = () => {
 
                     <div className="flex flex-col gap-1.5">
                       <label className="font-medium text-text-black text-sm leading-5">
-                        New Password
+                        {
+                          t("settings.tab_1_list.new_password")
+                        }
                       </label>
                       <div className="relative">
                         <div className="absolute left-3.5 top-1/2 transform -translate-y-1/2">
@@ -1005,7 +1004,7 @@ const SettingsPage = () => {
                           value={formData.newPassword}
                           onChange={handlePasswordChange}
                           className="w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none"
-                          placeholder="Enter new password"
+                          placeholder={t("settings.tab_1_list.new_password_placeholder")}
                         />
                         <button
                           type="button"
@@ -1026,7 +1025,9 @@ const SettingsPage = () => {
 
                     <div className="flex flex-col gap-1.5">
                       <label className="font-medium text-text-black text-sm leading-5">
-                        Confirm Password
+                        {
+                          t("settings.tab_1_list.confirm_password")
+                        }
                       </label>
                       <div className="relative">
                         <div className="absolute left-3.5 top-1/2 transform -translate-y-1/2">
@@ -1038,7 +1039,7 @@ const SettingsPage = () => {
                           value={formData.confirmPassword}
                           onChange={handlePasswordChange}
                           className="w-full pl-10 pr-10 py-2.5 bg-white rounded-lg border border-solid border-[#e1e4ea] text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none"
-                          placeholder="Confirm password"
+                          placeholder={t("settings.tab_1_list.confirm_password_placeholder")}
                         />
                         <button
                           type="button"
@@ -1068,11 +1069,11 @@ const SettingsPage = () => {
                     <button onClick={handleChangePassword} disabled={updatePasswordLoading} className={`w-full sm:w-auto px-4 py-2 ${updatePasswordLoading ? "bg-[#5f54ff87]" : "bg-[#5E54FF]"} text-white rounded-lg`}>
                       {updatePasswordLoading ? (
                         <div className="flex items-center justify-center gap-2">
-                          <p>Processing...</p>
+                          <p>{t("processing")}</p>
                           <span className="loader" />
                         </div>
                       ) : (
-                        " Update Password"
+                        `${t("settings.tab_1_list.update_password")}`
                       )}
                     </button>
                     {/* <button onClick={() => setFormData({
@@ -1112,7 +1113,7 @@ const SettingsPage = () => {
               {/* <MdOutlineKeyboardArrowLeft size={25} /> */}
               <div className="flex gap-4 pl-3 items-center h-[57px]">
                 {/* <LeftArrow /> */}
-                <h1 className="text-[20px] font-[600]">Settings</h1>
+                <h1 className="text-[20px] font-[600]">{t("settings.label")}</h1>
               </div>
             </div>
             <hr className='text-[#E1E4EA]' />
@@ -1125,7 +1126,7 @@ const SettingsPage = () => {
             >
               {activeSidebarItem === "general" ? <Settings status={activeSidebarItem === "general"} /> : <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<Settings status={activeSidebarItem === "general"} />}</div> <div className='hidden group-hover:block'>{<Settings hover={true} />}</div></div>}
               <span className={`font-[400] text-[16px] ${activeSidebarItem === "general" ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
-                General Settings
+                {t("settings.tab_1")}
               </span>
             </div>
 
@@ -1137,7 +1138,7 @@ const SettingsPage = () => {
               {activeSidebarItem === "billing" ? <PlanIcon status={activeSidebarItem === "billing"} /> :
                 <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<PlanIcon status={activeSidebarItem === "billing"} />}</div> <div className='hidden group-hover:block'>{<PlanIcon hover={true} />}</div></div>}
               <span className={`font-[400] text-[16px] ${activeSidebarItem === "billing" ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
-                Plan &amp; Billing
+                {t("settings.tab_2")}
               </span>
             </div>
 
@@ -1149,7 +1150,7 @@ const SettingsPage = () => {
               {activeSidebarItem === "team" ? <TeamMemberIcon status={activeSidebarItem === "team"} /> :
                 <div className="flex items-center gap-2"><div className='group-hover:hidden'><TeamMemberIcon status={activeSidebarItem === "team"} /></div> <div className='hidden group-hover:block'><TeamMemberIcon hover={true} /></div></div>}
               <span className={`font-[400] text-[16px] ${activeSidebarItem === "team" ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
-                Team Members
+                {t("settings.tab_3")}
               </span>
             </div>
           </div>
@@ -1173,13 +1174,13 @@ const SettingsPage = () => {
 
           <div className='h-[120px] flex flex-col justify-around gap-2 items-center '>
             <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-1">
-              Please complete your profile first
+              {t("settings.profile_status")}
             </h2>
             <button
               className="bg-[#675FFF] text-white px-5 py-2 font-[500] test-[16px]  rounded-lg"
               onClick={() => setModalStatus(false)}
             >
-              Ok
+              {t("settings.ok")}
             </button>
           </div>
         </div>
@@ -1198,20 +1199,20 @@ const SettingsPage = () => {
 
             <div className="flex flex-col justify-around h-[150px] text-center">
               <h2 className="text-[20px] font-semibold text-[#1E1E1E] mb-4">
-                Are you sure you want to delete your profile?
+                {t("settings.tab_1_list.delete_header")}
               </h2>
               <div className="flex gap-4 mt-2 w-full">
                 <button
                   className="w-full bg-[#FF3B30] text-white px-5 py-2 font-[500] test-[16px]  rounded-lg"
                   onClick={handleDeleteProfile}
                 >
-                  Confirm Delete
+                  {t("settings.tab_1_list.confirm_delete")}
                 </button>
                 <button
                   className="w-full bg-white text-[#5A687C] border-[1.5px] border-[#E1E4EA] font-[500] test-[16px] px-5 py-2 rounded-lg"
                   onClick={() => setDeleteModalStatus(false)}
                 >
-                  Cancel
+                  {t("settings.tab_1_list.cancel")}
                 </button>
               </div>
             </div>
