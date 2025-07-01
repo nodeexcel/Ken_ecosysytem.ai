@@ -138,7 +138,7 @@ const Integration = () => {
     },
     {
       icon: systemio,
-      name: "System.io",
+      name: "Systeme.io",
       connectedAccounts: 0,
     },
     {

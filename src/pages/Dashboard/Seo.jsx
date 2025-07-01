@@ -9,6 +9,7 @@ import AgentChatBox from '../../components/AgentChatBox'
 import SeoArticles from '../../components/SeoArticles'
 import SeoAudit from '../../components/SeoAudit'
 import SeoAutomation from '../../components/SeoAutomation'
+import { formatTimeAgo } from '../../utils/TimeFormat'
 
 function Seo() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -85,7 +86,7 @@ function Seo() {
                 isUser,
                 content,
                 sender: isUser ? "User" : "Ecosystem.ai",
-                time: "Just now",
+                time: msg?.messaged_at ? formatTimeAgo(msg?.messaged_at) : "Just now",
                 status: "Read"
             };
         });

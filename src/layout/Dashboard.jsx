@@ -85,6 +85,7 @@ function Dashboard() {
                 }
                 dispatch(getProfileData(response?.data))
                 i18n.changeLanguage(response?.data?.language);
+                localStorage.setItem("lan", response?.data?.language)
 
             }
         } catch (error) {

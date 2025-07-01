@@ -9,6 +9,7 @@ import AgentChatBox from '../../components/AgentChatBox'
 import CooPresentations from '../../components/CooPresentations'
 import CooConnectWhatsapp from '../../components/CooConnectWhatsapp'
 import { useTranslation } from "react-i18next";
+import { formatTimeAgo } from '../../utils/TimeFormat'
 
 function Coo() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -86,7 +87,7 @@ function Coo() {
                 isUser,
                 content,
                 sender: isUser ? "User" : "Ecosystem.ai",
-                time: "Just now",
+                time: msg?.messaged_at ? formatTimeAgo(msg?.messaged_at) : "Just now",
                 status: "Read"
             };
         });

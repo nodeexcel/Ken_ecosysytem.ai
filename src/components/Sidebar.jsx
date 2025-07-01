@@ -63,6 +63,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
             const response = await changeLanguage({ language: lang })
             if (response?.status === 200) {
                 i18n.changeLanguage(lang);
+                localStorage.setItem("lan", lang)
                 setSelectedLang(lang);
                 setShowDropdown(false);
             }

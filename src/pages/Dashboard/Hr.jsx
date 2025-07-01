@@ -6,6 +6,7 @@ import rimaMsgLogo from '../../assets/svg/rima_msg_logo.svg'
 import { v4 as uuidv4 } from 'uuid';
 import { deleteHrChat, getHrChatById, getHrChats, updateHrChatName } from '../../api/hrAgent'
 import AgentChatBox from '../../components/AgentChatBox'
+import { formatTimeAgo } from '../../utils/TimeFormat'
 
 function Hr() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -81,7 +82,7 @@ function Hr() {
                 isUser,
                 content,
                 sender: isUser ? "User" : "Ecosystem.ai",
-                time: "Just now",
+                time: msg?.messaged_at ? formatTimeAgo(msg?.messaged_at) : "Just now",
                 status: "Read"
             };
         });

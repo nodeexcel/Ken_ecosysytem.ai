@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { deleteChat, getAccountingChatById, getAccountingChats, updateChatName } from "../api/account";
 import { Delete, DislikeIcon, Duplicate, Edit, LikeIcon, SearchIcon, SendIcon, SpeakerIcon, ThreeDots } from "../icons/icons";
 import { useSelector } from "react-redux";
+import { formatTimeAgo } from "../utils/TimeFormat";
 
 
 const AgentChatBox = ({ listedProps }) => {
@@ -96,7 +97,7 @@ const AgentChatBox = ({ listedProps }) => {
                 isUser: true,
                 content: messageToSend,
                 sender: "User",
-                time: "Just now",
+                time: formatTimeAgo(new Date()),
                 status: "Read",
             };
             setMessages((prev) => [...prev, agentMessage]);
@@ -104,13 +105,15 @@ const AgentChatBox = ({ listedProps }) => {
             socketRef.current.onmessage = async (event) => {
                 const responseText = event.data
                 console.log('💬 Bot:', responseText)
+                const parsedMessage = JSON.parse(responseText);
+                console.log('💬 Bot:', parsedMessage)
 
                 const userMessage = {
                     id: uuidv4(),
                     isUser: false,
-                    content: responseText,
+                    content: parsedMessage?.agent,
                     sender: "Ecosystem.ai",
-                    time: "Just now",
+                    time: formatTimeAgo(parsedMessage?.message_at),
                     status: "Read",
                 };
 
@@ -153,7 +156,7 @@ const AgentChatBox = ({ listedProps }) => {
                 isUser: true,
                 content: messageToSend,
                 sender: "User",
-                time: "Just now",
+                time: formatTimeAgo(new Date()),
                 status: "Read",
             };
             setMessages((prev) => [...prev, agentMessage]);
@@ -161,13 +164,15 @@ const AgentChatBox = ({ listedProps }) => {
             socket2Ref.current.onmessage = async (event) => {
                 const responseText = event.data
                 console.log('💬 Bot:', responseText)
+                const parsedMessage = JSON.parse(responseText);
+                console.log('💬 Bot:', parsedMessage)
 
                 const userMessage = {
                     id: uuidv4(),
                     isUser: false,
-                    content: responseText,
+                    content: parsedMessage?.agent,
                     sender: "Ecosystem.ai",
-                    time: "Just now",
+                    time: formatTimeAgo(parsedMessage?.messaged_at),
                     status: "Read",
                 };
 
@@ -237,7 +242,7 @@ const AgentChatBox = ({ listedProps }) => {
             isUser: false,
             content: initialMessage,
             sender: "Ecosystem.ai",
-            time: "Just now",
+            time: formatTimeAgo(new Date()),
             status: "Read",
         }];
         setMessages(userMessage)

@@ -73,17 +73,19 @@ const SettingsPage = () => {
     newPassword: "",
     confirmPassword: "",
   });
+  const [selectedCountry, setSelectedCountry] = useState(countryData[240]);
+
   const [profileFormData, setProfileFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phoneNumber: "",
+    countryCode: selectedCountry?.code,
     company: "",
     role: "",
     city: "",
     country: "",
   });
-  const [selectedCountry, setSelectedCountry] = useState(countryData[240]);
 
   const [errors, setErrors] = useState({
     currentPassword: '',
@@ -98,6 +100,8 @@ const SettingsPage = () => {
   const dispatch = useDispatch()
   const [isOpen, setIsOpen] = useState(false)
   const countryRef = useRef()
+
+  console.log(selectedCountry, "selectedCountry")
 
 
   const token = useSelector((state) => state.auth.token);
@@ -114,8 +118,14 @@ const SettingsPage = () => {
       } else {
         const formatPhoneNumber = extractPhoneDetails(userDetails?.user.phoneNumber)
         const formatedData = { ...userDetails?.user, phoneNumber: formatPhoneNumber.number }
-        const filterCountryCode = countryData.filter((e) => e.dial_code === formatPhoneNumber.countryCode)
-        setSelectedCountry(filterCountryCode[0])
+        if (userDetails?.user?.countryCode === "null") {
+          const filterData = countryData.filter((e) => e.dial_code === formatPhoneNumber.countryCode)
+          console.log(filterData, "filterCountryCode")
+          setSelectedCountry(filterData[0])
+        } else {
+          const filterCountryCode = countryData.filter((e) => e.code === userDetails?.user?.countryCode)
+          setSelectedCountry(filterCountryCode[0])
+        }
         setProfileFormData(formatedData)
       }
       renderTeamMembers()
@@ -786,8 +796,8 @@ const SettingsPage = () => {
                               className="w-[120px] flex hover:cursor-pointer relative border-none justify-between gap-1 items-center border py-1 text-left"
                             >
                               <div className="flex items-center gap-2 mr-3">
-                                <p className={`fi fi-${selectedCountry.flag} fis w-4 h-4 rounded-full`}></p>
-                                <p className="text-[#5A687C] font-[400] text-[16px]">{selectedCountry.dial_code}</p>
+                                <p className={`fi fi-${selectedCountry?.flag} fis w-4 h-4 rounded-full`}></p>
+                                <p className="text-[#5A687C] font-[400] text-[16px]">{selectedCountry?.dial_code}</p>
                               </div>
                               <FaChevronDown color="#5A687C" className={`w-[10px]  transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
                               <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />
@@ -800,7 +810,7 @@ const SettingsPage = () => {
                                     onClick={() => {
                                       setSelectedCountry(country);
                                       setIsOpen(false);
-                                      // setAddNewContact((prev) => ({ ...prev, phoneCode: country.dial_code }));
+                                      setProfileFormData((prev) => ({ ...prev, countryCode: country.code }));
                                     }}
                                     className={`flex px-2 gap-2 hover:bg-[#F4F5F6] hover:rounded-lg my-1 py-2 ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6] rounded-lg'} cursor-pointer flex items-center`}
                                   >

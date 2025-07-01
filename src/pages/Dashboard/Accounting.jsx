@@ -6,6 +6,7 @@ import finnMsgLogo from '../../assets/svg/finn_msg_logo.svg'
 import { v4 as uuidv4 } from 'uuid';
 import { deleteChat, getAccountingChatById, getAccountingChats, updateChatName } from '../../api/account'
 import AgentChatBox from '../../components/AgentChatBox'
+import { formatTimeAgo } from '../../utils/TimeFormat'
 
 function Accounting() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -80,7 +81,7 @@ function Accounting() {
                 isUser,
                 content,
                 sender: isUser ? "User" : "Ecosystem.ai",
-                time: "Just now",
+                time: msg?.messaged_at ? formatTimeAgo(msg?.messaged_at) : "Just now",
                 status: "Read"
             };
         });
