@@ -58,7 +58,7 @@ const ContactsPage = () => {
   const [addNewContact, setAddNewContact] = useState({
     firstName: '',
     lastName: '',
-    countryCode: selectedCountry.code,
+    countryCode: 'US',
     email: '',
     companyName: '',
   });
@@ -91,24 +91,24 @@ const ContactsPage = () => {
   const validateSubmit = () => {
     const errors = {};
     if (!addNewContact.firstName) {
-      errors.firstName = "First name is required";
+      errors.firstName = `${t("brain_ai.first_name_required")}`;
     }
     if (!addNewContact.lastName) {
-      errors.lastName = "Last name is required";
+      errors.lastName = `${t("brain_ai.last_name_required")}`;
     }
     if (!addNewContact.phone) {
-      errors.phone = "Phone number is required";
+      errors.phone = `${t("brain_ai.phone_no_required")}`;
     } else if (!/^\+?[0-9\s]+$/.test(addNewContact.phone)) {
-      errors.phone = "Invalid phone number format";
+      errors.phone = `${t("brain_ai.invalid_phone_no")}`;
     }
     //  else if (addNewContact.phone.replace(/\D/g, "").length !== 10) {
     //   errors.phone = "Phone number must be exactly 10 digits";
     // }
     if (!addNewContact.email) {
-      errors.email = "Email is required";
+      errors.email = `${t("brain_ai.email_required")}`;
     }
     if (!addNewContact.companyName) {
-      errors.companyName = "Company Name is required";
+      errors.companyName = `${t("brain_ai.company_name_required")}`;
     }
     setError(errors);
     return Object.keys(errors).length === 0;
@@ -138,6 +138,7 @@ const ContactsPage = () => {
     if (!validateSubmit()) {
       return;
     }
+    console.log(addNewContact)
     setLoading(true)
     try {
       const response = await newContactAdd({ ...addNewContact, phone: selectedCountry.dial_code + " " + addNewContact.phone })
@@ -159,11 +160,11 @@ const ContactsPage = () => {
         getAllContacts();
       } else {
         console.log(response)
-        setError((prev) => ({ ...prev, error: response?.data?.message || 'Network Connection Error' }))
+        setError((prev) => ({ ...prev, error: response?.data?.message || `${t("brain_ai.network_connection_error")}` }))
       }
     } catch (error) {
       console.log(error)
-      setError((prev) => ({ ...prev, error: 'Network Connection Error' }))
+      setError((prev) => ({ ...prev, error: `${t("brain_ai.network_connection_error")}` }))
     } finally {
       setLoading(false)
     }
@@ -195,11 +196,11 @@ const ContactsPage = () => {
         getAllContacts();
       } else {
         console.log(response)
-        setError((prev) => ({ ...prev, error: response?.data?.message || 'Network Connection Error' }))
+        setError((prev) => ({ ...prev, error: response?.data?.message || `${t("brain_ai.network_connection_error")}` }))
       }
     } catch (error) {
       console.log(error)
-      setError((prev) => ({ ...prev, error: "Network Connection Error" }))
+      setError((prev) => ({ ...prev, error: `${t("brain_ai.network_connection_error")}` }))
     } finally {
       setLoading(false)
     }
@@ -284,7 +285,7 @@ const ContactsPage = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formCreateList.listName) newErrors.listName = "List name is required.";
+    if (!formCreateList.listName) newErrors.listName = `${t("brain_ai.list_name_required")}`;
     // if (!formCreateList.channel) newErrors.channel = "Channel is required.";
 
     setCreateListErrors(newErrors);
@@ -295,9 +296,9 @@ const ContactsPage = () => {
   const validateListForm = () => {
     const newErrors = {};
 
-    if (!formData.listName.trim()) newErrors.listName = "List name is required.";
-    if (!formData.description) newErrors.description = "Description is required.";
-    if (!formData.channel) newErrors.channel = "Channel is required.";
+    if (!formData.listName.trim()) newErrors.listName = `${t("brain_ai.list_name_required")}`;
+    if (!formData.description) newErrors.description = `${t("brain_ai.description_required")}`;
+    if (!formData.channel) newErrors.channel = `${t("brain_ai.channel_required")}`;
 
     setFormErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -384,7 +385,7 @@ const ContactsPage = () => {
         setFormErrors((prev) => ({ ...prev, listName: response?.response?.data?.message }))
       }
     } catch (error) {
-      setFormErrors((prev) => ({ ...prev, error: response?.data?.message || 'Network Connection Error' }))
+      setFormErrors((prev) => ({ ...prev, error: response?.data?.message || `${t("brain_ai.network_connection_error")}` }))
       console.log(error)
     } finally {
       setLoading(false)
@@ -400,7 +401,7 @@ const ContactsPage = () => {
 
         if (response?.data?.contacts?.length == 0) {
 
-          setAllContactsMessage("No Contacts Found")
+          setAllContactsMessage(`${t("brain_ai.no_contact_found")}`)
           setAllContacts([])
         } else {
           setAllContacts(response?.data?.contacts);
@@ -451,7 +452,7 @@ const ContactsPage = () => {
         console.log(response?.data?.lists)
         if (response?.data?.lists?.length === 0) {
           setListLoading(false);
-          setListMessage("No Lists Found");
+          setListMessage(`${t("brain_ai.no_list_found")}`);
         }
       }
 
@@ -469,7 +470,7 @@ const ContactsPage = () => {
     try {
       const response = await createContactList(formData);
       if (response?.status === 201) {
-        setFormErrors((prev) => ({ ...prev, success: response?.data?.message || 'Added Create List' }))
+        setFormErrors((prev) => ({ ...prev, success: response?.data?.message || `${t("brain_ai.added_create_list")}` }))
         setTimeout(() => {
           setFormErrors({})
           setOpen(false);
@@ -482,7 +483,7 @@ const ContactsPage = () => {
       }
     } catch (error) {
       console.log(error)
-      setFormErrors((prev) => ({ ...prev, error: response?.data?.message || 'Network Connection Error' }))
+      setFormErrors((prev) => ({ ...prev, error: response?.data?.message || `${t("brain_ai.network_connection_error")}` }))
     } finally {
       setLoading(false)
 
@@ -535,7 +536,7 @@ const ContactsPage = () => {
   const handleUploadFile = async () => {
     console.log(selectedFile)
     if (selectedFile == null) {
-      setFileUploadError("File is required")
+      setFileUploadError(`${t("brain_ai.file_required")}`)
       return
     }
     setLoading(true)
@@ -622,25 +623,25 @@ const ContactsPage = () => {
       <div className="flex flex-col items-start gap-2.5 w-full">
         <div className="flex items-center justify-between w-full">
           <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
-            Contacts
+           {t("brain_ai.contacts")}
           </h1>
 
           <div className="flex gap-2.5 items-center">
             {activeTab !== "lists" && <button className="flex items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#E1E4EA] rounded-[7px] bg-white">
               <Download color="#5A687C" />
               <span className="font-[500] text-[16px] leading-6 text-[#5A687C]">
-                Export
+                {t("brain_ai.export")}
               </span>
             </button>}
 
             {activeTab !== "lists" && <button onClick={() => setOpenImport(true)} className="flex items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5F58E8] rounded-[7px] bg-white">
               <Upload color="#675FFF" />
-              <span className="font-[500] text-[16px] leading-6 text-[#675FFF]">Import</span>
+              <span className="font-[500] text-[16px] leading-6 text-[#675FFF]">{t("brain_ai.import")}</span>
             </button>}
 
             <button onClick={activeTab === "lists" ? () => setOpen(true) : () => setAddContactModal(true)} className="flex items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
               <span className="font-medium text-base leading-6">
-                {activeTab === "lists" ? "Create List" : "Add Contact"}
+                {activeTab === `${t("brain_ai.lists")}` ? `${t("brain_ai.create_list")}` : `${t("brain_ai.add_contact")}`}
               </span>
             </button>
           </div>
@@ -655,7 +656,7 @@ const ContactsPage = () => {
                 : "border-transparent text-[#5A687C]"
                 }`}
             >
-              All Contacts
+             {t("brain_ai.all_contacts")}
             </button>
             <button
               onClick={() => setActiveTab("lists")}
@@ -664,7 +665,7 @@ const ContactsPage = () => {
                 : "border-transparent text-[#5A687C]"
                 }`}
             >
-              Lists
+              {t("brain_ai.list")}
             </button>
           </div>
         </div>
@@ -694,7 +695,7 @@ const ContactsPage = () => {
               <div className="relative w-[179px]">
                 <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
-                  placeholder="Search"
+                  placeholder={t(t("brain_ai.search"))}
                   value={contactSearch}
                   onChange={(e) => setContactSearch(e.target.value.trim())}
                   className="w-full pl-10 pr-3.5 pt-[8px] pb-[8px] bg-white border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] rounded-lg"
@@ -888,7 +889,7 @@ const ContactsPage = () => {
                 <input
                   value={listSearch}
                   onChange={(e) => setListSearch(e.target.value.trim())}
-                  placeholder="Search"
+                  placeholder={t("brain_ai.search")}
                   className="w-full pl-10 pr-3.5 pt-[8px] pb-[8px] bg-white border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] rounded-lg"
                 />
               </div>
@@ -1009,7 +1010,7 @@ const ContactsPage = () => {
                 <input
                   type="text"
                   name="listName"
-                  placeholder="e.g. Monthly Newsletter, Sales Leads, etc."
+                  placeholder={t("brain_ai.example_placeholder")}
                   value={formData?.listName}
                   onChange={handleChange}
                   className={`flex w-full items-center border ${formErrors.listName ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-2 focus:outline-none focus:border-[#675FFF]`}
@@ -1018,11 +1019,11 @@ const ContactsPage = () => {
               </div>
               {formErrors.listName && <p className="text-sm text-red-500">{formErrors.listName}</p>}
               <div>
-                <label className="block text-[14px] font-medium text-[#292D32] mb-1">List Description</label>
+                <label className="block text-[14px] font-medium text-[#292D32] mb-1">{t("brain_ai.list_description")}</label>
                 <textarea
                   type="text"
                   name="description"
-                  placeholder="Describe your list to your team. This description will not be visible to your contacts. "
+                  placeholder={t("brain_ai.describe_your_list_placeholder")}
                   value={formData?.description}
                   rows={4}
                   onChange={handleChange}
@@ -1043,7 +1044,7 @@ const ContactsPage = () => {
                     ...prev, channel: ''
                   }))
                 }}
-                placeholder="Select"
+                placeholder={t("brain_ai.select")}
                 className=""
                 errors={formErrors}
               />
@@ -1282,21 +1283,21 @@ const ContactsPage = () => {
             </button>
 
             <h2 className="text-xl font-semibold text-gray-800 mb-5">
-              {contactIsEdit ? 'Update' : 'Add New'} Contact
+              {contactIsEdit ? `${t("brain_ai.update")}` : `${t("brain_ai.add_new")}`} {t("brain_ai.contact")}
             </h2>
 
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
-                    First Name
+                    {t("brain_ai.first_name")}
                   </label>
                   <input
                     type="text"
                     name="firstName"
                     value={addNewContact.firstName}
                     onChange={handleAddContactChange}
-                    placeholder="Enter first name"
+                    placeholder={t("brain_ai.first_name_placeholder")}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#675FFF]"
                   />
 
@@ -1306,12 +1307,12 @@ const ContactsPage = () => {
                 </div>
                 <div>
                   <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
-                    Last Name
+                   {t("brain_ai.last_name")}
                   </label>
                   <input
                     type="text"
                     name="lastName"
-                    placeholder="Enter last name"
+                    placeholder={t("brain_ai.last_name_placeholder")}
                     value={addNewContact.lastName}
                     onChange={handleAddContactChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#675FFF]"
@@ -1325,7 +1326,7 @@ const ContactsPage = () => {
 
               <div>
                 <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
-                  Number
+                  {t("brain_ai.number")}
                 </label>
                 <div ref={countryRef} className="flex group items-center focus-within:border-[#675FFF] gap-2 border border-gray-300 rounded-lg px-4 py-2">
                   <div className="relative">
@@ -1342,11 +1343,12 @@ const ContactsPage = () => {
                     </button>
                     {isOpen && (
                       <div className="absolute px-1 z-10 rounded-md shadow-lg border border-gray-200 max-h-40 overflow-auto top-6 w-full left-[-13px] bg-white mt-1">
-                        {countryData.map((country) => (
+                        {countryData.map((country,idx) => (
                           <div
-                            key={country.code}
+                            key={idx}
                             onClick={() => {
                               setSelectedCountry(country);
+                              console.log(country);
                               setAddNewContact((prev) => ({ ...prev, countryCode: country.code }))
                               setIsOpen(false);
                             }}
@@ -1364,7 +1366,7 @@ const ContactsPage = () => {
                     name="phone"
                     value={addNewContact.phone}
                     onChange={handleAddContactChange}
-                    placeholder="Enter number"
+                    placeholder={t("brain_ai.number_placeholder")}
                     className="w-full outline-none"
                   // onChange={(e) => {
                   //   setNumber(e.target.value);
@@ -1381,14 +1383,14 @@ const ContactsPage = () => {
               </div>
               <div>
                 <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
-                  Email Address
+                  {t("settings.tab_1_list.email_address")}
                 </label>
                 <input
                   type="text"
                   name="email"
                   value={addNewContact.email}
                   onChange={handleAddContactChange}
-                  placeholder="Enter email address"
+                  placeholder={t("settings.tab_3_list.email_placeholder")}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#675FFF]"
                 />
 
@@ -1398,7 +1400,7 @@ const ContactsPage = () => {
               </div>
               <div>
                 <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
-                  Company Name
+                  {t("brain_ai.company_name")}
                 </label>
                 <input
                   type="text"
@@ -1453,7 +1455,7 @@ const ContactsPage = () => {
                 disabled={loading}
                 onClick={contactIsEdit ? () => handleUpdateContactSubmit() : () => handleNewContactSubmit()}
               >
-                {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save"}
+                {loading ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : `${t("brain_ai.save")}`}
               </button>
             </div>
           </div>
