@@ -1001,11 +1001,11 @@ const ContactsPage = () => {
               <X className="w-5 h-5" />
             </button>
 
-            <h2 className="text-[#1E1E1E] font-semibold text-[20px] mb-2">{isEdit ? 'Update' : 'Create'} a List</h2>
+            <h2 className="text-[#1E1E1E] font-semibold text-[20px] mb-2">{isEdit ? `${t("brain_ai.update")}` : `${t("brain_ai.create")}`} {t("brain_ai.a_list")}</h2>
 
             <div className="flex flex-col gap-2">
               <div>
-                <label className="block text-[14px] font-medium text-[#292D32] mb-1">Name</label>
+                <label className="block text-[14px] font-medium text-[#292D32] mb-1">{t("brain_ai.name")}</label>
                 <input
                   type="text"
                   name="listName"
@@ -1014,7 +1014,7 @@ const ContactsPage = () => {
                   onChange={handleChange}
                   className={`flex w-full items-center border ${formErrors.listName ? 'border-red-500' : 'border-gray-300'} rounded-[8px] px-4 py-2 focus:outline-none focus:border-[#675FFF]`}
                 />
-                <p className="text-[12px] pt-2 text-[#5A687C] font-[400]">List names are visible to contacts</p>
+                <p className="text-[12px] pt-2 text-[#5A687C] font-[400]">{t("brain_ai.visible_to_contacts")}</p>
               </div>
               {formErrors.listName && <p className="text-sm text-red-500">{formErrors.listName}</p>}
               <div>
@@ -1059,10 +1059,10 @@ const ContactsPage = () => {
                 setFormErrors({})
                 setIsEdit("");
               }} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
-                Cancel
+                {t("brain_ai.cancel")}
               </button>
               <button onClick={!isEdit ? () => handleSubmit() : () => handleUpdateList()} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
-                {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save"}
+                {loading ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : `${t("brain_ai.save")}`}
               </button>
             </div>
           </div>
@@ -1085,13 +1085,13 @@ const ContactsPage = () => {
 
             <div className="flex flex-col gap-8">
               <div className="flex flex-col gap-1">
-                <h2 className="text-[#1E1E1E] font-[600] text-[20px]">Create List</h2>
-                <h2 className="text-[#5A687C] font-[400] text-[16px]">{formCreateList.contactsId?.length} Contact Selected</h2>
+                <h2 className="text-[#1E1E1E] font-[600] text-[20px]">{t("brain_ai.create_list")}</h2>
+                <h2 className="text-[#5A687C] font-[400] text-[16px]">{formCreateList.contactsId?.length} {t("brain_ai.contacts_selected")}</h2>
               </div>
 
               <div className="flex flex-col gap-2">
                 <div>
-                  <label className="block text-[14px] font-medium text-[#292D32] mb-1">List Name</label>
+                  <label className="block text-[14px] font-medium text-[#292D32] mb-1">{t("brain_ai.list_name")}</label>
                   {/* <input
                     type="text"
                     name="listName"
@@ -1115,7 +1115,7 @@ const ContactsPage = () => {
                         ...prev, listName: ''
                       }))
                     }}
-                    placeholder="Select"
+                    placeholder={t("brain_ai.select")}
                     className=""
                     errors={createListErrors}
                   />
@@ -1154,7 +1154,7 @@ const ContactsPage = () => {
                   Cancel
                 </button>
                 <button onClick={handleListSubmit} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
-                  {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save"}
+                  {loading ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : `${t("brain_ai.save")}`}
                 </button>
               </div>
             </div>
@@ -1176,11 +1176,11 @@ const ContactsPage = () => {
               <X className="w-5 h-5" />
             </button>
 
-            <h2 className="text-[#1E1E1E] font-[600] text-[20px] mb-2">Upload your files</h2>
-            <p className="text-[16px] font-[400] text-[#5A687C]">Before uploading files. make sure your file is ready to import. <span onClick={handleDownload} className="text-[#675FFF]">Download sample file</span> or <span className="text-[#675FFF]">learn more</span>.</p>
+            <h2 className="text-[#1E1E1E] font-[600] text-[20px] mb-2">{t("brain_ai.upload_your_files")}</h2>
+            <p className="text-[16px] font-[400] text-[#5A687C]">{t("brain_ai.before_uploading_files")} <span onClick={handleDownload} className="text-[#675FFF]">{t("brain_ai.download_sample_file")}</span> {t("brain_ai.or")} <span className="text-[#675FFF]">{t("brain_ai.learn_more")}</span>.</p>
             <div className="flex flex-col gap-2">
               <div>
-                <label className="block text-sm font-medium mb-1">Upload File / Images</label>
+                <label className="block text-sm font-medium mb-1">{t("brain_ai.upload_file_images")}</label>
                 <div className="mt-2">
                   <div
                     onClick={handleClick}
@@ -1192,10 +1192,10 @@ const ContactsPage = () => {
                   >
                     <UploadIcon />
                     <p className="text-[18px] font-[600] text-[#1E1E1E] mt-2">
-                      Upload from your computer
+                      {t("brain_ai.upload_from_your_computer")}
                     </p>
                     <p className="text-[14px] font-[500] text-[#5A687C] mt-1">
-                      or drag and drop
+                    {t("brain_ai.or_drag_and_drop")}
                     </p>
                     <input
                       type="file"
@@ -1207,7 +1207,7 @@ const ContactsPage = () => {
 
                   {selectedFile && (
                     <div className="mt-3 text-sm text-gray-700">
-                      <strong>Selected File:</strong> {selectedFile.name}
+                      <strong>{t("brain_ai.selected_file")}</strong> {selectedFile.name}
                     </div>
                   )}
                 </div>
@@ -1248,10 +1248,10 @@ const ContactsPage = () => {
                 setOpenImport(false)
                 setSelectedFile(null)
               }} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
-                Cancel
+                {t("brain_ai.cancel")}
               </button>
               <button onClick={handleUploadFile} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
-                {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save"}
+                {loading ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : `${t("brain_ai.save")}`}
               </button>
             </div>
           </div>

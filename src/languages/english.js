@@ -41,7 +41,29 @@ const englishTranslation = {
         update:"Update",
         create:"Create",
         a_list:"a List",
-        
+        name:"Name",
+        visible_to_contacts:"List names are visible to contacts",
+        list_description:"List Description",
+        describe_your_list_placeholder:"Describe your list to your team. This description will not be visible to your contacts.",
+        cancel:"Cancel",
+        save:"Save",
+        processing:"Processing...",
+        create_list:"Create List",
+        contacts_selected:"Contacts Selected",
+        select:"Select",
+       upload_your_files:"Upload your files",
+       before_uploading_files:"Before uploading files. make sure your file is ready to import.",
+       download_sample_file:"Download sample file",
+       or:"or",
+       learn_more:"learn more",
+       upload_file_images:"Upload File / Images",
+       upload_from_your_computer:"Upload from your computer",
+       or_drag_and_drop:"or drag and drop",
+       selected_file:"Selected File:",
+       add_new:"Add New",
+       contact:"Contact",
+       first_name:"First Name",
+       last_name:"Last Name"
         }
 }
 export default englishTranslation;
