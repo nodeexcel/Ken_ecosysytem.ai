@@ -1,5 +1,5 @@
 const frenchTranslation = {
-    welcome: "Bienvenu",
+    hello: "Bonjour",
     coo: "ROUCOULER",
     content_creation: "Création de contenu",
     phone_outreach: "Contact téléphonique",

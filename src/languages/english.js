@@ -1,5 +1,5 @@
 const englishTranslation = {
-    welcome: "Welcome",
+    hello: "Hello",
     coo: "COO",
     content_creation: "Content Creation",
     phone_outreach: "Phone Outreach",
