@@ -87,7 +87,7 @@ function Coo() {
                 isUser,
                 content,
                 sender: isUser ? "User" : "Ecosystem.ai",
-                time: msg?.messaged_at ? formatTimeAgo(msg?.messaged_at) : "Just now",
+                time: msg?.message_at ? formatTimeAgo(msg?.message_at) : "Just now",
                 status: "Read"
             };
         });

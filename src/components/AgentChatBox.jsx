@@ -119,6 +119,9 @@ const AgentChatBox = ({ listedProps }) => {
 
                 setMessages((prev) => [...prev, userMessage]);
                 handleGetAccountChats()
+                if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+                    socketRef.current.close()
+                }
             }
 
         } catch (err) {
@@ -170,9 +173,9 @@ const AgentChatBox = ({ listedProps }) => {
                 const userMessage = {
                     id: uuidv4(),
                     isUser: false,
-                    content: parsedMessage?.agent,
+                    content: parsedMessage?.agent ?? parsedMessage?.error,
                     sender: "Ecosystem.ai",
-                    time: formatTimeAgo(parsedMessage?.messaged_at),
+                    time: formatTimeAgo(parsedMessage?.message_at),
                     status: "Read",
                 };
 
@@ -225,7 +228,7 @@ const AgentChatBox = ({ listedProps }) => {
 
     const handleSelectChat = async (chat_id) => {
         stopTranscription()
-        socket2Ref.current = new WebSocket(`${websocketurl}/${chat_id}?token=${localStorage.getItem("token")}`)
+        // socket2Ref.current = new WebSocket(`${websocketurl}/${chat_id}?token=${localStorage.getItem("token")}`)
         await handleChatHistoryId(chat_id)
         setActiveConversation(chat_id)
     }

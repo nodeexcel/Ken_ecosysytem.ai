@@ -114,6 +114,7 @@ const Knowledge = () => {
       if (response.status === 200) {
         setOpen(false)
         handleSnippetsData()
+        setFormData({ snippet: '', files: [], website: '' })
       } else {
         setLoading(false)
       }
@@ -180,7 +181,7 @@ const Knowledge = () => {
         }
         const data = {
           data: formData.snippet,
-          data_type: activeTab
+          data_type: "snippet"
         }
         handleKnowledge(data)
         return;
