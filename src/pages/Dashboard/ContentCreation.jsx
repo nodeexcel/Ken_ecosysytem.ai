@@ -4,7 +4,7 @@ import constanceImg from "../../assets/svg/constance_logo.svg"
 import { useNavigate } from 'react-router-dom'
 import constanceMsgLogo from '../../assets/svg/constance_msg_logo.svg'
 import { v4 as uuidv4 } from 'uuid';
-import { deleteChat, getAccountingChatById, getAccountingChats, updateChatName } from '../../api/account'
+import { deleteContentCreationChat, getContentCreationChatById, getContentCreationChats, updateContentCreationChatName } from '../../api/contentCreationAgent'
 import AgentChatBox from '../../components/AgentChatBox'
 import { formatTimeAgo } from '../../utils/TimeFormat'
 import CreationStudio from '../../components/CreationStudio'
@@ -25,8 +25,8 @@ function ContentCreation() {
     const [editData, setEditData] = useState({})
     const socketRef = useRef(null)
     const socket2Ref = useRef(null)
-    const newwebsocketurl = "ws://116.202.210.102:8000/new-accounting-chat"
-    const websocketurl = "ws://116.202.210.102:8000/accounting"
+    const newwebsocketurl = "ws://116.202.210.102:8000/new-content-creation-agent-chat"
+    const websocketurl = "ws://116.202.210.102:8000/content-creation-agent"
     const initialMessage = "Hello! I’m Constance, your Content Creator.\nI’m here to support you across all your HR needs, from recruiting and screening candidates to onboarding, managing interviews, and beyond.\nI can also help you with day-to-day HR topics like policy clarification, employee onboarding support, FAQ responses, and internal coordination.\nJust tell me what you need, whether it's hiring your next top talent or streamlining your HR processes. and I’ll take care of it.\nReady to simplify your HR tasks and save time? Let’s get started 😊"
 
     const navigate = useNavigate()
@@ -47,7 +47,7 @@ function ContentCreation() {
     const handleGetAccountChats = async () => {
         setLoadingChatsList(true)
         try {
-            const response = await getAccountingChats()
+            const response = await getContentCreationChats()
             if (response?.status === 200) {
                 if (response?.data?.success?.length === 0) {
                     setLoadingChatsList(false)
@@ -91,7 +91,7 @@ function ContentCreation() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await deleteChat(id)
+            const response = await deleteContentCreationChat(id)
             if (response?.status === 200) {
                 handleGetAccountChats()
                 if (id === activeConversation) {
@@ -113,7 +113,7 @@ function ContentCreation() {
         }
         try {
             setUpdateNameLoading(true)
-            const response = await updateChatName(editData?.chat_id, { name })
+            const response = await updateContentCreationChatName(editData?.chat_id, { name })
             if (response?.status === 200) {
                 setEditData({})
                 handleGetAccountChats()
@@ -130,7 +130,7 @@ function ContentCreation() {
         // setOpenChat(true)
         try {
             setLoadingChats(true)
-            const response = await getAccountingChatById(id);
+            const response = await getContentCreationChatById(id);
             console.log(response.data)
             if (response.status === 200) {
                 const data = await transformApiMessages(response?.data?.success)
