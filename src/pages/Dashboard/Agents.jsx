@@ -44,7 +44,7 @@ const Agents = () => {
       name: "Constance",
       role: `${t("content_creation")}`,
       gradient: "bg-gradient-to-br from-[#F8DDFF] to-[#F8DDFF]",
-      path: "",
+      path: "/dashboard/content-creation",
       label: "",
       image: constanceImg
     },
@@ -143,14 +143,14 @@ const Agents = () => {
             <h1 className="text-[20px] font-[600] pl-3">{t("home")}</h1>
           </div>
           <div>
-            <button className='bg-[#675FFF] p-2 rounded-lg text-white cursor-pointer' onClick={handleLogout}>{t("logout")}</button>
+            <button className='bg-[#675FFF] py-2 px-10 text-[14px] rounded-lg text-white cursor-pointer' onClick={handleLogout}>{t("logout")}</button>
           </div>
         </div>
         <hr className='text-[#E1E4EA]' />
       </div>
       {/* Top Right Button */}
       <div className="flex justify-end items-end pt-3 pr-2">
-        <button className="gap-2 rounded-lg flex items-center p-3 text-[#5A687C] font-[400] text-[16px]">
+        <button className="gap-2 cursor-pointer rounded-lg flex items-center p-3 text-[#5A687C] font-[400] text-[16px]">
           {/* <span><img src={image1} alt="image1" /></span> */}
           {t("request_new_feature")}
           <div className="pb-0.5">
@@ -161,7 +161,7 @@ const Agents = () => {
 
       {/* Welcome Message */}
       <div className="flex justify-center flex-col items-center text-center gap-2 pb-5">
-        <h1 className="font-[600] text-2xl">{t("hello")}, <span className="text-[#5E54FF]">{userDetails?.user?.firstName}</span><span className="!mb-1">👋</span></h1>
+        <h1 className="font-[600] text-2xl">{t("hello")}, <span className="text-[#5E54FF]">{userDetails?.user?.firstName}</span>{" "}<span className="!mb-1">👋</span></h1>
         <p className="font-[400] text-[16px] text-[#5A687C]">
           {t("ai_agents_heading")}
         </p>
@@ -174,7 +174,7 @@ const Agents = () => {
             <div
               onClick={() => handleNavigate(employee.path, employee.label)}
               key={index}
-              className={`w-[227px] h-[266px] rounded-lg ${employee.gradient}`}
+              className={`w-[227px] h-[266px] rounded-lg  ${employee.gradient} hover:opacity-80 cursor-pointer`}
             >
               <div className="flex flex-col items-start p-[21px] h-full justify-between">
                 <div className="w-full relative">
