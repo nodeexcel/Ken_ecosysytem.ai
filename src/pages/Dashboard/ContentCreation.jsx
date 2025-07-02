@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
-import { ConversationIcon, LeftArrow } from '../../icons/icons'
-import finnImg from "../../assets/svg/finn_logo.svg"
+import { ConversationIcon, CreationStudioIcon, LeftArrow } from '../../icons/icons'
+import constanceImg from "../../assets/svg/constance_logo.svg"
 import { useNavigate } from 'react-router-dom'
-import finnMsgLogo from '../../assets/svg/finn_msg_logo.svg'
+import constanceMsgLogo from '../../assets/svg/constance_msg_logo.svg'
 import { v4 as uuidv4 } from 'uuid';
 import { deleteChat, getAccountingChatById, getAccountingChats, updateChatName } from '../../api/account'
 import AgentChatBox from '../../components/AgentChatBox'
 import { formatTimeAgo } from '../../utils/TimeFormat'
+import CreationStudio from '../../components/CreationStudio'
 
-function Accounting() {
+function ContentCreation() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
     const [activeConversation, setActiveConversation] = useState()
     const [messages, setMessages] = useState([]);
@@ -26,12 +27,13 @@ function Accounting() {
     const socket2Ref = useRef(null)
     const newwebsocketurl = "ws://116.202.210.102:8000/new-accounting-chat"
     const websocketurl = "ws://116.202.210.102:8000/accounting"
-    const initialMessage = "Hi! I’m Finn, your Finance and Accounting expert. \nI’m here to help you manage your cash flow, track expenses, generate financial reports, and keep your books clean, without the headache.\nFrom invoicing and cost analysis to budgeting and tax prep, I’ve got your numbers covered. \nJust tell me what you need.I can analyze your data, highlight financial risks, and help you make smarter business decisions in real time. \nReady to get your finances in order and grow with clarity ? Let’s dive in 💼"
+    const initialMessage = "Hello! I’m Constance, your Content Creator.\nI’m here to support you across all your HR needs, from recruiting and screening candidates to onboarding, managing interviews, and beyond.\nI can also help you with day-to-day HR topics like policy clarification, employee onboarding support, FAQ responses, and internal coordination.\nJust tell me what you need, whether it's hiring your next top talent or streamlining your HR processes. and I’ll take care of it.\nReady to simplify your HR tasks and save time? Let’s get started 😊"
 
     const navigate = useNavigate()
 
     const sideMenuList = [
         { label: "Chat", icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
+        { label: "Creation Studio", icon: <CreationStudioIcon status={activeSidebarItem == "creation_studio"} />, hoverIcon: <CreationStudioIcon hover={true} />, path: "creation_studio" },
     ]
 
     useEffect(() => {
@@ -141,15 +143,14 @@ function Accounting() {
         }
     }
 
-    const staticSuggestions = [{ label: "Would you like advice on optimizing your cash flow?", key: "I would you like advice on optimizing my cash flow." },
-    { label: "I need template for my forecast budget.", key: "I need template for my forecast budget." },
+    const staticSuggestions = [{ label: "How to analyze the performance of your last campaign?", key: "How to analyze the performance of my last campaign." },
+    { label: "Would you like a plan for your next marketing campaign?", key: "Would you like a plan for my next marketing campaign." },
     { label: "How to organize my expenses and icome efficiently.", key: "How to organize my expenses and icome efficiently." }
     ]
 
-
     const listedProps = {
-        agentLogo: finnMsgLogo,
-        agentName: "Finn",
+        agentLogo: constanceMsgLogo,
+        agentName: "Constance",
         initialMessage: initialMessage,
         setActiveConversation: setActiveConversation,
         activeConversation: activeConversation,
@@ -194,6 +195,8 @@ function Accounting() {
 
     const renderMainContent = () => {
         switch (activeSidebarItem) {
+            case "creation_studio":
+                return <CreationStudio />
             default:
                 return <AgentChatBox listedProps={listedProps} />
         }
@@ -212,7 +215,7 @@ function Accounting() {
                         }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}
-                                <h1 className="text-[20px] font-[600]">Accounting</h1>
+                                <h1 className="text-[20px] font-[600]">Content Creation</h1>
                             </div>
                         </div>
                         <hr className='text-[#E1E4EA]' />
@@ -220,11 +223,11 @@ function Accounting() {
                     <div className="flex flex-col w-full items-start gap-2 relative px-3">
                         <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
                             <div className="flex justify-center items-center">
-                                <img src={finnImg} alt={"finn"} className="object-fit" />
+                                <img src={constanceImg} alt={"constance"} className="object-fit" />
                             </div>
                             <div className="flex flex-col">
-                                <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Finn</h1>
-                                <p className="text-[#5A687C] text-[14px] font-[400]">Accounting</p>
+                                <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Constance</h1>
+                                <p className="text-[#5A687C] text-[14px] font-[400]">Content Creation</p>
                             </div>
                         </div>
                         {sideMenuList.map((e, i) => <div
@@ -251,4 +254,4 @@ function Accounting() {
     )
 }
 
-export default Accounting
+export default ContentCreation

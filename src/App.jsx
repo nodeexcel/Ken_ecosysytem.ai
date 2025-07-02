@@ -28,6 +28,8 @@ import Accounting from './pages/Dashboard/Accounting'
 import Hr from './pages/Dashboard/Hr'
 import Coo from './pages/Dashboard/Coo'
 import Seo from './pages/Dashboard/Seo'
+import ContentCreation from './pages/Dashboard/ContentCreation'
+import CustomerSupport from './pages/Dashboard/CustomerSupport'
 
 
 
@@ -61,6 +63,8 @@ function App() {
           <Route path="hr" element={<Hr />} />
           <Route path="coo" element={<Coo />} />
           <Route path="seo" element={<Seo />} />
+          <Route path="content-creation" element={<ContentCreation />} />
+          <Route path="customer-support" element={<CustomerSupport />} />
         </Route>
       </Routes>
     </div>
