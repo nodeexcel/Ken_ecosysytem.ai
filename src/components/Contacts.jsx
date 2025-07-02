@@ -268,7 +268,7 @@ const ContactsPage = () => {
     { name: `${t("brain_ai.email")}`, width: "w-[290px]" },
     { name: `${t("brain_ai.phone_no")}`, width: "flex-1" },
     { name: `${t("brain_ai.date_created")}`, width: "flex-1" },
-    { name: `${t("brain_ai.actions")}`, width: "w-[120px]" },
+    { name: `${t("brain_ai.action")}`, width: "w-[120px]" },
   ];
 
   const statusOptions = [{ label: `${t("brain_ai.any")}`, key: "any" }, { label: `${t("brain_ai.active")}`, key: "active" }, { label: `${t("brain_ai.unconfirmed")}`, key: "unconfirmed" }, { label: `${t("brain_ai.unsubscribed")}`, key: "unsubscribed" }, { label: `${t("brain_ai.bounced")}`, key: "bounced" }]
@@ -681,7 +681,7 @@ const ContactsPage = () => {
                 onChange={(updated) => setChannelSelect(updated)}
                 placeholder="Select"
                 className="w-[198px]"
-                extraName="Channel"
+                extraName={t("brain_ai.channel")}
               />
               <SelectDropdown
                 name="all_contacts_status"
@@ -690,7 +690,7 @@ const ContactsPage = () => {
                 onChange={(updated) => setStatusSelect(updated)}
                 placeholder="Select"
                 className="w-[215px]"
-                extraName="Status"
+                extraName={t("brain_ai.status")}
               />
               <div className="relative w-[179px]">
                 <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -785,18 +785,18 @@ const ContactsPage = () => {
                           </td>
                         </tr>
                       ))}
-                    </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Contacts Listed</p>}
+                    </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">{t("brain_ai.no_contact_message")}</p>}
               </div>
             </table>
           </div>
           <div className="flex justify-between items-center mt-4 px-4 flex-wrap gap-3 w-full">
             <div className="flex items-center gap-2 text-[16px] text-[#5A687C]">
               <div>
-                Showing {(currentPage - 1) * rowsPerPage + 1} - {Math.min((currentPage) * rowsPerPage, totalContacts)} of {totalContacts}
+                {t("brain_ai.showing")} {(currentPage - 1) * rowsPerPage + 1} - {Math.min((currentPage) * rowsPerPage, totalContacts)} {t("brain_ai.of")} {totalContacts}
 
               </div>
               |
-              <span>Rows per page:</span>
+              <span>{t("brain_ai.rows_per_page")}</span>
               <SelectDropdown
                 name="rowsPerPage"
                 options={rowsPerPageOptions}
@@ -904,7 +904,7 @@ const ContactsPage = () => {
                     <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">{t("brain_ai.active_contacts")}</th>
                     <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">{t("brain_ai.channel")}</th>
                     <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">{t("brain_ai.created_date")}</th>
-                    <th className="p-[14px] w-full font-[400] whitespace-nowrap">{t("brain_ai.actions")}</th>
+                    <th className="p-[14px] w-full font-[400] whitespace-nowrap">{t("brain_ai.action")}</th>
                   </tr>
                 </thead>
               </div>
@@ -979,7 +979,7 @@ const ContactsPage = () => {
                           </td>
                         </tr>
                       ))}
-                    </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Contacts Listed</p>}
+                    </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">{t("brain_ai.no_contact_message")}</p>}
               </div>
             </table>
           </div>
@@ -1152,7 +1152,7 @@ const ContactsPage = () => {
                     setCreateListErrors({})
                   }
                 }} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
-                  Cancel
+                  {t("brain_ai.cancel")}
                 </button>
                 <button onClick={handleListSubmit} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
                   {loading ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : `${t("brain_ai.save")}`}
@@ -1181,7 +1181,7 @@ const ContactsPage = () => {
             <p className="text-[16px] font-[400] text-[#5A687C]">{t("brain_ai.before_uploading_files")} <span onClick={handleDownload} className="text-[#675FFF]">{t("brain_ai.download_sample_file")}</span> {t("brain_ai.or")} <span className="text-[#675FFF]">{t("brain_ai.learn_more")}</span>.</p>
             <div className="flex flex-col gap-2">
               <div>
-                <label className="block text-sm font-medium mb-1">{t("brain_ai.upload_file_images")}</label>
+                <label className="block text-sm font-medium mb-1">{t("brain_ai.upload_file_images_placeholder")}</label>
                 <div className="mt-2">
                   <div
                     onClick={handleClick}
@@ -1407,7 +1407,7 @@ const ContactsPage = () => {
                   name="companyName"
                   value={addNewContact.companyName}
                   onChange={handleAddContactChange}
-                  placeholder="Enter company Name "
+                  placeholder={t("brain_ai.company_name_placeholder")}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#675FFF]"
                 />
 

@@ -4,18 +4,12 @@ import letter from '../assets/svg/letter_t.svg'
 import { Upload, X } from "lucide-react";
 import { Delete, Edit, ThreeDots, UploadIcon } from "../icons/icons";
 import { deleteKnowledgeSnippets, getKnowledgeSnippets, knowledgeBase } from "../api/brainai";
+import { useTranslation } from "react-i18next";
 
-const tabs = [
-  { label: "Snippets", key: "snippets", header: "Snippet" },
-  { label: "Websites", key: "website", header: "Website" },
-  { label: "Files", key: "files", header: "File" },
-]
 
-const modelData = {
-  snippets: { label: "Provide any facts, information you want to include in your Brain AI for agents to be aware of." },
-  website: { label: "Provide any facts webpages you want to include in your Brain AI for agents to be aware of." },
-  files: { label: "Upload only clear, relevant, and concise documents to ensure accurate answers from AI agents. Exemples: Company bylaws, Presentation Brochure, Various Presentations." }
-}
+
+
+
 
 const staticData = [
   { header: "My company", description: "Lev" },
@@ -23,15 +17,15 @@ const staticData = [
   { header: "Skill improvement area", description: "Looking to improve in an unspecified area to help Lev grow." }
 ]
 
-const NoData = ({ setOpen }) => {
+const NoData = ({t, setOpen }) => {
   return (
     <div className="mt-3">
       <div className="w-full gap-3 min-h-[360px] flex flex-col justify-center items-center border border-solid border-[#e1e4ea] bg-white rounded-2xl">
         <div onClick={setOpen}>
           <img src={nodata} alt="nodata" />
         </div>
-        <h1 className="text-[20px] font-[600] font-inter">Brain AI is empty</h1>
-        <p className="text-[14px] font-[500] font-inter">Add information to use it</p>
+        <h1 className="text-[20px] font-[600] font-inter"> {t("brain_ai.knowledge.brain_ai_emplty")}</h1>
+        <p className="text-[14px] font-[500] font-inter">{t("brain_ai.knowledge.add_information")}</p>
       </div>
     </div>
   )
@@ -52,6 +46,20 @@ const Knowledge = () => {
   const [errors, setErrors] = useState({});
   const [activeDropdown, setActiveDropdown] = useState(null);
 
+const { t } = useTranslation();
+
+  const tabs = [
+    { label: `${t("brain_ai.knowledge.snippets")}`, key: "snippets", header: "Snippet" },
+    { label: `${t("brain_ai.knowledge.websites")}`, key: "website", header: "Website" },
+    { label: `${t("brain_ai.knowledge.files")}`, key: "files", header: "File" },
+  ]
+
+  const modelData = {
+    snippets: { label: `${t("brain_ai.knowledge.snippet_label")}` },
+    website: { label:  `${t("brain_ai.knowledge.website_label")}` },
+    files: { label:  `${t("brain_ai.knowledge.files_label")}` }
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -68,7 +76,7 @@ const Knowledge = () => {
     setErrors((prev) => ({ ...prev, files: '' }))
     const file = e.target.files?.[0];
     if (file && file.type !== "application/pdf") {
-      setErrors((prev) => ({ ...prev, files: "Only PDF files are allowed." }));
+      setErrors((prev) => ({ ...prev, files: `${t("brain_ai.knowledge.only_pdf_files_allowed")}` }));
       e.target.files = '';
       return;
     } else if (file) {
@@ -95,7 +103,7 @@ const Knowledge = () => {
     setDragActive(false);
     const file = e.dataTransfer.files?.[0];
     if (file && file.type !== "application/pdf") {
-      setErrors((prev) => ({ ...prev, files: "Only PDF files are allowed." }));
+      setErrors((prev) => ({ ...prev, files: `${t("brain_ai.knowledge.only_pdf_files_allowed")}` }));
       e.target.files = '';
       return;
     } else if (file) {
@@ -149,11 +157,11 @@ const Knowledge = () => {
     switch (activeTab) {
       case "website":
         if (!formData.website.trim()) {
-          setErrors((prev) => ({ ...prev, website: "Website is required" }))
+          setErrors((prev) => ({ ...prev, website: `${t("brain_ai.knowledge.website_required")}` }))
           return
         }
         if (!/^https?:\/\/\S+$/.test(formData.website)) {
-          setErrors((prev) => ({ ...prev, website: "Enter a valid Website (http:// or https://)." }))
+          setErrors((prev) => ({ ...prev, website: `${t("brain_ai.knowledge.valid_website")}` }))
           return
         }
         const payload = {
@@ -164,7 +172,7 @@ const Knowledge = () => {
         return;
       case "files":
         if (formData.files?.length === 0) {
-          setErrors((prev) => ({ ...prev, files: "File is required" }))
+          setErrors((prev) => ({ ...prev, files: `${t("brain_ai.knowledge.files_required")}` }))
           return
         }
         const filePayload = {
@@ -176,7 +184,7 @@ const Knowledge = () => {
         return;
       default:
         if (!formData.snippet.trim()) {
-          setErrors((prev) => ({ ...prev, snippet: "Snippet is required" }))
+          setErrors((prev) => ({ ...prev, snippet: `${t("brain_ai.knowledge.snippet_required")}` }))
           return
         }
         const data = {
@@ -247,7 +255,7 @@ const Knowledge = () => {
                                 setActiveDropdown(null);
                               }}
                             >
-                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
                             </button>
                             <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                             <div className="py-1">
@@ -257,7 +265,7 @@ const Knowledge = () => {
                                   handleDelete(i, e.id)
                                 }}
                               >
-                                <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                                <div className="flex items-center gap-2">{<Delete />} <span>{t("delete")}</span> </div>
                               </button>
                             </div>
                           </div>
@@ -268,7 +276,7 @@ const Knowledge = () => {
                 </div>)}
               </div>
             </div> :
-              <NoData setOpen={() => setOpen(true)} />}
+              <NoData t={t} setOpen={() => setOpen(true)} />}
           </>
         )
 
@@ -301,7 +309,7 @@ const Knowledge = () => {
                                 setActiveDropdown(null);
                               }}
                             >
-                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
                             </button>
                             <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                             <div className="py-1">
@@ -311,7 +319,7 @@ const Knowledge = () => {
                                   handleDelete(i, e.id)
                                 }}
                               >
-                                <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                                <div className="flex items-center gap-2">{<Delete />} <span>{t("delete")}</span> </div>
                               </button>
                             </div>
                           </div>
@@ -321,7 +329,7 @@ const Knowledge = () => {
                   </div>
                 </div>)}
               </div>
-            </div> : <NoData setOpen={() => setOpen(true)} />}
+            </div> : <NoData t={t} setOpen={() => setOpen(true)} />}
           </>
         )
       default:
@@ -353,7 +361,7 @@ const Knowledge = () => {
                                 setActiveDropdown(null);
                               }}
                             >
-                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
                             </button>
                             <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                             <div className="py-1">
@@ -363,7 +371,7 @@ const Knowledge = () => {
                                   handleDelete(i, e.id)
                                 }}
                               >
-                                <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                                <div className="flex items-center gap-2">{<Delete />} <span>{t("delete")}</span> </div>
                               </button>
                             </div>
                           </div>
@@ -374,7 +382,7 @@ const Knowledge = () => {
                 </div>)}
               </div>
             </div> :
-              <NoData setOpen={() => setOpen(true)} />}
+              <NoData t={t} setOpen={() => setOpen(true)} />}
           </>
         )
     }
@@ -386,11 +394,11 @@ const Knowledge = () => {
     <div className="flex pr-4 py-4 flex-col w-full items-start gap-6 ">
       <div className="flex items-center justify-between w-full">
         <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
-          Knowledge Base
+          {t("brain_ai.knowledge.sub_heading")}
         </h1>
         <button onClick={() => setOpen(true)} className="flex items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
           <span className="font-medium text-base leading-6">
-            Add {renderHeader()}
+          {t("brain_ai.knowledge.add")} {renderHeader()}
           </span>
         </button>
       </div>
@@ -429,7 +437,7 @@ const Knowledge = () => {
           </button>
 
           <h2 className="text-[#1E1E1E] font-semibold text-[20px] mb-1">
-            Add {renderHeader()}
+          {t("brain_ai.knowledge.add")} {renderHeader()}
           </h2>
           <p className="text-[14px] text-[#5A687C]">
             {modelData[activeTab].label}
@@ -458,7 +466,7 @@ const Knowledge = () => {
           <div className="mt-3">
             {activeTab === "files" && (
               <div>
-                <label className="block text-sm font-medium mb-1">Upload File / Images</label>
+                <label className="block text-sm font-medium mb-1">{t("brain_ai.upload_file_images_placeholder")}</label>
                 <div className="mt-2">
                   <div
                     onClick={handleClick}
@@ -470,10 +478,10 @@ const Knowledge = () => {
                   >
                     <UploadIcon />
                     <p className="text-[18px] font-[600] text-[#1E1E1E] mt-2">
-                      Upload from your computer
+                      {t("brain_ai.upload_from_your_computer")}
                     </p>
                     <p className="text-[14px] font-[500] text-[#5A687C] mt-1">
-                      or drag and drop
+                    {t("brain_ai.or_drag_and_drop")}
                     </p>
                     <input
                       type="file"
@@ -486,7 +494,7 @@ const Knowledge = () => {
 
                   {selectedFile && (
                     <div className="mt-3 text-sm text-gray-700">
-                      <strong>Selected File:</strong> {selectedFile.name}
+                      <strong>{t("brain_ai.selected_file")}</strong> {selectedFile.name}
                     </div>
                   )}
                   {errors.files && <p className="text-red-500 mt-2">{errors.files}</p>}
@@ -495,14 +503,14 @@ const Knowledge = () => {
             )}
             {activeTab === "snippets" && (
               <div>
-                <label className="block text-[14px] font-medium text-[#292D32] mb-1">Details</label>
+                <label className="block text-[14px] font-medium text-[#292D32] mb-1">{t("brain_ai.details")}</label>
                 <div className={`flex items-center border focus-within:border-[#675FFF] ${errors.snippet ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-[8px] px-4 py-3`}>
                   <textarea
                     type="text"
                     name="snippet"
                     value={formData?.snippet}
                     onChange={handleChange}
-                    placeholder="The more details, the better!"
+                    placeholder={t("brain_ai.detail_placeholder")}
                     rows={3}
                     className="w-full focus:outline-none resize-none"
                   />
@@ -512,7 +520,7 @@ const Knowledge = () => {
             )}
             {activeTab === "website" && (
               <div>
-                <label className="block text-[14px] font-medium text-[#292D32] mb-1">Website</label>
+                <label className="block text-[14px] font-medium text-[#292D32] mb-1">{t("brain_ai.knowledge.website")}</label>
                 <div className={`flex items-center border focus-within:border-[#675FFF] ${errors.website ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-[8px] px-4 py-3`}>
                   <input
                     type="text"
@@ -538,14 +546,14 @@ const Knowledge = () => {
               }}
               className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
             >
-              Cancel
+              {t("brain_ai.cancel")}
             </button>
             <button
               onClick={handleSubmit}
               disabled={loading}
               className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
             >
-              {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save"}
+              {loading ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : `${t("brain_ai.save")}`}
             </button>
           </div>
         </div>

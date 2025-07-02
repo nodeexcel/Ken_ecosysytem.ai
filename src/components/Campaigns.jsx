@@ -4,10 +4,12 @@ import { ChevronDown, Info, X } from 'lucide-react';
 import { format, isValid } from 'date-fns';
 import { createEmailCampaign, getEmailCampaignById, updateEmailCampaign } from '../api/emailCampaign';
 import { getLists } from '../api/brainai';
+import { useTranslation } from "react-i18next";
 
 
 
 const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
+    
     const parseInitialTime = () => {
         if (!initialTime) {
             const now = new Date();
@@ -348,13 +350,13 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
                     onClick={handleSave}
                     className={`flex-1 bg-[#675FFF] text-white py-2 px-4 rounded hover:bg-[#5648ff] ${isTimeBeforeMinAllowed(selectedHour, selectedMinute, selectedPeriod) ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                    Save
+                    {t("brain_ai.save")}
                 </button>
                 <button
                     onClick={onCancel}
                     className="flex-1 border border-[#E1E4EA] py-2 px-4 rounded hover:bg-gray-50"
                 >
-                    Cancel
+                    {t("brain_ai.cancel")}
                 </button>
             </div>
         </div>
@@ -416,6 +418,7 @@ const CustomSelector = ({ options, setShowSelector, value = [], onChange, ref })
 
 
 function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
+    const { t } = useTranslation();
     const [campaignData, setCampaignData] = useState([
         { name: 'Campaign', opened: '-', clicked: '-', bounced: '', status: "Issue Detected" },
         { name: 'Campaign', opened: '-', clicked: '-', bounced: '', status: "Planned" }

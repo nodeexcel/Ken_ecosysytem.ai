@@ -12,23 +12,27 @@ import { getNavbarData } from "../store/navbarSlice";
 import { LeftArrow } from "../icons/icons";
 import Integration from "./Integration";
 import { deleteGoogleCalendarAccount, deleteInstaAccount, deleteWhatsappAccount } from "../api/brainai";
+import { useTranslation } from "react-i18next";
 
-const tabs = [
-    { label: "Account" },
-]
 
-const staticData = [
-    { label: "orsay—sample", status: "Approved", description: "This message confirms that you've successfully set up your WhatsApp notifications. From now on, you'll be able to receive updates, alerts, and important info directly in your chat." },
-    { label: "orsay—sample", status: "Approved", description: "This message confirms that you've successfully set up your WhatsApp notifications. From now on, you'll be able to receive updates, alerts, and important info directly in your chat." },
-    { label: "orsay—sample", status: "Approved", description: "This message confirms that you've successfully set up your WhatsApp notifications. From now on, you'll be able to receive updates, alerts, and important info directly in your chat." }
-]
 
 const AdditionalIntegration = ({ setInstagramData, instagramData, integartionData, setFirstRender, whatsappData, setWhatsappData, googleCalendarData, setGoogleCalendarData }) => {
     const [open, setOpen] = useState(false);
     const [createTemplateOpen, setCreateTemplateOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("insta");
     const [errorMessage, setErrorMessage] = useState("")
+    const { t } = useTranslation();
     const dispatch = useDispatch()
+    const tabs = [
+        { label: "Account" },
+    ]
+    
+    const staticData = [
+        { label: `${t("brain_ai.integrations.orsay_sample")}`, status: "Approved", description: `${t("brain_ai.integrations.orsay_description")}` },
+        { label: `${t("brain_ai.integrations.orsay_sample")}`, status: "Approved", description: `${t("brain_ai.integrations.orsay_description")}` },
+        { label: `${t("brain_ai.integrations.orsay_sample")}`, status: "Approved", description: `${t("brain_ai.integrations.orsay_description")}` }
+    ]
+
 
     const handleDeleteInsta = async (id) => {
         try {
@@ -128,10 +132,10 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                                     ? `${e[label].slice(0, 30)}...`
                                     : e[label]}</h1>
                             </div>
-                            <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">Read and write using the {integartionData.name}.</li>
+                            <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">{t("brain_ai.integrations.read_write")} {integartionData.name}.</li>
                         </div>
                         <div className="flex items-center gap-3">
-                            <button onClick={() => handleDeleteWhatsapp(e[id])} className="text-[#FF3B30] border-[1.5px] border-[#FF3B30] rounded-lg px-[20px] py-[7px] text-[16px] font-[500]" >Delete</button>
+                            <button onClick={() => handleDeleteWhatsapp(e[id])} className="text-[#FF3B30] border-[1.5px] border-[#FF3B30] rounded-lg px-[20px] py-[7px] text-[16px] font-[500]" >{t("brain_ai.delete")}</button>
                         </div>
                     </div>
                 ))}
@@ -199,7 +203,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                 <div className='flex justify-between px-2 items-center'>
                     <div className="flex gap-4 items-center h-[45px] pb-2 pl-5 cursor-pointer" onClick={handleBack}>
                         <LeftArrow />
-                        <h1 className="text-[20px] font-[600]">Integrations</h1>
+                        <h1 className="text-[20px] font-[600]">{t("brain_ai.integrations.integrations")}</h1>
                     </div>
                 </div>
                 <hr className='text-[#E1E4EA]' />
@@ -213,7 +217,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                         <div className="flex items-center gap-2">
                             <IoIosAdd color="" />
                             <span className="font-medium text-base leading-6">
-                                Connect Account
+                            {t("brain_ai.integrations.connect_account")}
                             </span>
                         </div>
                     </button>
@@ -346,10 +350,10 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             />
                         </div>
                         <h2 className="text-[#1E1E1E] font-[600] text-[20px] mb-1">
-                            Connect {integartionData.name}
+                            {t("brain_ai.integrations.connect")} {integartionData.name}
                         </h2>
                         <p className="text-[16px] font-[400] text-[#5A687C]">
-                            {activeTab === "insta" ? ` Use your ${integartionData.name} account to connect to Ecosystem.ai` : "Use Meta Business Suite to connect your Instagram account to Ecosystem.ai"}
+                            {activeTab === "insta" ? ` ${t("brain_ai.integrations.use_your")} ${integartionData.name} ${t("brain_ai.integrations.account_to_ecosystem")}` : `${t("brain_ai.integrations.use_meta_business")}`}
                         </p>
 
                         {/* Tab Content */}
@@ -357,11 +361,11 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             {activeTab === "insta" && (
                                 <>
                                     <div className="flex flex-col gap-3">
-                                        <div className="flex items-center gap-2" > <p className="text-[14px] font-medium text-[#292D32]">A few steps left
+                                        <div className="flex items-center gap-2" > <p className="text-[14px] font-medium text-[#292D32]">{t("brain_ai.integrations.few_steps_left")}
                                         </p>
                                             <IoMdHelpCircleOutline /></div>
                                         <p className="text-[16px] font-[400] text-[#5A687C]">
-                                            Log in with {integartionData.name} and set your permissions. Once that’s done, you're all set to connect to Ecosystem.ai
+                                        {t("brain_ai.integrations.log_in_with")} {integartionData.name} {t("brain_ai.integrations.your_permissions")}
                                         </p>
                                     </div>
                                     <div className="flex flex-col gap-5 w-full mt-4">
@@ -372,7 +376,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
 
 
                                             >
-                                                Go To {integartionData.name}
+                                                {t("brain_ai.integrations.go_to")} {integartionData.name}
 
                                             </button>
                                         </a>
@@ -381,7 +385,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                                             onClick={() => setActiveTab("meta")}
                                             className="w-full text-[16px] text-[#5E54FF] mt-3 bg-white"
                                         >
-                                            Connect with Meta Business Suite instead
+                                            {t("brain_ai.integrations.connect_with_meta")}
                                         </button>
                                     </div>
                                 </>
@@ -389,11 +393,11 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             {activeTab === "meta" && (
                                 <>
                                     <div className="flex flex-col gap-3">
-                                        <div className="flex items-center gap-2" > <p className="text-[14px] font-medium text-[#292D32]">Continue with Meta Business Suite
+                                        <div className="flex items-center gap-2" > <p className="text-[14px] font-medium text-[#292D32]">{t("brain_ai.integrations.continue_with_meta_business")}
                                         </p>
                                             <IoMdHelpCircleOutline /></div>
                                         <p className="text-[16px] font-[400] text-[#5A687C]">
-                                            Go to Facebook to link your Instagram account and connect it to Manychat.
+                                        {t("brain_ai.integrations.go_to_facebook_to_link")}
                                         </p>
                                     </div>
                                     <div className="flex flex-col gap-5 w-full mt-4">
@@ -401,14 +405,14 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                                             // onClick={handleNext}
                                             className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
                                         >
-                                            Go To Facebook
+                                            {t("brain_ai.integrations.go_to_facebook")}
                                         </button>
                                         <button
                                             onClick={() => setActiveTab("insta")}
                                             className="w-full flex items-center justify-center gap-3 text-[16px] text-[#1E1E1E] mt-3 bg-white"
                                         >
                                             <FaArrowLeft />
-                                            Back
+                                            {t("brain_ai.integrations.back")}
                                         </button>
                                     </div>
                                 </>
@@ -418,13 +422,13 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                 </div>}
                 {integartionData.name === "WhatsApp" && <div className="flex items-center justify-between w-full">
                     <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
-                        Message Template (2)
+                    {t("brain_ai.integrations.message_temple")}
                     </h1>
                     <button onClick={() => setCreateTemplateOpen(true)} className="flex items-center gap-2.5 px-5 py-[7px] border-[#675FFF] border-[1.5px] rounded-lg bg-white text-white">
                         <div className="flex items-center gap-2">
                             <IoIosAdd color="#675FFF" />
                             <span className="font-medium text-[#675FFF] text-base leading-6">
-                                Create Template
+                            {t("brain_ai.integrations.create_temple")}
                             </span>
                         </div>
                     </button>
@@ -441,34 +445,34 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             <X className="w-5 h-5" />
                         </button>
                         <h2 className="text-[#1E1E1E] font-[600] text-[20px] mb-1">
-                            Create New Message Template
+                        {t("brain_ai.integrations.create_new_message_template")}
                         </h2>
                         <p className="text-[16px] font-[400] text-[#5A687C]">
-                            You can add your custom message below for your WhatsApp message template.
+                        {t("brain_ai.integrations.add_custom_message")}
                         </p>
 
                         {/* Tab Content */}
                         <div className="mt-3 flex flex-col gap-2">
                             <div>
-                                <label className="text-[14px] flex items-center gap-2 font-medium text-[#292D32] mb-1">Heading <TfiHelpAlt />
+                                <label className="text-[14px] flex items-center gap-2 font-medium text-[#292D32] mb-1">{t("brain_ai.integrations.heading")} <TfiHelpAlt />
                                 </label>
                                 <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] rounded-[8px] px-4 py-3">
                                     <input
                                         type="text"
                                         name="heading"
-                                        placeholder="Enter heading"
+                                        placeholder={t("brain_ai.integrations.heading_placeholder")}
                                         className="w-full focus:outline-none"
                                     />
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-[14px] font-medium text-[#292D32] mb-1">Message</label>
+                                <label className="block text-[14px] font-medium text-[#292D32] mb-1">{t("brain_ai.integrations.message")}</label>
                                 <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] rounded-[8px] px-4 py-3">
                                     <textarea
                                         rows={4}
                                         type="text"
                                         name="message"
-                                        placeholder="Enter message"
+                                        placeholder={t("brain_ai.integrations.message_placeholder")}
                                         className="w-full focus:outline-none resize-none"
                                     />
                                 </div>
@@ -480,12 +484,12 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                                 onClick={() => setCreateTemplateOpen(false)}
                                 className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
                             >
-                                Cancel
+                                {t("brain_ai.cancel")}
                             </button>
                             <button
                                 className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
                             >
-                                Save
+                                {t("brain_ai.save")}
                             </button>
                         </div>
                     </div>
@@ -510,7 +514,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                                     onClick={() => setErrorMessage('')}
                                     className={`w-fit bg-[#675FFF] cursor-pointer text-white py-[7px] px-[20px] rounded-[8px] font-semibold  transition`}
                                 >
-                                    Ok
+                                    {t("brain_ai.integrations.ok")}
                                 </button>
                             </div>
                         </div>

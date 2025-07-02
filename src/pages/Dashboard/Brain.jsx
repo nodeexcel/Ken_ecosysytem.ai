@@ -7,6 +7,7 @@ import { ContactIcon, IntegrationIcon, KnowledgeIcon, LeftArrow } from "../../ic
 import { useSelector } from "react-redux"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { CheckCircle, XCircle, Instagram, ArrowRight, RefreshCw, X } from "lucide-react"
+import { useTranslation } from "react-i18next";
 
 const BrainAI = () => {
   const [activePath, setActivePath] = useState("contacts")
@@ -15,11 +16,13 @@ const BrainAI = () => {
   const navigate = useNavigate()
   const navbarDetails = useSelector((state) => state.navbar)
   const [searchParams, setSearchParams] = useSearchParams()
+  const { t } = useTranslation();
+
 
   const sideMenuItems = [
-    { label: "Contacts", icon: <ContactIcon status={activePath == "contacts"} />, hoverIcon: <ContactIcon hover={true} />, path: "contacts" },
-    { label: "Knowledge", icon: <KnowledgeIcon status={activePath == "knowledge"} />, hoverIcon: <KnowledgeIcon hover={true} />, path: "knowledge" },
-    { label: "Integration", icon: <IntegrationIcon status={activePath == "integration"} />, hoverIcon: <IntegrationIcon hover={true} />, path: "integration" },
+    { label: `${t("contacts")}`, icon: <ContactIcon status={activePath == "contacts"} />, hoverIcon: <ContactIcon hover={true} />, path: "contacts" },
+    { label: `${t("knowledge")}`, icon: <KnowledgeIcon status={activePath == "knowledge"} />, hoverIcon: <KnowledgeIcon hover={true} />, path: "knowledge" },
+    { label: `${t("integration")}`, icon: <IntegrationIcon status={activePath == "integration"} />, hoverIcon: <IntegrationIcon hover={true} />, path: "integration" },
   ]
 
   const renderMainContent = () => {

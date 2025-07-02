@@ -35,9 +35,9 @@ function Coo() {
     const navigate = useNavigate()
 
     const sideMenuList = [
-        { label: "Chat", icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
-        { label: "Presentations", icon: <AutomationIcon status={activeSidebarItem == "presentations"} />, hoverIcon: <AutomationIcon hover={true} />, path: "presentations" },
-        { label: "Connect WhatsApp", icon: <WhatsappIcon status={activeSidebarItem == "connect_whatsApp"} />, hoverIcon: <WhatsappIcon hover={true} />, path: "connect_whatsApp" },
+        { label: `${t("tara.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
+        { label: `${t("tara.presentation")}`, icon: <AutomationIcon status={activeSidebarItem == "presentations"} />, hoverIcon: <AutomationIcon hover={true} />, path: "presentations" },
+        { label: `${t("tara.connect_whatsapp")}`, icon: <WhatsappIcon status={activeSidebarItem == "connect_whatsApp"} />, hoverIcon: <WhatsappIcon hover={true} />, path: "connect_whatsApp" },
     ]
 
     useEffect(() => {
