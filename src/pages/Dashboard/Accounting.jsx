@@ -16,7 +16,7 @@ function Accounting() {
     const [chatList, setChatList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({})
-    const [openChat, setOpenChat] = useState(false)
+    const [openChat, setOpenChat] = useState(true)
     const [loadingChats, setLoadingChats] = useState(false);
     const [loadingChatsList, setLoadingChatsList] = useState(false)
     const [name, setName] = useState("")
@@ -50,14 +50,14 @@ function Accounting() {
                 if (response?.data?.success?.length === 0) {
                     setLoadingChatsList(false)
                     setChatList([])
-                    setOpenChat(false)
+                    // setOpenChat(false)
                 } else {
                     const formatData = (response?.data?.success)
                     if (!activeConversation && openChat) {
                         const newChatActive = formatData.filter(element => {
                             return !chatList.some(chat => chat.chat_id === element.chat_id);
                         });
-                        if (newChatActive?.length > 0) {
+                        if (newChatActive?.length > 0 && messages?.length > 0) {
                             setActiveConversation(newChatActive[0].chat_id)
                         }
                     }
@@ -93,9 +93,10 @@ function Accounting() {
             if (response?.status === 200) {
                 handleGetAccountChats()
                 if (id === activeConversation) {
-                    setOpenChat(false)
+                    // setOpenChat(false)
+                    setMessages([])
+                    setActiveConversation("")
                 }
-                setActiveConversation("")
             }
         } catch (error) {
             console.log(error)
@@ -124,7 +125,7 @@ function Accounting() {
     }
 
     const handleChatHistoryId = async (id) => {
-        setOpenChat(true)
+        // setOpenChat(true)
         try {
             setLoadingChats(true)
             const response = await getAccountingChatById(id);
@@ -139,6 +140,11 @@ function Accounting() {
             setLoadingChats(false)
         }
     }
+
+    const staticSuggestions = [{ label: "Would you like advice on optimizing your cash flow?", key: "I would you like advice on optimizing my cash flow." },
+    { label: "I need template for my forecast budget.", key: "I need template for my forecast budget." },
+    { label: "How to organize my expenses and icome efficiently.", key: "How to organize my expenses and icome efficiently." }
+    ]
 
 
     const listedProps = {
@@ -173,7 +179,8 @@ function Accounting() {
         handleUpdateName: handleUpdateName,
         handleChatHistoryId: handleChatHistoryId,
         socketRef: socketRef,
-        socket2Ref: socket2Ref
+        socket2Ref: socket2Ref,
+        staticSuggestions: staticSuggestions
     }
 
     const stopTranscription = () => {

@@ -17,7 +17,7 @@ function ContentCreation() {
     const [chatList, setChatList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({})
-    const [openChat, setOpenChat] = useState(false)
+    const [openChat, setOpenChat] = useState(true)
     const [loadingChats, setLoadingChats] = useState(false);
     const [loadingChatsList, setLoadingChatsList] = useState(false)
     const [name, setName] = useState("")
@@ -52,14 +52,14 @@ function ContentCreation() {
                 if (response?.data?.success?.length === 0) {
                     setLoadingChatsList(false)
                     setChatList([])
-                    setOpenChat(false)
+                    // setOpenChat(false)
                 } else {
                     const formatData = (response?.data?.success)
                     if (!activeConversation && openChat) {
                         const newChatActive = formatData.filter(element => {
                             return !chatList.some(chat => chat.chat_id === element.chat_id);
                         });
-                        if (newChatActive?.length > 0) {
+                        if (newChatActive?.length > 0 && messages?.length > 0) {
                             setActiveConversation(newChatActive[0].chat_id)
                         }
                     }
@@ -95,9 +95,10 @@ function ContentCreation() {
             if (response?.status === 200) {
                 handleGetAccountChats()
                 if (id === activeConversation) {
-                    setOpenChat(false)
+                    // setOpenChat(false)
+                    setMessages([])
+                    setActiveConversation("")
                 }
-                setActiveConversation("")
             }
         } catch (error) {
             console.log(error)
@@ -126,7 +127,7 @@ function ContentCreation() {
     }
 
     const handleChatHistoryId = async (id) => {
-        setOpenChat(true)
+        // setOpenChat(true)
         try {
             setLoadingChats(true)
             const response = await getAccountingChatById(id);
@@ -142,6 +143,10 @@ function ContentCreation() {
         }
     }
 
+    const staticSuggestions = [{ label: "How to analyze the performance of your last campaign?", key: "How to analyze the performance of my last campaign." },
+    { label: "Would you like a plan for your next marketing campaign?", key: "Would you like a plan for my next marketing campaign." },
+    { label: "How to organize my expenses and icome efficiently.", key: "How to organize my expenses and icome efficiently." }
+    ]
 
     const listedProps = {
         agentLogo: constanceMsgLogo,
@@ -175,7 +180,8 @@ function ContentCreation() {
         handleUpdateName: handleUpdateName,
         handleChatHistoryId: handleChatHistoryId,
         socketRef: socketRef,
-        socket2Ref: socket2Ref
+        socket2Ref: socket2Ref,
+        staticSuggestions: staticSuggestions
     }
 
     const stopTranscription = () => {

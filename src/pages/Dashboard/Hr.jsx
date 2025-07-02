@@ -16,7 +16,7 @@ function Hr() {
     const [chatList, setChatList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({})
-    const [openChat, setOpenChat] = useState(false)
+    const [openChat, setOpenChat] = useState(true)
     const [loadingChats, setLoadingChats] = useState(false);
     const [loadingChatsList, setLoadingChatsList] = useState(false)
     const [name, setName] = useState("")
@@ -50,14 +50,14 @@ function Hr() {
                 if (response?.data?.success?.length === 0) {
                     setLoadingChatsList(false)
                     setChatList([])
-                    setOpenChat(false)
+                    // setOpenChat(false)
                 } else {
                     const formatData = (response?.data?.success)
                     if (!activeConversation && openChat) {
                         const newChatActive = formatData.filter(element => {
                             return !chatList.some(chat => chat.chat_id === element.chat_id);
                         });
-                        if (newChatActive?.length > 0) {
+                        if (newChatActive?.length > 0 && messages?.length > 0) {
                             setActiveConversation(newChatActive[0].chat_id)
                         }
                     }
@@ -94,9 +94,10 @@ function Hr() {
             if (response?.status === 200) {
                 handleGetAccountChats()
                 if (id === activeConversation) {
-                    setOpenChat(false)
+                    // setOpenChat(false)
+                    setMessages([])
+                    setActiveConversation("")
                 }
-                setActiveConversation("")
             }
         } catch (error) {
             console.log(error)
@@ -125,7 +126,7 @@ function Hr() {
     }
 
     const handleChatHistoryId = async (id) => {
-        setOpenChat(true)
+        // setOpenChat(true)
         try {
             setLoadingChats(true)
             const response = await getHrChatById(id);
@@ -141,6 +142,10 @@ function Hr() {
         }
     }
 
+    const staticSuggestions = [{ label: "Need help writing the perfect job description?", key: "Need help writing the perfect job description." },
+    { label: "Looking for a structured process to hire faster?", key: "Looking for a structured process to hire faster." },
+    { label: "Struggling to find qualified candidates for your roles?", key: "Struggling to find qualified candidates for my roles." }
+    ]
 
     const listedProps = {
         agentLogo: rimaMsgLogo,
@@ -174,7 +179,8 @@ function Hr() {
         handleUpdateName: handleUpdateName,
         handleChatHistoryId: handleChatHistoryId,
         socketRef: socketRef,
-        socket2Ref: socket2Ref
+        socket2Ref: socket2Ref,
+        staticSuggestions: staticSuggestions
     }
 
     const stopTranscription = () => {

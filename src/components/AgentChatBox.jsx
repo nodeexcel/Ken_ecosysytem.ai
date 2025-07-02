@@ -1,12 +1,8 @@
 import { useEffect, useRef, useState } from "react"
 import { X } from "lucide-react"
 import { GoDotFill } from "react-icons/go"
-import { FaRegSmile } from "react-icons/fa";
-import { PiImageBold } from "react-icons/pi"
-import { FiMic, FiPaperclip } from "react-icons/fi"
 import { v4 as uuidv4 } from 'uuid';
-import { deleteChat, getAccountingChatById, getAccountingChats, updateChatName } from "../api/account";
-import { Delete, DislikeIcon, Duplicate, Edit, LikeIcon, SearchIcon, SendIcon, SpeakerIcon, ThreeDots } from "../icons/icons";
+import { BulbIcon, Delete, DislikeIcon, Duplicate, Edit, EditIcon, ImageChatIcon, LikeIcon, MicChatIcon, PaperClipChatIcon, SearchChatIcon, SearchIcon, SendIcon, SpeakerIcon, ThreeDots, WebSearchChatIcon } from "../icons/icons";
 import { useSelector } from "react-redux";
 import { formatTimeAgo } from "../utils/TimeFormat";
 
@@ -23,7 +19,7 @@ const AgentChatBox = ({ listedProps }) => {
         loading,
         setErrors,
         errors,
-        setOpenChat,
+        // setOpenChat,
         openChat,
         loadingChats,
         setLoadingChatsList,
@@ -40,7 +36,7 @@ const AgentChatBox = ({ listedProps }) => {
         handleUpdateName,
         handleChatHistoryId,
         socketRef,
-        socket2Ref } = listedProps
+        socket2Ref, staticSuggestions } = listedProps
     const [errorMessage, setErrorMessage] = useState("")
     const [activeDropdown, setActiveDropdown] = useState(null);
     const chatRef = useRef()
@@ -118,7 +114,7 @@ const AgentChatBox = ({ listedProps }) => {
                 };
 
                 setMessages((prev) => [...prev, userMessage]);
-                handleGetAccountChats()
+                // handleGetAccountChats()
                 if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
                     socketRef.current.close()
                 }
@@ -180,7 +176,7 @@ const AgentChatBox = ({ listedProps }) => {
                 };
 
                 setMessages((prev) => [...prev, userMessage]);
-                handleGetAccountChats()
+                // handleGetAccountChats()
             }
 
         } catch (err) {
@@ -204,6 +200,12 @@ const AgentChatBox = ({ listedProps }) => {
     useEffect(() => {
         handleGetAccountChats()
     }, [])
+
+    useEffect(() => {
+        if (messages?.length > 0 && !messages?.[messages.length - 1].isUser) {
+            handleGetAccountChats()
+        }
+    }, [messages])
 
     useEffect(() => {
         if (chatList?.length > 0) {
@@ -238,7 +240,7 @@ const AgentChatBox = ({ listedProps }) => {
             socketRef.current.close()
         }
 
-        setOpenChat(true)
+        // setOpenChat(true)
         setActiveConversation("")
         const userMessage = [{
             id: uuidv4(),
@@ -248,7 +250,7 @@ const AgentChatBox = ({ listedProps }) => {
             time: formatTimeAgo(new Date()),
             status: "Read",
         }];
-        setMessages(userMessage)
+        setMessages([])
     }
 
     const stopTranscription = () => {
@@ -257,6 +259,19 @@ const AgentChatBox = ({ listedProps }) => {
         }
 
     }
+
+    const handleSelectMessage = (value) => {
+        setInput(value)
+    }
+
+    const suggestionsChat = [{ label: staticSuggestions[0].label, icon: <BulbIcon />, key: staticSuggestions[0].key },
+    { label: staticSuggestions[1].label, icon: <EditIcon />, key: staticSuggestions[1].key },
+    { label: staticSuggestions[2].label, icon: <SearchChatIcon />, key: staticSuggestions[2].key }
+    ]
+
+    const searchIcons = [{ key: "image", icon: <ImageChatIcon /> }, { key: "pin", icon: <PaperClipChatIcon /> },
+    { key: "mic", icon: <MicChatIcon /> }, { key: "web_search", icon: <WebSearchChatIcon /> }
+    ]
 
     if (loading) return <p className='flex justify-center items-center h-[100vh]'><span className='loader' /></p>
 
@@ -286,7 +301,7 @@ const AgentChatBox = ({ listedProps }) => {
                             </div>
                             <hr style={{ color: "#E1E4EA" }} />
                             <div ref={moreActionsRef} className="px-4 py-3">
-                                {loadingChatsList ? <div className="flex justify-center p-4 items-center w-full"><span className="loader" /> </div> : chatList?.length > 0 && chatList.map((conversation, index) => (
+                                {loadingChatsList ? <div className="flex justify-center p-4 items-center w-full"><span className="loader" /> </div> : chatList?.length > 0 ? chatList.map((conversation, index) => (
                                     <div key={index} className="flex relative items-center">
                                         <div
 
@@ -335,17 +350,17 @@ const AgentChatBox = ({ listedProps }) => {
                                             )}
                                         </div>
                                     </div>
-                                ))}
+                                )) : <p className="text-[#5A687C] font-[400] text-[12px] text-center pt-8">No chat history yet</p>}
                             </div>
                         </div>
                     </div>
                     {/* Main Content */}
                     {openChat ?
-                        loadingChats ? <div className="flex justify-center items-center w-full"><span className="loader" /> </div> : <div className="flex-1 h-full flex justify-between flex-col pt-2">
+                        loadingChats ? <div className="flex justify-center items-center w-full"><span className="loader" /> </div> : <div className="flex-1 h-full max-w-[80%] mx-auto flex justify-between flex-col pt-2">
                             {/* Messages */}
                             <div ref={chatRef} className="flex-1 p-4 overflow-y-auto">
                                 <div className="space-y-6">
-                                    {messages.map((message) => (
+                                    {messages?.length > 0 ? messages.map((message) => (
                                         <div key={message.id} className="flex flex-col">
                                             {!message.isUser && (
                                                 <div className="flex items-center gap-2 mb-1">
@@ -381,13 +396,27 @@ const AgentChatBox = ({ listedProps }) => {
                                                 <SendIcon />
                                             </div>}
                                         </div>
-                                    ))}
+                                    )) : <div className="flex flex-col gap-6 p-5">
+                                        <div className="text-[#000000] text-[24px] font-[400]">
+                                            <h1>Hey, I am {agentName}</h1>
+                                            <h1>How can i help you?</h1>
+                                        </div>
+                                        <div className="w-full flex gap-2">
+                                            {suggestionsChat.map((e) => (
+                                                <div key={e.key} onClick={() => handleSelectMessage(e.key)} className="border cursor-pointer w-[50%] flex items-center gap-[12px] border-[#E1E4EA] p-[14px] rounded-[7px]">
+                                                    <div>{e.icon}</div>
+                                                    <p className="text-[#000000] font-[400] text-[14px]">{e.label}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>}
 
                                 </div>
+
                             </div>
 
                             {/* Input */}
-                            <div className="w-full max-w-3xl mx-auto p-2">
+                            <div className="w-full mx-auto p-2">
                                 <form onSubmit={handleSend} className="flex w-full flex-col items-center gap-2 p-2 rounded-2xl border border-gray-300 shadow-sm">
                                     <input
                                         type="text"
@@ -397,14 +426,13 @@ const AgentChatBox = ({ listedProps }) => {
                                         onChange={(e) => setInput(e.target.value)}
                                     />
                                     {/* Left Icons */}
-                                    <div className="flex w-full justify-between">
-                                        <div className="flex items-center gap-2 px-2 text-gray-500">
-                                            <FaRegSmile className="cursor-pointer hover:text-gray-700" color="#5A687C" size={18} />
-                                            <div className="bg-gray-100 p-1 rounded-full">
-                                                <PiImageBold className="cursor-pointer hover:text-gray-700" color="#5A687C" size={18} />
-                                            </div>
-                                            <FiPaperclip className="cursor-pointer hover:text-gray-700" color="#5A687C" size={18} />
-                                            <FiMic className="cursor-pointer hover:text-gray-700" color="#5A687C" size={18} />
+                                    <div className="flex w-full justify-between px-2">
+                                        <div className="flex items-center">
+                                            {searchIcons.map((e) => (
+                                                <div key={e.key} className="p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px]">
+                                                    {e.icon}
+                                                </div>
+                                            ))}
                                         </div>
 
                                         {/* Text Input */}
