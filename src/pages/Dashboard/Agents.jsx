@@ -45,7 +45,7 @@ const Agents = () => {
       role: `${t("content_creation")}`,
       gradient: "bg-gradient-to-br from-[#F8DDFF] to-[#F8DDFF]",
       path: "/dashboard/content-creation",
-      label: "",
+      label: "Content Creation",
       image: constanceImg
     },
     {
@@ -68,8 +68,8 @@ const Agents = () => {
       name: "Calina",
       role: `${t("customer_support")}`,
       gradient: "bg-gradient-to-br from-[#E3F6ED] to-[#E3F6ED]",
-      path: "",
-      label: "",
+      path: "/dashboard/customer-support",
+      label: "Customer Support",
       image: calinaImg
     },
     {

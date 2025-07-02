@@ -27,7 +27,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     const userDetails = useSelector((state) => state.profile.user)
     const lastPath = location.pathname.split('/').filter(Boolean).pop();
 
-    const paths = ['campaigns', 'phone', 'appointment-setter', "accounting", "hr", "coo", "seo", "content-creation"]
+    const paths = ['campaigns', 'phone', 'appointment-setter', "accounting", "hr", "coo", "seo", "content-creation", "customer-support"]
 
     const [isNotification, setIsNotification] = useState(false);
 
