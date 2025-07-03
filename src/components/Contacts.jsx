@@ -882,7 +882,7 @@ const ContactsPage = () => {
                 onChange={(updated) => setChannelSelectList(updated)}
                 placeholder="Select"
                 className="w-[198px]"
-                extraName="Channel"
+                extraName={t("brain_ai.channel")}
               />
               <div className="relative w-[179px]">
                 <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />

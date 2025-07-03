@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 
 const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
     
+    const { t } = useTranslation();
     const parseInitialTime = () => {
         if (!initialTime) {
             const now = new Date();
@@ -27,7 +28,7 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
             }
             let hours = baseTime.getHours();
             const minutes = String(baseTime.getMinutes()).padStart(2, '0');
-            const period = hours >= 12 ? 'PM' : 'AM';
+            const period = hours >= 12 ? `${t("emailings.pm")}` : `${t("emailings.am")}`;
 
             // Convert to 12-hour format
             hours = hours % 12 || 12;
@@ -420,8 +421,8 @@ const CustomSelector = ({ options, setShowSelector, value = [], onChange, ref })
 function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
     const { t } = useTranslation();
     const [campaignData, setCampaignData] = useState([
-        { name: 'Campaign', opened: '-', clicked: '-', bounced: '', status: "Issue Detected" },
-        { name: 'Campaign', opened: '-', clicked: '-', bounced: '', status: "Planned" }
+        { name: `${t("emailings.campaign")}`, opened: '-', clicked: '-', bounced: '', status: `${t("emailings.issue_detected")}` },
+        { name: `${t("emailings.campaign")}`, opened: '-', clicked: '-', bounced: '', status: `${t("emailings.status")}` }
     ]);
 
     const [activeDropdown, setActiveDropdown] = useState(null);
@@ -454,23 +455,23 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
     const [errors, setErrors] = useState({});
 
 
-    const campaignObjectiveOptions = [{ label: "Promote an offer", key: "promote_an_offer" }, { label: "Inform / Educate", key: "inform_educate" }, { label: "Re-engage leads", key: "re_engage_leads" }, { label: "Announce a new feature", key: "announce_a_new_feature" }, { label: "Other", key: "other" }]
+    const campaignObjectiveOptions = [{ label: `${t("emailings.promote_an_offer")}`, key: "promote_an_offer" }, { label: `${t("emailings.inform_educate")}`, key: "inform_educate" }, { label: `${t("emailings.re_engage")}`, key: "re_engage_leads" }, { label: `${t("emailings.announce_new_feature")}`, key: "announce_a_new_feature" }, { label: `${t("emailings.other")}`, key: "other" }]
 
-    const ctaTypeOptions = [{ label: "Book a Meeting", key: "book_a_meeting" }, { label: "Send to a link", key: "send_to_a_link" }, { label: "Ask for a reply", key: "reply" }];
+    const ctaTypeOptions = [{ label: `${t("emailings.book_meeting")}`, key: "book_a_meeting" }, { label:`${t("emailings.send_to_link")}`, key: "send_to_a_link" }, { label: `${t("emailings.ask_for_reply")}`, key: "reply" }];
 
-    const toneOptions = [{ label: "Professional", key: "professional" }, { label: "Friendly", key: "friendly" }, { label: "Storytelling", key: "storytelling" }, { label: "Provocation", key: "provocation" },
-    { label: "Educational", key: "educational" }, { label: "Inspiring", key: "inspiring" }];
+    const toneOptions = [{ label: `${t("emailings.professional")}`, key: "professional" }, { label: `${t("emailings.friendly")}`, key: "friendly" }, { label:`${t("emailings.storytelling")}` , key: "storytelling" }, { label:`${t("emailings.provocation")}`, key: "provocation" },
+    { label: `${t("emailings.educational")}`, key: "educational" }, { label: `${t("emailings.inspiring")}`, key: "inspiring" }];
 
     const calendarOptions = [{ label: "Calendly", key: "calendly" }, { label: "Google Calendar", key: "google_calendar" }]
 
 
-    const languageOptions = [{ label: "EN", key: "en" }, { label: "FR", key: "fr" }];
+    const languageOptions = [{ label: `${t("emailings.en")}`, key: "en" }, { label: `${t("emailings.fr")}`, key: "fr" }];
 
-    const wordOptions = [{ label: "50 - 100 words", key: "50_to_100_words" }, { label: "100 - 200 words", key: "100_to_200_words" }, { label: "200 - 400 words", key: "200_to_400_words" }, { label: "400 - 800 words", key: "400_to_800_words" }];
+    const wordOptions = [{ label: `${t("emailings.words")}`, key: "50_to_100_words" }, { label: `${t("emailings.words_100")}`, key: "100_to_200_words" }, { label: `${t("emailings.words_200")}`, key: "200_to_400_words" }, { label: `${t("emailings.words_400")}`, key: "400_to_800_words" }];
 
-    const listOfTargetOptions = [{ label: "Segment A", key: "segment_a" }, { label: "Segment B", key: "segment_b" }]
+    const listOfTargetOptions = [{ label: `${t("emailings.segment_a")}`, key: "segment_a" }, { label: "Segment B", key: "segment_b" }]
 
-    const daysOptions = [{ label: 'Monday', key: 'monday' }, { label: "Tuesday", key: "tuesday" }, { label: "Wednesday", key: "wednesday" }, { label: "Thursday", key: "thursday" }, { label: "Friday", key: "friday" }, { label: "Saturday", key: "saturday" }, { label: "Sunday", key: "sunday" }];
+    const daysOptions = [{ label: `${t("emailings.monday")}`, key: 'monday' }, { label: `${t("emailings.tuesday")}`, key: "tuesday" }, { label:`${t("emailings.wednesday")}`, key: "wednesday" }, { label: `${t("emailings.thursday")}`, key: "thursday" }, { label: `${t("emailings.friday")}`, key: "friday" }, { label: `${t("emailings.saturday")}`, key: "saturday" }, { label: `${t("emailings.sunday")}`, key: "sunday" }];
 
 
     const validateForm = () => {
@@ -478,54 +479,54 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
 
         if (step === 1) {
-            if (!formData.campaign_title.trim()) newErrors.campaign_title = "Campaign title is required.";
-            if (!formData.campaign_objective) newErrors.campaign_objective = "Campaign objective is required.";
+            if (!formData.campaign_title.trim()) newErrors.campaign_title =`${t("emailings.campaign_title_required")}`;
+            if (!formData.campaign_objective) newErrors.campaign_objective = `${t("emailings.campaign_objective_required")}`;
 
             if (formData.campaign_objective === 'other' && !formData.campaign_objective_other.trim()) {
-                newErrors.campaign_objective_other = "Please specify the objective.";
+                newErrors.campaign_objective_other = `${t("emailings.specify_objective")}`;
             }
 
-            if (!formData.main_subject.trim()) newErrors.main_subject = "Main subject is required.";
-            if (!formData.cta_type) newErrors.cta_type = "CTA type is required.";
+            if (!formData.main_subject.trim()) newErrors.main_subject = `${t("emailings.main_subject_required")}`;
+            if (!formData.cta_type) newErrors.cta_type = `${t("emailings.cta_required")}`;
             if (formData.cta_type === "book_a_meeting") {
-                if (!formData.calender_choosed) newErrors.calender_choosed = "Meeting Link is required.";
+                if (!formData.calender_choosed) newErrors.calender_choosed = `${t("emailings.meeting_link_required")}`;
             } else if (formData.cta_type === "purchase" || formData.cta_type === "visit_a_page") {
                 if (!formData.url.trim()) {
-                    newErrors.url = "URL is required.";
+                    newErrors.url = `${t("emailings.url_required")}`;
                 } else if (!/^https?:\/\/\S+$/.test(formData.url)) {
-                    newErrors.url = "Enter a valid URL (http:// or https://).";
+                    newErrors.url = `${t("emailings.enter_valid_url")}`;
                 }
             } else if (formData.cta_type === "download") {
-                newErrors.file = "Upload a file is required."
+                newErrors.file = `${t("emailings.upload_file_required")}`
             }
         }
 
 
         if (step === 2) {
-            if (!formData.desired_tone) newErrors.desired_tone = "Desired tone is required.";
-            if (!formData.language) newErrors.language = "Language is required.";
-            if (!formData.send_time_window) newErrors.send_time_window = "Send time window is required.";
+            if (!formData.desired_tone) newErrors.desired_tone = `${t("emailings.desired_tone_required")}`;
+            if (!formData.language) newErrors.language =`${t("emailings.language_required")}`;
+            if (!formData.send_time_window) newErrors.send_time_window = `${t("emailings.time_window_required")}`;
 
             if (!formData.start_date) {
-                newErrors.start_date = "Start date is required.";
+                newErrors.start_date = `${t("emailings.start_date_required")}`;
             } else if (!/^\d{4}-\d{2}-\d{2}$/.test(formData.start_date)) {
-                newErrors.start_date = "Start date must be in YYYY-MM-DD format.";
+                newErrors.start_date = `${t("emailings.start_date_format")}`;
             }
 
             if (!Array.isArray(formData.frequency) || formData.frequency.length === 0) {
-                newErrors.frequency = "At least one frequency option must be selected.";
+                newErrors.frequency = `${t("emailings.atleast_frequency")}`;
             }
 
             if (!Array.isArray(formData.list_of_target) || formData.list_of_target.length === 0) {
-                newErrors.list_of_target = "At least one Target option must be selected.";
+                newErrors.list_of_target = `${t("emailings.atleast_target")}`;
             }
         }
 
 
         if (step === 3) {
-            if (!formData.text_length) newErrors.text_length = "Text length is required.";
-            if (!formData.product_or_service_feature.trim()) newErrors.product_or_service_feature = "Product/service to feature is required.";
-            if (!formData.custom_prompt.trim()) newErrors.custom_prompt = "Custom prompt is required when using AI brain.";
+            if (!formData.text_length) newErrors.text_length = `${t("emailings.text_length_required")}`;
+            if (!formData.product_or_service_feature.trim()) newErrors.product_or_service_feature = `${t("emailings.product_service_required")}`;
+            if (!formData.custom_prompt.trim()) newErrors.custom_prompt = `${t("emailings.custom_prompt")}`;
         }
 
         setErrors(newErrors);
@@ -583,7 +584,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
         const file = e.target.files?.[0];
         setErrors((prev) => ({ ...prev, file: "" }))
         if (file && file.type !== "application/pdf") {
-            setErrors((prev) => ({ ...prev, file: "Only PDF files are allowed." }));
+            setErrors((prev) => ({ ...prev, file:  `${t("brain_ai.knowledge.only_pdf_files_allowed")}` }));
             e.target.files = '';
             return;
         }
@@ -612,7 +613,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
         setDragActive(false);
         const file = e.dataTransfer.files?.[0];
         if (file && file.type !== "application/pdf") {
-            setErrors((prev) => ({ ...prev, file: "Only PDF files are allowed." }));
+            setErrors((prev) => ({ ...prev, file: `${t("brain_ai.knowledge.only_pdf_files_allowed")}` }));
             e.target.files = '';
             return;
         }
@@ -717,12 +718,12 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
             setStep(selectStep)
         } else if (!statusSteps.step1) {
             validateForm()
-            setErrors((prev) => ({ ...prev, step1: "First Please Complete Campaign Basics Section" }))
+            setErrors((prev) => ({ ...prev, step1: `${t("emailings.complete_campaign")}` }))
             setStep(1)
         }
         else if (!statusSteps.step2) {
             validateForm()
-            setErrors((prev) => ({ ...prev, step2: "First Please Complete Targeting & Scheduling Section" }))
+            setErrors((prev) => ({ ...prev, step2: `${t("emailings.complete_target")}` }))
             setStep(2)
         } else {
             setStep(selectStep)
@@ -879,7 +880,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
             case "book_a_meeting":
                 return (
                     <div>
-                        <label className="block text-sm font-medium mb-1">Meeting Link</label>
+                        <label className="block text-sm font-medium mb-1">{t("emailings.meeting_link")}</label>
                         {/* <Dropdown
                             name="calender_choosed"
                             options={calendarOptions}
@@ -894,14 +895,14 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                             }
                             placeholder="Select"
                         /> */}
-                        <input type="text" value={formData.calender_choosed} name='calender_choosed' onChange={handleChange} placeholder="Enter Meeting Link" className={`w-full border ${errors.calender_choosed ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF] bg-white`} />
+                        <input type="text" value={formData.calender_choosed} name='calender_choosed' onChange={handleChange} placeholder={t("emailings.meeting_link_placeholder")} className={`w-full border ${errors.calender_choosed ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF] bg-white`} />
                         {errors.calender_choosed && <p className='my-1 text-[#FF3B30]'>{errors.calender_choosed}</p>}
                     </div>
                 );
             case "download":
                 return (
                     <div>
-                        <label className="block text-sm font-medium mb-1">Import File</label>
+                        <label className="block text-sm font-medium mb-1">{t("emailings.import_file")}</label>
                         <div className="mt-2">
                             <div
                                 onClick={handleClick}
@@ -913,10 +914,10 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                             >
                                 <UploadIcon />
                                 <p className="text-[18px] font-[600] text-[#1E1E1E] mt-2">
-                                    Upload from your computer
+                                    {t("brain_ai.upload_from_your_computer")}
                                 </p>
                                 <p className="text-[14px] font-[500] text-[#5A687C] mt-1">
-                                    or drag and drop
+                                {t("brain_ai.or_drag_and_drop")}
                                 </p>
                                 <input
                                     type="file"
@@ -929,7 +930,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
                             {selectedFile && (
                                 <div className="mt-3 text-sm text-gray-700">
-                                    <strong>Selected File:</strong> {selectedFile.name}
+                                    <strong>{t("brain_ai.selected_file")}</strong> {selectedFile.name}
                                 </div>
                             )}
                             {errors.file && <p className='my-1 text-[#FF3B30]'>{errors.file}</p>}
@@ -939,16 +940,16 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
             case "visit_a_page":
                 return (
                     <div>
-                        <label className="block text-sm font-medium mb-1">URL</label>
-                        <input type="text" value={formData.url} name='url' onChange={handleChange} placeholder="http:// Enter URL" className={`w-full border ${errors.url ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF] bg-white`} />
+                        <label className="block text-sm font-medium mb-1">{t("emailings.url")}</label>
+                        <input type="text" value={formData.url} name='url' onChange={handleChange} placeholder={t("emailings.url_placeholder")} className={`w-full border ${errors.url ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF] bg-white`} />
                         {errors.url && <p className='my-1 text-[#FF3B30]'>{errors.url}</p>}
                     </div>
                 )
             case "send_to_a_link":
                 return (
                     <div>
-                        <label className="block text-sm font-medium mb-1">URL</label>
-                        <input type="text" value={formData.url} name='url' onChange={handleChange} placeholder="http:// Enter URL" className={`w-full border ${errors.url ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF] bg-white`} />
+                        <label className="block text-sm font-medium mb-1">{t("emailings.url")}</label>
+                        <input type="text" value={formData.url} name='url' onChange={handleChange} placeholder={t("emailings.url_placeholder")} className={`w-full border ${errors.url ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF] bg-white`} />
                         {errors.url && <p className='my-1 text-[#FF3B30]'>{errors.url}</p>}
                     </div>
                 )
@@ -1039,8 +1040,8 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                 <h1 onClick={() => {
                     setNewCampaignStatus(false)
                     setIsEdit("")
-                }} className="text-[#5A687C] hover:text-[#5a687cdc] cursor-pointer font-[400] text-[14px]">{`Campaigns > `}{isEdit ? `${formData.campaign_title}` : 'New Campaign'}</h1>
-                <h1 className="text-[#1E1E1E] font-[600] text-[24px] mt-2 my-4">{isEdit ? 'Update' : 'Add'} New Campaign</h1>
+                }} className="text-[#5A687C] hover:text-[#5a687cdc] cursor-pointer font-[400] text-[14px]">{`Campaigns > `}{isEdit ? `${formData.campaign_title}` : `${t("emailings.new_campaign")}`}</h1>
+                <h1 className="text-[#1E1E1E] font-[600] text-[24px] mt-2 my-4">{isEdit ? `${t("brain_ai.update")}` : `${t("brain_ai.knowledge.add")}`} {t("emailings.new_campaign")}</h1>
 
                 <div className="w-full h-full relative overflow-auto">
                     <div className="space-y-4">
@@ -1051,7 +1052,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 1 ? 'bg-[#675FFF]' : statusSteps.step1 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step1 ? <CheckIcon /> : '1'}</p>
-                                    <p className={`text-[14px] font-[600] ${step === 1 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>Campaign Basics</p>
+                                    <p className={`text-[14px] font-[600] ${step === 1 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("emailings.campaign_basics")}</p>
                                 </div>
                                 {step !== 1 && <RightArrowIcon />}
                             </div>
@@ -1059,14 +1060,14 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                 <hr style={{ color: "#E1E4EA" }} />
 
                                 <div>
-                                    <label className="block text-sm font-medium mb-1">Campaign Title</label>
-                                    <input type="text" onChange={handleChange} name='campaign_title' value={formData.campaign_title} placeholder="Enter campaign title" className={`w-full border bg-white ${errors.campaign_title ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
+                                    <label className="block text-sm font-medium mb-1">{t("emailings.campaign_title")}</label>
+                                    <input type="text" onChange={handleChange} name='campaign_title' value={formData.campaign_title} placeholder={t("emailings.campaign_title_placholder")} className={`w-full border bg-white ${errors.campaign_title ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
                                     {errors.campaign_title && <p className='my-1 text-[#FF3B30]'>{errors.campaign_title}</p>}
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium mb-1">Campaign Goals</label>
+                                        <label className="block text-sm font-medium mb-1">{t("emailings.campaign_goals")}</label>
                                         <Dropdown
                                             name="campaign_objective"
                                             options={campaignObjectiveOptions}
@@ -1080,41 +1081,41 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                                 setErrors((prev) => ({ ...prev, campaign_objective: "" }))
                                             }
                                             }
-                                            placeholder="Select"
+                                            placeholder={t("emailings.select")}
                                         />
                                         {errors.campaign_objective && <p className='my-1 text-[#FF3B30]'>{errors.campaign_objective}</p>}
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium mb-1">Subject</label>
-                                        <input type="text" placeholder="Enter main subject" value={formData.main_subject} name='main_subject' onChange={handleChange} className={`w-full border bg-white ${errors.main_subject ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
+                                        <label className="block text-sm font-medium mb-1">{t("emailings.subject")}</label>
+                                        <input type="text" placeholder={t("emailings.subject_placeholder")} value={formData.main_subject} name='main_subject' onChange={handleChange} className={`w-full border bg-white ${errors.main_subject ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
                                         {errors.main_subject && <p className='my-1 text-[#FF3B30]'>{errors.main_subject}</p>}
                                     </div>
                                 </div>
 
                                 {formData.campaign_objective === "other" && <div>
-                                    <label className="block text-sm font-medium mb-1">Other</label>
-                                    <input type="text" placeholder="Enter Campaign Objective Other" value={formData.campaign_objective_other} name='campaign_objective_other' onChange={handleChange} className={`w-full bg-white border ${errors.campaign_objective_other ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
+                                    <label className="block text-sm font-medium mb-1">{t("emailings.other")}</label>
+                                    <input type="text" placeholder={t("emailings.other_placeholder")} value={formData.campaign_objective_other} name='campaign_objective_other' onChange={handleChange} className={`w-full bg-white border ${errors.campaign_objective_other ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
                                     {errors.campaign_objective_other && <p className='my-1 text-[#FF3B30]'>{errors.campaign_objective_other}</p>}
                                 </div>}
 
                                 <div>
-                                    <label className="block text-sm font-medium mb-1">Account</label>
+                                    <label className="block text-sm font-medium mb-1">{t("emailings.account")}</label>
                                     <Dropdown
                                         name="account"
-                                        options={[{ label: "Account 1", key: "account_1" }, { label: "Account 2", key: "account_2" }]}
+                                        options={[{ label: `${t("emailings.account_1")}`, key: "account_1" }, { label: `${t("emailings.account_2")}`, key: "account_2" }]}
                                         value={accountSelect}
                                         onChange={(updated) => {
                                             setAccountSelect(updated)
                                             setErrors((prev) => ({ ...prev, account: "" }))
                                         }
                                         }
-                                        placeholder="Select your connected emailing accounts"
+                                        placeholder={t("emailings.account_placeholder")}
                                     />
                                     {errors.account && <p className='my-1 text-[#FF3B30]'>{errors.account}</p>}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium mb-1">CTA Type</label>
+                                    <label className="block text-sm font-medium mb-1">{t("emailings.cta_type")}</label>
                                     <Dropdown
                                         name="cta_type"
                                         options={ctaTypeOptions}
@@ -1130,7 +1131,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                             setErrors((prev) => ({ ...prev, cta_type: "" }))
                                         }
                                         }
-                                        placeholder="Select"
+                                        placeholder={t("emailings.select")}
                                     />
                                     {errors.cta_type && <p className='my-1 text-[#FF3B30]'>{errors.cta_type}</p>}
                                 </div>
@@ -1141,8 +1142,8 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                 <div className="flex items-center gap-2">
                                     <button onClick={() => {
                                         handleContinue(2)
-                                    }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
-                                    <button onClick={() => handleCancel(1)} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                                    }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("continue")}</button>
+                                    <button onClick={() => handleCancel(1)} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
                                 </div>
                             </div>}
                         </div>
@@ -1154,7 +1155,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 2 ? 'bg-[#675FFF]' : statusSteps.step2 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step2 ? <CheckIcon /> : '2'}</p>
-                                    <p className={`text-[14px] font-[600] ${step === 2 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>Targeting & Scheduling</p>
+                                    <p className={`text-[14px] font-[600] ${step === 2 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("emailings.target_scheduling")}</p>
                                 </div>
                                 {step !== 2 && <RightArrowIcon />}
                             </div>
@@ -1162,7 +1163,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                 <hr style={{ color: "#E1E4EA" }} />
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div className="relative" ref={targetListRef}>
-                                        <label className="block text-sm font-medium mb-1">List Of Target</label>
+                                        <label className="block text-sm font-medium mb-1">{t("emailings.list_target")}</label>
                                         <button
                                             onClick={() => setShowListTargetSelector((prev) => !prev)}
                                             className={`w-full flex items-center justify-between focus:outline-none focus:border-[#675FFF] bg-white border ${errors.list_of_target ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
@@ -1172,7 +1173,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                                     const found = contactLists?.length > 0 && contactLists.find(d => d.key === dayKey);
                                                     return found?.label;
                                                 }).join(', ')
-                                                : 'Select'}</span>
+                                                : `${t(t("emailings.select"))}`}</span>
                                             <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showListTargetSelector ? 'transform rotate-180' : ''}`} />
                                         </button>
                                         {showListTargetSelector && (
@@ -1194,11 +1195,11 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                             </div>
                                         )}
                                         {errors.list_of_target && <p className='my-1 text-[#FF3B30]'>{errors.list_of_target}</p>}
-                                        <p className="text-sm mt-1 ">Estimated Segment Size: 12</p>
+                                        <p className="text-sm mt-1 ">{t("emailings.estimate_segment")} 12</p>
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium mb-1">Desired Tone</label>
+                                        <label className="block text-sm font-medium mb-1">{t("emailings.desired_tone")}</label>
                                         <Dropdown
                                             name="desired_tone"
                                             options={toneOptions}
@@ -1211,13 +1212,13 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                                 setErrors((prev) => ({ ...prev, desired_tone: "" }))
                                             }
                                             }
-                                            placeholder="Select"
+                                            placeholder={t("emailings.select")}
                                         />
                                         {errors.desired_tone && <p className='my-1 text-[#FF3B30]'>{errors.desired_tone}</p>}
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium mb-1">Language</label>
+                                        <label className="block text-sm font-medium mb-1">{t("emailings.language")}</label>
                                         <Dropdown
                                             name="language"
                                             options={languageOptions}
@@ -1230,7 +1231,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                                 setErrors((prev) => ({ ...prev, language: "" }))
                                             }
                                             }
-                                            placeholder="Select"
+                                            placeholder={t("emailings.select")}
                                         />
                                         {errors.language && <p className='my-1 text-[#FF3B30]'>{errors.language}</p>}
                                     </div>
@@ -1238,12 +1239,12 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div className="relative" ref={timeSelectorRef}>
-                                        <label className="block text-sm font-medium mb-1">Send Time Window</label>
+                                        <label className="block text-sm font-medium mb-1">{t("emailings.send_time_window")}</label>
                                         <button
                                             onClick={() => setShowTimeSelector((prev) => !prev)}
                                             className={`w-full flex justify-between items-center bg-white focus:border-[#675FFF] border ${errors.send_time_window ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
                                         >
-                                            <span className={`${formData.send_time_window ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{formData.send_time_window || "Select Time"}</span>
+                                            <span className={`${formData.send_time_window ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{formData.send_time_window || `${t("emailings.select_time")}`}</span>
                                             <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showTimeSelector ? 'transform rotate-180' : ''}`} />
                                         </button>
                                         {showTimeSelector && (
@@ -1259,7 +1260,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                         {errors.send_time_window && <p className='my-1 text-[#FF3B30]'>{errors.send_time_window}</p>}
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium mb-1">Start Date</label>
+                                        <label className="block text-sm font-medium mb-1">{t("emailings.start_date")}</label>
                                         <input
                                             type="date"
                                             min={format(new Date(), 'yyyy-MM-dd')}
@@ -1283,7 +1284,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                         {errors.start_date && <p className='my-1 text-[#FF3B30]'>{errors.start_date}</p>}
                                     </div>
                                     <div className="relative" ref={frequencyDaysRef}>
-                                        <label className="block text-sm font-medium mb-1">Frequency</label>
+                                        <label className="block text-sm font-medium mb-1">{t("emailings.frequency")}</label>
                                         <button
                                             onClick={() => setShowWeekSelector((prev) => !prev)}
                                             className={`w-full flex justify-between items-center bg-white border truncate ${errors.frequency ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer focus:outline-none focus:border-[#675FFF]`}
@@ -1293,7 +1294,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                                     const found = daysOptions.find(d => d.key === dayKey);
                                                     return found?.label;
                                                 }).join(', ')
-                                                : 'Select Days'}</span>
+                                                : `${t("emailings.select_days")}`}</span>
                                             <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showWeekSelector ? 'transform rotate-180' : ''}`} />
                                         </button>
                                         {showWeekSelector && (
@@ -1322,8 +1323,8 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                 <div className="flex items-center gap-2">
                                     <button onClick={() => {
                                         handleContinue(3)
-                                    }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
-                                    <button onClick={() => handleCancel(2)} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                                    }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("continue")}</button>
+                                    <button onClick={() => handleCancel(2)} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
                                 </div>
                             </div>}
                         </div>
@@ -1335,7 +1336,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 3 ? 'bg-[#675FFF]' : statusSteps.step3 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step3 ? <CheckIcon /> : '3'}</p>
-                                    <p className={`text-[14px] font-[600] ${step === 3 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>AI Setup & Prompting</p>
+                                    <p className={`text-[14px] font-[600] ${step === 3 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("emailings.ai_setup")}</p>
                                 </div>
                                 {step !== 3 && <RightArrowIcon />}
                             </div>
@@ -1344,7 +1345,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
                                 <div className='flex flex-col gap-5'>
                                     <div className="flex items-center justify-between">
-                                        <label className="text-sm font-medium">Include branding (Brain AI)?</label>
+                                        <label className="text-sm font-medium">{t("emailings.including_branding")} (Brain AI)?</label>
                                         <div className='flex items-center gap-6'>
                                             {/* <div className='relative group'>
                                         <Info className="text-gray-500 cursor-pointer" size={16} />
@@ -1365,11 +1366,11 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <label className="text-sm font-medium mb-1 flex items-center gap-2">
-                                            <p>Use AI Brain as the reference for your emails</p>
+                                            <p>{t("emailings.use_ai_brain")}</p>
                                             <div className="relative group">
                                                 <Info className="text-gray-500 cursor-pointer" size={16} />
                                                 <div className="absolute bottom-full flex-col mb-1 gap-1 w-60 left-3 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:flex transition-opacity duration-200 z-10">
-                                                    {` Continue in the same spirit, format, tone, style, and overall vibe as your previous emails. To enable this, integrate your email platform or upload your past emails as a PDF in the “AI Brain > Files`}
+                                                    {t("emailings.continue_same_spirit")}
                                                 </div>
                                             </div>
                                         </label>
@@ -1385,19 +1386,19 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium mb-1">Custom prompt for AI</label>
-                                    <textarea value={formData.custom_prompt} name='custom_prompt' onChange={handleChange} placeholder="e.g. Write a re-engagement email for cold leads about my AI training offer" className={`w-full bg-white border ${errors.custom_prompt ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded px-3 py-2 resize-none focus:outline-none focus:border-[#675FFF]`} rows={3}></textarea>
+                                    <label className="block text-sm font-medium mb-1">{t("emailings.custom_prompt_ai")}</label>
+                                    <textarea value={formData.custom_prompt} name='custom_prompt' onChange={handleChange} placeholder={t("emailings.custom_prompt_placeholder")} className={`w-full bg-white border ${errors.custom_prompt ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded px-3 py-2 resize-none focus:outline-none focus:border-[#675FFF]`} rows={3}></textarea>
                                     {errors.custom_prompt && <p className='my-1 text-[#FF3B30]'>{errors.custom_prompt}</p>}
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label className="text-sm font-medium mb-1 flex items-center gap-2">
-                                            <p>Text Length</p>
+                                            <p>{t("emailings.text_length")}</p>
                                             <div className="relative group">
                                                 <Info className="text-gray-500 cursor-pointer" size={16} />
                                                 <div className="absolute bottom-full mb-1 w-60 left-8 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:flex transition-opacity duration-200 z-10">
-                                                    Choose the optimal length for your emails — see industry benchmarks in our Help Center.
+                                                {t("emailings.length_for_email")}
                                                 </div>
                                             </div>
                                         </label>
@@ -1413,14 +1414,14 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                                 setErrors((prev) => ({ ...prev, text_length: "" }))
                                             }
                                             }
-                                            placeholder="Select"
+                                            placeholder={t("emailings.select")}
                                         />
                                         {errors.text_length && <p className='my-1 text-[#FF3B30]'>{errors.text_length}</p>}
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium mb-1">Products/Service to feature</label>
-                                        <input type="text" value={formData.product_or_service_feature} name='product_or_service_feature' onChange={handleChange} placeholder="Enter Products/Service to feature" className={`w-full bg-white border ${errors.product_or_service_feature ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
+                                        <label className="block text-sm font-medium mb-1">{t("emailings.product_service_fearture")}</label>
+                                        <input type="text" value={formData.product_or_service_feature} name='product_or_service_feature' onChange={handleChange} placeholder={t("emailings.product_service_fearture_placeholder")} className={`w-full bg-white border ${errors.product_or_service_feature ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 focus:outline-none focus:border-[#675FFF]`} />
                                         {errors.product_or_service_feature && <p className='my-1 text-[#FF3B30]'>{errors.product_or_service_feature}</p>}
                                     </div>
                                 </div>
@@ -1428,13 +1429,13 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                 <div className="flex items-center justify-between">
                                     {/* <label className="text-sm font-medium"></label> */}
                                     <label className="text-sm font-medium mb-1 flex items-center gap-2">
-                                        <p>Review before sending</p>
+                                        <p>{t("emailings.review_before_sending")}</p>
                                         <div className="relative group">
                                             <Info className="text-gray-500 cursor-pointer" size={16} />
                                             <div className="absolute bottom-full flex-col mb-1 gap-1 w-60 left-3 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:flex transition-opacity duration-200 z-10">
-                                                <p className='font-[700]'>ON – <span className='font-[500] text-[#E1E4EA]'>You’ll get a notification 24 h before each scheduled email. The email stays on hold until you approve it in the calendar.</span></p>
-                                                <p className='font-[700]'>OFF –  <span className='font-[500] text-[#E1E4EA]'>The email is sent automatically at the scheduled time.</span></p>
-                                                <p className='font-[500] text-[#fff]'>In both cases, you can still open the calendar at any moment and review or edit any email up to 24 h before it goes out.</p>
+                                                <p className='font-[700]'>{t("emailings.on")} – <span className='font-[500] text-[#E1E4EA]'>{t("emailings.get_notification")}</span></p>
+                                                <p className='font-[700]'>{t("emailings.of")} –  <span className='font-[500] text-[#E1E4EA]'>{t("emailings.email_sent_automatically")}</span></p>
+                                                <p className='font-[500] text-[#fff]'>{t("emailings.open_calendar")}</p>
                                             </div>
                                         </div>
                                     </label>
@@ -1457,10 +1458,10 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                         </div>
 
                         {step === 3 && <div className="flex gap-4 pt-2">
-                            {isEdit ? <button disabled={updateStatus} className="px-4 font-[500] w-[200px] py-2 bg-[#675FFF] text-white rounded-lg" onClick={() => handleUpdate(false)}>{updateStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Update Campaign"}</button> :
-                                <button disabled={submitStatus} className="px-4 font-[500] w-[200px] py-2 bg-[#675FFF] text-white rounded-lg" onClick={() => handleSubmit(false)}>{submitStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Launch Campaign"}</button>}
-                            {isEdit ? <button disabled={updateSaveDraftStatus} className="px-4 font-[500] w-[200px] py-2 border text-[#5A687C] border-[#E1E4EA] rounded-lg" onClick={() => handleUpdate(true)}>{updateSaveDraftStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save As Draft"}</button> :
-                                <button disabled={saveDraftStatus} className="px-4 font-[500] w-[200px] py-2 border text-[#5A687C] border-[#E1E4EA] rounded-lg" onClick={() => handleSubmit(true)}>{saveDraftStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Save As Draft"}</button>}
+                            {isEdit ? <button disabled={updateStatus} className="px-4 font-[500] w-[200px] py-2 bg-[#675FFF] text-white rounded-lg" onClick={() => handleUpdate(false)}>{updateStatus ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : `${t("emailings.update_campaign")}`}</button> :
+                                <button disabled={submitStatus} className="px-4 font-[500] w-[200px] py-2 bg-[#675FFF] text-white rounded-lg" onClick={() => handleSubmit(false)}>{submitStatus ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : `${t("emailings.launch_campaign")}`}</button>}
+                            {isEdit ? <button disabled={updateSaveDraftStatus} className="px-4 font-[500] w-[200px] py-2 border text-[#5A687C] border-[#E1E4EA] rounded-lg" onClick={() => handleUpdate(true)}>{updateSaveDraftStatus ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : `${t("emailings.save_as_draft")}`}</button> :
+                                <button disabled={saveDraftStatus} className="px-4 font-[500] w-[200px] py-2 border text-[#5A687C] border-[#E1E4EA] rounded-lg" onClick={() => handleSubmit(true)}>{saveDraftStatus ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : `${t("emailings.save_as_draft")}`}</button>}
                         </div>}
 
                     </div>

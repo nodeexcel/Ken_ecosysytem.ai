@@ -3,11 +3,12 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react"
 import successImg from "../assets/svg/success.svg"
 import { getCampaignSchedule, getScheduledContent, updateContentStatus } from "../api/emailCampaign"
 import { SelectDropdown } from "./Dropdown"
+import { useTranslation } from "react-i18next";
 
 export default function Calendar() {
   // Get current date information
   const today = new Date()
-
+  const { t } = useTranslation();
   // State for current view date information
   const [currentMonth, setCurrentMonth] = useState(today.getMonth())
   const [currentYear, setCurrentYear] = useState(today.getFullYear())
@@ -15,6 +16,7 @@ export default function Calendar() {
   const [currentView, setCurrentView] = useState("month");
   const [newEvents, setNewEvents] = useState();
   const [popUpData, setPopUpData] = useState({})
+
 
   const [loading, setLoading] = useState(true)
   const [submitStatus, setSubmitStatus] = useState(false)
@@ -80,7 +82,7 @@ export default function Calendar() {
 
   // Helper function to get day name from date
   const getDayName = (date) => {
-    const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+    const days = [`${t("emailings.sunday")}`, `${t("emailings.monday")}`, `${t("emailings.tuesday")}`, `${t("emailings.wednesday")}`, `${t("emailings.thursday")}`, `${t("emailings.friday")}`, `${t("emailings.saturday")}`]
     return days[date.getDay()]
   }
 
@@ -150,20 +152,20 @@ export default function Calendar() {
     return (minutes / 60) * 100
   }
 
-  const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  const daysOfWeek = [`${t("emailings.mon")}`, `${t("emailings.tue")}`, `${t("emailings.wed")}`, `${t("emailings.thu")}`, `${t("emailings.fri")}`, `${t("emailings.sat")}`, `${t("emailings.sun")}`]
   const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    `${t("emailings.january")}`,
+    `${t("emailings.february")}`,
+    `${t("emailings.march")}`,
+    `${t("emailings.april")}`,
+    `${t("emailings.may")}`,
+    `${t("emailings.june")}`,
+    `${t("emailings.july")}`,
+    `${t("emailings.august")}`,
+    `${t("emailings.september")}`,
+    `${t("emailings.october")}`,
+    `${t("emailings.november")}`,
+    `${t("emailings.december")}`,
   ]
 
   // Replace the hours array with full 24-hour cycle in 12-hour format
@@ -194,7 +196,7 @@ export default function Calendar() {
     "11PM",
   ]
 
-  const calendarOptions = [{ label: "Month View", key: "month" }, { label: "Week View", key: "week" }, { label: "Day View", key: "day" }]
+  const calendarOptions = [{ label: `${t("emailings.month_view")}`, key: "month" }, { label: `${t("emailings.week_view")}`, key: "week" }, { label: `${t("emailings.day_view")}`, key: "day" }]
 
   const getScheduleDate = async () => {
     try {
@@ -685,7 +687,7 @@ export default function Calendar() {
               onChange={(updated) => {
                 setCurrentView(updated)
               }}
-              placeholder="Select"
+              placeholder={t("emailings.select")}
               className="w-[147px]"
             />
           </div>
@@ -695,7 +697,7 @@ export default function Calendar() {
       return (
         <div className="flex justify-between bg-[#F9FAFB] rounded-t-2xl items-center p-4">
           <h2 className="text-lg font-medium">
-            {monthNames[currentMonth]} {currentYear} (Mon {selectedWeekStart} - Sun {selectedWeekEnd})
+            {monthNames[currentMonth]} {currentYear} ({t("emailings.mon")} {selectedWeekStart} - {t("emailings.sun")} {selectedWeekEnd})
           </h2>
           <div className="flex items-center gap-2">
             <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] py-[6px] bg-white rounded-lg">
@@ -703,7 +705,7 @@ export default function Calendar() {
                 <ChevronLeft className="h-5 w-5 text-[#5A687C]" />
               </button>
               <span className="mx-2 text-[#5A687C]">
-                Mon {selectedWeekStart} - Sun {selectedWeekEnd}
+                {t("emailings.mon")} {selectedWeekStart} - {t("emailings.sun")} {selectedWeekEnd}
               </span>
               <button onClick={handleNextWeek} className="p-1 rounded-md hover:bg-gray-100" aria-label="Next week">
                 <ChevronRight className="h-5 w-5 text-[#5A687C]" />
@@ -717,7 +719,7 @@ export default function Calendar() {
               onChange={(updated) => {
                 setCurrentView(updated)
               }}
-              placeholder="Select"
+              placeholder={t("emailings.select")}
               className="w-[147px]"
             />
           </div>
@@ -749,7 +751,7 @@ export default function Calendar() {
               onChange={(updated) => {
                 setCurrentView(updated)
               }}
-              placeholder="Select"
+              placeholder={t("emailings.select")}
               className="w-[147px]"
             />
           </div>
@@ -762,7 +764,7 @@ export default function Calendar() {
 
   return (
     <div className="gap-6 h-screen overflow-auto py-4 pr-2">
-      <h1 className="font-semibold text-[#1e1e1e] mb-5 text-2xl leading-8">Calendar</h1>
+      <h1 className="font-semibold text-[#1e1e1e] mb-5 text-2xl leading-8">{t("emailings.calendar")}</h1>
       <div className="w-full  mx-auto bg-white rounded-xl border border-[#E1E4EA]">
         {renderCalendarHeader()}
         {currentView === "month" && renderMonthView()}
@@ -790,7 +792,7 @@ export default function Calendar() {
                     // onClick={handleSubmit}
                     className="border-[1.5px] p-1.5 rounded-lg border-[#5F58E8] text-[#675FFF] text-[16px] font-[500]"
                   >
-                    Generate New Email
+                    {t("emailings.generate_new_email")}
                   </button>
                 )}
               </div>
@@ -832,7 +834,7 @@ export default function Calendar() {
                     handleSubmit
                   }
                 >
-                  {submitStatus ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : isDisapprove ? "Save" : "Approve"}
+                  {submitStatus ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : isDisapprove ? `${t("brain_ai.save")}` : `${t("approve")}`}
                 </button>
               </div>
             </div>
@@ -856,15 +858,15 @@ export default function Calendar() {
                 <img src={successImg || "/placeholder.svg"} alt="success" />
               </div>
               <div className="flex flex-col gap-2 items-center">
-                <h2 className="text-[28px] font-[700] text-[#292D32]">Congratulations!</h2>
-                <p className="text-[#5A687C] text-[16px] font-[400]">You have successfully approved the campaign.</p>
+                <h2 className="text-[28px] font-[700] text-[#292D32]">{t("congratulations")}</h2>
+                <p className="text-[#5A687C] text-[16px] font-[400]">{t("successfully_approve")}</p>
               </div>
               {/* <div className="flex gap-2"> */}
               <button
                 className="bg-[#675FFF] w-full border border-[#5F58E8] text-white px-5 py-2 font-[500] text-[16px] rounded-lg"
                 onClick={() => setSuccessModal(false)}
               >
-                Ok
+                {t("brain_ai.ok")}
               </button>
               {/* </div> */}
             </div>
