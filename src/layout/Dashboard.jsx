@@ -49,7 +49,7 @@ function Dashboard() {
         { id: "", label: "Home" },
         { id: "brain", label: "Brain AI" },
         { id: "settings", label: "Settings" },
-        { id: "documentation", label: "Documentation" },
+        { id: "help_center", label: "Help center" },
         { id: "support", label: "Support" },
         { id: "community", label: "Community" },
         { id: "notification", label: "Notification" },
@@ -104,10 +104,10 @@ function Dashboard() {
 
     return (
         <div className='w-full flex'>
-            <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-[250px]' : 'w-[0%]'} md:w-[58px] relative z-50`}>
+            <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-[250px]' : 'w-[0%]'} md:w-[72px] relative z-50`}>
                 <Sidebar sidebarItems={SidebarItems} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
             </div>
-            <div style={{ width: 'calc(100% - 58px)' }}>
+            <div style={{ width: 'calc(100% - 72px)' }}>
                 {/* <Navbar sidebarItems={SidebarItems} /> */}
                 <Outlet />
             </div>

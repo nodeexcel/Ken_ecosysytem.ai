@@ -145,7 +145,7 @@ function ContentCreation() {
 
     const staticSuggestions = [{ label: "How to analyze the performance of your last campaign?", key: "How to analyze the performance of my last campaign." },
     { label: "Would you like a plan for your next marketing campaign?", key: "Would you like a plan for my next marketing campaign." },
-    { label: "How to organize my expenses and icome efficiently.", key: "How to organize my expenses and icome efficiently." }
+    { label: "How to organize my expenses and income efficiently.", key: "How to organize my expenses and income efficiently." }
     ]
 
     const listedProps = {

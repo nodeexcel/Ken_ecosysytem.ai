@@ -157,7 +157,7 @@ const englishTranslation = {
         use_meta_business:"Use Meta Business Suite to connect your Instagram account to Ecosystem.ai"
        }
         },
-   
+
     settings: {
         label: "Settings",
         tab_1: "General Settings",
@@ -282,7 +282,7 @@ const englishTranslation = {
             i_changed_my_mind: "I’ve changed my mind—I’ll stay"
         },
         tab_3_list: {
-            invite_team_member: "Invite A Team Member",
+            invite_team_member: "Invite a team member",
             role: "Role",
             all: "All",
             admin: "Admin",
@@ -401,7 +401,7 @@ const englishTranslation = {
        choose_calendar_validation:"Calender must bet chosen",
         whatsapp_no_validation:"WhatsApp number is required.",
         object_of_agent_validation:"Objective of the agent is required",
-       
+
         followup_validation:"Followup is required",
         behavior:"3 Behavior",
         prompt:"Prompt",
@@ -415,7 +415,7 @@ const englishTranslation = {
         update:"Update",
 
 
-        
+
 
 
 
@@ -493,7 +493,7 @@ const englishTranslation = {
     view:"View",
     rename:"Rename",
     download:"Download",
-    completed:"completed",
+    completed:"Completed",
     coming_soon:"Comming Soon"
 }
 export default englishTranslation;

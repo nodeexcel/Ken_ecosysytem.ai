@@ -61,7 +61,6 @@ const PhoneDashboard = () => {
             <h3 className="text-2xl font-bold">1</h3>
             <p className="text-[#1E1E1E]">Agent</p>
             <p className="text-sm text-[#5A687C]">You have 1 agent active now</p>
-            <a href="#" className="text-[#675FFF] mt-2 inline-block text-sm font-[400] underline">See More</a>
           </div>
 
           {/* Campaigns */}
@@ -77,7 +76,6 @@ const PhoneDashboard = () => {
             <h3 className="text-2xl font-bold">0</h3>
             <p className="text-[#1E1E1E]">Campaigns</p>
             <p className="text-sm text-[#5A687C]">You don’t have campaigns yet</p>
-            <a href="#" className="text-[#675FFF] mt-2 inline-block text-sm font-[400] underline">See More</a>
           </div>
 
           {/* Called Clients */}
@@ -92,7 +90,6 @@ const PhoneDashboard = () => {
             <h3 className="text-2xl font-bold">0</h3>
             <p className="text-[#1E1E1E]">Called clients</p>
             <p className="text-sm text-[#5A687C]">You don’t have calls yet</p>
-            <a href="#" className="text-[#675FFF] mt-2 inline-block text-sm font-[400] underline">See More</a>
           </div>
 
           {/* Average Call Duration */}
@@ -106,23 +103,21 @@ const PhoneDashboard = () => {
             <h3 className="text-2xl font-bold">00:00:00</h3>
             <p className="text-[#1E1E1E]">Average call duration</p>
             <p className="text-sm text-[#5A687C]">You don’t have calls yet</p>
-            <a href="#" className="text-[#675FFF] mt-2 inline-block text-sm font-[400] underline">See More</a>
           </div>
 
-             {/* call recive */}
+          {/* call recive */}
 
-               <div className="rounded-lg border border-[#E1E4EA] bg-white p-4 flex  flex-col gap-1">
+          <div className="rounded-lg border border-[#E1E4EA] bg-white p-4 flex  flex-col gap-1">
             <div className="flex w-10 h-10  justify-center border boarder-2 border-[#E1E4EA] rounded-[10px] p-2">
               <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M13.25 8.75V4.25M13.25 8.75H17.75M13.25 8.75L19.25 2.75M16.25 20.75C7.966 20.75 1.25 14.034 1.25 5.75V3.5C1.25 2.90326 1.48705 2.33097 1.90901 1.90901C2.33097 1.48705 2.90326 1.25 3.5 1.25H4.872C5.388 1.25 5.838 1.601 5.963 2.102L7.069 6.525C7.179 6.965 7.015 7.427 6.652 7.698L5.359 8.668C5.17393 8.80198 5.037 8.99207 4.96854 9.21005C4.90009 9.42803 4.90375 9.66227 4.979 9.878C5.58087 11.5151 6.53141 13.0018 7.76478 14.2352C8.99815 15.4686 10.4849 16.4191 12.122 17.021C12.563 17.183 13.05 17.017 13.332 16.641L14.302 15.348C14.4348 15.1708 14.6169 15.0366 14.8256 14.9625C15.0342 14.8883 15.2601 14.8773 15.475 14.931L19.898 16.037C20.398 16.162 20.75 16.612 20.75 17.128V18.5C20.75 19.0967 20.5129 19.669 20.091 20.091C19.669 20.5129 19.0967 20.75 18.5 20.75H16.25Z" stroke="#30B0C7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-</svg>
+                <path d="M13.25 8.75V4.25M13.25 8.75H17.75M13.25 8.75L19.25 2.75M16.25 20.75C7.966 20.75 1.25 14.034 1.25 5.75V3.5C1.25 2.90326 1.48705 2.33097 1.90901 1.90901C2.33097 1.48705 2.90326 1.25 3.5 1.25H4.872C5.388 1.25 5.838 1.601 5.963 2.102L7.069 6.525C7.179 6.965 7.015 7.427 6.652 7.698L5.359 8.668C5.17393 8.80198 5.037 8.99207 4.96854 9.21005C4.90009 9.42803 4.90375 9.66227 4.979 9.878C5.58087 11.5151 6.53141 13.0018 7.76478 14.2352C8.99815 15.4686 10.4849 16.4191 12.122 17.021C12.563 17.183 13.05 17.017 13.332 16.641L14.302 15.348C14.4348 15.1708 14.6169 15.0366 14.8256 14.9625C15.0342 14.8883 15.2601 14.8773 15.475 14.931L19.898 16.037C20.398 16.162 20.75 16.612 20.75 17.128V18.5C20.75 19.0967 20.5129 19.669 20.091 20.091C19.669 20.5129 19.0967 20.75 18.5 20.75H16.25Z" stroke="#30B0C7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
 
 
             </div>
             <h3 className="text-2xl font-bold">0</h3>
             <p className="text-[#1E1E1E]">Called Received</p>
             <p className="text-sm text-[#5A687C]">You don't have received calls yet</p>
-            <a href="#" className="text-[#675FFF] mt-2 inline-block text-sm font-[400] underline">See More</a>
           </div>
         </div>
       </div>

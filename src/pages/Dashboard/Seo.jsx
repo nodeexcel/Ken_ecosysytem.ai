@@ -146,9 +146,9 @@ function Seo() {
         }
     }
 
-    const staticSuggestions = [{ label: "Would you like advice on optimizing your cash flow?", key: "Would you like advice on optimizing my cash flow?" },
-    { label: "I need template for my forecast budget.", key: "I need template for my forecast budget." },
-    { label: "How to organize my expenses and income efficiently.", key: "How to organize my expenses and income efficiently." }
+    const staticSuggestions = [{ label: "How to analyze your SEO performance using tools?", key: "How to analyze my SEO performance using tools?" },
+    { label: "Need a template to structure your web page?", key: "I need a template to structure my web page." },
+    { label: "How to find the most relevant keywords for your content?", key: "How to find the most relevant keywords for my content?" }
     ]
 
     const listedProps = {

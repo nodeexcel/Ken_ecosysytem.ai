@@ -143,7 +143,7 @@ function Accounting() {
 
     const staticSuggestions = [{ label: "Would you like advice on optimizing your cash flow?", key: "I would you like advice on optimizing my cash flow." },
     { label: "I need template for my forecast budget.", key: "I need template for my forecast budget." },
-    { label: "How to organize my expenses and icome efficiently.", key: "How to organize my expenses and icome efficiently." }
+    { label: "How to organize my expenses and income efficiently.", key: "How to organize my expenses and income efficiently." }
     ]
 
 
