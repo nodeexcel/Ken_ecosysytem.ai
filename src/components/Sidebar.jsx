@@ -15,10 +15,11 @@ import fr_flag from "../assets/images/fr_flag.png"
 import Notification from '../pages/Dashboard/Notification';
 import { X } from 'lucide-react';
 import { getNavbarData } from '../store/navbarSlice';
-import { SidebarBrainIcon, SidebarDocumentIcon, SidebarFourBoxIcon, SidebarHelpCenterIcon, SidebarNotificationIcon, SidebarSettingIcon, SidebarSupportCenterIcon } from '../icons/icons';
+import { CommuinityIcon, SidebarBrainIcon, SidebarDocumentIcon, SidebarFourBoxIcon, SidebarHelpCenterIcon, SidebarNotificationIcon, SidebarSettingIcon, SidebarSupportCenterIcon, SkillsIcon } from '../icons/icons';
 import logo from '../assets/svg/dashboard_logo.svg'
 import { changeLanguage } from '../api/profile';
 import i18n from '../i18n';
+import lifeTimeImg from "../assets/svg/eco_systeme_lifetime_commission.svg"
 
 const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     const navigate = useNavigate()
@@ -34,6 +35,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedLang, setSelectedLang] = useState('en');
     const [modalStatus, setModalStatus] = useState(false);
+    const [commissionStatus, setCommissionStatus] = useState(false);
     const noticationRef = useRef()
     const languageRef = useRef()
 
@@ -147,13 +149,13 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
             >
                 {isOpen ? <IoClose size={24} /> : <RxHamburgerMenu size={24} />}
             </button>
-            <aside className={`bg-[#FFFFFF] w-full border-r border-[#E1E4EA] h-full transition-all duration-300 ${isOpen ? 'w-[100px]' : 'w-0 overflow-hidden'}  flex flex-col justify-between`}>
+            <aside className={`bg-[#FFFFFF] overflow-auto w-full border-r border-[#E1E4EA] h-full transition-all duration-300 ${isOpen ? 'w-[100px]' : 'w-0 overflow-auto'}  flex flex-col justify-between`}>
                 <div className='flex flex-col'>
                     <div className="flex justify-center py-4" onClick={handleHome}>
                         <img src={logo} alt='image' />
                     </div>
                     <hr className='text-[#E1E4EA]' />
-                    <div className='text-xl flex justify-center py-4'>
+                    <div className='text-xl flex justify-center py-3'>
                         <img
                             src={userDetails?.image ?? person}
                             alt='image'
@@ -162,7 +164,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                     </div>
                     <hr className='text-[#E1E4EA]' />
                     <div ref={noticationRef}>
-                        <div className={`text-xl flex ${!isNotification && 'group'} hover:cursor-pointer justify-center relative py-4`} onClick={handleNotification}>
+                        <div className={`text-xl flex ${!isNotification && 'group'} hover:cursor-pointer justify-center relative py-3`} onClick={handleNotification}>
                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarNotificationIcon status={renderColor(6)} /></div> <div className='hidden group-hover:block'><SidebarNotificationIcon status={true} /></div> </div>
                             <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[116px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
                                 <p className='font-[400]'>Notifications</p>
@@ -170,13 +172,19 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         </div>
                         {isNotification && <Notification setNotification={setIsNotification} />}
                     </div>
-                    <div className='text-xl flex group hover:cursor-pointer relative justify-center py-4' onClick={() => handleSelect(sidebarItems[0].id, sidebarItems[0].label)}>
+                    <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={() => handleSelect(sidebarItems[0].id, sidebarItems[0].label)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarFourBoxIcon status={renderColor(0)} /></div> <div className='hidden group-hover:block'><SidebarFourBoxIcon status={true} /></div> </div>
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[97px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
                             <p className='font-[400]'>Home</p>
                         </div>
                     </div>
-                    <div className='text-xl flex group hover:cursor-pointer relative justify-center py-4' onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
+                    <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={() => handleSelect(sidebarItems[7].id, sidebarItems[7].label)}>
+                        <div className="flex items-center gap-2"><div className='group-hover:hidden'><SkillsIcon status={renderColor(7)} /></div> <div className='hidden group-hover:block'><SkillsIcon status={true} /></div> </div>
+                        <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[95px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
+                            <p className='font-[400]'>Skills</p>
+                        </div>
+                    </div>
+                    <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarBrainIcon status={renderColor(1)} /></div> <div className='hidden group-hover:block'><SidebarBrainIcon status={true} /></div> </div>
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[102px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
                             <p className='font-[400]'>Brain AI</p>
@@ -186,7 +194,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                 </div>
                 <div className='flex flex-col'>
                     <hr className='text-[#E1E4EA]' />
-                    <div className='text-xl flex group hover:cursor-pointer relative justify-center py-4' onClick={() => handleSelect(sidebarItems[2].id, sidebarItems[2].label)}>
+                    <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={() => handleSelect(sidebarItems[2].id, sidebarItems[2].label)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarSettingIcon status={renderColor(2)} /></div> <div className='hidden group-hover:block'><SidebarSettingIcon status={true} /></div> </div>
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[104px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
                             <p className='font-[400]'>Settings</p>
@@ -194,7 +202,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                     </div>
                     <div
                         ref={languageRef}
-                        className={`relative ${!showDropdown && 'group'} text-xl flex justify-center py-4 cursor-pointer`}
+                        className={`relative ${!showDropdown && 'group'} text-xl flex justify-center py-3 cursor-pointer`}
                         onClick={toggleDropdown}
                     >
                         <img src={renderLangSrc()} alt={selectedLang} width={20} />
@@ -219,14 +227,14 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         </div>
                     </div>
                     <hr className='text-[#E1E4EA]' />
-                    <div className='text-xl flex group hover:cursor-pointer relative justify-center py-4' onClick={redirectHelpCenterDoc}>
+                    <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={redirectHelpCenterDoc}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarHelpCenterIcon status={renderColor(3)} /></div> <div className='hidden group-hover:block'><SidebarHelpCenterIcon status={true} /></div> </div>
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[113px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
                             <p className='font-[400]'>Help center</p>
                         </div>
                     </div>
-                    <div className='text-xl flex group hover:cursor-pointer relative justify-center py-4' onClick={() => handleSelect(sidebarItems[4].id, sidebarItems[4].label)}>
-                        <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarSupportCenterIcon status={renderColor(4)} /></div> <div className='hidden group-hover:block'><SidebarSupportCenterIcon status={true} /></div> </div>
+                    <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={() => setCommissionStatus(true)}>
+                        <div className="flex items-center gap-2"><div className='group-hover:hidden'><CommuinityIcon status={renderColor(4)} /></div> <div className='hidden group-hover:block'><CommuinityIcon status={true} /></div> </div>
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[107px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
                             <p className='font-[400]'>Suppport</p>
                         </div>
@@ -258,6 +266,37 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                             onClick={() => setModalStatus(false)}
                         >
                             Ok
+                        </button>
+                    </div>
+                </div>
+            </div>}
+
+            {commissionStatus && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                <div className="bg-white rounded-2xl w-full max-w-[510px] p-6 relative shadow-lg">
+                    <button
+                        className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-700"
+                        onClick={() => {
+                            setCommissionStatus(false)
+                        }}
+                    >
+                        <X size={20} />
+                    </button>
+
+                    <div className='flex flex-col gap-6 py-4'>
+                        <div>
+                            <img src={lifeTimeImg} alt='commission' className='object-fit' />
+                        </div>
+                        <div className='flex flex-col gap-2'>
+                            <h2 className="text-[20px] font-[600] text-[#1E1E1E]">
+                                50% lifetime commission!
+                            </h2>
+                            <h3 className='text-[16px] font-[400] text-[#5A687C]'>Share <span className='text-[#675FFF]'>Ecosysteme.ai</span> with your friends and get lifetime commission.</h3>
+                        </div>
+                        <button
+                            className="bg-[#675FFF] cursor-pointer w-full text-white px-5 py-2 font-[500] test-[16px]  rounded-lg"
+                            onClick={() => setCommissionStatus(false)}
+                        >
+                            Get It Now
                         </button>
                     </div>
                 </div>
