@@ -8,13 +8,9 @@ import { FiMic, FiPaperclip } from "react-icons/fi"
 import { agentStatusChat, chatAgent, getAppointmentSetter, getChatHistory, getChats } from "../api/appointmentSetter";
 import { v4 as uuidv4 } from 'uuid';
 import { SelectDropdown } from "./Dropdown";
+import { useTranslation } from "react-i18next";
 
-const options = [
-    { label: "Positive", key: "positive" },
-    { label: "Engaged", key: "engaged" },
-    { label: "No Answer", key: "no_answer" },
-    { label: "Negative", key: "negative" }
-]
+
 
 
 const DemoChat = () => {
@@ -31,6 +27,16 @@ const DemoChat = () => {
     const [loadingChatsList, setLoadingChatsList] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
     const chatRef = useRef()
+
+    const {t}=useTranslation();
+
+
+    const options = [
+        { label:t("appointment.positive"), key: "positive" },
+        { label:t("appointment.engaged"), key: "engaged" },
+        { label: t("appointment.no_answer"), key: "no_answer" },
+        { label: t("appointment.negative"), key: "negative" }
+    ]
 
     useEffect(() => {
         handleGetAgents()
@@ -215,14 +221,14 @@ const DemoChat = () => {
 
     return (
         <div className="w-full py-4 h-screen pr-2 flex flex-col gap-3">
-            <h1 className="text-[24px] font-[600] text-[#1E1E1E]">Conversation</h1>
+            <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{t('appointment.conversations')}</h1>
             <div className="h-full overflow-auto flex pb-2 flex-col">
                 {message ? <p>{message}</p> : <div className="flex bg-white h-full rounded-2xl border-[#E1E4EA] border">
                     {/* Sidebar */}
                     <div className="w-[372px] bg-[#FFFFFF] flex flex-col rounded-l-2xl border-[#E1E4EA] border-r">
                         <div className="px-4 py-2">
                             <div className="mt-4">
-                                <p className="text-[16px] font-[400] text-[#5A687C]">Explore conversation with your leads</p>
+                                <p className="text-[16px] font-[400] text-[#5A687C]">{t('appointment.explore_conversation')}</p>
 
                                 <div className="flex items-center gap-2 mt-3">
                                     <SelectDropdown
@@ -249,7 +255,7 @@ const DemoChat = () => {
                                 </select> */}
                                     <div className="relative flex-1">
                                         <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                        <input type="text" placeholder="Search" className="w-full pl-9 pr-3 py-[10px] text-sm border border-[#E1E4EA] bg-white focus:outline-none focus:border-[#675FFF] rounded-md" />
+                                        <input type="text" placeholder={t('appointment.search')} className="w-full pl-9 pr-3 py-[10px] text-sm border border-[#E1E4EA] bg-white focus:outline-none focus:border-[#675FFF] rounded-md" />
                                     </div>
                                 </div>
                             </div>
@@ -271,7 +277,7 @@ const DemoChat = () => {
                                         {/* <p className="text-sm text-gray-500 truncate">{conversation.message}</p> */}
                                     </div>
                                 </div>
-                            )) : <h1 className="text-[#5A687C] text-[18px] font-[400] flex justify-center items-center w-full">No users found</h1>}
+                            )) : <h1 className="text-[#5A687C] text-[18px] font-[400] flex justify-center items-center w-full">{t("no_user_found")}</h1>}
                         </div>
                     </div>
                     {/* Main Content */}
@@ -286,7 +292,7 @@ const DemoChat = () => {
                                     </div>
 
                                     <div className="flex items-center gap-2">
-                                        <span className="text-sm text-gray-500">Agent enabled</span>
+                                        <span className="text-sm text-gray-500">{t("appointment.agentEnabled")}</span>
                                         <label className="relative inline-flex items-center cursor-pointer">
                                             <input
                                                 type="checkbox"
@@ -364,12 +370,12 @@ const DemoChat = () => {
 
                                         {/* Send Button */}
                                         <button type="submit" className={`${agentEnabled ? 'bg-[#5A687C] cursor-not-allowed' : 'bg-[#675FFF]'} text-white px-4 py-2 rounded-md transition`}>
-                                            Send
+                                           {t("appointment.send")}
                                         </button>
                                     </div>
                                 </form>
                             </div>
-                        </div> : <h1 className="text-[#5A687C] text-[18px] font-[400] flex justify-center items-center w-full">No conversation selected</h1>}
+                        </div> : <h1 className="text-[#5A687C] text-[18px] font-[400] flex justify-center items-center w-full">{t("appointment.no_conversation_selected")}</h1>}
                 </div>}
 
 
@@ -392,7 +398,7 @@ const DemoChat = () => {
                                     onClick={() => setErrorMessage('')}
                                     className={`w-fit bg-[#675FFF] cursor-pointer text-white py-[7px] px-[20px] rounded-[8px] font-semibold  transition`}
                                 >
-                                    Ok
+                                   {t("ok")}
                                 </button>
                             </div>
                         </div>

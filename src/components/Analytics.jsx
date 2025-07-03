@@ -5,44 +5,54 @@ import positive from '../assets/svg/analytics_positive.svg'
 import negative from '../assets/svg/analytics_negative.svg'
 import engaged from '../assets/svg/analytics_updated_engaged.svg'
 import noanswer from '../assets/svg/analytics_updated_noanswer.svg'
-import total_lead from '../assets/svg/analytics_total_lead.svg'
-import total_responded from '../assets/svg/analytics_total_responded.svg'
-import total_positives from '../assets/svg/analytics_total_positives.svg'
-import total_negatives from '../assets/svg/analytics_total_negatives.svg'
 import response_rate from '../assets/svg/analytics_response_rate.svg'
 import positive_rate from '../assets/svg/analytics_positive_rate.svg'
 import { getAppointmentSetter, getLeadAnalytics } from '../api/appointmentSetter'
+import { useTranslation } from 'react-i18next'
 import { format } from 'date-fns'
 import { SelectDropdown } from './Dropdown'
 
 
-const staticData1 = [
-    {
-        icon: positive,
-        label: "Positive",
-        key: "positive",
-        value: "0"
-    },
-    {
-        icon: negative,
-        label: "Negative",
-        key: "negative",
-        value: "0"
-    },
-    {
-        icon: engaged,
-        label: "Engaged",
-        key: "engaged",
-        value: "0"
-    },
-    {
-        icon: noanswer,
-        label: "No Answer",
-        key: "no_answer",
-        value: "0"
-    },
-]
 
+
+
+function Analytics() {
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [leadAnalytics, setLeadAnalytics] = useState({});
+    const [agentSelect, setAgentSelect] = useState("all");
+    const [agentsList, setAgentList] = useState([{ label: "All", key: "all" }]);
+    const [loading, setLoading] = useState(false)
+
+    const { t } = useTranslation();
+
+    const staticData1 = [
+        {
+            icon: positive,
+            label: t("appointment.positive"),
+            key: "positive",
+            value: "0"
+        },
+        {
+            icon: negative,
+            label:t("appointment.negative"),
+            key: "negative",
+            value: "0"
+        },
+        {
+            icon: engaged,
+            label: t("appointment.engaged"),
+            key: "engaged",
+            value: "0"
+        },
+        {
+            icon: noanswer,
+            label: t("appointment.no_answer"),
+            key: "no_answer",
+            value: "0"
+        },
+    ]
+
+    
 const staticData2 = [
     // {
     //     icon: total_lead,
@@ -66,24 +76,17 @@ const staticData2 = [
     // },
     {
         icon: response_rate,
-        label: "Response Rate",
+        label: t("appointment.recently_rate"),
         key: "responded_rate",
         value: "0.0"
     },
     {
         icon: positive_rate,
-        label: "Positive Rate",
+        label: t("appointment.positive_rate"),
         key: "positive_rate",
         value: "0.0"
     },
 ]
-
-function Analytics() {
-    const [selectedDate, setSelectedDate] = useState(new Date());
-    const [leadAnalytics, setLeadAnalytics] = useState({});
-    const [agentSelect, setAgentSelect] = useState("all");
-    const [agentsList, setAgentList] = useState([{ label: "All", key: "all" }]);
-    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         handleAgentList()
@@ -138,8 +141,8 @@ function Analytics() {
         <div className="w-full  py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 ">
             <div className="flex justify-between items-center">
                 <div className='flex flex-col gap-2'>
-                    <h1 className="text-[#1E1E1E] font-[600] text-xl md:text-[24px]">Analytics</h1>
-                    <p className="text-[#1E1E1E] font-[400] text-[14px]">Here is what happened recently</p>
+                    <h1 className="text-[#1E1E1E] font-[600] text-xl md:text-[24px]">{t('appointment.analytics')}</h1>
+                    <p className="text-[#1E1E1E] font-[400] text-[14px]">{t('appointment.recently_happen')}</p>
                 </div>
                 <div className='flex w-fit gap-2'>
                     <div className="relative w-fit">
@@ -191,7 +194,7 @@ function Analytics() {
                     <div onClick={() => handleLeadAnalytics(`?date=${format(selectedDate, 'yyyy-MM-dd')}&agent_id=${agentSelect}`)} className="flex items-center px-3 gap-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-[8px] h-[40px]">
                         <LuRefreshCw color="#5E54FF" />
                         <button className="text-[16px] cursor-pointer text-[#5A687C]">
-                            Refresh
+                         {t("appointment.refresh")}
                         </button>
                     </div>
                 </div>
@@ -212,7 +215,7 @@ function Analytics() {
                                     {each.label}
                                 </h1>
                                 <p className="font-[600] text-[#1E1E1E] text-[24px]">
-                                    {leadAnalytics[each.key] ?? 0} Leads
+                                    {leadAnalytics[each.key] ?? 0} {t('appointment.leads')}
                                 </p>
                             </div>
                         </div>

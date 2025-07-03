@@ -4,6 +4,7 @@ import CreateNewAgent from './CreateNewAgent';
 import { deleteAppointmentSetter, getAppointmentSetter, updateAppointmentSetterStatus } from '../api/appointmentSetter';
 import { CallAgent, CancelIcon, CorrectIcon, Delete, Duplicate, Edit } from '../icons/icons';
 import AgentPreviewModal from './AgentPreview';
+import { t } from 'i18next';
 
 function AgentsSeth() {
     const [activeDropdown, setActiveDropdown] = useState(null);
@@ -108,10 +109,10 @@ function AgentsSeth() {
                     <table className="min-w-full rounded-2xl border-separate border-spacing-y-2">
                         <thead className="bg-transparent">
                             <tr className="text-[#5A687C]">
-                                <th className="px-6 text-start py-3 text-[16px] font-[400]">Name</th>
-                                <th className="px-6 text-start py-3 text-[16px] font-[400]">Channel</th>
-                                <th className="px-6 text-start py-3 text-[16px] font-[400]">Language</th>
-                                <th className="px-6 text-end py-3 text-[16px] font-[400]">Status</th>
+                                <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("appointment.name")}</th>
+                                <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("appointment.channel")}</th>
+                                <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("appointment.languages")}</th>
+                                <th className="px-6 text-end py-3 text-[16px] font-[400]">{t("appointment.status")}</th>
                                 <th></th>
                             </tr>
                         </thead>
