@@ -3,35 +3,40 @@ import { ActiveIcon, DeactiveIcon, Delete, Duplicate, Edit, EndIcon, ThreeDots }
 import { X } from 'lucide-react';
 import { deleteEmailCampaign, duplicateCampaign, getEmailCampaign, updateEmailCampaignStatus } from '../api/emailCampaign';
 import CampaignsTable from './Campaigns';
+import { useTranslation } from "react-i18next";
 
-const staticData = [
-    {
-        label: "Total Emails Sent",
-        value: "0"
-    },
-    {
-        label: "Emails Delivered",
-        value: "0"
-    },
-    {
-        label: "Emails Opened",
-        value: "0"
-    },
-    {
-        label: "Email Clicks",
-        value: "0"
-    },
-    {
-        label: "Bounced Emails",
-        value: "0"
-    }
-]
+
 function CampaignDashboard() {
     const [campaignData, setCampaignData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
     const [isEdit, setIsEdit] = useState();
     const [newCampaignStatus, setNewCampaignStatus] = useState(false)
+    const { t } = useTranslation();
+
+
+    const staticData = [
+        {
+            label: `${t("emailings.total_email_sent")}`,
+            value: "0"
+        },
+        {
+            label: `${t("emailings.email_delivered")}`,
+            value: "0"
+        },
+        {
+            label: `${t("emailings.email_opened")}`,
+            value: "0"
+        },
+        {
+            label: `${t("emailings.email_clicks")}`,
+            value: "0"
+        },
+        {
+            label: `${t("emailings.bounced_email")}`,
+            value: "0"
+        }
+    ]
 
     const [viewReportModel, setViewReportModel] = useState(false)
 
@@ -75,7 +80,7 @@ function CampaignDashboard() {
                 const updated = [...campaignData];
                 updated.splice(index, 1);
                 if (updated?.length === 0) {
-                    setMessage("No Data Found")
+                    setMessage(`${t("no_data")}`)
                 }
                 setCampaignData(updated);
             }
@@ -123,11 +128,11 @@ function CampaignDashboard() {
                     setCampaignData(response?.data?.campaign_info)
                 } else {
                     setLoading(false)
-                    setMessage("No Data Found")
+                    setMessage(`${t("no_data")}`)
                 }
             } else {
                 setLoading(false)
-                setMessage("Network Error!")
+                setMessage(`${t("network_error")}`)
             }
         } catch (error) {
             console.log(error)
@@ -173,9 +178,9 @@ function CampaignDashboard() {
         <div className=' overflow-auto h-screen'>
             {!newCampaignStatus ? <div className="w-full py-4 pr-2 flex flex-col gap-4 ">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">Campaigns</h1>
+                    <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">{t("emailings.campaigns")}</h1>
                     <button onClick={() => setNewCampaignStatus(true)} className="bg-[#675FFF] text-white rounded-md text-sm md:text-base px-4 py-2">
-                        Add Campaign
+                        {t("emailings.add_campaign")}
                     </button>
                 </div>
 
@@ -184,12 +189,12 @@ function CampaignDashboard() {
                         <div className="px-5 w-full">
                             <thead>
                                 <tr className="text-left text-[#5A687C]">
-                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">Name</th>
-                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">Sent</th>
-                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">Sent to</th>
-                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">Campaign Status</th>
+                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">{t("brain_ai.name")}</th>
+                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">{t("emailings.sent")}</th>
+                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">{t("emailings.sent_to")}</th>
+                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">{t("emailings.campaign_status")}</th>
                                     {/* <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[17%] w-full text-[16px] font-[400]">Status</th> */}
-                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">Actions</th>
+                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">{t("brain_ai.actions")}</th>
                                 </tr>
                             </thead>
                         </div>
@@ -228,7 +233,7 @@ function CampaignDashboard() {
                                                 <td className={`p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px]  text-[#5A687C]`}>
                                                     <div className='flex items-center gap-2'>
                                                         <button onClick={() => setViewReportModel(true)} className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg'>
-                                                            View Report
+                                                            {t("emailings.view_report")}
                                                         </button>
                                                         <button ref={moreActionsRef} onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
                                                             <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
@@ -241,7 +246,7 @@ function CampaignDashboard() {
                                                                                 handleEdit(item.campaign_id)
                                                                             }}
                                                                         >
-                                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
                                                                         </button>
                                                                         <button
                                                                             className="block w-full text-left font-[500] group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
@@ -255,7 +260,7 @@ function CampaignDashboard() {
                                                                                 handleDuplicate(item.campaign_id)
                                                                             }}
                                                                         >
-                                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
+                                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>{t("brain_ai.duplicate")}</span> </div>
                                                                         </button>
                                                                         <button
                                                                             className="block w-full text-left font-[500] px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
@@ -263,7 +268,7 @@ function CampaignDashboard() {
                                                                                 setActiveDropdown(null);
                                                                             }}
                                                                         >
-                                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><EndIcon /></div> <div className='hidden group-hover:block'><EndIcon status={true} /></div> <span>End</span> </div>
+                                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><EndIcon /></div> <div className='hidden group-hover:block'><EndIcon status={true} /></div> <span>{t("emailings.end")}</span> </div>
                                                                         </button>
                                                                         <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                                                                         <div className='py-2'>
@@ -273,7 +278,7 @@ function CampaignDashboard() {
                                                                                     handleDelete(index, item.campaign_id)
                                                                                 }}
                                                                             >
-                                                                                <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                                                                                <div className="flex items-center gap-2">{<Delete />} <span>{t("delete")}</span> </div>
                                                                             </button>
                                                                         </div>
                                                                     </div>
@@ -284,7 +289,7 @@ function CampaignDashboard() {
                                                 </td>
                                             </tr>
                                         ))}
-                                    </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Campaigns Listed</p>}
+                                    </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">{t("emailings.no_campaign_listed")}</p>}
                         </div>
                     </table>
                 </div>
@@ -292,7 +297,7 @@ function CampaignDashboard() {
                     <button
                         className="text-[#5E54FF] bg-transparent px-6 py-2 rounded-md text-[16px] font-[500]"
                     >
-                        + Add New
+                        + {t("brain_ai.add_new")}
                     </button>
                 </div>
                 {viewReportModel && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -305,7 +310,7 @@ function CampaignDashboard() {
                         </button>
 
                         <h2 className="text-[20px] font-[600] text-[#1E1E1E] my-4">
-                            Campaign Name : Inbound.4d74997e-2c17-4024-98c4-
+                            {t("emailings.campaign_name")}: Inbound.4d74997e-2c17-4024-98c4-
                             5fbca9d4f5d1
                         </h2>
                         <div className="grid grid-cols-2 gap-5 w-full">

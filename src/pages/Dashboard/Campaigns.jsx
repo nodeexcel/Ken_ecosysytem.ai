@@ -8,17 +8,19 @@ import emileImg from "../../assets/svg/emile_logo.svg"
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 
 const Campaigns = () => {
     const [activeSidebarItem, setActiveSidebarItem] = useState("dashboard");
+    const { t } = useTranslation();
 
     const navigate = useNavigate()
 
     const sideMenuList = [
-        { label: "Dashboard", icon: <FourBox status={activeSidebarItem == "dashboard"} />, hoverIcon: <FourBox hover={true} />, path: "dashboard" },
-        { label: "Campaigns", icon: <PhoneCampaign status={activeSidebarItem == "campaigns"} />, hoverIcon: <PhoneCampaign hover={true} />, path: "campaigns" },
-        { label: "Calendar", icon: <CalenderIcon status={activeSidebarItem == "calendar"} />, hoverIcon: <CalenderIcon hover={true} />, path: "calendar" },
+        { label: `${t("dashboard")}`, icon: <FourBox status={activeSidebarItem == "dashboard"} />, hoverIcon: <FourBox hover={true} />, path: "dashboard" },
+        { label: `${t("emailings.campaigns")}`, icon: <PhoneCampaign status={activeSidebarItem == "campaigns"} />, hoverIcon: <PhoneCampaign hover={true} />, path: "campaigns" },
+        { label: `${t("emailings.calendar")}`, icon: <CalenderIcon status={activeSidebarItem == "calendar"} />, hoverIcon: <CalenderIcon hover={true} />, path: "calendar" },
     ];
 
     const renderMainContent = () => {

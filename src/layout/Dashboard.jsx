@@ -53,6 +53,7 @@ function Dashboard() {
         { id: "support", label: "Support" },
         { id: "community", label: "Community" },
         { id: "notification", label: "Notification" },
+        { id: "skills", label: "Skills" },
     ]
 
 
@@ -104,7 +105,7 @@ function Dashboard() {
 
     return (
         <div className='w-full flex'>
-            <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-[250px]' : 'w-[0%]'} md:w-[72px] relative z-50`}>
+            <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-[250px]' : 'w-[0%]'} md:w-[72px] h-screen relative z-50`}>
                 <Sidebar sidebarItems={SidebarItems} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
             </div>
             <div style={{ width: 'calc(100% - 72px)' }}>
