@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { BulbIcon, Delete, DislikeIcon, Duplicate, Edit, EditIcon, ImageChatIcon, LikeIcon, MicChatIcon, PaperClipChatIcon, SearchChatIcon, SearchIcon, SendIcon, SpeakerIcon, ThreeDots, WebSearchChatIcon } from "../icons/icons";
 import { useSelector } from "react-redux";
 import { formatTimeAgo } from "../utils/TimeFormat";
+import { useTranslation } from "react-i18next";
 
 
 const AgentChatBox = ({ listedProps }) => {
@@ -42,6 +43,7 @@ const AgentChatBox = ({ listedProps }) => {
     const chatRef = useRef()
     const moreActionsRef = useRef()
     const userDetails = useSelector((state) => state.profile);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -279,7 +281,7 @@ const AgentChatBox = ({ listedProps }) => {
 
     return (
         <div className="w-full py-4 h-screen pr-2 flex flex-col gap-3">
-            <h1 className="text-[24px] font-[600] text-[#1E1E1E]">Chat</h1>
+            <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{t("seo.chat")}</h1>
             <div className="h-full overflow-auto flex pb-2 flex-col">
                 <div className="flex bg-white h-full rounded-2xl border-[#E1E4EA] border">
                     {/* Sidebar */}
@@ -289,14 +291,14 @@ const AgentChatBox = ({ listedProps }) => {
                                 <div className="absolute left-3 top-[25%]">
                                     <SearchIcon />
                                 </div>
-                                <input type="text" placeholder="Search Chat" className="w-full text-[#5A687C] pl-9 pr-3 py-[6px] text-sm border border-[#E1E4EA] bg-white focus:outline-none focus:border-[#675FFF] rounded-md" />
+                                <input type="text" placeholder={t("seo.search_chat_placeholder")} className="w-full text-[#5A687C] pl-9 pr-3 py-[6px] text-sm border border-[#E1E4EA] bg-white focus:outline-none focus:border-[#675FFF] rounded-md" />
                             </div>
                         </div>
 
                         <div className="w-[240px] h-full max-h-[90%] overflow-y-auto">
                             <div className="flex px-4 pb-4">
                                 <button onClick={handleSelectNewChat} className="text-[#1E1E1E] font-[400] px-1 cursor-pointer py-[6px] w-full text-[14px] flex items-center gap-2 hover:bg-[#F0EFFF] hover:rounded-lg">
-                                    <Edit chat={true} /> <span>New Chat</span>
+                                    <Edit chat={true} /> <span>{t("seo.new_chat")}</span>
                                 </button>
                             </div>
                             <hr style={{ color: "#E1E4EA" }} />
@@ -312,7 +314,7 @@ const AgentChatBox = ({ listedProps }) => {
                                                 setActiveDropdown(null)
                                             }}
                                         >
-                                            <p className={`text-[14px] truncate font-[400] group-hover:text-[#1E1E1E] ${activeConversation === conversation.chat_id ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{conversation.name === null ? `Accounting Chat` : conversation.name}</p>
+                                            <p className={`text-[14px] truncate font-[400] group-hover:text-[#1E1E1E] ${activeConversation === conversation.chat_id ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{conversation.name === null ? `${t("account_chat")}` : conversation.name}</p>
                                         </div>
                                         <div className="absolute right-2">
                                             <button
@@ -331,7 +333,7 @@ const AgentChatBox = ({ listedProps }) => {
                                                                 setActiveDropdown(null);
                                                             }}
                                                         >
-                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Rename</span> </div>
+                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("rename")}</span> </div>
                                                         </button>
                                                         <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                                                         <div className='py-2'>
@@ -342,7 +344,7 @@ const AgentChatBox = ({ listedProps }) => {
                                                                     setActiveDropdown(null);
                                                                 }}
                                                             >
-                                                                <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                                                                <div className="flex items-center gap-2">{<Delete />} <span>{t("delete")}</span> </div>
                                                             </button>
                                                         </div>
                                                     </div>
@@ -350,7 +352,7 @@ const AgentChatBox = ({ listedProps }) => {
                                             )}
                                         </div>
                                     </div>
-                                )) : <p className="text-[#5A687C] font-[400] text-[12px] text-center pt-8">No chat history yet</p>}
+                                )) : <p className="text-[#5A687C] font-[400] text-[12px] text-center pt-8">{t("tara.no_chat_history")}</p>}
                             </div>
                         </div>
                     </div>
@@ -398,8 +400,8 @@ const AgentChatBox = ({ listedProps }) => {
                                         </div>
                                     )) : <div className="flex flex-col gap-6 p-5">
                                         <div className="text-[#000000] text-[24px] font-[400]">
-                                            <h1>Hey, I am {agentName}</h1>
-                                            <h1>How can i help you?</h1>
+                                            <h1>{t("tara.hey")} {agentName}</h1>
+                                            <h1>{t("tara.help_you")}</h1>
                                         </div>
                                         <div className="w-full flex gap-2">
                                             {suggestionsChat.map((e) => (
@@ -421,7 +423,7 @@ const AgentChatBox = ({ listedProps }) => {
                                     <input
                                         type="text"
                                         className="flex-1 w-full px-4 py-2 outline-none border-none text-sm"
-                                        placeholder="Type your message here ...."
+                                        placeholder={t("type_message")}
                                         value={input}
                                         onChange={(e) => setInput(e.target.value)}
                                     />
@@ -439,12 +441,12 @@ const AgentChatBox = ({ listedProps }) => {
 
                                         {/* Send Button */}
                                         <button disabled={!input} type="submit" className={`${input ? 'bg-indigo-500' : 'bg-gray-500 cursor-not-allowed'} text-white px-4 py-2 rounded-md transition`}>
-                                            Send
+                                            {t("send")}
                                         </button>
                                     </div>
                                 </form>
                             </div>
-                        </div> : <h1 className="text-[#5A687C] text-[18px] font-[400] flex justify-center items-center w-full">Welcome, to Ecosysteme.ai Chats</h1>}
+                        </div> : <h1 className="text-[#5A687C] text-[18px] font-[400] flex justify-center items-center w-full">{t("welcome_to")} Ecosysteme.ai {t("chats")}</h1>}
                 </div>
 
                 {errorMessage && <div className="inter fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
@@ -466,7 +468,7 @@ const AgentChatBox = ({ listedProps }) => {
                                     onClick={() => setErrorMessage('')}
                                     className={`w-fit bg-[#675FFF] cursor-pointer text-white py-[7px] px-[20px] rounded-[8px] font-semibold  transition`}
                                 >
-                                    Ok
+                                    {t("brain_ai.integrations.ok")}
                                 </button>
                             </div>
                         </div>
@@ -487,11 +489,11 @@ const AgentChatBox = ({ listedProps }) => {
 
                             <div className="flex flex-col gap-3">
                                 <h2 className="text-[20px] font-semibold text-[#1E1E1E] mb-4">
-                                    Update the Chat Name
+                                    {t("tara.update_chat_name")}
                                 </h2>
                                 <div>
                                     <label className="text-sm font-medium text-[#1e1e1e]">
-                                        Name
+                                        {t("brain_ai.name")}
                                     </label>
                                     <input
                                         type="text"
@@ -499,7 +501,7 @@ const AgentChatBox = ({ listedProps }) => {
                                         value={name}
                                         onChange={handleChange}
                                         className={`w-full bg-white p-2 rounded-lg border ${errors.name ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                                        placeholder="Enter name"
+                                        placeholder={t("tara.name_placeholder")}
                                     />
                                     {errors.name && <p className="text-[12px] font-[400] text-red-500 my-3">{errors.name}</p>}
                                 </div>
@@ -509,13 +511,13 @@ const AgentChatBox = ({ listedProps }) => {
                                         onClick={handleUpdateName}
                                         disabled={updateNameLoading}
                                     >
-                                        {updateNameLoading ? <p className="flex items-center justify-center gap-1">Processing<span className="loader" /></p> : 'Update'}
+                                        {updateNameLoading ? <p className="flex items-center justify-center gap-1">{t("processing_normal")}<span className="loader" /></p> : `${t("brain_ai.update")}`}
                                     </button>
                                     <button
                                         className="w-full bg-white text-[#5A687C] border-[1.5px] border-[#E1E4EA] font-[500] test-[16px] px-5 py-2 rounded-lg"
                                         onClick={() => setEditData({})}
                                     >
-                                        Cancel
+                                        {t("cancel")}
                                     </button>
                                 </div>
                             </div>

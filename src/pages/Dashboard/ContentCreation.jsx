@@ -8,6 +8,7 @@ import { deleteContentCreationChat, getContentCreationChatById, getContentCreati
 import AgentChatBox from '../../components/AgentChatBox'
 import { formatTimeAgo } from '../../utils/TimeFormat'
 import CreationStudio from '../../components/CreationStudio'
+import { useTranslation } from "react-i18next";
 
 function ContentCreation() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -30,10 +31,11 @@ function ContentCreation() {
     const initialMessage = "Hello! I’m Constance, your Content Creator.\nI’m here to support you across all your HR needs, from recruiting and screening candidates to onboarding, managing interviews, and beyond.\nI can also help you with day-to-day HR topics like policy clarification, employee onboarding support, FAQ responses, and internal coordination.\nJust tell me what you need, whether it's hiring your next top talent or streamlining your HR processes. and I’ll take care of it.\nReady to simplify your HR tasks and save time? Let’s get started 😊"
 
     const navigate = useNavigate()
+    const { t } = useTranslation();
 
     const sideMenuList = [
-        { label: "Chat", icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
-        { label: "Creation Studio", icon: <CreationStudioIcon status={activeSidebarItem == "creation_studio"} />, hoverIcon: <CreationStudioIcon hover={true} />, path: "creation_studio" },
+        { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
+        { label: `${t("constance.creation_studio")}`, icon: <CreationStudioIcon status={activeSidebarItem == "creation_studio"} />, hoverIcon: <CreationStudioIcon hover={true} />, path: "creation_studio" },
     ]
 
     useEffect(() => {
@@ -83,7 +85,7 @@ function ContentCreation() {
                 isUser,
                 content,
                 sender: isUser ? "User" : "Ecosystem.ai",
-                time: msg?.message_at ? formatTimeAgo(msg?.message_at) : "Just now",
+                time: msg?.message_at ? formatTimeAgo(msg?.message_at) : `${t("seo.just_now")}`,
                 status: "Read"
             };
         });
@@ -108,7 +110,7 @@ function ContentCreation() {
 
     const handleUpdateName = async () => {
         if (!name) {
-            setErrors((prev) => ({ ...prev, name: "Enter the name" }))
+            setErrors((prev) => ({ ...prev, name: `${t("seo.enter_name")}` }))
             return
         }
         try {
@@ -143,9 +145,9 @@ function ContentCreation() {
         }
     }
 
-    const staticSuggestions = [{ label: "How to analyze the performance of your last campaign?", key: "How to analyze the performance of my last campaign." },
-    { label: "Would you like a plan for your next marketing campaign?", key: "Would you like a plan for my next marketing campaign." },
-    { label: "How to organize my expenses and income efficiently.", key: "How to organize my expenses and income efficiently." }
+    const staticSuggestions = [{ label: `${t("constance.last_campaign")}`, key: `${t("constance.last_campaign_key")}` },
+    { label: `${t("constance.marketing_campaign")}`, key: `${t("constance.marketing_campaign_key")}`},
+    { label: `${t("constance.income_efficiently")}`, key: `${t("constance.income_efficiently_key")}`}
     ]
 
     const listedProps = {
@@ -215,7 +217,7 @@ function ContentCreation() {
                         }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}
-                                <h1 className="text-[20px] font-[600]">Content Creation</h1>
+                                <h1 className="text-[20px] font-[600]">{t("constance.content_creation")}</h1>
                             </div>
                         </div>
                         <hr className='text-[#E1E4EA]' />
@@ -226,8 +228,8 @@ function ContentCreation() {
                                 <img src={constanceImg} alt={"constance"} className="object-fit" />
                             </div>
                             <div className="flex flex-col">
-                                <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Constance</h1>
-                                <p className="text-[#5A687C] text-[14px] font-[400]">Content Creation</p>
+                                <h1 className="text-[#1E1E1E] text-[16px] font-[600]">{t("constance.constance")}</h1>
+                                <p className="text-[#5A687C] text-[14px] font-[400]">{t("constance.content_creation")}</p>
                             </div>
                         </div>
                         {sideMenuList.map((e, i) => <div

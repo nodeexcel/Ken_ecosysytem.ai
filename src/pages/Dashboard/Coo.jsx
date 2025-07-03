@@ -147,9 +147,9 @@ function Coo() {
         }
     }
 
-    const staticSuggestions = [{ label: "Would you like advice on optimizing your cash flow?", key: "Would you like advice on optimizing my cash flow." },
-    { label: "I need template for my forecast budget.", key: "I need template for my forecast budget." },
-    { label: "How to organize my expenses and income efficiently.", key: "How to organize my expenses and income efficiently." }
+    const staticSuggestions = [{ label: `${t("tara.optimizing")}`, key: `${t("tara.optimizing_key")}` },
+    { label: `${t("tara.forecast_budget")}`, key: `${t("tara.forecast_budget_key")}` },
+    { label: `${t("tara.efficiently")}`, key: `${t("tara.efficiently_key")}` }
     ]
 
     const listedProps = {

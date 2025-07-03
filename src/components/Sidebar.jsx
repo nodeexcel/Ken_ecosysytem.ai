@@ -20,6 +20,7 @@ import logo from '../assets/svg/dashboard_logo.svg'
 import { changeLanguage } from '../api/profile';
 import i18n from '../i18n';
 import lifeTimeImg from "../assets/svg/eco_systeme_lifetime_commission.svg"
+import { useTranslation } from "react-i18next";
 
 const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     const navigate = useNavigate()
@@ -27,6 +28,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     const dispatch = useDispatch()
     const userDetails = useSelector((state) => state.profile.user)
     const lastPath = location.pathname.split('/').filter(Boolean).pop();
+    const { t } = useTranslation();
 
     const paths = ['campaigns', 'phone', 'appointment-setter', "accounting", "hr", "coo", "seo", "content-creation", "customer-support"]
 
@@ -167,7 +169,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         <div className={`text-xl flex ${!isNotification && 'group'} hover:cursor-pointer justify-center relative py-3`} onClick={handleNotification}>
                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarNotificationIcon status={renderColor(6)} /></div> <div className='hidden group-hover:block'><SidebarNotificationIcon status={true} /></div> </div>
                             <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[116px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                                <p className='font-[400]'>Notifications</p>
+                                <p className='font-[400]'>{t("sidebar.notification")}</p>
                             </div>
                         </div>
                         {isNotification && <Notification setNotification={setIsNotification} />}
@@ -175,19 +177,19 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={() => handleSelect(sidebarItems[0].id, sidebarItems[0].label)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarFourBoxIcon status={renderColor(0)} /></div> <div className='hidden group-hover:block'><SidebarFourBoxIcon status={true} /></div> </div>
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[97px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[400]'>Home</p>
+                            <p className='font-[400]'>{t("sidebar.home")}</p>
                         </div>
                     </div>
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={() => handleSelect(sidebarItems[7].id, sidebarItems[7].label)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SkillsIcon status={renderColor(7)} /></div> <div className='hidden group-hover:block'><SkillsIcon status={true} /></div> </div>
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[95px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[400]'>Skills</p>
+                            <p className='font-[400]'>{t("sidebar.skills")}</p>
                         </div>
                     </div>
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarBrainIcon status={renderColor(1)} /></div> <div className='hidden group-hover:block'><SidebarBrainIcon status={true} /></div> </div>
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[102px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[400]'>Brain AI</p>
+                            <p className='font-[400]'>{t("sidebar.brain_ai")}</p>
                         </div>
                     </div>
                     <hr className='text-[#E1E4EA]' />
@@ -197,7 +199,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={() => handleSelect(sidebarItems[2].id, sidebarItems[2].label)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarSettingIcon status={renderColor(2)} /></div> <div className='hidden group-hover:block'><SidebarSettingIcon status={true} /></div> </div>
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[104px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[400]'>Settings</p>
+                            <p className='font-[400]'>{t("sidebar.settings")}</p>
                         </div>
                     </div>
                     <div
@@ -223,20 +225,20 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                             </div>
                         )}
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[109px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[400]'>Language</p>
+                            <p className='font-[400]'>{t("sidebar.language")}</p>
                         </div>
                     </div>
                     <hr className='text-[#E1E4EA]' />
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={redirectHelpCenterDoc}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarHelpCenterIcon status={renderColor(3)} /></div> <div className='hidden group-hover:block'><SidebarHelpCenterIcon status={true} /></div> </div>
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[113px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[400]'>Help center</p>
+                            <p className='font-[400]'>{t("sidebar.help_center")}</p>
                         </div>
                     </div>
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={() => setCommissionStatus(true)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><CommuinityIcon status={renderColor(4)} /></div> <div className='hidden group-hover:block'><CommuinityIcon status={true} /></div> </div>
                         <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[107px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[400]'>Suppport</p>
+                            <p className='font-[400]'>{t("sidebar.support")}</p>
                         </div>
                     </div>
                     {/* <div className='text-xl flex justify-center py-4' onClick={() => handleSelect(sidebarItems[5].id)}>
@@ -259,13 +261,13 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
 
                     <div className='h-[120px] flex flex-col justify-around gap-2 items-center '>
                         <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-1">
-                            Please complete your profile first
+                        {t("sidebar.please_complete_profile")}
                         </h2>
                         <button
                             className="bg-[#675FFF] text-white px-5 py-2 font-[500] test-[16px]  rounded-lg"
                             onClick={() => setModalStatus(false)}
                         >
-                            Ok
+                            {t("brain_ai.ok")}
                         </button>
                     </div>
                 </div>
@@ -288,7 +290,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         </div>
                         <div className='flex flex-col gap-2'>
                             <h2 className="text-[20px] font-[600] text-[#1E1E1E]">
-                                50% lifetime commission!
+                                {t("sidebar.lifetime_commission")}
                             </h2>
                             <h3 className='text-[16px] font-[400] text-[#5A687C]'>Share <span className='text-[#675FFF]'>Ecosysteme.ai</span> with your friends and get lifetime commission.</h3>
                         </div>
@@ -296,7 +298,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                             className="bg-[#675FFF] cursor-pointer w-full text-white px-5 py-2 font-[500] test-[16px]  rounded-lg"
                             onClick={() => setCommissionStatus(false)}
                         >
-                            Get It Now
+                            {t("sidebar.get_it_now")}
                         </button>
                     </div>
                 </div>

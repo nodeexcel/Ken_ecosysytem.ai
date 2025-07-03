@@ -1,13 +1,15 @@
 import { useState } from "react"
 import { SelectDropdown } from "./Dropdown"
+import { useTranslation } from "react-i18next";
 
 function CreationStudio() {
     const [formData, setFormData] = useState({ text_prompt: "", post_type: "", language: "", media_type: "", video_duration: "", author: "" })
     const [errors, setErrors] = useState({})
+    const { t } = useTranslation();
 
-    const postTypeOptions = [{ label: "Generic", key: "generic" }, { label: "Meme", key: "meme" }, { label: "Quotes", key: "quotes" }]
-    const mediaTypeOptions = [{ label: "Single Image", key: "single_image" }, { label: "Carousel", key: "carousel" }, { label: "Video", key: "video" }]
-    const languageOptions = [{ label: "ENG", key: "english" }, { label: "FR", key: "french" }]
+    const postTypeOptions = [{ label: `${t("constance.generic")}`, key: "generic" }, { label: `${t("constance.meme")}`, key: "meme" }, { label: `${t("constance.quoted")}`, key: "quotes" }]
+    const mediaTypeOptions = [{ label: `${t("constance.single_image")}`, key: "single_image" }, { label:`${t("constance.carousel")}`, key: "carousel" }, { label: `${t("constance.video")}`, key: "video" }]
+    const languageOptions = [{ label: `${t("constance.eng")}`, key: "english" }, { label: `${t("constance.fr")}`, key: "french" }]
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -17,12 +19,12 @@ function CreationStudio() {
 
     return (
         <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-1 w-full">
-            <p className="text-[#5A687C] text-[14px] font-[400]">Content Creation {">"} Add New</p>
-            <h1 className="text-[#1E1E1E] font-[600] text-[24px]">Add Creation Studio</h1>
+            <p className="text-[#5A687C] text-[14px] font-[400]">{t("constance.content_creation")} {">"} {t("brain_ai.add_new")}</p>
+            <h1 className="text-[#1E1E1E] font-[600] text-[24px]">{t("constance.add_creation_studio")}</h1>
             <div className="h-full flex flex-col gap-4 w-full py-3">
                 <div className="flex flex-col gap-1.5 w-full">
                     <label className="text-sm font-medium text-[#1e1e1e]">
-                        Text(prompt)
+                    {t("constance.text")}(prompt)
                     </label>
                     <textarea
                         name='text_prompt'
@@ -30,14 +32,14 @@ function CreationStudio() {
                         value={formData?.text_prompt}
                         rows={4}
                         className={`w-full bg-white p-2 rounded-lg border  ${errors.text_prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                        placeholder="Enter text(prompt)"
+                        placeholder={t("constance.text_placeholder")}
                     />
                     {errors.text_prompt && <p className="text-red-500 text-sm mt-1">{errors.text_prompt}</p>}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                     <div className="flex flex-col gap-1.5 flex-1">
                         <label className="text-sm font-medium text-[#1e1e1e]">
-                            Post Type
+                        {t("constance.post_type")}
                         </label>
                         <SelectDropdown
                             name="post_type"
@@ -51,7 +53,7 @@ function CreationStudio() {
                                     ...prev, post_type: ""
                                 }))
                             }}
-                            placeholder="Select"
+                            placeholder={t("select")}
                             className=""
                             errors={errors}
                         />
@@ -59,7 +61,7 @@ function CreationStudio() {
                     </div>
                     <div className="flex flex-col gap-1.5 flex-1">
                         <label className="text-sm font-medium text-[#1e1e1e]">
-                            language
+                        {t("constance.lang")}
                         </label>
                         <SelectDropdown
                             name="language"
@@ -73,7 +75,7 @@ function CreationStudio() {
                                     ...prev, language: ""
                                 }))
                             }}
-                            placeholder="Select"
+                            placeholder={t("select")}
                             className=""
                             errors={errors}
                         />
@@ -81,7 +83,7 @@ function CreationStudio() {
                     </div>
                     <div className="flex flex-col gap-1.5 flex-1">
                         <label className="text-sm font-medium text-[#1e1e1e]">
-                            Media Type
+                        {t("constance.media_type")}
                         </label>
                         <SelectDropdown
                             name="media_type"
@@ -95,7 +97,7 @@ function CreationStudio() {
                                     ...prev, media_type: ""
                                 }))
                             }}
-                            placeholder="Select"
+                            placeholder={t("select")}
                             className=""
                             errors={errors}
                         />
@@ -103,7 +105,7 @@ function CreationStudio() {
                     </div>
                     <div className="flex flex-col gap-1.5 w-full">
                         <label className="text-sm font-medium text-[#1e1e1e]">
-                            Video Duration
+                        {t("constance.video_duration")}
                         </label>
                         <input
                             type="text"
@@ -111,14 +113,14 @@ function CreationStudio() {
                             value={formData?.video_duration}
                             onChange={handleChange}
                             className={`w-full bg-white p-2 rounded-lg border ${errors.video_duration ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                            placeholder="Enter video duration"
+                            placeholder={t("constance.video_duration_placeholder")}
                         />
                         {errors.video_duration && <p className="text-red-500 text-sm mt-1">{errors.video_duration}</p>}
                     </div>
                 </div>
                 {formData.post_type === "quotes" && <div className="flex flex-col gap-1.5 w-full">
                     <label className="text-sm font-medium text-[#1e1e1e]">
-                        Author
+                    {t("constance.author")}
                     </label>
                     <input
                         type="text"
@@ -126,13 +128,13 @@ function CreationStudio() {
                         value={formData?.author}
                         onChange={handleChange}
                         className={`w-full bg-white p-2 rounded-lg border ${errors.author ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                        placeholder="Enter author"
+                        placeholder={t("constance.author_placeholder")}
                     />
                     {errors.author && <p className="text-red-500 text-sm mt-1">{errors.author}</p>}
                 </div>}
                 <div className="flex items-center gap-2">
-                    <button className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
-                    <button className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                    <button className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("continue")}</button>
+                    <button className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
                 </div>
             </div>
         </div>

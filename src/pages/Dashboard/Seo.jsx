@@ -10,6 +10,7 @@ import SeoArticles from '../../components/SeoArticles'
 import SeoAudit from '../../components/SeoAudit'
 import SeoAutomation from '../../components/SeoAutomation'
 import { formatTimeAgo } from '../../utils/TimeFormat'
+import { useTranslation } from "react-i18next";
 
 function Seo() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -30,14 +31,14 @@ function Seo() {
     const newwebsocketurl = "ws://116.202.210.102:8000/new-seo-agent-chat"
     const websocketurl = "ws://116.202.210.102:8000/seo-agent"
     const initialMessage = "Hi there! I’m Sandro, your SEO Expert. \nI’m here to help you boost your website’s visibility, generate high-quality traffic, and improve your search engine rankings — all automatically. \nI can research keywords, optimize blog posts, create SEO-friendly content, and publish directly to your CMS like WordPress, Wix, or Shopify. \nWant to start ranking higher on Google without lifting a finger? Just tell me your goal, and I’ll take it from there. \nReady to grow your traffic? 🚀"
-
+    const { t } = useTranslation();
     const navigate = useNavigate()
 
     const sideMenuList = [
-        { label: "Chat", icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
-        { label: "Articles", icon: <ArticleIcon status={activeSidebarItem == "articles"} />, hoverIcon: <ArticleIcon hover={true} />, path: "articles" },
-        { label: "Start SEO Automation", icon: <AutomationIcon status={activeSidebarItem == "automation"} />, hoverIcon: <AutomationIcon hover={true} />, path: "automation" },
-        { label: "SEO Audit", icon: <AuditIcon status={activeSidebarItem == "audit"} />, hoverIcon: <AuditIcon hover={true} />, path: "audit" },
+        { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
+        { label: `${t("seo.articles")}`, icon: <ArticleIcon status={activeSidebarItem == "articles"} />, hoverIcon: <ArticleIcon hover={true} />, path: "articles" },
+        { label: `${t("seo.start_seo_automation")}`, icon: <AutomationIcon status={activeSidebarItem == "automation"} />, hoverIcon: <AutomationIcon hover={true} />, path: "automation" },
+        { label: `${t("seo.seo_audit")}`, icon: <AuditIcon status={activeSidebarItem == "audit"} />, hoverIcon: <AuditIcon hover={true} />, path: "audit" },
     ]
 
     useEffect(() => {
@@ -86,7 +87,7 @@ function Seo() {
                 isUser,
                 content,
                 sender: isUser ? "User" : "Ecosystem.ai",
-                time: msg?.message_at ? formatTimeAgo(msg?.message_at) : "Just now",
+                time: msg?.message_at ? formatTimeAgo(msg?.message_at) : `${t("seo.just_now")}`,
                 status: "Read"
             };
         });
@@ -111,7 +112,7 @@ function Seo() {
 
     const handleUpdateName = async () => {
         if (!name) {
-            setErrors((prev) => ({ ...prev, name: "Enter the name" }))
+            setErrors((prev) => ({ ...prev, name: `${t("seo.enter_name")}` }))
             return
         }
         try {
@@ -146,9 +147,9 @@ function Seo() {
         }
     }
 
-    const staticSuggestions = [{ label: "How to analyze your SEO performance using tools?", key: "How to analyze my SEO performance using tools?" },
-    { label: "Need a template to structure your web page?", key: "I need a template to structure my web page." },
-    { label: "How to find the most relevant keywords for your content?", key: "How to find the most relevant keywords for my content?" }
+    const staticSuggestions = [{ label: `${t("seo.how_to_analyze")}`, key: "How to analyze my SEO performance using tools?" },
+    { label: `${t("seo.need_a_template")}`, key: "I need a template to structure my web page." },
+    { label: `${t("seo.most_relevent_keyword")}`, key: "How to find the most relevant keywords for my content?" }
     ]
 
     const listedProps = {
@@ -222,7 +223,7 @@ function Seo() {
                         }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}
-                                <h1 className="text-[20px] font-[600]">SEO</h1>
+                                <h1 className="text-[20px] font-[600]">{t("seo.seo_heading")}</h1>
                             </div>
                         </div>
                         <hr className='text-[#E1E4EA]' />
@@ -233,8 +234,8 @@ function Seo() {
                                 <img src={sandroImg} alt={"sandro"} className="object-fit" />
                             </div>
                             <div className="flex flex-col">
-                                <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Sandro</h1>
-                                <p className="text-[#5A687C] text-[14px] font-[400]">SEO</p>
+                                <h1 className="text-[#1E1E1E] text-[16px] font-[600]">{t("seo.sandro")}</h1>
+                                <p className="text-[#5A687C] text-[14px] font-[400]">{t("seo.seo_heading")}</p>
                             </div>
                         </div>
                         {sideMenuList.map((e, i) => <div

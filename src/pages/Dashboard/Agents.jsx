@@ -106,7 +106,7 @@ const Agents = () => {
     },
     {
       name: "Sandro",
-      role: `${t("seo")}`,
+      role: `${t("seo_name")}`,
       gradient: "bg-gradient-to-br from-[#F8DDFF] to-[#F8DDFF]",
       path: "/dashboard/seo",
       label: "Sandro",
