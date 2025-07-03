@@ -15,13 +15,13 @@ function CooPresentations() {
         {
             id: 1,
             name: `${t("tara.exploring_trends")}`,
-            status: `${t("completed")}`,
+            status: `completed`,
             date: new Date(),
         },
         {
             id: 2,
             name: `${t("tara.exploring_trends")}`,
-            status: `${t("completed")}`,
+            status: "completed",
             date: new Date(),
         }
     ]
@@ -56,7 +56,7 @@ function CooPresentations() {
     const renderStatusLabel = (key) => {
         switch (key) {
             case "completed":
-                return 'Completed'
+                return t("completed")
         }
     }
 
