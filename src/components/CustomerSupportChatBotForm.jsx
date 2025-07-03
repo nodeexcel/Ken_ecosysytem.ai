@@ -154,10 +154,10 @@ function CustomerSupportChatBotForm() {
                                     name='bot_name'
                                     value={formData?.bot_name}
                                     onChange={handleChange}
-                                    className={`w-full bg-white p-2 rounded-lg border ${errors.agent_name ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
+                                    className={`w-full bg-white p-2 rounded-lg border ${errors.bot_name ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
                                     placeholder="Ex. Ecosystem"
                                 />
-                                {errors.agent_name && <p className="text-red-500 text-sm mt-1">{errors.agent_name}</p>}
+                                {errors.bot_name && <p className="text-red-500 text-sm mt-1">{errors.bot_name}</p>}
                             </div>
                             <div className="flex flex-col gap-1.5 flex-1">
                                 <label className="text-sm font-medium text-[#1e1e1e]">
