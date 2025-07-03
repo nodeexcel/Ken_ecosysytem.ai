@@ -122,7 +122,7 @@ const staticData2 = [
                         label: e.agent_name,
                         key: e.agent_id
                     }))
-                    setAgentList([{ label: "All", key: "all" }, ...updatedData]);
+                    setAgentList([{ label: t("appointment.all"), key: "all" }, ...updatedData]);
                 }
                 console.log(response?.data)
             }

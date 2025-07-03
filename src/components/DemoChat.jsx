@@ -277,7 +277,7 @@ const DemoChat = () => {
                                         {/* <p className="text-sm text-gray-500 truncate">{conversation.message}</p> */}
                                     </div>
                                 </div>
-                            )) : <h1 className="text-[#5A687C] text-[18px] font-[400] flex justify-center items-center w-full">{t("no_user_found")}</h1>}
+                            )) : <h1 className="text-[#5A687C] text-[18px] font-[400] flex justify-center items-center w-full">{t("appointment.no_user_found")}</h1>}
                         </div>
                     </div>
                     {/* Main Content */}

@@ -307,13 +307,13 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     ];
 
     const agentsPersonalityOptions = [
-        { label: "Friendly", key: "friendly" },
-        { label: "Professional", key: "professional" },
-        { label: "Energetic", key: "energetic" },
-        { label: "Relaxed", key: "relaxed" },
-        { label: "Results-Oriented", key: "results_oriented" },
-        { label: "Direct", key: "direct" },
-        { label: "Emphatic", key: "emphatic" },
+        { label: t("appointment.friendly"), key: "friendly" },
+        { label: t("appointment.professional"), key: "professional" },
+        { label: t("appointment.energetic"), key: "energetic" },
+        { label:t("appointment.relaxed"), key: "relaxed" },
+        { label: t("appointment.results_oriented"), key: "results_oriented" },
+        { label: t("appointment.direct"), key: "direct" },
+        { label: t("appointment.empathetic"), key: "emphatic" },
     ]
 
     const genderOptions = [

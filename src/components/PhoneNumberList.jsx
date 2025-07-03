@@ -10,6 +10,7 @@ import { addPhoneNumber, getPhoneNumber, updatePhoneNumberStatus, deletePhoneNum
 import { set } from "date-fns";
 import { DateFormat } from "../utils/TimeFormat";
 import { useSelector } from "react-redux";
+import { t } from "i18next";
 const initialRows = [
   {
     id: "1",
@@ -85,8 +86,8 @@ export default function PhoneNumbers() {
   const countryRef = useRef()
 
   const tabs = [
-    { label: "Outbound Number", key: "outbound", icon: <OutboundCall active={activeTab == "outbound"} /> },
-    { label: "Inbound Number", key: "inbound", icon: <InboundCall active={activeTab == "inbound"} /> },
+    { label: t("phone.outbound_number"), key: "outbound", icon: <OutboundCall active={activeTab == "outbound"} /> },
+    { label: t("phone.inbound_number"), key: "inbound", icon: <InboundCall active={activeTab == "inbound"} /> },
   ]
 
   const toggleActive = async (index, id) => {
@@ -122,12 +123,12 @@ export default function PhoneNumbers() {
   const ValidateSubmit = () => {
     const errors = {};
     if (!phoneName) {
-      errors.phoneName = "Phone name is required";
+      errors.phoneName = t("phone.phone_number_validation");
     }
     if (!number) {
-      errors.number = "Phone number is required";
+      errors.number = t("phone.phone_number_failed");
     } else if (!/^\+?[0-9\s]+$/.test(number)) {
-      errors.number = "Invalid phone number format";
+      errors.number = t("phone.phone_number_format_validation");
     }
     // else if (number.replace(/\D/g, "").length !== 10) {
     //   errors.number = "Phone number must be exactly 10 digits";
@@ -153,7 +154,7 @@ export default function PhoneNumbers() {
 
     } else {
       setLoader(false);
-      setResponseError(response.response.data.error || "Failed to add phone number");
+      setResponseError(response.response.data.error || t("phone.phone_number_failed"));
     }
   }
 
@@ -217,12 +218,14 @@ export default function PhoneNumbers() {
     <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <h1 className="text-[24px] font-[600] text-[#1E1E1E]">Phone Numbers </h1>
+        <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{t("phone.phone_numbers")} </h1>
         <button
           onClick={() => setShowModal(true)}
           className="bg-[#675FFF] border border-[#5F58E8] text-white font-medium rounded-lg px-5 py-2 flex items-center gap-2"
         >
-          New Phone Number
+         {
+          t("phone.new_phone_number")
+         }
         </button>
       </div>
 
@@ -232,13 +235,13 @@ export default function PhoneNumbers() {
           <div className="px-5 w-full">
             <thead>
               <tr className="text-left text-[#5A687C] text-[16px]">
-                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Phone Number</th>
-                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Country</th>
-                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Status</th>
-                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Total Calls</th>
-                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Direction</th>
-                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Creation Date</th>
-                <th className="p-[14px] w-full font-[400] whitespace-nowrap">Actions</th>
+                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.phone_numbers")}</th>
+                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.country")}</th>
+                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.status")}</th>
+                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.total_call")}</th>
+                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.direction")}</th>
+                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.creation_date")}</th>
+                <th className="p-[14px] w-full font-[400] whitespace-nowrap">{t("phone.actions")}</th>
               </tr>
             </thead>
           </div>
@@ -261,7 +264,7 @@ export default function PhoneNumbers() {
                               : "text-[#FF9500] border-[#FF9500] bg-[#FFF4E6]"
                               }`}
                           >
-                            {row.status ? "Active" : "Inactive"}
+                            {row.status ? t("phone.active") : t("phone.inactive")}
                           </span>
                           <ToggleSwitch
                             checked={row.status}
@@ -285,7 +288,7 @@ export default function PhoneNumbers() {
                       </td>
                     </tr>
                   )}
-                </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Phone Numbers Listed</p>}
+                </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">{t("phone.no_phonenumber_listed")}</p>}
           </div>
         </table>
       </div>
@@ -305,10 +308,14 @@ export default function PhoneNumbers() {
             </button>
 
             <h2 className="text-xl font-semibold text-gray-800 mb-1">
-              Add a New Number
+             {
+              t("phone.add_new_number")
+             }
             </h2>
             <p className="text-gray-500 text-sm mb-4">
-              Enter your new phone number in the field below.
+             {
+              t("phone.enter_new_phone_number")
+             }
             </p>
 
             {/* Tabs */}
@@ -333,7 +340,9 @@ export default function PhoneNumbers() {
             <div className="space-y-4">
               <div>
                 <label className="text-sm text-gray-600 font-medium block mb-1">
-                  Name The Number
+                {
+                  t("phone.name_number")
+                }
                 </label>
                 <input
                   type="text"
@@ -354,7 +363,9 @@ export default function PhoneNumbers() {
 
               <div>
                 <label className="text-sm text-gray-600 font-medium block mb-1">
-                  Number
+                  {
+                    t("phone.number")
+                  }
                 </label>
                 <div ref={countryRef} className={`flex group items-center focus-within:border-[#675FFF] gap-2 border ${error.number ? 'border-red-500' : 'border-[#E1E4EA]'} rounded-lg px-4 py-2`}>
                   <div className="relative">
@@ -407,7 +418,7 @@ export default function PhoneNumbers() {
                 <svg width="21" height="22" viewBox="0 0 21 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M9.84375 10.3438L9.87963 10.3262C9.99183 10.2702 10.1177 10.2475 10.2425 10.2608C10.3672 10.2741 10.4855 10.3228 10.5833 10.4012C10.6812 10.4797 10.7545 10.5845 10.7947 10.7034C10.8348 10.8222 10.84 10.95 10.8098 11.0717L10.1902 13.5533C10.1598 13.675 10.1648 13.803 10.2049 13.922C10.2449 14.0409 10.3182 14.146 10.4161 14.2245C10.514 14.3031 10.6324 14.3519 10.7572 14.3652C10.8821 14.3785 11.0081 14.3558 11.1204 14.2996L11.1562 14.2812M18.375 11C18.375 12.0342 18.1713 13.0582 17.7756 14.0136C17.3798 14.9691 16.7997 15.8372 16.0685 16.5685C15.3372 17.2997 14.4691 17.8798 13.5136 18.2756C12.5582 18.6713 11.5342 18.875 10.5 18.875C9.46584 18.875 8.44181 18.6713 7.48637 18.2756C6.53093 17.8798 5.6628 17.2997 4.93153 16.5685C4.20027 15.8372 3.6202 14.9691 3.22445 14.0136C2.82869 13.0582 2.625 12.0342 2.625 11C2.625 8.91142 3.45469 6.90838 4.93153 5.43153C6.40838 3.95469 8.41142 3.125 10.5 3.125C12.5886 3.125 14.5916 3.95469 16.0685 5.43153C17.5453 6.90838 18.375 8.91142 18.375 11ZM10.5 7.71875H10.507V7.72575H10.5V7.71875Z" stroke="#FF9500" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
-                {activeTab === 'outbound' ? "You Will Receive a Call on This Number to Validate It" : `"Message text here @sami"`}
+                {activeTab === 'outbound' ? t("phone.active_outbound_msg") : t("phone.inactive_outbound_msg")}
               </div>
             </div>
 
@@ -426,7 +437,9 @@ export default function PhoneNumbers() {
                 }}
                 className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
               >
-                Cancel
+                {
+                  t("phone.cancel")
+                }
               </button>
               <button
                 className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
@@ -434,7 +447,7 @@ export default function PhoneNumbers() {
                 onClick={handleAddNumber}
               >
 
-                <p>  Add Number</p>
+                <p>{t("phone.add_number")}</p>
                 {loader && <span className="loader text-[#5E54FF]"></span>}
 
 

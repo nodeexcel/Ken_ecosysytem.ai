@@ -425,12 +425,57 @@ const englishTranslation = {
         update:"Update",
         mark_as_inactive:"Mark as Inactive",
         mark_as_active:"Mark as Active",
-        please_create_agent:"Please create an Agent"
+        please_create_agent:"Please create an Agent",
+        friendly:"Friendly",
+        professional:"Professional",
+        energetic:"Energetic",
+        relaxed:"Relaxed",
+        results_oriented:"Results-Oriented",
+        direct:"Direct",
+        empathetic:"Empathetic",
 
 
 
 
 
+
+    },
+
+    phone:{
+        receptionist:"Receptionist",
+        phone_outreach:"Phone Outreach",
+        phone:"Phone",
+        dashboard:"Dashboard",
+        phone_numbers:"Phone Numbers",
+        new_phone_number:" New Phone Number",
+        call_agents:"Call Agents",
+        call_campaigns:"Call Campaigns",
+        outbound_calls:"Outbound Calls",
+        inbound_calls:"Inbound Calls",
+        credit:"Credit",
+        add_credit:"Add Credit",
+        outbound_number:"Outbound Number",
+        inbound_number:"Inbound Number",
+        phone_number_validation:"Phone name is required",
+        phone_number_format_validation:"Invalid phone number format",
+        phone_number_failed:"Failed to add phone number",
+        country:"Country",
+        status:"Status",
+        total_call:"Total Calls",
+        direction:"Direction",
+        creation_date:"Creation Date",
+        actions:"Actions",
+        active:"Active",
+        inactive:"Inactive",
+        cancel:"Cancel",
+        no_phonenumber_listed:"No Phone Numbers Listed",
+        add_new_number:" Add a New Number",
+        enter_new_phone_number:"Enter your new phone number in the field below.",
+        name_number:" Name The Number",
+        number:"Number",
+        active_outbound_msg:"You Will Receive a Call on This Number to Validate It",
+        inactive_outbound_msg:"Message text here @sami",
+        add_number:"Add Number",
 
     },
 

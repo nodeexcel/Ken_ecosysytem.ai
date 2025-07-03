@@ -13,6 +13,7 @@ import tomImg from "../../assets/svg/tom_logo.svg"
 import rebeccaImg from "../../assets/svg/rebecca_logo.svg"
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 
 const PhonePage = () => {
@@ -21,13 +22,15 @@ const PhonePage = () => {
   const navbarDetails = useSelector((state) => state.navbar);
   const navigate = useNavigate()
 
+  const {t}=useTranslation();
+
   const sideMenuList = [
-    { label: "Dashboard", icon: <FourBox status={activeSidebarItem == "dashboard"} />, hoverIcon: <FourBox hover={true} />, path: "dashboard", header: "Tom & Rebecca, Phone" },
-    { label: "Phone Numbers", icon: <Phone status={activeSidebarItem == "phone-numbers"} />, hoverIcon: <Phone hover={true} />, path: "phone-numbers", header: "Tom & Rebecca, Phone" },
-    { label: "Call Agents", icon: <CallAgent status={activeSidebarItem == "call-agents"} />, hoverIcon: <CallAgent hover={true} />, path: "call-agents", header: "Tom & Rebecca, Phone" },
-    { label: "Call Campaigns", icon: <PhoneCampaign status={activeSidebarItem == "call-campaigns"} />, hoverIcon: <PhoneCampaign hover={true} />, path: "call-campaigns", header: "Tom" },
-    { label: "Outbound Calls", icon: <OutboundCall status={activeSidebarItem == "outbound-calls"} />, hoverIcon: <OutboundCall hover={true} />, path: "outbound-calls", header: "Tom" },
-    { label: "Inbound Calls", icon: <InboundCall status={activeSidebarItem == "inbound-calls"} />, hoverIcon: <InboundCall hover={true} />, path: "inbound-calls", header: "Rebecca" },
+    { label:t("phone.dashboard"), icon: <FourBox status={activeSidebarItem == "dashboard"} />, hoverIcon: <FourBox hover={true} />, path: "dashboard", header: `Tom & Rebecca,${t("phone.phone")} ` },
+    { label: t("phone.phone_numbers"), icon: <Phone status={activeSidebarItem == "phone-numbers"} />, hoverIcon: <Phone hover={true} />, path: "phone-numbers", header:`Tom & Rebecca,${t("phone.phone")} ` },
+    { label:t("phone.call_agents"), icon: <CallAgent status={activeSidebarItem == "call-agents"} />, hoverIcon: <CallAgent hover={true} />, path: "call-agents", header: `Tom & Rebecca,${t("phone.phone")} `},
+    { label: t("phone.call_campaigns"), icon: <PhoneCampaign status={activeSidebarItem == "call-campaigns"} />, hoverIcon: <PhoneCampaign hover={true} />, path: "call-campaigns", header: "Tom" },
+    { label: t("phone.outbound_calls"), icon: <OutboundCall status={activeSidebarItem == "outbound-calls"} />, hoverIcon: <OutboundCall hover={true} />, path: "outbound-calls", header: "Tom" },
+    { label: t("phone.inbound_calls"), icon: <InboundCall status={activeSidebarItem == "inbound-calls"} />, hoverIcon: <InboundCall hover={true} />, path: "inbound-calls", header: "Rebecca" },
   ];
 
   const renderMainContent = () => {
@@ -63,7 +66,7 @@ const PhonePage = () => {
         </div>
         <div className="flex flex-col">
           <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Rebecca</h1>
-          <p className="text-[#5A687C] text-[14px] font-[400]">Receptionist</p>
+          <p className="text-[#5A687C] text-[14px] font-[400]">{t("phone.receptionist")}</p>
         </div>
       </div>
     } else if (navbarDetails.label === "Tom") {
@@ -73,7 +76,7 @@ const PhonePage = () => {
         </div>
         <div className="flex flex-col">
           <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Tom</h1>
-          <p className="text-[#5A687C] text-[14px] font-[400]">Phone Outreach</p>
+          <p className="text-[#5A687C] text-[14px] font-[400]">{t("phone.phone_outreach")}</p>
         </div>
       </div>
     } else {
@@ -84,7 +87,7 @@ const PhonePage = () => {
         </div>
         <div className="flex flex-col">
           <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Tom & Rebecca</h1>
-          <p className="text-[#5A687C] text-[14px] font-[400]">Phone</p>
+          <p className="text-[#5A687C] text-[14px] font-[400]">{t("phone.phone")}</p>
         </div>
       </div>
     }
@@ -99,7 +102,7 @@ const PhonePage = () => {
             <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
               <div className="flex gap-4 pl-3 items-center h-[57px]">
                 {/* <LeftArrow /> */}
-                <h1 className="text-[20px] font-[600]">Phone</h1>
+                <h1 className="text-[20px] font-[600]">{t("phone.phone")}</h1>
               </div>
             </div>
             <hr className='text-[#E1E4EA]' />

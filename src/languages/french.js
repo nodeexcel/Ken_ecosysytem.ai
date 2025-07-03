@@ -287,11 +287,53 @@ const frenchTranslation = {
             mark_as_active:"Marquer comme actif",
             no_data_found:"Aucune donnée trouvée",
             network_connection_error:"Erreur de connexion réseau",
-            please_create_agent: "Veuillez créer un agent"
-
-        
+            please_create_agent: "Veuillez créer un agent",
+friendly: "Amical",
+professional: "Professionnel",
+energetic: "Énergique",
+relaxed: "Détendu",
+results_oriented: "Orienté résultats",
+direct: "Direct",
+empathetic: "Empathique"  
         },
-                 
+
+        phone: {
+            receptionist: "Réceptionniste",
+            phone_outreach: "Appels sortants",
+            phone: "Téléphone",
+            dashboard: "Tableau de bord",
+            phone_numbers: "Numéros de téléphone",
+            new_phone_number: "Nouveau numéro de téléphone",
+            call_agents: "Agents d’appel",
+            call_campaigns: "Campagnes d’appel",
+            outbound_calls: "Appels sortants",
+            inbound_calls: "Appels entrants",
+            credit: "Crédit",
+            add_credit: "Ajouter du crédit",
+            outbound_number: "Numéro sortant",
+            inbound_number: "Numéro entrant",
+            phone_number_validation: "Le nom du numéro est requis",
+            phone_number_format_validation: "Format de numéro de téléphone invalide",
+            phone_number_failed: "Échec de l’ajout du numéro de téléphone",
+            country: "Pays",
+            status: "Statut",
+            total_call: "Total des appels",
+            direction: "Direction",
+            creation_date: "Date de création",
+            actions: "Actions",
+            active: "Actif",
+            inactive: "Inactif",
+            cancel: "Annuler",
+            no_phonenumber_listed: "Aucun numéro de téléphone répertorié",
+            add_new_number: "Ajouter un nouveau numéro",
+            enter_new_phone_number: "Entrez votre nouveau numéro de téléphone ci-dessous.",
+            name_number: "Nom du numéro",
+            number: "Numéro",
+            active_outbound_msg: "Vous recevrez un appel sur ce numéro pour le valider",
+            inactive_outbound_msg: "Message texte ici @sami",
+            add_number: "Ajouter le numéro"
+        },        
+            
                 
 
     settings: {
