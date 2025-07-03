@@ -17,13 +17,14 @@ import { SelectDropdown } from './Dropdown'
 
 
 function Analytics() {
+        const { t } = useTranslation();
+
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [leadAnalytics, setLeadAnalytics] = useState({});
-    const [agentSelect, setAgentSelect] = useState("all");
-    const [agentsList, setAgentList] = useState([{ label: "All", key: "all" }]);
+    const [agentSelect, setAgentSelect] = useState(t("all"));
+    const [agentsList, setAgentList] = useState([{ label: t("appointment.all"), key: "all" }]);
     const [loading, setLoading] = useState(false)
 
-    const { t } = useTranslation();
 
     const staticData1 = [
         {

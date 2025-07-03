@@ -167,7 +167,10 @@ const frenchTranslation = {
             conversations:"Conversations",
             analytics:"Analytique",
             new_agents:"Nouveaux agents",
+            new_agent:"Nouvel agent",
             name:"Nom",
+            active:"Actif",
+            inactive:"Inactif",
             channel:"Canal",
             languages:"Langues",
             status:"Statut",
@@ -212,11 +215,15 @@ const frenchTranslation = {
             recommended:"Recommandé",
             continue:"Continuer",
             cancel:"Annuler",
-        
+            all:"Tous",
             objective:"Objectif",
+            duplicate:"Dupliquer",
+            delete:"Supprimer",
+            test_agent:"Tester l’agent",
         
             first_form_validation:"Veuillez d’abord compléter la section Identité",
             second_form_validation:"Veuillez d’abord compléter la section Objectif",
+        
             agent_name_validation:"Le nom de l’agent est requis",
             agent_language_validation:"La langue est requise",
             agent_personality_validation:"La personnalité de l’agent est requise",
@@ -225,6 +232,11 @@ const frenchTranslation = {
             qualification_validation:"La qualification doit être choisie.",
             gender_validation:"Le genre est requis.",
             select_google_calendar:"Sélectionner le calendrier Google",
+            business_description_placeholder:"Entrez la description de votre entreprise",
+            choose_your_personality_placeholder:"Choisissez votre personnalité",
+            agent_age_placeholder:"Entrez l’âge de votre agent",
+            agent_name_placeholder:"Entrez le nom de votre agent",
+            agent_business_placeholder:"",
         
             male:"Homme",
             female:"Femme",
@@ -258,8 +270,8 @@ const frenchTranslation = {
             calendar_validation:"Un compte de calendrier doit être sélectionné",
             choose_calendar_validation:"Un calendrier doit être choisi",
             whatsapp_no_validation:"Le numéro WhatsApp est requis.",
-            object_of_agent_validation:"L’objectif de l’agent est requis.",
-            
+            object_of_agent_validation:"L’objectif de l’agent est requis",
+        
             followup_validation:"La relance est requise",
             behavior:"3 Comportements",
             prompt:"Invite",
@@ -270,9 +282,16 @@ const frenchTranslation = {
             create_agent:"Créer l’agent",
             update_agent:"Mettre à jour l’agent",
             field_required:"Ce champ est requis",
-            update:"Mettre à jour"
+            update:"Mettre à jour",
+            mark_as_inactive:"Marquer comme inactif",
+            mark_as_active:"Marquer comme actif",
+            no_data_found:"Aucune donnée trouvée",
+            network_connection_error:"Erreur de connexion réseau",
+            please_create_agent: "Veuillez créer un agent"
+
         
-        },        
+        },
+                 
                 
 
     settings: {

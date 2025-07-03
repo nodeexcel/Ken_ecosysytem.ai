@@ -829,7 +829,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             value={formData?.agent_name}
                                             onChange={handleChange}
                                             className={`w-full bg-white p-2 rounded-lg border ${errors.agent_name ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                                            placeholder="Enter your agent name"
+                                            placeholder={t("appointment.agent_name_placeholder")}
                                         />
                                         {errors.agent_name && <p className="text-red-500 text-sm mt-1">{errors.agent_name}</p>}
                                     </div>
@@ -859,7 +859,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                         ...prev, gender: ""
                                                     }))
                                                 }}
-                                                placeholder="Select"
+                                                placeholder={t("appointment.select")}
                                                 className=""
                                                 errors={errors}
                                             />
@@ -884,7 +884,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                     }
                                                 }}
                                                 className={`w-full bg-white p-2 rounded-lg border ${errors.age ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                                                placeholder="Enter your agent age"
+                                                placeholder={t("appointment.agent_age_placeholder")}
                                             />
                                             {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
                                         </div>
@@ -924,7 +924,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                     ...prev, agent_personality: ""
                                                 }))
                                             }}
-                                            placeholder="Choose your agent personality"
+                                            placeholder={t("appointment.choose_your_personality_placeholder")}
                                             className=""
                                             errors={errors}
                                         />
@@ -1059,7 +1059,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             value={formData?.business_description}
                                             rows={4}
                                             className={`w-full bg-white p-2 rounded-lg border  ${errors.business_description ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                            placeholder="Enter your business description"
+                                            placeholder={t("appointment.business_description_placeholder")}
                                         />
                                         {errors.business_description && <p className="text-red-500 text-sm mt-1">{errors.business_description}</p>}
                                     </div>
@@ -1073,7 +1073,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             value={formData?.your_business_offer}
                                             rows={4}
                                             className={`w-full bg-white p-2 rounded-lg border  ${errors.your_business_offer ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                            placeholder="Share everything you want the AI to know about your offer"
+                                            placeholder={t("appointment.agent_business_placeholder")}
                                         />
                                         {errors.your_business_offer && <p className="text-red-500 text-sm mt-1">{errors.your_business_offer}</p>}
                                     </div>
@@ -1257,7 +1257,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                                     },
                                                                 }));
                                                             }}
-                                                            placeholder="Select"
+                                                            placeholder={t("appointment.select")}
                                                             className="w-full"
                                                             errors={errors}
                                                             disabled={!formData.is_followups_enabled}

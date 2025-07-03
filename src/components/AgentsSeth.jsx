@@ -62,11 +62,11 @@ function AgentsSeth() {
                 setCampaignData(response.data.agent)
                 if (response.data.agent.length === 0) {
                     setLoading(false)
-                    setMessage("No Data Found")
+                    setMessage(t("appointment.no_data_found"))
                 }
             } else {
                 setLoading(false)
-                setMessage("Network connection error")
+                setMessage(t("appointment.network_connection_error"))
             }
 
         } catch (error) {
@@ -101,7 +101,7 @@ function AgentsSeth() {
                 <div className="flex justify-between items-center">
                     <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">Agents</h1>
                     <button onClick={() => setOpen(false)} className="bg-[#675FFF] text-white rounded-md text-sm md:text-base px-4 py-2">
-                        New Agent
+                        {t("appointment.new_agent")}
                     </button>
                 </div>
 
@@ -135,7 +135,7 @@ function AgentsSeth() {
                                         <td className="px-6 py-6 text-[16px] text-end flex justify-end gap-2 border-r-1 border-t-1 border-b-1 rounded-r-lg border-[#E1E4EA]">
                                             <div className='flex justify-center items-center gap-2'>
                                                 <p className={`${item.is_active ? "text-[#34C759] border-[#34C759] bg-[#EBF9EE]" : "text-[#FF9500] border-[#FF9500] bg-[#FFF4E6]"} px-2 py-1 text-[14px] font-[500] border rounded-full`}>
-                                                    {item.is_active ? 'Active' : 'Inactive'}
+                                                    {item.is_active ? `${t("appointment.active")}` : `${t("appointment.inactive")}`}
                                                 </p>
                                                 {/* <label className="relative inline-flex items-center cursor-pointer">
                                                     <input
@@ -169,7 +169,7 @@ function AgentsSeth() {
                                                                 setOpen(false)
                                                             }}
                                                         >
-                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
                                                         </button>
                                                         {item.is_active ?
                                                             <button
@@ -178,7 +178,7 @@ function AgentsSeth() {
                                                                     toggleStatus(index, 'is_active', item.agent_id)
                                                                 }}
                                                             >
-                                                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><CancelIcon /></div> <div className='hidden group-hover:block'><CancelIcon status={true} /></div> <span>Mark As Inactive</span> </div>
+                                                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><CancelIcon /></div> <div className='hidden group-hover:block'><CancelIcon status={true} /></div> <span>{t("appointment.mark_as_inactive")}</span> </div>
                                                             </button> :
                                                             <button
                                                                 className="block w-full group text-left hover:rounded-lg px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
@@ -186,7 +186,7 @@ function AgentsSeth() {
                                                                     toggleStatus(index, 'is_active', item.agent_id)
                                                                 }}
                                                             >
-                                                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><CorrectIcon /></div> <div className='hidden group-hover:block'><CorrectIcon status={true} /></div> <span>Mark As Active</span> </div>
+                                                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><CorrectIcon /></div> <div className='hidden group-hover:block'><CorrectIcon status={true} /></div> <span>{t("appointment.mark_as_active")}</span> </div>
                                                             </button>
                                                         }
                                                         <button
@@ -195,7 +195,7 @@ function AgentsSeth() {
                                                                 setActiveDropdown(null);
                                                             }}
                                                         >
-                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
+                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>{t("appointment.duplicate")}</span> </div>
                                                         </button>
                                                         <button
                                                             className="block w-full group text-left hover:rounded-lg pr-4 pl-[14px] py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
@@ -204,7 +204,7 @@ function AgentsSeth() {
                                                                 setPreviewAgent(item.agent_id)
                                                             }}
                                                         >
-                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><CallAgent /></div> <div className='hidden group-hover:block'><CallAgent status={true} /></div> <span>Test Agent</span> </div>
+                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><CallAgent /></div> <div className='hidden group-hover:block'><CallAgent status={true} /></div> <span>{t("appointment.test_agent")}</span> </div>
                                                         </button>
                                                         <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                                                         <div className='py-2'>
@@ -215,7 +215,7 @@ function AgentsSeth() {
                                                                     handleDelete(index, item.agent_id)
                                                                 }}
                                                             >
-                                                                <div className="flex items-center gap-2">{<Delete />} <span>Delete</span> </div>
+                                                                <div className="flex items-center gap-2">{<Delete />} <span>{t("delete")}</span> </div>
                                                             </button>
                                                         </div>
                                                     </div>

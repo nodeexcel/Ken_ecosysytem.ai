@@ -70,7 +70,7 @@ const DemoChat = () => {
             const response = await getAppointmentSetter()
             if (response?.status === 200) {
                 if (response?.data?.agent?.length === 0) {
-                    setMessage("Please create an Agent")
+                    setMessage(t("appointment.please_create_agent"))
                 } else {
                     setAgentId(response?.data?.agent?.[0].agent_id)
                 }

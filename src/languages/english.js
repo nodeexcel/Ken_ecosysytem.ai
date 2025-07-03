@@ -308,7 +308,10 @@ const englishTranslation = {
         conversations:"Conversations",
         analytics:"Analytics",
         new_agents:"New Agents",
+        new_agent:"New Agent",
         name:"Name",
+        active:"Active",
+        inactive:"Inactive",
         channel:"Channel",
         languages:"Languages",
         status:"Status",
@@ -354,11 +357,14 @@ const englishTranslation = {
         recommended:"Recommended",
         continue:"Continue",
         cancel:"Cancel",
-
+        all:"All",
         objective:"Objective",
-
+        duplicate:"Duplicate",
+        delete:"Delete",
+        test_agent:"Test Agent",
         first_form_validation:"First Please Complete Identity Section",
         second_form_validation:"First Please Complete Objective Section",
+
         agent_name_validation:"Agent name is required",
         agent_language_validation:"Language is required",
         agent_personality_validation:"Agent personality is required",
@@ -367,7 +373,11 @@ const englishTranslation = {
         qualification_validation:"Qualification must be chosen.",
         gender_validation:"Gender is required.",
         select_google_calendar:"Select Google Calendar",
-
+        business_description_placeholder:"Enter your business description",
+        choose_your_personality_placeholder:"Choose your personality",
+        agent_age_placeholder:"Enter your agent age",
+        agent_name_placeholder:"Enter your agent name",
+        agent_business_placeholder:"",
         male:"Male",
         female:"Female",
         age:"Age",
@@ -413,6 +423,9 @@ const englishTranslation = {
         update_agent:"Update Agent",
         field_required:"This field is required'",
         update:"Update",
+        mark_as_inactive:"Mark as Inactive",
+        mark_as_active:"Mark as Active",
+        please_create_agent:"Please create an Agent"
 
 
         
