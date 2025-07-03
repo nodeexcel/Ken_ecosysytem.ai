@@ -6,7 +6,7 @@ function CreationStudio() {
     const [errors, setErrors] = useState({})
 
     const postTypeOptions = [{ label: "Generic", key: "generic" }, { label: "Meme", key: "meme" }, { label: "Quotes", key: "quotes" }]
-    const mediaTypeOptions = [{ label: "Single Image", key: "single_image" }, { label: "Carousel", key: "carousel" }, { label: "Video", key: "video" }, { label: "Reel", key: "reel" }]
+    const mediaTypeOptions = [{ label: "Single Image", key: "single_image" }, { label: "Carousel", key: "carousel" }, { label: "Video", key: "video" }]
     const languageOptions = [{ label: "ENG", key: "english" }, { label: "FR", key: "french" }]
 
     const handleChange = (e) => {
@@ -116,7 +116,7 @@ function CreationStudio() {
                         {errors.video_duration && <p className="text-red-500 text-sm mt-1">{errors.video_duration}</p>}
                     </div>
                 </div>
-                <div className="flex flex-col gap-1.5 w-full">
+                {formData.post_type === "quotes" && <div className="flex flex-col gap-1.5 w-full">
                     <label className="text-sm font-medium text-[#1e1e1e]">
                         Author
                     </label>
@@ -129,7 +129,7 @@ function CreationStudio() {
                         placeholder="Enter author"
                     />
                     {errors.author && <p className="text-red-500 text-sm mt-1">{errors.author}</p>}
-                </div>
+                </div>}
                 <div className="flex items-center gap-2">
                     <button className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
                     <button className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>

@@ -2,12 +2,15 @@ import { useRef, useState } from "react";
 import { CheckIcon, FacebookIcon, RightArrowIcon, SlackIcon, UploadIcon, WebsiteIcon, WhatsAppIcon } from "../icons/icons";
 import { SelectDropdown } from "./Dropdown";
 import { useTranslation } from "react-i18next";
+import CustomizeAgent from "./CustomizeAgent";
 
 function CustomerSupportChatBotForm() {
     const [formData, setFormData] = useState({ bot_name: "", role: "", personality: "", prompt: "", transfer: "", file: [], free_text: "" })
     const [errors, setErrors] = useState({})
     const [step, setStep] = useState(1)
     const [statusSteps, setStatusSteps] = useState({ step1: false, step2: false, step3: false, step4: false })
+    const [customStatus, setCustomStatus] = useState(false)
+    const [customIntegartion, setCustomIntegartion] = useState({})
 
     const fileInputRef = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -230,8 +233,8 @@ function CustomerSupportChatBotForm() {
                         <div className="flex items-center gap-2">
                             <button onClick={() => {
                                 handleContinue(2)
-                            }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
-                            <button onClick={() => handleCancel(1)} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                            }} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
+                            <button onClick={() => handleCancel(1)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
                         </div>
 
                     </div>}
@@ -286,8 +289,8 @@ function CustomerSupportChatBotForm() {
                         <div className="flex items-center gap-2">
                             <button onClick={() => {
                                 handleContinue(3)
-                            }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
-                            <button onClick={() => handleCancel(2)} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                            }} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
+                            <button onClick={() => handleCancel(2)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
                         </div>
 
                     </div>}
@@ -359,8 +362,8 @@ function CustomerSupportChatBotForm() {
                         <div className="flex items-center gap-2">
                             <button onClick={() => {
                                 handleContinue(4)
-                            }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
-                            <button onClick={() => handleCancel(3)} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                            }} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
+                            <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
                         </div>
 
                     </div>}
@@ -379,11 +382,16 @@ function CustomerSupportChatBotForm() {
                         <hr style={{ color: "#E1E4EA" }} />
                         <div className="w-full flex flex-wrap gap-4">
                             {integrationsData.map((each) => (
-                                <div className="flex w-full lg:w-[32%] flex-col gap-[10px] border-[0.5px] rounded-[8px] border-[#E1E4EA] p-[20px]">
+                                <div key={each.label} className="flex w-full lg:w-[32%] flex-col gap-[10px] border-[0.5px] rounded-[8px] border-[#E1E4EA] p-[20px]">
                                     <div>{each.icon}</div>
                                     <h1 className="text-[#1E1E1E] text-[18px] font-[600]">{each.label}</h1>
                                     <p className="text-[#5A687C] text-[14px] font-[400]">{each.content}</p>
-                                    <button className={`w-full px-[20px] py-[7px] border-[1.5px] font-[500] text-[16px] rounded-[7px] ${each.is_active ? 'bg-[#675FFF] border-[#5F58E8] text-[#fff]' : 'border-[#E1E4EA] bg-[#E1E4EA] text-[#5A687C]'}`}>{each.is_active ? "Update" : "Comming Soon"}</button>
+                                    <button onClick={() => {
+                                        setCustomIntegartion(each)
+                                        setCustomStatus(true)
+                                    }}
+                                        disabled={!each.is_active}
+                                        className={`w-full px-[20px] py-[7px] border-[1.5px] font-[500] text-[16px] rounded-[7px] ${each.is_active ? 'bg-[#675FFF] border-[#5F58E8] text-[#fff] cursor-pointer' : 'border-[#E1E4EA] bg-[#E1E4EA] text-[#5A687C]'}`}>{each.is_active ? "Update" : "Comming Soon"}</button>
                                 </div>
                             ))}
                         </div>
@@ -393,13 +401,14 @@ function CustomerSupportChatBotForm() {
                         <div className="flex items-center gap-2">
                             <button onClick={() => {
                                 handleContinue(4)
-                            }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
-                            <button onClick={() => handleCancel(3)} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                            }} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
+                            <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
                         </div>
 
                     </div>}
                 </div>
             </div>
+            {customStatus && <CustomizeAgent customIntegartion={customIntegartion} setCustomStatus={setCustomStatus} />}
         </div >
     )
 }
