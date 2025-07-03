@@ -1,15 +1,31 @@
-import { X } from "lucide-react"
+import { icons, X } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { SketchPicker } from "react-color"
+import taraImg from '../assets/svg/tara_logo.svg'
+import constanceImg from '../assets/svg/constance_logo.svg'
+import tomImg from '../assets/svg/tom_logo.svg'
+import sethImg from '../assets/svg/seth_logo.svg'
+import calinaImg from '../assets/svg/calina_logo.svg'
+import rebeccaImg from '../assets/svg/rebecca_logo.svg'
+import emileImg from '../assets/svg/emile_logo.svg'
+import rimaImg from '../assets/svg/rima_logo.svg'
+import finnImg from '../assets/svg/finn_logo.svg'
+import sandroImg from '../assets/svg/sandro_logo.svg'
 
 function CustomizeAgent({ customIntegartion, setCustomStatus }) {
     const [activeTab, setActiveTab] = useState("customize")
-    const [formData, setFormData] = useState({ display_name: "", color: "#F1F1F1", introduction_to_chat: "", domains_name: "" })
+    const [formData, setFormData] = useState({ display_name: "", color: "#F1F1F1", avatar: "", introduction_to_chat: "", domains_name: "" })
     const [errors, setErrors] = useState({})
     const [colorPickerStatus, setColorPickerStatus] = useState(false)
     const colorPickerRef = useRef()
 
     const tabs = [{ label: "Customize", key: "customize" }, { label: "Share", key: "share" }]
+
+    const avatarList = [
+        { key: "tara", icon: taraImg }, { key: "constance", icon: constanceImg }, { key: "tom", icon: tomImg },
+        { key: "seth", icon: sethImg }, { key: "calina", icon: calinaImg }, { key: "rebecca", icon: rebeccaImg },
+        { key: "emile", icon: emileImg }, { key: "rima", icon: rimaImg }, { key: "finn", icon: finnImg }, { key: "sandro", icon: sandroImg }
+    ]
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -91,13 +107,32 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                                                 className={`w-full bg-white py-2 px-14 cursor-pointer rounded-lg border ${errors.color ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
                                                 placeholder="ffffff"
                                             />
-                                            <div className={`w-[22px] h-[22px] top-2 absolute left-2 rounded-[4px] ${formData?.color && `bg-[red]`}`}></div>
-                                            {/* <hr style={{color:"red",}} className="top-2 absolute left-13"/> */}
+                                            <div className={`w-[22px] h-[22px] top-2 absolute left-2 rounded-[4px]`} style={{ backgroundColor: formData?.color }}></div>
+                                            <hr style={{ color: "#E1E4EA", width: "17px", transform: "rotate(-90deg)", position: "absolute", top: 19, left: 35 }} />
                                             {colorPickerStatus && <div className="absolute z-[9999]"><SketchPicker onChange={handleChangeColor} /></div>}
                                         </div>
                                         {errors.color && <p className="text-red-500 text-sm mt-1">{errors.color}</p>}
                                     </div>
-
+                                </div>
+                                <div className="w-full">
+                                    <label className="text-sm font-medium text-[#1e1e1e]">
+                                        Avatar
+                                    </label>
+                                    {/* <div className="flex items-center gap-5">
+                                        <div className="bg-[#E1E4EA] p-[10px] rounded-[10px]">
+                                            <div className="p-10 w-[25%] rounded-full bg-[#F0EFFF]">
+                                                <img src={`${formData.avatar}Img`} alt={formData.avatar} className="object-fit" />
+                                            </div>
+                                        </div>
+                                        <hr style={{ color: "#E1E4EA", width: "148px", transform: "rotate(-90deg)" }} />
+                                        <div className="flex gap-2 flex-wrap">
+                                            {avatarList.map((each) => (
+                                                <div key={each.key} onClick={() => setFormData((prev) => ({ ...prev, avatar: each.value }))} className="rounded-full bg-[#F0EFFF]">
+                                                    <img src={each.icon} alt={each.key} className="object-fit" />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div> */}
                                 </div>
                                 <div className="flex flex-col gap-1.5 w-full">
                                     <label className="text-sm font-medium text-[#1e1e1e]">
@@ -135,7 +170,7 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 
