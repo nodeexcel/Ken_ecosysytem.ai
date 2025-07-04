@@ -1,31 +1,112 @@
-import { icons, X } from "lucide-react"
+import { X } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { SketchPicker } from "react-color"
-import taraImg from '../assets/svg/tara_logo.svg'
-import constanceImg from '../assets/svg/constance_logo.svg'
-import tomImg from '../assets/svg/tom_logo.svg'
-import sethImg from '../assets/svg/seth_logo.svg'
-import calinaImg from '../assets/svg/calina_logo.svg'
-import rebeccaImg from '../assets/svg/rebecca_logo.svg'
-import emileImg from '../assets/svg/emile_logo.svg'
-import rimaImg from '../assets/svg/rima_logo.svg'
-import finnImg from '../assets/svg/finn_logo.svg'
-import sandroImg from '../assets/svg/sandro_logo.svg'
-import { UploadIcon } from "../icons/icons"
+import tara from '../assets/svg/tara_logo.svg'
+import constance from '../assets/svg/constance_logo.svg'
+import tom from '../assets/svg/tom_logo.svg'
+import seth from '../assets/svg/seth_logo.svg'
+import calina from '../assets/svg/calina_logo.svg'
+import rebecca from '../assets/svg/rebecca_logo.svg'
+import emile from '../assets/svg/emile_logo.svg'
+import rima from '../assets/svg/rima_logo.svg'
+import finn from '../assets/svg/finn_logo.svg'
+import sandro from '../assets/svg/sandro_logo.svg'
+import { DeleteIcon, UploadIcon } from "../icons/icons"
+import { testAgentChat } from "../api/appointmentSetter"
+import { v4 as uuidv4 } from 'uuid';
 
 function CustomizeAgent({ customIntegartion, setCustomStatus }) {
     const [activeTab, setActiveTab] = useState("customize")
-    const [formData, setFormData] = useState({ display_name: "", color: "#F1F1F1", avatar: "", introduction_to_chat: "", domains_name: "" })
+    const [formData, setFormData] = useState({ display_name: "", color: "#F1F1F1", avatar: "constance", introduction_to_chat: "", domains_name: "" })
     const [errors, setErrors] = useState({})
     const [colorPickerStatus, setColorPickerStatus] = useState(false)
     const colorPickerRef = useRef()
 
+    const [message, setMessage] = useState("")
+    const [messages, setMessages] = useState([]);
+    const [chat_id, setChatId] = useState("")
+
+    const agentChatRef = useRef()
+
+    useEffect(() => {
+        if (formData.avatar) {
+            setMessages([
+                { id: uuidv4(), sender: "agent", isUser: false, text: `I'm ${(formData.avatar.slice(0, 1).toUpperCase()) + formData.avatar.slice(1)}, your appointment setter. How can I assist you today?` }
+            ])
+        }
+
+
+    }, [formData])
+
+    useEffect(() => {
+        setChatId(uuidv4())
+    }, [])
+
+    useEffect(() => {
+        if (agentChatRef.current) {
+            agentChatRef.current.scrollTo({
+                top: agentChatRef.current.scrollHeight,
+                behavior: 'smooth',
+            });
+        }
+    }, [messages]);
+
+
+    const closeModal = () => {
+        setPreviewAgent("")
+    }
+    const handleSendMessage = async () => {
+        if (!message.trim()) return;
+
+        const userMessage = { id: uuidv4(), sender: "user", isUser: true, text: message };
+        setMessages(prev => [...prev, userMessage]);
+        setMessage("");
+
+        const typingMessage = {
+            id: 'typing', sender: "agent", isUser: false, text: "..."
+        };
+        setMessages((prev) => [...prev, typingMessage]);
+
+        try {
+            const payload = { message, chat_id };
+            const response = await testAgentChat(payload, previewAgent);
+            if (response?.status === 200 && response?.data?.response) {
+                const agentMessage = {
+                    id: uuidv4(),
+                    isUser: false,
+                    sender: "agent",
+                    text: response.data.response
+                };
+
+                setMessages((prev) =>
+                    prev.map((msg) =>
+                        msg.id === "typing" ? agentMessage : msg
+                    )
+                );
+            } else {
+                setMessages((prev) => prev.filter((msg) => msg.id !== "typing"));
+            }
+        } catch (error) {
+            console.error(error);
+            setMessages((prev) => prev.filter((msg) => msg.id !== "typing"));
+        }
+    };
+
+
+
+    const avatarMap = {
+        tara, constance,
+        tom,
+        seth, calina, rebecca, emile, rima, finn, sandro
+    };
+
+
     const tabs = [{ label: "Customize", key: "customize" }, { label: "Share", key: "share" }]
 
     const avatarList = [
-        { key: "tara", icon: taraImg }, { key: "constance", icon: constanceImg }, { key: "rebecca", icon: rebeccaImg },
-        { key: "emile", icon: emileImg }, { key: "rima", icon: rimaImg }, { key: "calina", icon: calinaImg },
-        { key: "seth", icon: sethImg }, { key: "tom", icon: tomImg }, { key: "finn", icon: finnImg }, { key: "sandro", icon: sandroImg }
+        { key: "tara", icon: tara }, { key: "constance", icon: constance }, { key: "rebecca", icon: rebecca },
+        { key: "emile", icon: emile }, { key: "rima", icon: rima }, { key: "calina", icon: calina },
+        { key: "seth", icon: seth }, { key: "tom", icon: tom }, { key: "finn", icon: finn }, { key: "sandro", icon: sandro }
     ]
 
     const handleChange = (e) => {
@@ -77,7 +158,7 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                         </div>
                     </div>
                     <div className="w-full flex gap-5">
-                        <div className="w-[70%]">
+                        <div className="w-[60%]">
                             <h1 className="text-[#1E1E1E] font-[600] text-[16px] pb-4">Personalize your Chatbot</h1>
                             <div className="flex flex-col gap-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
@@ -120,15 +201,16 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                                         Avatar
                                     </label>
                                     <div className="flex items-center gap-5">
-                                        <div className="border border-[#E1E4EA] p-[10px] rounded-[10px]">
+                                        <div className="border border-[#E1E4EA] justify-around flex flex-col items-center w-[148px] h-[148px] p-[10px] rounded-[10px]">
                                             <div className="rounded-full h-[63px] w-[63px] flex justify-center items-center bg-[#F0EFFF]">
-                                                <img src={`${formData.avatar}Img`} alt={formData.avatar} className="object-fit" />
+                                                <img src={avatarMap[formData.avatar]} alt={formData.avatar} className="object-fit" />
                                             </div>
+                                            <DeleteIcon />
                                         </div>
-                                        <hr style={{ color: "#E1E4EA", width: "148px", transform: "rotate(-90deg)" }} />
+                                        <div className="h-[148px] border-r border-[#E1E4EA]"></div>
                                         <div className="flex gap-2 flex-wrap">
                                             {avatarList.map((each) => (
-                                                <div key={each.key} onClick={() => setFormData((prev) => ({ ...prev, avatar: each.key }))} className={`rounded-full h-[63px] w-[63px] cursor-pointer ${formData.avatar === each.key && 'border border-[#675FFF]'} flex justify-center items-center bg-[#F0EFFF]`}>
+                                                <div key={each.key} onClick={() => setFormData((prev) => ({ ...prev, avatar: each.key }))} className={`rounded-full h-[63px] w-[63px] cursor-pointer ${formData.avatar === each.key && 'border-2 border-[#675FFF]'} flex justify-center items-center bg-[#F0EFFF]`}>
                                                     <img src={each.icon} alt={each.key} className="object-fit" />
                                                 </div>
                                             ))}
@@ -168,8 +250,60 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                                 </div>
                             </div>
                         </div>
-                        <div className="w-[30%]">
+                        <div className="w-[40%]">
                             <h1 className="text-[#1E1E1E] font-[600] text-[16px]">Preview</h1>
+                            <div className="py-6 flex gap-6 w-full">
+                                <div className="h-[466px] relative border border-[#E1E4EA] rounded-lg">
+                                    <div className="bg-[#F5F7FF] rounded-y-lg rounded-t-lg p-2 mb-4 flex items-center gap-3">
+                                        <div className="w-[45px] h-[45px] rounded-full bg-[#fff] flex items-center justify-center">
+                                            <img src={avatarMap[formData.avatar]} alt={formData.avatar} className="object-fit" />
+                                        </div>
+                                        <div className="font-[600] text-[18px] text-[#1E1E1E]">{`${(formData.avatar.slice(0, 1).toUpperCase()) + formData.avatar.slice(1)} `} (AI Agent)</div>
+                                    </div>
+                                    <div className="flex flex-col justify-between h-full">
+                                        <div ref={agentChatRef} className="px-4 overflow-auto max-h-[300px] mb-2">
+                                            {messages.map((msg,) => (
+                                                <div key={msg.id} className="flex flex-col">
+                                                    {!msg.isUser && (
+                                                        <div className="flex items-center gap-2 mb-1 mr-auto w-fit max-w-[80%]">
+                                                            <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] font-[600] text-[#675FFF]">E</div>
+                                                            <span className="text-sm font-medium">Ecosystem.ai</span>
+                                                        </div>
+                                                    )}
+                                                    {msg.isUser && (
+                                                        <div className="flex items-center gap-1 mt-1 ml-auto w-fit max-w-[80%]">
+                                                            <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] text-[#675FFF] font-[600]">U</div>
+                                                            <span className="text-xs text-gray-500">User</span>
+                                                        </div>
+                                                    )}
+                                                    {msg.id === "typing" ? <div className="pl-[40px] pt-3 flex "><span className="three-dots" /></div> : <div
+                                                        className={`w-fit max-w-[80%] text-[12px] font-[400] p-3 rounded-lg ${!msg.isUser ? "mr-auto my-1 bg-[#F2F2F7] text-[#5A687C]" : "my-1 ml-auto bg-[#675FFF] text-white"
+                                                            }`}
+                                                    >
+                                                        <p className="text-sm">{msg.text}</p>
+                                                    </div>}
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="mt-auto p-4 flex gap-2 bg-[#F0EFFF] rounded-b-lg absolute bottom-0">
+                                            <input
+                                                type="text"
+                                                value={message}
+                                                onChange={(e) => setMessage(e.target.value)}
+                                                placeholder="Type your message here..."
+                                                className="flex w-full border bg-white border-[#E1E4EA] focus:outline-none focus:border-[#675FFF] rounded-lg px-4 py-2 text-[#5A687C]"
+                                            />
+                                            <button
+                                                onClick={handleSendMessage}
+                                                className="px-6 py-2 font-[500] text-[16px] bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white rounded-lg"
+                                            >
+                                                Send
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -214,7 +214,7 @@ function Accounting() {
                         }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}
-                                <h1 className="text-[20px] font-[600]">{t("accounting")}</h1>
+                                <h1 className="text-[20px] font-[600]">{t("accouting")}</h1>
                             </div>
                         </div>
                         <hr className='text-[#E1E4EA]' />
@@ -226,7 +226,7 @@ function Accounting() {
                             </div>
                             <div className="flex flex-col">
                                 <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Finn</h1>
-                                <p className="text-[#5A687C] text-[14px] font-[400]">{t("accounting")}</p>
+                                <p className="text-[#5A687C] text-[14px] font-[400]">{t("accouting")}</p>
                             </div>
                         </div>
                         {sideMenuList.map((e, i) => <div
