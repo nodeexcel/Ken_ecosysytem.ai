@@ -444,12 +444,6 @@ const englishTranslation = {
         results_oriented:"Results-Oriented",
         direct:"Direct",
         empathetic:"Empathetic",
-
-
-
-
-
-
     },
 
     phone:{
@@ -521,7 +515,8 @@ const englishTranslation = {
     forecast_budget:"I need template for my forecast budget.",
     forecast_budget_key:"I need template for my forecast budget.",
     efficiently:"How to organize my expenses and income efficiently.",
-    efficiently_key:"How to organize my expenses and income efficiently."
+    efficiently_key:"How to organize my expenses and income efficiently.",
+    accountings_key:"I would you like advice on optimizing my cash flow.",
 
   },
   emailings: {
@@ -718,8 +713,11 @@ const englishTranslation = {
     just_now:"Just now",
     enter_name:"Enter the name",
     how_to_analyze:"How to analyze your SEO performance using tools?",
+    how_to_analyze_key:"How to analyze my SEO performance using tools?",
     need_a_template:"Need a template to structure your web page?",
+    need_a_template_key:"I need a template to structure my web page.",
     most_relevent_keyword:"How to find the most relevant keywords for your content?",
+    most_relevent_keyword_key:"How to find the most relevant keywords for my content?",
     seo_heading:"SEO",
     sandro:"Sandro",
     article_title:"Article Title",
@@ -819,8 +817,15 @@ const englishTranslation = {
     smart_chatbot:"Smart Chatbot",
     new_chatbot:"New Chatbot",
     no_chatbot_listed:"No Chatbot Data Listed"
-
-
+  },
+  rima:{
+    hr_heading:"HR",
+    perfect_job_description:"Need help writing the perfect job description?",
+    perfect_job_description_key:"Need help writing the perfect job description.",
+    hire_faster:"Looking for a structured process to hire faster?",
+    hire_faster_key:"Looking for a structured process to hire faster.",
+    qualified_candidates:"Struggling to find qualified candidates for your roles?",
+    qualified_candidates_key:"Struggling to find qualified candidates for my roles.",
 
   },
 

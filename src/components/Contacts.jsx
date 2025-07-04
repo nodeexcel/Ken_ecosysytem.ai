@@ -703,10 +703,10 @@ const ContactsPage = () => {
               </div>
               {(activeTab !== "lists" && formCreateList.contactsId?.length > 0) && <div className="flex items-center gap-2">
                 <button onClick={() => setCreateList(true)} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5f58e8] rounded-[7px] text-[#675FFF]">
-                  Add to a list
+                 {t("brain_ai.add_to_list")}
                 </button>
                 <button onClick={() => handleDeleteContact(formCreateList.contactsId)} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#FF2D55] rounded-[7px] text-[#FF2D55]">
-                  Delete
+                  {t("delete")}
                 </button>
               </div>}
             </div>
@@ -880,7 +880,7 @@ const ContactsPage = () => {
                 options={channelOptions}
                 value={channelSelectList}
                 onChange={(updated) => setChannelSelectList(updated)}
-                placeholder="Select"
+                placeholder={t("brain_ai.select")}
                 className="w-[198px]"
                 extraName={t("brain_ai.channel")}
               />

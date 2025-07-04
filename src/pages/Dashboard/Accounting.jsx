@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { deleteChat, getAccountingChatById, getAccountingChats, updateChatName } from '../../api/account'
 import AgentChatBox from '../../components/AgentChatBox'
 import { formatTimeAgo } from '../../utils/TimeFormat'
+import { useTranslation } from "react-i18next";
 
 function Accounting() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -29,9 +30,10 @@ function Accounting() {
     const initialMessage = "Hi! I’m Finn, your Finance and Accounting expert. \nI’m here to help you manage your cash flow, track expenses, generate financial reports, and keep your books clean, without the headache.\nFrom invoicing and cost analysis to budgeting and tax prep, I’ve got your numbers covered. \nJust tell me what you need.I can analyze your data, highlight financial risks, and help you make smarter business decisions in real time. \nReady to get your finances in order and grow with clarity ? Let’s dive in 💼"
 
     const navigate = useNavigate()
+    const { t } = useTranslation()
 
     const sideMenuList = [
-        { label: "Chat", icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
+        { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
     ]
 
     useEffect(() => {
@@ -81,7 +83,7 @@ function Accounting() {
                 isUser,
                 content,
                 sender: isUser ? "User" : "Ecosystem.ai",
-                time: msg?.message_at ? formatTimeAgo(msg?.message_at) : "Just now",
+                time: msg?.message_at ? formatTimeAgo(msg?.message_at) : `${t("seo.just_now")}`,
                 status: "Read"
             };
         });
@@ -106,7 +108,7 @@ function Accounting() {
 
     const handleUpdateName = async () => {
         if (!name) {
-            setErrors((prev) => ({ ...prev, name: "Enter the name" }))
+            setErrors((prev) => ({ ...prev, name: `${t("seo.enter_name")}` }))
             return
         }
         try {
@@ -141,9 +143,9 @@ function Accounting() {
         }
     }
 
-    const staticSuggestions = [{ label: "Would you like advice on optimizing your cash flow?", key: "I would you like advice on optimizing my cash flow." },
-    { label: "I need template for my forecast budget.", key: "I need template for my forecast budget." },
-    { label: "How to organize my expenses and income efficiently.", key: "How to organize my expenses and income efficiently." }
+    const staticSuggestions = [{ label: `${t("tara.optimizing")}`, key: `${t("tara.accountings_key")}` },
+    { label: `${t("tara.forecast_budget")}`, key: `${t("tara.forecast_budget")}` },
+    { label: `${t("tara.efficiently")}`, key: `${t("tara.efficiently_key")}` }
     ]
 
 
@@ -212,7 +214,7 @@ function Accounting() {
                         }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}
-                                <h1 className="text-[20px] font-[600]">Accounting</h1>
+                                <h1 className="text-[20px] font-[600]">{t("accounting")}</h1>
                             </div>
                         </div>
                         <hr className='text-[#E1E4EA]' />
@@ -224,7 +226,7 @@ function Accounting() {
                             </div>
                             <div className="flex flex-col">
                                 <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Finn</h1>
-                                <p className="text-[#5A687C] text-[14px] font-[400]">Accounting</p>
+                                <p className="text-[#5A687C] text-[14px] font-[400]">{t("accounting")}</p>
                             </div>
                         </div>
                         {sideMenuList.map((e, i) => <div

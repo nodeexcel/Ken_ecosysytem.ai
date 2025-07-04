@@ -147,9 +147,9 @@ function Seo() {
         }
     }
 
-    const staticSuggestions = [{ label: `${t("seo.how_to_analyze")}`, key: "How to analyze my SEO performance using tools?" },
-    { label: `${t("seo.need_a_template")}`, key: "I need a template to structure my web page." },
-    { label: `${t("seo.most_relevent_keyword")}`, key: "How to find the most relevant keywords for my content?" }
+    const staticSuggestions = [{ label: `${t("seo.how_to_analyze")}`, key: `${t("seo.how_to_analyze_key")}`},
+    { label: `${t("seo.need_a_template")}`, key: `${t("seo.need_a_template_key")}`},
+    { label: `${t("seo.most_relevent_keyword")}`, key: `${t("seo.most_relevent_keyword_key")}` }
     ]
 
     const listedProps = {

@@ -684,6 +684,8 @@ const frenchTranslation = {
     efficiently: "Comment organiser efficacement mes dépenses et mes revenus.",
     efficiently_key:
       "Comment organiser efficacement mes dépenses et mes revenus.",
+    accountings_key: "Je voudrais des conseils pour optimiser ma trésorerie."
+
   },
   emailings: {
     am: "Matin",
@@ -884,9 +886,12 @@ const frenchTranslation = {
     just_now: "À l’instant",
     enter_name: "Entrez le nom",
     how_to_analyze: "Comment analyser vos performances SEO à l’aide d’outils ?",
+    how_to_analyze_key: "Comment analyser la performance SEO de mon site à l’aide d’outils ?",
     need_a_template: "Besoin d’un modèle pour structurer votre page web ?",
+    need_a_template_key: "J’ai besoin d’un modèle pour structurer ma page web.",
     most_relevent_keyword:
       "Comment trouver les mots-clés les plus pertinents pour votre contenu ?",
+      most_relevent_keyword_key: "Comment trouver les mots-clés les plus pertinents pour mon contenu ?",
     seo_heading: "SEO",
     sandro: "Sandro",
     article_title: "Titre de l’article",
@@ -990,7 +995,15 @@ const frenchTranslation = {
     smart_chatbot: "Chatbot intelligent",
     new_chatbot: "Nouveau chatbot",
     no_chatbot_listed: "Aucune donnée de chatbot répertoriée"
-
+  },
+  rima: {
+    hr_heading: "Ressources humaines",
+    perfect_job_description: "Besoin d’aide pour rédiger la description de poste parfaite ?",
+    perfect_job_description_key: "Besoin d’aide pour rédiger la description de poste parfaite.",
+    hire_faster: "Vous cherchez un processus structuré pour recruter plus rapidement ?",
+    hire_faster_key: "Je cherche un processus structuré pour recruter plus rapidement.",
+    qualified_candidates: "Vous avez du mal à trouver des candidats qualifiés pour vos postes ?",
+    qualified_candidates_key: "J’ai du mal à trouver des candidats qualifiés pour mes postes."
   },  
   no_data: "Aucune donnée trouvée",
   processing: "Traitement en cours...",

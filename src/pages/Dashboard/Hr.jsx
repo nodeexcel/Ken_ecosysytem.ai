@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { deleteHrChat, getHrChatById, getHrChats, updateHrChatName } from '../../api/hrAgent'
 import AgentChatBox from '../../components/AgentChatBox'
 import { formatTimeAgo } from '../../utils/TimeFormat'
+import { useTranslation } from "react-i18next";
 
 function Hr() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -27,12 +28,12 @@ function Hr() {
     const newwebsocketurl = "ws://116.202.210.102:8000/new-hr-agent-chat"
     const websocketurl = "ws://116.202.210.102:8000/hr-agent"
     const initialMessage = "Hello! I’m Rima, your HR assistant. \nI’m here to support you across all your HR needs, from recruiting and screening candidates to onboarding, managing interviews, and beyond.\nI can also help you with day-to-day HR topics like policy clarification, employee onboarding support, FAQ responses, and internal coordination.\nJust tell me what you need, whether it's hiring your next top talent or streamlining your HR processes. and I’ll take care of it. \nReady to simplify your HR tasks and save time? Let’s get started 😊"
-
+    const { t } = useTranslation()
 
     const navigate = useNavigate()
 
     const sideMenuList = [
-        { label: "Chat", icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
+        { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
     ]
 
     useEffect(() => {
@@ -82,7 +83,7 @@ function Hr() {
                 isUser,
                 content,
                 sender: isUser ? "User" : "Ecosystem.ai",
-                time: msg?.message_at ? formatTimeAgo(msg?.message_at) : "Just now",
+                time: msg?.message_at ? formatTimeAgo(msg?.message_at) : `${t("seo.just_now")}`,
                 status: "Read"
             };
         });
@@ -107,7 +108,7 @@ function Hr() {
 
     const handleUpdateName = async () => {
         if (!name) {
-            setErrors((prev) => ({ ...prev, name: "Enter the name" }))
+            setErrors((prev) => ({ ...prev, name: `${t("seo.enter_name")}` }))
             return
         }
         try {
@@ -142,9 +143,9 @@ function Hr() {
         }
     }
 
-    const staticSuggestions = [{ label: "Need help writing the perfect job description?", key: "Need help writing the perfect job description." },
-    { label: "Looking for a structured process to hire faster?", key: "Looking for a structured process to hire faster." },
-    { label: "Struggling to find qualified candidates for your roles?", key: "Struggling to find qualified candidates for my roles." }
+    const staticSuggestions = [{ label: `${t("rima.perfect_job_description")}`, key: `${t("rima.perfect_job_description_key")}`},
+    { label: `${t("rima.hire_faster")}`, key: `${t("rima.hire_faster_key")}` },
+    { label: `${t("rima.qualified_candidates")}`, key: `${t("rima.qualified_candidates_key")}` }
     ]
 
     const listedProps = {
@@ -212,7 +213,7 @@ function Hr() {
                         }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}
-                                <h1 className="text-[20px] font-[600]">HR</h1>
+                                <h1 className="text-[20px] font-[600]">{t("rima.hr_heading")}</h1>
                             </div>
                         </div>
                         <hr className='text-[#E1E4EA]' />
@@ -224,7 +225,7 @@ function Hr() {
                             </div>
                             <div className="flex flex-col">
                                 <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Rima</h1>
-                                <p className="text-[#5A687C] text-[14px] font-[400]">HR</p>
+                                <p className="text-[#5A687C] text-[14px] font-[400]">{t("rima.hr_heading")}</p>
                             </div>
                         </div>
                         {sideMenuList.map((e, i) => <div
