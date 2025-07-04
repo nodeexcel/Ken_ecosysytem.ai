@@ -176,13 +176,13 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                     </div>
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={() => handleSelect(sidebarItems[0].id, sidebarItems[0].label)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarFourBoxIcon status={renderColor(0)} /></div> <div className='hidden group-hover:block'><SidebarFourBoxIcon status={true} /></div> </div>
-                        <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[97px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
+                        <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[101px]' : 'md:left-[97px]'} left-[102px]  bg-white shadow-md rounded p-2 z-[9999]`}>
                             <p className='font-[400]'>{t("sidebar.home")}</p>
                         </div>
                     </div>
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={() => handleSelect(sidebarItems[7].id, sidebarItems[7].label)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SkillsIcon status={renderColor(7)} /></div> <div className='hidden group-hover:block'><SkillsIcon status={true} /></div> </div>
-                        <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[95px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
+                        <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[120px]' : 'md:left-[95px]'} left-[102px] bg-white shadow-md rounded p-2 z-[9999]`}>
                             <p className='font-[400]'>{t("sidebar.skills")}</p>
                         </div>
                     </div>
@@ -198,7 +198,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                     <hr className='text-[#E1E4EA]' />
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={() => handleSelect(sidebarItems[2].id, sidebarItems[2].label)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarSettingIcon status={renderColor(2)} /></div> <div className='hidden group-hover:block'><SidebarSettingIcon status={true} /></div> </div>
-                        <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[104px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
+                        <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[113px]' : 'md:left-[104px]'} left-[102px] bg-white shadow-md rounded p-2 z-[9999]`}>
                             <p className='font-[400]'>{t("sidebar.settings")}</p>
                         </div>
                     </div>
@@ -224,20 +224,20 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                                 ))}
                             </div>
                         )}
-                        <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[109px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
+                        <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[101px]' : 'md:left-[109px]'} left-[102px] bg-white shadow-md rounded p-2 z-[9999]`}>
                             <p className='font-[400]'>{t("sidebar.language")}</p>
                         </div>
                     </div>
                     <hr className='text-[#E1E4EA]' />
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={redirectHelpCenterDoc}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarHelpCenterIcon status={renderColor(3)} /></div> <div className='hidden group-hover:block'><SidebarHelpCenterIcon status={true} /></div> </div>
-                        <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[113px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
+                        <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[118px]' : 'md:left-[113px]'} left-[102px] bg-white shadow-md rounded p-2 z-[9999]`}>
                             <p className='font-[400]'>{t("sidebar.help_center")}</p>
                         </div>
                     </div>
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={() => setCommissionStatus(true)}>
                         <div className="flex items-center gap-2"><div className='group-hover:hidden'><CommuinityIcon status={renderColor(4)} /></div> <div className='hidden group-hover:block'><CommuinityIcon status={true} /></div> </div>
-                        <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[107px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
+                        <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[103px]' : 'md:left-[107px]'} left-[102px] bg-white shadow-md rounded p-2 z-[9999]`}>
                             <p className='font-[400]'>{t("sidebar.support")}</p>
                         </div>
                     </div>
@@ -261,7 +261,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
 
                     <div className='h-[120px] flex flex-col justify-around gap-2 items-center '>
                         <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-1">
-                        {t("sidebar.please_complete_profile")}
+                            {t("sidebar.please_complete_profile")}
                         </h2>
                         <button
                             className="bg-[#675FFF] text-white px-5 py-2 font-[500] test-[16px]  rounded-lg"

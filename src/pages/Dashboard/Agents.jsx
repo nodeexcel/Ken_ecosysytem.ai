@@ -183,7 +183,7 @@ const Agents = () => {
                       {employee.name}
                       <br />
                     </span>
-                    <span>{employee.role}</span>
+                    <span className="text-[15px]">{employee.role}</span>
                   </div>
                   <CircleArrowRightIcon className="absolute w-5 h-5 top-0 right-0 text-[#1E1E1E]" />
                 </div>
