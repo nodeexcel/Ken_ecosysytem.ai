@@ -781,6 +781,49 @@ const englishTranslation = {
     author_placeholder:"Enter author"
 
   },
+  calina:{
+    create_new_chatbot:"Create New Chatbot",
+    bot_details:"Bot Details",
+    bot_name:"Bot Name",
+    bot_name_placeholder:"Ex. Ecosystem",
+    role:"Role",
+    personality:"Personality",
+    personality_description:"The chatbot automatically detects the language used by customer during the first interaction.",
+    prompt:"Prompt",
+    prompt_hello:"Hello",
+    transfer_details:"Transfer Details",
+    transfer_optional:"Transfer",
+    optional:"(Optional)",
+    end_the_conversation:"When Should The A1 End The Conversation?",
+    main_condition:"Select the main condition that triggers a transfer:",
+    friendly:"Friendly",
+    professional:"Professional",
+    energetic:"Energetic",
+    relaxed:"Relaxed",
+    result_oriented:"Results-Oriented",
+    direct:"Direct",
+    empathic:"Emphatic",
+    all:"All",
+    user_requested:"The user requests to be contacted",
+    request_after_x_attempt:"The AI doesn't understand the request after X attempts",
+    detect_keyword:`The A1 detects a keyword (e.g., "help," "human")`,
+    website:"Website",
+    website_content:"Connect your chatbot to Website and let it respond to your customers messages",
+    messenger:"Messenger",
+    messenger_content:"Connect your chatbot to facebook and let it respond to your customers messages",
+    whatsapp:"WhatsApp",
+    whatsapp_content:"Connect your chatbot to WhatsApp and let it respond to your customers messages",
+    slack:"Slack",
+    slack_content:"Connect your chatbot to Slack and let it respond to your customers messages",
+    chat_bot_alpha:"Chat bot alpha",
+    smart_chatbot:"Smart Chatbot",
+    new_chatbot:"New Chatbot",
+    no_chatbot_listed:"No Chatbot Data Listed"
+
+
+
+  },
+
   no_data: "No Data Found",
   processing: "Processing...",
   refresh: "Refresh",
@@ -813,7 +856,14 @@ const englishTranslation = {
   type_message:"Type your message here ....",
   account_chat:"Accounting Chat",
   share:"Share",
-  with_your_friends:"with your friends and get lifetime commission."
+  with_your_friends:"with your friends and get lifetime commission.",
+  add_resources:"Add Resources",
+  my_file:"My File",
+  free_text:"Free Text",
+  date_and_time:"Date & Time",
+  total_chat:"Total Chat",
+  open:"Open"
+  
   
 };
 export default englishTranslation;

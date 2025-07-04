@@ -71,32 +71,32 @@ function CustomerSupportChatBotForm() {
 
 
     const personalityOptions = [
-        { label: "Friendly", key: "friendly" },
-        { label: "Professional", key: "professional" },
-        { label: "Energetic", key: "energetic" },
-        { label: "Relaxed", key: "relaxed" },
-        { label: "Results-Oriented", key: "results_oriented" },
-        { label: "Direct", key: "direct" },
-        { label: "Emphatic", key: "emphatic" },
+        { label: `${t("calina.friendly")}`, key: "friendly" },
+        { label: `${t("calina.professional")}`, key: "professional" },
+        { label: `${t("calina.energetic")}`, key: "energetic" },
+        { label: `${t("calina.relaxed")}`, key: "relaxed" },
+        { label: `${t("calina.result_oriented")}`, key: "results_oriented" },
+        { label:`${t("calina.direct")}`, key: "direct" },
+        { label: `${t("calina.empathic")}`, key: "emphatic" },
     ]
 
     const roleOptions = [
-        { label: "All", key: "all" },
-        { label: "Professional", key: "professional" },
-        { label: "Energetic", key: "energetic" },
+        { label: `${t("calina.all")}`, key: "all" },
+        { label: `${t("calina.professional")}`, key: "professional" },
+        { label: `${t("calina.energetic")}`, key: "energetic" },
     ]
 
     const transferOptions = [
-        { label: "The user requests to be contacted", key: "the_user_requests_to_be_contacted" },
-        { label: "The AI doesn't understand the request after X attempts", key: "the_AI_doesn't_understand_the_request_after_X_attempts" },
-        { label: `The A1 detects a keyword (e.g., "help," "human")`, key: `the_AI_detects_a_keyword` }
+        { label: `${t("calina.user_requested")}`, key: "the_user_requests_to_be_contacted" },
+        { label: `${t("calina.request_after_x_attempt")}`, key: "the_AI_doesn't_understand_the_request_after_X_attempts" },
+        { label: `${t("calina.detect_keyword")}`, key: `the_AI_detects_a_keyword` }
     ]
 
     const integrationsData = [
-        { label: "Website", icon: <WebsiteIcon />, content: "Connect your chatbot to Website and let it respond to your customers messages", is_active: true },
-        { label: "Messenger", icon: <FacebookIcon />, content: "Connect your chatbot to facebook and let it respond to your customers messages", is_active: false },
-        { label: "WhatsApp", icon: <WhatsAppIcon />, content: "Connect your chatbot to WhatsApp and let it respond to your customers messages", is_active: false },
-        { label: "Slack", icon: <SlackIcon />, content: "Connect your chatbot to Slack and let it respond to your customers messages", is_active: false }
+        { label: `${t("calina.website")}`, icon: <WebsiteIcon />, content: `${t("calina.website_content")}`, is_active: true },
+        { label: `${t("calina.messenger")}`, icon: <FacebookIcon />, content: `${t("calina.messenger_content")}`, is_active: false },
+        { label: `${t("calina.whatsapp")}`, icon: <WhatsAppIcon />, content: `${t("calina.whatsapp_content")}`, is_active: false },
+        { label: `${t("calina.slack")}`, icon: <SlackIcon />, content: `${t("calina.slack_content")}`, is_active: false }
     ]
 
     const handleChange = (e) => {
@@ -133,7 +133,7 @@ function CustomerSupportChatBotForm() {
 
     return (
         <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
-            <h1 className="text-[#1E1E1E] font-[600] text-[24px]">Create New Chatbot</h1>
+            <h1 className="text-[#1E1E1E] font-[600] text-[24px]">{t("calina.create_new_chatbot")}</h1>
             <div className="h-full flex flex-col gap-4 w-full">
                 <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
                     <div className="flex justify-between items-center" onClick={() => {
@@ -141,7 +141,7 @@ function CustomerSupportChatBotForm() {
                     }}>
                         <div className='flex items-center gap-2'>
                             <p className={`${step === 1 ? 'bg-[#675FFF]' : statusSteps.step1 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step1 ? <CheckIcon /> : '1'}</p>
-                            <p className={`text-[14px] font-[600] ${step === 1 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>Bot Details</p>
+                            <p className={`text-[14px] font-[600] ${step === 1 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("calina.bot_details")}</p>
                         </div>
                         {step !== 1 && <RightArrowIcon />}
                     </div>
@@ -150,7 +150,7 @@ function CustomerSupportChatBotForm() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                             <div className="flex flex-col gap-1.5 w-full">
                                 <label className="text-sm font-medium text-[#1e1e1e]">
-                                    Bot Name<span className="text-[#675fff]">*</span>
+                                {t("calina.bot_name")}<span className="text-[#675fff]">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -158,13 +158,13 @@ function CustomerSupportChatBotForm() {
                                     value={formData?.bot_name}
                                     onChange={handleChange}
                                     className={`w-full bg-white p-2 rounded-lg border ${errors.bot_name ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                                    placeholder="Ex. Ecosystem"
+                                    placeholder={t("calina.bot_name_placeholder")}
                                 />
                                 {errors.bot_name && <p className="text-red-500 text-sm mt-1">{errors.bot_name}</p>}
                             </div>
                             <div className="flex flex-col gap-1.5 flex-1">
                                 <label className="text-sm font-medium text-[#1e1e1e]">
-                                    Role
+                                    {t("calina.role")}
                                 </label>
                                 <SelectDropdown
                                     name="role"
@@ -178,7 +178,7 @@ function CustomerSupportChatBotForm() {
                                             ...prev, role: ""
                                         }))
                                     }}
-                                    placeholder="Select"
+                                    placeholder={t("select")}
                                     className=""
                                     errors={errors}
                                 />
@@ -186,13 +186,13 @@ function CustomerSupportChatBotForm() {
                             </div>
                             <div className="flex flex-col gap-1.5 flex-1">
                                 <label className="text-sm font-medium text-[#1e1e1e]">
-                                    Personality
+                                    {t("calina.personality")}
                                 </label>
-                                <p className="text-[#5A687C] font-[400] text-[12px]">The chatbot automatically detects the language used by customer during the first interaction.</p>
+                                <p className="text-[#5A687C] font-[400] text-[12px]">{t("calina.personality_description")}</p>
                             </div>
                             <div className="flex flex-col gap-1.5 flex-1">
                                 <label className="text-sm font-medium text-[#1e1e1e]">
-                                    Personality
+                                {t("calina.personality")}
                                 </label>
                                 <SelectDropdown
                                     name="personality"
@@ -206,7 +206,7 @@ function CustomerSupportChatBotForm() {
                                             ...prev, personality: ""
                                         }))
                                     }}
-                                    placeholder="Select"
+                                    placeholder={t("Select")}
                                     className=""
                                     errors={errors}
                                 />
@@ -215,7 +215,7 @@ function CustomerSupportChatBotForm() {
                         </div>
                         <div className="flex flex-col gap-1.5 w-full">
                             <label className="text-sm font-medium text-[#1e1e1e]">
-                                Prompt
+                            {t("calina.prompt")}
                             </label>
                             <textarea
                                 name='prompt'
@@ -223,7 +223,7 @@ function CustomerSupportChatBotForm() {
                                 value={formData?.prompt}
                                 rows={4}
                                 className={`w-full bg-white p-2 rounded-lg border  ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                placeholder="Hello"
+                                placeholder={t("calina.prompt_hello")}
                             />
                             {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
                         </div>
@@ -233,8 +233,8 @@ function CustomerSupportChatBotForm() {
                         <div className="flex items-center gap-2">
                             <button onClick={() => {
                                 handleContinue(2)
-                            }} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
-                            <button onClick={() => handleCancel(1)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                            }} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("continue")}</button>
+                            <button onClick={() => handleCancel(1)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
                         </div>
 
                     </div>}
@@ -245,7 +245,7 @@ function CustomerSupportChatBotForm() {
                     }}>
                         <div className='flex items-center gap-2'>
                             <p className={`${step === 2 ? 'bg-[#675FFF]' : statusSteps.step2 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step2 ? <CheckIcon /> : '2'}</p>
-                            <p className={`text-[14px] font-[600] ${step === 2 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>Transfer Details</p>
+                            <p className={`text-[14px] font-[600] ${step === 2 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("calina.transfer_details")}</p>
                         </div>
                         {step !== 2 && <RightArrowIcon />}
                     </div>
@@ -253,10 +253,10 @@ function CustomerSupportChatBotForm() {
                         <hr style={{ color: "#E1E4EA" }} />
                         <div className="flex flex-col gap-1 w-full">
                             <p className="text-sm font-medium text-[#1e1e1e] pb-4">
-                                Transfer<span className="text-[#5A687C] text-xs font-[400]">(Optional)</span>
+                            {t("calina.transfer_optional")}<span className="text-[#5A687C] text-xs font-[400]">{t("calina.optional")}</span>
                             </p>
                             <label className="text-sm font-medium text-[#1e1e1e] pb-2">
-                                When Should The A1 End The Conversation?<span className="text-[#5A687C] text-xs font-[400]">Select the main condition that triggers a transfer:</span>
+                            {t("calina.end_the_conversation")}<span className="text-[#5A687C] text-xs font-[400]">{t("calina.main_condition")}</span>
                             </label>
                             <ul className="flex flex-col gap-2.5">
                                 {transferOptions.map((each) => (
@@ -289,8 +289,8 @@ function CustomerSupportChatBotForm() {
                         <div className="flex items-center gap-2">
                             <button onClick={() => {
                                 handleContinue(3)
-                            }} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
-                            <button onClick={() => handleCancel(2)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                            }} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("continue")}</button>
+                            <button onClick={() => handleCancel(2)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
                         </div>
 
                     </div>}
@@ -308,7 +308,7 @@ function CustomerSupportChatBotForm() {
                     {step === 3 && <div className="flex flex-col gap-5">
                         <hr style={{ color: "#E1E4EA" }} />
                         <div>
-                            <label className="block text-sm font-medium mb-1">My File</label>
+                            <label className="block text-sm font-medium mb-1">{t("my_file")}</label>
                             <div className="mt-2">
                                 <div
                                     onClick={handleClick}
@@ -344,7 +344,7 @@ function CustomerSupportChatBotForm() {
                         </div>
                         <div className="flex flex-col gap-1.5 w-full">
                             <label className="text-sm font-medium text-[#1e1e1e]">
-                                Free Text
+                                {t("free_text")}
                             </label>
                             <textarea
                                 name='free_text'
@@ -352,7 +352,7 @@ function CustomerSupportChatBotForm() {
                                 value={formData?.free_text}
                                 rows={4}
                                 className={`w-full bg-white p-2 rounded-lg border  ${errors.free_text ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                placeholder="Hello"
+                                placeholder={t("calina.prompt_hello")}
                             />
                             {errors.free_text && <p className="text-red-500 text-sm mt-1">{errors.free_text}</p>}
                         </div>
@@ -362,8 +362,8 @@ function CustomerSupportChatBotForm() {
                         <div className="flex items-center gap-2">
                             <button onClick={() => {
                                 handleContinue(4)
-                            }} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
-                            <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                            }} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("continue")}</button>
+                            <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
                         </div>
 
                     </div>}
@@ -374,7 +374,7 @@ function CustomerSupportChatBotForm() {
                     }}>
                         <div className='flex items-center gap-2'>
                             <p className={`${step === 4 ? 'bg-[#675FFF]' : statusSteps.step4 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step4 ? <CheckIcon /> : '4'}</p>
-                            <p className={`text-[14px] font-[600] ${step === 4 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>Integrations</p>
+                            <p className={`text-[14px] font-[600] ${step === 4 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("brain_ai.integrations.integrations")}</p>
                         </div>
                         {step !== 4 && <RightArrowIcon />}
                     </div>
@@ -391,7 +391,7 @@ function CustomerSupportChatBotForm() {
                                         setCustomStatus(true)
                                     }}
                                         disabled={!each.is_active}
-                                        className={`w-full px-[20px] py-[7px] border-[1.5px] font-[500] text-[16px] rounded-[7px] ${each.is_active ? 'bg-[#675FFF] border-[#5F58E8] text-[#fff] cursor-pointer' : 'border-[#E1E4EA] bg-[#E1E4EA] text-[#5A687C]'}`}>{each.is_active ? "Update" : "Comming Soon"}</button>
+                                        className={`w-full px-[20px] py-[7px] border-[1.5px] font-[500] text-[16px] rounded-[7px] ${each.is_active ? 'bg-[#675FFF] border-[#5F58E8] text-[#fff] cursor-pointer' : 'border-[#E1E4EA] bg-[#E1E4EA] text-[#5A687C]'}`}>{each.is_active ? `${t("brain_ai.update")}` : `${t("coming_soon")}`}</button>
                                 </div>
                             ))}
                         </div>
@@ -401,8 +401,8 @@ function CustomerSupportChatBotForm() {
                         <div className="flex items-center gap-2">
                             <button onClick={() => {
                                 handleContinue(4)
-                            }} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
-                            <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                            }} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("continue")}</button>
+                            <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
                         </div>
 
                     </div>}
