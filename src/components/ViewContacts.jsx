@@ -117,7 +117,7 @@ function ViewContacts({ setSelectedData, selectedData }) {
                 <div className='flex flex-col gap-5 py-5'>
                     <h1 className='text-[#1E1E1E] font-[600] text-[16px]'>{selectedData?.listName} contacts</h1>
                     {formCreateList.contactsId?.length > 0 && <div className='flex gap-4 items-center'>
-                        <p className='text-[#1E1E1E] font-[600] text-[16px]'>{formCreateList.contactsId?.length + ' Contact Selected'}</p>
+                        <p className='text-[#1E1E1E] font-[600] text-[16px]'>{formCreateList.contactsId?.length + " "+`${t("brain_ai.contacts_selected")}`}</p>
                         <button onClick={() => handleDeleteContact(formCreateList.contactsId)} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#FF2D55] rounded-[7px] text-[#FF2D55]">
                             {t("brain_ai.delete")}
                         </button>
