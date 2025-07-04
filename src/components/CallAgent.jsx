@@ -7,6 +7,7 @@ import us_flag from "../assets/images/us_flag.png"
 import fr_flag from "../assets/images/fr_flag.png"
 import { getPhoneNumber, createPhoneAgent, getCallAgent, updatePhoneNumberAgentStatus } from "../api/callAgent";
 import { SelectDropdown } from "./Dropdown";
+import { useTranslation } from "react-i18next";
 
 const countries = [
   { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
@@ -28,6 +29,8 @@ export default function CallAgentsPage() {
   const [inboundLimitStatus, setInboundLimitStatus] = useState(false)
   const [showPhoneNumberList, setShowPhoneNumberList] = useState(false)
   const [openUpward, setOpenUpward] = useState(false);
+  const { t } = useTranslation();
+
 
   const buttonRef = useRef(null);
   const phoneNumberRef = useRef()
@@ -52,8 +55,8 @@ export default function CallAgentsPage() {
   ];
 
   const voiceOptions = [
-    { key: "male", label: "Male" },
-    { key: "female", label: "Female" },
+    { key: "male", label: t("phone.male") },
+    { key: "female", label: t("phone.female") },
   ];
 
   const toggleActive = async (id) => {
@@ -160,11 +163,11 @@ export default function CallAgentsPage() {
 
   const isValidForm = () => {
     const error = {};
-    if (!agent.agent_name) error.agent_name = "Agent name is required";
-    if (!agent.language) error.language = "Language is required";
-    if (!agent.voice) error.voice = "Voice is required";
-    if (!agent.type) error.type = "Type is required";
-    if (agent.phone_number?.length === 0) error.phone_number = "Phone number is required";
+    if (!agent.agent_name) error.agent_name = t("phone.agent_name_validation");
+    if (!agent.language) error.language = t("phone.agent_language_validation");
+    if (!agent.voice) error.voice = t("phone.agent_voice_validation");
+    if (!agent.type) error.type = t("phone.agent_type_validation");
+    if (agent.phone_number?.length === 0) error.phone_number = t("phone.agent_phone_number_validation");
     setError({ ...error });
     return Object.keys(error).length === 0;
   };
@@ -222,9 +225,11 @@ export default function CallAgentsPage() {
     <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
       {/* Header */}
       <div className="flex justify-between items-center mb-3">
-        <h1 className="text-2xl font-semibold text-black">Call Agents</h1>
+        <h1 className="text-2xl font-semibold text-black">{t("phone.call_agents")}</h1>
         <button className="bg-[#7065F0] text-white font-medium px-5 py-2 rounded-lg shadow" onClick={() => setShowModal(true)}>
-          New Agent
+          {
+            t("phone.new_agent")
+          }
         </button>
       </div>
 
@@ -234,7 +239,7 @@ export default function CallAgentsPage() {
           <SelectDropdown
             name="country"
             options={countryOptions}
-            placeholder="Country"
+            placeholder={t("phone.country")}
             value={filters.country}
             onChange={(value) => setFilters({ ...filters, country: value })}
           />
@@ -244,7 +249,7 @@ export default function CallAgentsPage() {
           <SelectDropdown
             name="language"
             options={languageOptions}
-            placeholder="Language"
+            placeholder={t("phone.language")}
             value={filters.language}
             onChange={(value) => setFilters({ ...filters, language: value })}
           />
@@ -254,7 +259,7 @@ export default function CallAgentsPage() {
           <SelectDropdown
             name="voice"
             options={voiceOptions}
-            placeholder="Voice"
+            placeholder={t("phone.voice")}
             value={filters.voice}
             onChange={(value) => setFilters({ ...filters, voice: value })}
           />
@@ -267,12 +272,12 @@ export default function CallAgentsPage() {
           <div className="px-5 w-full">
             <thead>
               <tr className="text-left text-[#5A687C] text-[16px]">
-                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">Agent Name</th>
-                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">Language</th>
-                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">Voice</th>
-                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">Phone No</th>
-                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">Status</th>
-                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">Actions</th>
+                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">{t("appointment.agent_name")}</th>
+                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">{t("phone.language")}</th>
+                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">{t("phone.voice")}</th>
+                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">{t("brain_ai.phone_no")}</th>
+                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">{t("phone.status")}</th>
+                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">{t("phone.actions")}</th>
               </tr>
             </thead>
           </div>
@@ -301,7 +306,7 @@ export default function CallAgentsPage() {
                       <td className="p-[14px] min-w-[200px] max-w-[20%] w-full whitespace-nowrap">
                         <div className='flex items-center gap-2'>
                           <button className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg'>
-                            View Report
+                            {t("emailings.view_report")}
                           </button>
                           <button className="p-2 rounded-lg">
                             <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
@@ -310,7 +315,7 @@ export default function CallAgentsPage() {
                       </td>
                     </tr>
                   ))}
-                </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Call Agents Listed</p>}
+                </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">{t("phone.no_call_agents")}</p>}
           </div>
         </table>
       </div>
@@ -330,18 +335,18 @@ export default function CallAgentsPage() {
             </button>
 
             <h2 className="text-xl font-semibold text-gray-800 mb-8">
-              Add a New Call Agent
+             {t("phone.add_new_call_agent")}
             </h2>
 
             {/* Form */}
             <div className="space-y-4">
               <div>
                 <label className="text-sm  font-medium block mb-1">
-                  Agent Name
+                {t("appointment.agent_name")}
                 </label>
                 <input
                   type="text"
-                  placeholder="Enter number name"
+                  placeholder={t("phone.enter_number_placeholder")}
                   className={`w-full px-4 py-2 border rounded-lg resize-none ${error.agent_name ? 'border-red-500' : 'border-[#E1E4EA]'} focus:outline-none focus:border-[#675FFF]`}
                   value={agent.agent_name}
                   name="agent_name"
@@ -353,10 +358,11 @@ export default function CallAgentsPage() {
 
               <div>
                 <label className="text-sm font-medium block mb-1">
-                  Language
+                  {t("phone.language")}
                 </label>
                 <SelectDropdown
                   name="language"
+                  placeholder={t("select")}
                   options={[
                     { key: 'english', label: 'English' },
                     { key: 'french', label: 'French' },
@@ -374,9 +380,10 @@ export default function CallAgentsPage() {
 
               <div>
                 <label className="text-sm font-medium block mb-1">
-                  Voice
+                  {t("phone.voice")}
                 </label>
                 <SelectDropdown
+                 placeholder={t("select")}
                   name="voice"
                   options={[
                     { key: 'English', label: 'English' },
@@ -395,13 +402,14 @@ export default function CallAgentsPage() {
 
               <div>
                 <label className="text-sm font-medium block mb-1">
-                  Type
+                 {t("phone.type")}
                 </label>
                 <SelectDropdown
+                  placeholder={t("select")}
                   name="type"
                   options={[
-                    { key: 'inbound', label: 'Inbound' },
-                    { key: 'outbound', label: 'Outbound' },
+                    { key: 'inbound', label: t("phone.inbound") },
+                    { key: 'outbound', label: t("phone.outbound") },
                   ]}
                   value={agent.type}
                   onChange={(selectedType) => {
@@ -417,13 +425,13 @@ export default function CallAgentsPage() {
               <div>
                 <div className="flex items-center gap-2 ">
                   <label className="text-sm font-medium block mb-1">
-                    Phone Number
+                {t("phone.phone_number")}
                   </label>
 
                   <div className="relative group">
                     <Info className="text-gray-500 cursor-pointer mb-1" size={16} />
                     <div className="absolute bottom-full flex-col mb-1 gap-1 w-60 left-3 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:flex transition-opacity duration-200 z-10">
-                      {`For inbound user can choose one number but for outbound user can choose multiples.`}
+                      {t("phone.inbound_can_choose_one_number")}
                     </div>
                   </div>
                 </div>
@@ -438,7 +446,7 @@ export default function CallAgentsPage() {
                         const found = phoneNumbers?.length > 0 && phoneNumbers.find(d => d.key === dayKey);
                         return found?.label;
                       }).join(', ')
-                      : 'Select'}</span>
+                      : t("select")}</span>
                     <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showPhoneNumberList ? 'transform rotate-180' : ''}`} />
                   </button>
                   {showPhoneNumberList && (
@@ -480,14 +488,14 @@ export default function CallAgentsPage() {
                 }}
                 className="w-full text-[16px] text-[#5A687C] bg-white border-[1.5px] border-[#E1E4EA] rounded-[8px] h-[38px]"
               >
-                Cancel
+              {t("cancel")}
               </button>
               <button
                 className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
                 disabled={loader}
                 onClick={submitForm}
               >
-                <p>  Add Number</p>
+                <p> {t("phone.add_number")}</p>
                 {loader && <span className="loader text-[#5E54FF]"></span>}
               </button>
             </div>
@@ -513,10 +521,14 @@ export default function CallAgentsPage() {
               </div>
               <div className="flex flex-col gap-2">
                 <h2 className="text-[20px] font-[600] text-[#1E1E1E]">
-                  Warning: Inbound Number Limit
+                  {
+                    t("phone.warning_inbound")
+                  }
                 </h2>
                 <p className="text-[14px] font-[400] text-[#5A687C]">
-                  Each agent can have only one inbound number. This agent already has one assigned.
+                  {
+                    t("phone.warning_inbound_msg")
+                  }
                 </p>
               </div>
               <button
@@ -526,7 +538,9 @@ export default function CallAgentsPage() {
                   setShowPhoneNumberList(true)
                 }}
               >
-                Ok
+                {
+                  t("phone.ok")
+                }
               </button>
             </div>
           </div>

@@ -470,21 +470,21 @@ export default function PhoneNumbers() {
                 <X size={20} />
               </button>
               <div className="flex flex-col gap-7">
-                <p className="text-[#1E1E1E] font-[500] text-[20px]">Verification Code</p>
+                <p className="text-[#1E1E1E] font-[500] text-[20px]">{t("phone.verification_code")}</p>
                 <p className="text-[#1E1E1E] font-[700] bg-[#F0EFFF] w-full text-center text-[44px] px-[12px] py-[17px] rounded-[10px]">0600525</p>
-                <p className="text-[#5A687C] text-[16px] font-[400] mb-4">Please enter the code on your phone’s keypad to activate this number.</p>
+                <p className="text-[#5A687C] text-[16px] font-[400] mb-4">{t("phone.enter_verification_code")}</p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setOtpModal(false)}
                     className="w-full  px-[20px] py-[7px] text-[16px] text-[#5A687C] bg-white border-[1.5px] border-[#E1E4EA] rounded-[8px]"
                   >
-                    Cancel
+                    {t("phone.cancel")}
                   </button>
                   <button
                     onClick={() => setOtpModal(false)}
                     className="w-full text-[16px] text-white rounded-[8px] bg-[#675FFF] px-[20px] py-[7px] flex justify-center items-center gap-2 relative"
                   >
-                    Submit
+                   {t("phone.submit")}
                   </button>
                 </div>
               </div>
@@ -497,14 +497,14 @@ export default function PhoneNumbers() {
         deleteRow && (
           <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl w-[400px] p-6 relative shadow-lg">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">Delete Phone Number</h2>
-              <p className="text-gray-500 mb-4">Are you sure you want to delete this phone number?</p>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">{t("phone.delete_phone_number")}</h2>
+              <p className="text-gray-500 mb-4">{t("phone.delete_phone_number_msg")}</p>
               <div className="flex gap-2">
                 <button
                   onClick={() => setDeleteRow(null)}
                   className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
                 >
-                  Cancel
+                 {t("cancel")}
                 </button>
                 <button
                   onClick={() => {
@@ -513,7 +513,7 @@ export default function PhoneNumbers() {
                   }}
                   className="w-full text-[16px] text-white rounded-[8px] bg-red-500 h-[38px] flex justify-center items-center gap-2 relative"
                 >
-                  Delete
+                {t("delete")}
                   {/* <span className="loader"></span> */}
                 </button>
               </div>

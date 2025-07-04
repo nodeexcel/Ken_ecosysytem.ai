@@ -3,6 +3,7 @@ import { MoreHorizontal, X } from "lucide-react";
 import { BritishFlag, Delete, Notes, Phone, TestCall, ThreeDots } from "../icons/icons";
 import DatePicker from "react-datepicker";
 import { LuCalendarDays } from "react-icons/lu";
+import { useTranslation } from "react-i18next";
 
 const agents = [
     {
@@ -45,6 +46,7 @@ const countries = [
 ];
 
 export default function InBoundCalls() {
+    const { t } = useTranslation();
     const [showModal, setShowModal] = useState(false);
     const [secondModel, setSecondModel] = useState(false);
     const [toggleTom, setToggleTom] = useState(true);
@@ -79,7 +81,7 @@ export default function InBoundCalls() {
         <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold text-black">Inbound Calls</h1>
+                <h1 className="text-2xl font-semibold text-black">{t("phone.inbound_calls")}</h1>
                 {/* <button
                     className="bg-[#7065F0] text-white font-medium px-5 py-2 rounded-lg shadow"
                     onClick={() => setShowModal(true)}
@@ -96,7 +98,7 @@ export default function InBoundCalls() {
                         onChange={(date) => setStartDate(date)}
                         customInput={
                             <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px]  focus:border-[#675FFF] focus:outline-none">
-                                Start Date
+                                {t("phone.start_date")}
                                 <LuCalendarDays className="text-[16px]" />
                             </button>
                         }
@@ -108,7 +110,7 @@ export default function InBoundCalls() {
                         onChange={(date) => setEndDate(date)}
                         customInput={
                             <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px] focus:border-[#675FFF] focus:outline-none">
-                                End Date
+                            {t("phone.end_date")}
                                 <LuCalendarDays className="text-[16px]" />
                             </button>
                         }
@@ -129,14 +131,15 @@ export default function InBoundCalls() {
                     <div className="px-5 w-full">
                         <thead>
                             <tr className="text-left text-[#5a687c] text-[16px]">
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Agent Name</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Date</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Language</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Voice</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Caller no</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Status</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Duration</th>
-                                <th className="p-[14px]  w-full font-[400] whitespace-nowrap">Actions</th>
+                              <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("emailings.campaign_name")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("appointment.agent_name")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("brain_ai.date")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.language")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.voice")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.receipient_no")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.status")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.duration")}</th>
+                                <th className="p-[14px] w-full font-[400] whitespace-nowrap">{t("phone.actions")}</th>
                             </tr>
                         </thead>
                     </div>

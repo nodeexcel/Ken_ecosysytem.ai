@@ -4,6 +4,7 @@ import { BritishFlag, Delete, Notes, Phone, TestCall, ThreeDots } from "../icons
 import DatePicker from "react-datepicker";
 import { LuCalendarDays } from "react-icons/lu";
 import { SelectDropdown } from "./Dropdown";
+import { useTranslation } from "react-i18next";
 
 const agents = [
     {
@@ -52,6 +53,7 @@ const countries = [
 ];
 
 export default function OutBoundCalls() {
+    const { t } = useTranslation();
     const [showModal, setShowModal] = useState(false);
     const [secondModel, setSecondModel] = useState(false);
     const [toggleTom, setToggleTom] = useState(true);
@@ -99,12 +101,14 @@ export default function OutBoundCalls() {
         <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold text-black">Outbound Calls</h1>
+                <h1 className="text-2xl font-semibold text-black">{t("phone.outbound_calls")}</h1>
                 <button
                     className="bg-[#7065F0] text-white font-medium px-5 py-2 rounded-lg shadow"
                     onClick={() => setShowModal(true)}
                 >
-                    New Campaign
+                    {
+                        t("emailings.new_campaign")
+                    }
                 </button>
             </div>
 
@@ -116,7 +120,9 @@ export default function OutBoundCalls() {
                         onChange={(date) => setStartDate(date)}
                         customInput={
                             <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px]  focus:border-[#675FFF] focus:outline-none">
-                                Start Date
+                                {
+                                    t("phone.start_date")
+                                }
                                 <LuCalendarDays className="text-[16px]" />
                             </button>
                         }
@@ -128,7 +134,9 @@ export default function OutBoundCalls() {
                         onChange={(date) => setEndDate(date)}
                         customInput={
                             <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px]  focus:border-[#675FFF] focus:outline-none">
-                                End Date
+                               {
+                                t("phone.end_date")
+                               }
                                 <LuCalendarDays className="text-[16px]" />
                             </button>
                         }
@@ -138,7 +146,7 @@ export default function OutBoundCalls() {
                     <SelectDropdown
                         name="campaign"
                         options={campaignOptions}
-                        placeholder="Campaign"
+                        placeholder={t("emailings.campaign")}
                         value={filters.campaign}
                         onChange={(value) => setFilters({ ...filters, campaign: value })}
                     />
@@ -147,7 +155,7 @@ export default function OutBoundCalls() {
                     <input
                         value={filters.recipient}
                         onChange={(e) => setFilters({ ...filters, recipient: e.target.value })}
-                        placeholder="Recipient"
+                        placeholder={t("phone.receipient")}
                         className="bg-white border text-[#5A687C] max-w-[152px] text-[16px] font-[400] w-fit border-[#E1E4EA] px-4 py-2 rounded-lg focus:border-[#675FFF] focus:outline-none"
                     />
                 </div>
@@ -158,15 +166,15 @@ export default function OutBoundCalls() {
                     <div className="px-5 w-full">
                         <thead>
                             <tr className="text-left text-[#5a687c] text-[16px]">
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Campaign Name</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Agent Name</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Date</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Language</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Voice</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Recipient No</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Status</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Duration</th>
-                                <th className="p-[14px] w-full font-[400] whitespace-nowrap">Actions</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("emailings.campaign_name")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("appointment.agent_name")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("brain_ai.date")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.language")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.voice")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.receipient_no")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.status")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.duration")}</th>
+                                <th className="p-[14px] w-full font-[400] whitespace-nowrap">{t("phone.actions")}</th>
                             </tr>
                         </thead>
                     </div>
@@ -205,7 +213,7 @@ export default function OutBoundCalls() {
                                                                     setActiveDropdown(null);
                                                                 }}
                                                             >
-                                                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><Phone /></div> <div className='hidden group-hover:block'><Phone active={true} /></div> <span>Listen the call</span> </div>
+                                                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><Phone /></div> <div className='hidden group-hover:block'><Phone active={true} /></div> <span>{t("phone.listen_call")}</span> </div>
                                                             </button>
                                                             <button
                                                                 className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
@@ -214,7 +222,7 @@ export default function OutBoundCalls() {
                                                                     setActiveDropdown(null);
                                                                 }}
                                                             >
-                                                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>Notes</span> </div>
+                                                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>{t("phone.notes")}</span> </div>
                                                             </button>
                                                             <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                                                             <div className='py-2'>
@@ -225,7 +233,7 @@ export default function OutBoundCalls() {
                                                                         setActiveDropdown(null);
                                                                     }}
                                                                 >
-                                                                    <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">Delete</span> </div>
+                                                                    <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">{t("delete")}</span> </div>
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -234,7 +242,7 @@ export default function OutBoundCalls() {
                                             </td>
                                         </tr>
                                     ))}
-                                </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Outbound Calls Listed</p>}
+                                </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">{t("phone.no_outbound_calls")}</p>}
                     </div>
 
                 </table>
@@ -255,21 +263,21 @@ export default function OutBoundCalls() {
                             <X size={20} />
                         </button>
 
-                        <h2 className="text-xl font-semibold mb-6">Add New Campaign</h2>
+                        <h2 className="text-xl font-semibold mb-6">{t("phone.add_new_campaign")}</h2>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm text-gray-700 mb-1">Campaign Name</label>
+                                <label className="block text-sm text-gray-700 mb-1">{t("emailings.campaigns")}</label>
                                 <input
                                     type="text"
-                                    placeholder="Enter campaign name"
+                                    placeholder={t("phone.enter_campaign_name")}
                                     className="w-full px-4 py-2 border rounded-lg border-gray-300 focus:border-[#675FFF] focus:outline-none"
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm text-gray-700 mb-1">Language</label>
+                                    <label className="block text-sm text-gray-700 mb-1">{t("emailings.language")}</label>
                                     <select className="w-full px-4 py-2 border rounded-lg border-gray-300  focus:border-[#675FFF] focus:outline-none">
                                         <option>Select</option>
                                         <option value="english">English</option>
@@ -277,18 +285,18 @@ export default function OutBoundCalls() {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm text-gray-700 mb-1">Voice</label>
+                                    <label className="block text-sm text-gray-700 mb-1">{t("phone.voice")}</label>
                                     <select className="w-full px-4 py-2 border rounded-lg border-gray-300  focus:border-[#675FFF] focus:outline-none">
-                                        <option>Select</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
+                                        <option>{t("select")}</option>
+                                        <option value="male">{t("phone.male")}</option>
+                                        <option value="female">{t("phone.female")}</option>
                                     </select>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm text-gray-700 mb-1">Choose Calendar</label>
+                                    <label className="block text-sm text-gray-700 mb-1">{t("phone.choose_calender")}</label>
                                     <select className="w-full px-4 py-2 border rounded-lg border-gray-300  focus:border-[#675FFF] focus:outline-none">
                                         <option>Select</option>
                                         <option value="google">Google Calendar</option>
@@ -296,9 +304,9 @@ export default function OutBoundCalls() {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm text-gray-700 mb-1">Max Call Time (Minutes)</label>
+                                    <label className="block text-sm text-gray-700 mb-1">{t("phone.max_call_time")}</label>
                                     <select className="w-full px-4 py-2 border rounded-lg border-gray-300  focus:border-[#675FFF] focus:outline-none">
-                                        <option>Select</option>
+                                        <option>{t("select")}</option>
                                         <option value="30">30</option>
                                         <option value="45">45</option>
                                         <option value="60">60</option>
@@ -307,19 +315,19 @@ export default function OutBoundCalls() {
                             </div>
 
                             <div>
-                                <label className="block text-sm text-gray-700 mb-1">Target Lists</label>
+                                <label className="block text-sm text-gray-700 mb-1">{t("phone.target_lists")}</label>
                                 <select className="w-full px-4 py-2 border rounded-lg border-gray-300  focus:border-[#675FFF] focus:outline-none">
-                                    <option>Select</option>
+                                    <option>{t("select")}</option>
                                     <option value="list1">List 1</option>
                                     <option value="list2">List 2</option>
                                 </select>
-                                <button className="text-[#7065F0] text-sm font-medium mt-1">+ Create New Contact List</button>
+                                <button className="text-[#7065F0] text-sm font-medium mt-1">+ {t("phone.create_new_contact_list")}</button>
                             </div>
 
                             <div>
-                                <label className="block text-sm text-gray-700 mb-1">Choose an Agent</label>
+                                <label className="block text-sm text-gray-700 mb-1">{t("phone.choose_an_agent")}</label>
                                 <select className="w-full px-4 py-2 border rounded-lg border-gray-300  focus:border-[#675FFF] focus:outline-none">
-                                    <option>Select</option>
+                                    <option>{t("select")}</option>
                                     <option value="agent1">Agent 1</option>
                                     <option value="agent2">Agent 2</option>
                                 </select>
@@ -327,7 +335,7 @@ export default function OutBoundCalls() {
 
                             <div>
                                 <label className="text-sm text-gray-600 font-medium block mb-1">
-                                    Phone Number
+                                    {t("phone.phone_number")}
                                 </label>
                                 <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-4 py-2  focus-within:border-[#675FFF]">
                                     <select
@@ -342,7 +350,7 @@ export default function OutBoundCalls() {
                                     </select>
                                     <input
                                         type="tel"
-                                        placeholder="Enter number"
+                                        placeholder={t("phone.enter_number")}
                                         className="w-full outline-none focus:outline-none"
                                     />
                                 </div>
@@ -350,7 +358,7 @@ export default function OutBoundCalls() {
 
                             <div className="flex items-center justify-between mt-2">
                                 <span className="text-sm font-medium text-gray-700">
-                                    Tom, Engages the Conversation
+                                  {t("phone.tom_engages_conversation")}
                                 </span>
                                 <button
                                     onClick={() => setToggleTom(!toggleTom)}
@@ -365,9 +373,9 @@ export default function OutBoundCalls() {
                             </div>
 
                             <div>
-                                <label className="block text-sm text-gray-700 mb-1">Your Catch Phrase</label>
+                                <label className="block text-sm text-gray-700 mb-1">{t("phone.your_catch_phrase")}</label>
                                 <textarea
-                                    placeholder="Enter your catch phrase"
+                                    placeholder={t("phone.catch_phrase_placeholder")}
                                     className="w-full px-4 py-2 border rounded-lg border-gray-300 focus:border-[#675FFF] focus:outline-none resize-none"
                                     rows={2}
                                 />
@@ -375,7 +383,7 @@ export default function OutBoundCalls() {
                             <div>
                                 <label className="block text-sm text-gray-700 mb-1">Your Call Script</label>
                                 <textarea
-                                    placeholder="Enter your call script"
+                                    placeholder={t("phone.placeholder_call_script")}
                                     className="w-full px-4 py-2 border rounded-lg border-gray-300  focus:border-[#675FFF] focus:outline-none resize-none"
                                     rows={4}
                                 />
@@ -383,10 +391,10 @@ export default function OutBoundCalls() {
 
                             <div className="flex gap-4 mt-6 justify-between">
                                 <button onClick={() => setSecondModel(true)} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px] hover:border-[#675FFF] focus:border-[#675FFF] focus:outline-none">
-                                    Test Call
+                    {t("phone.test_call")}
                                 </button>
                                 <button className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]  focus:bg-[#5A52E5] focus:outline-none">
-                                    Launch Calls
+                                    {t("phone.test_call")}
                                 </button>
                             </div>
                         </div>
@@ -402,10 +410,10 @@ export default function OutBoundCalls() {
                         </button>
 
                         <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-1">
-                            Test Call
+                           {t("phone.test_call")}
                         </h2>
                         <p className="text-gray-500 text-sm mb-4">
-                            Test your call with <span className="text-[#5E54FF]">Tom</span>
+                            {t("phone.test_call_with")} <span className="text-[#5E54FF]">Tom</span>
                         </p>
                         <div className="flex flex-col my-5 justify-center items-center gap-3">
                             <div><TestCall /></div>
@@ -416,12 +424,12 @@ export default function OutBoundCalls() {
                                 onClick={() => setShowModal(false)}
                                 className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
                             >
-                                I Haven't Received A Call
+                               {t("phone.not_receive_a_call")}
                             </button>
                             <button
                                 className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
                             >
-                                Finish The Test
+                               {t("phone.finish_test")}
                             </button>
                         </div>
                     </div>}
