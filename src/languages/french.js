@@ -868,11 +868,11 @@ const frenchTranslation = {
       "Voici quelques éléments pour vous aider à choisir la bonne longueur d’article :",
     writing_instructions: "Instructions de rédaction",
     writng_instruction_placeholder: `Par exemple, demandez à Lou de rédiger un article SEO ciblant les professionnels, tout en gardant un ton accessible :
-  
-  • Ton : professionnel mais facile à lire  
-  • Structure : une introduction, 3 à 5 sections, et une conclusion  
-  • Style : clair, concis, sans jargon inutile  
-  • Longueur : environ 700 à 900 mots  
+
+  • Ton : professionnel mais facile à lire
+  • Structure : une introduction, 3 à 5 sections, et une conclusion
+  • Style : clair, concis, sans jargon inutile
+  • Longueur : environ 700 à 900 mots
   • Conclusion : inclure un appel à l'action pour inciter les lecteurs à en savoir plus ou à contacter l'entreprise`,
     here_your_article: "Voici votre article",
     ethical_changes: "Les défis éthiques de l’intelligence artificielle.",
@@ -891,7 +891,7 @@ const frenchTranslation = {
     need_a_template_key: "J’ai besoin d’un modèle pour structurer ma page web.",
     most_relevent_keyword:
       "Comment trouver les mots-clés les plus pertinents pour votre contenu ?",
-      most_relevent_keyword_key: "Comment trouver les mots-clés les plus pertinents pour mon contenu ?",
+    most_relevent_keyword_key: "Comment trouver les mots-clés les plus pertinents pour mon contenu ?",
     seo_heading: "SEO",
     sandro: "Sandro",
     article_title: "Titre de l’article",
@@ -955,7 +955,12 @@ const frenchTranslation = {
     video_duration: "Durée de la vidéo",
     video_duration_placeholder: "Entrez la durée de la vidéo",
     author: "Auteur",
-    author_placeholder: "Entrez l’auteur"
+    author_placeholder: "Entrez l’auteur",
+    text_min: "Au moins 30 caractères sont requis",
+    loading_content: "Constance prépare votre création de contenu",
+    processed: "Voici votre création de contenu",
+    short: "Court",
+    long: "Long"
   },
   calina: {
     create_new_chatbot: "Créer un nouveau chatbot",
@@ -1004,7 +1009,7 @@ const frenchTranslation = {
     hire_faster_key: "Je cherche un processus structuré pour recruter plus rapidement.",
     qualified_candidates: "Vous avez du mal à trouver des candidats qualifiés pour vos postes ?",
     qualified_candidates_key: "J’ai du mal à trouver des candidats qualifiés pour mes postes."
-  },  
+  },
   no_data: "Aucune donnée trouvée",
   processing: "Traitement en cours...",
   refresh: "Actualiser",
@@ -1043,8 +1048,8 @@ const frenchTranslation = {
   free_text: "Texte libre",
   date_and_time: "Date et heure",
   total_chat: "Total des conversations",
-  open: "Ouvert"
-
+  open: "Ouvert",
+  is_required: "est requis",
 
 };
 export default frenchTranslation;

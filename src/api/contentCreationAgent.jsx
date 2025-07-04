@@ -39,3 +39,23 @@ export const deleteContentCreationChat = async (id) => {
         return error;
     }
 };
+
+export const createContent = async (payload) => {
+    try {
+        const response = await axiosInstance.post(`http://116.202.210.102:8000/create-content`, payload);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+
+export const contentGenerationStatus = async (id) => {
+    try {
+        const response = await axiosInstance.get(`http://116.202.210.102:8000/content-generation-status?content_id=${id}`,);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};

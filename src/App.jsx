@@ -31,6 +31,9 @@ import Seo from './pages/Dashboard/Seo'
 import ContentCreation from './pages/Dashboard/ContentCreation'
 import CustomerSupport from './pages/Dashboard/CustomerSupport'
 import Skills from './pages/Dashboard/Skills'
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 
 
 

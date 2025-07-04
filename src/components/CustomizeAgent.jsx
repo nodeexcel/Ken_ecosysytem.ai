@@ -11,6 +11,7 @@ import emileImg from '../assets/svg/emile_logo.svg'
 import rimaImg from '../assets/svg/rima_logo.svg'
 import finnImg from '../assets/svg/finn_logo.svg'
 import sandroImg from '../assets/svg/sandro_logo.svg'
+import { UploadIcon } from "../icons/icons"
 
 function CustomizeAgent({ customIntegartion, setCustomStatus }) {
     const [activeTab, setActiveTab] = useState("customize")
@@ -22,9 +23,9 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
     const tabs = [{ label: "Customize", key: "customize" }, { label: "Share", key: "share" }]
 
     const avatarList = [
-        { key: "tara", icon: taraImg }, { key: "constance", icon: constanceImg }, { key: "tom", icon: tomImg },
-        { key: "seth", icon: sethImg }, { key: "calina", icon: calinaImg }, { key: "rebecca", icon: rebeccaImg },
-        { key: "emile", icon: emileImg }, { key: "rima", icon: rimaImg }, { key: "finn", icon: finnImg }, { key: "sandro", icon: sandroImg }
+        { key: "tara", icon: taraImg }, { key: "constance", icon: constanceImg }, { key: "rebecca", icon: rebeccaImg },
+        { key: "emile", icon: emileImg }, { key: "rima", icon: rimaImg }, { key: "calina", icon: calinaImg },
+        { key: "seth", icon: sethImg }, { key: "tom", icon: tomImg }, { key: "finn", icon: finnImg }, { key: "sandro", icon: sandroImg }
     ]
 
     const handleChange = (e) => {
@@ -118,21 +119,24 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                                     <label className="text-sm font-medium text-[#1e1e1e]">
                                         Avatar
                                     </label>
-                                    {/* <div className="flex items-center gap-5">
-                                        <div className="bg-[#E1E4EA] p-[10px] rounded-[10px]">
-                                            <div className="p-10 w-[25%] rounded-full bg-[#F0EFFF]">
+                                    <div className="flex items-center gap-5">
+                                        <div className="border border-[#E1E4EA] p-[10px] rounded-[10px]">
+                                            <div className="rounded-full h-[63px] w-[63px] flex justify-center items-center bg-[#F0EFFF]">
                                                 <img src={`${formData.avatar}Img`} alt={formData.avatar} className="object-fit" />
                                             </div>
                                         </div>
                                         <hr style={{ color: "#E1E4EA", width: "148px", transform: "rotate(-90deg)" }} />
                                         <div className="flex gap-2 flex-wrap">
                                             {avatarList.map((each) => (
-                                                <div key={each.key} onClick={() => setFormData((prev) => ({ ...prev, avatar: each.value }))} className="rounded-full bg-[#F0EFFF]">
+                                                <div key={each.key} onClick={() => setFormData((prev) => ({ ...prev, avatar: each.key }))} className={`rounded-full h-[63px] w-[63px] cursor-pointer ${formData.avatar === each.key && 'border border-[#675FFF]'} flex justify-center items-center bg-[#F0EFFF]`}>
                                                     <img src={each.icon} alt={each.key} className="object-fit" />
                                                 </div>
                                             ))}
+                                            <div className="rounded-full h-[63px] w-[63px] flex justify-center items-center bg-[#F0EFFF]">
+                                                <UploadIcon />
+                                            </div>
                                         </div>
-                                    </div> */}
+                                    </div>
                                 </div>
                                 <div className="flex flex-col gap-1.5 w-full">
                                     <label className="text-sm font-medium text-[#1e1e1e]">
