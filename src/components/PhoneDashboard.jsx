@@ -1,9 +1,11 @@
 import { Plus } from 'lucide-react'
 import React, { useState } from 'react'
+import { useTranslation } from "react-i18next";
 
 const PhoneDashboard = () => {
 
   const [autoRefill, setAutoRefill] = useState(true);
+  const {t}=useTranslation();
   return (
 
     <div className="py-4 pr-2 flex flex-col gap-4 w-full h-screen overflow-auto ">
@@ -14,19 +16,19 @@ const PhoneDashboard = () => {
         <div className="w-full lg:w-[360px] h-[410px] rounded-lg border border-[#E1E4EA] bg-white  flex flex-col justify-between">
 
           <div className="flex items-center justify-between bg-[#F1F1FF] px-5 py-4 rounded-t-lg">
-            <h2 className="font-[400] text-[14px] text-[#1E1E1E]">Credit</h2>
+            <h2 className="font-[400] text-[14px] text-[#1E1E1E]">{t("settings.tab_2_list.credit")}</h2>
             <button className="bg-[#675FFF] border border-[#5F58E8] text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center  gap-1">
               <Plus size={16} />
-              Add Credit
+              {t("phone.add_credit")}
             </button>
           </div>
 
           <div className="p-6">
             <h3 className="text-5xl font-bold mb-2">$0</h3>
-            <p className="text-black mb-6 font-[500]">Credit 0.20$/mnt</p>
+            <p className="text-black mb-6 font-[500]">{t("settings.tab_2_list.credit")} 0.20$/mnt</p>
 
             <div className="flex items-center justify-between">
-              <span className="text-sm text-[#1E1E1E]">Auto-refill is</span>
+              <span className="text-sm text-[#1E1E1E]">{t("phone.auto_refill_is")}</span>
               <div className="flex items-center gap-2">
                 <span className={`text-xs px-2 py-1 rounded-full ${autoRefill ? "bg-green-100 text-green-600" : "bg-gray-200 text-gray-500"
                   }`}>
@@ -59,8 +61,8 @@ const PhoneDashboard = () => {
               </svg>
             </div>
             <h3 className="text-2xl font-bold">1</h3>
-            <p className="text-[#1E1E1E]">Agent</p>
-            <p className="text-sm text-[#5A687C]">You have 1 agent active now</p>
+            <p className="text-[#1E1E1E]">{t("phone.agent")}</p>
+            <p className="text-sm text-[#5A687C]">{t("phone.one_agent_active")}</p>
           </div>
 
           {/* Campaigns */}
@@ -74,8 +76,8 @@ const PhoneDashboard = () => {
 
 
             <h3 className="text-2xl font-bold">0</h3>
-            <p className="text-[#1E1E1E]">Campaigns</p>
-            <p className="text-sm text-[#5A687C]">You don’t have campaigns yet</p>
+            <p className="text-[#1E1E1E]">{t("emailings.campaigns")}</p>
+            <p className="text-sm text-[#5A687C]">{t("phone.dont_have_call")}</p>
           </div>
 
           {/* Called Clients */}
@@ -88,8 +90,8 @@ const PhoneDashboard = () => {
               </svg>
             </div>
             <h3 className="text-2xl font-bold">0</h3>
-            <p className="text-[#1E1E1E]">Called clients</p>
-            <p className="text-sm text-[#5A687C]">You don’t have calls yet</p>
+            <p className="text-[#1E1E1E]">{t("phone.called_clients")}</p>
+            <p className="text-sm text-[#5A687C]">{t("phone.dont_have_call")}</p>
           </div>
 
           {/* Average Call Duration */}
@@ -101,8 +103,8 @@ const PhoneDashboard = () => {
 
             </div>
             <h3 className="text-2xl font-bold">00:00:00</h3>
-            <p className="text-[#1E1E1E]">Average call duration</p>
-            <p className="text-sm text-[#5A687C]">You don’t have calls yet</p>
+            <p className="text-[#1E1E1E]">{t("phone.average_call_duration")}</p>
+            <p className="text-sm text-[#5A687C]">{t("phone.dont_have_call")}</p>
           </div>
 
           {/* call recive */}
@@ -116,8 +118,8 @@ const PhoneDashboard = () => {
 
             </div>
             <h3 className="text-2xl font-bold">0</h3>
-            <p className="text-[#1E1E1E]">Called Received</p>
-            <p className="text-sm text-[#5A687C]">You don't have received calls yet</p>
+            <p className="text-[#1E1E1E]">{t("phone.call_recieved")}</p>
+            <p className="text-sm text-[#5A687C]">{t("phone.dont_have_call")}</p>
           </div>
         </div>
       </div>

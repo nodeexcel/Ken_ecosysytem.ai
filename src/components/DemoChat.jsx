@@ -239,7 +239,7 @@ const DemoChat = () => {
                                             setLeadStatus(updated)
                                             setActiveConversation("")
                                         }}
-                                        placeholder="Select"
+                                        placeholder={t("brain_ai.select")}
                                         className="w-[40%]"
                                     />
                                     {/* <select value={leadStatus}

@@ -665,7 +665,7 @@ export default function CallCampaign() {
                 <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("emailings.campaign_name")}</label>
                 <input
                   type="text"
-                  placeholder="Enter campaign name"
+                  placeholder={t("phone.enter_campaign_name")}
                   className={`w-full px-4 py-2 bg-white border rounded-lg ${errors.campaign_name ? 'border-red-500' : 'border-[#E1E4EA]'}  focus:outline-none focus:border-[#675FFF]`}
 
                   name="campaign_name"

@@ -421,7 +421,15 @@ phone: {
     enter_campaign_name: "Entrez le nom de la campagne",
     choose_calender: "Choisir le Calendrier",
     target_lists: "Listes Cibles",
-    create_new_contact_list: "Créer une Nouvelle Liste de Contacts"
+    create_new_contact_list: "Créer une Nouvelle Liste de Contacts",
+    auto_refill_is: "Le rechargement automatique est",
+    agent: "Agent",
+    one_agent_active: "1 agent est actuellement actif",
+    called_clients: "Clients appelés",
+    dont_have_call: "Vous n’avez pas encore d’appels",
+    average_call_duration: "Durée moyenne des appels",
+    call_recieved: "Appels reçus"
+
 }
 ,
 

@@ -492,7 +492,7 @@ const SettingsPage = () => {
                 onChange={(updated) => {
                   handleChangeRole(updated)
                 }}
-                placeholder="Select"
+                placeholder={t("brain_ai.select")}
                 className="w-[157px]"
                 extraName={t("settings.tab_3_list.role")}
               />
@@ -623,7 +623,7 @@ const SettingsPage = () => {
                     onChange={(updated) => {
                       setEmailInviteRole(updated)
                     }}
-                    placeholder="Select"
+                    placeholder={t("brain_ai.select")}
                     className=""
                   />
                 </div>

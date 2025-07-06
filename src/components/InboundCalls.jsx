@@ -120,7 +120,7 @@ export default function InBoundCalls() {
                     <input
                         value={recipient}
                         onChange={(e) => setRecipient(e.target.value)}
-                        placeholder="Recipient"
+                        placeholder={t("phone.receipient")}
                         className="bg-white border text-[#5A687C] max-w-[152px] text-[16px] font-[400] w-fit border-[#E1E4EA] px-4 py-2 rounded-lg  focus:border-[#675FFF] focus:outline-none"
                     />
                 </div>
@@ -233,7 +233,7 @@ export default function InBoundCalls() {
                                 <label className="block text-sm text-gray-700 mb-1">Campaign Name</label>
                                 <input
                                     type="text"
-                                    placeholder="Enter campaign name"
+                                    placeholder={t("phone.enter_campaign_name")}
                                     className="w-full px-4 py-2 border rounded-lg border-gray-300  focus:border-[#675FFF] focus:outline-none"
                                 />
                             </div>
@@ -300,7 +300,7 @@ export default function InBoundCalls() {
                                     </select>
                                     <input
                                         type="tel"
-                                        placeholder="Enter number"
+                                        placeholder={t("phone.enter_number")}
                                         className="w-full outline-none focus:outline-none"
                                     />
                                 </div>

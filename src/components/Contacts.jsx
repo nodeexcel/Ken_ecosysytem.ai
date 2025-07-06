@@ -679,7 +679,7 @@ const ContactsPage = () => {
                 options={channelOptions}
                 value={channelSelect}
                 onChange={(updated) => setChannelSelect(updated)}
-                placeholder="Select"
+                placeholder={t("brain_ai.select")}
                 className="w-[198px]"
                 extraName={t("brain_ai.channel")}
               />
@@ -688,7 +688,7 @@ const ContactsPage = () => {
                 options={statusOptions}
                 value={statusSelect}
                 onChange={(updated) => setStatusSelect(updated)}
-                placeholder="Select"
+                placeholder={t("brain_ai.select")}
                 className="w-[215px]"
                 extraName={t("brain_ai.status")}
               />
@@ -805,7 +805,7 @@ const ContactsPage = () => {
                   setRowsPerPage(Number(updated));
                   setCurrentPage(1);
                 }}
-                placeholder="Select"
+                placeholder={t("brain_ai.select")}
                 className=""
               />
             </div>

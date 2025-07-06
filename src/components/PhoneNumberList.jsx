@@ -346,7 +346,7 @@ export default function PhoneNumbers() {
                 </label>
                 <input
                   type="text"
-                  placeholder="Enter number name"
+                  placeholder={t("phone.enter_number_placeholder")}
                   className={`w-full px-4 py-2 border rounded-lg resize-none ${error.phoneName ? 'border-red-500' : 'border-[#E1E4EA]'}  focus:outline-none focus:border-[#675FFF]`}
                   onChange={(e) => {
                     setPhoneName(e.target.value);
@@ -400,7 +400,7 @@ export default function PhoneNumbers() {
                   </div>
                   <input
                     type="tel"
-                    placeholder="Enter number"
+                    placeholder={t("phone.enter_number")}
                     className="w-full outline-none"
                     onChange={(e) => {
                       setNumber(e.target.value);

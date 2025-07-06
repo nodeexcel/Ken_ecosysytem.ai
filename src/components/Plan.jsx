@@ -722,7 +722,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
               onChange={(updated) => {
                 setRoleSelect(updated)
               }}
-              placeholder="Select"
+              placeholder={t("brain_ai.select")}
               className="w-[155px]"
             />
             <SelectDropdown
@@ -732,7 +732,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
               onChange={(updated) => {
                 setPastMonths(updated)
               }}
-              placeholder="Select"
+              placeholder={t("brain_ai.select")}
               className="w-[160px]"
             />
             <div className="flex items-center px-3 gap-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-[8px] py-[8px]">

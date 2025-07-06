@@ -563,10 +563,14 @@ const englishTranslation = {
         choose_calender:"Choose Calendar",
         target_lists:"Target Lists",
         create_new_contact_list:"Create New Contact List",
-        
-       
+        auto_refill_is:"Auto-refill is",
+        agent:"Agent",
+        one_agent_active:"You have 1 agent active now",
+        called_clients:"Called clients",
+        dont_have_call:"You don’t have calls yet",
+        average_call_duration:"Average call duration",
+        call_recieved:"Called Received"
 
-      
 
   },
   followup_validation: "Followup is required",
