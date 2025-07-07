@@ -3,13 +3,15 @@ import { DateFormat } from "../utils/TimeFormat"
 import { Delete, Edit, ThreeDots } from "../icons/icons"
 import CustomerSupportChatBotForm from "./CustomerSupportChatBotForm"
 import { useTranslation } from "react-i18next";
+import CustomerSupportChat from "./CustomerSupportChat";
 
 
 function SmartChatbot() {
     const [chatbotData, setChatbotData] = useState([])
     const [loading, setLoading] = useState(true)
     const [activeDropdown, setActiveDropdown] = useState(null);
-    const [chatBotFormStatus, setChatBotFormStatus] = useState(false)
+    const [chatBotFormStatus, setChatBotFormStatus] = useState(false);
+    const [openChats, setOpenChats] = useState(false)
     const moreActionsRef = useRef()
     const { t } = useTranslation()
 
@@ -98,7 +100,10 @@ function SmartChatbot() {
                                                 <td className="py-[14px] px-[14px] min-w-[200px] max-w-[38%] w-full text-[#5A687C] whitespace-nowrap">{row.tota_chats}</td>
                                                 <td ref={moreActionsRef} className="pr-[14px] relative">
                                                     <div className="flex items-center gap-2">
-                                                        <button className="border-[1.5px] cursor-pointer border-[#5F58E8] text-[#675FFF] font-[500] text-[16px] py-[7px] px-[20px] rounded-[7px]">{t("open")}</button>
+                                                        <button onClick={() => {
+                                                            setChatBotFormStatus(true)
+                                                            setOpenChats(true)
+                                                        }} className="border-[1.5px] cursor-pointer border-[#5F58E8] text-[#675FFF] font-[500] text-[16px] py-[7px] px-[20px] rounded-[7px]">{t("open")}</button>
                                                         <div>
                                                             <button
                                                                 onClick={() => handleDropdownClick(index)}
@@ -140,7 +145,7 @@ function SmartChatbot() {
                         </div>
                     </table>
                 </div>
-            </div> : <CustomerSupportChatBotForm />}
+            </div> : openChats ? <CustomerSupportChat /> : <CustomerSupportChatBotForm />}
         </>
     )
 }

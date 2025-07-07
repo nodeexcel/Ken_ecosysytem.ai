@@ -25,6 +25,8 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
     const [message, setMessage] = useState("")
     const [messages, setMessages] = useState([]);
     const [chat_id, setChatId] = useState("")
+    const [chatbotIntegrate, setChatbotIntegrate] = useState("chat_bubble")
+    const [code, setCode] = useState("")
 
     const agentChatRef = useRef()
 
@@ -109,6 +111,12 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
         { key: "seth", icon: seth }, { key: "tom", icon: tom }, { key: "finn", icon: finn }, { key: "sandro", icon: sandro }
     ]
 
+    const chatbotOptions = [{
+        key: "chat_bubble", label: "Display a chat bubble", content: "Add a floating chat icon at the bottom of your site, perfect for a discreet and always-accessible chatbot.", is_recommended: true
+    }, {
+        key: "iframe", label: "Integrate via iframe", content: "Embed the chatbot directly on a page of your site, always visible without needing to click on a bubble.", is_recommended: false
+    }]
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }))
@@ -157,7 +165,7 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                             ))}
                         </div>
                     </div>
-                    <div className="w-full flex gap-5">
+                    {activeTab === "customize" ? <div className="w-full flex gap-5">
                         <div className="w-[60%]">
                             <h1 className="text-[#1E1E1E] font-[600] text-[16px] pb-4">Personalize your Chatbot</h1>
                             <div className="flex flex-col gap-4">
@@ -305,7 +313,58 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> :
+                        <div className="w-full flex flex-col gap-3">
+                            <div className="flex items-center justify-between">
+                                <h1 className="text-[#1E1E1E] font-[600] text-[16px] pb-4">Integrate your chatbot into your website</h1>
+                                <p className="text-[#FF9500] font-[400] text-[16px]">Action required from you</p>
+                            </div>
+                            <ul className="flex w-full gap-2">
+                                {chatbotOptions.map((each) => (
+                                    <li key={each.key} className={`border w-[50%] ${each.key === chatbotIntegrate ? 'border-[#675FFF]' : 'border-[#E1E4EA]'} bg-[#fff] flex cursor-pointer gap-3 p-[12px] rounded-[12px]`} onClick={() => setChatbotIntegrate(each.key)}>
+                                        <div className="flex gap-3 pl-2">
+                                            <div className="pt-5">
+                                                <input style={{ accentColor: "#675FFF", width: "20px", height: "20px" }} className="" type="radio" checked={each.key === chatbotIntegrate} />
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                <div className="flex items-center justify-between py-1">
+                                                    <h2 className="text-[#1E1E1E] text-[16px] font-[500]">{each.label}</h2>
+                                                    {each.is_recommended && <p className="text-[#1E1E1E] font-[400] text-[14px] rounded-[40px] py-[8px] px-[12px] bg-[#F0EFFF]">Recommended</p>}
+                                                </div>
+                                                <p className="text-[#5A687C] text-[14px] font-[400]">{each.content}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                            <div className="flex flex-col gap-3">
+                                <h1 className="text-[#1E1E1E] font-[600] text-[16px]">Configuration</h1>
+                                <div className="flex flex-col gap-1">
+                                    <h2 className="text-[#1E1E1E] font-[600] text-[14px]">Install the following code on your site</h2>
+                                    <p className="text-[#5A687C] font-[400] text-[12px]">Place the code just before the closing tag on any page where you want to activate the chatbot.</p>
+                                </div>
+                                <>
+                                    <div className="flex items-center justify-between pb-1">
+                                        <p className="text-[#1E1E1E] font-[500] text-[14px]">Add Code Here</p>
+                                        <button className="border-[1.5px] cursor-pointer rounded-[7px] py-[4px] px-[14px] border-[#5F58E8] text-[#675FFF] text-[16px] font-[500]">Copy</button>
+                                    </div>
+                                    <textarea
+                                        name='code'
+                                        onChange={(e) => setCode(e.target.value)}
+                                        value={code}
+                                        rows={8}
+                                        className={`w-full text-[16px] font-[400] bg-white p-2 rounded-lg border border-[#e1e4ea] resize-none focus:outline-none focus:border-[#675FFF]`}
+                                        placeholder={`<script>document.addEventListener("DOMContentLoaded", ( ) { var e = document.createElement("iframe"); e.src =
+"https://applimova.ai/embededChatbot?id=6863d9859ecd340a75d9b215"; const i = innerWidth < 768, o = i ? "90%" : "420px", t = i ?
+"calc(lOOvh - 100px)" : "600px"; Object.assign(e.style, { position: "fixed", bottom: right: i ? "5%" "30px", border: "none", zlndex: "1000",
+width: o, height: t, borderRadius: "IOpx" }); document.body.appendChild(e); window.addEventListener("message", n { const d =
+n.data; if (d && typeof d === "object") { if (d.chatbotOpen === true) { e.style.width = o, e.style.height = t } else if (d.chatbotOpen
+=== false) { e.style.width = "50px", e.style.height = "70px" } } }) });
+< /script>`}
+                                    />
+                                </>
+                            </div>
+                        </div>}
                 </div>
             </div>
         </div >
