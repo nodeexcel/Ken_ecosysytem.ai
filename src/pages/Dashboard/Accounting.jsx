@@ -182,7 +182,8 @@ function Accounting() {
         handleChatHistoryId: handleChatHistoryId,
         socketRef: socketRef,
         socket2Ref: socket2Ref,
-        staticSuggestions: staticSuggestions
+        staticSuggestions: staticSuggestions,
+        nameColor:"#53AF86"
     }
 
     const stopTranscription = () => {

@@ -185,7 +185,8 @@ function Seo() {
         handleChatHistoryId: handleChatHistoryId,
         socketRef: socketRef,
         socket2Ref: socket2Ref,
-        staticSuggestions: staticSuggestions
+        staticSuggestions: staticSuggestions,
+        nameColor:"#C76FFF"
     }
 
     const stopTranscription = () => {

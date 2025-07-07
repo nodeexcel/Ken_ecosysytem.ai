@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { ConversationIcon, LeftArrow } from '../../icons/icons'
+import { ConversationIcon, DocIcon, InterviewPlannerIcon, LeftArrow, LinkedInIcon, ResumeDocIcon } from '../../icons/icons'
 import rimaImg from "../../assets/svg/rima_logo.svg"
 import { useNavigate } from 'react-router-dom'
 import rimaMsgLogo from '../../assets/svg/rima_msg_logo.svg'
@@ -8,6 +8,10 @@ import { deleteHrChat, getHrChatById, getHrChats, updateHrChatName } from '../..
 import AgentChatBox from '../../components/AgentChatBox'
 import { formatTimeAgo } from '../../utils/TimeFormat'
 import { useTranslation } from "react-i18next";
+import JobDescriptionHr from '../../components/JobDescriptionHr'
+import ResumeScreenerHr from '../../components/ResumeScreenerHr'
+import InterviewPlannerHr from '../../components/InterviewPlannerHr'
+import LinkedInOutreachHr from '../../components/LinkedInOutreachHr'
 
 function Hr() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -34,6 +38,10 @@ function Hr() {
 
     const sideMenuList = [
         { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
+        { label: `Job Description Writer`, icon: <DocIcon status={activeSidebarItem == "job_description_writer"} />, hoverIcon: <DocIcon hover={true} />, path: "job_description_writer" },
+        { label: `Resume Screener`, icon: <ResumeDocIcon status={activeSidebarItem == "resume_screener"} />, hoverIcon: <ResumeDocIcon hover={true} />, path: "resume_screener" },
+        { label: `Interview Planner`, icon: <InterviewPlannerIcon status={activeSidebarItem == "interview_planner"} />, hoverIcon: <InterviewPlannerIcon hover={true} />, path: "interview_planner" },
+        { label: `LinkedIn Outreacher`, icon: <LinkedInIcon status={activeSidebarItem == "linkedin"} />, hoverIcon: <LinkedInIcon hover={true} />, path: "linkedin" },
     ]
 
     useEffect(() => {
@@ -143,7 +151,7 @@ function Hr() {
         }
     }
 
-    const staticSuggestions = [{ label: `${t("rima.perfect_job_description")}`, key: `${t("rima.perfect_job_description_key")}`},
+    const staticSuggestions = [{ label: `${t("rima.perfect_job_description")}`, key: `${t("rima.perfect_job_description_key")}` },
     { label: `${t("rima.hire_faster")}`, key: `${t("rima.hire_faster_key")}` },
     { label: `${t("rima.qualified_candidates")}`, key: `${t("rima.qualified_candidates_key")}` }
     ]
@@ -181,7 +189,8 @@ function Hr() {
         handleChatHistoryId: handleChatHistoryId,
         socketRef: socketRef,
         socket2Ref: socket2Ref,
-        staticSuggestions: staticSuggestions
+        staticSuggestions: staticSuggestions,
+        nameColor:"#18A8D5"
     }
 
     const stopTranscription = () => {
@@ -196,6 +205,14 @@ function Hr() {
 
     const renderMainContent = () => {
         switch (activeSidebarItem) {
+            case "job_description_writer":
+                return <JobDescriptionHr />
+            case "resume_screener":
+                return <ResumeScreenerHr />
+            case "interview_planner":
+                return <InterviewPlannerHr />
+            case "linkedin":
+                return <LinkedInOutreachHr />
             default:
                 return <AgentChatBox listedProps={listedProps} />
         }

@@ -37,7 +37,7 @@ const AgentChatBox = ({ listedProps }) => {
         handleUpdateName,
         handleChatHistoryId,
         socketRef,
-        socket2Ref, staticSuggestions } = listedProps
+        socket2Ref, staticSuggestions, nameColor } = listedProps
     const [errorMessage, setErrorMessage] = useState("")
     const [activeDropdown, setActiveDropdown] = useState(null);
     const chatRef = useRef()
@@ -400,7 +400,7 @@ const AgentChatBox = ({ listedProps }) => {
                                         </div>
                                     )) : <div className="flex flex-col gap-6 p-5">
                                         <div className="text-[#000000] text-[24px] font-[400]">
-                                            <h1>{t("tara.hey")} {agentName}</h1>
+                                            <h1>{t("tara.hey")} <span style={{ color: nameColor }}>{agentName}</span></h1>
                                             <h1>{t("tara.help_you")}</h1>
                                         </div>
                                         <div className="w-full flex gap-2">

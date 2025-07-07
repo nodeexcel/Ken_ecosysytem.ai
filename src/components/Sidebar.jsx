@@ -15,7 +15,7 @@ import fr_flag from "../assets/images/fr_flag.png"
 import Notification from '../pages/Dashboard/Notification';
 import { X } from 'lucide-react';
 import { getNavbarData } from '../store/navbarSlice';
-import { CommuinityIcon, SidebarBrainIcon, SidebarDocumentIcon, SidebarFourBoxIcon, SidebarHelpCenterIcon, SidebarNotificationIcon, SidebarSettingIcon, SidebarSupportCenterIcon, SkillsIcon } from '../icons/icons';
+import { GiftIcon, SidebarBrainIcon, SidebarFourBoxIcon, SidebarHelpCenterIcon, SidebarNotificationIcon, SidebarSettingIcon, SkillsIcon } from '../icons/icons';
 import logo from '../assets/svg/dashboard_logo.svg'
 import { changeLanguage } from '../api/profile';
 import i18n from '../i18n';
@@ -236,7 +236,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         </div>
                     </div>
                     <div className='text-xl flex group hover:cursor-pointer relative justify-center py-3' onClick={() => setCommissionStatus(true)}>
-                        <div className="flex items-center gap-2"><div className='group-hover:hidden'><CommuinityIcon status={renderColor(4)} /></div> <div className='hidden group-hover:block'><CommuinityIcon status={true} /></div> </div>
+                        <div className="flex items-center gap-2"><div className='group-hover:hidden'><GiftIcon status={renderColor(4)} /></div> <div className='hidden group-hover:block'><GiftIcon status={true} /></div> </div>
                         <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[103px]' : 'md:left-[107px]'} left-[102px] bg-white shadow-md rounded p-2 z-[9999]`}>
                             <p className='font-[400]'>{t("sidebar.support")}</p>
                         </div>

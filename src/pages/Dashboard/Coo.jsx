@@ -187,7 +187,8 @@ function Coo() {
         handleChatHistoryId: handleChatHistoryId,
         socketRef: socketRef,
         socket2Ref: socket2Ref,
-        staticSuggestions: staticSuggestions
+        staticSuggestions: staticSuggestions,
+        nameColor:"#8A84FF"
     }
 
     const stopTranscription = () => {

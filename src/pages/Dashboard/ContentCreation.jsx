@@ -183,7 +183,8 @@ function ContentCreation() {
         handleChatHistoryId: handleChatHistoryId,
         socketRef: socketRef,
         socket2Ref: socket2Ref,
-        staticSuggestions: staticSuggestions
+        staticSuggestions: staticSuggestions,
+        nameColor:"#FF8FFF"
     }
 
     const stopTranscription = () => {
