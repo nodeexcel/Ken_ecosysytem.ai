@@ -279,9 +279,9 @@ export default function OutBoundCalls() {
                                 <div>
                                     <label className="block text-sm text-gray-700 mb-1">{t("emailings.language")}</label>
                                     <select className="w-full px-4 py-2 border rounded-lg border-gray-300  focus:border-[#675FFF] focus:outline-none">
-                                        <option>Select</option>
-                                        <option value="english">English</option>
-                                        <option value="french">French</option>
+                                        <option>{t("emailings.select")}</option>
+                                        <option value="english">{t("sandro.english")}</option>
+                                        <option value="french">{t("sandro.french")}</option>
                                     </select>
                                 </div>
                                 <div>
@@ -298,9 +298,9 @@ export default function OutBoundCalls() {
                                 <div>
                                     <label className="block text-sm text-gray-700 mb-1">{t("phone.choose_calender")}</label>
                                     <select className="w-full px-4 py-2 border rounded-lg border-gray-300  focus:border-[#675FFF] focus:outline-none">
-                                        <option>Select</option>
-                                        <option value="google">Google Calendar</option>
-                                        <option value="outlook">Outlook Calendar</option>
+                                        <option>{t("select")}</option>
+                                        <option value="google">{t("google_calendar")}</option>
+                                        <option value="outlook">{t("outlook_calendar")}</option>
                                     </select>
                                 </div>
                                 <div>
@@ -318,8 +318,8 @@ export default function OutBoundCalls() {
                                 <label className="block text-sm text-gray-700 mb-1">{t("phone.target_lists")}</label>
                                 <select className="w-full px-4 py-2 border rounded-lg border-gray-300  focus:border-[#675FFF] focus:outline-none">
                                     <option>{t("select")}</option>
-                                    <option value="list1">List 1</option>
-                                    <option value="list2">List 2</option>
+                                    <option value="list1">{t("brain_ai.list")} 1</option>
+                                    <option value="list2">{t("brain_ai.list")} 2</option>
                                 </select>
                                 <button className="text-[#7065F0] text-sm font-medium mt-1">+ {t("phone.create_new_contact_list")}</button>
                             </div>
@@ -328,8 +328,8 @@ export default function OutBoundCalls() {
                                 <label className="block text-sm text-gray-700 mb-1">{t("phone.choose_an_agent")}</label>
                                 <select className="w-full px-4 py-2 border rounded-lg border-gray-300  focus:border-[#675FFF] focus:outline-none">
                                     <option>{t("select")}</option>
-                                    <option value="agent1">Agent 1</option>
-                                    <option value="agent2">Agent 2</option>
+                                    <option value="agent1">{t("phone.agent")} 1</option>
+                                    <option value="agent2">{t("phone.agent")} 2</option>
                                 </select>
                             </div>
 

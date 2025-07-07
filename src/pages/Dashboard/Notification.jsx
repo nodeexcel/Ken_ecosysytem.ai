@@ -1,5 +1,6 @@
 import { CheckIcon, XIcon } from "lucide-react";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 
 const NotificationsComponent = ({ setNotification }) => {
@@ -36,6 +37,7 @@ const NotificationsComponent = ({ setNotification }) => {
     },
   ];
 
+  const { t } = useTranslation();
   const tomorrowNotifications = [
     {
       id: 1,
@@ -70,7 +72,7 @@ const NotificationsComponent = ({ setNotification }) => {
         {/* Header */}
         <header className="flex items-center justify-between px-5 py-3.5 w-full border-b border-[#e1e4ea]">
           <h2 className="font-bold text-black text-lg tracking-[-0.36px] leading-5">
-            Notifications
+            {t("sidebar.notification")}
           </h2>
 
           <div className="flex items-center gap-5 cursor-pointer">
@@ -82,7 +84,7 @@ const NotificationsComponent = ({ setNotification }) => {
                 <CheckIcon className="absolute w-[18px] h-[18px] top-0 left-1 text-blue-600" />
               </div>
               <span className="font-semibold text-blue-600 text-base tracking-[-0.32px] leading-5">
-                Mark all as Read
+                {t("mark_all_read")}
               </span>
             </button>
 
@@ -130,7 +132,7 @@ const NotificationsComponent = ({ setNotification }) => {
           {/* Tomorrow section */}
           <div className="flex items-center gap-2.5 p-2.5 relative self-stretch w-full flex-[0_0_auto] bg-gray-50">
             <h2 className="relative w-fit mt-[-1.00px] font-semibold text-gray-500 text-base tracking-[-0.32px] leading-5 whitespace-nowrap">
-              Tomorrow
+              {t("tomorrow")}
             </h2>
           </div>
           <div className="gap-3 p-3 flex flex-col items-start w-full">

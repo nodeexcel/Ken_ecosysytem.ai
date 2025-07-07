@@ -104,13 +104,13 @@ export default function CallCampaign() {
 
   const voiceOptions = [
     // { key: "", label: "Voice" },
-    { key: "male", label: "Male" },
-    { key: "female", label: "Female" },
-    { key: "neutral", label: "Neutral" }
+    { key: "male", label: `${t("male")}` },
+    { key: "female", label: `${t("female")}`},
+    { key: "neutral", label: `${t("neutral")}` }
   ];
 
-  const tagsOptions = [{ label: "Interested", key: "interested" }, { label: "Not Interested", key: "not_interested" },
-  { label: "Messaging", key: "messaging" }, { label: "No Answer", key: "no_answer" }, { label: "Recall Requested", key: "recall_requested" }
+  const tagsOptions = [{ label: `${t("interested")}`, key: "interested" }, { label: `${t("not_interested")}`, key: "not_interested" },
+  { label: `${t("messaging")}`, key: "messaging" }, { label: `${t("appointment.no_answer")}`, key: "no_answer" }, { label: `${t("recall_request")}`, key: "recall_requested" }
   ]
 
   const [campaign, setCampaign] = useState(

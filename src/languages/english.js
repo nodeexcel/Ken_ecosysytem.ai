@@ -961,7 +961,19 @@ const englishTranslation = {
   date_and_time: "Date & Time",
   total_chat: "Total Chat",
   open: "Open",
-  is_required: "is required"
+  is_required: "is required",
+  interested:"Interested",
+  not_interested:"Not Interested",
+  messaging:"Messaging",
+  recall_request:"Recall Requested",
+  male:"Male",
+  female:"Female",
+  neutral:"Neutral",
+  google_calendar:"Google Calendar",
+  outlook_calendar:"Outlook Calendar",
+  seo_website_url_is_required:"Url is required",
+  mark_all_read:"Mark all as Read",
+  tomorrow:"Tomorrow"
 
 };
 export default englishTranslation;

@@ -206,7 +206,7 @@ function CustomerSupportChatBotForm() {
                                             ...prev, personality: ""
                                         }))
                                     }}
-                                    placeholder={t("Select")}
+                                    placeholder={t("emailings.select")}
                                     className=""
                                     errors={errors}
                                 />

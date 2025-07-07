@@ -973,6 +973,18 @@ phone: {
   total_chat: "Total des conversations",
   open: "Ouvert",
   is_required: "est requis",
+  interested: "Intéressé",
+  not_interested: "Pas intéressé",
+  messaging: "Messagerie",
+  recall_request: "Rappel demandé",
+  male: "Homme",
+  female: "Femme",
+  neutral: "Neutre",
+  google_calendar:"Google Calendar",
+  outlook_calendar:"Outlook Calendar",
+  seo_website_url_is_required: "L’URL est requise",
+  mark_all_read: "Tout marquer comme lu",
+  tomorrow: "Demain"
 
 };
 export default frenchTranslation;
