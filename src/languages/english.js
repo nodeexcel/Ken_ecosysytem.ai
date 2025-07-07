@@ -18,7 +18,7 @@ const englishTranslation = {
   home: "Home",
   contacts: "Contacts",
   knowledge: "Knowledge",
-  integration: "integration",
+  integration: "Integrations",
   tara_coo: {
     coo_auto_generated:
       "Hi! I’m Tara, your Executive Assistant. \nI’m here to help you run your company and guide you through everything inside Ecosysteme.ai.\nVery soon, you’ll be able to message me directly on WhatsApp — by voice or text — to manage everything in one place. \nI’ll coordinate all your AI agents for you. Just a little more patience… it’s launching soon ⏳ In the meantime, I’m already connected to your AI Brain. \nI can analyze your business, answer your questions, and help you get the most out of every agent. So, where shall we start? 😊",
@@ -479,7 +479,7 @@ const englishTranslation = {
         inactive:"Inactive",
         cancel:"Cancel",
         type:"Type",
-        
+
         no_phonenumber_listed:"No Phone Numbers Listed",
         add_new_number:" Add a New Number",
         enter_new_phone_number:"Enter your new phone number in the field below.",
@@ -758,7 +758,7 @@ const englishTranslation = {
     month_view: "Month View",
     week_view: "Week View",
     day_view: "Day View",
-    calendar: "Calendar",
+    calendar: "Calender",
     generate_new_email: "Generate New Email",
   },
   sandro: {

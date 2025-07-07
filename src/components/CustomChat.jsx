@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { BulbIcon, Delete, DislikeIcon, Duplicate, Edit, EditIcon, FlashIcon, ImageChatIcon, LikeIcon, MicChatIcon, PaperClipChatIcon, SearchChatIcon, SearchIcon, SendIcon, SpeakerIcon, StarsIcon, ThreeDots, WebSearchChatIcon } from "../icons/icons";
 import { useSelector } from "react-redux";
 import { formatTimeAgo } from "../utils/TimeFormat";
+import { SelectDropdown } from "./Dropdown";
 
 
 const CustomChat = ({ listedProps }) => {
@@ -189,7 +190,7 @@ const CustomChat = ({ listedProps }) => {
                             <h1 className="text-[#1E1E1E] font-[400] text-[14px]">{description}</h1>
                         </div>
                         <hr style={{ color: "#E1E4EA" }} />
-                        <div className="flex flex-col gap-4 px-5">
+                        <div className="flex flex-col gap-4 px-5 py-3">
                             <div className="flex flex-col gap-1.5 w-full">
                                 <label className="text-sm font-medium text-[#1e1e1e]">
                                     {form.label_1}
@@ -204,6 +205,44 @@ const CustomChat = ({ listedProps }) => {
                                 />
                                 {errors.additional_questions && <p className="text-red-500 text-sm mt-1">{errors.additional_questions}</p>}
                             </div>
+                            {(form?.label_3 && !form?.options) &&
+                                <div className="flex flex-col gap-1.5 w-full">
+                                    <label className="text-sm font-medium text-[#1e1e1e]">
+                                        {form.label_3}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name='purpose'
+                                        value={formData?.purpose}
+                                        onChange={handleChange}
+                                        className={`w-full bg-white p-2 rounded-lg border ${errors.purpose ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
+                                        placeholder={form.placeholder_3}
+                                    />
+                                    {errors.purpose && <p className="text-red-500 text-sm mt-1">{errors.purpose}</p>}
+                                </div>
+                            }
+                            {form?.options &&
+                                <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
+                                    <label className="font-medium text-[#1e1e1e] text-sm">{form.label_3}</label>
+                                    <SelectDropdown
+                                        name="tone"
+                                        options={form.options}
+                                        value={formData?.tone}
+                                        onChange={(updated) => {
+                                            console.log(updated)
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                tone: updated,
+                                            }))
+                                            setErrors((prev) => ({ ...prev, tone: '' }))
+                                        }}
+                                        placeholder={form.placeholder_3}
+                                        className="w-full"
+                                        errors={errors}
+                                    />
+                                    {errors.tone && <p className="text-red-500 text-sm mt-1">{errors.tone}</p>}
+                                </div>
+                            }
                             <div className="flex flex-col gap-1.5 w-full">
                                 <label className="text-sm font-medium text-[#1e1e1e]">
                                     {form.label_2}

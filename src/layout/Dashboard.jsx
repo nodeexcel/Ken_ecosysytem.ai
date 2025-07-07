@@ -88,6 +88,9 @@ function Dashboard() {
                 i18n.changeLanguage(response?.data?.language);
                 localStorage.setItem("lan", response?.data?.language)
 
+            } else if (response.status === 404) {
+                localStorage.clear();
+                navigate("")
             }
         } catch (error) {
             console.log(error)

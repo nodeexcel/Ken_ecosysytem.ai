@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { ConversationIcon, CreationStudioIcon, LeftArrow } from '../../icons/icons'
+import { CalenderIcon, ConversationIcon, CreationStudioIcon, LeftArrow, LinkedInIcon, XIcon, YoutubeIcon } from '../../icons/icons'
 import constanceImg from "../../assets/svg/constance_logo.svg"
 import { useNavigate } from 'react-router-dom'
 import constanceMsgLogo from '../../assets/svg/constance_msg_logo.svg'
@@ -9,6 +9,10 @@ import AgentChatBox from '../../components/AgentChatBox'
 import { formatTimeAgo } from '../../utils/TimeFormat'
 import CreationStudio from '../../components/CreationStudio'
 import { useTranslation } from "react-i18next";
+import Calendar from '../../components/Calendar'
+import YoutubeScriptContent from '../../components/YoutubeScriptContent'
+import LinkedInNukeContent from '../../components/LinkedInNukeContent'
+import XPostContent from '../../components/XPostContent'
 
 function ContentCreation() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -36,6 +40,10 @@ function ContentCreation() {
     const sideMenuList = [
         { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
         { label: `${t("constance.creation_studio")}`, icon: <CreationStudioIcon status={activeSidebarItem == "creation_studio"} />, hoverIcon: <CreationStudioIcon hover={true} />, path: "creation_studio" },
+        { label: `${t("emailings.calendar")}`, icon: <CalenderIcon status={activeSidebarItem == "calender"} />, hoverIcon: <CalenderIcon hover={true} />, path: "calender" },
+        { label: `YouTube Script Writer`, icon: <YoutubeIcon status={activeSidebarItem == "youtube"} />, hoverIcon: <YoutubeIcon hover={true} />, path: "youtube" },
+        { label: `LinkedIn Nuke`, icon: <LinkedInIcon status={activeSidebarItem == "linkedin"} />, hoverIcon: <LinkedInIcon hover={true} />, path: "linkedin" },
+        { label: `X Post Generator`, icon: <XIcon status={activeSidebarItem == "x_post"} />, hoverIcon: <XIcon hover={true} />, path: "x_post" },
     ]
 
     useEffect(() => {
@@ -146,8 +154,8 @@ function ContentCreation() {
     }
 
     const staticSuggestions = [{ label: `${t("constance.last_campaign")}`, key: `${t("constance.last_campaign_key")}` },
-    { label: `${t("constance.marketing_campaign")}`, key: `${t("constance.marketing_campaign_key")}`},
-    { label: `${t("constance.income_efficiently")}`, key: `${t("constance.income_efficiently_key")}`}
+    { label: `${t("constance.marketing_campaign")}`, key: `${t("constance.marketing_campaign_key")}` },
+    { label: `${t("constance.income_efficiently")}`, key: `${t("constance.income_efficiently_key")}` }
     ]
 
     const listedProps = {
@@ -184,7 +192,7 @@ function ContentCreation() {
         socketRef: socketRef,
         socket2Ref: socket2Ref,
         staticSuggestions: staticSuggestions,
-        nameColor:"#FF8FFF"
+        nameColor: "#FF8FFF"
     }
 
     const stopTranscription = () => {
@@ -200,6 +208,14 @@ function ContentCreation() {
         switch (activeSidebarItem) {
             case "creation_studio":
                 return <CreationStudio />
+            case "calender":
+                return <Calendar />
+            case "youtube":
+                return <YoutubeScriptContent />
+            case "linkedin":
+                return <LinkedInNukeContent />
+            case "x_post":
+                return <XPostContent />
             default:
                 return <AgentChatBox listedProps={listedProps} />
         }
