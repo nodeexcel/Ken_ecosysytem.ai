@@ -585,6 +585,7 @@ phone: {
   tara: {
     exploring_trends: "Explorer les tendances de l'IA",
     presentation: "Présentations",
+    meeting_notes:"Générateur de comptes rendus de réunion",
     generate_presentation: "Générer une présentation",
     no_article_listed: "Aucun article n'est répertorié",
     chat: "Chat",
@@ -932,7 +933,7 @@ phone: {
     hire_faster_key: "Je cherche un processus structuré pour recruter plus rapidement.",
     qualified_candidates: "Vous avez du mal à trouver des candidats qualifiés pour vos postes ?",
     qualified_candidates_key: "J’ai du mal à trouver des candidats qualifiés pour mes postes."
-  },  
+  },
   no_data: "Aucune donnée trouvée",
   processing: "Traitement en cours...",
   refresh: "Actualiser",

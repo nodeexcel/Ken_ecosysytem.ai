@@ -1,8 +1,11 @@
 import { useState } from 'react'
-import { AutomationIcon, LeftArrow, } from '../../icons/icons'
+import { AutomationIcon, CallAgent, EmailIcon, HelpIcon, LeftArrow, } from '../../icons/icons'
 import calinaImg from "../../assets/svg/calina_logo.svg"
 import { useNavigate } from 'react-router-dom'
 import SmartChatbot from '../../components/CustomerSupportSmartChatbot'
+import FaqCustomerSupport from '../../components/FaqCustomerSupport'
+import UserGuideCustomerSupport from '../../components/UserGuideCustomerSupport'
+import EmailCustomerSupport from '../../components/EmailCustomerSupport'
 
 function CustomerSupport() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("smart_bot")
@@ -11,10 +14,19 @@ function CustomerSupport() {
 
     const sideMenuList = [
         { label: "Smart Chatbot", icon: <AutomationIcon status={activeSidebarItem == "smart_bot"} />, hoverIcon: <AutomationIcon hover={true} />, path: "smart_bot" },
+        { label: "FAQ Generator", icon: <HelpIcon status={activeSidebarItem == "faq_generator"} />, hoverIcon: <HelpIcon hover={true} />, path: "faq_generator" },
+        { label: "User Guide Generator", icon: <CallAgent status={activeSidebarItem == "user_guide"} />, hoverIcon: <CallAgent hover={true} />, path: "user_guide" },
+        { label: "Customer Email Responder", icon: <EmailIcon status={activeSidebarItem == "email"} />, hoverIcon: <EmailIcon hover={true} />, path: "email" },
     ]
 
     const renderMainContent = () => {
         switch (activeSidebarItem) {
+            case "faq_generator":
+                return <FaqCustomerSupport/>;
+            case "user_guide":
+                return <UserGuideCustomerSupport/>;
+            case "email":
+                return <EmailCustomerSupport/>;
             default:
                 return <SmartChatbot />
         }
@@ -24,7 +36,7 @@ function CustomerSupport() {
         <div className="h-full w-full">
             <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
                 {/* Sidebar */}
-                <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
+                <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] min-w-[272px] h-full">
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
@@ -38,7 +50,7 @@ function CustomerSupport() {
                         <hr className='text-[#E1E4EA]' />
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-3">
-                        <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
+                        <div className="bg-[#F7F7FF] border border-[#E9E8FF] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
                             <div className="flex justify-center items-center">
                                 <img src={calinaImg} alt={"calina"} className="object-fit" />
                             </div>

@@ -591,6 +591,7 @@ const englishTranslation = {
   tara: {
     exploring_trends: "Exploring A1 Trends",
     presentation: "Presentations",
+    meeting_notes:"Meeting Notes Generator",
     generate_presentation: "Generate a Presentation",
     no_article_listed: "No Articles Listed",
     chat: "Discussion",

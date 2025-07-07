@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { AutomationIcon, ConversationIcon, LeftArrow, WhatsappIcon } from '../../icons/icons'
+import { AutomationIcon, ConversationIcon, LeftArrow, MeetingNotesIcon, WhatsappIcon } from '../../icons/icons'
 import taraImg from "../../assets/svg/tara_logo.svg"
 import { useNavigate } from 'react-router-dom'
 import taraMsgLogo from '../../assets/svg/tara_msg_logo.svg'
@@ -10,6 +10,7 @@ import CooPresentations from '../../components/CooPresentations'
 import CooConnectWhatsapp from '../../components/CooConnectWhatsapp'
 import { useTranslation } from "react-i18next";
 import { formatTimeAgo } from '../../utils/TimeFormat'
+import MeetingNotesCoo from '../../components/MeetingNotesCoo'
 
 function Coo() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -37,6 +38,7 @@ function Coo() {
     const sideMenuList = [
         { label: `${t("tara.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
         { label: `${t("tara.presentation")}`, icon: <AutomationIcon status={activeSidebarItem == "presentations"} />, hoverIcon: <AutomationIcon hover={true} />, path: "presentations" },
+        { label: `${t("tara.meeting_notes")}`, icon: <MeetingNotesIcon status={activeSidebarItem == "meeting_notes"} />, hoverIcon: <MeetingNotesIcon hover={true} />, path: "meeting_notes" },
         { label: `${t("tara.connect_whatsapp")}`, icon: <WhatsappIcon status={activeSidebarItem == "connect_whatsApp"} />, hoverIcon: <WhatsappIcon hover={true} />, path: "connect_whatsApp" },
     ]
 
@@ -201,6 +203,8 @@ function Coo() {
         switch (activeSidebarItem) {
             case "presentations":
                 return <CooPresentations />
+            case "meeting_notes":
+                return <MeetingNotesCoo />
             case "connect_whatsApp":
                 return <CooConnectWhatsapp />
             default:
@@ -212,7 +216,7 @@ function Coo() {
         <div className="h-full w-full">
             <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
                 {/* Sidebar */}
-                <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
+                <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] min-w-[272px] h-full">
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
@@ -226,7 +230,7 @@ function Coo() {
                         <hr className='text-[#E1E4EA]' />
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-3">
-                        <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
+                        <div className="bg-[#F7F7FF] border border-[#E9E8FF] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
                             <div className="flex justify-center items-center">
                                 <img src={taraImg} alt={"tara"} className="object-fit" />
                             </div>
@@ -241,7 +245,7 @@ function Coo() {
                             className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                 }`}
                         >
-                            {activeSidebarItem === `${e.path}` ? e.icon :
+                            {activeSidebarItem === `${e.path}` ? <div>{e.icon}</div> :
                                 <div className="flex items-center gap-2"><div className='group-hover:hidden'>{e.icon}</div> <div className='hidden group-hover:block'>{e.hoverIcon}</div></div>}
                             <span className={`font-[400] text-[16px] ${activeSidebarItem === `${e.path}` ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
                                 {e.label}
