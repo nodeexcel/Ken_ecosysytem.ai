@@ -368,6 +368,7 @@ const englishTranslation = {
     no_of_follower: "Number of followups",
     no_emoji: "No emoji",
     recommended: "Recommended",
+    no_data_found:"No Data Found",
     continue: "Continue",
     cancel: "Cancel",
     all: "All",
