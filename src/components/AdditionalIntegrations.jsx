@@ -168,8 +168,8 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                 return (
                     <RenderAccountData
                         accountsData={googleCalendarData}
-                        label={"google_calendar_id"}
-                        id={"google_calendar_id"}
+                        label={"calendar_id"}
+                        id={"calendar_id"}
                     />
                 )
         }
