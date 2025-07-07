@@ -85,8 +85,13 @@ function Dashboard() {
                     navigate("settings")
                 }
                 dispatch(getProfileData(response?.data))
-                i18n.changeLanguage(response?.data?.language);
-                localStorage.setItem("lan", response?.data?.language)
+                if ((response?.data?.language == "null") || (response?.data?.language == null) || (response?.data?.language == "")) {
+                    i18n.changeLanguage('en');
+                    localStorage.setItem("lan", 'en')
+                } else {
+                    i18n.changeLanguage(response?.data?.language);
+                    localStorage.setItem("lan", response?.data?.language)
+                }
 
             } else if (response.status === 404) {
                 localStorage.clear();
