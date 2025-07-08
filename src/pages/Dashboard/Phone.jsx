@@ -14,6 +14,7 @@ import rebeccaImg from "../../assets/svg/rebecca_logo.svg"
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import ColdCallingScriptPhone from "../../components/ColdCallingScriptPhone";
 
 
 const PhonePage = () => {
@@ -46,6 +47,8 @@ const PhonePage = () => {
         return <OutBoundCalls />;
       case "inbound-calls":
         return <InBoundCalls />;
+      case "cold_calling":
+        return <ColdCallingScriptPhone/>;
       default:
         return <PhoneDashboard />;
     }

@@ -207,10 +207,10 @@ const CustomChat = ({ listedProps }) => {
                                 />
                                 {errors.additional_questions && <p className="text-red-500 text-sm mt-1">{errors.additional_questions}</p>}
                             </div>
-                            {(form?.label_3 && !form?.options) &&
+                            {(form?.label_3 && (!form?.options || form?.label_4)) &&
                                 <div className="flex flex-col gap-1.5 w-full">
                                     <label className="text-sm font-medium text-[#1e1e1e]">
-                                        {form.label_3}
+                                        {form?.label_4??form.label_3}
                                     </label>
                                     <input
                                         type="text"
@@ -218,7 +218,7 @@ const CustomChat = ({ listedProps }) => {
                                         value={formData?.purpose}
                                         onChange={handleChange}
                                         className={`w-full bg-white p-2 rounded-lg border ${errors.purpose ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                                        placeholder={form.placeholder_3}
+                                        placeholder={form.placeholder_4??form.placeholder_3}
                                     />
                                     {errors.purpose && <p className="text-red-500 text-sm mt-1">{errors.purpose}</p>}
                                 </div>
