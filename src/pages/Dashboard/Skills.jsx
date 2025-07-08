@@ -1,8 +1,8 @@
+import AllAgentsSkills from "../../components/AllAgentsSkills"
+
 function Skills() {
     return (
-        <div className='flex justify-center items-center h-screen'>
-            Comming Soon
-        </div>
+        <AllAgentsSkills/>
     )
 }
 
