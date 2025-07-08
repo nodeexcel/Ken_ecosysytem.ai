@@ -1107,7 +1107,7 @@ const SettingsPage = () => {
       </div> */}
       <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
         {/* Sidebar Navigation */}
-        <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
+        <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] min-w-[272px] h-full">
           <div className=''>
             <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
               {/* <MdOutlineKeyboardArrowLeft size={25} /> */}

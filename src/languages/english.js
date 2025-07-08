@@ -2,7 +2,7 @@
 
 const englishTranslation = {
   hello: "Hello",
-  coo: "COO",
+  coo: "Executive Assistant",
   content_creation: "Content Creation",
   phone_outreach: "Phone Outreach",
   appointment_setter: "Appointment Setter",
@@ -933,7 +933,7 @@ const englishTranslation = {
     generations_appear:"New Generations Appears Here",
     interview_planner:{
       heading:"Interview Planner",
-      description:"Plan an efficient interview for a potential candidate.", 
+      description:"Plan an efficient interview for a potential candidate.",
     },
     linkedin_outreacher:{
       heading:"LinkedIn Outreacher",
@@ -963,7 +963,7 @@ const englishTranslation = {
   rename: "Rename",
   download: "Download",
   completed: "completed",
-  coming_soon: "Comming Soon",
+  coming_soon: "Coming Soon",
   continue: "Continue",
   network_error: "Network Error!",
   approve: "Approve",
