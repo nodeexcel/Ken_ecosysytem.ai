@@ -3,7 +3,7 @@ import PhoneNumberList from '../../components/PhoneNumberList'
 import CallAgentsPage from '../../components/CallAgent'
 import CallCampaign from '../../components/CallCampaign'
 import PhoneDashboard from '../../components/PhoneDashboard'
-import { CallAgent, FourBox, Phone, PhoneCampaign, OutboundCall, InboundCall, LeftArrow } from "../../icons/icons";
+import { CallAgent, FourBox, Phone, PhoneCampaign, OutboundCall, InboundCall, LeftArrow, HeadPhonesIcon } from "../../icons/icons";
 import OutBoundCalls from "../../components/OutboundCalls";
 import InBoundCalls from "../../components/InboundCalls";
 import dashboardProfile from '../../assets/svg/dashboard_profile.svg'
@@ -22,15 +22,16 @@ const PhonePage = () => {
   const navbarDetails = useSelector((state) => state.navbar);
   const navigate = useNavigate()
 
-  const {t}=useTranslation();
-  
+  const { t } = useTranslation();
+
   const sideMenuList = [
-    { label:t("phone.dashboard"), icon: <FourBox status={activeSidebarItem == "dashboard"} />, hoverIcon: <FourBox hover={true} />, path: "dashboard", header: `Tom & Rebecca,${t("phone.phone")} ` },
-    { label: t("phone.phone_numbers"), icon: <Phone status={activeSidebarItem == "phone-numbers"} />, hoverIcon: <Phone hover={true} />, path: "phone-numbers", header:`Tom & Rebecca,${t("phone.phone")} ` },
-    { label:t("phone.call_agents"), icon: <CallAgent status={activeSidebarItem == "call-agents"} />, hoverIcon: <CallAgent hover={true} />, path: "call-agents", header: `Tom & Rebecca,${t("phone.phone")} `},
+    { label: t("phone.dashboard"), icon: <FourBox status={activeSidebarItem == "dashboard"} />, hoverIcon: <FourBox hover={true} />, path: "dashboard", header: `Tom & Rebecca,${t("phone.phone")} ` },
+    { label: t("phone.phone_numbers"), icon: <Phone status={activeSidebarItem == "phone-numbers"} />, hoverIcon: <Phone hover={true} />, path: "phone-numbers", header: `Tom & Rebecca,${t("phone.phone")} ` },
+    { label: t("phone.call_agents"), icon: <CallAgent status={activeSidebarItem == "call-agents"} />, hoverIcon: <CallAgent hover={true} />, path: "call-agents", header: `Tom & Rebecca,${t("phone.phone")} ` },
     { label: t("phone.call_campaigns"), icon: <PhoneCampaign status={activeSidebarItem == "call-campaigns"} />, hoverIcon: <PhoneCampaign hover={true} />, path: "call-campaigns", header: "Tom" },
     { label: t("phone.outbound_calls"), icon: <OutboundCall status={activeSidebarItem == "outbound-calls"} />, hoverIcon: <OutboundCall hover={true} />, path: "outbound-calls", header: "Tom" },
     { label: t("phone.inbound_calls"), icon: <InboundCall status={activeSidebarItem == "inbound-calls"} />, hoverIcon: <InboundCall hover={true} />, path: "inbound-calls", header: "Rebecca" },
+    { label: `Cold Calling`, icon: <HeadPhonesIcon status={activeSidebarItem == "cold_calling"} />, hoverIcon: <HeadPhonesIcon hover={true} />, path: "cold_calling", header: `Tom & Rebecca,${t("phone.phone")} ` },
   ];
 
   const renderMainContent = () => {
