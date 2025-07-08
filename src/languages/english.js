@@ -921,7 +921,35 @@ const englishTranslation = {
     hire_faster_key: "Looking for a structured process to hire faster.",
     qualified_candidates: "Struggling to find qualified candidates for your roles?",
     qualified_candidates_key: "Struggling to find qualified candidates for my roles.",
+    job_description_writer:"Job Description Writer",
+    precise_description:"Create a precise job description for a candidate.",
+    job_role:"Job Role",
+    job_role_placeholder:"Ex.: Marketing Manager, Soft..",
+    custom_instructions:"Custom Instructions (Optional)",
+    custom_instructions_placeholder:"Anything you want to tell the AI",
+    initial_message:"Unable to generate a balance sheet: The uploaded document is not a bank statement; it is an eBook or informational guide related to health and wellness. No financial data available for extraction. Please upload an actual bank statement for accurate balance sheet creation",
+    generate:"Generate",
+    previous_generation:"Previous Generation",
+    generations_appear:"New Generations Appears Here",
+    interview_planner:{
+      heading:"Interview Planner",
+      description:"Plan an efficient interview for a potential candidate.", 
+    },
+    linkedin_outreacher:{
+      heading:"LinkedIn Outreacher",
+      description:"Generate a personalized outreach email for LinkedIn connections.",
+      target_audience:"Target Audience",
+      target_placeholder:"Ex.: Industry professionals, po..",
+    }
 
+  },
+  resume_screener:{
+    heading:"Resume Screener",
+    resume_description:"Develop a tool to screen resumes effectively.",
+    resume_content:"Resume Content",
+    resume_label2:"Custom Instructions (Optional)",
+    resume_placeholder2:"Anything you want to tell the AI",
+    resume_initial_message:"Unable to generate a balance sheet: The uploaded document is not a bank statement; it is an eBook or informational guide related to health and wellness. No financial data available for extraction. Please upload an actual bank statement for accurate balance sheet creation"
   },
 
   no_data: "No Data Found",

@@ -267,7 +267,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                             className="bg-[#675FFF] text-white px-5 py-2 font-[500] test-[16px]  rounded-lg"
                             onClick={() => setModalStatus(false)}
                         >
-                            {t("brain_ai.ok")}
+                            {t("brain_ai.integrations.ok")}
                         </button>
                     </div>
                 </div>

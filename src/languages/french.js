@@ -932,8 +932,38 @@ phone: {
     hire_faster: "Vous cherchez un processus structuré pour recruter plus rapidement ?",
     hire_faster_key: "Je cherche un processus structuré pour recruter plus rapidement.",
     qualified_candidates: "Vous avez du mal à trouver des candidats qualifiés pour vos postes ?",
-    qualified_candidates_key: "J’ai du mal à trouver des candidats qualifiés pour mes postes."
+    qualified_candidates_key: "J’ai du mal à trouver des candidats qualifiés pour mes postes.",
+    job_description_writer: "Rédacteur de description de poste",
+    precise_description: "Créer une description de poste précise pour un candidat.",
+    job_role: "Poste",
+    job_role_placeholder: "Ex. : Responsable Marketing, Développeur Soft...",
+    custom_instructions: "Instructions personnalisées (optionnel)",
+    custom_instructions_placeholder: "Tout ce que vous souhaitez indiquer à l’IA",
+    initial_message: "Impossible de générer un bilan : le document téléchargé n’est pas un relevé bancaire, mais un eBook ou un guide informatif lié à la santé et au bien-être. Aucune donnée financière disponible pour extraction. Veuillez télécharger un véritable relevé bancaire pour créer un bilan précis.",
+    generate: "Générer",
+    previous_generation: "Génération précédente",
+    generations_appear: "Les nouvelles générations apparaîtront ici",
+    interview_planner: {
+      heading: "Planificateur d'entretien",
+      description: "Planifiez un entretien efficace pour un candidat potentiel."
+    },
+    linkedin_outreacher: {
+      heading: "Messagerie LinkedIn",
+      description: "Générez un message de prospection personnalisé pour vos connexions LinkedIn.",
+      target_audience: "Public cible",
+      target_placeholder: "Ex. : Professionnels du secteur, recruteurs..."
+    }
+    
+    
   },
+  resume_screener: {
+    heading: "Filtre de CV",
+    resume_description: "Développer un outil pour filtrer les CV efficacement.",
+    resume_content: "Contenu du CV",
+    resume_label2: "Instructions personnalisées (optionnel)",
+    resume_placeholder2: "Tout ce que vous souhaitez indiquer à l’IA",
+    resume_initial_message: "Impossible de générer un bilan : le document téléchargé n’est pas un relevé bancaire, mais un eBook ou un guide informatif lié à la santé et au bien-être. Aucune donnée financière disponible pour extraction. Veuillez télécharger un véritable relevé bancaire pour créer un bilan précis."
+  },  
   no_data: "Aucune donnée trouvée",
   processing: "Traitement en cours...",
   refresh: "Actualiser",

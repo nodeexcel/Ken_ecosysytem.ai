@@ -1,12 +1,14 @@
 import CustomChat from "./CustomChat"
 import rimaImg from "../assets/svg/rima_msg_logo.svg"
 import resumeImg from "../assets/svg/resume_screener_hr.svg";
+import { useTranslation } from "react-i18next";
 
 function ResumeScreenerHr() {
+    const { t } = useTranslation()
     const listedData = {
-        header: "Resume Screener", label: "Resume Screener", description: "Develop a tool to screen resumes effectively.",
-        form: { label_1: "Resume Content", placeholder_1: "Enter", label_2: "Custom Instructions (Optional)", placeholder_2: "Anything you want to tell the AI" },
-        initialMessage: "Unable to generate a balance sheet: The uploaded document is not a bank statement; it is an eBook or informational guide related to health and wellness. No financial data available for extraction. Please upload an actual bank statement for accurate balance sheet creation",
+        header: `${t("resume_screener.heading")}`, label: `${t("resume_screener.heading")}`, description: `${t("resume_screener.resume_description")}`,
+        form: { label_1: `${t("resume_screener.resume_content")}`, placeholder_1: `${t("settings.tab_1_list.enter")}`, label_2: `${t("resume_screener.resume_label2")}`, placeholder_2: `${t("resume_screener.resume_placeholder2")}`},
+        initialMessage: `${t("resume_screener.resume_initial_message")}`,
         agentName: "Rima",
         agentImg: rimaImg,
         headerLogo: resumeImg

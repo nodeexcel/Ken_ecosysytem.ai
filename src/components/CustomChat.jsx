@@ -6,9 +6,11 @@ import { BulbIcon, Delete, DislikeIcon, Duplicate, Edit, EditIcon, FlashIcon, Im
 import { useSelector } from "react-redux";
 import { formatTimeAgo } from "../utils/TimeFormat";
 import { SelectDropdown } from "./Dropdown";
+import { useTranslation } from "react-i18next";
 
 
 const CustomChat = ({ listedProps }) => {
+    const { t } = useTranslation();
     console.log(listedProps)
     const { header, label, description,
         form,
@@ -257,7 +259,7 @@ const CustomChat = ({ listedProps }) => {
                                 />
                                 {errors.custom_instructions && <p className="text-red-500 text-sm mt-1">{errors.custom_instructions}</p>}
                             </div>
-                            <button className="px-5 cursor-pointer rounded-[7px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Generate</button>
+                            <button className="px-5 cursor-pointer rounded-[7px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("rima.generate")}</button>
                         </div>
                     </div>
                     {/* Main Content */}
@@ -302,13 +304,13 @@ const CustomChat = ({ listedProps }) => {
                             </div>
                             <div className="flex items-center w-full gap-2 pt-5">
                                 <hr style={{ width: "40%", color: "#E1E4EA" }} />
-                                <p className="text-[#5A687C] text-[12px] whitespace-nowrap font-[400]">Previous Generation</p>
+                                <p className="text-[#5A687C] text-[12px] whitespace-nowrap font-[400]">{t("rima.previous_generation")}</p>
                                 <hr style={{ width: "40%", color: "#E1E4EA" }} />
                             </div>
 
                             <div className="flex items-center justify-center pt-10 gap-1.5">
                                 <FlashIcon />
-                                <p className="text-[#1E1E1E] text-[12px] font-[400]">New Generations Appears Here</p>
+                                <p className="text-[#1E1E1E] text-[12px] font-[400]">{t("rima.generations_appear")}</p>
                             </div>
                         </div>
                     </div>}

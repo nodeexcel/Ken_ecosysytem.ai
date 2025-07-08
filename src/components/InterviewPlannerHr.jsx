@@ -1,12 +1,14 @@
 import CustomChat from "./CustomChat"
 import rimaImg from "../assets/svg/rima_msg_logo.svg"
 import interviewImg from "../assets/svg/interview_planner_hr.svg";
+import { useTranslation } from "react-i18next";
 
 function InterviewPlannerHr() {
+    const { t } = useTranslation()
     const listedData = {
-        header: "Interview Planner", label: "Interview Planner", description: "Plan an efficient interview for a potential candidate.",
-        form: { label_1: "Job Role", placeholder_1: "Ex.: Marketing Manager, Soft..", label_2: "Custom Instructions (Optional)", placeholder_2: "Anything you want to tell the AI" },
-        initialMessage: "Unable to generate a balance sheet: The uploaded document is not a bank statement; it is an eBook or informational guide related to health and wellness. No financial data available for extraction. Please upload an actual bank statement for accurate balance sheet creation",
+        header: `${t("rima.interview_planner.heading")}`, label: `${t("rima.interview_planner.heading")}`, description: `${t("rima.interview_planner.description")}`,
+        form: { label_1: `${t("rima.job_role")}`, placeholder_1: `${t("rima.job_role_placeholder")}`, label_2: `${t("rima.custom_instructions")}`, placeholder_2: `${t("rima.custom_instructions_placeholder")}` },
+        initialMessage: `${t("rima.initial_message")}`,
         agentName: "Rima",
         agentImg: rimaImg,
         headerLogo: interviewImg
