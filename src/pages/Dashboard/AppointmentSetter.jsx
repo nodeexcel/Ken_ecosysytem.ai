@@ -44,7 +44,7 @@ function AppointmentSetter() {
         <div className="h-full w-full">
             <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
                 {/* Sidebar */}
-                <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
+                <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] min-w-[272px] h-full">
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
@@ -55,7 +55,7 @@ function AppointmentSetter() {
                         <hr className='text-[#E1E4EA]' />
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-3">
-                        <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
+                        <div className="bg-[#F7F7FF] border border-[#E9E8FF] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
                             <div className="flex justify-center items-center">
                                 <img src={sethImg} alt={"seth"} className="object-fit" />
                             </div>

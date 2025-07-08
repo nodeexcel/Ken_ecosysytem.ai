@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { ConversationIcon, LeftArrow } from '../../icons/icons'
+import { BalanceSheetIcon, CalculatorIcon, ConversationIcon, LeftArrow, PhoneCampaign, ROICalculatorIcon } from '../../icons/icons'
 import finnImg from "../../assets/svg/finn_logo.svg"
 import { useNavigate } from 'react-router-dom'
 import finnMsgLogo from '../../assets/svg/finn_msg_logo.svg'
@@ -8,6 +8,10 @@ import { deleteChat, getAccountingChatById, getAccountingChats, updateChatName }
 import AgentChatBox from '../../components/AgentChatBox'
 import { formatTimeAgo } from '../../utils/TimeFormat'
 import { useTranslation } from "react-i18next";
+import BalanceSheetAccounting from '../../components/BalanceSheetAccounting'
+import ProfitLossCalculatorAccounting from '../../components/ProfitLossCalculatorAccounting'
+import SalesForecasterAccounting from '../../components/SalesForecasterAccounting'
+import ROICalculatorAccounting from '../../components/ROICalculatorAccounting'
 
 function Accounting() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -34,6 +38,10 @@ function Accounting() {
 
     const sideMenuList = [
         { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
+        { label: `Balance Sheet Generator`, icon: <BalanceSheetIcon status={activeSidebarItem == "balance_sheet"} />, hoverIcon: <BalanceSheetIcon hover={true} />, path: "balance_sheet" },
+        { label: `Profit Loss Calculator`, icon: <CalculatorIcon status={activeSidebarItem == "profit_loss_calculator"} />, hoverIcon: <CalculatorIcon hover={true} />, path: "profit_loss_calculator" },
+        { label: `Sales Forecaster`, icon: <PhoneCampaign status={activeSidebarItem == "sales_forecaster"} />, hoverIcon: <PhoneCampaign hover={true} />, path: "sales_forecaster" },
+        { label: `ROI Calculator`, icon: <ROICalculatorIcon status={activeSidebarItem == "roi_calculator"} />, hoverIcon: <ROICalculatorIcon hover={true} />, path: "roi_calculator" },
     ]
 
     useEffect(() => {
@@ -183,7 +191,7 @@ function Accounting() {
         socketRef: socketRef,
         socket2Ref: socket2Ref,
         staticSuggestions: staticSuggestions,
-        nameColor:"#53AF86"
+        nameColor: "#53AF86"
     }
 
     const stopTranscription = () => {
@@ -197,6 +205,14 @@ function Accounting() {
 
     const renderMainContent = () => {
         switch (activeSidebarItem) {
+            case "balance_sheet":
+                return <BalanceSheetAccounting/>
+            case "profit_loss_calculator":
+                return <ProfitLossCalculatorAccounting/>
+            case "sales_forecaster":
+                return <SalesForecasterAccounting/>
+            case "roi_calculator":
+                return <ROICalculatorAccounting/>
             default:
                 return <AgentChatBox listedProps={listedProps} />
         }
@@ -207,7 +223,7 @@ function Accounting() {
         <div className="h-full w-full">
             <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
                 {/* Sidebar */}
-                <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
+                <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] min-w-[272px] h-full">
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
@@ -221,7 +237,7 @@ function Accounting() {
                         <hr className='text-[#E1E4EA]' />
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-3">
-                        <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
+                        <div className="bg-[#F7F7FF] border border-[#E9E8FF] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
                             <div className="flex justify-center items-center">
                                 <img src={finnImg} alt={"finn"} className="object-fit" />
                             </div>
