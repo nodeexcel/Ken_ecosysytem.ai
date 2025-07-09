@@ -83,7 +83,7 @@ const SettingsPage = () => {
     lastName: "",
     email: "",
     phoneNumber: "",
-    countryCode: selectedCountry?.code,
+    countryCode: 'US',
     company: "",
     role: "",
     city: "",
