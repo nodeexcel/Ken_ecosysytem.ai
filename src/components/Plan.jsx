@@ -6,7 +6,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { CheckedCircle, EmptyCircle, OfferIcon } from "../icons/icons";
 import { SelectDropdown } from "./Dropdown";
 
-const CreditPopup = ({ t, onClose, onOpen, stripePromise, userDetails }) => {
+const CreditPopup = ({ t, onClose, onOpen, userDetails }) => {
   const staticCredits = [{ label: 500, value: "35€", priceId: import.meta.env.VITE_CREDITS_500_ID }, { label: 1000, value: "65€", priceId: import.meta.env.VITE_CREDITS_1000_ID }, { label: 2000, value: "110€", priceId: import.meta.env.VITE_CREDITS_2000_ID }]
   const [selectedCredit, setSelectedCredit] = useState(staticCredits[2]);
   const [loading, setLoading] = useState(false)
@@ -20,6 +20,7 @@ const CreditPopup = ({ t, onClose, onOpen, stripePromise, userDetails }) => {
         userId: userDetails.id
       }
       const response = await addCredits(payload);
+      const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
       const stripe = await stripePromise;
       console.log(response)
       if (response.status === 200 && stripe) {
@@ -143,7 +144,7 @@ const CreditPopup = ({ t, onClose, onOpen, stripePromise, userDetails }) => {
   );
 };
 
-const PlanManagementPopup = ({ t, onClose, onOpen, stripePromise }) => {
+const PlanManagementPopup = ({ t, onClose, onOpen }) => {
   const [activeTab, setActiveTab] = useState("annual");
   const [activePlan, setActivePlan] = useState("");
   const [planIndex, setPlanIndex] = useState();
@@ -313,6 +314,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen, stripePromise }) => {
         priceId: id
       }
       const response = await updateSubscriptionPaymentStatus(payload)
+      const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
       const stripe = await stripePromise;
       console.log(response)
       if (response.status === 200 && stripe) {
@@ -571,7 +573,6 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
   const [cancelPopup, setCancelPopup] = useState(false);
   const [roleSelect, setRoleSelect] = useState("All");
   const [pastMonths, setPastMonths] = useState(6);
-  const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
   const userDetails = useSelector((state) => state.profile.user)
 
   const creditUsageData = [
@@ -627,10 +628,10 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
       </div>
 
       {showPlanPopup && (
-        <PlanManagementPopup t={t} onClose={() => setShowPlanPopup(false)} onOpen={() => setCancelPopup(true)} stripePromise={stripePromise} />
+        <PlanManagementPopup t={t} onClose={() => setShowPlanPopup(false)} onOpen={() => setCancelPopup(true)} />
       )}
       {showCreditPopup && (
-        <CreditPopup t={t} onClose={() => setShowCreditPopup(false)} onOpen={() => setShowPlanPopup(true)} stripePromise={stripePromise} userDetails={userDetails} />
+        <CreditPopup t={t} onClose={() => setShowCreditPopup(false)} onOpen={() => setShowPlanPopup(true)} userDetails={userDetails} />
       )}
       {cancelPopup && (
         <CancelSubscriptionPopup t={t} onClose={() => setCancelPopup(false)} />
