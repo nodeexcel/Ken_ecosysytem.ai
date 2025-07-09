@@ -112,14 +112,21 @@ function Dashboard() {
 
 
     return (
-        <div className='w-full flex'>
-            <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-[250px]' : 'w-[0%]'} md:w-[72px] h-screen relative z-50`}>
+        <div className='w-full flex relative'>
+            {!isSidebarOpen && <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-[250px]' : 'w-[0%]'} lg:w-[72px] h-screen relative z-50`}>
                 <Sidebar sidebarItems={SidebarItems} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-            </div>
-            <div style={{ width: 'calc(100% - 72px)' }}>
+            </div>}
+            <div className='lg:w-[calc(100%-72px)] w-full' >
                 {/* <Navbar sidebarItems={SidebarItems} /> */}
                 <Outlet />
             </div>
+            {isSidebarOpen &&
+                <div className="fixed inset-0 bg-black/20 flex flex-col z-50">
+                    <div className={`transition-all w-[120px] h-screen relative z-50`}>
+                        <Sidebar sidebarItems={SidebarItems} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                    </div>
+                </div>
+            }
         </div>
     )
 }

@@ -179,7 +179,7 @@ function AllAgentsSkills() {
                         </div>
                         <div className="flex gap-4 w-full flex-wrap">
                             {each.cardContent.map((card) => (
-                                <div key={card.header} className={`w-[23%] border ${each.cardStyles} p-[14px] rounded-[8px] flex flex-col gap-[16px]`}>
+                                <div key={card.header} className={`w-full sm:w-[40%] lg:w-[23%] border ${each.cardStyles} p-[14px] rounded-[8px] flex flex-col gap-[16px]`}>
                                     <div>
                                         <img src={card.img} alt={card.header} className="object-fit" />
                                     </div>

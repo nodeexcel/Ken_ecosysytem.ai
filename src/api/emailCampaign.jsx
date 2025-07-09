@@ -2,7 +2,7 @@ import axiosInstance from "./axiosInstance";
 
 export const createEmailCampaign = async (payload) => {
     try {
-        const response = await axiosInstance.post("http://116.202.210.102:8000/email-campaign-creation", payload);
+        const response = await axiosInstance.post("http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/email-campaign-creation", payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -13,7 +13,7 @@ export const createEmailCampaign = async (payload) => {
 
 export const getEmailCampaign = async () => {
     try {
-        const response = await axiosInstance.get("http://116.202.210.102:8000/get-email-campaigns");
+        const response = await axiosInstance.get("http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/get-email-campaigns");
         return response;
     } catch (error) {
         console.error(error);
@@ -24,7 +24,7 @@ export const getEmailCampaign = async () => {
 
 export const getEmailCampaignById = async (id) => {
     try {
-        const response = await axiosInstance.get(`http://116.202.210.102:8000/campaign-details/${id}`);
+        const response = await axiosInstance.get(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/campaign-details/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -35,7 +35,7 @@ export const getEmailCampaignById = async (id) => {
 
 export const deleteEmailCampaign = async (id) => {
     try {
-        const response = await axiosInstance.delete(`http://116.202.210.102:8000/delete-campaign/${id}`);
+        const response = await axiosInstance.delete(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/delete-campaign/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -46,7 +46,7 @@ export const deleteEmailCampaign = async (id) => {
 
 export const updateEmailCampaign = async (payload, id) => {
     try {
-        const response = await axiosInstance.put(`http://116.202.210.102:8000/update-campaign/${id}`, payload);
+        const response = await axiosInstance.put(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/update-campaign/${id}`, payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -57,7 +57,7 @@ export const updateEmailCampaign = async (payload, id) => {
 
 export const updateEmailCampaignStatus = async (id) => {
     try {
-        const response = await axiosInstance.patch(`http://116.202.210.102:8000/email-campaign-status/${id}`);
+        const response = await axiosInstance.patch(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/email-campaign-status/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -68,7 +68,7 @@ export const updateEmailCampaignStatus = async (id) => {
 
 export const getCampaignSchedule = async () => {
     try {
-        const response = await axiosInstance.get(`http://116.202.210.102:8000/get-campaign-schedule`);
+        const response = await axiosInstance.get(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/get-campaign-schedule`);
         return response;
     } catch (error) {
         console.error(error);
@@ -79,7 +79,7 @@ export const getCampaignSchedule = async () => {
 
 export const getScheduledContent = async (id) => {
     try {
-        const response = await axiosInstance.get(`http://116.202.210.102:8000/get-scheduled-content/${id}`);
+        const response = await axiosInstance.get(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/get-scheduled-content/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -90,7 +90,7 @@ export const getScheduledContent = async (id) => {
 
 export const updateContentStatus = async (id, payload) => {
     try {
-        const response = await axiosInstance.post(`http://116.202.210.102:8000/content-status/${id}`, payload);
+        const response = await axiosInstance.post(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/content-status/${id}`, payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -101,7 +101,7 @@ export const updateContentStatus = async (id, payload) => {
 
 export const duplicateCampaign = async (id) => {
     try {
-        const response = await axiosInstance.post(`http://116.202.210.102:8000/duplicate-campaign/${id}`);
+        const response = await axiosInstance.post(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/duplicate-campaign/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -112,7 +112,7 @@ export const duplicateCampaign = async (id) => {
 
 export const campaignStatics = async () => {
     try {
-        const response = await axiosInstance.get(`http://116.202.210.102:8000/campigns-stats`);
+        const response = await axiosInstance.get(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/campigns-stats`);
         return response;
     } catch (error) {
         console.error(error);

@@ -147,11 +147,11 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
         <>
             <button
                 onClick={toggleSidebar}
-                className="md:hidden fixed top-4 right-4 z-50 text-gray-600 hover:text-gray-800 bg-white p-2 rounded-full shadow-md"
+                className={`lg:hidden cursor-pointer absolute ${isOpen?'right-1 top-2':'left-4 top-4 '} z-50 text-[#1e1e1e] hover:text-gray-800`}
             >
-                {isOpen ? <IoClose size={24} /> : <RxHamburgerMenu size={24} />}
+                {isOpen ? <IoClose size={24} /> : <RxHamburgerMenu size={24} color='#1e1e1e'/>}
             </button>
-            <aside className={`bg-[#FFFFFF] overflow-auto w-full border-r border-[#E1E4EA] h-full transition-all duration-300 ${isOpen ? 'w-[100px]' : 'w-0 overflow-auto'}  flex flex-col justify-between`}>
+            <aside className={`bg-[#FFFFFF] ${isOpen && 'rounded-r-[8px]'} overflow-auto w-full border-r border-[#E1E4EA] h-full transition-all duration-300 ${isOpen ? 'w-[100px]' : 'w-0 overflow-auto'}  flex flex-col justify-between`}>
                 <div className='flex flex-col'>
                     <div className="flex justify-center py-4" onClick={handleHome}>
                         <img src={logo} alt='image' />

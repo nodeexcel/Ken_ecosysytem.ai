@@ -8,10 +8,12 @@ import { useSelector } from "react-redux"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { CheckCircle, XCircle, Instagram, ArrowRight, RefreshCw, X } from "lucide-react"
 import { useTranslation } from "react-i18next";
+import { BsThreeDots } from "react-icons/bs"
 
 const BrainAI = () => {
   const [activePath, setActivePath] = useState("contacts")
   const [showModal, setShowModal] = useState(true)
+  const [sidebarStatus, setSideBarStatus] = useState(false)
 
   const navigate = useNavigate()
   const navbarDetails = useSelector((state) => state.navbar)
@@ -189,11 +191,12 @@ const BrainAI = () => {
   }
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full relative">
+      <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><BsThreeDots size={24} color='#1e1e1e' /></div>
       <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
         {/* Sidebar */}
         {navbarDetails?.label !== "integrations" && (
-          <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
+          <div className="lg:flex hidden flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
             <div className="">
               <div
                 className="flex justify-between items-center cursor-pointer w-fit"
@@ -236,8 +239,60 @@ const BrainAI = () => {
         <InstagramStatus />
 
         {/* Main Content */}
-        <div className="w-full h-full overflow-x-hidden py-3 pr-4">{renderMainContent()}</div>
+        <div className="w-full h-full overflow-x-hidden pr-0 py-8 pl-3 lg:pr-4 lg:py-3">{renderMainContent()}</div>
       </div>
+      {sidebarStatus && navbarDetails?.label !== "integrations" && (
+        <div className="lg:hidden fixed inset-0 bg-black/20 flex items-end z-50">
+          <div className="flex flex-col relative bg-white gap-8 w-full py-8 rounded-t-[8px]">
+            <button
+              className="absolute top-4 cursor-pointer right-4 text-gray-500 hover:text-gray-700"
+              onClick={() => {
+                setSideBarStatus(false)
+              }}
+            >
+              <X size={20} />
+            </button>
+            <div className="">
+              <div
+                className="flex justify-between items-center cursor-pointer w-fit"
+                onClick={() => navigate("/dashboard")}
+              >
+                <div className="flex gap-4 pl-3 items-center h-[57px]">
+                  {/* <LeftArrow /> */}
+                  <h1 className="text-[20px] font-[600]">Brain AI</h1>
+                </div>
+              </div>
+              <hr className="text-[#E1E4EA]" />
+            </div>
+            <div className="flex flex-col w-full items-start gap-2 px-3">
+              {sideMenuItems.map((item, i) => {
+                const Icon = item.icon
+                const hoverIcon = item.hoverIcon
+                const isActive = activePath === item.path
+
+                return (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setActivePath(item.path)
+                      setSideBarStatus(false)
+                    }}
+                    className={`cursor-pointer group flex items-center justify-start gap-1.5 px-2 py-2 w-full h-auto rounded ${isActive ? "bg-[#F0EFFF] text-[#675FFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                      }`}
+                  >
+                    {isActive ? Icon
+                      : <div className="flex items-center gap-2"><div className='group-hover:hidden'>{Icon}</div> <div className='hidden group-hover:block'>{hoverIcon}</div></div>
+                    }
+                    <span className={`font-[400] text-[16px] ${isActive ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                      {item.label}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
