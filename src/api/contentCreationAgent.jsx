@@ -2,7 +2,7 @@ import axiosInstance from "./axiosInstance";
 
 export const getContentCreationChats = async () => {
     try {
-        const response = await axiosInstance.get(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/get-content-creation-chats`);
+        const response = await axiosInstance.get(`https://agents.ecosysteme.ai/get-content-creation-chats`);
         return response;
     } catch (error) {
         console.error(error);
@@ -12,7 +12,7 @@ export const getContentCreationChats = async () => {
 
 export const getContentCreationChatById = async (id) => {
     try {
-        const response = await axiosInstance.get(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/get-content-creation-chat/${id}`);
+        const response = await axiosInstance.get(`https://agents.ecosysteme.ai/get-content-creation-chat/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -22,7 +22,7 @@ export const getContentCreationChatById = async (id) => {
 
 export const updateContentCreationChatName = async (id, payload) => {
     try {
-        const response = await axiosInstance.patch(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/update-content-creation-chat-name/${id}`, payload);
+        const response = await axiosInstance.patch(`https://agents.ecosysteme.ai/update-content-creation-chat-name/${id}`, payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -32,7 +32,7 @@ export const updateContentCreationChatName = async (id, payload) => {
 
 export const deleteContentCreationChat = async (id) => {
     try {
-        const response = await axiosInstance.delete(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/delete-content-creation-chat/${id}`);
+        const response = await axiosInstance.delete(`https://agents.ecosysteme.ai/delete-content-creation-chat/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -42,7 +42,7 @@ export const deleteContentCreationChat = async (id) => {
 
 export const createContent = async (payload) => {
     try {
-        const response = await axiosInstance.post(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/create-content`, payload);
+        const response = await axiosInstance.post(`https://agents.ecosysteme.ai/create-content`, payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -52,7 +52,7 @@ export const createContent = async (payload) => {
 
 export const contentGenerationStatus = async (id) => {
     try {
-        const response = await axiosInstance.get(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/content-generation-status?content_id=${id}`,);
+        const response = await axiosInstance.get(`https://agents.ecosysteme.ai/content-generation-status?content_id=${id}`,);
         return response;
     } catch (error) {
         console.error(error);
