@@ -33,7 +33,6 @@ export default function Login() {
     const [activeTabModal, setActiveTabModal] = useState("forgot-password")
 
     const otpRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
-    const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
     const priceId = import.meta.env.VITE_REGISTER_PLAN_ID
     const navigate = useNavigate();
 
@@ -294,6 +293,7 @@ export default function Login() {
                 "cancelUrl": "http://localhost:5173/cancel"
             }
             const response = await subscriptionPayment(payload);
+            const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
             const stripe = await stripePromise;
             console.log(response)
             if (response.status === 200 && stripe) {
