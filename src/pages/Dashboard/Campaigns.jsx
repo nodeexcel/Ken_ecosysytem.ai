@@ -87,9 +87,9 @@ const Campaigns = () => {
             {
                 sidebarStatus &&
                 <div className="lg:hidden fixed inset-0 bg-black/20 flex items-end z-50">
-                    <div className="flex relative flex-col bg-white gap-8 rounded-t-[8px] w-full">
+                    <div className="flex relative flex-col bg-white gap-8 rounded-t-[20px] w-full max-h-[80%] overflow-auto py-8">
                         <button
-                            className="absolute top-4 cursor-pointer right-4 text-gray-500 hover:text-gray-700"
+                            className="absolute top-4 cursor-pointer right-4 text-[#1e1e1e]"
                             onClick={() => {
                                 setSideBarStatus(false)
                             }}
@@ -97,7 +97,7 @@ const Campaigns = () => {
                             <X size={20} />
                         </button>
                         <div className=''>
-                            <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
+                            <div className='flex justify-center items-center cursor-pointer' onClick={() => navigate("/dashboard")}>
                                 <div className="flex gap-4 pl-3 items-center h-[57px]">
                                     {/* <LeftArrow /> */}
                                     <h1 className="text-[20px] font-[600]">Emailing</h1>
@@ -105,7 +105,7 @@ const Campaigns = () => {
                             </div>
                             <hr className='text-[#E1E4EA]' />
                         </div>
-                        <div className="flex flex-col w-full items-start gap-2 relative p-3">
+                        <div className="flex flex-col w-full items-start gap-2 relative px-5">
                             <div className="bg-[#F7F7FF] border border-[#E9E8FF] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
                                 <div className="flex justify-center items-center">
                                     <img src={emileImg} alt={"emile"} className="object-fit" />
