@@ -2,7 +2,7 @@ import axiosInstance from "./axiosInstance";
 
 export const addPhoneNumber = async (payload) => {
     try {
-        const response = await axiosInstance.post('http://116.202.210.102:8000/add-phone-number', payload);
+        const response = await axiosInstance.post('http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/add-phone-number', payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -14,7 +14,7 @@ export const addPhoneNumber = async (payload) => {
 
 export const createPhoneAgent = async (payload) => {
     try {
-        const response = await axiosInstance.post('http://116.202.210.102:8000/create-phone-agent', payload);
+        const response = await axiosInstance.post('http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/create-phone-agent', payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -25,7 +25,7 @@ export const createPhoneAgent = async (payload) => {
 
 export const createPhoneCampaign= async (payload) => {
     try {
-        const response = await axiosInstance.post('http://116.202.210.102:8000/create-phone-campaign', payload);
+        const response = await axiosInstance.post('http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/create-phone-campaign', payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -37,7 +37,7 @@ export const createPhoneCampaign= async (payload) => {
 
 export const getPhoneNumber= async () => {
     try {
-        const response = await axiosInstance.get('http://116.202.210.102:8000/get-phone-numbers');
+        const response = await axiosInstance.get('http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/get-phone-numbers');
         return response;
     } catch (error) {
         console.error(error);
@@ -48,7 +48,7 @@ export const getPhoneNumber= async () => {
 
 export const getPhoneCampaign= async () => {
     try {
-        const response = await axiosInstance.get('http://116.202.210.102:8000/get-phone-campaigns');
+        const response = await axiosInstance.get('http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/get-phone-campaigns');
         return response;
     } catch (error) {
         console.error(error);
@@ -59,7 +59,7 @@ export const getPhoneCampaign= async () => {
 
 export const getPhoneCampaignDetail= async (id) => {
     try {
-        const response = await axiosInstance.get(`http://116.202.210.102:8000/phone-campaign-detail/${id}`);
+        const response = await axiosInstance.get(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/phone-campaign-detail/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -69,7 +69,7 @@ export const getPhoneCampaignDetail= async (id) => {
 
 export const getCallAgent=async()=>{
      try{
-        const response = await axiosInstance.get('http://116.202.210.102:8000/get-phone-agents');
+        const response = await axiosInstance.get('http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/get-phone-agents');
         return response;
      }catch (error) {
         console.error(error);
@@ -80,7 +80,7 @@ export const getCallAgent=async()=>{
 
 export const updatePhoneNumberStatus=async (id)=>{
       try{
-      const response = await axiosInstance.patch(`http://116.202.210.102:8000/phone-number-status/${id}`);
+      const response = await axiosInstance.patch(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/phone-number-status/${id}`);
       return response;
       }catch(error){
         console.error(error);
@@ -91,7 +91,7 @@ export const updatePhoneNumberStatus=async (id)=>{
 export const updatePhoneNumberAgentStatus=async (id)=>{
 
       try{
-      const response = await axiosInstance.patch(`http://116.202.210.102:8000/phone-agent-status/${id}`);
+      const response = await axiosInstance.patch(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/phone-agent-status/${id}`);
       return response;
       }catch(error){
         console.error(error);
@@ -101,7 +101,7 @@ export const updatePhoneNumberAgentStatus=async (id)=>{
 
 export const deletePhoneNumber=async (id)=>{
       try{
-      const response = await axiosInstance.delete(`http://116.202.210.102:8000/phone-number/${id}`);
+      const response = await axiosInstance.delete(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/phone-number/${id}`);
       return response;
       }
       catch(error){
@@ -113,7 +113,7 @@ export const deletePhoneNumber=async (id)=>{
 export const deletePhoneCampaign=async(id)=>{
 
       try{
-      const response = await axiosInstance.delete(`http://116.202.210.102:8000/phone-campaign/${id}`);
+      const response = await axiosInstance.delete(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/phone-campaign/${id}`);
       return response;
       }
       catch(error){
@@ -125,7 +125,7 @@ export const deletePhoneCampaign=async(id)=>{
 
 export const updatePhoneCampaign=async ( payload)=>{
       try{
-      const response = await axiosInstance.put("http://116.202.210.102:8000/update-phone-campaign/"+payload.id, payload);
+      const response = await axiosInstance.put("http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/update-phone-campaign/"+payload.id, payload);
         return response;
         }
         catch(error){
@@ -136,7 +136,7 @@ export const updatePhoneCampaign=async ( payload)=>{
 
 export const duplicateCampaign=async (id)=>{
       try{
-      const response = await axiosInstance.post(`http://116.202.210.102:8000/duplicate-phone-campaign/${id}`);
+      const response = await axiosInstance.post(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/duplicate-phone-campaign/${id}`);
       return response;
       }
       catch(error){

@@ -2,7 +2,7 @@ import axiosInstance from "./axiosInstance";
 
 export const getSeoChats = async () => {
     try {
-        const response = await axiosInstance.get(`http://116.202.210.102:8000/get-seo-chats`);
+        const response = await axiosInstance.get(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/get-seo-chats`);
         return response;
     } catch (error) {
         console.error(error);
@@ -12,7 +12,7 @@ export const getSeoChats = async () => {
 
 export const getSeoChatById = async (id) => {
     try {
-        const response = await axiosInstance.get(`http://116.202.210.102:8000/get-seo-chat/${id}`);
+        const response = await axiosInstance.get(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/get-seo-chat/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -22,7 +22,7 @@ export const getSeoChatById = async (id) => {
 
 export const updateSeoChatName = async (id, payload) => {
     try {
-        const response = await axiosInstance.patch(`http://116.202.210.102:8000/update-seo-chat-name/${id}`, payload);
+        const response = await axiosInstance.patch(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/update-seo-chat-name/${id}`, payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -32,7 +32,7 @@ export const updateSeoChatName = async (id, payload) => {
 
 export const deleteSeoChat = async (id) => {
     try {
-        const response = await axiosInstance.delete(`http://116.202.210.102:8000/delete-seo-chat/${id}`);
+        const response = await axiosInstance.delete(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/delete-seo-chat/${id}`);
         return response;
     } catch (error) {
         console.error(error);

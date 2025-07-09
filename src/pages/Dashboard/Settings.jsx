@@ -12,11 +12,12 @@ import { updatePassword } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import { getTeamMembers, sendInviteEmail } from "../../api/teamMember";
 import TransactionHistory from "../../components/TransactionHistory";
-import { Delete, Edit, LeftArrow, PasswordLock, PlanIcon, Settings, TeamMemberIcon } from "../../icons/icons";
+import { Delete, Edit, LeftArrow, PasswordLock, PlanIcon, Settings, TeamMemberIcon, ThreeDots } from "../../icons/icons";
 import { discardData } from "../../store/profileSlice";
 import { SelectDropdown } from "../../components/Dropdown";
 import { FaChevronDown } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+import { BsThreeDots } from "react-icons/bs";
 
 
 // User profile data
@@ -101,6 +102,7 @@ const SettingsPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch()
   const [isOpen, setIsOpen] = useState(false)
+  const [sidebarStatus, setSideBarStatus] = useState(false)
   const countryRef = useRef()
 
   console.log(selectedCountry, "selectedCountry")
@@ -1097,7 +1099,7 @@ const SettingsPage = () => {
 
 
   return (
-    <div className="w-full overflow-auto">
+    <div className="w-full overflow-auto relative">
       {/* <div>
         <div className='flex items-center pl-4 py-3' onClick={() => navigate("/dashboard")}>
           <MdOutlineKeyboardArrowLeft size={25} />
@@ -1105,9 +1107,10 @@ const SettingsPage = () => {
         </div>
         <hr className='text-[#E1E4EA]' />
       </div> */}
-      <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
+      <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><BsThreeDots size={24} color='#1e1e1e' /></div>
+      <div className="flex h-screen flex-col md:flex-row items-start lg:gap-8 relative w-full">
         {/* Sidebar Navigation */}
-        <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] min-w-[272px] h-full">
+        <div className="lg:flex hidden flex-col bg-white gap-8 border-r border-[#E1E4EA] min-w-[272px] h-full">
           <div className=''>
             <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
               {/* <MdOutlineKeyboardArrowLeft size={25} /> */}
@@ -1157,7 +1160,7 @@ const SettingsPage = () => {
         </div>
 
         {/* Main Content */}
-        <div className="w-full h-full overflow-x-hidden py-3">
+        <div className="w-full h-full overflow-x-hidden py-8 pl-5 lg:px-0 lg:py-3">
           {renderMainContent()}
         </div>
       </div>
@@ -1219,6 +1222,75 @@ const SettingsPage = () => {
           </div>
         </div>
       )}
+      {sidebarStatus &&
+        <div className="lg:hidden fixed inset-0 bg-black/20 flex items-end z-50">
+          <div className="flex flex-col relative bg-white gap-8 w-full py-8 rounded-t-[8px]">
+            <button
+              className="absolute top-4 cursor-pointer right-4 text-gray-500 hover:text-gray-700"
+              onClick={() => {
+                setSideBarStatus(false)
+              }}
+            >
+              <X size={20} />
+            </button>
+            <div className=''>
+              <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
+                {/* <MdOutlineKeyboardArrowLeft size={25} /> */}
+                <div className="flex gap-4 pl-3 items-center h-[57px]">
+                  {/* <LeftArrow /> */}
+                  <h1 className="text-[20px] font-[600]">{t("settings.label")}</h1>
+                </div>
+              </div>
+              <hr className='text-[#E1E4EA]' />
+            </div>
+            <div className="flex inter flex-col w-full px-3 items-start gap-2 relative">
+              <div
+                onClick={() => {
+                  handleSelect("general")
+                  setSideBarStatus(false)
+                }}
+                className={`flex group justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#F0EFFF]" : "hover:bg-[#F9F8FF]"
+                  }`}
+              >
+                {activeSidebarItem === "general" ? <Settings status={activeSidebarItem === "general"} /> : <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<Settings status={activeSidebarItem === "general"} />}</div> <div className='hidden group-hover:block'>{<Settings hover={true} />}</div></div>}
+                <span className={`font-[400] text-[16px] ${activeSidebarItem === "general" ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                  {t("settings.tab_1")}
+                </span>
+              </div>
+
+              <div
+                onClick={() => {
+                  handleSelect("billing")
+                  setSideBarStatus(false)
+                }}
+                className={`flex group justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#EDF3FF]" : "hover:bg-[#F9F8FF]"
+                  }`}
+              >
+                {activeSidebarItem === "billing" ? <PlanIcon status={activeSidebarItem === "billing"} /> :
+                  <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<PlanIcon status={activeSidebarItem === "billing"} />}</div> <div className='hidden group-hover:block'>{<PlanIcon hover={true} />}</div></div>}
+                <span className={`font-[400] text-[16px] ${activeSidebarItem === "billing" ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                  {t("settings.tab_2")}
+                </span>
+              </div>
+
+              <div
+                onClick={() => {
+                  handleSelect("team")
+                  setSideBarStatus(false)
+                }}
+                className={`flex group justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "team" ? "bg-[#EDF3FF]" : "hover:bg-[#F9F8FF]"
+                  }`}
+              >
+                {activeSidebarItem === "team" ? <TeamMemberIcon status={activeSidebarItem === "team"} /> :
+                  <div className="flex items-center gap-2"><div className='group-hover:hidden'><TeamMemberIcon status={activeSidebarItem === "team"} /></div> <div className='hidden group-hover:block'><TeamMemberIcon hover={true} /></div></div>}
+                <span className={`font-[400] text-[16px] ${activeSidebarItem === "team" ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                  {t("settings.tab_3")}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   );
 };

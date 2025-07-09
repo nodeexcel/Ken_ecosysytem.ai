@@ -140,7 +140,7 @@ const Agents = () => {
         <div className='flex justify-between px-2 items-center'>
           {/* <MdOutlineKeyboardArrowLeft size={25} /> */}
           <div className="flex gap-2 items-center h-[57px]">
-            <h1 className="text-[20px] font-[600] pl-3">{t("home")}</h1>
+            <h1 className="text-[20px] font-[600] pl-10 lg:pl-3">{t("home")}</h1>
           </div>
           <div>
             <button className='bg-[#675FFF] py-2 px-10 text-[14px] rounded-lg text-white cursor-pointer' onClick={handleLogout}>{t("logout")}</button>
