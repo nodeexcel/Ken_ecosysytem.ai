@@ -2,7 +2,7 @@ import axiosInstance from "./axiosInstance";
 
 export const getHrChats = async () => {
     try {
-        const response = await axiosInstance.get(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/get-hr-chats`);
+        const response = await axiosInstance.get(`https://agents.ecosysteme.ai/get-hr-chats`);
         return response;
     } catch (error) {
         console.error(error);
@@ -12,7 +12,7 @@ export const getHrChats = async () => {
 
 export const getHrChatById = async (id) => {
     try {
-        const response = await axiosInstance.get(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/get-hr-chat/${id}`);
+        const response = await axiosInstance.get(`https://agents.ecosysteme.ai/get-hr-chat/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -22,7 +22,7 @@ export const getHrChatById = async (id) => {
 
 export const updateHrChatName = async (id, payload) => {
     try {
-        const response = await axiosInstance.patch(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/update-hr-chat-name/${id}`, payload);
+        const response = await axiosInstance.patch(`https://agents.ecosysteme.ai/update-hr-chat-name/${id}`, payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -32,7 +32,7 @@ export const updateHrChatName = async (id, payload) => {
 
 export const deleteHrChat = async (id) => {
     try {
-        const response = await axiosInstance.delete(`http://ecosystem-agents-2078567720.eu-north-1.elb.amazonaws.com/delete-hr-chat/${id}`);
+        const response = await axiosInstance.delete(`https://agents.ecosysteme.ai/delete-hr-chat/${id}`);
         return response;
     } catch (error) {
         console.error(error);
