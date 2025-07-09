@@ -785,7 +785,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         <>
             <div className="w-full py-4 pr-4 flex flex-col gap-4 ">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">{updateAgentStatus ? `${t("appointment.update")}` : `${t("appointment.create_agent")}`} Agent</h1>
+                    <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">{updateAgentStatus ? `${t("appointment.update_agent")}` : `${t("appointment.create_agent")}`}</h1>
                     <div className='flex gap-2'>
                         {/* <button onClick={() => setPreviewAgent(true)} className="bg-white text-[16px] font-[500] text-[#5A687C] border-[1.5px] border-[#E1E4EA] rounded-md text-sm md:text-base px-4 py-2">
                             Preview Agent
