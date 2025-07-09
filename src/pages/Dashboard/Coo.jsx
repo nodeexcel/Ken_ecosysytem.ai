@@ -32,8 +32,8 @@ function Coo() {
     const socketRef = useRef(null)
     const socket2Ref = useRef(null)
     const { t } = useTranslation();
-    const newwebsocketurl = "ws://116.202.210.102:8000/new-coo-agent-chat"
-    const websocketurl = "ws://116.202.210.102:8000/coo-agent"
+    const newwebsocketurl = "ws://agents.ecosysteme.ai/new-coo-agent-chat"
+    const websocketurl = "ws://agents.ecosysteme.ai/coo-agent"
     const initialMessage = `${t("tara_coo.coo_auto_generated")}`
 
     const navigate = useNavigate()
