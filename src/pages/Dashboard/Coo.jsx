@@ -13,6 +13,7 @@ import { formatTimeAgo } from '../../utils/TimeFormat'
 import MeetingNotesCoo from '../../components/MeetingNotesCoo'
 import { BsThreeDots } from 'react-icons/bs'
 import { X } from 'lucide-react'
+import chatInstance from '../../api/chatInstance'
 
 function Coo() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -32,8 +33,8 @@ function Coo() {
     const socketRef = useRef(null)
     const socket2Ref = useRef(null)
     const { t } = useTranslation();
-    const newwebsocketurl = "wss://agents.ecosysteme.ai/new-coo-agent-chat"
-    const websocketurl = "wss://agents.ecosysteme.ai/coo-agent"
+    const newwebsocketurl = `${chatInstance}/new-coo-agent-chat`
+    const websocketurl = `${chatInstance}/coo-agent`
     const initialMessage = `${t("tara_coo.coo_auto_generated")}`
 
     const navigate = useNavigate()

@@ -14,6 +14,7 @@ import SalesForecasterAccounting from '../../components/SalesForecasterAccountin
 import ROICalculatorAccounting from '../../components/ROICalculatorAccounting'
 import { X } from 'lucide-react'
 import { BsThreeDots } from 'react-icons/bs'
+import chatInstance from '../../api/chatInstance'
 
 function Accounting() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -32,8 +33,8 @@ function Accounting() {
     const [sidebarStatus, setSideBarStatus] = useState(false)
     const socketRef = useRef(null)
     const socket2Ref = useRef(null)
-    const newwebsocketurl = "wss://agents.ecosysteme.ai/new-accounting-chat"
-    const websocketurl = "wss://agents.ecosysteme.ai/accounting"
+    const newwebsocketurl = `${chatInstance}/new-accounting-chat`
+    const websocketurl = `${chatInstance}/accounting`
     const initialMessage = "Hi! I’m Finn, your Finance and Accounting expert. \nI’m here to help you manage your cash flow, track expenses, generate financial reports, and keep your books clean, without the headache.\nFrom invoicing and cost analysis to budgeting and tax prep, I’ve got your numbers covered. \nJust tell me what you need.I can analyze your data, highlight financial risks, and help you make smarter business decisions in real time. \nReady to get your finances in order and grow with clarity ? Let’s dive in 💼"
 
     const navigate = useNavigate()
