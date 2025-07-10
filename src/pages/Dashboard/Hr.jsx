@@ -14,6 +14,7 @@ import InterviewPlannerHr from '../../components/InterviewPlannerHr'
 import LinkedInOutreachHr from '../../components/LinkedInOutreachHr'
 import { BsThreeDots } from 'react-icons/bs'
 import { X } from 'lucide-react'
+import chatInstance from '../../api/chatInstance'
 
 function Hr() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -32,8 +33,8 @@ function Hr() {
     const [sidebarStatus, setSideBarStatus] = useState(false)
     const socketRef = useRef(null)
     const socket2Ref = useRef(null)
-    const newwebsocketurl = "wss://agents.ecosysteme.ai/new-hr-agent-chat"
-    const websocketurl = "wss://agents.ecosysteme.ai/hr-agent"
+    const newwebsocketurl = `${chatInstance}/new-hr-agent-chat`
+    const websocketurl = `${chatInstance}/hr-agent`
     const initialMessage = "Hello! I’m Rima, your HR assistant. \nI’m here to support you across all your HR needs, from recruiting and screening candidates to onboarding, managing interviews, and beyond.\nI can also help you with day-to-day HR topics like policy clarification, employee onboarding support, FAQ responses, and internal coordination.\nJust tell me what you need, whether it's hiring your next top talent or streamlining your HR processes. and I’ll take care of it. \nReady to simplify your HR tasks and save time? Let’s get started 😊"
     const { t } = useTranslation()
 
