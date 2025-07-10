@@ -1,8 +1,8 @@
-import axiosInstance from "./axiosInstance";
+import agentInstance from "./agentInstance";
 
 export const addPhoneNumber = async (payload) => {
     try {
-        const response = await axiosInstance.post('https://agents.ecosysteme.ai/add-phone-number', payload);
+        const response = await agentInstance.post('/add-phone-number', payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -14,7 +14,7 @@ export const addPhoneNumber = async (payload) => {
 
 export const createPhoneAgent = async (payload) => {
     try {
-        const response = await axiosInstance.post('https://agents.ecosysteme.ai/create-phone-agent', payload);
+        const response = await agentInstance.post('/create-phone-agent', payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -25,7 +25,7 @@ export const createPhoneAgent = async (payload) => {
 
 export const createPhoneCampaign= async (payload) => {
     try {
-        const response = await axiosInstance.post('https://agents.ecosysteme.ai/create-phone-campaign', payload);
+        const response = await agentInstance.post('/create-phone-campaign', payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -37,7 +37,7 @@ export const createPhoneCampaign= async (payload) => {
 
 export const getPhoneNumber= async () => {
     try {
-        const response = await axiosInstance.get('https://agents.ecosysteme.ai/get-phone-numbers');
+        const response = await agentInstance.get('/get-phone-numbers');
         return response;
     } catch (error) {
         console.error(error);
@@ -48,7 +48,7 @@ export const getPhoneNumber= async () => {
 
 export const getPhoneCampaign= async () => {
     try {
-        const response = await axiosInstance.get('https://agents.ecosysteme.ai/get-phone-campaigns');
+        const response = await agentInstance.get('/get-phone-campaigns');
         return response;
     } catch (error) {
         console.error(error);
@@ -59,7 +59,7 @@ export const getPhoneCampaign= async () => {
 
 export const getPhoneCampaignDetail= async (id) => {
     try {
-        const response = await axiosInstance.get(`https://agents.ecosysteme.ai/phone-campaign-detail/${id}`);
+        const response = await agentInstance.get(`/phone-campaign-detail/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -69,7 +69,7 @@ export const getPhoneCampaignDetail= async (id) => {
 
 export const getCallAgent=async()=>{
      try{
-        const response = await axiosInstance.get('https://agents.ecosysteme.ai/get-phone-agents');
+        const response = await agentInstance.get('/get-phone-agents');
         return response;
      }catch (error) {
         console.error(error);
@@ -80,7 +80,7 @@ export const getCallAgent=async()=>{
 
 export const updatePhoneNumberStatus=async (id)=>{
       try{
-      const response = await axiosInstance.patch(`https://agents.ecosysteme.ai/phone-number-status/${id}`);
+      const response = await agentInstance.patch(`/phone-number-status/${id}`);
       return response;
       }catch(error){
         console.error(error);
@@ -91,7 +91,7 @@ export const updatePhoneNumberStatus=async (id)=>{
 export const updatePhoneNumberAgentStatus=async (id)=>{
 
       try{
-      const response = await axiosInstance.patch(`https://agents.ecosysteme.ai/phone-agent-status/${id}`);
+      const response = await agentInstance.patch(`/phone-agent-status/${id}`);
       return response;
       }catch(error){
         console.error(error);
@@ -101,7 +101,7 @@ export const updatePhoneNumberAgentStatus=async (id)=>{
 
 export const deletePhoneNumber=async (id)=>{
       try{
-      const response = await axiosInstance.delete(`https://agents.ecosysteme.ai/phone-number/${id}`);
+      const response = await agentInstance.delete(`/phone-number/${id}`);
       return response;
       }
       catch(error){
@@ -113,7 +113,7 @@ export const deletePhoneNumber=async (id)=>{
 export const deletePhoneCampaign=async(id)=>{
 
       try{
-      const response = await axiosInstance.delete(`https://agents.ecosysteme.ai/phone-campaign/${id}`);
+      const response = await agentInstance.delete(`/phone-campaign/${id}`);
       return response;
       }
       catch(error){
@@ -125,7 +125,7 @@ export const deletePhoneCampaign=async(id)=>{
 
 export const updatePhoneCampaign=async ( payload)=>{
       try{
-      const response = await axiosInstance.put("https://agents.ecosysteme.ai/update-phone-campaign/"+payload.id, payload);
+      const response = await agentInstance.put("/update-phone-campaign/"+payload.id, payload);
         return response;
         }
         catch(error){
@@ -136,7 +136,7 @@ export const updatePhoneCampaign=async ( payload)=>{
 
 export const duplicateCampaign=async (id)=>{
       try{
-      const response = await axiosInstance.post(`https://agents.ecosysteme.ai/duplicate-phone-campaign/${id}`);
+      const response = await agentInstance.post(`/duplicate-phone-campaign/${id}`);
       return response;
       }
       catch(error){

@@ -1,8 +1,8 @@
-import axiosInstance from "./axiosInstance";
+import agentInstance from "./agentInstance";
 
 export const getContentCreationChats = async () => {
     try {
-        const response = await axiosInstance.get(`https://agents.ecosysteme.ai/get-content-creation-chats`);
+        const response = await agentInstance.get(`/get-content-creation-chats`);
         return response;
     } catch (error) {
         console.error(error);
@@ -12,7 +12,7 @@ export const getContentCreationChats = async () => {
 
 export const getContentCreationChatById = async (id) => {
     try {
-        const response = await axiosInstance.get(`https://agents.ecosysteme.ai/get-content-creation-chat/${id}`);
+        const response = await agentInstance.get(`/get-content-creation-chat/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -22,7 +22,7 @@ export const getContentCreationChatById = async (id) => {
 
 export const updateContentCreationChatName = async (id, payload) => {
     try {
-        const response = await axiosInstance.patch(`https://agents.ecosysteme.ai/update-content-creation-chat-name/${id}`, payload);
+        const response = await agentInstance.patch(`/update-content-creation-chat-name/${id}`, payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -32,7 +32,7 @@ export const updateContentCreationChatName = async (id, payload) => {
 
 export const deleteContentCreationChat = async (id) => {
     try {
-        const response = await axiosInstance.delete(`https://agents.ecosysteme.ai/delete-content-creation-chat/${id}`);
+        const response = await agentInstance.delete(`/delete-content-creation-chat/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -42,7 +42,7 @@ export const deleteContentCreationChat = async (id) => {
 
 export const createContent = async (payload) => {
     try {
-        const response = await axiosInstance.post(`https://agents.ecosysteme.ai/create-content`, payload);
+        const response = await agentInstance.post(`/create-content`, payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -52,7 +52,7 @@ export const createContent = async (payload) => {
 
 export const contentGenerationStatus = async (id) => {
     try {
-        const response = await axiosInstance.get(`https://agents.ecosysteme.ai/content-generation-status?content_id=${id}`,);
+        const response = await agentInstance.get(`/content-generation-status?content_id=${id}`,);
         return response;
     } catch (error) {
         console.error(error);
