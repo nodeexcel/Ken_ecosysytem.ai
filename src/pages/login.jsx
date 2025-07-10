@@ -57,6 +57,14 @@ export default function Login() {
 
     }, [token, userDetails.loading])
 
+    const renderPath = (path) => {
+        if (path === "terms") {
+            window.open("https://www.ecosysteme.ai/terms", "_blank");
+        } else {
+            window.open("https://www.ecosysteme.ai/privacy", "_blank");
+        }
+    }
+
     const handleEmailSubmit = async (e) => {
         e.preventDefault();
         setErrors({});
@@ -284,6 +292,10 @@ export default function Login() {
         onSuccess: handleGoogleLogin,
     });
 
+    const handleSignup = () => {
+        window.open("http://ecosysteme.ai/pricing", "_blank");
+    }
+
     const getSubscriptionPlan = async () => {
         try {
             const payload = {
@@ -467,7 +479,7 @@ export default function Login() {
                 {step !== "otp" && (
                     <p className="text-center mt-6 text-[#5A687C] text-[14px]">
                         Don’t have an account?{" "}
-                        <span onClick={getSubscriptionPlan} className="hover:underline text-[#675FFF] text-[14px] font-semibold cursor-pointer">
+                        <span onClick={handleSignup} className="hover:underline text-[#675FFF] text-[14px] font-semibold cursor-pointer">
                             Sign Up
                         </span>
                     </p>
@@ -476,9 +488,9 @@ export default function Login() {
 
             <p className="text-center inter font-[400] py-6 text-[#5A687C] text-[12px]">
                 By signing in you agree to our{" "}
-                <span onClick={() => navigate("/terms-conditions")} className="underline text-[#675FFF] text-[12px] font-[600] cursor-pointer">
+                <span onClick={() => renderPath("terms")} className="underline text-[#675FFF] text-[12px] font-[600] cursor-pointer">
                     Terms and Conditions
-                </span> & <span onClick={() => navigate("/privacy-policy")} className="underline text-[#675FFF] text-[12px] font-[600] cursor-pointer">
+                </span> & <span onClick={() => renderPath("privacy")} className="underline text-[#675FFF] text-[12px] font-[600] cursor-pointer">
                     Privacy Policy
                 </span>
             </p>

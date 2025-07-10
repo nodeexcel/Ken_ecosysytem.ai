@@ -49,8 +49,8 @@ function App() {
         <Route path='/success' element={<Success />} />
         <Route path='/cancel' element={<PaymentFailed />} />
         <Route path='/accept-invite' element={<AcceptInvitation />} />
-        <Route path='/terms-conditions' element={< TermsAndConditions />} />
-        <Route path='/privacy-policy' element={< PrivacyPolicy />} />
+        <Route path='/terms' element={< TermsAndConditions />} />
+        <Route path='/privacy' element={< PrivacyPolicy />} />
         <Route path='/agent-personality-documentation' element={< AgentPersonalityDocumentation />} />
         <Route path='/dashboard' element={<Dashboard />}>
           <Route path='' element={<Agents />} />
