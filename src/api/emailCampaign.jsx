@@ -1,8 +1,8 @@
-import axiosInstance from "./axiosInstance";
+import agentInstance from "./agentInstance";
 
 export const createEmailCampaign = async (payload) => {
     try {
-        const response = await axiosInstance.post("https://agents.ecosysteme.ai/email-campaign-creation", payload);
+        const response = await agentInstance.post("/email-campaign-creation", payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -13,7 +13,7 @@ export const createEmailCampaign = async (payload) => {
 
 export const getEmailCampaign = async () => {
     try {
-        const response = await axiosInstance.get("https://agents.ecosysteme.ai/get-email-campaigns");
+        const response = await agentInstance.get("/get-email-campaigns");
         return response;
     } catch (error) {
         console.error(error);
@@ -24,7 +24,7 @@ export const getEmailCampaign = async () => {
 
 export const getEmailCampaignById = async (id) => {
     try {
-        const response = await axiosInstance.get(`https://agents.ecosysteme.ai/campaign-details/${id}`);
+        const response = await agentInstance.get(`/campaign-details/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -35,7 +35,7 @@ export const getEmailCampaignById = async (id) => {
 
 export const deleteEmailCampaign = async (id) => {
     try {
-        const response = await axiosInstance.delete(`https://agents.ecosysteme.ai/delete-campaign/${id}`);
+        const response = await agentInstance.delete(`/delete-campaign/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -46,7 +46,7 @@ export const deleteEmailCampaign = async (id) => {
 
 export const updateEmailCampaign = async (payload, id) => {
     try {
-        const response = await axiosInstance.put(`https://agents.ecosysteme.ai/update-campaign/${id}`, payload);
+        const response = await agentInstance.put(`/update-campaign/${id}`, payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -57,7 +57,7 @@ export const updateEmailCampaign = async (payload, id) => {
 
 export const updateEmailCampaignStatus = async (id) => {
     try {
-        const response = await axiosInstance.patch(`https://agents.ecosysteme.ai/email-campaign-status/${id}`);
+        const response = await agentInstance.patch(`/email-campaign-status/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -68,7 +68,7 @@ export const updateEmailCampaignStatus = async (id) => {
 
 export const getCampaignSchedule = async () => {
     try {
-        const response = await axiosInstance.get(`https://agents.ecosysteme.ai/get-campaign-schedule`);
+        const response = await agentInstance.get(`/get-campaign-schedule`);
         return response;
     } catch (error) {
         console.error(error);
@@ -79,7 +79,7 @@ export const getCampaignSchedule = async () => {
 
 export const getScheduledContent = async (id) => {
     try {
-        const response = await axiosInstance.get(`https://agents.ecosysteme.ai/get-scheduled-content/${id}`);
+        const response = await agentInstance.get(`/get-scheduled-content/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -90,7 +90,7 @@ export const getScheduledContent = async (id) => {
 
 export const updateContentStatus = async (id, payload) => {
     try {
-        const response = await axiosInstance.post(`https://agents.ecosysteme.ai/content-status/${id}`, payload);
+        const response = await agentInstance.post(`/content-status/${id}`, payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -101,7 +101,7 @@ export const updateContentStatus = async (id, payload) => {
 
 export const duplicateCampaign = async (id) => {
     try {
-        const response = await axiosInstance.post(`https://agents.ecosysteme.ai/duplicate-campaign/${id}`);
+        const response = await agentInstance.post(`/duplicate-campaign/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -112,7 +112,7 @@ export const duplicateCampaign = async (id) => {
 
 export const campaignStatics = async () => {
     try {
-        const response = await axiosInstance.get(`https://agents.ecosysteme.ai/campigns-stats`);
+        const response = await agentInstance.get(`/campigns-stats`);
         return response;
     } catch (error) {
         console.error(error);
