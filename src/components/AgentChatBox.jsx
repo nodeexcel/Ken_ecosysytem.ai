@@ -100,6 +100,11 @@ const AgentChatBox = ({ listedProps }) => {
             };
             setMessages((prev) => [...prev, agentMessage]);
 
+            const typingMessage = {
+                id: 'typing', isUser: false, content: "...", sender: "Ecosystem.ai", time: "", status: "",
+            };
+            setMessages((prev) => [...prev, typingMessage]);
+
             socketRef.current.onmessage = async (event) => {
                 const responseText = event.data
                 console.log('💬 Bot:', responseText)
@@ -115,7 +120,13 @@ const AgentChatBox = ({ listedProps }) => {
                     status: "Read",
                 };
 
-                setMessages((prev) => [...prev, userMessage]);
+                setMessages((prev) =>
+                    prev.map((msg) =>
+                        msg.id === "typing" ? userMessage : msg
+                    )
+                );
+
+                // setMessages((prev) => [...prev, userMessage]);
                 // handleGetAccountChats()
                 if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
                     socketRef.current.close()
@@ -162,6 +173,11 @@ const AgentChatBox = ({ listedProps }) => {
             };
             setMessages((prev) => [...prev, agentMessage]);
 
+            const typingMessage = {
+                id: 'typing', isUser: false, content: "...", sender: "Ecosystem.ai", time: "", status: "",
+            };
+            setMessages((prev) => [...prev, typingMessage]);
+
             socket2Ref.current.onmessage = async (event) => {
                 const responseText = event.data
                 console.log('💬 Bot:', responseText)
@@ -176,8 +192,13 @@ const AgentChatBox = ({ listedProps }) => {
                     time: formatTimeAgo(parsedMessage?.message_at),
                     status: "Read",
                 };
+                setMessages((prev) =>
+                    prev.map((msg) =>
+                        msg.id === "typing" ? userMessage : msg
+                    )
+                );
 
-                setMessages((prev) => [...prev, userMessage]);
+                // setMessages((prev) => [...prev, userMessage]);
                 // handleGetAccountChats()
             }
 
@@ -204,7 +225,7 @@ const AgentChatBox = ({ listedProps }) => {
     }, [])
 
     useEffect(() => {
-        if (messages?.length > 0 && !messages?.[messages.length - 1].isUser) {
+        if (messages?.length > 0 && !messages?.[messages.length - 1].isUser && messages?.[messages.length - 1].id !== "typing") {
             handleGetAccountChats()
         }
     }, [messages])
@@ -265,6 +286,15 @@ const AgentChatBox = ({ listedProps }) => {
     const handleSelectMessage = (value) => {
         setInput(value)
     }
+
+    const parseMarkdown = (text) => {
+        return text
+            .replace(/^## (.*$)/gim, "<h2>$1</h2>")
+            .replace(/^### (.*$)/gim, "<h3><strong>$1</strong></h3>")
+            .replace(/^#### (.*$)/gim, "<h4>$1</h4>")
+            .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+            .replace(/\*(.*?)\*/g, "<em>$1</em>");;
+    };
 
     const suggestionsChat = [{ label: staticSuggestions[0].label, icon: <BulbIcon />, key: staticSuggestions[0].key },
     { label: staticSuggestions[1].label, icon: <EditIcon />, key: staticSuggestions[1].key },
@@ -364,39 +394,46 @@ const AgentChatBox = ({ listedProps }) => {
                                 <div className="space-y-6">
                                     {messages?.length > 0 ? messages.map((message) => (
                                         <div key={message.id} className="flex flex-col">
-                                            {!message.isUser && (
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <div>
-                                                        <img src={agentLogo} alt={agentName} className="object-fit" />
+                                            <>
+                                                {message.id === "typing" ? <div className="pl-3 pt-3 flex "><span className="thinking" /></div> : <>
+                                                    {!message.isUser && (
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <div>
+                                                                <img src={agentLogo} alt={agentName} className="object-fit" />
+                                                            </div>
+                                                            <p className="text-[12px] font-[600] text-[#5A687C]">{agentName}</p>
+                                                            <span className="text-[12px] text-[#5A687C] flex items-center gap-1"><GoDotFill color="#E1E4EA" />
+                                                                {message.time}</span>
+                                                        </div>
+                                                    )}
+
+                                                    {message.isUser && (
+                                                        <div className="flex items-center gap-1 mt-1 ml-auto">
+                                                            <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] text-[#675FFF] font-[600]">{userDetails?.user?.firstName[0]}</div>
+                                                            <div className="text-[12px] font-[600] text-[#5A687C]">{userDetails?.user?.firstName}</div>
+                                                            <span className="text-[12px] text-[#5A687C] flex items-center gap-1"><GoDotFill color="#E1E4EA" />
+                                                                {message.time}</span>
+                                                        </div>
+                                                    )}
+
+                                                    <div
+                                                        className={`max-w-[70%] w-fit text-[12px] font-[400] p-3 ${!message.isUser ? "my-1 bg-[#F2F2F7] text-[#5A687C] rounded-b-[10px] rounded-r-[10px]" : "ml-auto my-1 bg-[#675FFF] text-[#fff] rounded-b-[10px] rounded-l-[10px]"
+                                                            }`}
+                                                    >
+                                                        <p
+                                                            className="text-[16px] !whitespace-pre-wrap"
+                                                            dangerouslySetInnerHTML={{ __html: parseMarkdown(message.content) }}
+                                                        />
                                                     </div>
-                                                    <p className="text-[12px] font-[600] text-[#5A687C]">{agentName}</p>
-                                                    <span className="text-[12px] text-[#5A687C] flex items-center gap-1"><GoDotFill color="#E1E4EA" />
-                                                        {message.time}</span>
-                                                </div>
-                                            )}
-
-                                            {message.isUser && (
-                                                <div className="flex items-center gap-1 mt-1 ml-auto">
-                                                    <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] text-[#675FFF] font-[600]">{userDetails?.user?.firstName[0]}</div>
-                                                    <div className="text-[12px] font-[600] text-[#5A687C]">{userDetails?.user?.firstName}</div>
-                                                    <span className="text-[12px] text-[#5A687C] flex items-center gap-1"><GoDotFill color="#E1E4EA" />
-                                                        {message.time}</span>
-                                                </div>
-                                            )}
-
-                                            {message.id === "typing" ? <div className="pl-[50px] pt-3 flex "><span className="three-dots" /></div> : <div
-                                                className={`max-w-[70%] w-fit text-[12px] font-[400] p-3 ${!message.isUser ? "my-1 bg-[#F2F2F7] text-[#5A687C] rounded-b-[10px] rounded-r-[10px]" : "ml-auto my-1 bg-[#675FFF] text-[#fff] rounded-b-[10px] rounded-l-[10px]"
-                                                    }`}
-                                            >
-                                                <p className="text-[16px] !whitespace-pre-wrap">{message.content}</p>
-                                            </div>}
-                                            {message.id !== "typing" && !message.isUser && <div className="my-1 flex items-center gap-1">
-                                                <Duplicate />
-                                                <LikeIcon />
-                                                <DislikeIcon />
-                                                <SpeakerIcon />
-                                                <SendIcon />
-                                            </div>}
+                                                    {message.id !== "typing" && !message.isUser && <div className="my-1 flex items-center gap-1">
+                                                        <Duplicate />
+                                                        <LikeIcon />
+                                                        <DislikeIcon />
+                                                        <SpeakerIcon />
+                                                        <SendIcon />
+                                                    </div>}
+                                                </>}
+                                            </>
                                         </div>
                                     )) : <div className="flex flex-col gap-6 p-5">
                                         <div className="text-[#000000] text-[24px] font-[400]">
