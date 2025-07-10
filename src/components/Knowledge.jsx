@@ -391,7 +391,7 @@ const { t } = useTranslation();
 
 
   return (
-    <div className="flex pr-4 py-4 flex-col w-full items-start gap-6 ">
+    <div className="flex lg:pl-0 pl-4 pr-4 py-4 flex-col w-full items-start gap-6 ">
       <div className="flex items-center justify-between w-full">
         <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
           {t("brain_ai.knowledge.sub_heading")}

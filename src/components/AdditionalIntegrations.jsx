@@ -208,7 +208,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                 </div>
                 <hr className='text-[#E1E4EA]' />
             </div>
-            <div className="flex flex-col w-full items-start gap-6 md:max-w-[763px] mx-auto">
+            <div className="flex flex-col w-full items-start gap-6 md:max-w-[763px] lg:px-0 px-10 mx-auto">
                 <div className="flex items-center justify-between w-full">
                     <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
                         {integartionData.name}

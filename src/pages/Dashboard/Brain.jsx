@@ -14,6 +14,7 @@ const BrainAI = () => {
   const [activePath, setActivePath] = useState("contacts")
   const [showModal, setShowModal] = useState(true)
   const [sidebarStatus, setSideBarStatus] = useState(false)
+  const [firstRender, setFirstRender] = useState(true)
 
   const navigate = useNavigate()
   const navbarDetails = useSelector((state) => state.navbar)
@@ -32,7 +33,7 @@ const BrainAI = () => {
       case "knowledge":
         return <Knowledge />
       case "integration":
-        return <Integration />
+        return <Integration setFirstRender={setFirstRender} firstRender={firstRender} />
       default:
         return <Contacts />
     }
@@ -239,9 +240,9 @@ const BrainAI = () => {
         <InstagramStatus />
 
         {/* Main Content */}
-        <div className="w-full h-full overflow-x-hidden pr-0 py-8 pl-3 lg:pr-4 lg:py-3">{renderMainContent()}</div>
+        <div className={`w-full h-full overflow-x-hidden pr-0 py-8 ${!firstRender ? 'lg:pl-0' : 'lg:pr-4 pl-3 px-6'}  lg:py-3`}>{renderMainContent()}</div>
       </div>
-      {sidebarStatus && navbarDetails?.label !== "integrations" && (
+      {sidebarStatus && (
         <div className="lg:hidden fixed inset-0 bg-black/20 flex items-end z-50">
           <div className="flex flex-col relative bg-white gap-8 w-full max-h-[80%] overflow-auto py-8 rounded-t-[20px]">
             <button
