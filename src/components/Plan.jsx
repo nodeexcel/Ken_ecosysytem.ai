@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { addCredits, updateSubscriptionPaymentStatus } from "../api/payment";
 import { useSelector } from "react-redux";
 import { loadStripe } from "@stripe/stripe-js";
-import { AddIcon, CheckedCircle, CreditsIcon, EditPlanIcon, EmptyCircle, MembersIcon, OfferIcon, PaymentsIcon, PaymentsViewIcon, RefreshIcon } from "../icons/icons";
+import { AddIcon, BusinessPlanIcon, CheckedCircle, CreditsIcon, CustomPlanIcon, EditPlanIcon, EmptyCircle, MembersIcon, OfferIcon, PaymentsIcon, PaymentsViewIcon, ProPlanIcon, RefreshIcon, TeamPlanIcon } from "../icons/icons";
 import { SelectDropdown } from "./Dropdown";
 
 const CreditPopup = ({ t, onClose, onOpen, userDetails }) => {
@@ -158,7 +158,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
         id: import.meta.env.VITE_PRO_PLAN,
         name: `${t("settings.tab_2_list.pro")}`,
         key: "pro",
-        svg: '/src/assets/svg/table.svg',
+        svg: <ProPlanIcon />,
         price: "€97",
         period: `/ ${t("settings.tab_2_list.month")}`,
         description:
@@ -178,7 +178,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
         id: import.meta.env.VITE_TEAM_PLAN,
         name: `${t("settings.tab_2_list.team")}`,
         key: "team",
-        svg: '/src/assets/svg/house.svg',
+        svg: <TeamPlanIcon />,
         price: "€179",
         period: `/ ${t("settings.tab_2_list.month")}`,
         description: `${t("settings.tab_2_list.team_content")}`,
@@ -196,7 +196,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
         id: import.meta.env.VITE_BUSINESS_PLAN,
         name: `${t("settings.tab_2_list.business")}`,
         key: "business",
-        svg: '/src/assets/svg/building.svg',
+        svg: <BusinessPlanIcon />,
         price: "€279",
         period: `/ ${t("settings.tab_2_list.month")}`,
         description: `${t("settings.tab_2_list.business_content")}`,
@@ -212,7 +212,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
       },
       {
         name: `${t("settings.tab_2_list.enterprise")}`,
-        svg: '/src/assets/svg/buildings.svg',
+        svg: <CustomPlanIcon />,
         key: "enterprise",
         price: `${t("settings.tab_2_list.custom")}`,
         description: "Best performance, support and security.",
@@ -227,7 +227,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
     monthly: [
       {
         name: `${t("settings.tab_2_list.pro")}`,
-        svg: '/src/assets/svg/table.svg',
+        svg: <ProPlanIcon />,
         price: "€107",
         key: "pro",
         period: `/ ${t("settings.tab_2_list.month")}`,
@@ -245,7 +245,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
       },
       {
         name: `${t("settings.tab_2_list.team")}`,
-        svg: '/src/assets/svg/house.svg',
+        svg: <TeamPlanIcon />,
         key: "team",
         price: "€199",
         period: `/ ${t("settings.tab_2_list.month")}`,
@@ -261,7 +261,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
       },
       {
         name: `${t("settings.tab_2_list.business")}`,
-        svg: '/src/assets/svg/building.svg',
+        svg: <BusinessPlanIcon />,
         key: "business",
         price: "€309",
         period: `/ ${t("settings.tab_2_list.month")}`,
@@ -278,7 +278,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
       },
       {
         name: `${t("settings.tab_2_list.enterprise")}`,
-        svg: '/src/assets/svg/buildings.svg',
+        svg: <CustomPlanIcon />,
         key: "enterprise",
         price: `${t("settings.tab_2_list.custom")}`,
         description: "Best performance, support and security.",
@@ -387,15 +387,15 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
               onClick={index >= planIndex ? () => handleSelectPlan(plan.name) : undefined}
               className={`border ${activePlan === plan.name && index >= planIndex ? "border-[#675FFF]" : "border-[#E1E4EA]"} rounded-xl p-4`}
             >
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex justify-between mb-4">
                 <div className="flex flex-col gap-2">
-                  <div className="p-2 rounded-lg">
-                    <img src={plan.svg} alt="" className="w-8 h-8 object-contain" />
+                  <div>
+                    {plan.svg}
                   </div>
                   <span className="font-[600] text-[15px] sm:text-[16px] ">{plan.name}</span>
                 </div>
                 {plan.discount && (
-                  <span className="text-[#34C759] text-[13px] sm:text-[14px]  bg-[#34C7591A] px-2 py-1 rounded whitespace-nowrap">
+                  <span className="text-[#34C759] h-fit text-[13px] sm:text-[14px]  bg-[#34C7591A] px-2 py-1 mt-2 rounded whitespace-nowrap">
                     {plan.discount}
                   </span>
                 )}
@@ -692,12 +692,12 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
               <div className="">
-                <MembersIcon/>
+                <MembersIcon />
               </div>
               <span className="font-medium"> {t("settings.tab_2_list.members_seats")}</span>
             </div>
             <button onClick={handleInviteTeam} className="text-[#5E54FF] font-[600] cursor-pointer text-sm hover:underline flex items-center gap-1 ">
-              <AddIcon/>
+              <AddIcon />
               {t("settings.tab_2_list.add_seats")}{" "}
             </button>
           </div>
@@ -736,7 +736,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
               className="w-[160px]"
             />
             <div className="flex items-center px-3 gap-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-[8px] py-[8px]">
-              <RefreshIcon/>
+              <RefreshIcon />
               <button className="text-[16px] cursor-pointer text-[#5A687C]">
                 {t("refresh")}
               </button>
