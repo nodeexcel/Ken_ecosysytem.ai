@@ -44,7 +44,6 @@ function CustomerSupport() {
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
-                            stopTranscription()
                         }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}
@@ -97,7 +96,6 @@ function CustomerSupport() {
                         <div className=''>
                             <div className='flex justify-center items-center cursor-pointer' onClick={() => {
                                 navigate("/dashboard")
-                                stopTranscription()
                             }}>
                                 <div className="flex gap-4 pl-3 items-center h-[57px]">
                                     {/* <LeftArrow /> */}
