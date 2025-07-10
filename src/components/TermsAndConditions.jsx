@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import logo from '/ecosystem_logo.svg'
+import logo from '../assets/svg/ecosysteme.ai_logo.svg'
 
 const staticData = {
     header: "Terms and Conditions",
@@ -123,11 +123,10 @@ function TermsAndConditions() {
     return (
         <div className="h-full overflow-auto w-full bg-[#F6F7F9]">
             <div className='flex justify-between p-4 items-center bg-[#E7E6F9]'>
-                <div className="flex justify-center items-center gap-3">
+                <div className="flex justify-center items-center gap-3 pl-6">
                     <div>
-                        <img src={logo} alt="logo" className="w-[47.15px] h-[52px]" />
+                        <img src={logo} alt="logo" className="object-fit" />
                     </div>
-                    <h1 className="text-[28px] font-semibold onest text-[#1E1E1E]">Ecosysteme.ai</h1>
                 </div>
                 <div>
                     <button onClick={() => navigate("/")} className='bg-[#675FFF] cursor-pointer border border-[#5F58E8] px-3 py-2 rounded-lg text-[#fff] text-[16px] font-[500]'>
