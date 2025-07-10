@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { addCredits, updateSubscriptionPaymentStatus } from "../api/payment";
 import { useSelector } from "react-redux";
 import { loadStripe } from "@stripe/stripe-js";
-import { CheckedCircle, EmptyCircle, OfferIcon } from "../icons/icons";
+import { AddIcon, CheckedCircle, CreditsIcon, EditPlanIcon, EmptyCircle, MembersIcon, OfferIcon, PaymentsIcon, PaymentsViewIcon, RefreshIcon } from "../icons/icons";
 import { SelectDropdown } from "./Dropdown";
 
 const CreditPopup = ({ t, onClose, onOpen, userDetails }) => {
@@ -568,52 +568,53 @@ const CancelSubscriptionPopup = ({ t, onClose }) => {
   )
 }
 
-const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
+const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPlanPopup, handleInviteTeam }) => {
   const [showCreditPopup, setShowCreditPopup] = useState(false);
   const [cancelPopup, setCancelPopup] = useState(false);
   const [roleSelect, setRoleSelect] = useState("All");
   const [pastMonths, setPastMonths] = useState(6);
-  const userDetails = useSelector((state) => state.profile.user)
+  const userDetails = useSelector((state) => state.profile.user);
+  const [creditUsageData, setCreditUsageData] = useState([])
 
-  const creditUsageData = [
-    {
-      item: "AI Agents - LLM and Tool Cost",
-      credit: "500.000",
-      usedBy: "Sami",
-      dateTime: "27/03/2025 03:30 PM",
-    },
-    {
-      item: "AI Agents - LLM and Tool Cost",
-      credit: "500.000",
-      usedBy: "Jeson",
-      dateTime: "27/03/2025 03:30 PM",
-    },
-    {
-      item: "AI Agents - LLM and Tool Cost",
-      credit: "500.000",
-      usedBy: "Marcus",
-      dateTime: "27/03/2025 03:30 PM",
-    },
-    {
-      item: "AI Agents - LLM and Tool Cost",
-      credit: "500.000",
-      usedBy: "Robert",
-      dateTime: "27/03/2025 03:30 PM",
-    },
-    {
-      item: "AI Agents - LLM and Tool Cost",
-      credit: "500.000",
-      usedBy: "Robert",
-      dateTime: "27/03/2025 03:30 PM",
-    },
-  ];
+  // const creditUsageData = [
+  //   {
+  //     item: "AI Agents - LLM and Tool Cost",
+  //     credit: "500.000",
+  //     usedBy: "Sami",
+  //     dateTime: "27/03/2025 03:30 PM",
+  //   },
+  //   {
+  //     item: "AI Agents - LLM and Tool Cost",
+  //     credit: "500.000",
+  //     usedBy: "Jeson",
+  //     dateTime: "27/03/2025 03:30 PM",
+  //   },
+  //   {
+  //     item: "AI Agents - LLM and Tool Cost",
+  //     credit: "500.000",
+  //     usedBy: "Marcus",
+  //     dateTime: "27/03/2025 03:30 PM",
+  //   },
+  //   {
+  //     item: "AI Agents - LLM and Tool Cost",
+  //     credit: "500.000",
+  //     usedBy: "Robert",
+  //     dateTime: "27/03/2025 03:30 PM",
+  //   },
+  //   {
+  //     item: "AI Agents - LLM and Tool Cost",
+  //     credit: "500.000",
+  //     usedBy: "Robert",
+  //     dateTime: "27/03/2025 03:30 PM",
+  //   },
+  // ];
   const role = useSelector((state) => state.profile.user.role)
 
   const roleOptions = [{ label: `${t("settings.tab_3_list.all")}`, key: "All" }, { label: `${t("settings.tab_3_list.admin")}`, key: "Admin" }, { label: `${t("settings.tab_3_list.member")}`, key: "Member" }, { label: `${t("settings.tab_3_list.guest")}`, key: "Guest" }]
   const pastMonthOptions = [{ label: `${t("settings.tab_2_list.past_6_months")}`, key: 6 }, { label: `${t("settings.tab_2_list.past_3_months")}`, key: 3 }, { label: `${t("settings.tab_2_list.past_2_months")}`, key: 2 }]
 
   return (
-    <div className="py-2 pr-4 w-full">
+    <div className="py-2 pr-4 w-full h-full">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h1 className="text-[20px] sm:text-[24px] font-semibold">
@@ -647,21 +648,21 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
               <div className="">
-                <img src="/src/assets/svg/plan.svg" alt="" />
+                <CreditsIcon />
               </div>
               <span className="text-[16px] font-[600]   "> {t("settings.tab_2_list.plan")}</span>
             </div>
-            <button className="text-gray-400 hover:text-gray-600 cursor-pointer bg-[#F2F2F7] rounded-lg px-2 py-2"
+            <button className="cursor-pointer"
               onClick={() => setShowCreditPopup(true)}
             >
-              <img src="/src/assets/svg/planedit.svg" alt="" />
+              <EditPlanIcon />
             </button>
           </div>
           <h1 className=" mb-2 text-sm font-[400]  text-[#5A687C] " > {t("settings.tab_2_list.available_credits")}</h1>
           <div className="flex items-center gap-2">
             <span className="text-[24px] font-[600]  ">{teamMembersData?.credits}</span>
             <button onClick={() => setShowCreditPopup(true)} className="px-2 rounded-[5px] py-2 text-[14px] flex items-center gap-1 bg-[#335BFB1A] text-[#675FFF] font-[600] ">
-              <img src="/src/assets/svg/add.svg" alt="" />
+              <AddIcon />
               <span> {t("settings.tab_2_list.add_credits")}</span>
             </button>
           </div>
@@ -672,15 +673,13 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
               <div className="">
-                <img src="/src/assets/svg/payment.svg" alt="" />
+                <PaymentsIcon />
               </div>
               <span className="font-medium"> {t("settings.tab_2_list.payment")}</span>
             </div>
-            <button onClick={() => setActiveSidebarItem("transaction-history")} className="text-[#5E54FF] font-[600] text-sm hover:underline flex items-center gap-2 ">
-              {t("settings.tab_2_list.view_details")}{" "}
-              <span>
-                <img src="/src/assets/svg/details.svg" alt="" />
-              </span>
+            <button onClick={() => setActiveSidebarItem("transaction-history")} className="text-[#5E54FF] font-[600] text-sm cursor-pointer hover:underline flex items-center gap-2 ">
+              <span>{t("settings.tab_2_list.view_details")}{" "}</span>
+              <span className="pb-0.5"><PaymentsViewIcon /></span>
             </button>
           </div>
           <div className="inline-block w-fit px-4 py-2 bg-green-50 text-[#34C759] font-[600] rounded-lg text-sm">
@@ -693,12 +692,12 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
               <div className="">
-                <img src="/src/assets/svg/members.svg" alt="" />
+                <MembersIcon/>
               </div>
               <span className="font-medium"> {t("settings.tab_2_list.members_seats")}</span>
             </div>
-            <button className="text-[#5E54FF] font-[600] text-sm hover:underline flex items-center gap-1 ">
-              <img src="/src/assets/svg/add.svg" alt="" />
+            <button onClick={handleInviteTeam} className="text-[#5E54FF] font-[600] cursor-pointer text-sm hover:underline flex items-center gap-1 ">
+              <AddIcon/>
               {t("settings.tab_2_list.add_seats")}{" "}
             </button>
           </div>
@@ -737,7 +736,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
               className="w-[160px]"
             />
             <div className="flex items-center px-3 gap-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-[8px] py-[8px]">
-              <img src="/src/assets/svg/refresh.svg" alt="" />
+              <RefreshIcon/>
               <button className="text-[16px] cursor-pointer text-[#5A687C]">
                 {t("refresh")}
               </button>
@@ -785,6 +784,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
               ))}
             </tbody>
           </table>
+          {creditUsageData?.length == 0 && <p className="text-center h-20 pt-5">{t("no_data")}</p>}
         </div>
       </div>
     </div>

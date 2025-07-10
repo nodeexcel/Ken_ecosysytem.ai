@@ -12,7 +12,7 @@ import { updatePassword } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import { getTeamMembers, sendInviteEmail } from "../../api/teamMember";
 import TransactionHistory from "../../components/TransactionHistory";
-import { Delete, Edit, LeftArrow, PasswordLock, PlanIcon, Settings, TeamMemberIcon, ThreeDots } from "../../icons/icons";
+import { Delete, Edit, LeftArrow, PasswordLock, PlanIcon, ProfileEditIcon, RefreshIcon, Settings, TeamMemberIcon, ThreeDots } from "../../icons/icons";
 import { discardData } from "../../store/profileSlice";
 import { SelectDropdown } from "../../components/Dropdown";
 import { FaChevronDown } from "react-icons/fa";
@@ -473,7 +473,7 @@ const SettingsPage = () => {
     if (activeSidebarItem === "billing") {
       return (
         <div className="flex py-3 pr-4 flex-col w-full gap-6">
-          <Plan t={t} teamMembersData={teamMembersData} setActiveSidebarItem={setActiveSidebarItem} showPlanPopup={showPlanPopup} setShowPlanPopup={setShowPlanPopup} />
+          <Plan t={t} teamMembersData={teamMembersData} setActiveSidebarItem={setActiveSidebarItem} showPlanPopup={showPlanPopup} setShowPlanPopup={setShowPlanPopup} handleInviteTeam={handleInviteTeam}/>
         </div>
       );
     }
@@ -499,7 +499,7 @@ const SettingsPage = () => {
                 extraName={t("settings.tab_3_list.role")}
               />
               <div onClick={renderTeamMembers} className="flex items-center px-3 gap-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-[8px] py-[8px]">
-                <img src="/src/assets/svg/refresh.svg" alt="" />
+                <RefreshIcon />
                 <button className="text-[16px] cursor-pointer text-[#5A687C]">
                   {t("refresh")}
                 </button>
@@ -726,9 +726,9 @@ const SettingsPage = () => {
                     <button
                       type="button"
                       onClick={() => document.getElementById('profileImageInput').click()}
-                      className="absolute top-[55px] ml-15 sm:top-[65px] bg-[#675FFF] rounded-full cursor-pointer w-[31px] h-[31px] p-[7px]"
+                      className="absolute top-[55px] ml-15 sm:top-[65px] bg-[#675FFF] rounded-full cursor-pointer w-[31px] h-[31px] flex justify-center items-center"
                     >
-                      <img className="w-[17px] h-[17px]" alt="Edit" src='/src/assets/svg/edit.svg' />
+                      <ProfileEditIcon/>
                     </button>
                   </div>
                   {profileErrors.imageFile && <p className="text-[#FF3B30]">{profileErrors.imageFile}</p>}
