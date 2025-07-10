@@ -403,9 +403,9 @@ const AgentChatBox = ({ listedProps }) => {
                                             <h1>{t("tara.hey")} <span style={{ color: nameColor }}>{agentName}</span></h1>
                                             <h1>{t("tara.help_you")}</h1>
                                         </div>
-                                        <div className="w-full flex gap-2">
+                                        <div className="w-full flex flex-wrap gap-2">
                                             {suggestionsChat.map((e) => (
-                                                <div key={e.key} onClick={() => handleSelectMessage(e.key)} className="border cursor-pointer w-[50%] flex items-center gap-[12px] border-[#E1E4EA] p-[14px] rounded-[7px]">
+                                                <div key={e.key} onClick={() => handleSelectMessage(e.key)} className="border cursor-pointer w-full md:w-[45%] lg:w-[32%] flex items-center gap-[12px] border-[#E1E4EA] p-[14px] rounded-[7px]">
                                                     <div>{e.icon}</div>
                                                     <p className="text-[#000000] font-[400] text-[14px]">{e.label}</p>
                                                 </div>

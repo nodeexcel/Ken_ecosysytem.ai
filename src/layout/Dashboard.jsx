@@ -122,7 +122,7 @@ function Dashboard() {
             </div>
             {isSidebarOpen &&
                 <div className="fixed inset-0 bg-black/20 flex flex-col z-50">
-                    <div className={`transition-all w-[120px] h-screen relative z-50`}>
+                    <div className={`transition-all w-[250px] h-screen relative z-50`}>
                         <Sidebar sidebarItems={SidebarItems} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
                     </div>
                 </div>
