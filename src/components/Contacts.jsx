@@ -619,7 +619,7 @@ const ContactsPage = () => {
 
 
   return (
-    <div className="flex h-full overflow-auto pr-4 py-4 flex-col w-full items-start gap-6 ">
+    <div className="flex h-full overflow-auto lg:pl-0 pl-4 pr-4 py-4 flex-col w-full items-start gap-6 ">
       <div className="flex flex-col items-start gap-2.5 w-full">
         <div className="flex items-center justify-between w-full">
           <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">

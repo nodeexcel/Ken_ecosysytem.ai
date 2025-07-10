@@ -19,8 +19,7 @@ import { getGoogleCalendarAccounts, getInstaAccounts, getWhatsappAccounts } from
 // Define the integrations data
 
 
-const Integration = () => {
-  const [firstRender, setFirstRender] = useState(true)
+const Integration = ({firstRender, setFirstRender}) => {
   const [integartionData, setIntegrationData] = useState({})
   const [instagramData, setInstagramData] = useState([])
   const [whatsappData, setWhatsappData] = useState([])
@@ -189,7 +188,7 @@ const Integration = () => {
   if (loading.whatsapp && loading.instagram) return <p className='flex justify-center items-center h-full'><span className='loader' /></p>
 
   return (
-    <div className={`flex flex-col  ${firstRender ? 'py-4' : 'pb-4'}  pr-4 w-full items-start gap-6 `}>
+    <div className={`flex flex-col  ${firstRender ? 'py-4 pr-4' : 'pb-4 pr-0'} w-full items-start gap-6 `}>
       {firstRender ? <>
         {/* Header */}
         <header className="flex items-center justify-between w-full ">
