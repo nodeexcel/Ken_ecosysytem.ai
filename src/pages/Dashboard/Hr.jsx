@@ -15,6 +15,8 @@ import LinkedInOutreachHr from '../../components/LinkedInOutreachHr'
 import { BsThreeDots } from 'react-icons/bs'
 import { X } from 'lucide-react'
 import chatInstance from '../../api/chatInstance'
+import { useDispatch, useSelector } from 'react-redux'
+import { discardSkillsData } from '../../store/agentSkillsSlice'
 
 function Hr() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -37,6 +39,7 @@ function Hr() {
     const websocketurl = `${chatInstance}/hr-agent`
     const initialMessage = "Hello! I’m Rima, your HR assistant. \nI’m here to support you across all your HR needs, from recruiting and screening candidates to onboarding, managing interviews, and beyond.\nI can also help you with day-to-day HR topics like policy clarification, employee onboarding support, FAQ responses, and internal coordination.\nJust tell me what you need, whether it's hiring your next top talent or streamlining your HR processes. and I’ll take care of it. \nReady to simplify your HR tasks and save time? Let’s get started 😊"
     const { t } = useTranslation()
+    const dispatch=useDispatch()
 
     const navigate = useNavigate()
 
@@ -47,6 +50,14 @@ function Hr() {
         { label: `Interview Planner`, icon: <InterviewPlannerIcon status={activeSidebarItem == "interview_planner"} />, hoverIcon: <InterviewPlannerIcon hover={true} />, path: "interview_planner" },
         { label: `LinkedIn Outreacher`, icon: <LinkedInIcon status={activeSidebarItem == "linkedin"} />, hoverIcon: <LinkedInIcon hover={true} />, path: "linkedin" },
     ]
+
+    const activeTab = useSelector((state) => state.skills)
+
+    useEffect(() => {
+        if (activeTab.label !== null) {
+            setActiveSidebarItem(activeTab.label)
+        }
+    }, [activeTab.loading])
 
     useEffect(() => {
         if (chatList?.length > 0) {
@@ -232,6 +243,7 @@ function Hr() {
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
                             stopTranscription()
+                            dispatch(discardSkillsData())
                         }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}

@@ -14,6 +14,8 @@ import { useTranslation } from "react-i18next";
 import { BsThreeDots } from 'react-icons/bs'
 import { X } from 'lucide-react'
 import chatInstance from '../../api/chatInstance'
+import { useDispatch, useSelector } from 'react-redux'
+import { discardSkillsData } from '../../store/agentSkillsSlice'
 
 function Seo() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -37,6 +39,7 @@ function Seo() {
     const initialMessage = "Hi there! I’m Sandro, your SEO Expert. \nI’m here to help you boost your website’s visibility, generate high-quality traffic, and improve your search engine rankings — all automatically. \nI can research keywords, optimize blog posts, create SEO-friendly content, and publish directly to your CMS like WordPress, Wix, or Shopify. \nWant to start ranking higher on Google without lifting a finger? Just tell me your goal, and I’ll take it from there. \nReady to grow your traffic? 🚀"
     const { t } = useTranslation();
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     const sideMenuList = [
         { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
@@ -44,6 +47,15 @@ function Seo() {
         { label: `${t("seo.start_seo_automation")}`, icon: <AutomationIcon status={activeSidebarItem == "automation"} />, hoverIcon: <AutomationIcon hover={true} />, path: "automation" },
         { label: `${t("seo.seo_audit")}`, icon: <AuditIcon status={activeSidebarItem == "audit"} />, hoverIcon: <AuditIcon hover={true} />, path: "audit" },
     ]
+
+
+    const activeTab = useSelector((state) => state.skills)
+
+    useEffect(() => {
+        if (activeTab.label !== null) {
+            setActiveSidebarItem(activeTab.label)
+        }
+    }, [activeTab.loading])
 
     useEffect(() => {
         if (chatList?.length > 0) {
@@ -202,7 +214,6 @@ function Seo() {
         }
     }
 
-
     const renderMainContent = () => {
         switch (activeSidebarItem) {
             case "articles":
@@ -226,6 +237,7 @@ function Seo() {
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
                             stopTranscription()
+                            dispatch(discardSkillsData())
                         }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}
