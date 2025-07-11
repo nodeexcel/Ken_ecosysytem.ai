@@ -806,7 +806,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 </header> */}
                     <div className="flex flex-col gap-4 w-full">
                         <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
-                            <div className="flex justify-between items-center" onClick={() => {
+                            <div className="flex justify-between cursor-pointer items-center" onClick={() => {
                                 handleSelectSteps(1)
                             }}>
                                 <div className='flex items-center gap-2'>
@@ -1025,8 +1025,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <div className="flex items-center gap-2">
                                     <button onClick={() => {
                                         handleContinue(2)
-                                    }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("appointment.continue")}</button>
-                                    <button onClick={() => handleCancel(1)} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("appointment.cancel")}</button>
+                                    }} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("appointment.continue")}</button>
+                                    <button onClick={() => handleCancel(1)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("appointment.cancel")}</button>
                                 </div>
 
                             </div>}
@@ -1034,7 +1034,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                         {errors.step1 && <p className="text-red-500 text-sm mt-1">{errors.step1}</p>}
 
                         <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
-                            <div className="flex justify-between items-center" onClick={() => {
+                            <div className="flex justify-between cursor-pointer items-center" onClick={() => {
                                 handleSelectSteps(2)
                             }}>
                                 <div className='flex items-center gap-2'>
@@ -1131,7 +1131,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                 ...prev,
                                                 is_followups_enabled: !formData.is_followups_enabled
                                             }))}
-                                            className={`relative w-11 h-6 flex items-center rounded-full transition-colors duration-300 ${formData.is_followups_enabled ? "bg-[#675fff]" : "bg-gray-300"
+                                            className={`relative cursor-pointer w-11 h-6 flex items-center rounded-full transition-colors duration-300 ${formData.is_followups_enabled ? "bg-[#675fff]" : "bg-gray-300"
                                                 }`}
                                         >
                                             <span
@@ -1278,15 +1278,15 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <div className="flex items-center gap-2">
                                     <button onClick={() => {
                                         handleContinue(3)
-                                    }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("appointment.continue")}</button>
-                                    <button onClick={() => handleCancel(2)} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("appointment.cancel")}</button>
+                                    }} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("appointment.continue")}</button>
+                                    <button onClick={() => handleCancel(2)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("appointment.cancel")}</button>
                                 </div>
                             </div>}
                         </div>
                         {errors.step2 && <p className="text-red-500 text-sm mt-1">{errors.step2}</p>}
 
                         <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
-                            <div className="flex justify-between items-center" onClick={() => {
+                            <div className="flex cursor-pointer justify-between items-center" onClick={() => {
                                 handleSelectSteps(3)
                             }}>
                                 <div className='flex items-center gap-2'>
@@ -1476,10 +1476,10 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                         {errors.error && <p className="text-red-500 text-sm mt-1">{errors.error}</p>}
 
                         {step === 3 && <div className="flex items-center gap-2 py-3">
-                            <button disabled={loading} onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()} className="bg-[#675FFF] w-[162px] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
-                                {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : updateAgentStatus ? `${t("appointment.update_agent")}` : `${t("appointment.create_agent")}`}
+                            <button disabled={loading} onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()} className="bg-[#675FFF] cursor-pointer w-[162px] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
+                                {loading ? <div className="flex cursor-pointer items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : updateAgentStatus ? `${t("appointment.update_agent")}` : `${t("appointment.create_agent")}`}
                             </button>
-                            <button onClick={() => handleCancel(3)} className="px-5 rounded-[7px] w-[162px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("select")}</button>
+                            <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-[7px] w-[162px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
                         </div>}
 
                         {/* Message Time Range */}
@@ -1635,7 +1635,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             onClick={() => {
                                 setErrorMessage('')
                             }}
-                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+                            className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
                         >
                             <X className="w-5 h-5" />
                         </button>

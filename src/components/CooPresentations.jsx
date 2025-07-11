@@ -110,13 +110,13 @@ function CooPresentations() {
                                                 <button
                                                     onClick={() => handleDropdownClick(index)}
                                                     className="flex items-center">
-                                                    <div className="bg-[#F4F5F6] h-[34px] w-[34px] flex justify-center items-center rounded-[4px]"><ThreeDots /></div>
+                                                    <div className="bg-[#F4F5F6] cursor-pointer h-[34px] w-[34px] flex justify-center items-center rounded-[4px]"><ThreeDots /></div>
                                                 </button>
                                                 {activeDropdown === index && (
                                                     <div className="absolute right-6 px-2 w-52 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[10]">
                                                         <div className="py-1">
                                                             <button
-                                                                className="block w-full group text-left px-4 hover:rounded-lg py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                                                className="block w-full group cursor-pointer text-left px-4 hover:rounded-lg py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
                                                                 onClick={() => {
                                                                     setActiveDropdown(null);
                                                                 }}
@@ -124,7 +124,7 @@ function CooPresentations() {
                                                                 <div className="flex items-center gap-2"><div className='group-hover:hidden'><EyeIcon /></div> <div className='hidden group-hover:block'><EyeIcon status={true} /></div> <span>{t("view")}</span> </div>
                                                             </button>
                                                             <button
-                                                                className="block w-full group text-left px-4 hover:rounded-lg py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                                                className="block w-full group cursor-pointer text-left px-4 hover:rounded-lg py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
                                                                 onClick={() => {
                                                                     setActiveDropdown(null);
                                                                 }}
@@ -132,7 +132,7 @@ function CooPresentations() {
                                                                 <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("rename")}</span> </div>
                                                             </button>
                                                             <button
-                                                                className="block w-full group text-left hover:rounded-lg pr-4 pl-[14px] py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                                                className="block w-full group cursor-pointer text-left hover:rounded-lg pr-4 pl-[14px] py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
                                                                 onClick={() => {
                                                                     setActiveDropdown(null);
                                                                 }}
@@ -142,7 +142,7 @@ function CooPresentations() {
                                                             <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                                                             <div className='py-2'>
                                                                 <button
-                                                                    className="block w-full text-left px-4 hover:rounded-lg py-2 text-sm text-red-600 hover:bg-[#F4F5F6] font-[500]"
+                                                                    className="block w-full cursor-pointer text-left px-4 hover:rounded-lg py-2 text-sm text-red-600 hover:bg-[#F4F5F6] font-[500]"
                                                                     onClick={() => {
                                                                         setActiveDropdown(null);
                                                                     }}

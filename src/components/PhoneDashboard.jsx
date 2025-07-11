@@ -17,7 +17,7 @@ const PhoneDashboard = () => {
 
           <div className="flex items-center justify-between bg-[#F1F1FF] px-5 py-4 rounded-t-lg">
             <h2 className="font-[400] text-[14px] text-[#1E1E1E]">{t("settings.tab_2_list.credit")}</h2>
-            <button className="bg-[#675FFF] border border-[#5F58E8] text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center  gap-1">
+            <button className="bg-[#675FFF] cursor-pointer border border-[#5F58E8] text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center  gap-1">
               <Plus size={16} />
               {t("phone.add_credit")}
             </button>
@@ -36,7 +36,7 @@ const PhoneDashboard = () => {
                 </span>
                 <button
                   onClick={() => setAutoRefill(!autoRefill)}
-                  className={`w-10 h-6 rounded-full flex items-center px-1 transition-colors duration-300 ${autoRefill ? "bg-indigo-500" : "bg-gray-300"
+                  className={`w-10 h-6 cursor-pointer rounded-full flex items-center px-1 transition-colors duration-300 ${autoRefill ? "bg-indigo-500" : "bg-gray-300"
                     }`}
                 >
                   <div
