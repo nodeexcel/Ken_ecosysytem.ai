@@ -51,7 +51,7 @@ export default function CallAgentsPage() {
   const languageOptions = [
     { key: "english", label: "English" },
     { key: "french", label: "French" },
-    { key: "spanish", label: "Spanish" }
+    // { key: "spanish", label: "Spanish" }
   ];
 
   const voiceOptions = [
@@ -226,7 +226,7 @@ export default function CallAgentsPage() {
       {/* Header */}
       <div className="flex justify-between items-center mb-3">
         <h1 className="text-2xl font-semibold text-black">{t("phone.call_agents")}</h1>
-        <button className="bg-[#7065F0] text-white font-medium px-5 py-2 rounded-lg shadow" onClick={() => setShowModal(true)}>
+        <button className="bg-[#7065F0] cursor-pointer text-white font-medium px-5 py-2 rounded-lg shadow" onClick={() => setShowModal(true)}>
           {
             t("phone.new_agent")
           }
@@ -324,7 +324,7 @@ export default function CallAgentsPage() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl max-h-[85vh] overflow-auto w-full max-w-[610px] p-6 relative shadow-lg">
             <button
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-700"
               onClick={() => {
                 setShowModal(false)
                 setAgent({ agent_name: "", language: "", voice: "", type: "", phone_number: [] })
@@ -486,12 +486,12 @@ export default function CallAgentsPage() {
                   setAgent({ agent_name: "", language: "", voice: "", type: "", phone_number: [] })
                   setError({})
                 }}
-                className="w-full text-[16px] text-[#5A687C] bg-white border-[1.5px] border-[#E1E4EA] rounded-[8px] h-[38px]"
+                className="w-full cursor-pointer text-[16px] text-[#5A687C] bg-white border-[1.5px] border-[#E1E4EA] rounded-[8px] h-[38px]"
               >
               {t("cancel")}
               </button>
               <button
-                className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
+                className="w-full cursor-pointer text-[16px] text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
                 disabled={loader}
                 onClick={submitForm}
               >

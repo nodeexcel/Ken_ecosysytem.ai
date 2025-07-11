@@ -179,7 +179,7 @@ function CampaignDashboard() {
             {!newCampaignStatus ? <div className="w-full py-4 pr-2 flex flex-col gap-4 ">
                 <div className="flex justify-between items-center">
                     <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">{t("emailings.campaigns")}</h1>
-                    <button onClick={() => setNewCampaignStatus(true)} className="bg-[#675FFF] text-white rounded-md text-sm md:text-base px-4 py-2">
+                    <button onClick={() => setNewCampaignStatus(true)} className="bg-[#675FFF] cursor-pointer text-white rounded-md text-sm md:text-base px-4 py-2">
                         {t("emailings.add_campaign")}
                     </button>
                 </div>
@@ -255,7 +255,7 @@ function CampaignDashboard() {
                                                                             <div className="flex items-center gap-2"><div className='group-hover:hidden'>{item.is_active ? <DeactiveIcon /> : <ActiveIcon />}</div> <div className='hidden group-hover:block'>{item.is_active ? <DeactiveIcon status={true} /> : <ActiveIcon status={true} />}</div> <span>{item.is_active ? 'Deactive' : 'Active'}</span> </div>
                                                                         </button>
                                                                         <button
-                                                                            className="block w-full text-left font-[500] px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
+                                                                            className="block w-full cursor-pointer text-left font-[500] px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
                                                                             onClick={() => {
                                                                                 handleDuplicate(item.campaign_id)
                                                                             }}
@@ -263,7 +263,7 @@ function CampaignDashboard() {
                                                                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>{t("brain_ai.duplicate")}</span> </div>
                                                                         </button>
                                                                         <button
-                                                                            className="block w-full text-left font-[500] px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
+                                                                            className="block w-full cursor-pointer text-left font-[500] px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
                                                                             onClick={() => {
                                                                                 setActiveDropdown(null);
                                                                             }}
@@ -273,7 +273,7 @@ function CampaignDashboard() {
                                                                         <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                                                                         <div className='py-2'>
                                                                             <button
-                                                                                className="block w-full text-left font-[500] px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6] hover:rounded-lg"
+                                                                                className="block w-full cursor-pointer text-left font-[500] px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6] hover:rounded-lg"
                                                                                 onClick={() => {
                                                                                     handleDelete(index, item.campaign_id)
                                                                                 }}

@@ -100,7 +100,7 @@ function AgentsSeth() {
             {open ? <div className="w-full h-full  py-4 pr-4 flex flex-col gap-4 ">
                 <div className="flex justify-between items-center">
                     <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">Agents</h1>
-                    <button onClick={() => setOpen(false)} className="bg-[#675FFF] text-white rounded-md text-sm md:text-base px-4 py-2">
+                    <button onClick={() => setOpen(false)} className="bg-[#675FFF] cursor-pointer text-white rounded-md text-sm md:text-base px-4 py-2">
                         {t("appointment.new_agent")}
                     </button>
                 </div>
@@ -152,7 +152,7 @@ function AgentsSeth() {
                                             <button
                                                 // ref={moreActionsRef}
                                                 onClick={() => handleDropdownClick(index)}
-                                                className="text-gray-500 hover:text-gray-700"
+                                                className="text-gray-500 hover:text-gray-700 cursor-pointer"
                                             >
                                                 <EllipsisVertical />
                                             </button>
@@ -160,7 +160,7 @@ function AgentsSeth() {
                                                 <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                                                     <div className="py-1">
                                                         <button
-                                                            className="block w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500]"
+                                                            className="block cursor-pointer w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500]"
                                                             onClick={() => {
                                                                 // Handle edit action
                                                                 setEditData(item.agent_id)
@@ -173,7 +173,7 @@ function AgentsSeth() {
                                                         </button>
                                                         {item.is_active ?
                                                             <button
-                                                                className="block w-full group text-left hover:rounded-lg px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                                                className="block cursor-pointer w-full group text-left hover:rounded-lg px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
                                                                 onClick={() => {
                                                                     toggleStatus(index, 'is_active', item.agent_id)
                                                                 }}
@@ -181,7 +181,7 @@ function AgentsSeth() {
                                                                 <div className="flex items-center gap-2"><div className='group-hover:hidden'><CancelIcon /></div> <div className='hidden group-hover:block'><CancelIcon status={true} /></div> <span>{t("appointment.mark_as_inactive")}</span> </div>
                                                             </button> :
                                                             <button
-                                                                className="block w-full group text-left hover:rounded-lg px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                                                className="block cursor-pointer w-full group text-left hover:rounded-lg px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
                                                                 onClick={() => {
                                                                     toggleStatus(index, 'is_active', item.agent_id)
                                                                 }}
@@ -190,7 +190,7 @@ function AgentsSeth() {
                                                             </button>
                                                         }
                                                         <button
-                                                            className="block w-full group text-left px-4 hover:rounded-lg py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                                            className="block cursor-pointer w-full group text-left px-4 hover:rounded-lg py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
                                                             onClick={() => {
                                                                 setActiveDropdown(null);
                                                             }}
@@ -198,7 +198,7 @@ function AgentsSeth() {
                                                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>{t("appointment.duplicate")}</span> </div>
                                                         </button>
                                                         <button
-                                                            className="block w-full group text-left hover:rounded-lg pr-4 pl-[14px] py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                                            className="block cursor-pointer w-full group text-left hover:rounded-lg pr-4 pl-[14px] py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
                                                             onClick={() => {
                                                                 setActiveDropdown(null);
                                                                 setPreviewAgent(item.agent_id)
@@ -209,7 +209,7 @@ function AgentsSeth() {
                                                         <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                                                         <div className='py-2'>
                                                             <button
-                                                                className="block w-full text-left px-4 hover:rounded-lg py-2 text-sm text-red-600 hover:bg-[#F4F5F6] font-[500]"
+                                                                className="block cursor-pointer w-full text-left px-4 hover:rounded-lg py-2 text-sm text-red-600 hover:bg-[#F4F5F6] font-[500]"
                                                                 onClick={() => {
                                                                     // Handle delete action
                                                                     handleDelete(index, item.agent_id)

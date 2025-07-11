@@ -477,7 +477,7 @@ const AgentChatBox = ({ listedProps }) => {
                                         {/* Text Input */}
 
                                         {/* Send Button */}
-                                        <button disabled={!input} type="submit" className={`${input ? 'bg-indigo-500' : 'bg-gray-500 cursor-not-allowed'} text-white px-4 py-2 rounded-md transition`}>
+                                        <button disabled={!input} type="submit" className={`${input ? 'bg-indigo-500 cursor-pointer' : 'bg-gray-500 cursor-not-allowed'} text-white px-4 py-2 rounded-md transition`}>
                                             {t("send")}
                                         </button>
                                     </div>

@@ -617,7 +617,7 @@ export default function CallCampaign() {
           {viewReportModel && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl w-full max-w-[678px] p-6 relative shadow-lg">
               <button
-                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-700"
                 onClick={() => setViewReportModel(false)}
               >
                 <X size={20} />
@@ -905,7 +905,7 @@ export default function CallCampaign() {
                 </span>
                 <button
                   onClick={() => setToggleTom(!toggleTom)}
-                  className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${toggleTom ? "bg-[#7065F0]" : "bg-gray-300"
+                  className={`w-11 h-6 cursor-pointer rounded-full relative transition-colors duration-300 ${toggleTom ? "bg-[#7065F0]" : "bg-gray-300"
                     }`}
                 >
                   <span
@@ -941,7 +941,7 @@ export default function CallCampaign() {
               </div>
 
               {editData ? <div className="flex gap-4 mt-6">
-                <button className="w-[195px]  text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+                <button className="w-[195px] cursor-pointer text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
                   onClick={handleEditCampaign} disabled={loader}
                 >
                   {t("phone.save_campaign")}
@@ -950,20 +950,20 @@ export default function CallCampaign() {
                   setShowModal(false)
                   setEditData()
                   resetForm()
-                }} className="w-[195px]  text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                }} className="w-[195px] cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                   {t("phone.cancel")}
                 </button>
               </div> : <div className="flex gap-4 mt-6">
                 <button onClick={() => {
                   setSecondModel(true)
                   setShowModal(false)
-                }} className="w-[195px] text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                }} className="w-[195px] text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                   {t("phone.test_call")}
                 </button>
 
 
                 <button
-                  className="w-[195px] text-[16px] text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
+                  className="w-[195px] text-[16px] cursor-pointer text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
                   disabled={loader}
                   onClick={handleSubmit}
                 >
@@ -982,7 +982,7 @@ export default function CallCampaign() {
       {secondModel && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
         <div className="bg-white rounded-2xl w-full max-w-[514px] p-6 relative shadow-lg">
           <button
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            className="absolute top-4 cursor-pointer right-4 text-gray-500 hover:text-gray-700"
             onClick={() => {
               setSecondModel(false)
             }}
@@ -1003,12 +1003,12 @@ export default function CallCampaign() {
           <div className="flex gap-2 mt-4">
             <button
               onClick={() => setSecondModel(false)}
-              className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
+              className="w-full cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
             >
              {t("phone.not_received_a_call")}
             </button>
             <button
-              className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+              className="w-full cursor-pointer text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
             >
               {t("phone.finish_test")}
             </button>
@@ -1064,7 +1064,7 @@ export default function CallCampaign() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setDeleteRow(null)}
-                  className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
+                  className="w-full text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
                 >
                   {t("phone.cancel")}
                 </button>
@@ -1073,7 +1073,7 @@ export default function CallCampaign() {
                     removeRow(deleteRow);
 
                   }}
-                  className="w-full text-[16px] text-white rounded-[8px] bg-red-500 h-[38px] flex justify-center items-center gap-2 relative"
+                  className="w-full text-[16px] cursor-pointer text-white rounded-[8px] bg-red-500 h-[38px] flex justify-center items-center gap-2 relative"
                 >
                   {
                     t("phone.delete")

@@ -151,6 +151,9 @@ export default function PhoneNumbers() {
       setShowModal(false);
       setLoader(false);
       setOtpModal(true)
+      setNumber("")
+      setPhoneName("")
+      setSelectedCountry(countries[240])
 
     } else {
       setLoader(false);
@@ -221,11 +224,11 @@ export default function PhoneNumbers() {
         <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{t("phone.phone_numbers")} </h1>
         <button
           onClick={() => setShowModal(true)}
-          className="bg-[#675FFF] border border-[#5F58E8] text-white font-medium rounded-lg px-5 py-2 flex items-center gap-2"
+          className="bg-[#675FFF] border cursor-pointer border-[#5F58E8] text-white font-medium rounded-lg px-5 py-2 flex items-center gap-2"
         >
-         {
-          t("phone.new_phone_number")
-         }
+          {
+            t("phone.new_phone_number")
+          }
         </button>
       </div>
 
@@ -266,10 +269,10 @@ export default function PhoneNumbers() {
                           >
                             {row.status ? t("phone.active") : t("phone.inactive")}
                           </span>
-                          <ToggleSwitch
+                          {/* <ToggleSwitch
                             checked={row.status}
                             onChange={() => toggleActive(index, row.id)}
-                          />
+                          /> */}
                         </div>
                       </td>
                       <td className="py-[14px] pl-[30px] pr-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{row.total_calls}</td>
@@ -281,7 +284,7 @@ export default function PhoneNumbers() {
                       <td className="p-[14px] pr-[30px] w-full">
                         <button
                           onClick={() => setDeleteRow(row.id)}
-                          className="text-[#FF3B30] hover:text-[#ff3a30b7]"
+                          className="text-[#FF3B30] cursor-pointer hover:text-[#ff3a30b7]"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -298,7 +301,7 @@ export default function PhoneNumbers() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl w-[610px] max-h-[85vh] overflow-auto p-6 relative shadow-lg">
             <button
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-700"
               onClick={() => {
                 setShowModal(false)
                 setError({})
@@ -308,14 +311,14 @@ export default function PhoneNumbers() {
             </button>
 
             <h2 className="text-xl font-semibold text-gray-800 mb-1">
-             {
-              t("phone.add_new_number")
-             }
+              {
+                t("phone.add_new_number")
+              }
             </h2>
             <p className="text-gray-500 text-sm mb-4">
-             {
-              t("phone.enter_new_phone_number")
-             }
+              {
+                t("phone.enter_new_phone_number")
+              }
             </p>
 
             {/* Tabs */}
@@ -324,7 +327,7 @@ export default function PhoneNumbers() {
                 <div key={tab.key} className="w-full p-1" onClick={() => setActiveTab(tab.key)}>
                   <button
 
-                    className={`w-full py-1.5 text-sm font-medium transition ${activeTab === tab.key
+                    className={`w-full py-1.5 cursor-pointer text-sm font-medium transition ${activeTab === tab.key
                       ? "bg-white text-[#1E1E1E] rounded-lg"
                       : "text-[#5A687C]"
                       }`}
@@ -340,9 +343,9 @@ export default function PhoneNumbers() {
             <div className="space-y-4">
               <div>
                 <label className="text-sm text-gray-600 font-medium block mb-1">
-                {
-                  t("phone.name_number")
-                }
+                  {
+                    t("phone.name_number")
+                  }
                 </label>
                 <input
                   type="text"
@@ -435,14 +438,14 @@ export default function PhoneNumbers() {
                   setShowModal(false)
                   setError({})
                 }}
-                className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
+                className="w-full text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
               >
                 {
                   t("phone.cancel")
                 }
               </button>
               <button
-                className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
+                className="w-full text-[16px] cursor-pointer text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
                 disabled={loader}
                 onClick={handleAddNumber}
               >
@@ -464,7 +467,7 @@ export default function PhoneNumbers() {
           <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl w-full max-w-[610px] max-h-[357px] overflow-auto p-6 relative shadow-lg">
               <button
-                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-700"
                 onClick={() => setOtpModal(false)}
               >
                 <X size={20} />
@@ -476,15 +479,15 @@ export default function PhoneNumbers() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setOtpModal(false)}
-                    className="w-full  px-[20px] py-[7px] text-[16px] text-[#5A687C] bg-white border-[1.5px] border-[#E1E4EA] rounded-[8px]"
+                    className="w-full cursor-pointer px-[20px] py-[7px] text-[16px] text-[#5A687C] bg-white border-[1.5px] border-[#E1E4EA] rounded-[8px]"
                   >
                     {t("phone.cancel")}
                   </button>
                   <button
                     onClick={() => setOtpModal(false)}
-                    className="w-full text-[16px] text-white rounded-[8px] bg-[#675FFF] px-[20px] py-[7px] flex justify-center items-center gap-2 relative"
+                    className="w-full cursor-pointer text-[16px] text-white rounded-[8px] bg-[#675FFF] px-[20px] py-[7px] flex justify-center items-center gap-2 relative"
                   >
-                   {t("phone.submit")}
+                    {t("phone.submit")}
                   </button>
                 </div>
               </div>
@@ -502,18 +505,18 @@ export default function PhoneNumbers() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setDeleteRow(null)}
-                  className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
+                  className="w-full cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
                 >
-                 {t("cancel")}
+                  {t("cancel")}
                 </button>
                 <button
                   onClick={() => {
                     removeRow(deleteRow);
 
                   }}
-                  className="w-full text-[16px] text-white rounded-[8px] bg-red-500 h-[38px] flex justify-center items-center gap-2 relative"
+                  className="w-full cursor-pointer text-[16px] text-white rounded-[8px] bg-red-500 h-[38px] flex justify-center items-center gap-2 relative"
                 >
-                {t("delete")}
+                  {t("delete")}
                   {/* <span className="loader"></span> */}
                 </button>
               </div>

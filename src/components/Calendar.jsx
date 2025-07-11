@@ -542,11 +542,14 @@ export default function Calendar() {
             <div key={index} className={`${weekDays.length !== index + 1 && "border-r"} border-[#E1E4EA]`}>
               {/* Day header */}
               <div className="h-10 border-b border-[#E1E4EA] flex flex-col items-center justify-center">
-                <div className="text-sm font-medium">
+                <div className="text-sm flex items-center gap-1 font-medium">
                   {dayName}{" "}
-                  <span className={`${isToday ? "w-6 h-6 rounded-full bg-[#675FFF] p-1 text-white" : ""}`}>
+                  {!isToday?<span className={`${isToday ? "w-6 h-6 rounded-full bg-[#675FFF] p-1 text-white" : ""}`}>
                     {day.day}
-                  </span>
+                  </span>:
+                  <div className="w-6 h-6 rounded-full bg-[#675FFF] flex items-center justify-center">
+                    <span className="text-white">{day.day}</span>
+                  </div>}
                 </div>
               </div>
 
@@ -668,7 +671,7 @@ export default function Calendar() {
             <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] py-[6px] bg-white rounded-lg">
               <button
                 onClick={handlePrevMonth}
-                className="p-1 rounded-md hover:bg-gray-100"
+                className="p-1 rounded-md cursor-pointer hover:bg-gray-100"
                 aria-label="Previous month"
               >
                 <ChevronLeft className="h-5 w-5 text-[#5A687C]" />
@@ -676,7 +679,7 @@ export default function Calendar() {
               <span className="mx-2 text-[#5A687C]">
                 {monthNames[currentMonth]} {currentYear}
               </span>
-              <button onClick={handleNextMonth} className="p-1 rounded-md hover:bg-gray-100" aria-label="Next month">
+              <button onClick={handleNextMonth} className="p-1 rounded-md cursor-pointer hover:bg-gray-100" aria-label="Next month">
                 <ChevronRight className="h-5 w-5 text-[#5A687C]" />
               </button>
             </div>
@@ -701,13 +704,13 @@ export default function Calendar() {
           </h2>
           <div className="flex items-center gap-2">
             <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] py-[6px] bg-white rounded-lg">
-              <button onClick={handlePrevWeek} className="p-1 rounded-md hover:bg-gray-100" aria-label="Previous week">
+              <button onClick={handlePrevWeek} className="p-1 cursor-pointer rounded-md hover:bg-gray-100" aria-label="Previous week">
                 <ChevronLeft className="h-5 w-5 text-[#5A687C]" />
               </button>
               <span className="mx-2 text-[#5A687C]">
                 {t("emailings.mon")} {selectedWeekStart} - {t("emailings.sun")} {selectedWeekEnd}
               </span>
-              <button onClick={handleNextWeek} className="p-1 rounded-md hover:bg-gray-100" aria-label="Next week">
+              <button onClick={handleNextWeek} className="p-1 cursor-pointer rounded-md hover:bg-gray-100" aria-label="Next week">
                 <ChevronRight className="h-5 w-5 text-[#5A687C]" />
               </button>
             </div>
@@ -733,13 +736,13 @@ export default function Calendar() {
           </h2>
           <div className="flex items-center gap-2">
             <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] py-[6px] bg-white rounded-lg">
-              <button onClick={handlePrevDay} className="p-1 rounded-md hover:bg-gray-100" aria-label="Previous day">
+              <button onClick={handlePrevDay} className="p-1 cursor-pointer rounded-md hover:bg-gray-100" aria-label="Previous day">
                 <ChevronLeft className="h-5 w-5 text-[#5A687C]" />
               </button>
               <span className="mx-2 text-[#5A687C]">
                 {currentDay} {monthNames[currentMonth]} {currentYear}
               </span>
-              <button onClick={handleNextDay} className="p-1 rounded-md hover:bg-gray-100" aria-label="Next day">
+              <button onClick={handleNextDay} className="p-1 cursor-pointer rounded-md hover:bg-gray-100" aria-label="Next day">
                 <ChevronRight className="h-5 w-5 text-[#5A687C]" />
               </button>
             </div>
