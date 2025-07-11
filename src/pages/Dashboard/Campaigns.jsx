@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CalenderIcon, FourBox, LeftArrow, PhoneCampaign } from "../../icons/icons";
 import CampaignDashboard from "../../components/CampaignDashboard";
 import Calendar from "../../components/Calendar";
@@ -6,11 +6,12 @@ import dashboardProfile from '../../assets/svg/dashboard_profile.svg'
 import EmailDashboard from "../../components/EmailDashboard";
 import emileImg from "../../assets/svg/emile_logo.svg"
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { BsThreeDots } from "react-icons/bs";
 import { X } from "lucide-react";
+import { discardSkillsData } from "../../store/agentSkillsSlice";
 
 
 const Campaigns = () => {
@@ -19,12 +20,21 @@ const Campaigns = () => {
     const { t } = useTranslation();
 
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     const sideMenuList = [
         { label: `${t("dashboard")}`, icon: <FourBox status={activeSidebarItem == "dashboard"} />, hoverIcon: <FourBox hover={true} />, path: "dashboard" },
         { label: `${t("emailings.campaigns")}`, icon: <PhoneCampaign status={activeSidebarItem == "campaigns"} />, hoverIcon: <PhoneCampaign hover={true} />, path: "campaigns" },
         { label: `${t("emailings.calendar")}`, icon: <CalenderIcon status={activeSidebarItem == "calendar"} />, hoverIcon: <CalenderIcon hover={true} />, path: "calendar" },
     ];
+
+    const activeTab = useSelector((state) => state.skills)
+
+    useEffect(() => {
+        if (activeTab.label !== null) {
+            setActiveSidebarItem(activeTab.label)
+        }
+    }, [activeTab.loading])
 
     const renderMainContent = () => {
         switch (activeSidebarItem) {
@@ -44,7 +54,10 @@ const Campaigns = () => {
                 {/* Sidebar */}
                 <div className="lg:flex hidden flex-col bg-white gap-8 border-r border-[#E1E4EA] min-w-[272px] h-full">
                     <div className=''>
-                        <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
+                        <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
+                            navigate("/dashboard")
+                            dispatch(discardSkillsData())
+                        }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}
                                 <h1 className="text-[20px] font-[600]">Emailing</h1>

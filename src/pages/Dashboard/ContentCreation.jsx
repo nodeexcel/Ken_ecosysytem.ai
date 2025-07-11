@@ -16,6 +16,8 @@ import XPostContent from '../../components/XPostContent'
 import { BsThreeDots } from 'react-icons/bs'
 import { X } from 'lucide-react'
 import chatInstance from '../../api/chatInstance'
+import { useDispatch, useSelector } from 'react-redux'
+import { discardSkillsData } from '../../store/agentSkillsSlice'
 
 function ContentCreation() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -40,6 +42,7 @@ function ContentCreation() {
 
     const navigate = useNavigate()
     const { t } = useTranslation();
+    const dispatch=useDispatch()
 
     const sideMenuList = [
         { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
@@ -49,6 +52,14 @@ function ContentCreation() {
         { label: `LinkedIn Nuke`, icon: <LinkedInIcon status={activeSidebarItem == "linkedin"} />, hoverIcon: <LinkedInIcon hover={true} />, path: "linkedin" },
         { label: `X Post Generator`, icon: <XIcon status={activeSidebarItem == "x_post"} />, hoverIcon: <XIcon hover={true} />, path: "x_post" },
     ]
+
+    const activeTab = useSelector((state) => state.skills)
+
+    useEffect(() => {
+        if (activeTab.label !== null) {
+            setActiveSidebarItem(activeTab.label)
+        }
+    }, [activeTab.loading])
 
     useEffect(() => {
         if (chatList?.length > 0) {
@@ -236,6 +247,7 @@ function ContentCreation() {
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
                             stopTranscription()
+                            dispatch(discardSkillsData())
                         }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}

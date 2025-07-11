@@ -42,21 +42,27 @@ import finnSkillImg4 from "../assets/svg/skills_finn_4.svg";
 import sandroSkillImg1 from "../assets/svg/skills_sandro_1.svg";
 import sandroSkillImg2 from "../assets/svg/skills_sandro_2.svg";
 import sandroSkillImg3 from "../assets/svg/skills_sandro_3.svg";
+import { useDispatch } from "react-redux";
+import { getAgentSkillsData } from "../store/agentSkillsSlice";
+import { useNavigate } from "react-router-dom";
 
 
 
 function AllAgentsSkills() {
     const { t } = useTranslation()
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
     const allAgentsData = [
         {
             name: "Tara",
             role: t("coo"),
             gradient: "bg-gradient-to-br from-[#CEBFFD] to-[#CEBFFD]",
             image: taraImg,
+            path: "coo",
             cardStyles: "border-[#CEBFFD] bg-[#F6F3FF]",
-            cardContent: [{ header: "Presentations", content: "Create engaging presentations quickly and effortlessly.", img: taraSkillImg1 },
-            { header: "Meeting Notes Generator", content: "Summarize meetings into clear, actionable notes.", img: taraSkillImg2 },
-            { header: "Connect WhatsApp", content: "Link WhatsApp for instant customer communication.", img: taraSkillImg3 }
+            cardContent: [{ header: "Presentations", content: "Create engaging presentations quickly and effortlessly.", img: taraSkillImg1, tab: "presentations" },
+            { header: "Meeting Notes Generator", content: "Summarize meetings into clear, actionable notes.", img: taraSkillImg2, tab: "meeting_notes" },
+            { header: "Connect WhatsApp", content: "Link WhatsApp for instant customer communication.", img: taraSkillImg3, tab: "connect_whatsApp" }
             ]
         },
         {
@@ -64,11 +70,12 @@ function AllAgentsSkills() {
             role: t("content_creation"),
             gradient: "bg-gradient-to-br from-[#F8DDFF] to-[#F8DDFF]",
             image: constanceImg,
+            path: "content-creation",
             cardStyles: "border-[#F8DDFF] bg-[#FDF6FF]",
-            cardContent: [{ header: "YouTube Script Writer", content: "Write compelling scripts for YouTube videos.", img: constanceSkillImg1 },
-            { header: "LinkedIn Nuke", content: "Automate LinkedIn messaging and outreach campaigns.", img: constanceSkillImg2 },
-            { header: "X Post Generator", content: "Craft posts optimized for X (formerly Twitter).", img: constanceSkillImg3 },
-            { header: "Creation Studio", content: "Central hub for content and campaign creation.", img: constanceSkillImg4 }
+            cardContent: [{ header: "YouTube Script Writer", content: "Write compelling scripts for YouTube videos.", img: constanceSkillImg1, tab: "youtube" },
+            { header: "LinkedIn Nuke", content: "Automate LinkedIn messaging and outreach campaigns.", img: constanceSkillImg2, tab: "linkedin" },
+            { header: "X Post Generator", content: "Craft posts optimized for X (formerly Twitter).", img: constanceSkillImg3, tab: "x_post" },
+            { header: "Creation Studio", content: "Central hub for content and campaign creation.", img: constanceSkillImg4, tab: "creation_studio" }
             ]
         },
         {
@@ -76,13 +83,15 @@ function AllAgentsSkills() {
             role: t("phone_outreach"),
             gradient: "bg-gradient-to-br from-[#DBE5FF] to-[#DBE5FF]",
             image: tomImg,
+            path: "phone",
             cardStyles: "border-[#DBE5FF] bg-[#F2F5FF]",
-            cardContent: [{ header: "Cold Calling Script", content: "Generate persuasive cold calling sales scripts.", img: tomSkillImg1 },
-            { header: "Phone Numbers", content: "Manage and assign business phone numbers easily.", img: tomSkillImg2 },
-            { header: "Call Agents", content: "Add and manage your call support agents.", img: tomSkillImg3 },
-            { header: "Call Campaigns", content: "Launch and track automated outbound call campaigns.", img: tomSkillImg4 },
-            { header: "Outbound Calls", content: "Automate and scale your outbound call operations.", img: tomSkillImg5 },
-            { header: "Inbound Calls", content: "Handle inbound calls with efficiency and automation.", img: tomSkillImg6 }
+            cardContent: [
+                { header: "Call Campaigns", content: "Launch and track automated outbound call campaigns.", img: tomSkillImg4, tab: "call-campaigns" },
+                { header: "Cold Calling Script", content: "Generate persuasive cold calling sales scripts.", img: tomSkillImg1, tab: "cold_calling" },
+                // { header: "Phone Numbers", content: "Manage and assign business phone numbers easily.", img: tomSkillImg2 },
+                // { header: "Call Agents", content: "Add and manage your call support agents.", img: tomSkillImg3 },
+                // { header: "Outbound Calls", content: "Automate and scale your outbound call operations.", img: tomSkillImg5 },
+                // { header: "Inbound Calls", content: "Handle inbound calls with efficiency and automation.", img: tomSkillImg6 }
             ]
         },
         {
@@ -90,10 +99,11 @@ function AllAgentsSkills() {
             role: t("appointment_setter"),
             gradient: "bg-gradient-to-br from-[#FFE4C5] to-[#FFE4C5]",
             image: sethImg,
+            path: "appointment-setter",
             cardStyles: "border-[#FFE4C5] bg-[#FFFDFA]",
-            cardContent: [{ header: "Agents", content: "Manage agent performance and availability in real time.", img: sethSkillImg1 },
-            { header: "Conversations", content: "Monitor and review all customer communications.", img: sethSkillImg2 },
-            { header: "Analytics", content: "Track performance metrics and campaign insights.", img: sethSkillImg3 }
+            cardContent: [{ header: "Agents", content: "Manage agent performance and availability in real time.", img: sethSkillImg1, tab: "agents" },
+                // { header: "Conversations", content: "Monitor and review all customer communications.", img: sethSkillImg2 },
+                // { header: "Analytics", content: "Track performance metrics and campaign insights.", img: sethSkillImg3 }
             ]
         },
         {
@@ -101,11 +111,12 @@ function AllAgentsSkills() {
             role: t("customer_support"),
             gradient: "bg-gradient-to-br from-[#E3F6ED] to-[#E3F6ED]",
             image: calinaImg,
+            path: "customer-support",
             cardStyles: "border-[#E3F6ED] bg-[#EFFFF7]",
-            cardContent: [{ header: "Smart Chatbot Generator", content: "Build intelligent chatbots without coding skills.", img: calinaSkillImg1 },
-            { header: "FAQ Generator", content: "Auto-generate FAQs based on customer queries.", img: calinaSkillImg2 },
-            { header: "User Guide Generator", content: "Create user guides from product descriptions.", img: calinaSkillImg3 },
-            { header: "Customer Email Responder", content: "Automate replies to common customer emails.", img: calinaSkillImg4 }
+            cardContent: [{ header: "Smart Chatbot Generator", content: "Build intelligent chatbots without coding skills.", img: calinaSkillImg1, tab: "smart_bot" },
+            { header: "FAQ Generator", content: "Auto-generate FAQs based on customer queries.", img: calinaSkillImg2, tab: "faq_generator" },
+            { header: "User Guide Generator", content: "Create user guides from product descriptions.", img: calinaSkillImg3, tab: "user_guide" },
+            { header: "Customer Email Responder", content: "Automate replies to common customer emails.", img: calinaSkillImg4, tab: "email" }
             ]
         },
         {
@@ -113,17 +124,19 @@ function AllAgentsSkills() {
             role: t("receptionist"),
             gradient: "bg-gradient-to-br from-[#DBE5FF] to-[#DBE5FF]",
             image: rebeccaImg,
+            path: "phone",
             cardStyles: "border-[#DBE5FF] bg-[#F2F5FF]",
-            cardContent: [{ header: "Cold Calling Script", content: "Automate and scale your outbound call operations.", img: rebeccaSkillImg1 }]
+            cardContent: [{ header: "Inbound Calls", content: "Automate and scale your outbound call operations.", img: tomSkillImg6, tab: "inbound-calls" }]
         },
         {
             name: "Emile",
             role: t("email"),
             gradient: "bg-gradient-to-br from-[#CEBFFD] to-[#CEBFFD]",
             image: emileImg,
+            path: "campaigns",
             cardStyles: "border-[#CEBFFD] bg-[#F7F4FF]",
-            cardContent: [{ header: "Campaigns Generator", content: "Build multi-channel marketing campaigns instantly.", img: emileSkillImg1 },
-            { header: "Calendar", content: "Schedule meetings and deadlines in one place.", img: emileSkillImg2 }
+            cardContent: [{ header: "Campaigns Generator", content: "Build multi-channel marketing campaigns instantly.", img: emileSkillImg1, tab: "campaigns" },
+                // { header: "Calendar", content: "Schedule meetings and deadlines in one place.", img: emileSkillImg2 }
             ]
         },
         {
@@ -131,11 +144,12 @@ function AllAgentsSkills() {
             role: t("hr"),
             gradient: "bg-gradient-to-br from-[#FFE4C5] to-[#FFE4C5]",
             image: rimaImg,
+            path: "hr",
             cardStyles: "border-[#FFE4C5] bg-[#FFF7EE]",
-            cardContent: [{ header: "Job Description Writer", content: "Write clear, role-specific job descriptions fast.", img: rimaSkillImg1 },
-            { header: "Resume Screener", content: "Automatically filter and rank resumes efficiently.", img: rimaSkillImg2 },
-            { header: "Interview Planner", content: "Organize interviews and coordinate with candidates.", img: rimaSkillImg3 },
-            { header: "LinkedIn Outreacher", content: "Automate LinkedIn networking and lead generation.", img: constanceSkillImg2 }
+            cardContent: [{ header: "Job Description Writer", content: "Write clear, role-specific job descriptions fast.", img: rimaSkillImg1, tab: "job_description_writer" },
+            { header: "Resume Screener", content: "Automatically filter and rank resumes efficiently.", img: rimaSkillImg2, tab: "resume_screener" },
+            { header: "Interview Planner", content: "Organize interviews and coordinate with candidates.", img: rimaSkillImg3, tab: "interview_planner" },
+            { header: "LinkedIn Outreacher", content: "Automate LinkedIn networking and lead generation.", img: constanceSkillImg2, tab: "linkedin" }
             ]
         },
         {
@@ -143,11 +157,12 @@ function AllAgentsSkills() {
             role: t("accouting"),
             gradient: "bg-gradient-to-br from-[#E3F6ED] to-[#E3F6ED]",
             image: finnImg,
+            path: "accounting",
             cardStyles: "border-[#E3F6ED] bg-[#F4FDF9]",
-            cardContent: [{ header: "Balance Sheet Generator", content: "Create accurate balance sheets in seconds.", img: finnSkillImg1 },
-            { header: "Profit Loss Calculator", content: "Instantly calculate your business profit and loss.", img: finnSkillImg2 },
-            { header: "Sales Forecaster", content: "Predict future sales with AI-powered insights.", img: finnSkillImg3 },
-            { header: "ROI Calculator", content: "Measure return on investment for any campaign.", img: finnSkillImg4 }
+            cardContent: [{ header: "Balance Sheet Generator", content: "Create accurate balance sheets in seconds.", img: finnSkillImg1, tab: "balance_sheet" },
+            { header: "Profit Loss Calculator", content: "Instantly calculate your business profit and loss.", img: finnSkillImg2, tab: "profit_loss_calculator" },
+            { header: "Sales Forecaster", content: "Predict future sales with AI-powered insights.", img: finnSkillImg3, tab: "sales_forecaster" },
+            { header: "ROI Calculator", content: "Measure return on investment for any campaign.", img: finnSkillImg4, tab: "roi_calculator" }
             ]
         },
         {
@@ -155,13 +170,22 @@ function AllAgentsSkills() {
             role: t("seo_name"),
             gradient: "bg-gradient-to-br from-[#F8DDFF] to-[#F8DDFF]",
             image: sandroImg,
+            path: "seo",
             cardStyles: "border-[#F8DDFF] bg-[#FDF3FF]",
-            cardContent: [{ header: "Articles Generator", content: "Produce high-quality articles in minutes.", img: sandroSkillImg1 },
-            { header: "Start SEO Automation", content: "Automate SEO tasks and content optimization.", img: sandroSkillImg2 },
-            { header: "SEO Audit", content: "Run detailed SEO audits to improve rankings.", img: sandroSkillImg3 }
+            cardContent: [{ header: "Articles Generator", content: "Produce high-quality articles in minutes.", img: sandroSkillImg1, tab: "articles" },
+            { header: "Start SEO Automation", content: "Automate SEO tasks and content optimization.", img: sandroSkillImg2, tab: "automation" },
+            { header: "SEO Audit", content: "Run detailed SEO audits to improve rankings.", img: sandroSkillImg3, tab: "audit" }
             ]
         },
     ];
+
+
+    const handleNavigate = (path, tab) => {
+        dispatch(getAgentSkillsData(tab))
+        navigate(`/dashboard/${path}`)
+    }
+
+
     return (
         <div className="w-full py-4 px-20 h-screen overflow-auto flex flex-col gap-6">
             <h1 className="text-[24px] font-[600] text-[#1E1E1E] pb-2">All Agents</h1>
@@ -179,7 +203,7 @@ function AllAgentsSkills() {
                         </div>
                         <div className="flex gap-4 w-full flex-wrap">
                             {each.cardContent.map((card) => (
-                                <div key={card.header} className={`w-full sm:w-[40%] lg:w-[23%] border ${each.cardStyles} p-[14px] rounded-[8px] flex flex-col gap-[16px]`}>
+                                <div key={card.header} onClick={() => handleNavigate(each.path, card.tab)} className={`w-full cursor-pointer hover:opacity-70 sm:w-[40%] lg:w-[23%] border ${each.cardStyles} p-[14px] rounded-[8px] flex flex-col gap-[16px]`}>
                                     <div>
                                         <img src={card.img} alt={card.header} className="object-fit" />
                                     </div>

@@ -15,6 +15,8 @@ import ROICalculatorAccounting from '../../components/ROICalculatorAccounting'
 import { X } from 'lucide-react'
 import { BsThreeDots } from 'react-icons/bs'
 import chatInstance from '../../api/chatInstance'
+import { useDispatch, useSelector } from 'react-redux'
+import { discardSkillsData } from '../../store/agentSkillsSlice'
 
 function Accounting() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -39,6 +41,7 @@ function Accounting() {
 
     const navigate = useNavigate()
     const { t } = useTranslation()
+    const dispatch = useDispatch()
 
     const sideMenuList = [
         { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
@@ -47,6 +50,14 @@ function Accounting() {
         { label: `Sales Forecaster`, icon: <PhoneCampaign status={activeSidebarItem == "sales_forecaster"} />, hoverIcon: <PhoneCampaign hover={true} />, path: "sales_forecaster" },
         { label: `ROI Calculator`, icon: <ROICalculatorIcon status={activeSidebarItem == "roi_calculator"} />, hoverIcon: <ROICalculatorIcon hover={true} />, path: "roi_calculator" },
     ]
+
+    const activeTab = useSelector((state) => state.skills)
+
+    useEffect(() => {
+        if (activeTab.label !== null) {
+            setActiveSidebarItem(activeTab.label)
+        }
+    }, [activeTab.loading])
 
     useEffect(() => {
         if (chatList?.length > 0) {
@@ -233,6 +244,7 @@ function Accounting() {
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
                             stopTranscription()
+                            dispatch(discardSkillsData())
                         }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}

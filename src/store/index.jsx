@@ -3,6 +3,7 @@ import authReducer from './authSlice';
 import profileReducer from './profileSlice';
 import navbarReducer from './navbarSlice'
 import countryReducer from './countryCodeSlice'
+import agentSkillsReducer from './agentSkillsSlice'
 
 /**
  * Configures the Redux store with application reducers.
@@ -21,7 +22,8 @@ const store = configureStore({
     auth: authReducer,
     profile: profileReducer,
     navbar: navbarReducer,
-    country: countryReducer
+    country: countryReducer,
+    skills: agentSkillsReducer
   },
 });
 

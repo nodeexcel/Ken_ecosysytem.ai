@@ -14,6 +14,8 @@ import MeetingNotesCoo from '../../components/MeetingNotesCoo'
 import { BsThreeDots } from 'react-icons/bs'
 import { X } from 'lucide-react'
 import chatInstance from '../../api/chatInstance'
+import { useDispatch, useSelector } from 'react-redux'
+import { discardSkillsData } from '../../store/agentSkillsSlice'
 
 function Coo() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -36,6 +38,7 @@ function Coo() {
     const newwebsocketurl = `${chatInstance}/new-coo-agent-chat`
     const websocketurl = `${chatInstance}/coo-agent`
     const initialMessage = `${t("tara_coo.coo_auto_generated")}`
+    const dispatch = useDispatch()
 
     const navigate = useNavigate()
 
@@ -45,6 +48,14 @@ function Coo() {
         { label: `${t("tara.meeting_notes")}`, icon: <MeetingNotesIcon status={activeSidebarItem == "meeting_notes"} />, hoverIcon: <MeetingNotesIcon hover={true} />, path: "meeting_notes" },
         { label: `${t("tara.connect_whatsapp")}`, icon: <WhatsappIcon status={activeSidebarItem == "connect_whatsApp"} />, hoverIcon: <WhatsappIcon hover={true} />, path: "connect_whatsApp" },
     ]
+
+    const activeTab = useSelector((state) => state.skills)
+
+    useEffect(() => {
+        if (activeTab.label !== null) {
+            setActiveSidebarItem(activeTab.label)
+        }
+    }, [activeTab.loading])
 
     useEffect(() => {
         if (chatList?.length > 0) {
@@ -227,6 +238,7 @@ function Coo() {
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
                             stopTranscription()
+                            dispatch(discardSkillsData())
                         }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}

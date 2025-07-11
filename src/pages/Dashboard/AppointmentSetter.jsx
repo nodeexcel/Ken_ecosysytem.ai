@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import agents from '../../assets/svg/campaign_image2.svg'
 import conversation from '../../assets/svg/conversation.svg'
 import analytics from '../../assets/svg/analytics.svg'
@@ -14,12 +14,15 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next';
 import { BsThreeDots } from 'react-icons/bs'
 import { X } from 'lucide-react'
+import { useDispatch, useSelector } from 'react-redux'
+import { discardSkillsData } from '../../store/agentSkillsSlice'
 
 function AppointmentSetter() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("agents")
     const [sidebarStatus, setSideBarStatus] = useState(false)
 
     const { t } = useTranslation();
+    const dispatch = useDispatch()
 
     const navigate = useNavigate()
 
@@ -29,6 +32,14 @@ function AppointmentSetter() {
         { label: t("appointment.analytics"), icon: <AnalyticsIcon status={activeSidebarItem == "analytics"} />, hoverIcon: <AnalyticsIcon hover={true} />, path: "analytics" },
         // { label: "Demo Chat", icon: <ConversationIcon status={activeSidebarItem == "demo"} />, path: "demo" },
     ]
+
+    const activeTab = useSelector((state) => state.skills)
+
+    useEffect(() => {
+        if (activeTab.label !== null) {
+            setActiveSidebarItem(activeTab.label)
+        }
+    }, [activeTab.loading])
 
     const renderMainContent = () => {
         switch (activeSidebarItem) {
@@ -50,7 +61,10 @@ function AppointmentSetter() {
                 {/* Sidebar */}
                 <div className="lg:flex hidden flex-col bg-white gap-8 border-r border-[#E1E4EA] min-w-[272px] h-full">
                     <div className=''>
-                        <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
+                        <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
+                            navigate("/dashboard")
+                            dispatch(discardSkillsData())
+                        }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}
                                 <h1 className="text-[20px] font-[600]">{t("appointment.appointment_setter")}</h1>

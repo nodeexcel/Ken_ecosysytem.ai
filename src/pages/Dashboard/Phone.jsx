@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import ColdCallingScriptPhone from "../../components/ColdCallingScriptPhone";
 import { BsThreeDots } from "react-icons/bs";
 import { X } from "lucide-react";
+import { discardSkillsData } from "../../store/agentSkillsSlice";
 
 
 const PhonePage = () => {
@@ -37,6 +38,17 @@ const PhonePage = () => {
     { label: t("phone.inbound_calls"), icon: <InboundCall status={activeSidebarItem == "inbound-calls"} />, hoverIcon: <InboundCall hover={true} />, path: "inbound-calls", header: "Rebecca" },
     { label: `Cold Calling`, icon: <HeadPhonesIcon status={activeSidebarItem == "cold_calling"} />, hoverIcon: <HeadPhonesIcon hover={true} />, path: "cold_calling", header: `Tom & Rebecca,${t("phone.phone")} ` },
   ];
+
+  const activeTab = useSelector((state) => state.skills)
+
+  useEffect(() => {
+    if (activeTab.label !== null) {
+      setActiveSidebarItem(activeTab.label)
+      if (activeTab.label === "inbound-calls") {
+        dispatch(getNavbarData('Rebecca'))
+      }
+    }
+  }, [activeTab.loading])
 
   const renderMainContent = () => {
     switch (activeSidebarItem) {
@@ -107,7 +119,10 @@ const PhonePage = () => {
         {/* Sidebar */}
         <div className="lg:flex hidden flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
           <div className=''>
-            <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
+            <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
+              navigate("/dashboard")
+              dispatch(discardSkillsData())
+            }}>
               <div className="flex gap-4 pl-3 items-center h-[57px]">
                 {/* <LeftArrow /> */}
                 <h1 className="text-[20px] font-[600]">{t("phone.phone")}</h1>

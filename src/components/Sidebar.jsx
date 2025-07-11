@@ -22,6 +22,7 @@ import i18n from '../i18n';
 import lifeTimeImg from "../assets/svg/eco_systeme_lifetime_commission.svg"
 import { useTranslation } from "react-i18next";
 import textLogo from '../assets/svg/ecosysteme.ai_logo.svg'
+import { discardSkillsData } from '../store/agentSkillsSlice';
 
 const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     const navigate = useNavigate()
@@ -105,6 +106,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
             dispatch(getNavbarData(label))
             setShowDropdown(false)
             navigate(path)
+            dispatch(discardSkillsData())
             if (isOpen) {
                 toggleSidebar()
             }
@@ -127,6 +129,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
         else {
             dispatch(getNavbarData("Home"))
             navigate("/dashboard")
+            dispatch(discardSkillsData())
             if (isOpen) {
                 toggleSidebar()
             }

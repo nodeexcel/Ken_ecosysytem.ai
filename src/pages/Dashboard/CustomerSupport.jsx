@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AutomationIcon, CallAgent, EmailIcon, HelpIcon, LeftArrow, } from '../../icons/icons'
 import calinaImg from "../../assets/svg/calina_logo.svg"
 import { useNavigate } from 'react-router-dom'
@@ -8,10 +8,13 @@ import UserGuideCustomerSupport from '../../components/UserGuideCustomerSupport'
 import EmailCustomerSupport from '../../components/EmailCustomerSupport'
 import { BsThreeDots } from 'react-icons/bs'
 import { X } from 'lucide-react'
+import { useDispatch, useSelector } from 'react-redux'
+import { discardSkillsData } from '../../store/agentSkillsSlice'
 
 function CustomerSupport() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("smart_bot")
     const [sidebarStatus, setSideBarStatus] = useState(false)
+    const dispatch = useDispatch()
 
     const navigate = useNavigate()
 
@@ -21,6 +24,14 @@ function CustomerSupport() {
         { label: "User Guide Generator", icon: <CallAgent status={activeSidebarItem == "user_guide"} />, hoverIcon: <CallAgent hover={true} />, path: "user_guide" },
         { label: "Customer Email Responder", icon: <EmailIcon status={activeSidebarItem == "email"} />, hoverIcon: <EmailIcon hover={true} />, path: "email" },
     ]
+
+    const activeTab = useSelector((state) => state.skills)
+
+    useEffect(() => {
+        if (activeTab.label !== null) {
+            setActiveSidebarItem(activeTab.label)
+        }
+    }, [activeTab.loading])
 
     const renderMainContent = () => {
         switch (activeSidebarItem) {
@@ -44,6 +55,7 @@ function CustomerSupport() {
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
+                            dispatch(discardSkillsData())
                         }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}
