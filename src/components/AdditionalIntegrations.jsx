@@ -213,7 +213,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                     <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
                         {integartionData.name}
                     </h1>
-                    <button onClick={() => setOpen(true)} className="flex items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-lg text-white">
+                    <button onClick={() => setOpen(true)} className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-lg text-white">
                         <div className="flex items-center gap-2">
                             <IoIosAdd color="" />
                             <span className="font-medium text-base leading-6">
@@ -337,7 +337,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                     <div className="bg-white max-h-[600px] flex flex-col gap-2 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
                         <button
                             onClick={() => setOpen(false)}
-                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+                            className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
                         >
                             <X className="w-5 h-5" />
                         </button>
@@ -372,7 +372,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                                         <a href={integartionData.path} target="_blank">
                                             <button
                                                 // onClick={handleNext}
-                                                className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+                                                className="w-full text-[16px] cursor-pointer text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
 
 
                                             >
@@ -383,7 +383,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
 
                                         <button
                                             onClick={() => setActiveTab("meta")}
-                                            className="w-full text-[16px] text-[#5E54FF] mt-3 bg-white"
+                                            className="w-full cursor-pointer text-[16px] text-[#5E54FF] mt-3 bg-white"
                                         >
                                             {t("brain_ai.integrations.connect_with_meta")}
                                         </button>
@@ -403,13 +403,13 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                                     <div className="flex flex-col gap-5 w-full mt-4">
                                         <button
                                             // onClick={handleNext}
-                                            className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+                                            className="w-full text-[16px] cursor-pointer text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
                                         >
                                             {t("brain_ai.integrations.go_to_facebook")}
                                         </button>
                                         <button
                                             onClick={() => setActiveTab("insta")}
-                                            className="w-full flex items-center justify-center gap-3 text-[16px] text-[#1E1E1E] mt-3 bg-white"
+                                            className="w-full flex cursor-pointer items-center justify-center gap-3 text-[16px] text-[#1E1E1E] mt-3 bg-white"
                                         >
                                             <FaArrowLeft />
                                             {t("brain_ai.integrations.back")}
@@ -424,7 +424,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                     <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
                     {t("brain_ai.integrations.message_temple")}
                     </h1>
-                    <button onClick={() => setCreateTemplateOpen(true)} className="flex items-center gap-2.5 px-5 py-[7px] border-[#675FFF] border-[1.5px] rounded-lg bg-white text-white">
+                    <button onClick={() => setCreateTemplateOpen(true)} className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] border-[#675FFF] border-[1.5px] rounded-lg bg-white text-white">
                         <div className="flex items-center gap-2">
                             <IoIosAdd color="#675FFF" />
                             <span className="font-medium text-[#675FFF] text-base leading-6">
@@ -440,7 +440,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                     <div className="bg-white max-h-[600px] flex flex-col gap-2 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
                         <button
                             onClick={() => setCreateTemplateOpen(false)}
-                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+                            className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
                         >
                             <X className="w-5 h-5" />
                         </button>
@@ -482,12 +482,12 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                         <div className="flex gap-2 mt-4">
                             <button
                                 onClick={() => setCreateTemplateOpen(false)}
-                                className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
+                                className="w-full cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
                             >
                                 {t("brain_ai.cancel")}
                             </button>
                             <button
-                                className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+                                className="w-full cursor-pointer text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
                             >
                                 {t("brain_ai.save")}
                             </button>
@@ -501,7 +501,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             onClick={() => {
                                 setErrorMessage('')
                             }}
-                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+                            className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
                         >
                             <X className="w-5 h-5" />
                         </button>
