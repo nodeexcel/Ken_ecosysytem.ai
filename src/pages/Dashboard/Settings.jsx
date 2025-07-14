@@ -12,7 +12,7 @@ import { updatePassword } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import { getTeamMembers, sendInviteEmail } from "../../api/teamMember";
 import TransactionHistory from "../../components/TransactionHistory";
-import { Delete, Edit, LeftArrow, PasswordLock, PlanIcon, ProfileEditIcon, RefreshIcon, Settings, TeamMemberIcon, ThreeDots } from "../../icons/icons";
+import { Delete, Edit, LeftArrow, PasswordLock, PlanIcon, ProfileEditIcon, RefreshIcon, Settings, SuccessIcon, TeamMemberIcon, ThreeDots } from "../../icons/icons";
 import { discardData } from "../../store/profileSlice";
 import { SelectDropdown } from "../../components/Dropdown";
 import { FaChevronDown } from "react-icons/fa";
@@ -168,6 +168,7 @@ const SettingsPage = () => {
   const [profileErrors, setProfileErrors] = useState({});
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [deleteModalStatus, setDeleteModalStatus] = useState(false)
+  const [successModalStatus, setSuccessModalStatus] = useState('')
 
   const users = useSelector((state) => state.auth);
 
@@ -360,6 +361,7 @@ const SettingsPage = () => {
             newPassword: "",
             confirmPassword: "",
           })
+          setSuccessModalStatus('psd')
         } else {
           setErrors((prev) => ({
             ...prev, newError: response?.response?.data?.message
@@ -415,7 +417,9 @@ const SettingsPage = () => {
         setSuccess({ emailInvite: response?.data?.message })
         setEmailInvite("")
         setEmailInviteRole("Member")
+        setOpen(false)
         setInviteErrors({ email: "", limit: "" });
+        setSuccessModalStatus('inv')
       } else {
         setInviteErrors((prev) => ({
           ...prev, inviteError: response?.response?.data?.message
@@ -433,6 +437,15 @@ const SettingsPage = () => {
       setActiveSidebarItem("billing")
       setShowPlanPopup(true)
     } else {
+      setOpen(true)
+    }
+  }
+
+  const handleAddSeatsTeam = () => {
+    if (userDetails?.user?.subscriptionType === "pro") {
+      setShowPlanPopup(true)
+    } else {
+      setActiveSidebarItem("team")
       setOpen(true)
     }
   }
@@ -472,8 +485,8 @@ const SettingsPage = () => {
   const renderMainContent = () => {
     if (activeSidebarItem === "billing") {
       return (
-        <div className="flex py-3 pr-4 flex-col w-full gap-6">
-          <Plan t={t} teamMembersData={teamMembersData} setActiveSidebarItem={setActiveSidebarItem} showPlanPopup={showPlanPopup} setShowPlanPopup={setShowPlanPopup} handleInviteTeam={handleInviteTeam}/>
+        <div className="flex py-3 pr-4 flex-col h-full w-full gap-6">
+          <Plan t={t} teamMembersData={teamMembersData} setActiveSidebarItem={setActiveSidebarItem} showPlanPopup={showPlanPopup} setShowPlanPopup={setShowPlanPopup} handleAddSeatsTeam={handleAddSeatsTeam} />
         </div>
       );
     }
@@ -484,7 +497,7 @@ const SettingsPage = () => {
           <div className="w-full py-4 flex flex-col gap-3 pr-4">
             <div className="flex justify-between">
               <h1 className="text-[#1E1E1E] font-semibold text-[20px] md:text-[24px]">{t("settings.tab_3")}</h1>
-              <button className="bg-[#5E54FF] text-white rounded-md text-[14px] md:text-[16px] p-2" onClick={handleInviteTeam}>{t("settings.tab_3_list.invite_team_member")}</button>
+              <button className="bg-[#5E54FF] cursor-pointer text-white rounded-md text-[14px] md:text-[16px] p-2" onClick={handleInviteTeam}>{t("settings.tab_3_list.invite_team_member")}</button>
             </div>
             <div className="flex justify-between">
               <SelectDropdown
@@ -513,7 +526,7 @@ const SettingsPage = () => {
                     <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]"> {t("settings.tab_3_list.email")}</th>
                     <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]"> {t("settings.tab_3_list.role")}</th>
                     <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]"> {t("settings.tab_3_list.agents")}</th>
-                    <th className="px-6 py-3"></th>
+                    {/* <th className="px-6 py-3"></th> */}
                   </tr>
                 </thead>
                 <tbody className=" rounded-lg">
@@ -544,10 +557,10 @@ const SettingsPage = () => {
                           ))}
                         </select> */}
                       </td>
-                      <td className="px-6 py-4 text-left bg-[#FAFBFD]">
+                      <td className="text-right bg-[#FAFBFD]">
                         <button
                           onClick={() => handleDropdownClick(index)}
-                          className="text-gray-500 hover:text-gray-700"
+                          className="text-gray-500 cursor-pointer hover:text-gray-700"
                         >
                           <EllipsisVertical />
                         </button>
@@ -555,7 +568,7 @@ const SettingsPage = () => {
                           <div className="absolute right-6 px-2  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                             <div className="py-1">
                               <button
-                                className="block group w-full text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
+                                className="block group w-full cursor-pointer text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
                                 onClick={() => {
                                   // Handle edit action
                                   setActiveDropdown(null);
@@ -566,7 +579,7 @@ const SettingsPage = () => {
                               <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                               <div className="py-2">
                                 <button
-                                  className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
+                                  className="block w-full cursor-pointer text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
                                   onClick={() => {
                                     // Handle delete action
                                     setActiveDropdown(null);
@@ -595,7 +608,7 @@ const SettingsPage = () => {
                     setInviteErrors({})
                     setOpen(false)
                   }}
-                  className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+                  className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -638,10 +651,10 @@ const SettingsPage = () => {
                   <button onClick={() => {
                     setOpen(false)
                     setInviteErrors({})
-                  }} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                  }} className="w-full text-[16px] cursor-pointer  text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                     {t("settings.tab_3_list.close")}
                   </button>
-                  <button onClick={handleInvite} className={`w-full text-[16px] text-white rounded-[8px] ${inviteEmailLoading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
+                  <button onClick={handleInvite} className={`w-full cursor-pointer  text-[16px] text-white rounded-[8px] ${inviteEmailLoading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
                     {inviteEmailLoading ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : `${t("settings.tab_3_list.invite")}`}
                   </button>
                 </div>
@@ -676,7 +689,7 @@ const SettingsPage = () => {
           <div className="flex items-start relative self-stretch w-full flex-[0_0_auto] border-b border-[#e1e4ea]">
             <button
               onClick={() => setActiveTab("profile")}
-              className={`inline-flex items-center justify-center gap-1 p-2.5 relative flex-[0_0_auto] border-b-2 ${activeTab === "profile"
+              className={`inline-flex items-center justify-center cursor-pointer  gap-1 p-2.5 relative flex-[0_0_auto] border-b-2 ${activeTab === "profile"
                 ? "border-[#5E54FF] text-primary-color"
                 : "border-[#e1e4ea] text-text-grey"
                 } rounded-none`}
@@ -688,7 +701,7 @@ const SettingsPage = () => {
             </button>
             <button
               onClick={() => setActiveTab("password")}
-              className={`inline-flex items-center justify-center gap-1 p-2.5 relative flex-[0_0_auto] border-b-2 ${activeTab === "password"
+              className={`inline-flex items-center justify-center cursor-pointer gap-1 p-2.5 relative flex-[0_0_auto] border-b-2 ${activeTab === "password"
                 ? "border-[#5E54FF] text-primary-color"
                 : "border-[#e1e4ea] text-text-grey"
                 } rounded-none`}
@@ -728,7 +741,7 @@ const SettingsPage = () => {
                       onClick={() => document.getElementById('profileImageInput').click()}
                       className="absolute top-[55px] ml-15 sm:top-[65px] bg-[#675FFF] rounded-full cursor-pointer w-[31px] h-[31px] flex justify-center items-center"
                     >
-                      <ProfileEditIcon/>
+                      <ProfileEditIcon />
                     </button>
                   </div>
                   {profileErrors.imageFile && <p className="text-[#FF3B30]">{profileErrors.imageFile}</p>}
@@ -906,7 +919,7 @@ const SettingsPage = () => {
                         type="button"
                         disabled={updateLoading}
                         onClick={handleProfileSubmit}
-                        className={`sm:w-auto px-4 py-2 ${updateLoading ? "bg-[#5f54ff87]" : "bg-[#5E54FF]"} text-white text-[16px] rounded-lg`}
+                        className={`sm:w-auto px-4 cursor-pointer py-2 ${updateLoading ? "bg-[#5f54ff87]" : "bg-[#5E54FF]"} text-white text-[16px] rounded-lg`}
                       >
                         {updateLoading ? (
                           <div className="flex items-center justify-center gap-2">
@@ -928,7 +941,7 @@ const SettingsPage = () => {
                       </button> */}
                     </div>
                     <div>
-                      <button onClick={() => setDeleteModalStatus(true)} className="w-full text-[13px] font-[500] bg-transparent text-[#5A687C]">
+                      <button onClick={() => setDeleteModalStatus(true)} className="w-full cursor-pointer  text-[13px] font-[500] bg-transparent text-[#5A687C]">
                         {
                           t("settings.tab_1_list.delete_profile")
                         }
@@ -976,7 +989,7 @@ const SettingsPage = () => {
                         <button
                           type="button"
                           onClick={() => togglePasswordVisibility('currentPassword')}
-                          className="absolute right-3.5 top-1/2 transform -translate-y-1/2"
+                          className="absolute cursor-pointer right-3.5 top-1/2 transform -translate-y-1/2"
                         >
                           {showPasswords.currentPassword ? (
                             <EyeIcon className="w-5 h-5 text-gray-400" />
@@ -1011,7 +1024,7 @@ const SettingsPage = () => {
                         <button
                           type="button"
                           onClick={() => togglePasswordVisibility('newPassword')}
-                          className="absolute right-3.5 top-1/2 transform -translate-y-1/2"
+                          className="absolute cursor-pointer right-3.5 top-1/2 transform -translate-y-1/2"
                         >
                           {showPasswords.newPassword ? (
                             <EyeIcon className="w-5 h-5 text-gray-400" />
@@ -1046,7 +1059,7 @@ const SettingsPage = () => {
                         <button
                           type="button"
                           onClick={() => togglePasswordVisibility('confirmPassword')}
-                          className="absolute right-3.5 top-1/2 transform -translate-y-1/2"
+                          className="absolute cursor-pointer  right-3.5 top-1/2 transform -translate-y-1/2"
                         >
                           {showPasswords.confirmPassword ? (
                             <EyeIcon className="w-5 h-5 text-gray-400" />
@@ -1068,7 +1081,7 @@ const SettingsPage = () => {
                   )}
 
                   <div className="flex flex-col sm:flex-row items-center gap-4 pt-2 w-full">
-                    <button onClick={handleChangePassword} disabled={updatePasswordLoading} className={`w-full sm:w-auto px-4 py-2 ${updatePasswordLoading ? "bg-[#5f54ff87]" : "bg-[#5E54FF]"} text-white rounded-lg`}>
+                    <button onClick={handleChangePassword} disabled={updatePasswordLoading} className={`w-full cursor-pointer  sm:w-auto px-4 py-2 ${updatePasswordLoading ? "bg-[#5f54ff87]" : "bg-[#5E54FF]"} text-white rounded-lg`}>
                       {updatePasswordLoading ? (
                         <div className="flex items-center justify-center gap-2">
                           <p>{t("processing")}</p>
@@ -1291,6 +1304,42 @@ const SettingsPage = () => {
           </div>
         </div>
       }
+      {successModalStatus && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl w-full max-w-[457px] p-6 relative shadow-lg">
+            <button
+              className="absolute top-4 cursor-pointer  right-4 text-gray-500 hover:text-gray-700"
+              onClick={() => {
+                setSuccessModalStatus('')
+              }}
+            >
+              <X size={20} />
+            </button>
+
+            <div className="flex flex-col gap-6 justify-center pt-8 pb-6 items-center text-center">
+              <div>
+                <SuccessIcon />
+              </div>
+              <div className="flex flex-col gap-2">
+                <h2 className="text-[28px] font-[700] text-[#292D32]">
+                  {successModalStatus === "psd" ? t("settings.tab_1_list.password_changed_header") : t("settings.tab_3_list.invite_email_success_header")}
+                </h2>
+                <h2 className="text-[16px] font-[400] text-[#5A687C]">
+                  {successModalStatus === "psd" ? t("settings.tab_1_list.password_changed_description") : t("settings.tab_3_list.invite_email_success_description")}
+                </h2>
+              </div>
+              <button
+                className="w-full cursor-pointer border-[1.5px] border-[#5F58E8] bg-[#675FFF] text-white px-[20px] py-[12px] font-[500] text-[16px]  rounded-[7px]"
+                onClick={() => {
+                  setSuccessModalStatus('')
+                }}
+              >
+                {t("appointment.ok")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

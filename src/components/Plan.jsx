@@ -568,7 +568,7 @@ const CancelSubscriptionPopup = ({ t, onClose }) => {
   )
 }
 
-const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPlanPopup, handleInviteTeam }) => {
+const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPlanPopup, handleAddSeatsTeam }) => {
   const [showCreditPopup, setShowCreditPopup] = useState(false);
   const [cancelPopup, setCancelPopup] = useState(false);
   const [roleSelect, setRoleSelect] = useState("All");
@@ -696,7 +696,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
               </div>
               <span className="font-medium"> {t("settings.tab_2_list.members_seats")}</span>
             </div>
-            <button onClick={handleInviteTeam} className="text-[#5E54FF] font-[600] cursor-pointer text-sm hover:underline flex items-center gap-1 ">
+            <button onClick={handleAddSeatsTeam} className="text-[#5E54FF] font-[600] cursor-pointer text-sm hover:underline flex items-center gap-1 ">
               <AddIcon />
               {t("settings.tab_2_list.add_seats")}{" "}
             </button>
