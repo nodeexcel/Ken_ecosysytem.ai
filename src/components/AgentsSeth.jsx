@@ -117,7 +117,7 @@ function AgentsSeth() {
                             </tr>
                         </thead>
                         <tbody className='rounded-lg'>
-                            {loading ? <tr className='h-34'><td ></td><td ></td><td><span className='loader' /></td></tr> : message ? <tr className='h-34'><td></td><td>{message}</td></tr> : <>{campaignData.map((item, index) => {
+                            {loading ? <tr className='h-34'><td ></td><td ></td><td><span className='loader' /></td></tr> : message ? <tr className='h-34'><td></td><td></td><td>{message}</td></tr> : <>{campaignData.map((item, index) => {
                                 return (
                                     <tr key={index} className="text-center bg-white">
                                         <td className="px-6 py-4 text-[16px] text-[#1E1E1E] font-semibold border-l-1 border-t-1 border-b-1 border-[#E1E4EA] rounded-l-lg">

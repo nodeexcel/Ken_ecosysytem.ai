@@ -564,6 +564,7 @@ const frenchTranslation = {
       no_i_cancel: "Non, je veux quand même annuler",
       confirm_cancel: "Confirmer l’annulation",
       i_changed_my_mind: "J’ai changé d’avis — je reste",
+      include:"inclure"
     },
     tab_3_list: {
       invite_team_member: "Inviter un membre de l'équipe",
