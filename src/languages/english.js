@@ -297,6 +297,7 @@ const englishTranslation = {
       no_i_cancel: "No, I still want to cancel",
       confirm_cancel: "Confirm Cancellation",
       i_changed_my_mind: "I’ve changed my mind—I’ll stay",
+      include:"Include"
     },
     tab_3_list: {
       invite_team_member: "Invite a team member",

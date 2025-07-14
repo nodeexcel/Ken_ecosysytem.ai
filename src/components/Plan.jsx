@@ -394,31 +394,31 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
                   <div>
                     {plan.svg}
                   </div>
-                  <span className="font-[600] text-[15px] sm:text-[16px] ">{plan.name}</span>
+                  <span className="font-[600] text-[#1E1E1E] text-[18px] ">{plan.name}</span>
                 </div>
                 {plan.discount && (
-                  <span className="text-[#34C759] h-fit text-[13px] sm:text-[14px]  bg-[#34C7591A] px-2 py-1 mt-2 rounded whitespace-nowrap">
+                  <div className="text-[#34C759] h-fit text-[18px] font-[600] bg-[#34C7591A] p-[10px] rounded-[11px] whitespace-nowrap">
                     {plan.discount}
-                  </span>
+                  </div>
                 )}
               </div>
               <div className="flex items-baseline gap-1 mb-2 flex-wrap">
-                <span className="text-[18px] sm:text-[22px] font-[600] ">{plan.price}</span>
+                <p className="text-[22px] text-[#1E1E1E] font-[600] ">{plan.price}</p>
                 {plan.period && (
-                  <span className="text-[#5A687C] font-[600] text-[13px] sm:text-[14px]">
+                  <span className="text-[#5A687C] font-[600] text-[16px]">
                     {plan.period}
                   </span>
                 )}
               </div>
-              <p className="text-gray-600 text-[13px] sm:text-sm mb-4 line-clamp-2">{plan.description}</p>
+              <p className="text-[#5A687C] text-[14px] font-[400] mb-4">{plan.description}</p>
               <button
                 disabled={index < planIndex || plan.key === userDetails?.subscriptionType}
                 onClick={() => handlePayment(plan.id)}
-                className={`w-full py-2 px-3 rounded-lg mb-4 text-[13px] sm:text-sm ${(plan.key === userDetails?.subscriptionType || index < planIndex)
-                  ? "bg-gray-100 cursor-not-allowed text-gray-700"
+                className={`w-full py-2 px-3 font-[500] rounded-lg mb-4 text-[13px] sm:text-sm ${(plan.key === userDetails?.subscriptionType || index < planIndex)
+                  ? "bg-gray-100 cursor-not-allowed text-[#5A687C]"
                   : plan.key === "enterprise"
-                    ? "border border-[#5E54FF] text-[#5E54FF]"
-                    : "bg-[#5E54FF] text-white cursor-pointer"
+                    ? "border-[1.5px] border-[#5F58E8] text-[#675FFF]"
+                    : "bg-[#675FFF] text-white cursor-pointer"
                   }`}
               >
                 {plan.key === userDetails?.subscriptionType
@@ -427,11 +427,12 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
                     ? `${t("settings.tab_2_list.get_a_quote")}`
                     : `${t("settings.tab_2_list.upgrade")}`}
               </button>
+              <p className="text-[#5A687C] font-[500] text-[14px] pb-4">{t("settings.tab_2_list.include")}</p>
               <div className="space-y-2.5">
                 {plan.features.map((feature, idx) => (
                   <div key={idx} className="flex items-start gap-2">
                     <div><CheckedCircle status={true} /></div>
-                    <p className="text-[13px] sm:text-sm">{feature}</p>
+                    <p className="text-sm font-[500] text-[#5A687C]">{feature}</p>
                   </div>
                 ))}
               </div>
