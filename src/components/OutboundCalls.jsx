@@ -164,7 +164,7 @@ export default function OutBoundCalls() {
             <div className="overflow-auto w-full">
                 <table className="w-full">
                     <div className="px-5 w-full">
-                        <thead>
+                        <thead> 
                             <tr className="text-left text-[#5a687c] text-[16px]">
                                 <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("emailings.campaign_name")}</th>
                                 <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("appointment.agent_name")}</th>
