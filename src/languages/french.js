@@ -217,7 +217,7 @@ const frenchTranslation = {
     learn_more: "En savoir plus",
     agent_language: "Langue de l’agent*",
     emoji_freq: "Fréquence des emojis",
-    pow_msg: "(100 % implémenté sur chaque message)",
+    pow_msg: "(Si oui sélectionné, 25 % est appliqué à chaque message)",
     no_of_follower: "Nombre de relances",
     no_emoji: "Pas d'emoji",
     recommended: "Recommandé",
@@ -564,7 +564,7 @@ const frenchTranslation = {
       no_i_cancel: "Non, je veux quand même annuler",
       confirm_cancel: "Confirmer l’annulation",
       i_changed_my_mind: "J’ai changé d’avis — je reste",
-      include:"inclure"
+      include: "inclure"
     },
     tab_3_list: {
       invite_team_member: "Inviter un membre de l'équipe",

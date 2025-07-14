@@ -36,7 +36,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         calendar_id: ''
     })
 
-    const {t}=useTranslation();
+    const { t } = useTranslation();
     const [loadingStatus, setLoadingStatus] = useState(true)
     const [dataRenderStatus, setDataRenderStatus] = useState(true)
 
@@ -165,7 +165,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
         if (step === 1) {
             if (!formData.agent_name.trim()) newErrors.agent_name = t("appointment.agent_name_validation");
-            if (!formData.gender) newErrors.gender =t("appointment.gender_validation");
+            if (!formData.gender) newErrors.gender = t("appointment.gender_validation");
             if (!formData.age) newErrors.age = t("appointment.age_validation");
             if (formData.agent_language.length === 0) newErrors.agent_language = t("appointment.agent_language_validation");
             if (!formData.agent_personality) newErrors.agent_personality = t("appointment.agent_personality_validation");
@@ -200,7 +200,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             }
             if (formData.objective_of_the_agent === "whatsapp_number") {
                 if (!formData.whatsapp_number) {
-                    newErrors.whatsapp_number =t("appointment.whatsapp_no_validation");
+                    newErrors.whatsapp_number = t("appointment.whatsapp_no_validation");
                 }
             }
             if (formData.objective_of_the_agent === "web_page") {
@@ -281,9 +281,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     ];
 
     const objectiveAgent = [
-        { label:t("appointment.book_call"), key: "book_call" },
+        { label: t("appointment.book_call"), key: "book_call" },
         { label: t("appointment.send_to_web_page"), key: "web_page" },
-        { label:t("appointment.sent_to_whatsapp"), key: "whatsapp_number" }
+        { label: t("appointment.sent_to_whatsapp"), key: "whatsapp_number" }
 
     ]
 
@@ -310,7 +310,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         { label: t("appointment.friendly"), key: "friendly" },
         { label: t("appointment.professional"), key: "professional" },
         { label: t("appointment.energetic"), key: "energetic" },
-        { label:t("appointment.relaxed"), key: "relaxed" },
+        { label: t("appointment.relaxed"), key: "relaxed" },
         { label: t("appointment.results_oriented"), key: "results_oriented" },
         { label: t("appointment.direct"), key: "direct" },
         { label: t("appointment.empathetic"), key: "emphatic" },
@@ -318,7 +318,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
     const genderOptions = [
         { label: t("appointment.male"), key: "male" },
-        { label:t("appointment.female"), key: "female" }
+        { label: t("appointment.female"), key: "female" }
     ]
 
     const calendarOptions = [
@@ -414,7 +414,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         }
         else if (!statusSteps.step2) {
             validateForm()
-            setErrors((prev) => ({ ...prev, step2:t("appointment.second_form_validation") }))
+            setErrors((prev) => ({ ...prev, step2: t("appointment.second_form_validation") }))
             setStep(2)
         } else {
             setStep(selectStep)
@@ -821,7 +821,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                                     <div className="flex flex-col gap-1.5 w-full">
                                         <label className="text-sm font-medium text-[#1e1e1e]">
-                                        {t("appointment.agent_name")}<span className="text-[#675fff]">*</span>
+                                            {t("appointment.agent_name")}<span className="text-[#675fff]">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -836,7 +836,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                                         <div className="flex flex-col gap-1.5 flex-1">
                                             <label className="text-sm font-medium text-[#1e1e1e]">
-                                            {t("appointment.gender")}<span className="text-[#675fff]">*</span>
+                                                {t("appointment.gender")}<span className="text-[#675fff]">*</span>
                                             </label>
                                             {/* <select
                                         name='gender'
@@ -947,7 +947,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     <div className='flex flex-col gap-1.5 flex-1'>
                                         <div className="relative" ref={dropdownRef}>
                                             <label className="text-sm font-medium text-[#1e1e1e]">
-                                            {t("appointment.agent_language")}<span className="text-[#675fff]">*</span>
+                                                {t("appointment.agent_language")}<span className="text-[#675fff]">*</span>
                                             </label>
                                             <button
                                                 onClick={() => setShowLanguageSelector((prev) => !prev)}
@@ -981,23 +981,38 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 </div>
 
                                 {/* Emoji Frequency */}
-                                <div className="flex flex-col gap-3 p-3.5 bg-[#fff] border border-[#E1E4EA] rounded-[10px] w-full">
+                                <div className="flex justify-between gap-3 p-3.5 bg-[#fff] border border-[#E1E4EA] rounded-[10px] w-full">
                                     <div className='flex gap-1'>
                                         <div className="text-base font-medium text-[#1e1e1e]">
                                             {t("appointment.emoji_freq")}<span className="text-[#675fff]">*</span>
                                         </div>
-                                        <div className="text-xs text-gray-500">
+                                        <div className="text-[12px] text-[#5A687C] pt-0.5">
                                             {t("appointment.pow_msg")}
                                         </div>
                                     </div>
-                                    <label className="text-sm font-medium text-[#1e1e1e]">
+                                    <div>
+                                        <button
+                                            onClick={() => setFormData((prev) => ({
+                                                ...prev,
+                                                emoji_frequency: formData.emoji_frequency == 25 ? 0 : 25
+                                            }))}
+                                            className={`relative cursor-pointer w-11 h-6 flex items-center rounded-full transition-colors duration-300 ${formData.emoji_frequency ? "bg-[#675fff]" : "bg-gray-300"
+                                                }`}
+                                        >
+                                            <span
+                                                className={`inline-block w-5 h-5 transform bg-white rounded-full transition-transform duration-300 ${formData.emoji_frequency ? "translate-x-5" : "translate-x-1"
+                                                    }`}
+                                            />
+                                        </button>
+                                    </div>
+                                    {/* <label className="text-sm font-medium text-[#1e1e1e]">
                                    {
                                     t("appointment.no_of_follower")
                                    }
-                                    </label>
+                                    </label> */}
 
                                     {/* Using grid layout */}
-                                    <div className="grid grid-col-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 w-full">
+                                    {/* <div className="grid grid-col-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 w-full">
                                         {emojiOptions.map((option) => (
                                             <div
                                                 key={option.id}
@@ -1017,7 +1032,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                                             </div>
                                         ))}
-                                    </div>
+                                    </div> */}
                                 </div>
 
                                 <hr style={{ color: "#E1E4EA" }} />
@@ -1050,7 +1065,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <div className="flex flex-col md:flex-row gap-4 w-full">
                                     <div className="flex flex-col gap-1.5 flex-1">
                                         <label className="text-sm font-medium text-[#1e1e1e]">
-                                           {t("appointment.business_description")}
+                                            {t("appointment.business_description")}
                                             <span className="text-[#675fff]">*</span>
                                         </label>
                                         <textarea
@@ -1140,9 +1155,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             />
                                         </button>
                                         <span className="font-medium text-base text-black">
-                                          {
-                                            t("appointment.enable_followup")
-                                          }
+                                            {
+                                                t("appointment.enable_followup")
+                                            }
                                         </span>
                                     </div>
 
@@ -1348,7 +1363,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 {/* Sequence Section */}
                                 <div className="p-3 w-full relative bg-white rounded-2xl  border border-solid border-[#e1e4ea]">
                                     <div className="font-medium text-[#1e1e1e] text-base py-2">
-                                    {t("appointment.sequence")}
+                                        {t("appointment.sequence")}
                                     </div>
 
                                     <div className="flex items-center justify-between">
@@ -1573,9 +1588,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <div className="flex items-center px-3 gap-2 border border-[#E1E4EA] rounded-[8px] h-[38px]">
                                     <LuRefreshCw color="#5E54FF" />
                                     <button className="text-[16px] text-[#5A687C]">
-                                      {
-                                        t("appointment.reset")
-                                      }
+                                        {
+                                            t("appointment.reset")
+                                        }
                                     </button>
                                 </div>
                             </div>
@@ -1612,7 +1627,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                             <div className="flex gap-2 mt-3">
                                 <button onClick={() => setUpdateAgent(false)} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
-                                {t("appointment.test")}
+                                    {t("appointment.test")}
                                 </button>
                                 <button onClick={() => {
                                     setUpdateAgentStatus(false)

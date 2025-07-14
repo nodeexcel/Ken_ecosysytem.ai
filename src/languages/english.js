@@ -369,7 +369,7 @@ const englishTranslation = {
     learn_more: "Learn more",
     agent_language: "Agent Language*",
     emoji_freq: "Emoji Frequency",
-    pow_msg: "(100% is implemented on every message)",
+    pow_msg: "(If yes selected 25% is implemented on every message)",
     no_of_follower: "Number of followups",
     no_emoji: "No emoji",
     recommended: "Recommended",
