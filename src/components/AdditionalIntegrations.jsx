@@ -26,7 +26,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
     const tabs = [
         { label: "Account" },
     ]
-    
+
     const staticData = [
         { label: `${t("brain_ai.integrations.orsay_sample")}`, status: "Approved", description: `${t("brain_ai.integrations.orsay_description")}` },
         { label: `${t("brain_ai.integrations.orsay_sample")}`, status: "Approved", description: `${t("brain_ai.integrations.orsay_description")}` },
@@ -114,7 +114,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
         }
     }
 
-    const RenderAccountData = ({ accountsData, label, id, specialCharacter }) => {
+    const RenderAccountData = ({ accountsData, label, id, specialCharacter, handleDelete }) => {
         return (
             <div>
                 {accountsData?.length > 0 && accountsData.map((e, i) => (
@@ -135,7 +135,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">{t("brain_ai.integrations.read_write")} {integartionData.name}.</li>
                         </div>
                         <div className="flex items-center gap-3">
-                            <button onClick={() => handleDeleteWhatsapp(e[id])} className="text-[#FF3B30] border-[1.5px] border-[#FF3B30] rounded-lg px-[20px] py-[7px] text-[16px] font-[500]" >{t("brain_ai.delete")}</button>
+                            <button onClick={() => handleDelete(e[id])} className="text-[#FF3B30] cursor-pointer border-[1.5px] border-[#FF3B30] rounded-lg px-[20px] py-[7px] text-[16px] font-[500]" >{t("brain_ai.delete")}</button>
                         </div>
                     </div>
                 ))}
@@ -153,6 +153,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                         label={"username"}
                         id={"whatsapp_phone_id"}
                         specialCharacter={"+"}
+                        handleDelete={handleDeleteWhatsapp}
                     />
                 )
             case "Instagram":
@@ -162,6 +163,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                         label={"username"}
                         id={"instagram_user_id"}
                         specialCharacter={"@"}
+                        handleDelete={handleDeleteInsta}
                     />
                 )
             case "Google Calendar":
@@ -170,6 +172,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                         accountsData={googleCalendarData}
                         label={"calendar_id"}
                         id={"calendar_id"}
+                        handleDelete={handleDeleteGoogleCalendar}
                     />
                 )
         }
@@ -217,7 +220,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                         <div className="flex items-center gap-2">
                             <IoIosAdd color="" />
                             <span className="font-medium text-base leading-6">
-                            {t("brain_ai.integrations.connect_account")}
+                                {t("brain_ai.integrations.connect_account")}
                             </span>
                         </div>
                     </button>
@@ -365,7 +368,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                                         </p>
                                             <IoMdHelpCircleOutline /></div>
                                         <p className="text-[16px] font-[400] text-[#5A687C]">
-                                        {t("brain_ai.integrations.log_in_with")} {integartionData.name} {t("brain_ai.integrations.your_permissions")}
+                                            {t("brain_ai.integrations.log_in_with")} {integartionData.name} {t("brain_ai.integrations.your_permissions")}
                                         </p>
                                     </div>
                                     <div className="flex flex-col gap-5 w-full mt-4">
@@ -397,7 +400,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                                         </p>
                                             <IoMdHelpCircleOutline /></div>
                                         <p className="text-[16px] font-[400] text-[#5A687C]">
-                                        {t("brain_ai.integrations.go_to_facebook_to_link")}
+                                            {t("brain_ai.integrations.go_to_facebook_to_link")}
                                         </p>
                                     </div>
                                     <div className="flex flex-col gap-5 w-full mt-4">
@@ -422,13 +425,13 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                 </div>}
                 {integartionData.name === "WhatsApp" && <div className="flex items-center justify-between w-full">
                     <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
-                    {t("brain_ai.integrations.message_temple")}
+                        {t("brain_ai.integrations.message_temple")}
                     </h1>
                     <button onClick={() => setCreateTemplateOpen(true)} className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] border-[#675FFF] border-[1.5px] rounded-lg bg-white text-white">
                         <div className="flex items-center gap-2">
                             <IoIosAdd color="#675FFF" />
                             <span className="font-medium text-[#675FFF] text-base leading-6">
-                            {t("brain_ai.integrations.create_temple")}
+                                {t("brain_ai.integrations.create_temple")}
                             </span>
                         </div>
                     </button>
@@ -445,10 +448,10 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             <X className="w-5 h-5" />
                         </button>
                         <h2 className="text-[#1E1E1E] font-[600] text-[20px] mb-1">
-                        {t("brain_ai.integrations.create_new_message_template")}
+                            {t("brain_ai.integrations.create_new_message_template")}
                         </h2>
                         <p className="text-[16px] font-[400] text-[#5A687C]">
-                        {t("brain_ai.integrations.add_custom_message")}
+                            {t("brain_ai.integrations.add_custom_message")}
                         </p>
 
                         {/* Tab Content */}
