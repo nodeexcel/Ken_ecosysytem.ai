@@ -101,8 +101,8 @@ const PhonePage = () => {
     } else {
       return <div className="bg-[#F7F7FF] border border-[#E9E8FF]  lg:w-[232px] w-full mb-5 flex gap-3 p-[12px] rounded-[9px]">
         <div className="flex justify-center items-center">
-          <img src={tomImg} alt={"tome"} className="object-fit" />
           <img src={rebeccaImg} alt={"rebecca"} className="object-fit" />
+          <img src={tomImg} alt={"tome"} className="object-fit" />
         </div>
         <div className="flex flex-col">
           <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Tom & Rebecca</h1>
