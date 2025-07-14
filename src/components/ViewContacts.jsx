@@ -106,7 +106,7 @@ function ViewContacts({ setSelectedData, selectedData }) {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl w-full max-w-[80vw] max-h-[80vh] overflow-auto  p-6 relative shadow-lg">
                 <button
-                    className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                    className="absolute top-4 cursor-pointer right-4 text-gray-500 hover:text-gray-700"
                     onClick={() => {
                         setSelectedData({})
                     }}
@@ -118,7 +118,7 @@ function ViewContacts({ setSelectedData, selectedData }) {
                     <h1 className='text-[#1E1E1E] font-[600] text-[16px]'>{selectedData?.listName} contacts</h1>
                     {formCreateList.contactsId?.length > 0 && <div className='flex gap-4 items-center'>
                         <p className='text-[#1E1E1E] font-[600] text-[16px]'>{formCreateList.contactsId?.length + " "+`${t("brain_ai.contacts_selected")}`}</p>
-                        <button onClick={() => handleDeleteContact(formCreateList.contactsId)} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#FF2D55] rounded-[7px] text-[#FF2D55]">
+                        <button onClick={() => handleDeleteContact(formCreateList.contactsId)} className="flex cursor-pointer items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#FF2D55] rounded-[7px] text-[#FF2D55]">
                             {t("brain_ai.delete")}
                         </button>
                     </div>}
@@ -179,7 +179,7 @@ function ViewContacts({ setSelectedData, selectedData }) {
                                                     </td>
                                                     <td className="p-[14px]  w-full text-sm text-[#5A687C]">
                                                         <div className="flex items-center gap-3.5">
-                                                            <div onClick={() => handleDeleteContact([contact.id])}>
+                                                            <div className='cursor-pointer' onClick={() => handleDeleteContact([contact.id])}>
                                                                 <Delete className="text-red-500" />
                                                             </div>
                                                         </div>

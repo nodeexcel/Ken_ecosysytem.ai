@@ -1200,7 +1200,7 @@ const SettingsPage = () => {
       {modalStatus && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
         <div className="bg-white rounded-2xl w-full max-w-[514px] p-6 relative shadow-lg">
           <button
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-700"
             onClick={() => {
               setModalStatus(false)
             }}
@@ -1213,7 +1213,7 @@ const SettingsPage = () => {
               {t("settings.profile_status")}
             </h2>
             <button
-              className="bg-[#675FFF] text-white px-5 py-2 font-[500] test-[16px]  rounded-lg"
+              className="bg-[#675FFF] text-white px-5 cursor-pointer py-2 font-[500] test-[16px]  rounded-lg"
               onClick={() => setModalStatus(false)}
             >
               {t("settings.ok")}
@@ -1225,7 +1225,7 @@ const SettingsPage = () => {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl w-full max-w-[514px] p-6 relative shadow-lg">
             <button
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-700"
               onClick={() => {
                 setDeleteModalStatus(false)
               }}
@@ -1239,13 +1239,13 @@ const SettingsPage = () => {
               </h2>
               <div className="flex gap-4 mt-2 w-full">
                 <button
-                  className="w-full bg-[#FF3B30] text-white px-5 py-2 font-[500] test-[16px]  rounded-lg"
+                  className="w-full cursor-pointer bg-[#FF3B30] text-white px-5 py-2 font-[500] test-[16px]  rounded-lg"
                   onClick={handleDeleteProfile}
                 >
                   {t("settings.tab_1_list.confirm_delete")}
                 </button>
                 <button
-                  className="w-full bg-white text-[#5A687C] border-[1.5px] border-[#E1E4EA] font-[500] test-[16px] px-5 py-2 rounded-lg"
+                  className="w-full cursor-pointer bg-white text-[#5A687C] border-[1.5px] border-[#E1E4EA] font-[500] test-[16px] px-5 py-2 rounded-lg"
                   onClick={() => setDeleteModalStatus(false)}
                 >
                   {t("settings.tab_1_list.cancel")}

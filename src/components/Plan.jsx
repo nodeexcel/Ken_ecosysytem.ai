@@ -35,32 +35,33 @@ const CreditPopup = ({ t, onClose, onOpen, userDetails }) => {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-6 w-[75%] h-[60vh] lg:h-[511px] lg:w-[516px] overflow-y-auto relative">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <div className="p-2 bg-[#335BFB1A] rounded-lg">
-              <img src="/src/assets/svg/coins.svg" alt="" />
+      <div className="bg-white rounded-xl p-4 max-w-[515px] max-h-[514px] w-full h-full overflow-auto relative">
+        <div className="flex flex-col gap-3 pt-6 pb-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="p-2 bg-[#335BFB1A] rounded-lg">
+                <img src="/src/assets/svg/coins.svg" alt="" />
+              </div>
+              <span className="text-[20px]  font-[600] "> {t("settings.tab_2_list.yours_credits")}</span>
             </div>
-            <span className="text-[20px]  font-[600] "> {t("settings.tab_2_list.yours_credits")}</span>
+            <button
+              onClick={onClose}
+              className="text-gray-500 cursor-pointer absolute right-2 top-2 hover:text-gray-700"
+            >
+              <X />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-500 absolute right-2 top-2 hover:text-gray-700"
-          >
-            <X />
-          </button>
-        </div>
 
-        {/* <div className="bg-[#5E54FF] text-white p-4 rounded-lg mb-6 flex justify-between items-center ">
+          {/* <div className="bg-[#5E54FF] text-white p-4 rounded-lg mb-6 flex justify-between items-center ">
           <div className=" text-[16px]  font-[500] text-[#E1E4EA] ">
             Available Credit
           </div>
           <div className="text-[36px] font-700   font-semibold">100</div>
         </div> */}
 
-        <div className="mb-6">
-          <h3 className="text-[17px] font-[600]  my-4"> {t("settings.tab_2_list.add_credits")}</h3>
-          {/* <div className="relative mb-4">
+          <div className="">
+            <h3 className="text-[17px] font-[600]  my-4"> {t("settings.tab_2_list.add_credits")}</h3>
+            {/* <div className="relative mb-4">
             <input
               type="range"
               min="100"
@@ -79,7 +80,7 @@ const CreditPopup = ({ t, onClose, onOpen, userDetails }) => {
               <span className="text-[17px] font-[600]  ">30000</span>
             </div>
           </div> */}
-          {/* <div className="flex flex-wrap gap-2 mb-4">
+            {/* <div className="flex flex-wrap gap-2 mb-4">
             {creditOptions.map((credit, index) => (
               <button
                 key={index}
@@ -106,38 +107,39 @@ const CreditPopup = ({ t, onClose, onOpen, userDetails }) => {
               max="30000"
             />
           </div> */}
-          {staticCredits.map((each) => (
-            <div key={each.value} className="my-3" onClick={() => setSelectedCredit(each)}>
-              <div className={`flex justify-between items-center px-4 py-3 rounded-lg ${selectedCredit.value === each.value ? 'bg-[#675FFF]' : 'bg-[#F2F2F7]'}`}>
-                <div className={`${selectedCredit.value === each.value ? 'text-[#fff]' : 'text-[#1E1E1E]'} flex items-center gap-2 text-[17px] font-[600]`}>
-                  <h2>{each.label}  {t("settings.tab_2_list.credits")} = </h2>
-                  <h2>{each.value}</h2>
+            {staticCredits.map((each) => (
+              <div key={each.value} className="my-3 cursor-pointer" onClick={() => setSelectedCredit(each)}>
+                <div className={`flex justify-between items-center px-4 py-3 rounded-lg ${selectedCredit.value === each.value ? 'bg-[#675FFF]' : 'bg-[#F2F2F7]'}`}>
+                  <div className={`${selectedCredit.value === each.value ? 'text-[#fff]' : 'text-[#1E1E1E]'} flex items-center gap-2 text-[17px] font-[600]`}>
+                    <h2>{each.label}  {t("settings.tab_2_list.credits")} = </h2>
+                    <h2>{each.value}</h2>
+                  </div>
+                  {selectedCredit.value === each.value ? <CheckedCircle /> : <EmptyCircle />}
                 </div>
-                {selectedCredit.value === each.value ? <CheckedCircle /> : <EmptyCircle />}
               </div>
-            </div>
-          ))}
-          <button
-            onClick={() => {
-              onClose()
-              onOpen()
-            }}
-            className="flex-1 py-2 my-4 px-4 border-[1.5px] font-[500] border-[#675FFF] rounded-lg text-[#675FFF]"
-          >
-            {t("settings.tab_2_list.upgrade_plan")}
-          </button>
-        </div>
+            ))}
+            <button
+              onClick={() => {
+                onClose()
+                onOpen()
+              }}
+              className="flex-1 cursor-pointer py-2 my-4 px-4 border-[1.5px] font-[500] border-[#675FFF] rounded-lg text-[#675FFF]"
+            >
+              {t("settings.tab_2_list.upgrade_plan")}
+            </button>
+          </div>
 
-        <div className="flex gap-4">
-          <button
-            onClick={onClose}
-            className="flex-1 py-2 px-4 border border-[#5A687C] rounded-lg text-[#5A687C]"
-          >
-            {t("cancel")}
-          </button>
-          <button disabled={loading} onClick={handleAddCredits} className="flex-1 py-2 px-4 bg-[#675FFF] text-white rounded-lg">
-            {loading ? <div className="flex items-center justify-center gap-2"><p> {t("processing")}</p><span className="loader" /></div> : `${t("settings.tab_2_list.add") + " " + selectedCredit.label + " " + t("settings.tab_2_list.credits")}`}
-          </button>
+          <div className="flex gap-4">
+            <button
+              onClick={onClose}
+              className="flex-1 cursor-pointer py-2 px-4 border border-[#5A687C] rounded-lg text-[#5A687C]"
+            >
+              {t("cancel")}
+            </button>
+            <button disabled={loading} onClick={handleAddCredits} className="flex-1 cursor-pointer py-2 px-4 bg-[#675FFF] text-white rounded-lg">
+              {loading ? <div className="flex items-center justify-center gap-2"><p> {t("processing")}</p><span className="loader" /></div> : `${t("settings.tab_2_list.add") + " " + selectedCredit.label + " " + t("settings.tab_2_list.credits")}`}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -340,7 +342,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
             <span className="text-[16px] sm:text-[20px] font-[600] ">{t("settings.tab_2_list.manage_plan")}</span>
             <div className="flex gap-2 bg-[#F2F2F7] p-1 rounded-lg">
               <button
-                className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium ${activeTab === "annual"
+                className={`flex-1 px-3 py-2 rounded-lg cursor-pointer text-sm font-medium ${activeTab === "annual"
                   ? "bg-white text-black"
                   : "bg-transparent text-[#5A687C]"
                   }`}
@@ -349,7 +351,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
                 {t("settings.tab_2_list.annual")}
               </button>
               <button
-                className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium ${activeTab === "monthly"
+                className={`flex-1 px-3 py-2 cursor-pointer rounded-lg text-sm font-medium ${activeTab === "monthly"
                   ? "bg-white text-black"
                   : "bg-transparent text-[#5A687C]"
                   }`}
@@ -362,19 +364,19 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
           <div className="flex items-center gap-4">
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 absolute top-1 right-1"
+              className="text-gray-500 cursor-pointer hover:text-gray-700 absolute top-1 right-1"
             >
               <X />
             </button>
           </div>
           <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <button className="text-[#1E1E1E] text-[14px] font-[400]">
+            <button className="text-[#1E1E1E] cursor-pointer text-[14px] font-[400]">
               {t("settings.tab_2_list.manage_payment_method")}
             </button>
             <button onClick={() => {
               onClose()
               onOpen()
-            }} className="text-[#FF3B30] text-[14px] font-[400]">
+            }} className="text-[#FF3B30] cursor-pointer text-[14px] font-[400]">
               {t("settings.tab_2_list.cancel_subscription")}
             </button>
           </div>
@@ -413,10 +415,10 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
                 disabled={index < planIndex || plan.key === userDetails?.subscriptionType}
                 onClick={() => handlePayment(plan.id)}
                 className={`w-full py-2 px-3 rounded-lg mb-4 text-[13px] sm:text-sm ${(plan.key === userDetails?.subscriptionType || index < planIndex)
-                  ? "bg-gray-100 text-gray-700"
+                  ? "bg-gray-100 cursor-not-allowed text-gray-700"
                   : plan.key === "enterprise"
                     ? "border border-[#5E54FF] text-[#5E54FF]"
-                    : "bg-[#5E54FF] text-white"
+                    : "bg-[#5E54FF] text-white cursor-pointer"
                   }`}
               >
                 {plan.key === userDetails?.subscriptionType
@@ -455,7 +457,7 @@ const CancelSubscriptionPopup = ({ t, onClose }) => {
           </div>
           <button
             onClick={onClose}
-            className="text-gray-500 absolute right-2 top-2 hover:text-gray-700"
+            className="text-gray-500 cursor-pointer absolute right-2 top-2 hover:text-gray-700"
           >
             <X />
           </button>
@@ -494,12 +496,12 @@ const CancelSubscriptionPopup = ({ t, onClose }) => {
         </div>
 
         <div className="flex gap-4 mt-5">
-          <button className="flex-1 py-2 px-4 bg-[#675FFF] text-white rounded-lg">
+          <button className="flex-1 cursor-pointer py-2 px-4 bg-[#675FFF] text-white rounded-lg">
             {t("settings.tab_2_list.accept_discount")}
           </button>
           <button
             onClick={() => setInitailTab(false)}
-            className="flex-1 py-2 px-4 border border-[#FF3B30] rounded-lg text-[#FF3B30]"
+            className="flex-1 py-2 px-4 cursor-pointer border border-[#FF3B30] rounded-lg text-[#FF3B30]"
           >
             {t("settings.tab_2_list.no_i_cancel")}
           </button>
@@ -511,7 +513,7 @@ const CancelSubscriptionPopup = ({ t, onClose }) => {
           </div>
           <button
             onClick={onClose}
-            className="text-gray-500 absolute right-2 top-2 hover:text-gray-700"
+            className="text-gray-500 cursor-pointer absolute right-2 top-2 hover:text-gray-700"
           >
             <X />
           </button>
@@ -555,11 +557,11 @@ const CancelSubscriptionPopup = ({ t, onClose }) => {
         <div className="flex gap-4 mt-5">
           <button
             onClick={onClose}
-            className="flex-1 p-2 text-center bg-[#FF3B30] rounded-lg text-[#fff]"
+            className="flex-1 cursor-pointer p-2 text-center bg-[#FF3B30] rounded-lg text-[#fff]"
           >
             {t("settings.tab_2_list.confirm_cancel")}
           </button>
-          <button onClick={onClose} className="flex-1 w-full text-center p-2 bg-trasparent border border-[#5A687C] text-[#5A687C] rounded-lg">
+          <button onClick={onClose} className="flex-1 cursor-pointer w-full text-center p-2 bg-trasparent border border-[#5A687C] text-[#5A687C] rounded-lg">
             {t("settings.tab_2_list.i_changed_my_mind")}
           </button>
         </div>
@@ -622,7 +624,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
         </h1>
         <button
           onClick={() => setShowPlanPopup(true)}
-          className="w-full sm:w-auto px-4 py-2 text-[#5E54FF] text-[16px]  border border-[#5E54FF] hover:bg-indigo-50 rounded-lg"
+          className="w-full cursor-pointer sm:w-auto px-4 py-2 text-[#5E54FF] text-[16px]  border border-[#5E54FF] hover:bg-indigo-50 rounded-lg"
         >
           {t("settings.tab_2_list.manage_plan")}
         </button>
@@ -661,7 +663,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
           <h1 className=" mb-2 text-sm font-[400]  text-[#5A687C] " > {t("settings.tab_2_list.available_credits")}</h1>
           <div className="flex items-center gap-2">
             <span className="text-[24px] font-[600]  ">{teamMembersData?.credits}</span>
-            <button onClick={() => setShowCreditPopup(true)} className="px-2 rounded-[5px] py-2 text-[14px] flex items-center gap-1 bg-[#335BFB1A] text-[#675FFF] font-[600] ">
+            <button onClick={() => setShowCreditPopup(true)} className="px-2 cursor-pointer rounded-[5px] py-2 text-[14px] flex items-center gap-1 bg-[#335BFB1A] text-[#675FFF] font-[600] ">
               <AddIcon />
               <span> {t("settings.tab_2_list.add_credits")}</span>
             </button>
