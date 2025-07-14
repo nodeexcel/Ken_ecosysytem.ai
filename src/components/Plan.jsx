@@ -430,8 +430,8 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
               <div className="space-y-2.5">
                 {plan.features.map((feature, idx) => (
                   <div key={idx} className="flex items-start gap-2">
-                    <img src="/src/assets/svg/check.svg" alt="" className="w-4 h-4 mt-0.5" />
-                    <span className="text-[13px] sm:text-sm">{feature}</span>
+                    <div><CheckedCircle status={true} /></div>
+                    <p className="text-[13px] sm:text-sm">{feature}</p>
                   </div>
                 ))}
               </div>
