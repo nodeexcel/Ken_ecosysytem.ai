@@ -17,11 +17,11 @@ const staticData = [
   { header: "Skill improvement area", description: "Looking to improve in an unspecified area to help Lev grow." }
 ]
 
-const NoData = ({t, setOpen }) => {
+const NoData = ({ t, setOpen }) => {
   return (
     <div className="mt-3">
       <div className="w-full gap-3 min-h-[360px] flex flex-col justify-center items-center border border-solid border-[#e1e4ea] bg-white rounded-2xl">
-        <div onClick={setOpen}>
+        <div onClick={setOpen} className="cursor-pointer">
           <img src={nodata} alt="nodata" />
         </div>
         <h1 className="text-[20px] font-[600] font-inter"> {t("brain_ai.knowledge.brain_ai_emplty")}</h1>
@@ -45,8 +45,9 @@ const Knowledge = () => {
   const [loadingData, setLoadingData] = useState(false);
   const [errors, setErrors] = useState({});
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const moreActionsRef = useRef();
 
-const { t } = useTranslation();
+  const { t } = useTranslation();
 
   const tabs = [
     { label: `${t("brain_ai.knowledge.snippets")}`, key: "snippets", header: "Snippet" },
@@ -56,9 +57,19 @@ const { t } = useTranslation();
 
   const modelData = {
     snippets: { label: `${t("brain_ai.knowledge.snippet_label")}` },
-    website: { label:  `${t("brain_ai.knowledge.website_label")}` },
-    files: { label:  `${t("brain_ai.knowledge.files_label")}` }
+    website: { label: `${t("brain_ai.knowledge.website_label")}` },
+    files: { label: `${t("brain_ai.knowledge.files_label")}` }
   }
+
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (moreActionsRef.current && !moreActionsRef.current.contains(event.target)) {
+  //       setActiveDropdown(null);
+  //     }
+  //   };
+  //   document.addEventListener('mousedown', handleClickOutside);
+  //   return () => document.removeEventListener('mousedown', handleClickOutside);
+  // }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -223,6 +234,11 @@ const { t } = useTranslation();
     }
   }
 
+  const renderFileName = (file) => {
+    const filename = file.split('/').pop();
+    return filename
+  }
+
 
   const renderMainContent = () => {
     switch (activeTab) {
@@ -240,38 +256,38 @@ const { t } = useTranslation();
                       <a href={e.url} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C]">{e.url}</a>
                     </div>
                   </div>
-                  <div className='bg-[#fff] relative rounded-lg'>
+                  <div ref={moreActionsRef} className='bg-[#fff] relative rounded-lg'>
                     <button
                       onClick={() => handleDropdownClick(i)}
-                      className="text-gray-500 p-2"
+                      className="text-[#1e1e1e] p-2 cursor-pointer"
                     >
                       <ThreeDots />
-                      {activeDropdown === i && (
-                        <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                    </button>
+                    {activeDropdown === i && (
+                      <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[99999]">
+                        <div className="py-1">
+                          <button
+                            className="block cursor-pointer w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
+                            onClick={() => {
+                              setActiveDropdown(null);
+                            }}
+                          >
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
+                          </button>
+                          <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                           <div className="py-1">
                             <button
-                              className="block w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
+                              className="block cursor-pointer w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
                               onClick={() => {
-                                setActiveDropdown(null);
+                                handleDelete(i, e.id)
                               }}
                             >
-                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
+                              <div className="flex items-center gap-2">{<Delete />} <span>{t("delete")}</span> </div>
                             </button>
-                            <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                            <div className="py-1">
-                              <button
-                                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
-                                onClick={() => {
-                                  handleDelete(i, e.id)
-                                }}
-                              >
-                                <div className="flex items-center gap-2">{<Delete />} <span>{t("delete")}</span> </div>
-                              </button>
-                            </div>
                           </div>
                         </div>
-                      )}
-                    </button>
+                      </div>
+                    )}
                   </div>
                 </div>)}
               </div>
@@ -294,38 +310,38 @@ const { t } = useTranslation();
                       <p className="text-[14px] font-[400] font-inter text-[#5A687C]">{e.data}</p>
                     </div>
                   </div>
-                  <div className='bg-[#fff] relative rounded-lg'>
+                  <div ref={moreActionsRef} className='bg-[#fff] relative rounded-lg'>
                     <button
                       onClick={() => handleDropdownClick(i)}
-                      className="text-gray-500 p-2"
+                      className="text-[#1e1e1e] p-2 cursor-pointer"
                     >
                       <ThreeDots />
-                      {activeDropdown === i && (
-                        <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                    </button>
+                    {activeDropdown === i && (
+                      <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                        <div className="py-1">
+                          <button
+                            className="block cursor-pointer w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
+                            onClick={() => {
+                              setActiveDropdown(null);
+                            }}
+                          >
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
+                          </button>
+                          <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                           <div className="py-1">
                             <button
-                              className="block w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
+                              className="block cursor-pointer w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
                               onClick={() => {
-                                setActiveDropdown(null);
+                                handleDelete(i, e.id)
                               }}
                             >
-                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
+                              <div className="flex items-center gap-2">{<Delete />} <span>{t("delete")}</span> </div>
                             </button>
-                            <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                            <div className="py-1">
-                              <button
-                                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
-                                onClick={() => {
-                                  handleDelete(i, e.id)
-                                }}
-                              >
-                                <div className="flex items-center gap-2">{<Delete />} <span>{t("delete")}</span> </div>
-                              </button>
-                            </div>
                           </div>
                         </div>
-                      )}
-                    </button>
+                      </div>
+                    )}
                   </div>
                 </div>)}
               </div>
@@ -343,41 +359,41 @@ const { t } = useTranslation();
                       F
                     </div>
                     <div>
-                      <a href={e.path} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C]">{e.path}</a>
+                      <a href={e.path} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C]">{renderFileName(e.path)}</a>
                     </div>
                   </div>
-                  <div className='bg-[#fff] relative rounded-lg'>
+                  <div ref={moreActionsRef} className='bg-[#fff] relative rounded-lg'>
                     <button
                       onClick={() => handleDropdownClick(i)}
-                      className="text-gray-500 p-2"
+                      className="text-[#1e1e1e] p-2 cursor-pointer"
                     >
                       <ThreeDots />
-                      {activeDropdown === i && (
-                        <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                    </button>
+                    {activeDropdown === i && (
+                      <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                        <div className="py-1">
+                          <button
+                            className="block cursor-pointer w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
+                            onClick={() => {
+                              setActiveDropdown(null);
+                            }}
+                          >
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
+                          </button>
+                          <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                           <div className="py-1">
                             <button
-                              className="block w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
+                              className="block cursor-pointer w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
                               onClick={() => {
-                                setActiveDropdown(null);
+                                handleDelete(i, e.id)
                               }}
                             >
-                              <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
+                              <div className="flex items-center gap-2">{<Delete />} <span>{t("delete")}</span> </div>
                             </button>
-                            <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                            <div className="py-1">
-                              <button
-                                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
-                                onClick={() => {
-                                  handleDelete(i, e.id)
-                                }}
-                              >
-                                <div className="flex items-center gap-2">{<Delete />} <span>{t("delete")}</span> </div>
-                              </button>
-                            </div>
                           </div>
                         </div>
-                      )}
-                    </button>
+                      </div>
+                    )}
                   </div>
                 </div>)}
               </div>
@@ -396,9 +412,9 @@ const { t } = useTranslation();
         <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
           {t("brain_ai.knowledge.sub_heading")}
         </h1>
-        <button onClick={() => setOpen(true)} className="flex items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
+        <button onClick={() => setOpen(true)} className="flex items-center cursor-pointer gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
           <span className="font-medium text-base leading-6">
-          {t("brain_ai.knowledge.add")} {renderHeader()}
+            {t("brain_ai.knowledge.add")} {renderHeader()}
           </span>
         </button>
       </div>
@@ -407,7 +423,7 @@ const { t } = useTranslation();
         {tabs.map((e) => <button
           key={e.key}
           onClick={() => setActiveTab(e.key)}
-          className={`inline-flex items-center justify-center gap-1 p-2.5 relative flex-[0_0_auto] border-b-2 ${activeTab === e.key
+          className={`inline-flex cursor-pointer items-center justify-center gap-1 p-2.5 relative flex-[0_0_auto] border-b-2 ${activeTab === e.key
             ? "border-[#5E54FF] text-primary-color"
             : "border-[#e1e4ea] text-text-grey"
             } rounded-none`}
@@ -431,13 +447,13 @@ const { t } = useTranslation();
               setErrors({})
               setSelectedFile(null)
             }}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+            className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
           >
             <X className="w-5 h-5" />
           </button>
 
           <h2 className="text-[#1E1E1E] font-semibold text-[20px] mb-1">
-          {t("brain_ai.knowledge.add")} {renderHeader()}
+            {t("brain_ai.knowledge.add")} {renderHeader()}
           </h2>
           <p className="text-[14px] text-[#5A687C]">
             {modelData[activeTab].label}
@@ -481,7 +497,7 @@ const { t } = useTranslation();
                       {t("brain_ai.upload_from_your_computer")}
                     </p>
                     <p className="text-[14px] font-[500] text-[#5A687C] mt-1">
-                    {t("brain_ai.or_drag_and_drop")}
+                      {t("brain_ai.or_drag_and_drop")}
                     </p>
                     <input
                       type="file"
@@ -544,14 +560,14 @@ const { t } = useTranslation();
                 setErrors({})
                 setSelectedFile(null)
               }}
-              className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
+              className="w-full cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
             >
               {t("brain_ai.cancel")}
             </button>
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+              className="w-full disabled:cursor-not-allowed cursor-pointer text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
             >
               {loading ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : `${t("brain_ai.save")}`}
             </button>

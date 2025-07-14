@@ -107,15 +107,15 @@ const ContactsPage = () => {
     setCountries(filteredRows);
   }
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (moreActionsRef.current && !moreActionsRef.current.contains(event.target)) {
-        setActiveDropdown(null);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (moreActionsRef.current && !moreActionsRef.current.contains(event.target)) {
+  //       setActiveDropdown(null);
+  //     }
+  //   };
+  //   document.addEventListener('mousedown', handleClickOutside);
+  //   return () => document.removeEventListener('mousedown', handleClickOutside);
+  // }, []);
 
   // useEffect(() => {
   //   if (activeDropdown) {

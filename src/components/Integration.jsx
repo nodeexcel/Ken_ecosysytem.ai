@@ -203,7 +203,7 @@ const Integration = ({firstRender, setFirstRender}) => {
             <div
               key={index}
               onClick={() => handleClick(integration)}
-              className="w-full md:max-w-[763px] mx-auto bg-white border-[0.5px] border-solid border-[#e1e4ea] rounded-lg"
+              className="w-full cursor-pointer hover:opacity-70 md:max-w-[763px] mx-auto bg-white border-[0.5px] border-solid border-[#e1e4ea] rounded-lg"
             >
               <div className="flex items-center justify-between p-5">
                 <div className="flex items-center gap-2.5">
