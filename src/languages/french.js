@@ -307,7 +307,7 @@ const frenchTranslation = {
     empathetic: "Empathique",
   },
 
-phone: {
+  phone: {
     receptionist: "Réceptionniste",
     phone_outreach: "Appels Sortants",
     phone: "Téléphone",
@@ -430,8 +430,8 @@ phone: {
     average_call_duration: "Durée moyenne des appels",
     call_recieved: "Appels reçus"
 
-}
-,
+  }
+  ,
 
 
   settings: {
@@ -480,6 +480,9 @@ phone: {
       new_password_required:
         "Le nouveau mot de passe doit contenir au moins 6 caractères",
       confirm_password_required: "Les mots de passe ne correspondent pas",
+      password_changed_header: "Mot de passe modifié",
+      password_changed_description: "Votre mot de passe a été modifié avec succès."
+
     },
     tab_2_list: {
       manage_plan: "Gérer le forfait",
@@ -580,12 +583,14 @@ phone: {
       invite_error: "Vous avez atteint la limite de votre forfait",
       members: "Membres",
       email_error: "Veuillez entrer une adresse e-mail valide.",
+      invite_email_success_header: "Invitation envoyée",
+      invite_email_success_description: "Nous avons envoyé votre invitation avec succès"
     },
   },
   tara: {
     exploring_trends: "Explorer les tendances de l'IA",
     presentation: "Présentations",
-    meeting_notes:"Générateur de comptes rendus de réunion",
+    meeting_notes: "Générateur de comptes rendus de réunion",
     generate_presentation: "Générer une présentation",
     no_article_listed: "Aucun article n'est répertorié",
     chat: "Chat",
@@ -814,7 +819,7 @@ phone: {
     need_a_template_key: "J’ai besoin d’un modèle pour structurer ma page web.",
     most_relevent_keyword:
       "Comment trouver les mots-clés les plus pertinents pour votre contenu ?",
-      most_relevent_keyword_key: "Comment trouver les mots-clés les plus pertinents pour mon contenu ?",
+    most_relevent_keyword_key: "Comment trouver les mots-clés les plus pertinents pour mon contenu ?",
     most_relevent_keyword_key: "Comment trouver les mots-clés les plus pertinents pour mon contenu ?",
     seo_heading: "SEO",
     sandro: "Sandro",
@@ -953,8 +958,8 @@ phone: {
       target_audience: "Public cible",
       target_placeholder: "Ex. : Professionnels du secteur, recruteurs..."
     }
-    
-    
+
+
   },
   resume_screener: {
     heading: "Filtre de CV",
@@ -963,7 +968,7 @@ phone: {
     resume_label2: "Instructions personnalisées (optionnel)",
     resume_placeholder2: "Tout ce que vous souhaitez indiquer à l’IA",
     resume_initial_message: "Impossible de générer un bilan : le document téléchargé n’est pas un relevé bancaire, mais un eBook ou un guide informatif lié à la santé et au bien-être. Aucune donnée financière disponible pour extraction. Veuillez télécharger un véritable relevé bancaire pour créer un bilan précis."
-  },  
+  },
   no_data: "Aucune donnée trouvée",
   processing: "Traitement en cours...",
   refresh: "Actualiser",
@@ -1011,8 +1016,8 @@ phone: {
   male: "Homme",
   female: "Femme",
   neutral: "Neutre",
-  google_calendar:"Google Calendar",
-  outlook_calendar:"Outlook Calendar",
+  google_calendar: "Google Calendar",
+  outlook_calendar: "Outlook Calendar",
   seo_website_url_is_required: "L’URL est requise",
   mark_all_read: "Tout marquer comme lu",
   tomorrow: "Demain"
