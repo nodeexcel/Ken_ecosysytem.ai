@@ -37,6 +37,7 @@ const ContactsPage = () => {
   const [contactSearch, setContactSearch] = useState("")
   const [listSearch, setListSearch] = useState("")
   const countryData = useSelector((state) => state.country.data)
+  const [countries,setCountries] = useState(countryData);
   const { t } = useTranslation();
 
   const fileInputRef = useRef(null);
@@ -81,11 +82,27 @@ const ContactsPage = () => {
     const handleClickOutside = (event) => {
       if (countryRef.current && !countryRef.current.contains(event.target)) {
         setIsOpen(false);
+        setCountries(countryData);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+
+    const searchHandle = (e) => {
+    const searchValue = e.target.value.toLowerCase();
+
+     if( searchValue === "") {
+       setCountries(countryData);
+      return;
+    }
+    const filteredRows = countryData.filter((country) =>
+    country.name.toLowerCase().includes(searchValue) ||
+    country.dial_code.toLowerCase().includes(searchValue)
+    );
+    setCountries(filteredRows);
+  }
 
 
   const validateSubmit = () => {
@@ -1281,7 +1298,6 @@ const ContactsPage = () => {
             >
               <X size={20} />
             </button>
-
             <h2 className="text-xl font-semibold text-gray-800 mb-5">
               {contactIsEdit ? `${t("brain_ai.update")}` : `${t("brain_ai.add_new")}`} {t("brain_ai.contact")}
             </h2>
@@ -1341,9 +1357,11 @@ const ContactsPage = () => {
                       <FaChevronDown color="#5A687C" className={`w-[10px]  transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
                       <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />
                     </button>
+    
                     {isOpen && (
                       <div className="absolute px-1 z-10 rounded-md shadow-lg border border-gray-200 max-h-40 overflow-auto top-6 w-full left-[-13px] bg-white mt-1">
-                        {countryData.map((country,idx) => (
+                        <input type="text" placeholder="Search"  className="w-full px-3 py-2 border-b border-gray-200 outline-none text-sm" onChange={searchHandle} />
+                        {countries.map((country,idx) => (
                           <div
                             key={idx}
                             onClick={() => {

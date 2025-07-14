@@ -117,7 +117,7 @@ const Integration = ({firstRender, setFirstRender}) => {
     {
       icon: instagram,
       name: "Instagram",
-      connectedAccounts: instagramData.length,
+      connectedAccounts: instagramData?.length,
       path: import.meta.env.VITE_INSTA_URL + `&state=${userDetails.id}`,
     },
     {
@@ -148,13 +148,13 @@ const Integration = ({firstRender, setFirstRender}) => {
     {
       icon: google_calender,
       name: "Google Calendar",
-      connectedAccounts: googleCalendarData.length,
+      connectedAccounts: googleCalendarData?.length,
       path: import.meta.env.VITE_GOOGLE_CALENDAR_URL + `&state=${userDetails.id}`,
     },
     {
       icon: whatsapp,
       name: "WhatsApp",
-      connectedAccounts: whatsappData.length,
+      connectedAccounts: whatsappData?.length,
       path: import.meta.env.VITE_WHATS_APP_URL + `&state=${userDetails.id}`,
     },
     {

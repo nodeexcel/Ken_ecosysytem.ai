@@ -1,76 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { Trash2, PhoneOutgoing, Plus, X, Info } from "lucide-react";
 import { InboundCall, OutboundCall } from "../icons/icons";
-import { format } from "date-fns";
 import { FaChevronDown } from "react-icons/fa";
-import uk_flag from "../assets/images/uk_flag.png"
-import us_flag from "../assets/images/us_flag.png"
-import fr_flag from "../assets/images/fr_flag.png"
 import { addPhoneNumber, getPhoneNumber, updatePhoneNumberStatus, deletePhoneNumber } from "../api/callAgent"
-import { set } from "date-fns";
+
 import { DateFormat } from "../utils/TimeFormat";
 import { useSelector } from "react-redux";
 import { t } from "i18next";
-const initialRows = [
-  {
-    id: "1",
-    phone_number: "+41778090925",
-    country: "Switzerland",
-    active: true,
-    total_calls: 0,
-    direction: "outbound",
-    createdAt: "27/03/2025 03:30 PM",
-  },
-  {
-    id: "2",
-    phone_number: "+41778090925",
-    country: "Switzerland",
-    active: true,
-    total_calls: 0,
-    direction: "outbound",
-    createdAt: "27/03/2025 03:30 PM",
-  },
-  {
-    id: "3",
-    phone_number: "+41778090925",
-    country: "Switzerland",
-    active: true,
-    total_calls: 0,
-    direction: "outbound",
-    createdAt: "27/03/2025 03:30 PM",
-  },
-  {
-    id: "4",
-    phone_number: "+41778090925",
-    country: "Switzerland",
-    active: true,
-    total_calls: 0,
-    direction: "outbound",
-    createdAt: "27/03/2025 03:30 PM",
-  },
-  {
-    id: "5",
-    phone_number: "+41778090925",
-    country: "Switzerland",
-    active: true,
-    total_calls: 0,
-    direction: "outbound",
-    createdAt: "27/03/2025 03:30 PM",
-  },
-];
 
-
-
-// const countries = [
-//   { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
-//   { name: "United Kingdom", code: "GB", dial_code: "+44", flag: uk_flag }, ,
-//   { name: "France", code: "FR", dial_code: "+33", flag: fr_flag }, ,
-//   // Add more countries as needed
-// ];
 
 export default function PhoneNumbers() {
   const [rows, setRows] = useState([]);
-  const countries = useSelector((state) => state.country.data)
+  
+  
+  const countrieData = useSelector((state) => state.country.data);
+
+  const [countries, setCountries] = useState(countrieData);
+
+
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState("outbound")
   const [selectedCountry, setSelectedCountry] = useState(countries[240]);
@@ -114,6 +61,7 @@ export default function PhoneNumbers() {
     const handleClickOutside = (event) => {
       if (countryRef.current && !countryRef.current.contains(event.target)) {
         setIsOpen(false);
+        setCountries(countrieData); // Reset countries when clicking outside
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -201,7 +149,7 @@ export default function PhoneNumbers() {
   }
 
   useEffect(() => {
-    if (rows.length > 0) {
+    if (rows&&rows.length > 0) {
       setLoading(false)
     }
   }, [rows])
@@ -212,6 +160,20 @@ export default function PhoneNumbers() {
 
   }, []);
 
+
+  const searchHandle = (e) => {
+    const searchValue = e.target.value.toLowerCase();
+
+     if( searchValue === "") {
+       setCountries(countrieData);
+      return;
+    }
+    const filteredRows = countrieData.filter((country) =>
+    country.name.toLowerCase().includes(searchValue) ||
+    country.dial_code.toLowerCase().includes(searchValue)
+    );
+    setCountries(filteredRows);
+  }
   const renderPhoneNumber = (phone, country) => {
     const filterCode = countries.filter((e) => e.name === country)
     return `${filterCode[0]?.dial_code}${phone}`
@@ -385,12 +347,14 @@ export default function PhoneNumbers() {
                     </button>
                     {isOpen && (
                       <div className="absolute px-1 z-10 rounded-md shadow-lg border border-gray-200 max-h-30 overflow-auto top-6 w-full left-[-13px] bg-white mt-1">
-                        {countries.map((country) => (
+                        <input type="text" placeholder="Search"  className="w-full px-3 py-2 border-b border-gray-200 outline-none text-sm" onChange={searchHandle} />
+                        {countries.map((country,idx) => (
                           <div
-                            key={country.code}
+                            key={idx} 
                             onClick={() => {
                               setSelectedCountry(country);
                               setIsOpen(false);
+                              setCountries(countrieData);
                             }}
                             className={`flex gap-2 px-2 hover:bg-[#F4F5F6] hover:rounded-lg  my-1 py-2 ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6] rounded-lg'} cursor-pointer flex items-center`}
                           >

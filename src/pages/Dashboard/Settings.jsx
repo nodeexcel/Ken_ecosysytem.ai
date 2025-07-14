@@ -33,40 +33,14 @@ const profileData = {
   avatar: profile_pic,
 };
 
-const tableData = [
-  {
-    initials: 'RD',
-    name: 'Robert Downey',
-    email: 'robertdowney45@gmail.com',
-    role: 'Admin',
-    assigned: ['Liam'],
-  },
-  {
-    initials: 'NC',
-    name: 'Nicolas Cage',
-    email: 'nicolascage88@gmail.com',
-    role: 'Member',
-    assigned: ['Daniel', 'Criss'],
-  },
-  {
-    initials: 'JD',
-    name: 'Johny Deep',
-    email: 'johnydeep86@gmail.com',
-    role: 'Member',
-    assigned: ['Kenneth', 'Lori'],
-  },
-  {
-    initials: 'JM',
-    name: 'Jecob More',
-    email: 'jecobmore56542@gmail.com',
-    role: 'Guest',
-    assigned: ['Kurt'],
-  },
-]
+
 
 
 const SettingsPage = () => {
+
   const countryData = useSelector((state) => state.country.data)
+  const [countries,setCountries]=useState(countryData);
+
   const [activeTab, setActiveTab] = useState("profile");
   const [activeSidebarItem, setActiveSidebarItem] = useState("general");
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -169,6 +143,7 @@ const SettingsPage = () => {
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [deleteModalStatus, setDeleteModalStatus] = useState(false)
   const [successModalStatus, setSuccessModalStatus] = useState('')
+  const [searchTerm, setSearchTerm] = useState("");
 
   const users = useSelector((state) => state.auth);
 
@@ -480,6 +455,26 @@ const SettingsPage = () => {
     } else {
       setFilteredMembers(teamMembersData?.membersData)
     }
+  }
+
+  const handleSearch=(e)=>{
+
+    
+
+        const searchTerm = e.target.value.toLowerCase().trim();
+
+
+        if(searchTerm === ""){
+          setCountries(countryData);  
+          return;
+        }
+
+        const filteredData=countryData.filter((country) =>
+          country.name.toLowerCase().includes(searchTerm)||country.dial_code.includes(searchTerm)
+        );
+        console.log(filteredData, "filteredData")
+        setCountries(filteredData);
+
   }
 
   const renderMainContent = () => {
@@ -811,22 +806,47 @@ const SettingsPage = () => {
                               <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />
                             </button>
                             {isOpen && (
-                              <div className="absolute px-1 z-10 rounded-md shadow-lg border border-gray-200 max-h-40 overflow-auto top-6 w-full left-[-13px] bg-white mt-1">
-                                {countryData.map((country) => (
-                                  <div
-                                    key={country.code}
-                                    onClick={() => {
-                                      setSelectedCountry(country);
-                                      setIsOpen(false);
-                                      setProfileFormData((prev) => ({ ...prev, countryCode: country.code }));
-                                    }}
-                                    className={`flex px-2 gap-2 hover:bg-[#F4F5F6] hover:rounded-lg my-1 py-2 ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6] rounded-lg'} cursor-pointer flex items-center`}
-                                  >
-                                    <p className={`fi fi-${country.flag} fis w-4 h-4 rounded-full`}></p>
-                                    <p className="text-[#5A687C] font-[400] text-[16px]">{country.dial_code}</p>
-                                  </div>
-                                ))}
-                              </div>
+                            <div className="absolute px-1 z-10 rounded-md shadow-lg border border-gray-200 max-h-40 overflow-auto top-6 w-full left-[-13px] bg-white mt-1">
+  {/* Search input */}
+  <input
+    type="text"
+    placeholder="Search "
+
+    onChange={handleSearch}
+    className="w-full px-3 py-2 border-b border-gray-200 outline-none text-sm"
+  />
+
+  {/* Country list */}
+  {countries.length > 0 ? (
+    countries.map((country,idx) => (
+      <div
+        key={idx}
+        onClick={() => {
+          setSelectedCountry(country);
+           setIsOpen(false);
+          setCountries(countryData); // Optional: reset list
+          setProfileFormData((prev) => ({
+            ...prev,
+            countryCode: country.code,
+          }));
+        }}
+        className={`flex px-2 gap-2 hover:bg-[#F4F5F6] hover:rounded-lg my-1 py-2 ${
+          selectedCountry?.code === country?.code
+            ? "bg-[#F4F5F6] rounded-lg"
+            : ""
+        } cursor-pointer items-center`}
+      >
+        <p className={`fi fi-${country.flag} fis w-4 h-4 rounded-full`}></p>
+        <p className="text-[#5A687C] font-[400] text-[16px]">
+       {country.dial_code}
+        </p>
+      </div>
+    ))
+  ) : (
+    <p className="text-center text-sm text-gray-500 py-2">No results found</p>
+  )}
+</div>
+
                             )}
                           </div>
                           <input
