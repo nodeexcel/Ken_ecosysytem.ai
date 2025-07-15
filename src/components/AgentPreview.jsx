@@ -82,7 +82,7 @@ export default function AgentPreviewModal({ setPreviewAgent, previewAgent }) {
             <div className="bg-white rounded-lg w-full max-w-5xl max-h-[80vh] overflow-auto shadow-xl">
                 <div className="p-6 flex justify-between items-center">
                     <h2 className="text-xl font-semibold text-gray-800">Test Agent</h2>
-                    <button onClick={closeModal} className="text-gray-500 hover:text-gray-700">
+                    <button onClick={closeModal} className="text-gray-500 hover:text-gray-700 cursor-pointer">
                         <X size={24} />
                     </button>
                 </div>
@@ -110,7 +110,7 @@ export default function AgentPreviewModal({ setPreviewAgent, previewAgent }) {
                                                 <span className="text-xs text-gray-500">User</span>
                                             </div>
                                         )}
-                                        {msg.id === "typing" ? <div className="pl-[40px] pt-3 flex "><span className="three-dots" /></div> : <div
+                                        {msg.id === "typing" ? <div className="pl-[40px] pt-3 flex "><span className="thinking" /></div> : <div
                                             className={`w-fit max-w-[80%] text-[12px] font-[400] p-3 rounded-lg ${!msg.isUser ? "mr-auto my-1 bg-[#675FFF] text-white" : "my-1 ml-auto bg-[#F2F2F7] text-[#5A687C]"
                                                 }`}
                                         >
@@ -124,12 +124,18 @@ export default function AgentPreviewModal({ setPreviewAgent, previewAgent }) {
                                     type="text"
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            e.preventDefault();
+                                            handleSendMessage();
+                                        }
+                                    }}
                                     placeholder="Type your message here..."
                                     className="flex w-full border bg-white border-[#E1E4EA] focus:outline-none focus:border-[#675FFF] rounded-lg px-4 py-2 text-[#5A687C]"
                                 />
                                 <button
                                     onClick={handleSendMessage}
-                                    className="px-6 py-2 font-[500] text-[16px] bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white rounded-lg"
+                                    className="px-6 py-2 font-[500] text-[16px] bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white rounded-lg cursor-pointer"
                                 >
                                     Send
                                 </button>
@@ -153,7 +159,7 @@ export default function AgentPreviewModal({ setPreviewAgent, previewAgent }) {
                 <div className="px-6 pb-6 flex justify-end gap-4">
                     <button
                         onClick={closeModal}
-                        className="px-6 py-2 font-[500] text-[16px] border-[1.5px] border-[#E1E4EA] rounded-lg text-[#5A687C]"
+                        className="px-6 py-2 font-[500] text-[16px] border-[1.5px] border-[#E1E4EA] rounded-lg text-[#5A687C] cursor-pointer"
                     >
                         Close
                     </button>

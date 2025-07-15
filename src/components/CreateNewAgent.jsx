@@ -11,6 +11,7 @@ import AgentPreviewModal from './AgentPreview'
 import { getGoogleCalendarAccounts, getInstaAccounts, getWhatsappAccounts } from '../api/brainai'
 import { SelectDropdown } from './Dropdown'
 import { useTranslation } from 'react-i18next'
+import bgback from '../assets/images/bgback.svg'
 
 function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentStatus }) {
 
@@ -26,7 +27,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         // reply_min_time: 15,
         // reply_max_time: 60,
         is_followups_enabled: true,
-        follow_up_details: { number_of_followups: '', min_time: 15, max_time: 60 },
+        follow_up_details: { number_of_followups: '', wait_time_for_follow_up: 5 },
         emoji_frequency: 25,
         // directness: 2,a
         webpage_link: "",
@@ -231,7 +232,11 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             title: "Trigger",
             key: "trigger",
             iconSrc: trigger,
-            options: [{ label: "Systeme.io", key: "systeme.io" }, { label: "Clickfunnels", key: "clickfunnels" }, { label: "Whatsapp", key: "Whatsapp" }, { label: "Instagram", key: "Instagram" }],
+            options: [
+                // { label: "Systeme.io", key: "systeme.io" },
+                //  { label: "Clickfunnels", key: "clickfunnels" },
+                { label: "Whatsapp", key: "Whatsapp" },
+                { label: "Instagram", key: "Instagram" }],
             value: "systeme.io",
             selected: true,
         },
@@ -240,7 +245,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             title: "Delay",
             key: "delay",
             iconSrc: delay,
-            options: [{ label: "5", key: 5 }, { label: "10", key: 10 }, { label: "15", key: 15 }, { label: "20", key: 20 }, { label: "30", key: 30 }],
+            options: [{ label: "0", key: 0 }, { label: "5", key: 5 }, { label: "10", key: 10 }, { label: "15", key: 15 }, { label: "20", key: 20 }, { label: "30", key: 30 }],
             value: 15,
             unit: "Min",
             selected: false,
@@ -297,8 +302,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     ];
 
     const messageTimeRange = [
-        { label: t("appointment.min_msg_range"), key: "min_time", options: [{ label: "5", key: 5 }, { label: "10", key: 10 }, { label: "15", key: 15 }, { label: "30", key: 30 }] },
-        { label: t("appointment.max_msg_range"), key: "max_time", options: [{ label: "30", key: 30 }, { label: "45", key: 45 }, { label: "60", key: 60 }, { label: "90", key: 90 }] }
+        { label: "Number of days between each follow-up", key: "wait_time_for_follow_up", options: [{ label: "0", key: 0 }, { label: "5", key: 5 }, { label: "10", key: 10 }, { label: "15", key: 15 }, { label: "30", key: 30 }] }
     ];
 
     const globalMessageTimeRange = [
@@ -677,14 +681,21 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             <label className="text-sm font-medium text-[#1e1e1e]">
                                 Webpage Link
                             </label>
-                            <input
-                                type="text"
-                                name='webpage_link'
-                                value={formData?.webpage_link}
-                                onChange={handleChange}
-                                className={`w-full p-2 rounded-lg border ${errors.webpage_link ? 'border-red-500' : 'border-[#e1e4ea]'} bg-white focus:outline-none focus:border-[#675FFF]`}
-                                placeholder="http://  Enter link"
-                            />
+                            <div className="flex items-center border rounded-lg overflow-hidden w-full bg-white focus-within:border-[#675FFF] 
+  border-[#e1e4ea] focus-within:ring-0">
+                                <span className="pl-3 pr-2 text-[#4B5563] bg-white focus:outline-none  font-medium  border-r border-[#e1e4ea]">
+                                    http://
+                                </span>
+                                <input
+                                    type="text"
+                                    name="webpage_link"
+                                    value={formData?.webpage_link}
+                                    onChange={handleChange}
+                                    className="flex-1 p-2 px-3 text-[#4B5563] bg-white focus:outline-none"
+                                    placeholder="Enter link"
+                                />
+                            </div>
+
                             {errors.webpage_link && <p className="text-red-500 text-sm mt-1">{errors.webpage_link}</p>}
                         </div>
                         {/* <div className="flex flex-col items-start gap-1.5 w-full">
@@ -1201,8 +1212,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                     setErrors((prev) => ({ ...prev, [name]: '' }));
                                                 }
                                             }}
-
-                                            className={`w-full p-2 bg-white rounded-lg border ${errors.number_of_followups ? 'border-red-500' : 'border-[#e1e4ea]'} no-spinner focus:outline-none focus:border-[#675FFF]`}
+                                            style={{ width: '300px' }}
+                                            className={`p-2 bg-white rounded-lg border ${errors.number_of_followups ? 'border-red-500' : 'border-[#e1e4ea]'} no-spinner focus:outline-none focus:border-[#675FFF]`}
                                             placeholder={t("appointment.enter_number_between")}
                                         />
 
@@ -1235,10 +1246,10 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         {messageTimeRange.map((each) => (
                                             <div key={each.key} className="flex flex-col items-start gap-1.5 w-full">
                                                 <label className="font-medium text-[#1e1e1e] text-sm">
-                                                    {each.label}<span className="text-[#675fff]">*</span>
+                                                    {each.label}<span className="text-[#675fff]"></span>
                                                 </label>
                                                 <div className="flex items-center w-full">
-                                                    <div className="flex relative items-center justify-between w-full">
+                                                    <div className="flex relative items-center justify-between">
                                                         {/* <select
                                                     className="flex-1 bg-transparent text-text-black text-base focus:outline-none appearance-none"
                                                     name={each.key}
@@ -1273,11 +1284,12 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                                 }));
                                                             }}
                                                             placeholder={t("appointment.select")}
-                                                            className="w-full"
+                                                            className="w-[300px]"
                                                             errors={errors}
                                                             disabled={!formData.is_followups_enabled}
+                                                            hideArrow={true}
                                                         />
-                                                        <span className="text-[#5A687C] absolute right-8 text-[16px] font-[400]">Minutes</span>
+                                                        <span className="text-[#5A687C] absolute  right-2 text-[16px] font-[400]">Days</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1361,7 +1373,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 </div>
 
                                 {/* Sequence Section */}
-                                <div className="p-3 w-full relative bg-white rounded-2xl  border border-solid border-[#e1e4ea]">
+                                <div className="p-3 w-full relative bg-white rounded-2xl border border-solid border-[#e1e4ea]" style={{ backgroundImage: `url(${bgback})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundPosition: 'center' }}>
                                     <div className="font-medium text-[#1e1e1e] text-base py-2">
                                         {t("appointment.sequence")}
                                     </div>
@@ -1432,7 +1444,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                                 placeholder={t("appointment.select")}
                                                                 className=""
                                                                 errors={errors}
-                                                                disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
+                                                                disabled={((formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel") || (formData.sequence.trigger === "Instagram" && card.key === "template")}
                                                             />
                                                             {((card.key === "trigger" || card.key === "channel") && (formData.sequence.trigger === "Instagram" || formData.sequence.trigger === "Whatsapp" || formData.sequence.channel === "Channel")) &&
                                                                 // <select
@@ -1457,7 +1469,11 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                                 // </select>
                                                                 <SelectDropdown
                                                                     name="platform_unique_id"
-                                                                    options={formData.sequence.trigger === "Instagram" ? instagramData?.length > 0 && instagramData : whatsappData?.length > 0 && whatsappData}
+                                                                    options={
+                                                                        formData.sequence.trigger === "Instagram"
+                                                                            ? (Array.isArray(instagramData) ? instagramData : [])
+                                                                            : (Array.isArray(whatsappData) ? whatsappData : [])
+                                                                    }
                                                                     value={formData.platform_unique_id}
                                                                     onChange={(updated) => {
                                                                         setFormData((prev) => ({
