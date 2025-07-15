@@ -215,7 +215,7 @@ const frenchTranslation = {
     gender: "Genre",
     agent_personality: "Personnalité de l’agent",
     learn_more: "En savoir plus",
-    agent_language: "Langue de l’agent*",
+    agent_language: "Langue de l’agent",
     emoji_freq: "Fréquence des emojis",
     pow_msg: "(Si oui sélectionné, 25 % est appliqué à chaque message)",
     no_of_follower: "Nombre de relances",
