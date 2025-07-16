@@ -18,6 +18,7 @@ import { X } from 'lucide-react'
 import chatInstance from '../../api/chatInstance'
 import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
+import ContentCreationCalender from '../../components/ContentCreationCalender'
 
 function ContentCreation() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -224,7 +225,7 @@ function ContentCreation() {
             case "creation_studio":
                 return <CreationStudio />
             case "calender":
-                return <Calendar />
+                return <ContentCreationCalender />
             case "youtube":
                 return <YoutubeScriptContent />
             case "linkedin":

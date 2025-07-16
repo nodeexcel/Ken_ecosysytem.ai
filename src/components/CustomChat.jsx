@@ -26,7 +26,20 @@ const CustomChat = ({ listedProps }) => {
 
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type, files } = e.target;
+        if (type === 'file') {
+            setFormData((prev) => ({
+                ...prev,
+                [name]: files[0],
+            }));
+            setErrors((prev) => ({ ...prev, [name]: '' }));
+        } else {
+            setFormData((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+            setErrors((prev) => ({ ...prev, [name]: '' }));
+        }
     }
 
     const sendToSocket = () => {
@@ -197,14 +210,23 @@ const CustomChat = ({ listedProps }) => {
                                 <label className="text-sm font-medium text-[#1e1e1e]">
                                     {form.label_1}
                                 </label>
-                                <input
-                                    type="text"
-                                    name='additional_questions'
-                                    value={formData?.additional_questions}
-                                    onChange={handleChange}
-                                    className={`w-full bg-white p-2 rounded-lg border ${errors.additional_questions ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                                    placeholder={form.placeholder_1}
-                                />
+                                {(/file|bank statement/i.test(form.label_1) || /file|bank statement/i.test(form.placeholder_1)) ? (
+                                    <input
+                                        type="file"
+                                        name='additional_questions'
+                                        onChange={handleChange}
+                                        className={`w-full bg-white p-2 rounded-lg border ${errors.additional_questions ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
+                                    />
+                                ) : (
+                                    <input
+                                        type="text"
+                                        name='additional_questions'
+                                        value={formData?.additional_questions || ''}
+                                        onChange={handleChange}
+                                        className={`w-full bg-white p-2 rounded-lg border ${errors.additional_questions ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
+                                        placeholder={form.placeholder_1}
+                                    />
+                                )}
                                 {errors.additional_questions && <p className="text-red-500 text-sm mt-1">{errors.additional_questions}</p>}
                             </div>
                             {(form?.label_3 && (!form?.options || form?.label_4)) &&
