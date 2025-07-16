@@ -5,7 +5,7 @@ import { getCampaignSchedule, getScheduledContent, updateContentStatus } from ".
 import { SelectDropdown } from "./Dropdown"
 import { useTranslation } from "react-i18next";
 
-export default function Calendar() {
+export default function Calendar({status=true}) {
   // Get current date information
   const today = new Date()
   const { t } = useTranslation();
@@ -767,7 +767,7 @@ export default function Calendar() {
 
   return (
     <div className="gap-6 h-screen overflow-auto py-4 pr-2">
-      <h1 className="font-semibold text-[#1e1e1e] mb-5 text-2xl leading-8">{t("emailings.calendar")}</h1>
+      {status && <h1 className="font-semibold text-[#1e1e1e] mb-5 text-2xl leading-8">{t("emailings.calendar")}</h1>}
       <div className="w-full  mx-auto bg-white rounded-xl border border-[#E1E4EA]">
         {renderCalendarHeader()}
         {currentView === "month" && renderMonthView()}
