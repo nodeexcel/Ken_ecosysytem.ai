@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { contentGenerationStatus, createContent } from "../api/contentCreationAgent";
 import constanceImg from '../assets/svg/constance_logo.svg'
 import Slider from "react-slick";
+import { Calendar as CalendarIcon, Clock } from "lucide-react";
 
 function CreationStudio() {
     const [formData, setFormData] = useState({ text: "", post_type: "", language: "", media_type: "", video_duration: "", author: "", created_at: new Date() })
@@ -219,6 +220,40 @@ function CreationStudio() {
                         />
                         {errors.video_duration && <p className="text-red-500 text-sm mt-1">{errors.video_duration}</p>}
                     </div>}
+                    {/* Date Field */}
+                    <div className="flex flex-col gap-1.5 flex-1">
+                        <label className="text-sm font-medium text-[#1e1e1e]">
+                            Date
+                        </label>
+                        <div className="relative">
+                            <input
+                                type="text"
+                                name="date"
+                                value={formData?.date || ""}
+                                onChange={handleChange}
+                                className="w-full bg-white p-2 rounded-lg border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] pr-10"
+                                placeholder="dd/mm/yyyy"
+                            />
+                            <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5A687C] pointer-events-none" size={20} />
+                        </div>
+                    </div>
+                    {/* Time Field */}
+                    <div className="flex flex-col gap-1.5 flex-1">
+                        <label className="text-sm font-medium text-[#1e1e1e]">
+                            Time
+                        </label>
+                        <div className="relative">
+                            <input
+                                type="text"
+                                name="time"
+                                value={formData?.time || ""}
+                                onChange={handleChange}
+                                className="w-full bg-white p-2 rounded-lg border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] pr-10"
+                                placeholder="hh:yy"
+                            />
+                            <Clock className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5A687C] pointer-events-none" size={20} />
+                        </div>
+                    </div>
                 </div>
                 {formData.post_type === "quotes" && <div className="flex flex-col gap-1.5 w-full">
                     <label className="text-sm font-medium text-[#1e1e1e]">

@@ -34,7 +34,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         // webpage_type: "",
         whatsapp_number: '',
         platform_unique_id: '',
-        calendar_id: ''
+        calendar_id: '',
+        // more_info_setter: '',
     })
 
     const { t } = useTranslation();
@@ -363,7 +364,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     whatsapp_number: '',
                     platform_unique_id: '',
                     calendar_id: '',
-                    prompt: ''
+                    prompt: '',
+                    // more_info_setter: '',
                 })
                 setStatusSteps({ step1: false, step2: false, step3: false })
                 break;
@@ -380,7 +382,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     whatsapp_number: '',
                     platform_unique_id: '',
                     calendar_id: '',
-                    prompt: ''
+                    prompt: '',
+                    // more_info_setter: '',
                 }))
                 setStep(1)
                 setStatusSteps((prev) => ({ ...prev, step2: false, step3: false }))
@@ -391,7 +394,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     qualification_questions: [""],
                     sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
                     platform_unique_id: '',
-                    prompt: ''
+                    prompt: '',
+                    // more_info_setter: '',
                 }))
                 setStep(2)
                 setStatusSteps((prev) => ({ ...prev, step3: false }))
@@ -436,6 +440,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     follow_up_details: response.data.agent.is_followups_enabled
                         ? response.data.agent.follow_up_details
                         : formData.follow_up_details,
+                    // more_info_setter: response.data.agent.more_info_setter || '',
                 };
                 setFormData(payload)
                 setStatusSteps({ step1: true, step2: true, step3: true })
@@ -522,6 +527,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             follow_up_details: formData.is_followups_enabled
                 ? formData.follow_up_details
                 : {},
+            // more_info_setter: formData.more_info_setter || '',
         };
         console.log(finalPayload, "payload")
         try {
@@ -559,6 +565,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             follow_up_details: formData.is_followups_enabled
                 ? formData.follow_up_details
                 : {},
+            // more_info_setter: formData.more_info_setter || '',
         };
         console.log(finalPayload, "payload")
         try {
@@ -1328,7 +1335,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 {/* Prompt */}
                                 <div className="flex flex-col gap-1.5 flex-1">
                                     <label className="text-sm font-medium text-[#1e1e1e]">
-                                        {t("appointment.prompt")}
+                                    More informations for the setter
                                         <span className="text-[#675fff]">*</span>
                                     </label>
                                     <p className='text-[#5A687C] text-[14px] font-[400]'>{t("appointment.prompt_guild")}</p>
@@ -1338,10 +1345,25 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         value={formData?.prompt}
                                         rows={3}
                                         className={`w-full bg-white p-2 rounded-lg border  ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                        placeholder={t("appointment.prompt_input")}
+                                        placeholder="Enter your information for setter here"
                                     />
                                     {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
                                 </div>
+                                {/* More informations for the setter */}
+                                {/* <div className="flex flex-col gap-1.5 flex-1">
+                                    <label className="text-sm font-medium text-[#1e1e1e]">
+                                        More informations for the setter
+                                        <span className="text-[#675fff]">*</span>
+                                    </label>
+                                    <textarea
+                                        name='more_info_setter'
+                                        onChange={handleChange}
+                                        value={formData?.more_info_setter || ''}
+                                        rows={3}
+                                        className="w-full bg-white p-2 rounded-lg border border-[#e1e4ea] resize-none focus:outline-none focus:border-[#675FFF]"
+                                        placeholder="Enter more information for setter here"
+                                    />
+                                </div> */}
 
                                 {/* Qualification Questions */}
                                 <div className="flex flex-col gap-1.5 w-full">
