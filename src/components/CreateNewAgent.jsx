@@ -1335,7 +1335,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 {/* Prompt */}
                                 <div className="flex flex-col gap-1.5 flex-1">
                                     <label className="text-sm font-medium text-[#1e1e1e]">
-                                    More informations for the setter
+                                    More information
                                         <span className="text-[#675fff]">*</span>
                                     </label>
                                     <p className='text-[#5A687C] text-[14px] font-[400]'>{t("appointment.prompt_guild")}</p>
@@ -1350,20 +1350,20 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
                                 </div>
                                 {/* More informations for the setter */}
-                                {/* <div className="flex flex-col gap-1.5 flex-1">
+                                <div className="flex flex-col gap-1.5 flex-1">
                                     <label className="text-sm font-medium text-[#1e1e1e]">
-                                        More informations for the setter
-                                        <span className="text-[#675fff]">*</span>
+                                        First message(optional)
+                                        {/* <span className="text-[#675fff]">*</span> */}
                                     </label>
                                     <textarea
-                                        name='more_info_setter'
+                                        name='first_message'
                                         onChange={handleChange}
-                                        value={formData?.more_info_setter || ''}
+                                        value={formData?.first_message}
                                         rows={3}
                                         className="w-full bg-white p-2 rounded-lg border border-[#e1e4ea] resize-none focus:outline-none focus:border-[#675FFF]"
                                         placeholder="Enter more information for setter here"
                                     />
-                                </div> */}
+                                </div>
 
                                 {/* Qualification Questions */}
                                 <div className="flex flex-col gap-1.5 w-full">
