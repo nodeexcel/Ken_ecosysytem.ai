@@ -48,7 +48,7 @@ function ContentCreation() {
     const sideMenuList = [
         { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
         { label: `${t("constance.creation_studio")}`, icon: <CreationStudioIcon status={activeSidebarItem == "creation_studio"} />, hoverIcon: <CreationStudioIcon hover={true} />, path: "creation_studio" },
-        { label: `${t("emailings.calendar")}`, icon: <CalenderIcon status={activeSidebarItem == "calender"} />, hoverIcon: <CalenderIcon hover={true} />, path: "calender" },
+        { label: `Scheduler`, icon: <CalenderIcon status={activeSidebarItem == "calender"} />, hoverIcon: <CalenderIcon hover={true} />, path: "calender" },
         { label: `YouTube Script Writer`, icon: <YoutubeIcon status={activeSidebarItem == "youtube"} />, hoverIcon: <YoutubeIcon hover={true} />, path: "youtube" },
         { label: `LinkedIn Nuke`, icon: <LinkedInIcon status={activeSidebarItem == "linkedin"} />, hoverIcon: <LinkedInIcon hover={true} />, path: "linkedin" },
         { label: `X Post Generator`, icon: <XIcon status={activeSidebarItem == "x_post"} />, hoverIcon: <XIcon hover={true} />, path: "x_post" },

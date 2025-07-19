@@ -1008,7 +1008,8 @@ const englishTranslation = {
   outlook_calendar: "Outlook Calendar",
   seo_website_url_is_required: "Url is required",
   mark_all_read: "Mark all as Read",
-  tomorrow: "Tomorrow"
+  tomorrow: "Tomorrow",
+  scheduler:"Scheduler > Create"
 
 };
 export default englishTranslation;
