@@ -164,6 +164,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const validateForm = () => {
         const newErrors = {};
 
+        console.log(step);
+        console.log("fiuhifiuuifubef");
 
         if (step === 1) {
             if (!formData.agent_name.trim()) newErrors.agent_name = t("appointment.agent_name_validation");
@@ -180,6 +182,15 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     newErrors[`qualification_questions[${i}]`] = t("appointment.prompt_validation");
                 }
             });
+
+            console.log(formData);
+            // Add validation for platform_unique_id when Instagram or Whatsapp is selected
+            if (
+                (formData.sequence.trigger === "Instagram" || formData.sequence.trigger === "Whatsapp") &&
+                !formData.platform_unique_id
+            ) {
+                newErrors.platform_unique_id =  "Please select an account to integrate.";
+            }
         }
 
         if (step === 2) {
@@ -556,6 +567,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
 
     const handleSubmit = async () => {
+        console.log(validateForm());
         if (!validateForm()) {
             console.log("Form validation failed", errors);
             return;
@@ -1468,48 +1480,32 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                                 errors={errors}
                                                                 disabled={((formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel") || (formData.sequence.trigger === "Instagram" && card.key === "template")}
                                                             />
-                                                            {((card.key === "trigger" || card.key === "channel") && (formData.sequence.trigger === "Instagram" || formData.sequence.trigger === "Whatsapp" || formData.sequence.channel === "Channel")) &&
-                                                                // <select
-                                                                //     name="platform_unique_id"
-                                                                //     className="w-full my-2 h-8 py-1 px-3 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e] shadow-sm"
-                                                                //     value={formData.platform_unique_id}
-                                                                //     onChange={(e) => {
-                                                                //         const { name, value } = e.target;
-                                                                //         setFormData((prev) => ({
-                                                                //             ...prev,
-                                                                //             platform_unique_id: value,
-                                                                //         }));
-                                                                //     }}
-                                                                //     disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
-                                                                // >
-                                                                //     <option value="" disabled>Select</option>
-                                                                //     {instagramData?.length > 0 && instagramData.map((e) => (
-                                                                //         <option key={e.instagram_user_id} value={e.instagram_user_id}>
-                                                                //             {e.username}
-                                                                //         </option>
-                                                                //     ))}
-                                                                // </select>
-                                                                <SelectDropdown
-                                                                    name="platform_unique_id"
-                                                                    options={
-                                                                        formData.sequence.trigger === "Instagram"
-                                                                            ? (Array.isArray(instagramData) ? instagramData : [])
-                                                                            : (Array.isArray(whatsappData) ? whatsappData : [])
-                                                                    }
-                                                                    value={formData.platform_unique_id}
-                                                                    onChange={(updated) => {
-                                                                        setFormData((prev) => ({
-                                                                            ...prev, platform_unique_id: updated
-                                                                        }))
-                                                                    }}
-                                                                    placeholder={t("appointment.account")}
-                                                                    className="mt-2"
-                                                                    errors={errors}
-                                                                    disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
-                                                                />
-
+                                                            {((card.key === "trigger" || card.key === "channel") && (formData.sequence.trigger === "Instagram" || formData.sequence.trigger === "Whatsapp")) &&
+                                                                <>
+                                                                    <SelectDropdown
+                                                                        name="platform_unique_id"
+                                                                        options={
+                                                                            formData.sequence.trigger === "Instagram"
+                                                                                ? (Array.isArray(instagramData) ? instagramData : [])
+                                                                                : (Array.isArray(whatsappData) ? whatsappData : [])
+                                                                        }
+                                                                        value={formData.platform_unique_id}
+                                                                        onChange={(updated) => {
+                                                                            setFormData((prev) => ({
+                                                                                ...prev, platform_unique_id: updated
+                                                                            }))
+                                                                            setErrors((prev) => ({ ...prev, platform_unique_id: "" }))
+                                                                        }}
+                                                                        placeholder={t("appointment.account")}
+                                                                        className="mt-2"
+                                                                        errors={errors}
+                                                                        disabled={false}
+                                                                    />
+                                                                    {errors.platform_unique_id && (
+                                                                        <p className="text-red-500 text-sm mt-1">{errors.platform_unique_id}</p>
+                                                                    )}
+                                                                </>
                                                             }
-
                                                             {card.unit && (
                                                                 <span className="absolute right-8 top-1/2 transform -translate-y-1/2 text-sm text-[#5A687C]">
                                                                     {card.unit}
