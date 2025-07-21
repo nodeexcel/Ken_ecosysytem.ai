@@ -59,3 +59,91 @@ export const contentGenerationStatus = async (id) => {
         return error;
     }
 };
+export const linkedinPostGet = async (payload) => {
+    try {
+        const response = await agentInstance.get(`/linkedin-post`, payload);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+export const linkedinPostCreate = async (payload) => {
+    try {
+        const response = await agentInstance.post(`/linkedin-post`, payload);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+export const linkedinPostUpdate = async (post_id, content) => {
+    try {
+        const response = await agentInstance.patch(`/linkedin-post/${post_id}`, {
+            content: content
+        });
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+export const XPostGet = async (payload) => {
+    try {
+        const response = await agentInstance.get(`/X-post`, payload);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+export const XPostCreate = async (payload) => {
+    try {
+        const response = await agentInstance.post(`/X-post`, payload);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+export const XPostUpdate = async (post_id, content) => {
+    try {
+        const response = await agentInstance.patch(`/X-post/${post_id}`, {
+            content: content
+        });
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+// export const YoutubePostGet = async (payload) => {
+//     try {
+//         const response = await agentInstance.get(`/youtube-script-writer`, payload);
+//         return response;
+//     } catch (error) {
+//         console.error(error);
+//         return error;
+//     }
+// };
+
+// export const YoutubePostCreate = async (payload) => {
+//     try {
+//         const response = await agentInstance.post(`/youtube-script-writer`, payload);
+//         return response;
+//     } catch (error) {
+//         console.error(error);
+//         return error;
+//     }
+// };
+// export const YoutubePostUpdate = async (post_id, content) => {
+//     try {
+//         const response = await agentInstance.patch(`/youtube-script-writer/${post_id}`, {
+//             content: content
+//         });
+//         return response;
+//     } catch (error) {
+//         console.error(error);
+//         return error;
+//     }
+// };

@@ -11,19 +11,37 @@ import { useTranslation } from "react-i18next";
 
 const CustomChat = ({ listedProps }) => {
     const { t } = useTranslation();
-    console.log(listedProps)
+    console.log(listedProps);
     const { header, label, description,
         form,
         initialMessage,
         agentName,
         agentImg,
-        headerLogo } = listedProps
+        headerLogo, handleGenerate, handleUpdate, messages, setMessages, loadingChats, setLoadingChats } = listedProps
 
     const [formData, setFormData] = useState({})
     const [errors, setErrors] = useState({})
-    const [messages, setMessages] = useState([])
-    const [loadingChats, setLoadingChats] = useState(false)
+    const [input, setInput] = useState("")
+    const [editingMessageId, setEditingMessageId] = useState(null);
+    const [editContent, setEditContent] = useState("");
 
+    const socketRef = useRef(null);
+    const socket2Ref = useRef(null);
+
+  const validate = () => {
+    const newErrors = {}
+    if (!formData.additional_questions || formData.additional_questions === "") {
+      newErrors.additional_questions = t('Field is required')
+    }
+    if (!formData.purpose || formData.purpose.trim() === "") {
+      newErrors.purpose = t('Field is required')
+    }
+    if (form.options && !formData.tone) {
+      newErrors.tone = t('Field is required')
+    }
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
     const handleChange = (e) => {
         const { name, value, type, files } = e.target;
@@ -41,6 +59,32 @@ const CustomChat = ({ listedProps }) => {
             setErrors((prev) => ({ ...prev, [name]: '' }));
         }
     }
+    const handleMessageEdit = (message) => {
+        setEditingMessageId(message.id);
+        setEditContent(message.content);
+    };
+
+    const handleCancelEdit = () => {
+        setEditingMessageId(null);
+        setEditContent("");
+    };
+
+    const handleSaveEdit = () => {
+        if (handleUpdate && editingMessageId) {
+            const messageToUpdate = messages.find(msg => msg.id === editingMessageId);
+            if (messageToUpdate) {
+                handleUpdate(messageToUpdate, editContent);
+            }
+        }
+        setMessages(prev =>
+            prev.map(msg =>
+                msg.id === editingMessageId ? { ...msg, content: editContent } : msg
+            )
+        );
+        setEditingMessageId(null);
+        setEditContent("");
+    };
+
 
     const sendToSocket = () => {
         console.log(WebSocket.OPEN, WebSocket.CONNECTING)
@@ -167,24 +211,28 @@ const CustomChat = ({ listedProps }) => {
     }
 
     useEffect(() => {
-        const userMessage = {
-            id: uuidv4(),
-            isUser: false,
-            content: initialMessage,
-            sender: "Ecosystem.ai",
-            time: formatTimeAgo(new Date()),
-            status: "Read",
-        };
-        setMessages([userMessage])
+        // const userMessage = {
+        //     id: uuidv4(),
+        //     isUser: false,
+        //     content: initialMessage,
+        //     sender: "Ecosystem.ai",
+        //     time: formatTimeAgo(new Date()),
+        //     status: "Read",
+        // };
+        // setMessages([userMessage])
 
     }, [initialMessage])
 
 
-    const handleSend = (e) => {
-        e.preventDefault()
-        setInput("")
+    const onGenerateClick = e => {
+    e.preventDefault()
+    if (!validate()) return
+    if (handleGenerate) {
+      handleGenerate(formData)
     }
-
+    setFormData({ additional_questions: "", purpose: "", tone: '' })
+    setErrors({})
+  }
 
     // if (loading) return <p className='flex justify-center items-center h-[100vh]'><span className='loader' /></p>
 
@@ -232,7 +280,7 @@ const CustomChat = ({ listedProps }) => {
                             {(form?.label_3 && (!form?.options || form?.label_4)) &&
                                 <div className="flex flex-col gap-1.5 w-full">
                                     <label className="text-sm font-medium text-[#1e1e1e]">
-                                        {form?.label_4??form.label_3}
+                                        {form?.label_4 ?? form.label_3}
                                     </label>
                                     <input
                                         type="text"
@@ -240,7 +288,7 @@ const CustomChat = ({ listedProps }) => {
                                         value={formData?.purpose}
                                         onChange={handleChange}
                                         className={`w-full bg-white p-2 rounded-lg border ${errors.purpose ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                                        placeholder={form.placeholder_4??form.placeholder_3}
+                                        placeholder={form.placeholder_4 ?? form.placeholder_3}
                                     />
                                     {errors.purpose && <p className="text-red-500 text-sm mt-1">{errors.purpose}</p>}
                                 </div>
@@ -281,7 +329,7 @@ const CustomChat = ({ listedProps }) => {
                                 />
                                 {errors.custom_instructions && <p className="text-red-500 text-sm mt-1">{errors.custom_instructions}</p>}
                             </div>
-                            <button className="px-5 cursor-pointer rounded-[7px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("rima.generate")}</button>
+                            <button onClick={onGenerateClick} className="px-5 cursor-pointer rounded-[7px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("rima.generate")}</button>
                         </div>
                     </div>
                     {/* Main Content */}
@@ -310,17 +358,62 @@ const CustomChat = ({ listedProps }) => {
                                             </div>
                                         )}
 
-                                        {message.id === "typing" ? <div className="pl-[50px] pt-3 flex "><span className="three-dots" /></div> : <div
-                                            className={`max-w-[70%] w-fit text-[12px] font-[400] p-3 ${!message.isUser ? "my-1 bg-[#F2F2F7] text-[#5A687C] rounded-b-[10px] rounded-r-[10px]" : "ml-auto my-1 bg-[#675FFF] text-[#fff] rounded-b-[10px] rounded-l-[10px]"
-                                                }`}
-                                        >
-                                            <p className="text-[16px] !whitespace-pre-wrap">{message.content}</p>
-                                        </div>}
-                                        {message.id !== "typing" && !message.isUser && <div className="my-1 flex items-center gap-2">
-                                            <StarsIcon />
-                                            <Duplicate />
-                                            <Edit />
-                                        </div>}
+                                        {message.id === "typing" ? (
+                                            <div className="pl-[50px] pt-3 flex">
+                                                <span className="three-dots" />
+                                            </div>
+                                        ) : (
+                                            <>
+                                                {editingMessageId === message.id ? (
+                                                    <div className="max-w-[70%] w-full p-3 my-1 flex flex-col gap-2 bg-[#F2F2F7] rounded-md">
+                                                        <textarea
+                                                            value={editContent}
+                                                            onChange={(e) => setEditContent(e.target.value)}
+                                                            className="w-full p-2 border rounded-md text-sm"
+                                                            rows={8}
+                                                        />
+                                                        <div className="flex gap-2">
+                                                            <button
+                                                                onClick={handleCancelEdit}
+                                                                className="text-sm px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                            <button
+                                                                onClick={handleSaveEdit}
+                                                                className="text-sm px-3 py-1 rounded bg-[#675FFF] text-white hover:bg-[#574ee8]"
+                                                            >
+                                                                Save
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <>
+                                                        <div
+                                                            className={`max-w-[70%] w-fit text-[12px] font-[400] p-3 ${!message.isUser
+                                                                    ? "my-1 bg-[#F2F2F7] text-[#5A687C] rounded-b-[10px] rounded-r-[10px]"
+                                                                    : "ml-auto my-1 bg-[#675FFF] text-[#fff] rounded-b-[10px] rounded-l-[10px]"
+                                                                }`}
+                                                        >
+                                                            <p className="text-[16px] !whitespace-pre-wrap">
+                                                                {message.content}
+                                                            </p>
+                                                        </div>
+
+                                                        {message.id !== "typing" && !message.isUser && (
+                                                            <div className="my-1 flex items-center gap-2">
+                                                                <StarsIcon />
+                                                                <Duplicate />
+                                                                <div onClick={() => handleMessageEdit(message)}>
+                                                                <Edit />
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </>
+                                        )}
+
                                     </div>
                                 ))}
                             </div>
