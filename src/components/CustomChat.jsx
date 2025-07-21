@@ -28,20 +28,17 @@ const CustomChat = ({ listedProps }) => {
     const socketRef = useRef(null);
     const socket2Ref = useRef(null);
 
-  const validate = () => {
-    const newErrors = {}
-    if (!formData.additional_questions || formData.additional_questions === "") {
-      newErrors.additional_questions = t('Field is required')
-    }
-    if (!formData.purpose || formData.purpose.trim() === "") {
-      newErrors.purpose = t('Field is required')
-    }
-    if (form.options && !formData.tone) {
-      newErrors.tone = t('Field is required')
-    }
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+//   const validate = () => {
+//     const newErrors = {}
+//     // if (!formData.purpose) {
+//     //   newErrors.purpose = t('Field is required')
+//     // }
+//     if (form.options && !formData.tone) {
+//       newErrors.tone = t('Field is required')
+//     }
+//     setErrors(newErrors)
+//     return Object.keys(newErrors).length === 0
+//   }
 
     const handleChange = (e) => {
         const { name, value, type, files } = e.target;
@@ -226,14 +223,13 @@ const CustomChat = ({ listedProps }) => {
 
     const onGenerateClick = e => {
     e.preventDefault()
-    if (!validate()) return
+    // if (!validate()) return;
     if (handleGenerate) {
       handleGenerate(formData)
     }
     setFormData({ additional_questions: "", purpose: "", tone: '' })
     setErrors({})
   }
-
     // if (loading) return <p className='flex justify-center items-center h-[100vh]'><span className='loader' /></p>
 
 

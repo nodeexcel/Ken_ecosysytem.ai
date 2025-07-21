@@ -117,33 +117,33 @@ export const XPostUpdate = async (post_id, content) => {
         return error;
     }
 };
-// export const YoutubePostGet = async (payload) => {
-//     try {
-//         const response = await agentInstance.get(`/youtube-script-writer`, payload);
-//         return response;
-//     } catch (error) {
-//         console.error(error);
-//         return error;
-//     }
-// };
+export const YoutubePostGet = async (payload) => {
+    try {
+        const response = await agentInstance.get(`/youtube-script-writer`, payload);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
 
-// export const YoutubePostCreate = async (payload) => {
-//     try {
-//         const response = await agentInstance.post(`/youtube-script-writer`, payload);
-//         return response;
-//     } catch (error) {
-//         console.error(error);
-//         return error;
-//     }
-// };
-// export const YoutubePostUpdate = async (post_id, content) => {
-//     try {
-//         const response = await agentInstance.patch(`/youtube-script-writer/${post_id}`, {
-//             content: content
-//         });
-//         return response;
-//     } catch (error) {
-//         console.error(error);
-//         return error;
-//     }
-// };
+export const YoutubePostCreate = async (payload) => {
+    try {
+        const response = await agentInstance.post(`/youtube-script-writer`, payload);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+export const YoutubePostUpdate = async (post_id, content) => {
+    try {
+        const response = await agentInstance.patch(`/youtube-script-writer/${post_id}`, {
+            content: content
+        });
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
