@@ -1469,6 +1469,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                                     console.log(updated)
                                                                     setFormData((prev) => ({
                                                                         ...prev,
+                                                                        platform_unique_id:'',
                                                                         sequence: {
                                                                             ...prev.sequence,
                                                                             [card.key]: card.key === "delay" ? parseInt(updated) : updated,
