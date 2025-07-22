@@ -165,7 +165,6 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         const newErrors = {};
 
         console.log(step);
-        console.log("fiuhifiuuifubef");
 
         if (step === 1) {
             if (!formData.agent_name.trim()) newErrors.agent_name = t("appointment.agent_name_validation");
@@ -257,7 +256,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             title: "Delay",
             key: "delay",
             iconSrc: delay,
-            options: [{ label: "0", key: 0 }, { label: "5", key: 5 }, { label: "10", key: 10 }, { label: "15", key: 15 }, { label: "20", key: 20 }, { label: "30", key: 30 }],
+            options: [{ label: "0", key: 0 },{ label: "1", key: 1 }, { label: "5", key: 5 }, { label: "10", key: 10 }, { label: "15", key: 15 }, { label: "20", key: 20 }, { label: "30", key: 30 }],
             value: 15,
             unit: "Min",
             selected: false,

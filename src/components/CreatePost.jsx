@@ -1,9 +1,12 @@
 import { X, ChevronDown, Hash, Settings, Edit3, Camera, Link, Trash2, UploadIcon } from "lucide-react"
 import inkartinkLogo from '../assets/svg/inkartink.svg';
 import { useTranslation } from "react-i18next";
+import DateTimePicker from "./DateTimePicker";
+import { useState } from "react";
 
 export default function CreatePost({ onClose }) {
   const { t } = useTranslation();
+  const [showDateTimePicker, setShowDateTimePicker] = useState(false);
   return (
     <div className="flex flex-col gap-8">
       {/* Header */}
@@ -163,7 +166,7 @@ export default function CreatePost({ onClose }) {
             <button className="flex flex-row items-center justify-center gap-[10px] min-w-[96px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#675FFF] bg-transparent font-medium">
               Publish
             </button>
-            <button className="flex flex-row items-center justify-center gap-[10px] min-w-[112px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#FFFFFF] bg-[#675FFF] font-medium">
+            <button className="flex flex-row items-center justify-center gap-[10px] min-w-[112px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#FFFFFF] bg-[#675FFF] font-medium" onClick={() => setShowDateTimePicker(true)}>
               Schedule
             </button>
           </div>
@@ -193,6 +196,9 @@ export default function CreatePost({ onClose }) {
           </div>
         </div>
       </div>
+      {showDateTimePicker && (
+        <DateTimePicker onClose={() => setShowDateTimePicker(false)} />
+      )}
     </div>
   )
 }

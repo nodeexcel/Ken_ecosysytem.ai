@@ -9,6 +9,8 @@ import { formatTimeAgo } from "../utils/TimeFormat";
 function LinkedInNukeContent() {
     const [messages, setMessages] = useState([]);
     const [loadingChats, setLoadingChats] = useState(false);
+    const [error, setError] = useState({});
+    const [formData, setFormData] = useState({})
 
     const options = [
         { label: "Professional 🤵", key: "professional" },
@@ -21,7 +23,28 @@ function LinkedInNukeContent() {
 
     const agentName = "Constance";
 
+
+    const validateForm = (formData) => {
+        const newErrors = {};
+        if (!formData?.additional_questions || formData.additional_questions.trim() === "") {
+            newErrors.additional_questions= "Topic is required.";
+        }
+        if (!formData?.tone || formData.tone.trim() === "") {
+            newErrors.tone= "Tone is required.";
+        }
+
+        setError(newErrors);
+        console.log(newErrors)
+        return Object.keys(newErrors).length === 0;
+    };
+
+
     const handleGenerate = async (formData) => {
+
+        if (!validateForm(formData)) {
+            return
+        }
+        // Validation: Topic is required
         setLoadingChats(true);
         const payload = {
             topic: formData?.additional_questions,
@@ -33,6 +56,8 @@ function LinkedInNukeContent() {
             const response = await linkedinPostCreate(payload);
             if(response?.status === 201) {
                 fetchLinkedInPosts();
+                setFormData({}); // Clear form data on success
+                setError({}); // Clear error on success
             }
             
         } catch (error) {
@@ -123,8 +148,8 @@ function LinkedInNukeContent() {
         setMessages,
         loadingChats,
         setLoadingChats,
-
-
+        error, // Pass error to CustomChat
+        setError,formData, setFormData // Pass setError to CustomChat
     };
     useEffect(() => {
         fetchLinkedInPosts();
