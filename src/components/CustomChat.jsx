@@ -28,18 +28,6 @@ const CustomChat = ({ listedProps }) => {
     const socketRef = useRef(null);
     const socket2Ref = useRef(null);
 
-//   const validate = () => {
-//     const newErrors = {}
-//     // if (!formData.purpose) {
-//     //   newErrors.purpose = t('Field is required')
-//     // }
-//     if (form.options && !formData.tone) {
-//       newErrors.tone = t('Field is required')
-//     }
-//     setErrors(newErrors)
-//     return Object.keys(newErrors).length === 0
-//   }
-
     const handleChange = (e) => {
         const { name, value, type, files } = e.target;
         if (type === 'file') {
@@ -223,7 +211,6 @@ const CustomChat = ({ listedProps }) => {
 
     const onGenerateClick = e => {
     e.preventDefault()
-    // if (!validate()) return;
     if (handleGenerate) {
       handleGenerate(formData)
     }

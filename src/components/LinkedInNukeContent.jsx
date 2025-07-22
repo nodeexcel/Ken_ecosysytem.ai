@@ -24,9 +24,9 @@ function LinkedInNukeContent() {
     const handleGenerate = async (formData) => {
         setLoadingChats(true);
         const payload = {
-            topic: formData.additional_questions,
-            custom_instructions: formData.custom_instructions,
-            tone: formData.tone,
+            topic: formData?.additional_questions,
+            custom_instructions: formData?.custom_instructions,
+            tone: formData?.tone,
             created_at: new Date().toISOString()
         };
         try {
