@@ -17,10 +17,11 @@ const CustomChat = ({ listedProps }) => {
         initialMessage,
         agentName,
         agentImg,
-        headerLogo, handleGenerate, handleUpdate, messages, setMessages, loadingChats, setLoadingChats } = listedProps
+        headerLogo, handleGenerate, handleUpdate, messages, setMessages, loadingChats, setLoadingChats,error,setError, formData, setFormData } = listedProps
 
-    const [formData, setFormData] = useState({})
-    const [errors, setErrors] = useState({})
+    // Use error/setError from listedProps if provided, else local state
+    const [localErrors, setLocalErrors] = useState({})
+    // const [errors, setErrors] = [listedProps.errors || localErrors, listedProps.setErrors || setLocalErrors];
     const [input, setInput] = useState("")
     const [editingMessageId, setEditingMessageId] = useState(null);
     const [editContent, setEditContent] = useState("");
@@ -35,14 +36,18 @@ const CustomChat = ({ listedProps }) => {
                 ...prev,
                 [name]: files[0],
             }));
-            setErrors((prev) => ({ ...prev, [name]: '' }));
+            setError((prev) => ({ ...prev, [name]: '' }));
         } else {
             setFormData((prev) => ({
                 ...prev,
                 [name]: value,
             }));
-            setErrors((prev) => ({ ...prev, [name]: '' }));
+            setError((prev) => ({ ...prev, [name]: '' }));
         }
+        // If the user is editing the Topic field and parent setError exists, clear the parent error
+        // if (name === 'additional_questions' && typeof setError === 'function') {
+        //     setError({});
+        // }
     }
     const handleMessageEdit = (message) => {
         setEditingMessageId(message.id);
@@ -214,8 +219,6 @@ const CustomChat = ({ listedProps }) => {
     if (handleGenerate) {
       handleGenerate(formData)
     }
-    setFormData({ additional_questions: "", purpose: "", tone: '' })
-    setErrors({})
   }
     // if (loading) return <p className='flex justify-center items-center h-[100vh]'><span className='loader' /></p>
 
@@ -246,7 +249,7 @@ const CustomChat = ({ listedProps }) => {
                                         type="file"
                                         name='additional_questions'
                                         onChange={handleChange}
-                                        className={`w-full bg-white p-2 rounded-lg border ${errors.additional_questions ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
+                                        className={`w-full bg-white p-2 rounded-lg border ${(error?.additional_questions) ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
                                     />
                                 ) : (
                                     <input
@@ -254,11 +257,13 @@ const CustomChat = ({ listedProps }) => {
                                         name='additional_questions'
                                         value={formData?.additional_questions || ''}
                                         onChange={handleChange}
-                                        className={`w-full bg-white p-2 rounded-lg border ${errors.additional_questions ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
+                                        className={`w-full bg-white p-2 rounded-lg border ${(error?.additional_questions) ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
                                         placeholder={form.placeholder_1}
                                     />
                                 )}
-                                {errors.additional_questions && <p className="text-red-500 text-sm mt-1">{errors.additional_questions}</p>}
+                                {/* Show parent error (validation) after the Topic field */}
+                                {/* {error && <p className="text-red-500 text-sm mt-1">{error}</p>} */}
+                                {error?.additional_questions && <p className="text-red-500 text-sm mt-1">{error?.additional_questions}</p>}
                             </div>
                             {(form?.label_3 && (!form?.options || form?.label_4)) &&
                                 <div className="flex flex-col gap-1.5 w-full">
@@ -270,10 +275,10 @@ const CustomChat = ({ listedProps }) => {
                                         name='purpose'
                                         value={formData?.purpose}
                                         onChange={handleChange}
-                                        className={`w-full bg-white p-2 rounded-lg border ${errors.purpose ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
+                                        className={`w-full bg-white p-2 rounded-lg border ${error?.purpose ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
                                         placeholder={form.placeholder_4 ?? form.placeholder_3}
                                     />
-                                    {errors.purpose && <p className="text-red-500 text-sm mt-1">{errors.purpose}</p>}
+                                    {error?.purpose && <p className="text-red-500 text-sm mt-1">{error?.purpose}</p>}
                                 </div>
                             }
                             {form?.options &&
@@ -289,13 +294,13 @@ const CustomChat = ({ listedProps }) => {
                                                 ...prev,
                                                 tone: updated,
                                             }))
-                                            setErrors((prev) => ({ ...prev, tone: '' }))
+                                            setError((prev) => ({ ...prev, tone: '' }))
                                         }}
                                         placeholder={form.placeholder_3}
                                         className="w-full"
-                                        errors={errors}
+                                        errors={error?.tone}
                                     />
-                                    {errors.tone && <p className="text-red-500 text-sm mt-1">{errors.tone}</p>}
+                                    {error?.tone && <p className="text-red-500 text-sm mt-1">{error?.tone}</p>}
                                 </div>
                             }
                             <div className="flex flex-col gap-1.5 w-full">
@@ -307,16 +312,16 @@ const CustomChat = ({ listedProps }) => {
                                     onChange={handleChange}
                                     value={formData?.custom_instructions}
                                     rows={4}
-                                    className={`w-full bg-white p-2 rounded-lg border  ${errors.custom_instructions ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
+                                    className={`w-full bg-white p-2 rounded-lg border  ${error?.custom_instructions ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
                                     placeholder={form.label_2}
                                 />
-                                {errors.custom_instructions && <p className="text-red-500 text-sm mt-1">{errors.custom_instructions}</p>}
+                                {error?.custom_instructions && <p className="text-red-500 text-sm mt-1">{error?.custom_instructions}</p>}
                             </div>
                             <button onClick={onGenerateClick} className="px-5 cursor-pointer rounded-[7px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("rima.generate")}</button>
                         </div>
                     </div>
                     {/* Main Content */}
-                    {loadingChats ? <div className="flex justify-center items-center w-full"><span className="loader" /> </div> : <div className="flex-1 h-full max-w-[80%] mx-auto flex justify-between flex-col pt-2">
+                    {loadingChats ? <div className="h-full flex justify-center items-center w-[calc(100%-300px)]"><span className="loader" /> </div> : <div className="flex-1 h-full max-w-[80%] mx-auto flex justify-between flex-col pt-2">
                         <div className="flex-1 p-4 overflow-y-auto">
                             <div className="space-y-6">
                                 {messages?.length > 0 && messages.map((message) => (

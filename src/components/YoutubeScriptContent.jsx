@@ -11,9 +11,30 @@ function YoutubeScriptContent() {
     const [messages, setMessages] = useState([]);
     const [loadingChats, setLoadingChats] = useState(false);
     const [resetForm, setResetForm] = useState(null);
+    const [error, setError]= useState(null);
+    const [formData, setFormData] = useState({})
     const agentName = "Constance";
 
+
+
+
+    const validateForm = (formData) => {
+        const newErrors = {};
+        if (!formData?.additional_questions || formData.additional_questions.trim() === "") {
+            newErrors.additional_questions= "Topic is required.";
+        }
+        
+        setError(newErrors);
+        console.log(newErrors)
+        return Object.keys(newErrors).length === 0;
+    };
+
+
     const handleGenerate = async (formData) => {
+        if (!validateForm(formData)) {
+            return
+        }
+        
         setLoadingChats(true);
         const payload = {
             topic: formData?.additional_questions,
@@ -24,6 +45,7 @@ function YoutubeScriptContent() {
             const response = await YoutubePostCreate(payload);
             if (response?.status === 201) {
                 fetchYoutubeScripts();
+                setFormData({}); 
                 if (resetForm) resetForm(); 
             }
         } catch (error) {
@@ -108,12 +130,16 @@ function YoutubeScriptContent() {
         setMessages,
         loadingChats,
         setLoadingChats,
-        setFormReset: setResetForm 
+        setFormReset: setResetForm,
+        error, // Pass error to CustomChat
+        setError,formData, setFormData // Pass setError to CustomChat
     };
 
     useEffect(() => {
         fetchYoutubeScripts();
     }, []);
+
+    
 
     return <CustomChat listedProps={listedData} />;
 }
