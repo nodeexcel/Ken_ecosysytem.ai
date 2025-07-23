@@ -172,34 +172,75 @@ const SettingsPage = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (profileFormData.firstName === null || profileFormData.firstName === "") newErrors.firstName = `${t("settings.tab_1_list.first_name_required")}`;
-    if (profileFormData.lastName === null || profileFormData.lastName === "") newErrors.lastName = `${t("settings.tab_1_list.last_name_required")}`;
-    if (profileFormData.phoneNumber === null || profileFormData.phoneNumber === "") newErrors.phoneNumber = `${t("settings.tab_1_list.phone_required")}`;
-    if (profileFormData.company === null || profileFormData.company === "") newErrors.company = `${t("settings.tab_1_list.company_required")}`;
-    if (profileFormData.city === null || profileFormData.city === "") newErrors.city = `${t("settings.tab_1_list.city_required")}`;
-    if (profileFormData.country === null || profileFormData.country === "") newErrors.country = `${t("settings.tab_1_list.country_required")}`;
+    if (profileFormData.firstName === null || profileFormData.firstName === "") {
+      newErrors.firstName = `${t("settings.tab_1_list.first_name_required")}`;
+    } else if (profileFormData.firstName.length > 50) {
+      newErrors.firstName = "First name must be at most 50 characters.";
+    }
+
+    if (profileFormData.lastName === null || profileFormData.lastName === "") {
+      newErrors.lastName = `${t("settings.tab_1_list.last_name_required")}`;
+    } else if (profileFormData.lastName.length > 50) {
+      newErrors.lastName = "Last name must be at most 50 characters.";
+    }
+
+    if (profileFormData.phoneNumber === null || profileFormData.phoneNumber === "")
+      { newErrors.phoneNumber = `${t("settings.tab_1_list.phone_required")}`;
+  } else if (!/^\+?[0-9\s]+$/.test(profileFormData.phoneNumber)) {
+    newErrors.phoneNumber = `${t("brain_ai.invalid_phone_no")}`;
+  }
+
+    if (profileFormData.company === null || profileFormData.company === "") {
+      newErrors.company = `${t("settings.tab_1_list.company_required")}`;
+    } else if (profileFormData.company.length > 50) {
+      newErrors.company = "Company must be at most 50 characters.";
+    }
+
+    if (profileFormData.city === null || profileFormData.city === "") {
+      newErrors.city = `${t("settings.tab_1_list.city_required")}`;
+    } else if (profileFormData.city.length > 50) {
+      newErrors.city = "City must be at most 50 characters.";
+    }
+
+    if (profileFormData.country === null || profileFormData.country === "") {
+      newErrors.country = `${t("settings.tab_1_list.country_required")}`;
+    } else if (profileFormData.country.length > 50) {
+      newErrors.country = "Country must be at most 50 characters.";
+    }
+
     if (profileFormData.image === null && !profileFormData.imageFile) newErrors.imageFile = `${t("settings.tab_1_list.profile_image_required")}`;
 
     return newErrors;
   };
 
-  const renderTeamMembers = async () => {
-    setTeamMembersDataMessage("")
-    setTeamMembersDataLoading(true)
+  const renderTeamMembers = async (currentRole = role) => {
+    setTeamMembersDataMessage("");
+    setTeamMembersDataLoading(true);
     try {
-      const response = await getTeamMembers()
+      const response = await getTeamMembers();
 
       if (response?.status === 200) {
-        setTeamMembersData(response?.data?.data)
+        setTeamMembersData(response?.data?.data);
         if (response?.data?.data?.membersData?.length == 0) {
-          setTeamMembersDataLoading(false)
-          setTeamMembersDataMessage(`${t("no_data")}`)
+          setTeamMembersDataLoading(false);
+          setTeamMembersDataMessage(`${t("no_data")}`);
+          setFilteredMembers([]);
         } else {
-          setFilteredMembers(response?.data?.data?.membersData)
+          // Filter according to current role
+          const allMembers = response?.data?.data?.membersData;
+          if (currentRole !== "All") {
+            setFilteredMembers(allMembers.filter((e) => e.role === currentRole));
+          } else {
+            setFilteredMembers(allMembers);
+          }
+          setTeamMembersDataLoading(false); // Ensure loading is stopped
         }
+      } else {
+        setTeamMembersDataLoading(false); // Stop loading on error
       }
     } catch (error) {
-      console.log(error)
+      setTeamMembersDataLoading(false);
+      console.log(error);
     }
   }
 
@@ -506,7 +547,7 @@ const SettingsPage = () => {
                 className="w-[157px]"
                 extraName={t("settings.tab_3_list.role")}
               />
-              <div onClick={renderTeamMembers} className="flex items-center px-3 gap-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-[8px] py-[8px]">
+              <div onClick={() => renderTeamMembers(role)} className="flex items-center px-3 gap-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-[8px] py-[8px]">
                 <RefreshIcon />
                 <button className="text-[16px] cursor-pointer text-[#5A687C]">
                   {t("refresh")}
@@ -757,6 +798,7 @@ const SettingsPage = () => {
                             value={profileFormData[field] === "null" ? '' : profileFormData[field]}
                             placeholder={`${t("settings.tab_1_list.enter")} ${field === "firstName" ? `${t("settings.tab_1_list.first_name")}` : `${t("settings.tab_1_list.last_name")}`}`}
                             onChange={handleProfileChange}
+                            
                             className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors[field] ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none`}
                           />
                           {profileErrors[field] && <p className="text-[#FF3B30] py-1">{profileErrors[field]}</p>}
@@ -878,6 +920,7 @@ const SettingsPage = () => {
                           value={profileFormData.company === "null" ? '' : profileFormData.company}
                           placeholder={t("settings.tab_1_list.company_placeholder")}
                           onChange={handleProfileChange}
+                          
                           className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors.company ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'}  text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none`}
                         />
                         {profileErrors.company && <p className="text-[#FF3B30] py-1">{profileErrors.company}</p>}
@@ -920,6 +963,7 @@ const SettingsPage = () => {
                             value={profileFormData[field] === "null" ? '' : profileFormData[field]}
                             placeholder={`Enter ${field === "city" ? `${t("settings.tab_1_list.city")}` : `${t("settings.tab_1_list.country")}`} `}
                             onChange={handleProfileChange}
+                           
                             className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${profileErrors[field] ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none`}
                           />
                           {profileErrors[field] && <p className="text-[#FF3B30] py-1">{profileErrors[field]}</p>}
