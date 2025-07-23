@@ -838,7 +838,7 @@ const englishTranslation = {
     settings: "Settings",
     language: "Language",
     help_center: "Help center",
-    support: "Suppport",
+    support: "Support",
     please_complete_profile: "Please complete your profile first",
     lifetime_commission: "50% lifetime commission!",
     get_it_now: " Get It Now"
