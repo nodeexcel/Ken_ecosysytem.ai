@@ -119,7 +119,7 @@ function YoutubeScriptContent() {
             placeholder_1: "Ex. AI Revolution in Digital Ma..",
             label_2: "Custom Instructions (Optional)",
             placeholder_2: "Anything you want to tell the AI"
-        },
+        },//"Anything you want to tell the AI",
         initialMessage: messages,
         agentName,
         agentImg: constanceImg,

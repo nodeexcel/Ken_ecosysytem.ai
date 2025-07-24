@@ -100,7 +100,13 @@ function CreationStudio() {
         }
         setLoading(true)
         try {
-            const response = await createContent(formData)
+            // Remove empty keys from formData
+            const cleanedPayload = Object.fromEntries(
+                Object.entries(formData).filter(([_, value]) => value !== "" && value !== undefined && value !== null)
+            );
+
+            const response = await createContent(cleanedPayload)
+            console.log(response,"FFffffffhfhfhfhfhfhfh")
             if (response?.status === 200) {
                 console.log(response?.data)
                 setContentId(response?.data?.content_id)
@@ -227,14 +233,14 @@ function CreationStudio() {
                         </label>
                         <div className="relative">
                             <input
-                                type="text"
+                                type="date"
                                 name="date"
                                 value={formData?.date || ""}
                                 onChange={handleChange}
                                 className="w-full bg-white p-2 rounded-lg border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] pr-10"
                                 placeholder="dd/mm/yyyy"
                             />
-                            <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5A687C] pointer-events-none" size={20} />
+                            {/* <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5A687C] pointer-events-none" size={20} /> */}
                         </div>
                     </div>
                     {/* Time Field */}
@@ -244,14 +250,14 @@ function CreationStudio() {
                         </label>
                         <div className="relative">
                             <input
-                                type="text"
+                                type="time"
                                 name="time"
                                 value={formData?.time || ""}
                                 onChange={handleChange}
                                 className="w-full bg-white p-2 rounded-lg border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] pr-10"
-                                placeholder="hh:yy"
+                                placeholder="hh:mm"
                             />
-                            <Clock className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5A687C] pointer-events-none" size={20} />
+                            {/* <Clock className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5A687C] pointer-events-none" size={20} /> */}
                         </div>
                     </div>
                 </div>

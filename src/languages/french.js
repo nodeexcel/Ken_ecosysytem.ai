@@ -948,7 +948,7 @@ const frenchTranslation = {
     initial_message: "Impossible de générer un bilan : le document téléchargé n’est pas un relevé bancaire, mais un eBook ou un guide informatif lié à la santé et au bien-être. Aucune donnée financière disponible pour extraction. Veuillez télécharger un véritable relevé bancaire pour créer un bilan précis.",
     generate: "Générer",
     previous_generation: "Génération précédente",
-    generations_appear: "Les nouvelles générations apparaîtront ici",
+    generations_appear: "Les nouvelles générations apparaissent ici",
     interview_planner: {
       heading: "Planificateur d'entretien",
       description: "Planifiez un entretien efficace pour un candidat potentiel."

@@ -1,13 +1,156 @@
-"use client"
-
 import { useState, useMemo, useRef, useEffect } from "react"
 import { X } from "lucide-react" // Removed ChevronLeft, ChevronRight
+import { UtcFormat } from "../utils/TimeFormat"
 
-export default function DateTimePicker({ onClose }) {
+function TimeSelector24({ value, onChange, onClose }) {
+  // value: "HH : mm" or "HH:mm"
+  const parseInitial = () => {
+    let [h, m] = value.split(":").map((v) => v.trim());
+    h = h ? h.padStart(2, "0") : "00";
+    m = m ? m.padStart(2, "0") : "00";
+    return { hour: h, minute: m };
+  };
+  const { hour, minute } = parseInitial();
+  const [selectedHour, setSelectedHour] = useState(hour);
+  const [selectedMinute, setSelectedMinute] = useState(minute);
+  const hoursRef = useRef(null);
+  const minutesRef = useRef(null);
+  const itemHeight = 36;
+  const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
+  const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
+  const circularHours = [...hours, ...hours, ...hours];
+  const circularMinutes = [...minutes, ...minutes, ...minutes];
+
+  const scrollToItem = (ref, items, value, height = itemHeight, isCircular = false) => {
+    if (!ref.current) return;
+    if (isCircular) {
+      const index = items.indexOf(value);
+      if (index !== -1) {
+        const centerOffset = 2;
+        ref.current.scrollTop = (items.length + index - centerOffset) * height;
+      }
+    } else {
+      const index = items.indexOf(value);
+      if (index !== -1) {
+        const paddedIndex = index + 2;
+        const centerOffset = 2;
+        ref.current.scrollTop = (paddedIndex - centerOffset) * height;
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (hoursRef.current && minutesRef.current) {
+      scrollToItem(hoursRef, hours, selectedHour, itemHeight, true);
+      scrollToItem(minutesRef, minutes, selectedMinute, itemHeight, true);
+    }
+  }, []);
+
+  const handleCircularScroll = (ref, originalItems, circularItems, setValue) => {
+    if (!ref.current) return;
+    const scrollTop = ref.current.scrollTop;
+    const itemsLength = originalItems.length;
+    const centerPosition = scrollTop + 72;
+    const centerIndex = Math.round(centerPosition / itemHeight);
+    const actualIndex = centerIndex % itemsLength;
+    const selectedItem = originalItems[actualIndex];
+    setValue(selectedItem);
+    const totalItems = circularItems.length;
+    const threshold = itemHeight * 2;
+    if (scrollTop < threshold) {
+      ref.current.scrollTop = itemsLength * itemHeight + (scrollTop % (itemsLength * itemHeight));
+    } else if (scrollTop > (totalItems - itemsLength - 2) * itemHeight) {
+      ref.current.scrollTop = itemsLength * itemHeight + (scrollTop % (itemsLength * itemHeight));
+    }
+  };
+
+  useEffect(() => {
+    let timeout;
+    const handleScrollEnd = (ref, items, circularItems, setValue) => () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        if (!ref.current) return;
+        handleCircularScroll(ref, items, circularItems, setValue);
+      }, 50);
+    };
+    if (hoursRef.current) {
+      hoursRef.current.addEventListener('scroll', handleScrollEnd(hoursRef, hours, circularHours, setSelectedHour));
+    }
+    if (minutesRef.current) {
+      minutesRef.current.addEventListener('scroll', handleScrollEnd(minutesRef, minutes, circularMinutes, setSelectedMinute));
+    }
+    return () => {
+      if (hoursRef.current) hoursRef.current.removeEventListener('scroll', handleScrollEnd(hoursRef, hours, circularHours, setSelectedHour));
+      if (minutesRef.current) minutesRef.current.removeEventListener('scroll', handleScrollEnd(minutesRef, minutes, circularMinutes, setSelectedMinute));
+    };
+  }, []);
+
+  useEffect(() => {
+    onChange(`${selectedHour}:${selectedMinute}`);
+  }, [selectedHour, selectedMinute]);
+
+  const isSelected = (item, selectedItem) => item === selectedItem;
+
+  return (
+    <div className="flex flex-col items-center bg-white rounded-lg shadow-lg p-2 z-50 border border-gray-200">
+      <div className="flex gap-4 items-center w-full justify-center">
+        {/* Hours column */}
+        <div className="flex-1 min-w-[60px]">
+          <div ref={hoursRef} className="h-[108px] overflow-auto scrollbar-hide">
+            <div className="px-2">
+              {circularHours.map((hour, index) => (
+                <div
+                  key={`hour-${index}`}
+                  className={`h-[36px] flex items-center justify-center text-[18px] cursor-pointer select-none ${isSelected(hour, selectedHour) ? 'text-[#675FFF] font-semibold' : 'text-gray-500'}`}
+                  onClick={() => {
+                    setSelectedHour(hour);
+                    scrollToItem(hoursRef, hours, hour, itemHeight, true);
+                  }}
+                >
+                  {hour}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <span className="text-lg font-bold">:</span>
+        {/* Minutes column */}
+        <div className="flex-1 min-w-[60px]">
+          <div ref={minutesRef} className="h-[108px] overflow-auto scrollbar-hide">
+            <div className="px-2">
+              {circularMinutes.map((minute, index) => (
+                <div
+                  key={`minute-${index}`}
+                  className={`h-[36px] flex items-center justify-center text-[18px] cursor-pointer select-none ${isSelected(minute, selectedMinute) ? 'text-[#675FFF] font-semibold' : 'text-gray-500'}`}
+                  onClick={() => {
+                    setSelectedMinute(minute);
+                    scrollToItem(minutesRef, minutes, minute, itemHeight, true);
+                  }}
+                >
+                  {minute}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      <button
+        className="mt-3 px-4 py-1 bg-[#675FFF] text-white rounded hover:bg-[#5648ff]"
+        onClick={() => {
+          onChange(`${selectedHour}:${selectedMinute}`);
+          if (onClose) onClose();
+        }}
+      >Set Time</button>
+    </div>
+  );
+}
+
+export default function DateTimePicker({ onClose, onSchedule }) {
   const [currentMonth, setCurrentMonth] = useState(new Date(2025, 6, 1)) // Initialize to July 2025
   const [selectedDate, setSelectedDate] = useState(new Date(2025, 6, 12)) // Initialize to July 12, 2025
   const [time, setTime] = useState("15 : 25")
   const [showYearPicker, setShowYearPicker] = useState(false)
+  const [showTimeDropdown, setShowTimeDropdown] = useState(false)
   const today = useMemo(() => new Date(), []) // Actual current date for 'Today' highlight
 
   const yearPickerRef = useRef(null)
@@ -246,13 +389,26 @@ export default function DateTimePicker({ onClose }) {
 
         <div className="mt-6 space-y-4">
           <div className="text-base font-medium text-gray-700">Time</div>
-          <input
-            type="text"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-4 py-2 text-lg focus:border-v0-purple focus:outline-none focus:ring-1 focus:ring-v0-purple"
-            aria-label="Time input"
-          />
+          {/* Time Input with Dropdown Selector */}
+          <div className="relative w-full">
+            <input
+              type="text"
+              value={time}
+              readOnly
+              className="w-full rounded-md border border-gray-300 px-4 py-2 text-lg focus:border-v0-purple focus:outline-none focus:ring-1 focus:ring-v0-purple cursor-pointer bg-white"
+              aria-label="Time input"
+              onClick={() => setShowTimeDropdown(true)}
+            />
+            {showTimeDropdown && (
+              <div className="absolute left-0 top-full mt-2 w-full z-50">
+                <TimeSelector24
+                  value={time}
+                  onChange={(val) => setTime(val)}
+                  onClose={() => setShowTimeDropdown(false)}
+                />
+              </div>
+            )}
+          </div>
           <div className="text-sm text-gray-500">Select a predefined timeslot</div>
         </div>
 
@@ -261,7 +417,19 @@ export default function DateTimePicker({ onClose }) {
           w-[225px]" onClick={onClose}>
             Cancel
           </button>
-          <button className=" w-[225px] cursor-pointer bg-[#675FFF] rounded-md  px-5 py-2 text-base font-medium text-white border border-[#675FFF] hover:bg-v0-purple/90 focus:outline-none focus:ring-2 focus:ring-v0-purple">
+          <button
+            className=" w-[225px] cursor-pointer bg-[#675FFF] rounded-md  px-5 py-2 text-base font-medium text-white border border-[#675FFF] hover:bg-v0-purple/90 focus:outline-none focus:ring-2 focus:ring-v0-purple"
+            onClick={() => {
+              const dateUTC = UtcFormat(selectedDate);
+              // Parse time string and format as HH:mm in UTC
+              const [hourStr, minuteStr] = time.split(":").map((s) => s.trim());
+              const hours = String(parseInt(hourStr, 10)).padStart(2, '0');
+              const minutes = String(parseInt(minuteStr, 10)).padStart(2, '0');
+              const timeUTC = `${hourStr}:${minuteStr}`;
+              if (onSchedule) onSchedule(dateUTC, timeUTC);
+              if (onClose) onClose();
+            }}
+          >
             Schedule
           </button>
         </div>

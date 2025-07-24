@@ -2,11 +2,177 @@ import { X, ChevronDown, Hash, Settings, Edit3, Camera, Link, Trash2, UploadIcon
 import inkartinkLogo from '../assets/svg/inkartink.svg';
 import { useTranslation } from "react-i18next";
 import DateTimePicker from "./DateTimePicker";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { publishContent, saveDraftContent, scheduleContent } from '../api/contentCreationAgent';
+import { getInstaAccounts } from '../api/brainai';
 
 export default function CreatePost({ onClose }) {
   const { t } = useTranslation();
   const [showDateTimePicker, setShowDateTimePicker] = useState(false);
+  // State for required fields
+  const [text, setText] = useState("");
+  const [document, setDocument] = useState(null); // base64 string
+  const [platform, setPlatform] = useState("Linkedin");
+  const [platformUniqueId, setPlatformUniqueId] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState(null);
+  const [dragActive, setDragActive] = useState(false);
+  const fileInputRef = useRef();
+  const [fileName, setFileName] = useState("");
+  // State for Instagram accounts
+  const [instaAccounts, setInstaAccounts] = useState([]);
+  const [instaLoading, setInstaLoading] = useState(false);
+  const [instaError, setInstaError] = useState(null);
+
+  // Fetch Instagram accounts when platform is set to 'instagram'
+  useEffect(() => {
+    if (platform === "instagram") {
+      setInstaLoading(true);
+      setInstaError(null);
+      getInstaAccounts()
+        .then((res) => {
+          // Adjust this depending on your API response structure
+          setInstaAccounts(res?.data || []);
+        })
+        .catch((err) => {
+          setInstaError("Failed to fetch Instagram accounts");
+        })
+        .finally(() => {
+          setInstaLoading(false);
+        });
+    } else {
+      setInstaAccounts([]); // Clear accounts if not Instagram
+    }
+    setPlatformUniqueId(""); // Clear unique ID when platform changes
+  }, [platform]);
+
+  // Handle file upload and convert to base64
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    // Only allow webp/jpeg/png/pdf
+    if (!['image/webp', 'image/jpeg', 'image/png', 'application/pdf'].includes(file.type)) {
+      setError('Only webp, jpeg, png images or pdf files are allowed.');
+      return;
+    }
+    setFileName(file.name);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setDocument(file); // base64 string only
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Drag and drop handlers
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(true);
+  };
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+  };
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFileChange({ target: { files: e.dataTransfer.files[0] } });
+    }
+  };
+  const handleUploadAreaClick = () => {
+    fileInputRef.current.click();
+  };
+
+  // Handle Draft button click
+  const handleSaveDraft = async () => {
+    setIsSaving(true);
+    setError(null);
+    if (!text || !platform || !platformUniqueId || !document) {
+      setError('All fields marked are required.');
+      setIsSaving(false);
+      return;
+    }
+    try {
+      const payload = {
+        text,
+        document,
+        platform,
+        platform_unique_id: platformUniqueId,
+      };
+      await saveDraftContent(payload);
+
+      // Optionally show a success message or close modal
+    } catch (err) {
+      setError('Failed to save draft');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  const handlePublish = async () => {
+    setIsSaving(true);
+    setError(null);
+    if (!text || !platform || !platformUniqueId || !document) {
+      setError('All fields marked are required.');
+      setIsSaving(false);
+      return;
+    }
+    try {
+      const payload = {
+        text,
+        document,
+        platform,
+        platform_unique_id: platformUniqueId,
+      };
+      await publishContent(payload);
+    } catch (err) {
+      setError('Failed to publish');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  const handleSchedule = async (scheduledDate, scheduledTime) => {
+    setIsSaving(true);
+    setError(null);
+    if (!text || !platform || !platformUniqueId || !document) {
+      setError('All fields marked are required.');
+      setIsSaving(false);
+      return;
+    }
+    try {
+      // Parse scheduledTime (e.g., '15 : 25' or '15:25')
+      let [hours, minutes] = scheduledTime.replace(/\s/g, '').split(':');
+      if (!minutes && hours) {
+        // Try splitting by ' : '
+        [hours, minutes] = scheduledTime.split(' : ');
+      }
+      hours = parseInt(hours, 10);
+      minutes = parseInt(minutes, 10);
+      // Construct a Date object in local time, then get UTC string
+      const scheduledDateObj = new Date(scheduledDate);
+      scheduledDateObj.setHours(hours);
+      scheduledDateObj.setMinutes(minutes);
+      scheduledDateObj.setSeconds(0);
+      scheduledDateObj.setMilliseconds(0);
+      // Format as ISO string in UTC
+      const scheduledTimeUTC = scheduledDateObj.toISOString();
+      const payload = {
+        text,
+        document,
+        platform,
+        platform_unique_id: platformUniqueId,
+        scheduled_date: scheduledDate,
+        scheduled_time: scheduledTime,
+      };
+      await scheduleContent(payload);
+    } catch (err) {
+      setError('Failed to schedule');
+    } finally {
+      setIsSaving(false);
+    }
+  };
   return (
     <div className="flex flex-col gap-8">
       {/* Header */}
@@ -21,16 +187,61 @@ export default function CreatePost({ onClose }) {
         {/* Left Sidebar */}
         <div className="w-[218px] h-[726px] bg-white border-r border-r-[#E1E4EA] border-t border-t-[#ffffff] border-b border-b-[#ffffff] border-l border-l-[#ffffff] rounded-l-[16px] flex flex-col relative p-4 min-h-[600px]">
           <div>
-            <div className="flex flex-col w-[184px] max-h-[70px] gap-[6px] absolute top-[18px] left-[16px]">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Select Account</label>
+            <div className="flex flex-col w-[184px] max-h-[70px] gap-[6px] absolute top-[0px] left-[16px]">
+              {/* Select Platform */}
+              <div className="mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Select Platform</label>
                 <div className="relative mb-4">
-                  <select className="w-full border border-gray-300 px-3 py-2 rounded-md appearance-none bg-white text-gray-700">
-                    <option>Select</option>
+                  <select
+                    className="w-full border border-gray-300 px-3 py-2 rounded-md appearance-none bg-white text-gray-700"
+                    value={platform}
+                    onChange={e => setPlatform(e.target.value)}
+                  >
+                    <option value="linkedin">Linkedin</option>
+                    <option value="X">twitter</option>
+                    <option value="instagram">Instagram</option>
+                    {/* Add more platforms as needed */}
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                 </div>
               </div>
+              {/* Select Account */}
+              <div className="mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Select Account</label>
+                <div className="relative mb-4">
+                  <select
+                    className="w-full border border-gray-300 px-3 py-2 rounded-md appearance-none bg-white text-gray-700"
+                    value={platformUniqueId}
+                    onChange={e => setPlatformUniqueId(e.target.value)}
+                    disabled={platform !== "instagram" || instaLoading}
+                  >
+                    {platform === "instagram" ? (
+                      <>
+                        <option value="">{instaLoading ? "Loading..." : "Select"}</option>
+                        {instaAccounts?.length > 0 && instaAccounts.map((acc) => (
+                          <option key={acc.instagram_user_id} value={acc.instagram_user_id}>
+                            {acc.username}
+                          </option>
+                        ))}
+                      </>
+                    ) : (
+                      <option value="">Select</option>
+                    )}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+              {/* Platform Unique ID */}
+              <div className="mt-2 mb-4">
+                <input
+                  type="text"
+                  value={platformUniqueId}
+                  onChange={e => setPlatformUniqueId(e.target.value)}
+                  className="w-full border border-gray-300 px-3 py-2 rounded-md text-sm"
+                  placeholder="Platform Unique ID *"
+                />
+              </div>
+              {/* Existing account display and remove button */}
               <div className="flex flex-row items-center gap-[6px]  rounded-lg p-2 w-full mt-2">
                 <div className="w-[30px] h-[30px] bg-blue-600 rounded flex items-center justify-center">
                   <span className="text-white text-xs font-bold">in</span>
@@ -83,8 +294,10 @@ export default function CreatePost({ onClose }) {
             {/* Post Title Input */}
             <input
               type="text"
+              value={text}
+              onChange={e => setText(e.target.value)}
               className="w-full h-[48px] font-normal text-[16px] leading-[18.4px] tracking-[0] text-[#5A687C] rounded-md px-4 mb-4"
-              placeholder="Test Post"
+              placeholder="Enter post text *"
               style={{ fontWeight: 400, fontStyle: "normal", letterSpacing: 0 }}
             />
 
@@ -123,13 +336,30 @@ export default function CreatePost({ onClose }) {
 
             {/* Upload Section */}
             <div className="mb-4 w-full">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Upload File / Images</label>
-              <div className="border-2 border-dashed border-blue-200 bg-blue-50 rounded-lg p-6 text-center hover:border-blue-300 cursor-pointer w-full">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Upload File / Images (webp, jpeg, png, pdf) *</label>
+              <input
+                type="file"
+                accept="image/webp,image/jpeg,image/png,application/pdf"
+                onChange={handleFileChange}
+                className="mb-2 hidden"
+                ref={fileInputRef}
+              />
+              <div
+                className={`border-2 border-dashed ${dragActive ? 'border-blue-400 bg-blue-100' : 'border-blue-200 bg-blue-50'} rounded-lg p-6 text-center hover:border-blue-300 cursor-pointer w-full`}
+                onClick={handleUploadAreaClick}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                role="button"
+                tabIndex={0}
+              >
                 <UploadIcon className="w-8 h-8 text-blue-400 mx-auto mb-2" />
                 <p className="text-sm text-gray-600 font-medium">Upload from your computer</p>
                 <p className="text-xs text-gray-500 mt-1">or drag and drop</p>
               </div>
-
+              {fileName && (
+                <div className="text-xs text-gray-700 mt-2">Selected file: <span className="font-medium">{fileName}</span></div>
+              )}
               <div className="flex items-start justify-start mt-3">
                 <label className="flex items-center gap-2 text-sm text-gray-700">
                   <input type="checkbox" className="rounded border-gray-300 w-[21px] h-[21px]" />
@@ -160,16 +390,17 @@ export default function CreatePost({ onClose }) {
 
           {/* Action Buttons at the bottom */}
           <div className="flex flex-row justify-center items-center gap-[9px] border-t border-[#E1E4EA] w-full min-h-[88px] absolute bottom-0 left-0 right-0 p-[25px] box-border bg-white">
-            <button className="flex flex-row items-center justify-center gap-[10px] w-[79px] h-[38px] rounded-[7px] border-[1.5px] px-[20px] py-[7px] text-[#5A687C] bg-[#FFFFFF] font-medium">
-              Draft
+            <button className="flex flex-row items-center justify-center gap-[10px] w-[79px] h-[38px] rounded-[7px] border-[1.5px] px-[20px] py-[7px] text-[#5A687C] bg-[#FFFFFF] font-medium" onClick={handleSaveDraft} disabled={isSaving}>
+              {isSaving ? 'Saving...' : 'Draft'}
             </button>
-            <button className="flex flex-row items-center justify-center gap-[10px] min-w-[96px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#675FFF] bg-transparent font-medium">
+            <button onClick={handlePublish} disabled={isSaving}  className="flex flex-row items-center justify-center gap-[10px] min-w-[96px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#675FFF] bg-transparent font-medium">
               Publish
             </button>
-            <button className="flex flex-row items-center justify-center gap-[10px] min-w-[112px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#FFFFFF] bg-[#675FFF] font-medium" onClick={() => setShowDateTimePicker(true)}>
+            <button  className="flex flex-row items-center justify-center gap-[10px] min-w-[112px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#FFFFFF] bg-[#675FFF] font-medium" onClick={() => setShowDateTimePicker(true)}>
               Schedule
             </button>
           </div>
+          {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
         </div>
 
         {/* Right Post Preview */}
@@ -178,12 +409,14 @@ export default function CreatePost({ onClose }) {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Post Preview</label>
               <div className="relative w-full h-[44px]">
-                <select className="w-full h-full border border-gray-300 px-3 py-2 rounded-md appearance-none bg-white text-gray-700">
-                  <option>Linkedin</option>
+                <select className="w-full h-full border border-gray-300 px-3 py-2 rounded-md appearance-none bg-white text-gray-700" value={platform} onChange={e => setPlatform(e.target.value)}>
+                  <option value="Linkedin">Linkedin</option>
+                  {/* Add more platforms as needed */}
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
               </div>
             </div>
+            {/* Removed Platform Unique ID input from here */}
           </div>
 
           {/* Preview Content */}
@@ -197,7 +430,13 @@ export default function CreatePost({ onClose }) {
         </div>
       </div>
       {showDateTimePicker && (
-        <DateTimePicker onClose={() => setShowDateTimePicker(false)} />
+        <DateTimePicker 
+          onClose={() => setShowDateTimePicker(false)}
+          onSchedule={(date, time) => {
+            setShowDateTimePicker(false);
+            handleSchedule(date, time);
+          }}
+        />
       )}
     </div>
   )
