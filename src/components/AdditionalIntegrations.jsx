@@ -11,12 +11,12 @@ import { useDispatch } from "react-redux";
 import { getNavbarData } from "../store/navbarSlice";
 import { LeftArrow } from "../icons/icons";
 import Integration from "./Integration";
-import { deleteGoogleCalendarAccount, deleteInstaAccount, deleteWhatsappAccount } from "../api/brainai";
+import { deleteGoogleCalendarAccount, deleteInstaAccount, deleteLinkedInAccount, deleteWhatsappAccount } from "../api/brainai";
 import { useTranslation } from "react-i18next";
 
 
 
-const AdditionalIntegration = ({ setInstagramData, instagramData, integartionData, setFirstRender, whatsappData, setWhatsappData, googleCalendarData, setGoogleCalendarData }) => {
+const AdditionalIntegration = ({ setInstagramData, instagramData, integartionData, setFirstRender, whatsappData, setWhatsappData, googleCalendarData, setGoogleCalendarData, linkedInData,setLinkedInData }) => {
     const [open, setOpen] = useState(false);
     const [createTemplateOpen, setCreateTemplateOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("insta");
@@ -73,6 +73,22 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
             if (response?.status === 200) {
                 const filterData = googleCalendarData.filter((e) => e.google_calendar_id !== id)
                 setGoogleCalendarData(filterData)
+            } else if (response?.status === 400) {
+                if (response?.response?.data?.success) {
+                    setErrorMessage(response?.response?.data?.success)
+                }
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handleDeleteLinkedIn = async (id) => {
+        try {
+            const response = await deleteLinkedInAccount(id)
+            if (response?.status === 200) {
+                const filterData = linkedInData.filter((e) => e.linkedin_id !== id)
+                setLinkedInData(filterData)
             } else if (response?.status === 400) {
                 if (response?.response?.data?.success) {
                     setErrorMessage(response?.response?.data?.success)
@@ -175,6 +191,15 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                         handleDelete={handleDeleteGoogleCalendar}
                     />
                 )
+            case "LinkedIn":
+                return (
+                    <RenderAccountData
+                        accountsData={linkedInData}
+                        label={"name"}
+                        id={"linkedin_id"}
+                        handleDelete={handleDeleteLinkedIn}
+                    />
+                )
         }
     }
 
@@ -195,6 +220,8 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                 return whatsappData?.length
             case "Google Calendar":
                 return googleCalendarData?.length
+            case "LinkedIn":
+                return linkedInData?.length
             default:
                 return integartionData.connectedAccounts
         }

@@ -222,6 +222,26 @@ export const deleteGoogleCalendarAccount = async (id) => {
     }
 }
 
+export const getLinkedInAccounts = async () => {
+    try {
+        const response = await agentInstance.get(`/get-linkedin-accounts`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+}
+
+
+export const deleteLinkedInAccount = async (id) => {
+    try {
+        const response = await agentInstance.delete(`/delete-linkedin-account/${id}`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+}
 
 export const getListedContacts = async (id) => {
     try {

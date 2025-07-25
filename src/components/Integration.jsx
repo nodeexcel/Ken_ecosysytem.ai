@@ -15,18 +15,19 @@ import click_funnels from '../assets/svg/click-funnels.svg'
 import AdditionalIntegration from './AdditionalIntegrations';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNavbarData } from '../store/navbarSlice'
-import { getGoogleCalendarAccounts, getInstaAccounts, getWhatsappAccounts } from '../api/brainai';
+import { getGoogleCalendarAccounts, getInstaAccounts, getLinkedInAccounts, getWhatsappAccounts } from '../api/brainai';
 // Define the integrations data
 
 
-const Integration = ({firstRender, setFirstRender}) => {
+const Integration = ({ firstRender, setFirstRender }) => {
   const [integartionData, setIntegrationData] = useState({})
   const [instagramData, setInstagramData] = useState([])
   const [whatsappData, setWhatsappData] = useState([])
   const [googleCalendarData, setGoogleCalendarData] = useState([])
+  const [linkedInData, setLinkedInData] = useState([])
   const dispatch = useDispatch();
   const userDetails = useSelector((state) => state.profile.user)
-  const [loading, setLoading] = useState({ instagram: true, whatsapp: true, google_calendar: true })
+  const [loading, setLoading] = useState({ instagram: true, whatsapp: true, google_calendar: true, linkedin: true })
 
   const handleInstagram = async () => {
     try {
@@ -46,6 +47,28 @@ const Integration = ({firstRender, setFirstRender}) => {
       console.log(error)
       setLoading((prev) => ({
         ...prev, instagram: false
+      }))
+    }
+  }
+
+  const handleLinkedIn = async () => {
+    try {
+
+      const response = await getLinkedInAccounts();
+      if (response?.status === 200) {
+        console.log(response?.data?.linkedin_account_info)
+        setLinkedInData(response?.data?.linkedin_account_info);
+        if (response?.data?.linkedin_account_info?.length === 0) {
+          setLoading((prev) => ({
+            ...prev, linkedin: false
+          }))
+        }
+      }
+
+    } catch (error) {
+      console.log(error)
+      setLoading((prev) => ({
+        ...prev, linkedin: false
       }))
     }
   }
@@ -111,6 +134,7 @@ const Integration = ({firstRender, setFirstRender}) => {
     handleInstagram()
     handleWhatsapp()
     handleGoogleCalender()
+    handleLinkedIn()
   }, [])
 
   const integrations = [
@@ -128,7 +152,8 @@ const Integration = ({firstRender, setFirstRender}) => {
     {
       icon: linkedin,
       name: "LinkedIn",
-      connectedAccounts: 0,
+      connectedAccounts: linkedInData?.length,
+      path: import.meta.env.VITE_LINKEDIN_URL + `&state=${userDetails.id}`,
     },
     {
       icon: facebook,
@@ -231,7 +256,7 @@ const Integration = ({firstRender, setFirstRender}) => {
             </div>
           ))}
         </div>
-      </> : <AdditionalIntegration setInstagramData={setInstagramData} instagramData={instagramData} integartionData={integartionData} setFirstRender={setFirstRender} whatsappData={whatsappData} setWhatsappData={setWhatsappData} googleCalendarData={googleCalendarData} setGoogleCalendarData={setGoogleCalendarData} />}
+      </> : <AdditionalIntegration setInstagramData={setInstagramData} instagramData={instagramData} integartionData={integartionData} setFirstRender={setFirstRender} whatsappData={whatsappData} setWhatsappData={setWhatsappData} googleCalendarData={googleCalendarData} setGoogleCalendarData={setGoogleCalendarData} linkedInData={linkedInData} setLinkedInData={setLinkedInData}/>}
     </div>
   )
 }
