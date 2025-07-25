@@ -25,6 +25,8 @@ export default function CreatePost({ onClose }) {
   const [instaLoading, setInstaLoading] = useState(false);
   const [instaError, setInstaError] = useState(null);
   const textInputRef = useRef(); // Add ref for text input
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Fetch Instagram accounts when platform is 'instagram'
   useEffect(() => {
@@ -129,6 +131,8 @@ export default function CreatePost({ onClose }) {
   };
   const handlePublish = async () => {
     setIsSaving(true);
+    setSuccessMessage("");
+    setErrorMessage("");
     let newErrors = {};
     if (!text) newErrors.text = 'Post text is required.';
     if (!platform) newErrors.platform = 'Platform is required.';
@@ -145,7 +149,15 @@ export default function CreatePost({ onClose }) {
         ...(platform === "instagram" ? { platform_unique_id: selectedAccount } : {}),
         media_type: getMediaType(document),
       };
-      await publishContent(payload);
+      const response = await publishContent(payload);
+      console.log("responseddddddd", response);
+      if (response?.status === 201) {
+        setSuccessMessage(response?.data?.success);
+        setErrorMessage("");
+      } else if (response?.status === 400) {
+        setErrorMessage(response?.response?.data?.error);
+        setSuccessMessage("");
+      }
     } catch (err) {
       setErrors({ general: 'Failed to publish' });
     } finally {
@@ -459,6 +471,8 @@ export default function CreatePost({ onClose }) {
                 Schedule
               </button>
             </div>
+            {successMessage && <div className="text-green-600 text-sm mt-2 text-center">{successMessage}</div>}
+            {errorMessage && <div className="text-red-600 text-sm mt-2 text-center">{errorMessage}</div>}
             {errors.general && <div className="text-red-500 text-sm mt-2">{errors.general}</div>}
           </div>
 
