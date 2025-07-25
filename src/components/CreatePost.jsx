@@ -26,7 +26,29 @@ export default function CreatePost({ onClose }) {
   const [instaError, setInstaError] = useState(null);
   const textInputRef = useRef(); // Add ref for text input
 
-  // Remove useEffect for fetching Instagram accounts
+  // Fetch Instagram accounts when platform is 'instagram'
+  useEffect(() => {
+    if (platform === "instagram") {
+      setInstaLoading(true);
+      setInstaError(null);
+      const fetchAccounts = async () => {
+        try {
+          const accounts = await getInstaAccounts();
+          console.log("Fetched insta accounts:", accounts);
+          const arr = Array.isArray(accounts?.data?.insta_account_info) ? accounts.data?.insta_account_info : [];
+          
+          setInstaAccounts(arr);
+        } catch (err) {
+          setInstaError("Failed to fetch Instagram accounts");
+        } finally {
+          setInstaLoading(false);
+        }
+      };
+      fetchAccounts();
+    } else {
+      setInstaAccounts([]);
+    }
+  }, [platform]);
 
   // Handle file upload and convert to base64
   const handleFileChange = async (e) => {
@@ -69,6 +91,15 @@ export default function CreatePost({ onClose }) {
     fileInputRef.current.click();
   };
 
+  // Helper to determine media_type from file
+  const getMediaType = (file) => {
+    if (!file) return '';
+    if (file.type.startsWith('image/')) return 'image';
+    if (file.type.startsWith('video/')) return 'video';
+    if (file.type === 'application/pdf') return 'pdf';
+    return '';
+  };
+
   // Handle Draft button click
   const handleSaveDraft = async () => {
     setIsSaving(true);
@@ -86,6 +117,7 @@ export default function CreatePost({ onClose }) {
         document,
         platform,
         ...(platform === "instagram" ? { platform_unique_id: selectedAccount } : {}),
+        media_type: getMediaType(document),
       };
       await saveDraftContent(payload);
       // Optionally show a success message or close modal
@@ -111,6 +143,7 @@ export default function CreatePost({ onClose }) {
         document,
         platform,
         ...(platform === "instagram" ? { platform_unique_id: selectedAccount } : {}),
+        media_type: getMediaType(document),
       };
       await publishContent(payload);
     } catch (err) {
@@ -149,6 +182,7 @@ export default function CreatePost({ onClose }) {
         ...(platform === "instagram" ? { platform_unique_id: selectedAccount } : {}),
         scheduled_date: scheduledDate,
         scheduled_time: scheduledTime,
+        media_type: getMediaType(document),
       };
       await scheduleContent(payload);
     } catch (err) {
@@ -227,50 +261,34 @@ export default function CreatePost({ onClose }) {
                       The following static options are used for demo purposes only.
                       The dynamic code for fetching/displaying real Instagram accounts is commented below and can be restored later.
                     */}
+                    
+                    {/* // Uncomment this block to use dynamic Instagram accounts: */}
                     <SelectDropdown
                       name="account"
                       options={
                         platform === "instagram"
-                          ? [
-                              { key: '', label: 'Select' },
-                              { key: '1236', label: 'Demo Account 1' },
-                              { key: '7892', label: 'Demo Account 2' },
-                            ]
-                          : [
-                              { key: '', label: 'Select' }
-                            ]
+                          ? instaLoading
+                            ? [{ key: '', label: 'Loading...' }]
+                            : instaAccounts.length > 0
+                              ? [
+                                  { key: '', label: 'Select' },
+                                  ...instaAccounts.map(acc => ({
+                                    key: acc.instagram_user_id,
+                                    label: acc.username
+                                  }))
+                                ]
+                              : [{ key: '', label: 'No accounts found' }]
+                          : [{ key: '', label: 'Select' }]
                       }
                       value={selectedAccount}
                       onChange={val => {
                         setSelectedAccount(val);
                         if (errors.selectedAccount) setErrors(prev => ({ ...prev, selectedAccount: undefined }));
                       }}
-                      disabled={platform !== "instagram"}
+                      disabled={platform !== "instagram" || instaLoading}
                       className={`w-full ${errors.selectedAccount ? 'border border-red-500' : ''}`}
                     />
-                    {/*
-                    // Uncomment this block to use dynamic Instagram accounts:
-                    // <SelectDropdown
-                    //   name="account"
-                    //   options={
-                    //     platform === "instagram"
-                    //       ? [
-                    //           { key: '', label: 'Select' },
-                    //           ...instaAccounts.map(acc => ({ key: acc.id, label: acc.name }))
-                    //         ]
-                    //       : [
-                    //           { key: '', label: 'Select' }
-                    //         ]
-                    //   }
-                    //   value={selectedAccount}
-                    //   onChange={val => {
-                    //     setSelectedAccount(val);
-                    //     if (errors.selectedAccount) setErrors(prev => ({ ...prev, selectedAccount: undefined }));
-                    //   }}
-                    //   disabled={platform !== "instagram"}
-                    //   className={`w-full ${errors.selectedAccount ? 'border border-red-500' : ''}`}
-                    // />
-                    */}
+                    {instaError && <div className="text-red-500 text-xs mt-1">{instaError}</div>}
                     {errors.selectedAccount && <div className="text-red-500 text-xs mt-1">{errors.selectedAccount}</div>}
                   </div>
                 </div>
