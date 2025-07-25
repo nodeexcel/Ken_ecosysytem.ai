@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import DateTimePicker from "./DateTimePicker";
 import { useState, useRef, useEffect } from "react";
 import { publishContent, saveDraftContent, scheduleContent } from '../api/contentCreationAgent';
-import { getInstaAccounts } from '../api/brainai';
+import { getInstaAccounts, getLinkedInAccounts } from '../api/brainai';
 import { SelectDropdown } from "./Dropdown";
 
 export default function CreatePost({ onClose }) {
@@ -15,42 +15,54 @@ export default function CreatePost({ onClose }) {
   const [document, setDocument] = useState(null); // base64 string
   const [platform, setPlatform] = useState("");
   const [selectedAccount, setSelectedAccount] = useState(""); // New state for selected account
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSaving, setIsSaving] = useState({ draft: false, publish: false, schedule: false });
   const [errors, setErrors] = useState({});
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef();
   const [fileName, setFileName] = useState("");
   // State for Instagram accounts
-  const [instaAccounts, setInstaAccounts] = useState([]);
-  const [instaLoading, setInstaLoading] = useState(false);
-  const [instaError, setInstaError] = useState(null);
+  const [accountsOptions, setAccountsOptions] = useState([]);
+  const [accountsOptionsLoading, setAccountsOptionsLoading] = useState(false);
+  const [accountsError, setAccountsError] = useState(null);
   const textInputRef = useRef(); // Add ref for text input
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   // Fetch Instagram accounts when platform is 'instagram'
   useEffect(() => {
-    if (platform === "instagram") {
-      setInstaLoading(true);
-      setInstaError(null);
+    if (platform === "instagram" || platform === "linkedin") {
+      setAccountsOptionsLoading(true);
+      setAccountsError(null);
       const fetchAccounts = async () => {
         try {
-          const accounts = await getInstaAccounts();
-          console.log("Fetched insta accounts:", accounts);
-          const arr = Array.isArray(accounts?.data?.insta_account_info) ? accounts.data?.insta_account_info : [];
-          
-          setInstaAccounts(arr);
+          const accounts = platform === "instagram" ? await getInstaAccounts() : await getLinkedInAccounts()
+          const accountsData = platform === "instagram" ? accounts?.data?.insta_account_info : accounts?.data?.linkedin_account_info;
+          setAccountsOptions(accountsData);
         } catch (err) {
-          setInstaError("Failed to fetch Instagram accounts");
+          setAccountsError("Failed to fetch Instagram accounts");
         } finally {
-          setInstaLoading(false);
+          setAccountsOptionsLoading(false);
         }
       };
       fetchAccounts();
     } else {
-      setInstaAccounts([]);
+      setAccountsOptions([]);
     }
   }, [platform]);
+
+
+  const renderOptions = () => {
+    if (accountsOptionsLoading) {
+      return [{ key: '', label: 'Loading...' }];
+    }
+    if (accountsOptions?.length > 0) {
+      return accountsOptions.map(acc => ({
+        key: platform === "instagram" ? acc.instagram_user_id : acc.linkedin_id,
+        label: platform === "instagram" ? acc.username : acc.name
+      }));
+    }
+    return [];
+  }
 
   // Handle file upload and convert to base64
   const handleFileChange = async (e) => {
@@ -95,7 +107,7 @@ export default function CreatePost({ onClose }) {
 
   // Helper to determine media_type from file
   const getMediaType = (file) => {
-    if (!file) return '';
+    if (!file) return 'text';
     if (file.type.startsWith('image/')) return 'image';
     if (file.type.startsWith('video/')) return 'video';
     if (file.type === 'application/pdf') return 'pdf';
@@ -104,77 +116,88 @@ export default function CreatePost({ onClose }) {
 
   // Handle Draft button click
   const handleSaveDraft = async () => {
-    setIsSaving(true);
     let newErrors = {};
     if (!text) newErrors.text = 'Post text is required.';
     if (!platform) newErrors.platform = 'Platform is required.';
-    if (platform === "instagram" && !selectedAccount) newErrors.selectedAccount = 'Account is required.';
-    if (!document) newErrors.document = 'File/Image is required.';
+    if (!selectedAccount) newErrors.selectedAccount = 'Account is required.';
+    if (platform === "instagram" && !document) newErrors.document = 'File/Image is required.';
     setErrors(newErrors);
-    setIsSaving(false);
     if (Object.keys(newErrors).length > 0) return;
     try {
+      setIsSaving((prev) => ({ ...prev, draft: true }));
       const payload = {
         text,
         document,
         platform,
-        ...(platform === "instagram" ? { platform_unique_id: selectedAccount } : {}),
+        platform_unique_id: selectedAccount,
         media_type: getMediaType(document),
       };
-      await saveDraftContent(payload);
-      // Optionally show a success message or close modal
+      const response = await saveDraftContent(payload);
+      if (response?.status === 201) {
+        setText("");
+        setDocument(null);
+        setFileName("");
+        setSelectedAccount("");
+        setPlatform("");
+        setIsSaving((prev) => ({ ...prev, draft: false }));
+      } else {
+        setIsSaving((prev) => ({ ...prev, draft: false }));
+      }
     } catch (err) {
       setErrors({ general: 'Failed to save draft' });
-    } finally {
-      setIsSaving(false);
+      setIsSaving((prev) => ({ ...prev, draft: false }));
     }
   };
   const handlePublish = async () => {
-    setIsSaving(true);
     setSuccessMessage("");
     setErrorMessage("");
     let newErrors = {};
     if (!text) newErrors.text = 'Post text is required.';
     if (!platform) newErrors.platform = 'Platform is required.';
-    if (platform === "instagram" && !selectedAccount) newErrors.selectedAccount = 'Account is required.';
-    if (!document) newErrors.document = 'File/Image is required.';
+    if (!selectedAccount) newErrors.selectedAccount = 'Account is required.';
+    if (platform === "instagram" && !document) newErrors.document = 'File/Image is required.';
     setErrors(newErrors);
-    setIsSaving(false);
     if (Object.keys(newErrors).length > 0) return;
     try {
+      setErrorMessage("");
+      setIsSaving((prev) => ({ ...prev, publish: true }));
       const payload = {
         text,
         document,
         platform,
-        ...(platform === "instagram" ? { platform_unique_id: selectedAccount } : {}),
+        platform_unique_id: selectedAccount,
         media_type: getMediaType(document),
       };
       const response = await publishContent(payload);
-      console.log("responseddddddd", response);
       if (response?.status === 201) {
         setSuccessMessage(response?.data?.success);
-        setErrorMessage("");
-      } else if (response?.status === 400) {
+        setText("");
+        setDocument(null);
+        setFileName("");
+        setSelectedAccount("");
+        setPlatform("");
+        setIsSaving((prev) => ({ ...prev, publish: false }));
+      }
+      else {
         setErrorMessage(response?.response?.data?.error);
         setSuccessMessage("");
+        setIsSaving((prev) => ({ ...prev, publish: false }));
       }
     } catch (err) {
+      setIsSaving((prev) => ({ ...prev, publish: false }));
       setErrors({ general: 'Failed to publish' });
-    } finally {
-      setIsSaving(false);
     }
   };
   const handleSchedule = async (scheduledDate, scheduledTime) => {
-    setIsSaving(true);
     let newErrors = {};
     if (!text) newErrors.text = 'Post text is required.';
     if (!platform) newErrors.platform = 'Platform is required.';
-    if (platform === "instagram" && !selectedAccount) newErrors.selectedAccount = 'Account is required.';
-    if (!document) newErrors.document = 'File/Image is required.';
+    if (!selectedAccount) newErrors.selectedAccount = 'Account is required.';
+    if (platform === "instagram" && !document) newErrors.document = 'File/Image is required.';
     setErrors(newErrors);
-    setIsSaving(false);
     if (Object.keys(newErrors).length > 0) return;
     try {
+      setIsSaving((prev) => ({ ...prev, schedule: true }));
       let [hours, minutes] = scheduledTime.replace(/\s/g, '').split(':');
       if (!minutes && hours) {
         [hours, minutes] = scheduledTime.split(' : ');
@@ -191,16 +214,25 @@ export default function CreatePost({ onClose }) {
         text,
         document,
         platform,
-        ...(platform === "instagram" ? { platform_unique_id: selectedAccount } : {}),
         scheduled_date: scheduledDate,
         scheduled_time: scheduledTime,
+        platform_unique_id: selectedAccount,
         media_type: getMediaType(document),
       };
-      await scheduleContent(payload);
+      const response = await scheduleContent(payload);
+      if (response?.status === 201) {
+        setText("");
+        setDocument(null);
+        setFileName("");
+        setSelectedAccount("");
+        setPlatform("");
+        setIsSaving((prev) => ({ ...prev, schedule: false }));
+      } else {
+        setIsSaving((prev) => ({ ...prev, schedule: false }));
+      }
     } catch (err) {
       setErrors({ general: 'Failed to schedule' });
-    } finally {
-      setIsSaving(false);
+      setIsSaving((prev) => ({ ...prev, schedule: false }));
     }
   };
   // Toolbar button handlers
@@ -237,90 +269,80 @@ export default function CreatePost({ onClose }) {
 
       {/* Main Content with Horizontal Scroll for Small Screens */}
       <div className="w-full overflow-x-auto">
-        <div className="flex w-full min-w-[1000px] h-[726px]  mx-auto rounded-[16px] border border-[#E1E4EA] bg-white">
+        <div className="flex w-full min-w-[1000px] mx-auto rounded-[16px] border border-[#E1E4EA] bg-white">
           {/* Left Sidebar */}
           <div className="w-[218px] h-[726px] bg-white border-r border-r-[#E1E4EA] border-t border-t-[#ffffff] border-b border-b-[#ffffff] border-l border-l-[#ffffff] rounded-l-[16px] flex flex-col relative p-4 min-h-[600px]">
-            <div>
-              <div className="flex flex-col w-[184px] max-h-[70px] gap-[6px] absolute top-[0px] left-[16px]">
-                {/* Select Platform */}
-                <div className="mb-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Select Platform</label>
-                  <div className="relative mb-4">
-                    <SelectDropdown
-                      name="platform"
-                      options={[
-                        { key: "linkedin", label: "Linkedin" },
-                        { key: "X", label: "Twitter" },
-                        { key: "instagram", label: "Instagram" },
-                        // Add more platforms as needed
-                      ]}
-                      value={platform}
-                      onChange={val => {
-                        setPlatform(val);
-                        if (errors.platform) setErrors(prev => ({ ...prev, platform: undefined }));
-                      }}
-                      placeholder="Select Platform"
-                      className={`w-full rounded-md ${errors.platform ? 'border border-red-500' : ''}`}
-                    />
-                    {errors.platform && <div className="text-red-500 text-xs mt-1">{errors.platform}</div>}
-                  </div>
+            {/* <div> */}
+            <div className="flex flex-col pt-3 w-[184px] max-h-[70px] gap-[6px] absolute top-[0px] left-[16px]">
+              {/* Select Platform */}
+              <div className="mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Select Platform</label>
+                <div className="relative mb-4">
+                  <SelectDropdown
+                    name="platform"
+                    options={[
+                      { key: "linkedin", label: "Linkedin" },
+                      { key: "X", label: "Twitter" },
+                      { key: "instagram", label: "Instagram" },
+                    ]}
+                    value={platform}
+                    onChange={val => {
+                      setPlatform(val);
+                      if (errors.platform) setErrors(prev => ({ ...prev, platform: undefined }));
+                    }}
+                    placeholder="Select Platform"
+                    className={`w-full`}
+                    errors={errors}
+                  />
+                  {errors.platform && <div className="text-red-500 text-xs mt-1">{errors.platform}</div>}
                 </div>
-                {/* Select Account */}
-                <div className="mb-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Select Account</label>
-                  <div className="relative mb-4">
-                    {/*
+              </div>
+              {/* Select Account */}
+              <div className="mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Select Account</label>
+                <div className="relative mb-4">
+                  {/*
                       The following static options are used for demo purposes only.
                       The dynamic code for fetching/displaying real Instagram accounts is commented below and can be restored later.
                     */}
-                    
-                    {/* // Uncomment this block to use dynamic Instagram accounts: */}
-                    <SelectDropdown
-                      name="account"
-                      options={
-                        platform === "instagram"
-                          ? instaLoading
-                            ? [{ key: '', label: 'Loading...' }]
-                            : instaAccounts.length > 0
-                              ? [
-                                  { key: '', label: 'Select' },
-                                  ...instaAccounts.map(acc => ({
-                                    key: acc.instagram_user_id,
-                                    label: acc.username
-                                  }))
-                                ]
-                              : [{ key: '', label: 'No accounts found' }]
-                          : [{ key: '', label: 'Select' }]
-                      }
-                      value={selectedAccount}
-                      onChange={val => {
-                        setSelectedAccount(val);
-                        if (errors.selectedAccount) setErrors(prev => ({ ...prev, selectedAccount: undefined }));
-                      }}
-                      disabled={platform !== "instagram" || instaLoading}
-                      className={`w-full ${errors.selectedAccount ? 'border border-red-500' : ''}`}
-                    />
-                    {instaError && <div className="text-red-500 text-xs mt-1">{instaError}</div>}
-                    {errors.selectedAccount && <div className="text-red-500 text-xs mt-1">{errors.selectedAccount}</div>}
-                  </div>
-                </div>
-                {/* Platform Unique ID */}
-                {/* Removed this entire block for Platform Unique ID input */}
-                {/* Existing account display and remove button */}
-                <div className="flex flex-row items-center gap-[6px]  rounded-lg p-2 w-full mt-2">
-                  <div className="w-[30px] h-[30px] bg-blue-600 rounded flex items-center justify-center">
-                    <span className="text-white text-xs font-bold">in</span>
-                  </div>
-                  <div className="flex-1">
-                    <span className="font-semibold text-[14px] leading-[17px] tracking-[0] text-black flex-1">
-                      Ecomsystme.ai
-                    </span>
-                  </div>
-                  <button className="text-gray-400 hover:text-red-500">
-                    <X className="w-4 h-4" />
-                  </button>
+
+                  {/* // Uncomment this block to use dynamic Instagram accounts: */}
+                  <SelectDropdown
+                    name="selectedAccount"
+                    options={
+                      renderOptions()
+                    }
+                    value={selectedAccount}
+                    onChange={val => {
+                      setSelectedAccount(val);
+                      if (errors.selectedAccount) setErrors(prev => ({ ...prev, selectedAccount: undefined }));
+                    }}
+                    // disabled={platform !== "instagram" || accountsOptionsLoading}
+                    className={`w-full`}
+                    placeholder="Select Account"
+                    errors={errors}
+                  />
+                  {accountsError && <div className="text-red-500 text-xs mt-1">{accountsError}</div>}
+                  {errors.selectedAccount && <div className="text-red-500 text-xs mt-1">{errors.selectedAccount}</div>}
                 </div>
               </div>
+              {/* Platform Unique ID */}
+              {/* Removed this entire block for Platform Unique ID input */}
+              {/* Existing account display and remove button */}
+              <div className="flex flex-row items-center gap-[6px]  rounded-lg p-2 w-full mt-2">
+                <div className="w-[30px] h-[30px] bg-blue-600 rounded flex items-center justify-center">
+                  <span className="text-white text-xs font-bold">in</span>
+                </div>
+                <div className="flex-1">
+                  <span className="font-semibold text-[14px] leading-[17px] tracking-[0] text-black flex-1">
+                    Ecosysteme.ai
+                  </span>
+                </div>
+                <button className="text-gray-400 hover:text-red-500">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              {/* </div> */}
             </div>
 
             {/* Add Account button with border styling - positioned to match Draft buttons exactly */}
@@ -364,10 +386,10 @@ export default function CreatePost({ onClose }) {
                   setText(e.target.value);
                   if (errors.text) setErrors(prev => ({ ...prev, text: undefined }));
                 }}
-                className={`w-full h-[48px] font-normal text-[16px] leading-[18.4px] tracking-[0] text-[#5A687C] rounded-md px-4 mb-4 ${errors.text ? 'border border-red-500' : ''}`}
+                className={`w-full h-[48px] font-normal text-[16px] focus:outline-none focus:border focus:border-[#675FFF] text-[#5A687C] rounded-md px-4 mb-4 ${errors.text ? 'border border-red-500' : ''}`}
                 placeholder="Enter post text *"
                 style={{ fontWeight: 400, fontStyle: "normal", letterSpacing: 0 }}
-                ref={textInputRef} // Add ref here
+                ref={textInputRef}
               />
               {errors.text && <div className="text-red-500 text-xs mb-2">{errors.text}</div>}
 
@@ -461,13 +483,13 @@ export default function CreatePost({ onClose }) {
 
             {/* Action Buttons at the bottom */}
             <div className="flex flex-row justify-center items-center gap-[9px] border-t border-[#E1E4EA] w-full min-h-[88px] absolute bottom-0 left-0 right-0 p-[25px] box-border bg-white">
-              <button className="flex flex-row items-center justify-center gap-[10px] w-[79px] h-[38px] rounded-[7px] border-[1.5px] px-[20px] py-[7px] text-[#5A687C] bg-[#FFFFFF] font-medium" onClick={handleSaveDraft} disabled={isSaving}>
-                {isSaving ? 'Saving...' : 'Draft'}
+              <button className={`flex flex-row items-center justify-center gap-[10px] w-[79px] h-[38px] rounded-[7px] border-[1.5px] px-[20px] py-[7px] text-[#5A687C] bg-[#FFFFFF] font-medium ${isSaving?.draft ? 'cursor-not-allowed' : 'cursor-pointer'}`} onClick={handleSaveDraft} disabled={isSaving?.draft}>
+                {isSaving?.draft ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : 'Draft'}
               </button>
-              <button onClick={handlePublish} disabled={isSaving}  className="flex flex-row items-center justify-center gap-[10px] min-w-[96px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#675FFF] bg-transparent font-medium">
-                Publish
+              <button disabled={isSaving?.publish} onClick={handlePublish} className={`flex flex-row items-center justify-center gap-[10px] min-w-[96px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#675FFF] bg-transparent font-medium ${isSaving?.publish ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+                {isSaving?.publish ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : 'Publish'}
               </button>
-              <button  className="flex flex-row items-center justify-center gap-[10px] min-w-[112px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#FFFFFF] bg-[#675FFF] font-medium" onClick={() => setShowDateTimePicker(true)}>
+              <button className="flex cursor-pointer flex-row items-center justify-center gap-[10px] min-w-[112px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#FFFFFF] bg-[#675FFF] font-medium" onClick={() => setShowDateTimePicker(true)}>
                 Schedule
               </button>
             </div>
@@ -512,12 +534,13 @@ export default function CreatePost({ onClose }) {
         </div>
       </div>
       {showDateTimePicker && (
-        <DateTimePicker 
+        <DateTimePicker
           onClose={() => setShowDateTimePicker(false)}
           onSchedule={(date, time) => {
             setShowDateTimePicker(false);
             handleSchedule(date, time);
           }}
+          isSaving={isSaving?.schedule}
         />
       )}
     </div>

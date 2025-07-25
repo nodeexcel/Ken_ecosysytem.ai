@@ -142,7 +142,7 @@ function TimeSelector24({ value, onChange, onClose }) {
   );
 }
 
-export default function DateTimePicker({ onClose, onSchedule }) {
+export default function DateTimePicker({ onClose, onSchedule, isSaving }) {
   const [currentMonth, setCurrentMonth] = useState(new Date(2025, 6, 1)) // Initialize to July 2025
   const [selectedDate, setSelectedDate] = useState(new Date(2025, 6, 12)) // Initialize to July 12, 2025
   const [time, setTime] = useState("15 : 25")
@@ -239,8 +239,8 @@ export default function DateTimePicker({ onClose, onSchedule }) {
 
   const years = useMemo(() => {
     const currentYear = currentMonth.getFullYear()
-    const startYear = currentYear - 10 // Show 10 years before
-    const endYear = currentYear + 10 // Show 10 years after
+    const startYear = currentYear - 10
+    const endYear = currentYear + 10
     const yearList = []
     for (let year = startYear; year <= endYear; year++) {
       yearList.push(year)
@@ -248,25 +248,21 @@ export default function DateTimePicker({ onClose, onSchedule }) {
     return yearList
   }, [currentMonth])
 
-  // --- Date Utility Functions (moved from lib/date-utils.ts) ---
   function getDaysInMonth(year, month) {
     return new Date(year, month + 1, 0).getDate();
   }
 
   function getFirstDayOfMonth(year, month) {
-    // Returns 0 for Sunday, 1 for Monday, ..., 6 for Saturday
-    // Adjust to make Monday = 0, Sunday = 6 for calendar grid
     const day = new Date(year, month, 1).getDay();
-    return day === 0 ? 6 : day - 1; // Convert Sunday (0) to 6, Monday (1) to 0, etc.
+    return day === 0 ? 6 : day - 1;
   }
 
   function formatDate(date) {
     if (!date || isNaN(date.getTime())) {
-      return ""; // Handle invalid date
+      return "";
     }
     const options = { weekday: "short", month: "short", day: "numeric" };
     const formatted = date.toLocaleDateString("en-US", options);
-    // Add 'th', 'st', 'nd', 'rd' suffix
     const day = date.getDate();
     let suffix = "th";
     if (day === 1 || day === 21 || day === 31) suffix = "st";
@@ -281,14 +277,13 @@ export default function DateTimePicker({ onClose, onSchedule }) {
   }
 
   function getMonthName(monthIndex) {
-    const date = new Date(2000, monthIndex, 1); // Use a dummy year
+    const date = new Date(2000, monthIndex, 1);
     return date.toLocaleString("en-US", { month: "short" });
   }
-  // --- End Date Utility Functions ---
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-lg">
+      <div className="relative w-full max-w-md overflow-auto max-h-[85vh] rounded-xl bg-white p-6 shadow-lg">
         <button className="absolute cursor-pointer right-4 top-4 text-gray-400 hover:text-gray-600" aria-label="Close" onClick={onClose}>
           <X className="h-5 w-5" />
         </button>
@@ -366,7 +361,7 @@ export default function DateTimePicker({ onClose, onSchedule }) {
             return (
               <div
                 key={index}
-                className={`h-10 w-10 cursor-pointer rounded-lg transition-colors 
+                className={`h-10 w-10 cursor-pointer rounded-lg transition-colors
                 ${dayInfo.isOtherMonth ? "text-gray-400" : "text-gray-800"}
                 ${isToday ? "bg-v0-purple text-white font-semibold" : ""}
                 ${isSelected && !isToday ? "bg-[#675FFF] text-white" : ""}
@@ -415,7 +410,7 @@ export default function DateTimePicker({ onClose, onSchedule }) {
             Cancel
           </button>
           <button
-            className=" w-[225px] cursor-pointer bg-[#675FFF] rounded-md  px-5 py-2 text-base font-medium text-white border border-[#675FFF] hover:bg-v0-purple/90 focus:outline-none focus:ring-2 focus:ring-v0-purple"
+            className={`w-[225px] ${isSaving ? 'cursor-not-allowed' : 'cursor-pointer'} bg-[#675FFF] rounded-md  px-5 py-2 text-base font-medium text-white border border-[#675FFF] hover:bg-v0-purple/90 focus:outline-none focus:ring-2 focus:ring-v0-purple`}
             onClick={() => {
               const dateUTC = UtcFormat(selectedDate);
               // Parse time string and format as HH:mm in UTC
@@ -426,8 +421,9 @@ export default function DateTimePicker({ onClose, onSchedule }) {
               if (onSchedule) onSchedule(dateUTC, timeUTC);
               if (onClose) onClose();
             }}
+            disabled={isSaving}
           >
-            Schedule
+            {isSaving ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : 'Schedule'}
           </button>
         </div>
       </div>
