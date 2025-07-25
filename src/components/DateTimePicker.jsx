@@ -105,6 +105,8 @@ function TimeSelector24({ value, onChange, onClose }) {
                   onClick={() => {
                     setSelectedHour(hour);
                     scrollToItem(hoursRef, hours, hour, itemHeight, true);
+                    onChange(`${hour}:${selectedMinute}`);
+                    if (onClose) onClose();
                   }}
                 >
                   {hour}
@@ -125,6 +127,8 @@ function TimeSelector24({ value, onChange, onClose }) {
                   onClick={() => {
                     setSelectedMinute(minute);
                     scrollToItem(minutesRef, minutes, minute, itemHeight, true);
+                    onChange(`${selectedHour}:${minute}`);
+                    if (onClose) onClose();
                   }}
                 >
                   {minute}
@@ -134,13 +138,6 @@ function TimeSelector24({ value, onChange, onClose }) {
           </div>
         </div>
       </div>
-      <button
-        className="mt-3 px-4 py-1 bg-[#675FFF] text-white rounded hover:bg-[#5648ff]"
-        onClick={() => {
-          onChange(`${selectedHour}:${selectedMinute}`);
-          if (onClose) onClose();
-        }}
-      >Set Time</button>
     </div>
   );
 }
@@ -400,7 +397,7 @@ export default function DateTimePicker({ onClose, onSchedule }) {
               onClick={() => setShowTimeDropdown(true)}
             />
             {showTimeDropdown && (
-              <div className="absolute left-0 top-full mt-2 w-full z-50">
+              <div className="absolute left-0 bottom-full mb-2 w-full z-50">
                 <TimeSelector24
                   value={time}
                   onChange={(val) => setTime(val)}
