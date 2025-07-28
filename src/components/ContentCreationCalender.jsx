@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import Calendar from './Calendar'
 import { useTranslation } from "react-i18next";
 import CreatePost from './CreatePost';
+import CalendarPost from './CalendarPost';
 
 function ContentCreationCalender() {
   const { t } = useTranslation();
@@ -17,7 +17,7 @@ function ContentCreationCalender() {
       {showCreatePost ? (
         <CreatePost onClose={() => setShowCreatePost(false)} />
       ) : (
-        <Calendar status={false}/>
+        <CalendarPost status={false}/>
       )}
     </div>
   )

@@ -847,6 +847,7 @@ const frenchTranslation = {
     language: "Langue",
     help_center: "Centre d’aide",
     support: "Support",
+    ecosystem_ai: "Recommander Ecosysteme.ai",
     please_complete_profile: "Veuillez d’abord compléter votre profil",
     lifetime_commission: "50 % de commission à vie !",
     get_it_now: "Obtenez-le maintenant",

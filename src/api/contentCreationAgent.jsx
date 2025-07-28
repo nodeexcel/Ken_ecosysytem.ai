@@ -194,3 +194,20 @@ export const scheduleContent = async (payload) => {
         return error;
     }
 };
+
+
+export const getContentCreationCalender = async () => {
+    try {
+        const response = await agentInstance.get(`/get-schduled-content`,
+            {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};

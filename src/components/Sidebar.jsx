@@ -272,7 +272,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                             {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(4) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.support")}</p>}
                         </div>
                         {!isOpen && <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[103px]' : 'md:left-[107px]'} left-[102px] bg-white shadow-md rounded p-2 z-[9999]`}>
-                            <p className='font-[400]'>{t("sidebar.support")}</p>
+                            <p className='font-[400]'>{t("sidebar.ecosystem_ai")}</p>
                         </div>}
                     </div>
                     {/* <div className='text-xl flex justify-center py-4' onClick={() => handleSelect(sidebarItems[5].id)}>
@@ -332,7 +332,10 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                             </div>
                             <button
                                 className="bg-[#675FFF] cursor-pointer w-full text-white px-5 py-2 font-[500] test-[16px]  rounded-lg"
-                                onClick={() => setCommissionStatus(false)}
+                                onClick={() => {
+                                    setCommissionStatus(false);
+                                    window.open("https://www.ecosysteme.ai/partner", "_blank");
+                                }}
                             >
                                 {t("sidebar.get_it_now")}
                             </button>

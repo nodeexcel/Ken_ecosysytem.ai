@@ -44,6 +44,8 @@ const AgentChatBox = ({ listedProps }) => {
     const moreActionsRef = useRef()
     const userDetails = useSelector((state) => state.profile);
     const { t } = useTranslation();
+    const [likedMessages, setLikedMessages] = useState({});
+    const [dislikedMessages, setDislikedMessages] = useState({});
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -307,6 +309,32 @@ const AgentChatBox = ({ listedProps }) => {
 
     if (loading) return <p className='flex justify-center items-center h-[100vh]'><span className='loader' /></p>
 
+    const handleCopyMessage = (content) => {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(content);
+        }
+    };
+
+    const handleLikeMessage = (messageId) => {
+        setLikedMessages((prev) => ({ ...prev, [messageId]: !prev[messageId] }));
+        setDislikedMessages((prev) => ({ ...prev, [messageId]: false }));
+    };
+
+    const handleDislikeMessage = (messageId) => {
+        setDislikedMessages((prev) => ({ ...prev, [messageId]: !prev[messageId] }));
+        setLikedMessages((prev) => ({ ...prev, [messageId]: false }));
+    };
+
+    const handleSpeakMessage = (content) => {
+        if ('speechSynthesis' in window) {
+            const utterance = new window.SpeechSynthesisUtterance(content);
+            window.speechSynthesis.speak(utterance);
+        }
+    };
+
+    const handleResendMessage = (content) => {
+        setInput(content);
+    };
 
 
     return (
@@ -426,11 +454,21 @@ const AgentChatBox = ({ listedProps }) => {
                                                         />
                                                     </div>
                                                     {message.id !== "typing" && !message.isUser && <div className="my-1 flex items-center gap-1">
-                                                        <Duplicate />
-                                                        <LikeIcon />
-                                                        <DislikeIcon />
-                                                        <SpeakerIcon />
-                                                        <SendIcon />
+                                                        <button title="Copy message" onClick={() => handleCopyMessage(message.content)} className="hover:bg-gray-200 p-1 rounded">
+                                                            <Duplicate />
+                                                        </button>
+                                                        <button title="Like" onClick={() => handleLikeMessage(message.id)} className={`hover:bg-gray-200 p-1 rounded ${likedMessages[message.id] ? 'text-green-600' : ''}`}>
+                                                            <LikeIcon />
+                                                        </button>
+                                                        <button title="Dislike" onClick={() => handleDislikeMessage(message.id)} className={`hover:bg-gray-200 p-1 rounded ${dislikedMessages[message.id] ? 'text-red-600' : ''}`}>
+                                                            <DislikeIcon />
+                                                        </button>
+                                                        <button title="Speak" onClick={() => handleSpeakMessage(message.content)} className="hover:bg-gray-200 p-1 rounded">
+                                                            <SpeakerIcon />
+                                                        </button>
+                                                        <button title="Resend" onClick={() => handleResendMessage(message.content)} className="hover:bg-gray-200 p-1 rounded">
+                                                            <SendIcon />
+                                                        </button>
                                                     </div>}
                                                 </>}
                                             </>

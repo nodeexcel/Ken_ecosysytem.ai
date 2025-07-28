@@ -1,4 +1,4 @@
-import { X, ChevronDown, Hash, Settings, Edit3, Camera, Link, Trash2, UploadIcon } from "lucide-react"
+import { X, ChevronDown, Hash, Settings, Edit3, Camera, Link, Trash2, UploadIcon, Tag, CircleX, StarsIcon, Italic, Bold, Smile, SquarePen, Image, Share2 } from "lucide-react"
 import inkartinkLogo from '../assets/svg/inkartink.svg';
 import { useTranslation } from "react-i18next";
 import DateTimePicker from "./DateTimePicker";
@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { publishContent, saveDraftContent, scheduleContent } from '../api/contentCreationAgent';
 import { getInstaAccounts, getLinkedInAccounts } from '../api/brainai';
 import { SelectDropdown } from "./Dropdown";
+import { Duplicate } from "../icons/icons";
 
 export default function CreatePost({ onClose }) {
   const { t } = useTranslation();
@@ -242,21 +243,13 @@ export default function CreatePost({ onClose }) {
   const handleCameraClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
-  const handleLinkClick = () => {
-    const url = window.prompt('Enter URL to insert:');
-    if (url) {
-      // Insert at cursor or append
-      setText(prev => prev + ' ' + url);
-    }
-  };
+  
   const handleTrashClick = () => {
     setText("");
     setDocument(null);
     setFileName("");
   };
-  const handleSettingsClick = () => {
-    window.alert('Settings clicked! (Implement settings modal here)');
-  };
+  
   return (
     <div className="flex flex-col gap-8">
       {/* Header */}
@@ -330,8 +323,8 @@ export default function CreatePost({ onClose }) {
               {/* Removed this entire block for Platform Unique ID input */}
               {/* Existing account display and remove button */}
               <div className="flex flex-row items-center gap-[6px]  rounded-lg p-2 w-full mt-2">
-                <div className="w-[30px] h-[30px] bg-blue-600 rounded flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">in</span>
+                <div className="w-[30px] h-[30px] bg-[#0277B5] rounded flex items-center justify-center">
+                  <span className="text-white text-2xl font-bold">in</span>
                 </div>
                 <div className="flex-1">
                   <span className="font-semibold text-[14px] leading-[17px] tracking-[0] text-black flex-1">
@@ -358,18 +351,21 @@ export default function CreatePost({ onClose }) {
             {/* Post Header */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">in</span>
+                <div className="flex flex-row items-center gap-2 bg-[#F0EFFF] p-2 rounded-lg">
+                <div className="w-8 h-8 bg-[#0277B5] rounded flex items-center justify-end flex-col">
+                  <span className="text-white text-2xl font-bold">in</span>
                 </div>
-                <span className="text-sm font-medium text-gray-900">Test Post</span>
+                </div>
+              
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex flex-row items-center gap-[6px] w-[178px] h-[27px]">
                   <button className="flex flex-row items-center gap-[4px] w-[103px] h-[27px] rounded-[4px] border border-[#E1E4EA] px-[10px] py-[6px] text-xs text-gray-600 hover:text-gray-800 bg-white">
-                    <Hash className="w-3 h-3" />
+                  <Tag className="w-3 h-3" />
                     Add Labels
                   </button>
                   <button className="flex flex-row items-center gap-[4px] w-[69px] h-[27px] rounded-[4px] border border-[#E1E4EA] px-[10px] py-[6px] text-xs text-gray-600 hover:text-gray-800 bg-white">
+                  <CircleX className="w-3 h-3" />
                     Clear
                   </button>
                 </div>
@@ -386,8 +382,8 @@ export default function CreatePost({ onClose }) {
                   setText(e.target.value);
                   if (errors.text) setErrors(prev => ({ ...prev, text: undefined }));
                 }}
-                className={`w-full h-[48px] font-normal text-[16px] focus:outline-none focus:border focus:border-[#675FFF] text-[#5A687C] rounded-md px-4 mb-4 ${errors.text ? 'border border-red-500' : ''}`}
-                placeholder="Enter post text *"
+                className={`w-full h-[48px] font-normal text-[16px] focus:outline-none focus:border focus:border-[#675FFF] text-[#5A687C] rounded-md  mb-4 ${errors.text ? 'border border-red-500' : ''}`}
+                placeholder="Test Post"
                 style={{ fontWeight: 400, fontStyle: "normal", letterSpacing: 0 }}
                 ref={textInputRef}
               />
@@ -406,7 +402,7 @@ export default function CreatePost({ onClose }) {
                     className="flex items-center gap-[4px] rounded-[4px] border border-[#E1E4EA] px-[10px] py-[6px] text-xs text-gray-600 hover:text-gray-800 bg-white"
                     style={{ width: "118px", height: "27px" }}
                   >
-                    <Settings className="w-3 h-3" />
+                    <StarsIcon className="w-3 h-3" />
                     Ai Assistance
                   </button>
                 </div>
@@ -415,13 +411,13 @@ export default function CreatePost({ onClose }) {
                     <span className="text-[#5A687C] font-inter font-semibold text-[12px]">9</span>
                   </button>
                   <button className="flex items-center justify-center w-[27px] h-[27px] rounded-[4px] border border-[#E1E4EA] bg-white">
-                    <span className="text-[#5A687C] font-inter font-semibold text-[12px]">B</span>
+                    <span className="text-[#5A687C] font-inter font-semibold text-[12px]"><Bold /></span>
                   </button>
                   <button className="flex items-center justify-center w-[27px] h-[27px] rounded-[4px] border border-[#E1E4EA] bg-white">
-                    <span className="text-[#5A687C] font-inter font-semibold text-[12px]">I</span>
+                    <span className="text-[#5A687C] font-inter font-semibold text-[12px]"><Italic /></span>
                   </button>
                   <button className="flex items-center justify-center w-[27px] h-[27px] rounded-[4px] border border-[#E1E4EA] bg-white">
-                    <span className="text-[#5A687C] font-inter font-semibold text-[12px]">☺︎</span>
+                    <span className="text-[#5A687C] font-inter font-semibold text-[12px]"><Smile /></span>
                   </button>
                 </div>
               </div>
@@ -437,7 +433,7 @@ export default function CreatePost({ onClose }) {
                   ref={fileInputRef}
                 />
                 <div
-                  className={`border-2 border-dashed ${dragActive ? 'border-blue-400 bg-blue-100' : errors.document ? 'border-red-500 bg-red-50' : 'border-blue-200 bg-blue-50'} rounded-lg p-6 text-center hover:border-blue-300 cursor-pointer w-full`}
+                  className={`border-2 border-dashed ${dragActive ? 'border-[#335CFF80] bg-[#F5F7FF]' : errors.document ? 'border-red-500 bg-red-50' : 'border-[#335CFF80] bg-[#F5F7FF]'} rounded-lg p-6 text-center hover:border-[#335CFF80] cursor-pointer w-full`}
                   onClick={handleUploadAreaClick}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
@@ -445,7 +441,7 @@ export default function CreatePost({ onClose }) {
                   role="button"
                   tabIndex={0}
                 >
-                  <UploadIcon className="w-8 h-8 text-blue-400 mx-auto mb-2" />
+                  <UploadIcon className="w-8 h-8 text-[#675FFF] mx-auto mb-2" />
                   <p className="text-sm text-gray-600 font-medium">Upload from your computer</p>
                   <p className="text-xs text-gray-500 mt-1">or drag and drop</p>
                 </div>
@@ -465,19 +461,22 @@ export default function CreatePost({ onClose }) {
             {/* Bottom Toolbar */}
             <div className="flex flex-row items-center" style={{ width: "140px", height: "20px", gap: "4px" }}>
               <button className="p-2 cursor-pointer rounded" onClick={handleEditClick}>
-                <Edit3 className="w-4 h-4" />
+                <SquarePen  className="w-4 h-4" />
               </button>
               <button className="p-2 cursor-pointer rounded" onClick={handleCameraClick}>
-                <Camera className="w-4 h-4" />
+                <Image className="w-4 h-4" />
               </button>
-              <button className="p-2 cursor-pointer rounded" onClick={handleLinkClick}>
-                <Link className="w-4 h-4" />
+              <button className="p-2 cursor-pointer rounded">
+                <Share2 className="w-4 h-4" />
               </button>
               <button className="p-2 cursor-pointer rounded" onClick={handleTrashClick}>
                 <Trash2 className="w-4 h-4" />
               </button>
-              <button className="p-2 cursor-pointer rounded" onClick={handleSettingsClick}>
-                <Settings className="w-4 h-4" />
+              <button className="p-2 cursor-pointer rounded">
+                <Duplicate className="w-4 h-4" />
+              </button>
+              <button className="p-2 cursor-pointer rounded">
+                <StarsIcon className="w-4 h-4" />
               </button>
             </div>
 

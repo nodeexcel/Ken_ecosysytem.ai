@@ -54,9 +54,9 @@ function CreationStudio() {
     }, [contentId]);
 
     const postTypeOptions = [{ label: `${t("constance.generic")}`, key: "generic" }, { label: `${t("constance.meme")}`, key: "meme" }, { label: `${t("constance.quoted")}`, key: "quotes" }]
-    const mediaTypeOptions = [{ label: `${t("constance.single_image")}`, key: "single_image" }, { label: `${t("constance.carousel")}`, key: "carousel" }, { label: `${t("constance.video")}`, key: "video" }]
+    const mediaTypeOptions = [{ label: `${t("constance.single_image")}`, key: "single_image" }, { label: `${t("constance.carousel")}`, key: "carousel" }, { label: `${t("constance.video")}`, key: "video" }, { label: `${t("constance.reel")}`, key: "reel" }]
     const languageOptions = [{ label: `${t("constance.eng")}`, key: "english" }, { label: `${t("constance.fr")}`, key: "french" }]
-    const videoDurationOptions = [{ label: t("constance.short"), key: "short" }, { label: t("constance.long"), key: "long" }]
+    // Removed videoDurationOptions as we're changing to free text input
 
 
     const validateForm = () => {
@@ -208,21 +208,13 @@ function CreationStudio() {
                         <label className="text-sm font-medium text-[#1e1e1e]">
                             {t("constance.video_duration")}
                         </label>
-                        <SelectDropdown
+                        <input
+                            type="text"
                             name="video_duration"
-                            options={videoDurationOptions}
-                            value={formData?.video_duration}
-                            onChange={(updated) => {
-                                setFormData((prev) => ({
-                                    ...prev, video_duration: updated
-                                }))
-                                setErrors((prev) => ({
-                                    ...prev, video_duration: ""
-                                }))
-                            }}
-                            placeholder={t("select")}
-                            className=""
-                            errors={errors}
+                            value={formData?.video_duration || ""}
+                            onChange={handleChange}
+                            className={`w-full bg-white p-2 rounded-lg border ${errors.video_duration ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
+                            placeholder={t("constance.video_duration_placeholder") || "Enter video duration (e.g., 30 seconds, 2 minutes)"}
                         />
                         {errors.video_duration && <p className="text-red-500 text-sm mt-1">{errors.video_duration}</p>}
                     </div>}
@@ -282,7 +274,7 @@ function CreationStudio() {
                             <span className="loader" />
                         </div>
                     ) : (
-                        t("continue")
+                        t("brain_ai.create")
                     )}</button>
                     <button className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
                 </div>
