@@ -36,6 +36,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         platform_unique_id: '',
         calendar_id: '',
         // more_info_setter: '',
+        silent_hours: [{ start: '', end: '' }],
     })
 
     const { t } = useTranslation();
@@ -1519,6 +1520,51 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     </div>
                                 </div>
 
+                                {/* Silent Hours Section (single, non-removable time range) */}
+                                <div className="flex flex-col gap-1.5 flex-1 mt-4">
+                                    <label className="text-sm font-medium text-[#1e1e1e]">
+                                        Silent Hours
+                                    </label>
+                                    <div className="flex flex-row gap-4 w-full items-center">
+                                        {/* Start Time */}
+                                        <div className="relative flex-1" style={{ maxWidth: '248.5px', minWidth: '248.5px' }}>
+                                            <input
+                                                type="time"
+                                                value={formData.silent_hours && formData.silent_hours[0] ? formData.silent_hours[0].start : ''}
+                                                onChange={e => {
+                                                    const updated = [{
+                                                        start: e.target.value,
+                                                        end: formData.silent_hours && formData.silent_hours[0] ? formData.silent_hours[0].end : ''
+                                                    }];
+                                                    setFormData(prev => ({ ...prev, silent_hours: updated }));
+                                                }}
+                                                placeholder="Start"
+                                                className="w-full p-2 pl-4 rounded-xl border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] text-base text-[#5A687C] bg-white h-11"
+                                                style={{ width: '248.5px' }}
+                                            />
+                                            
+                                        </div>
+                                        {/* End Time */}
+                                        <div className="relative flex-1" style={{ maxWidth: '248.5px', minWidth: '248.5px' }}>
+                                            <input
+                                                type="time"
+                                                value={formData.silent_hours && formData.silent_hours[0] ? formData.silent_hours[0].end : ''}
+                                                onChange={e => {
+                                                    const updated = [{
+                                                        start: formData.silent_hours && formData.silent_hours[0] ? formData.silent_hours[0].start : '',
+                                                        end: e.target.value
+                                                    }];
+                                                    setFormData(prev => ({ ...prev, silent_hours: updated }));
+                                                }}
+                                                placeholder="End"
+                                                className="w-full p-2 pl-4 rounded-xl border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] text-base text-[#5A687C] bg-white h-11"
+                                                style={{ width: '248.5px' }}
+                                            />
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>}
                         </div>
                         {errors.success && <p className="text-green-500 text-sm mt-1">{errors.success}</p>}
@@ -1526,7 +1572,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                         {step === 3 && <div className="flex items-center gap-2 py-3">
                             <button disabled={loading} onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()} className="bg-[#675FFF] cursor-pointer w-[162px] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
-                                {loading ? <div className="flex cursor-pointer items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : updateAgentStatus ? `${t("appointment.update_agent")}` : `${t("appointment.create_agent")}`}
+                                {loading ? <div className="flex cursor-pointer items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : updateAgentStatus ? `${t("appointment.update_agent")}` : `Confirm Agent`}
                             </button>
                             <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-[7px] w-[162px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
                         </div>}

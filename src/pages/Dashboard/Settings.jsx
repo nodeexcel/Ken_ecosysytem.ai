@@ -18,6 +18,7 @@ import { SelectDropdown } from "../../components/Dropdown";
 import { FaChevronDown } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { BsThreeDots } from "react-icons/bs";
+import default_avatar from '../../assets/images/default_avatar.png';
 
 
 // User profile data
@@ -593,41 +594,43 @@ const SettingsPage = () => {
                           ))}
                         </select> */}
                       </td>
-                      <td className="text-right bg-[#FAFBFD]">
-                        <button
-                          onClick={() => handleDropdownClick(index)}
-                          className="text-gray-500 cursor-pointer hover:text-gray-700"
-                        >
-                          <EllipsisVertical />
-                        </button>
-                        {activeDropdown === index && (
-                          <div className="absolute right-6 px-2  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
-                            <div className="py-1">
-                              <button
-                                className="block group w-full cursor-pointer text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
-                                onClick={() => {
-                                  // Handle edit action
-                                  setActiveDropdown(null);
-                                }}
-                              >
-                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span> {t("edit")}</span> </div>
-                              </button>
-                              <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                              <div className="py-2">
+                      {userDetails?.user?.role === 'Admin' && (
+                        <td className="text-right bg-[#FAFBFD]">
+                          <button
+                            onClick={() => handleDropdownClick(index)}
+                            className="text-gray-500 cursor-pointer hover:text-gray-700"
+                          >
+                            <EllipsisVertical />
+                          </button>
+                          {activeDropdown === index && (
+                            <div className="absolute right-6 px-2  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                              <div className="py-1">
                                 <button
-                                  className="block w-full cursor-pointer text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
+                                  className="block group w-full cursor-pointer text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
                                   onClick={() => {
-                                    // Handle delete action
+                                    // Handle edit action
                                     setActiveDropdown(null);
                                   }}
                                 >
-                                  <div className="flex items-center gap-2">{<Delete />} <span> {t("delete")}</span> </div>
+                                  <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span> {t("edit")}</span> </div>
                                 </button>
+                                <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                                <div className="py-2">
+                                  <button
+                                    className="block w-full cursor-pointer text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
+                                    onClick={() => {
+                                      // Handle delete action
+                                      setActiveDropdown(null);
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-2">{<Delete />} <span> {t("delete")}</span> </div>
+                                  </button>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        )}
-                      </td>
+                          )}
+                        </td>
+                      )}
                     </tr>
                   )) : <tr className='h-34'><td></td><td></td><td>{t("no_data")}</td></tr>}</>}
                 </tbody>
@@ -757,7 +760,11 @@ const SettingsPage = () => {
                   <div className="relative flex">
                     <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden">
                       <img
-                        src={profileFormData.imagePath || profileFormData.image || profileData.avatar}
+                        src={
+                          profileFormData.imagePath ||
+                          profileFormData.image ||
+                          default_avatar
+                        }
                         alt="Profile"
                         className="w-full h-full object-cover"
                       />

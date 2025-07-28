@@ -147,3 +147,67 @@ export const YoutubePostUpdate = async (post_id, content) => {
         return error;
     }
 };
+
+export const saveDraftContent = async (payload) => {
+    try {
+        const response = await agentInstance.post(`/schedule-content/draft`, payload, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            });
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+
+export const publishContent = async (payload) => {
+    try {
+        const response = await agentInstance.post(`/schedule-content/publish`, payload,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+
+
+export const scheduleContent = async (payload) => {
+    try {
+        const response = await agentInstance.post(`/schedule-content/scheduled`, payload,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+
+
+export const getContentCreationCalender = async () => {
+    try {
+        const response = await agentInstance.get(`/get-schduled-content`,
+            {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};

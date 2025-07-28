@@ -357,7 +357,7 @@ const englishTranslation = {
     recently_rate: "Response Rate",
     positive_rate: "Positive Rate",
     refresh: "Refresh",
-    ok: "ok",
+    ok: "Ok",
     no_user_found: "No users found",
     search: "Search",
 
@@ -839,6 +839,7 @@ const englishTranslation = {
     language: "Language",
     help_center: "Help center",
     support: "Support",
+    ecosystem_ai: "Recommend Ecosysteme.ai",
     please_complete_profile: "Please complete your profile first",
     lifetime_commission: "50% lifetime commission!",
     get_it_now: " Get It Now"
@@ -935,7 +936,7 @@ const englishTranslation = {
     initial_message: "Unable to generate a balance sheet: The uploaded document is not a bank statement; it is an eBook or informational guide related to health and wellness. No financial data available for extraction. Please upload an actual bank statement for accurate balance sheet creation",
     generate: "Generate",
     previous_generation: "Previous Generation",
-    generations_appear: "New Generations Appears Here",
+    generations_appear: "New Generations Appear Here",
     interview_planner: {
       heading: "Interview Planner",
       description: "Plan an efficient interview for a potential candidate.",

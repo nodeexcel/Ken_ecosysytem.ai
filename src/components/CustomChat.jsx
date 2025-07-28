@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { formatTimeAgo } from "../utils/TimeFormat";
 import { SelectDropdown } from "./Dropdown";
 import { useTranslation } from "react-i18next";
+import { useCallback } from "react";
 
 
 const CustomChat = ({ listedProps }) => {
@@ -25,6 +26,17 @@ const CustomChat = ({ listedProps }) => {
     const [input, setInput] = useState("")
     const [editingMessageId, setEditingMessageId] = useState(null);
     const [editContent, setEditContent] = useState("");
+    const [copiedMessageId, setCopiedMessageId] = useState(null);
+
+    const handleCopy = useCallback(async (message) => {
+        try {
+            await navigator.clipboard.writeText(message.content);
+            setCopiedMessageId(message.id);
+            setTimeout(() => setCopiedMessageId(null), 1500);
+        } catch (err) {
+            // Optionally handle error
+        }
+    }, []);
 
     const socketRef = useRef(null);
     const socket2Ref = useRef(null);
@@ -313,7 +325,7 @@ const CustomChat = ({ listedProps }) => {
                                     value={formData?.custom_instructions}
                                     rows={4}
                                     className={`w-full bg-white p-2 rounded-lg border  ${error?.custom_instructions ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                    placeholder={form.label_2}
+                                    placeholder={form.placeholder_2}
                                 />
                                 {error?.custom_instructions && <p className="text-red-500 text-sm mt-1">{error?.custom_instructions}</p>}
                             </div>
@@ -391,7 +403,14 @@ const CustomChat = ({ listedProps }) => {
                                                         {message.id !== "typing" && !message.isUser && (
                                                             <div className="my-1 flex items-center gap-2">
                                                                 <StarsIcon />
-                                                                <Duplicate />
+                                                                <div className="relative">
+                                                                    <span onClick={() => handleCopy(message)} className="cursor-pointer">
+                                                                        <Duplicate />
+                                                                    </span>
+                                                                    {copiedMessageId === message.id && (
+                                                                        <span className="absolute left-1/2 -translate-x-1/2 top-7 text-xs text-[#675FFF] z-10 whitespace-nowrap">Copied!</span>
+                                                                    )}
+                                                                </div>
                                                                 <div onClick={() => handleMessageEdit(message)}>
                                                                 <Edit />
                                                                 </div>
