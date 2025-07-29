@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { X } from "lucide-react"
 import { GoDotFill } from "react-icons/go"
 import { v4 as uuidv4 } from 'uuid';
-import { BulbIcon, Delete, DislikeIcon, Duplicate, Edit, EditIcon, ImageChatIcon, LikeIcon, MicChatIcon, PaperClipChatIcon, SearchChatIcon, SearchIcon, SendIcon, SpeakerIcon, ThreeDots, WebSearchChatIcon } from "../icons/icons";
+import { BulbIcon, Delete, DislikeIcon, Duplicate, Edit, EditIcon, EmojiIcon, ImageChatIcon, LikeIcon, MicChatIcon, PaperClipChatIcon, SearchChatIcon, SearchIcon, SendIcon, SpeakerIcon, ThreeDots, WebSearchChatIcon } from "../icons/icons";
 import { useSelector } from "react-redux";
 import { formatTimeAgo } from "../utils/TimeFormat";
 import { useTranslation } from "react-i18next";
@@ -46,6 +46,7 @@ const AgentChatBox = ({ listedProps }) => {
     const { t } = useTranslation();
     const [likedMessages, setLikedMessages] = useState({});
     const [dislikedMessages, setDislikedMessages] = useState({});
+    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -63,6 +64,16 @@ const AgentChatBox = ({ listedProps }) => {
         setName(value)
         setErrors((prev) => ({ ...prev, [name]: "" }))
     }
+
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const filteredChatList = chatList?.filter((conversation) => {
+        const searchTerm = searchQuery.toLowerCase();
+        const conversationName = (conversation.name || t("account_chat")).toLowerCase();
+        return conversationName.includes(searchTerm);
+    });
 
     const sendToSocket = () => {
         console.log(WebSocket.OPEN, WebSocket.CONNECTING)
@@ -303,8 +314,8 @@ const AgentChatBox = ({ listedProps }) => {
     { label: staticSuggestions[2].label, icon: <SearchChatIcon />, key: staticSuggestions[2].key }
     ]
 
-    const searchIcons = [{ key: "image", icon: <ImageChatIcon /> }, { key: "pin", icon: <PaperClipChatIcon /> },
-    { key: "mic", icon: <MicChatIcon /> }, { key: "web_search", icon: <WebSearchChatIcon /> }
+    const searchIcons = [{ key: "emoji", icon: <EmojiIcon /> },{ key: "image", icon: <ImageChatIcon /> }, { key: "pin", icon: <PaperClipChatIcon /> },
+    { key: "mic", icon: <MicChatIcon /> }
     ]
 
     if (loading) return <p className='flex justify-center items-center h-[100vh]'><span className='loader' /></p>
@@ -349,7 +360,13 @@ const AgentChatBox = ({ listedProps }) => {
                                 <div className="absolute left-3 top-[25%]">
                                     <SearchIcon />
                                 </div>
-                                <input type="text" placeholder={t("seo.search_chat_placeholder")} className="w-full text-[#5A687C] pl-9 pr-3 py-[6px] text-sm border border-[#E1E4EA] bg-white focus:outline-none focus:border-[#675FFF] rounded-md" />
+                                <input 
+                                    type="text" 
+                                    placeholder={t("seo.search_chat_placeholder")} 
+                                    value={searchQuery}
+                                    onChange={handleSearchChange}
+                                    className="w-full text-[#5A687C] pl-9 pr-3 py-[6px] text-sm border border-[#E1E4EA] bg-white focus:outline-none focus:border-[#675FFF] rounded-md" 
+                                />
                             </div>
                         </div>
 
@@ -361,7 +378,7 @@ const AgentChatBox = ({ listedProps }) => {
                             </div>
                             <hr style={{ color: "#E1E4EA" }} />
                             <div ref={moreActionsRef} className="px-4 py-3">
-                                {loadingChatsList ? <div className="flex justify-center p-4 items-center w-full"><span className="loader" /> </div> : chatList?.length > 0 ? chatList.map((conversation, index) => (
+                                {loadingChatsList ? <div className="flex justify-center p-4 items-center w-full"><span className="loader" /> </div> : filteredChatList?.length > 0 ? filteredChatList.map((conversation, index) => (
                                     <div key={index} className="flex relative items-center">
                                         <div
 
@@ -410,7 +427,7 @@ const AgentChatBox = ({ listedProps }) => {
                                             )}
                                         </div>
                                     </div>
-                                )) : <p className="text-[#5A687C] font-[400] text-[12px] text-center pt-8">{t("tara.no_chat_history")}</p>}
+                                )) : searchQuery ? <p className="text-[#5A687C] font-[400] text-[12px] text-center pt-8">{t("tara.no_chat_history")}</p> : <p className="text-[#5A687C] font-[400] text-[12px] text-center pt-8">{t("tara.no_chat_history")}</p>}
                             </div>
                         </div>
                     </div>
@@ -430,8 +447,10 @@ const AgentChatBox = ({ listedProps }) => {
                                                                 <img src={agentLogo} alt={agentName} className="object-fit" />
                                                             </div>
                                                             <p className="text-[12px] font-[600] text-[#5A687C]">{agentName}</p>
-                                                            <span className="text-[12px] text-[#5A687C] flex items-center gap-1"><GoDotFill color="#E1E4EA" />
-                                                                {message.time}</span>
+                                                            <span className="text-[12px] text-[#5A687C] flex items-center gap-1">
+                                                                <GoDotFill color="#E1E4EA" className="flex-shrink-0" />
+                                                                {message.time}
+                                                            </span>
                                                         </div>
                                                     )}
 

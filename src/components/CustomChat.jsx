@@ -27,6 +27,7 @@ const CustomChat = ({ listedProps }) => {
     const [editingMessageId, setEditingMessageId] = useState(null);
     const [editContent, setEditContent] = useState("");
     const [copiedMessageId, setCopiedMessageId] = useState(null);
+    const [favoriteMessages, setFavoriteMessages] = useState({});
 
     const handleCopy = useCallback(async (message) => {
         try {
@@ -402,7 +403,9 @@ const CustomChat = ({ listedProps }) => {
 
                                                         {message.id !== "typing" && !message.isUser && (
                                                             <div className="my-1 flex items-center gap-2">
-                                                                <StarsIcon />
+                                                                <span onClick={() => setFavoriteMessages(prev => ({ ...prev, [message.id]: !prev[message.id] }))} className="cursor-pointer">
+                                                                    <StarsIcon filled={!!favoriteMessages[message.id]} color={favoriteMessages[message.id] ? '#675FFF' : '#5A687C'} />
+                                                                </span>
                                                                 <div className="relative">
                                                                     <span onClick={() => handleCopy(message)} className="cursor-pointer">
                                                                         <Duplicate />
