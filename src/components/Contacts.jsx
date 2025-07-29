@@ -675,7 +675,7 @@ const ContactsPage = () => {
           <div className="flex gap-2.5 items-center">
             {activeTab !== "lists" && <button className="flex items-center gap-2.5 cursor-pointer px-5 py-[7px] border-[1.5px] border-[#E1E4EA] rounded-[7px] bg-white">
               <Download color="#5A687C" />
-              <span className="font-[500] text-[16px] leading-6 text-[#5A687C]">
+              <span className="font-[500] text-[16px] leading-6 text-[#5A687C] cursor-pointer">
                 {t("brain_ai.export")}
               </span>
             </button>}
@@ -685,7 +685,7 @@ const ContactsPage = () => {
               <span className="font-[500] text-[16px] leading-6 text-[#675FFF]">{t("brain_ai.import")}</span>
             </button>}
 
-            <button onClick={activeTab === "lists" ? () => setOpen(true) : () => setAddContactModal(true)} className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
+            <button onClick={activeTab === "lists" ? () => setOpen(true) : () => setAddContactModal(true)} className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white hover:bg-[#5f58e8]">
               <span className="font-medium text-base leading-6">
                 {activeTab === `${t("brain_ai.lists")}` ? `${t("brain_ai.create_list")}` : `${t("brain_ai.add_contact")}`}
               </span>
@@ -1224,7 +1224,7 @@ const ContactsPage = () => {
             </button>
 
             <h2 className="text-[#1E1E1E] font-[600] text-[20px] mb-2">{t("brain_ai.upload_your_files")}</h2>
-            <p className="text-[16px] font-[400] text-[#5A687C]">{t("brain_ai.before_uploading_files")} <span onClick={handleDownload} className="text-[#675FFF]">{t("brain_ai.download_sample_file")}</span> {t("brain_ai.or")} <span className="text-[#675FFF]">{t("brain_ai.learn_more")}</span>.</p>
+            <p className="text-[16px] font-[400] text-[#5A687C]">{t("brain_ai.before_uploading_files")} <span onClick={handleDownload} className="text-[#675FFF] cursor-pointer">{t("brain_ai.download_sample_file")}</span> {t("brain_ai.or")} <span className="text-[#675FFF] cursor-pointer">{t("brain_ai.learn_more")}</span>.</p>
             <div className="flex flex-col gap-2">
               <div>
                 <label className="block text-sm font-medium mb-1">{t("brain_ai.upload_file_images_placeholder")}</label>
