@@ -137,9 +137,13 @@ const ContactsPage = () => {
     const errors = {};
     if (!addNewContact.firstName) {
       errors.firstName = `${t("brain_ai.first_name_required")}`;
+    } else if (!addNewContact.firstName.trim()) {
+      errors.firstName = `${t("first name cannot be blank")}`;
     }
     if (!addNewContact.lastName) {
       errors.lastName = `${t("brain_ai.last_name_required")}`;
+    } else if (!addNewContact.lastName.trim()) {
+      errors.lastName = `${t("last name annot be blank")}`;
     }
     if (!addNewContact.phone) {
       errors.phone = `${t("brain_ai.phone_no_required")}`;
@@ -151,6 +155,8 @@ const ContactsPage = () => {
     // }
     if (!addNewContact.email) {
       errors.email = `${t("brain_ai.email_required")}`;
+    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(addNewContact.email)) {
+      errors.email = `${t("brain_ai.invalid_email_format")}`;
     }
     if (!addNewContact.companyName) {
       errors.companyName = `${t("brain_ai.company_name_required")}`;
@@ -168,6 +174,7 @@ const ContactsPage = () => {
 
   const handleAddContactChange = (e) => {
     const { name, value } = e.target;
+    // Store the value as is, but validation will check for trimmed value
     setAddNewContact((prev) => ({ ...prev, [name]: value }));
     setError((prev) => ({ ...prev, [name]: '' }));
   }
@@ -186,7 +193,12 @@ const ContactsPage = () => {
     console.log(addNewContact)
     setLoading(true)
     try {
-      const response = await newContactAdd({ ...addNewContact, phone: selectedCountry.dial_code + " " + addNewContact.phone })
+      const response = await newContactAdd({ 
+        ...addNewContact, 
+        firstName: addNewContact.firstName.trim(),
+        lastName: addNewContact.lastName.trim(),
+        phone: selectedCountry.dial_code + " " + addNewContact.phone 
+      })
       if (response?.status === 201) {
         setError((prev) => ({ ...prev, success: response?.data?.message }))
         setTimeout(() => {
@@ -221,7 +233,13 @@ const ContactsPage = () => {
     }
     setLoading(true)
     try {
-      const response = await updateContact({ ...addNewContact, phone: selectedCountry.dial_code + " " + addNewContact.phone, contactId: contactIsEdit })
+      const response = await updateContact({ 
+        ...addNewContact, 
+        firstName: addNewContact.firstName.trim(),
+        lastName: addNewContact.lastName.trim(),
+        phone: selectedCountry.dial_code + " " + addNewContact.phone, 
+        contactId: contactIsEdit 
+      })
       if (response?.status === 200) {
         setError((prev) => ({ ...prev, success: response?.data?.message }))
         setTimeout(() => {
@@ -1336,6 +1354,7 @@ const ContactsPage = () => {
                 <div>
                   <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
                     {t("brain_ai.first_name")}
+                    <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -1353,6 +1372,7 @@ const ContactsPage = () => {
                 <div>
                   <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
                     {t("brain_ai.last_name")}
+                    <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -1372,6 +1392,7 @@ const ContactsPage = () => {
               <div>
                 <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
                   {t("brain_ai.number")}
+                  <span className="text-red-500">*</span>
                 </label>
                 <div ref={countryRef} className="flex group items-center focus-within:border-[#675FFF] gap-2 border border-gray-300 rounded-lg px-4 py-2">
                   <div className="relative">
@@ -1431,9 +1452,10 @@ const ContactsPage = () => {
               <div>
                 <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
                   {t("settings.tab_1_list.email_address")}
+                  <span className="text-red-500">*</span>
                 </label>
                 <input
-                  type="text"
+                  type="email"
                   name="email"
                   value={addNewContact.email}
                   onChange={handleAddContactChange}
@@ -1448,6 +1470,7 @@ const ContactsPage = () => {
               <div>
                 <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
                   {t("brain_ai.company_name")}
+                  <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"

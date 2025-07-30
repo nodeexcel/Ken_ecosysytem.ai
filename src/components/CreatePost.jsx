@@ -111,7 +111,7 @@ export default function CreatePost({ onClose }) {
     if (!file) return 'text';
     if (file.type.startsWith('image/')) return 'image';
     if (file.type.startsWith('video/')) return 'video';
-    if (file.type === 'application/pdf') return 'pdf';
+    if (file.type === 'application/pdf') return 'document';
     return '';
   };
 

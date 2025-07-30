@@ -83,6 +83,7 @@ const frenchTranslation = {
     phone_no_required: "Le numéro de téléphone est requis",
     invalid_phone_no: "Format de numéro de téléphone invalide",
     email_required: "L'e-mail est obligatoire",
+    invalid_email_format: "Format d'e-mail invalide. Veuillez saisir un e-mail valide (exemple@domaine.com)",
     company_name_required: "Le nom de l'entreprise est obligatoire",
     list_name_required: " nom de la liste est obligatoire.",
     description_required: "La description est obligatoire.",
