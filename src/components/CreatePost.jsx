@@ -51,6 +51,14 @@ export default function CreatePost({ onClose }) {
     }
   }, [platform]);
 
+  useEffect(() => {
+    if (successMessage) {
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 3000);
+    }
+  }, [successMessage])
+
 
   const renderOptions = () => {
     if (accountsOptionsLoading) {
@@ -70,7 +78,7 @@ export default function CreatePost({ onClose }) {
     const file = e.target.files[0];
     if (!file) return;
     // Only allow webp/jpeg/png/pdf
-    if (!['image/webp', 'image/jpeg', 'image/png', 'application/pdf'].includes(file.type)) {
+    if (!['image/webp', 'image/jpeg', 'image/png', 'application/pdf', 'video/mp4'].includes(file.type)) {
       setErrors({ document: 'Only webp, jpeg, png images or pdf files are allowed.' });
       return;
     }
@@ -111,7 +119,7 @@ export default function CreatePost({ onClose }) {
     if (!file) return 'text';
     if (file.type.startsWith('image/')) return 'image';
     if (file.type.startsWith('video/')) return 'video';
-    if (file.type === 'application/pdf') return 'pdf';
+    if (file.type === 'application/pdf') return 'document';
     return '';
   };
 
@@ -140,6 +148,7 @@ export default function CreatePost({ onClose }) {
         setFileName("");
         setSelectedAccount("");
         setPlatform("");
+        fileInputRef.current.value = '';
         setIsSaving((prev) => ({ ...prev, draft: false }));
       } else {
         setIsSaving((prev) => ({ ...prev, draft: false }));
@@ -177,6 +186,7 @@ export default function CreatePost({ onClose }) {
         setFileName("");
         setSelectedAccount("");
         setPlatform("");
+        fileInputRef.current.value = '';
         setIsSaving((prev) => ({ ...prev, publish: false }));
       }
       else {
@@ -227,6 +237,7 @@ export default function CreatePost({ onClose }) {
         setFileName("");
         setSelectedAccount("");
         setPlatform("");
+        fileInputRef.current.value = '';
         setIsSaving((prev) => ({ ...prev, schedule: false }));
       } else {
         setIsSaving((prev) => ({ ...prev, schedule: false }));
@@ -243,13 +254,13 @@ export default function CreatePost({ onClose }) {
   const handleCameraClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
-  
+
   const handleTrashClick = () => {
     setText("");
     setDocument(null);
     setFileName("");
   };
-  
+
   return (
     <div className="flex flex-col gap-8">
       {/* Header */}
@@ -352,20 +363,20 @@ export default function CreatePost({ onClose }) {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="flex flex-row items-center gap-2 bg-[#F0EFFF] p-2 rounded-lg">
-                <div className="w-8 h-8 bg-[#0277B5] rounded flex items-center justify-end flex-col">
-                  <span className="text-white text-2xl font-bold">in</span>
+                  <div className="w-8 h-8 bg-[#0277B5] rounded flex items-center justify-end flex-col">
+                    <span className="text-white text-2xl font-bold">in</span>
+                  </div>
                 </div>
-                </div>
-              
+
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex flex-row items-center gap-[6px] w-[178px] h-[27px]">
                   <button className="flex flex-row items-center gap-[4px] w-[103px] h-[27px] rounded-[4px] border border-[#E1E4EA] px-[10px] py-[6px] text-xs text-gray-600 hover:text-gray-800 bg-white">
-                  <Tag className="w-3 h-3" />
+                    <Tag className="w-3 h-3" />
                     Add Labels
                   </button>
                   <button className="flex flex-row items-center gap-[4px] w-[69px] h-[27px] rounded-[4px] border border-[#E1E4EA] px-[10px] py-[6px] text-xs text-gray-600 hover:text-gray-800 bg-white">
-                  <CircleX className="w-3 h-3" />
+                    <CircleX className="w-3 h-3" />
                     Clear
                   </button>
                 </div>
@@ -382,7 +393,7 @@ export default function CreatePost({ onClose }) {
                   setText(e.target.value);
                   if (errors.text) setErrors(prev => ({ ...prev, text: undefined }));
                 }}
-                className={`w-full h-[48px] font-normal text-[16px] focus:outline-none focus:border focus:border-[#675FFF] text-[#5A687C] rounded-md  mb-4 ${errors.text ? 'border border-red-500' : ''}`}
+                className={`w-full pl-3 h-[48px] font-normal text-[16px] focus:outline-none focus:border focus:border-[#675FFF] text-[#5A687C] rounded-md  mb-4 ${errors.text ? 'border border-red-500' : ''}`}
                 placeholder="Test Post"
                 style={{ fontWeight: 400, fontStyle: "normal", letterSpacing: 0 }}
                 ref={textInputRef}
@@ -424,10 +435,10 @@ export default function CreatePost({ onClose }) {
 
               {/* Upload Section */}
               <div className="mb-4 w-full">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Upload File / Images (webp, jpeg, png, pdf) *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Upload File / Images (webp, jpeg, png, pdf, mp4) *</label>
                 <input
                   type="file"
-                  accept="image/webp,image/jpeg,image/png,application/pdf"
+                  accept="image/webp,image/jpeg,image/png,application/pdf/,video/mp4"
                   onChange={handleFileChange}
                   className="mb-2 hidden"
                   ref={fileInputRef}
@@ -461,7 +472,7 @@ export default function CreatePost({ onClose }) {
             {/* Bottom Toolbar */}
             <div className="flex flex-row items-center" style={{ width: "140px", height: "20px", gap: "4px" }}>
               <button className="p-2 cursor-pointer rounded" onClick={handleEditClick}>
-                <SquarePen  className="w-4 h-4" />
+                <SquarePen className="w-4 h-4" />
               </button>
               <button className="p-2 cursor-pointer rounded" onClick={handleCameraClick}>
                 <Image className="w-4 h-4" />
@@ -482,7 +493,7 @@ export default function CreatePost({ onClose }) {
 
             {/* Action Buttons at the bottom */}
             <div className="flex flex-row justify-center items-center gap-[9px] border-t border-[#E1E4EA] w-full min-h-[88px] absolute bottom-0 left-0 right-0 p-[25px] box-border bg-white">
-              <button className={`flex flex-row items-center justify-center gap-[10px] w-[79px] h-[38px] rounded-[7px] border-[1.5px] px-[20px] py-[7px] text-[#5A687C] bg-[#FFFFFF] font-medium ${isSaving?.draft ? 'cursor-not-allowed' : 'cursor-pointer'}`} onClick={handleSaveDraft} disabled={isSaving?.draft}>
+              <button className={`flex flex-row items-center justify-center gap-[10px] h-[38px] rounded-[7px] border-[1.5px] px-[20px] py-[7px] text-[#5A687C] bg-[#FFFFFF] font-medium ${isSaving?.draft ? 'cursor-not-allowed' : 'cursor-pointer'}`} onClick={handleSaveDraft} disabled={isSaving?.draft}>
                 {isSaving?.draft ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : 'Draft'}
               </button>
               <button disabled={isSaving?.publish} onClick={handlePublish} className={`flex flex-row items-center justify-center gap-[10px] min-w-[96px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#675FFF] bg-transparent font-medium ${isSaving?.publish ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
