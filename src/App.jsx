@@ -33,6 +33,11 @@ import CustomerSupport from './pages/Dashboard/CustomerSupport'
 import Skills from './pages/Dashboard/Skills'
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+// import SuperDashboard from './pages/SuperAdminDashboard/Layout/SuperDashboard';
+// import SuperAdminDashboard from './pages/SuperAdminDashboard/SuperAdminDashboard';
+// import UserManagement from './pages/SuperAdminDashboard/UserManagement'
+import { Toaster } from 'react-hot-toast'
+
 
 
 
@@ -41,8 +46,13 @@ function App() {
 
   return (
     <div className='h-screen inter'>
+      <Toaster />
       <Routes>
         <Route path='/' element={<Login />} />
+        {/* <Route path='/super-admin' element={<SuperDashboard/>}>
+          <Route path='' element={<SuperAdminDashboard />} />
+          <Route path="user-management" element={<UserManagement/>}/>
+        </Route> */}
         <Route path='/create-password' element={<SetPassword />} />
         <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/pricing' element={<PricingPage />} />

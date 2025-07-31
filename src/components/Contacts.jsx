@@ -13,6 +13,7 @@ import { SelectDropdown } from "./Dropdown";
 import { useSelector } from "react-redux";
 import ViewContacts from "./ViewContacts";
 import { useTranslation } from "react-i18next";
+import toast from "react-hot-toast";
 
 const countries = [
   { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
@@ -199,7 +200,9 @@ const ContactsPage = () => {
         lastName: addNewContact.lastName.trim(),
         phone: selectedCountry.dial_code + " " + addNewContact.phone 
       })
+      
       if (response?.status === 201) {
+        toast.success(response?.data?.message || "Contact added successfully!");
         setError((prev) => ({ ...prev, success: response?.data?.message }))
         setTimeout(() => {
           setAddContactModal(false);
@@ -215,7 +218,10 @@ const ContactsPage = () => {
         });
         setSelectedCountry(countryData[240])
         getAllContacts();
-      } else {
+          
+        
+      }
+       else {
         console.log(response)
         setError((prev) => ({ ...prev, error: response?.data?.message || `${t("brain_ai.network_connection_error")}` }))
       }
@@ -1308,14 +1314,14 @@ const ContactsPage = () => {
                 </div>
               </div> */}
             </div>
-            <div className="flex gap-2 mt-3">
+            <div className="flex justify-end gap-2 mt-3">
               <button onClick={() => {
                 setOpenImport(false)
                 setSelectedFile(null)
-              }} className="w-full text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+              }} className="w-[208px] text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                 {t("brain_ai.cancel")}
               </button>
-              <button onClick={handleUploadFile} className={`w-full cursor-pointer text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
+              <button onClick={handleUploadFile} className={`w-[208px] cursor-pointer text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
                 {loading ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : `${t("brain_ai.save")}`}
               </button>
             </div>
@@ -1430,7 +1436,7 @@ const ContactsPage = () => {
                     )}
                   </div>
                   <input
-                    type="tel"
+                    type="number"
                     name="phone"
                     value={addNewContact.phone}
                     onChange={handleAddContactChange}
