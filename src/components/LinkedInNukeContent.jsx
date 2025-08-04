@@ -2,15 +2,17 @@ import { useState, useEffect } from "react";
 import CustomChat from "./CustomChat"
 import constanceImg from "../assets/svg/constance_msg_logo.svg"
 import linkedinImg from "../assets/svg/linkedin_hr.svg";
-import { linkedinPostCreate, linkedinPostGet , linkedinPostUpdate } from "../api/contentCreationAgent";
+import { linkedinPostCreate, linkedinPostGet, linkedinPostUpdate } from "../api/contentCreationAgent";
 import { v4 as uuidv4 } from 'uuid';
 import { formatTimeAgo } from "../utils/TimeFormat";
+import { useTranslation } from "react-i18next";
 
 function LinkedInNukeContent() {
     const [messages, setMessages] = useState([]);
     const [loadingChats, setLoadingChats] = useState(false);
     const [error, setError] = useState({});
     const [formData, setFormData] = useState({})
+    const { t } = useTranslation()
 
     const options = [
         { label: "Professional 🤵", key: "professional" },
@@ -27,10 +29,10 @@ function LinkedInNukeContent() {
     const validateForm = (formData) => {
         const newErrors = {};
         if (!formData?.additional_questions || formData.additional_questions.trim() === "") {
-            newErrors.additional_questions= "Topic is required.";
+            newErrors.additional_questions = `${t("topic")} ${t("is_required")}`;
         }
         if (!formData?.tone || formData.tone.trim() === "") {
-            newErrors.tone= "Tone is required.";
+            newErrors.tone = `${t("tone")} ${t("is_required")}`;
         }
 
         setError(newErrors);
@@ -54,12 +56,12 @@ function LinkedInNukeContent() {
         };
         try {
             const response = await linkedinPostCreate(payload);
-            if(response?.status === 201) {
+            if (response?.status === 201) {
                 fetchLinkedInPosts();
                 setFormData({}); // Clear form data on success
                 setError({}); // Clear error on success
             }
-            
+
         } catch (error) {
             setMessages(prev => [
                 ...prev,
@@ -105,7 +107,7 @@ function LinkedInNukeContent() {
             ]);
         }
         setLoadingChats(false);
-    
+
     };
 
     const handleUpdate = async (message, newContent) => {
@@ -125,16 +127,16 @@ function LinkedInNukeContent() {
     };
 
     const listedData = {
-        header: "LinkedIn Nuke",
-        label: "LinkedIn Nuke",
-        description: "Create engaging LinkedIn posts.",
+        header: t("skills.constance_content2_header"),
+        label: t("skills.constance_content2_header"),
+        description: t("constance.linkedin_descrp"),
         form: {
-            label_1: "Topic",
-            placeholder_1: "Ex. AI Revolution in Digital Ma..",
-            label_2: "Custom Instructions (Optional)",
-            placeholder_2: "Anything you want to tell the AI",
-            label_3: "Tone",
-            placeholder_3: "Select tone",
+            label_1: t("topic"),
+            placeholder_1: t("topic_placeholder"),
+            label_2: t("rima.custom_instructions"),
+            placeholder_2: t("rima.custom_instructions_placeholder"),
+            label_3: t("tone"),
+            placeholder_3: t("tone_placeholder"),
             options: options
         },
         // initialMessage: "Unable to generate a balance sheet: The uploaded document is not a bank statement; it is an eBook or informational guide related to health and wellness. No financial data available for extraction. Please upload an actual bank statement for accurate balance sheet creation",
@@ -142,14 +144,14 @@ function LinkedInNukeContent() {
         agentName,
         agentImg: constanceImg,
         headerLogo: linkedinImg,
-        handleGenerate, 
+        handleGenerate,
         handleUpdate,
         messages,
         setMessages,
         loadingChats,
         setLoadingChats,
         error, // Pass error to CustomChat
-        setError,formData, setFormData // Pass setError to CustomChat
+        setError, formData, setFormData // Pass setError to CustomChat
     };
     useEffect(() => {
         fetchLinkedInPosts();
