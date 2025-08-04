@@ -91,6 +91,7 @@ const frenchTranslation = {
     network_connection_error: "Erreur de connexion réseau",
     no_contact_found: "Aucun contact trouvé",
     no_list_found: "Aucune liste trouvée",
+    no_results_found: "Aucun résultat trouvé",
     added_create_list: "Ajout de la création de liste",
     file_required: "Fichier est requis",
     contacts: "Contacts",

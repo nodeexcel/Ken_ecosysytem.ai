@@ -50,7 +50,7 @@ const SettingsPage = () => {
     newPassword: "",
     confirmPassword: "",
   });
-  const [selectedCountry, setSelectedCountry] = useState(countryData[240]);
+  const [selectedCountry, setSelectedCountry] = useState(countryData && countryData.length > 0 ? countryData[240] : { name: "United States", code: "US", dial_code: "+1", flag: "us" });
   const { t } = useTranslation()
 
   const [profileFormData, setProfileFormData] = useState({

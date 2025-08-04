@@ -74,9 +74,9 @@ function SeoArticles() {
                         <div className="px-5 w-full">
                             <thead>
                                 <tr className="text-left text-[#5A687C] text-[16px]">
-                                    <th className="px-[14px] py-[14px] min-w-[200px] max-w-[50%] w-full font-[400] whitespace-nowrap">{t("seo.article_title")}</th>
-                                    <th className="px-[14px] py-[14px] min-w-[200px] max-w-[50%] w-full font-[400] whitespace-nowrap">{t("brain_ai.date")}</th>
-                                    <th className="py-[14px] w-full font-[400] whitespace-nowrap">{t("brain_ai.actions")}</th>
+                                    <th className="px-[14px] py-[14px] min-w-[200px] max-w-[50%] w-full font-[400] table-cell-wrap">{t("seo.article_title")}</th>
+              <th className="px-[14px] py-[14px] min-w-[200px] max-w-[50%] w-full font-[400] table-cell-wrap">{t("brain_ai.date")}</th>
+              <th className="py-[14px] w-full font-[400] table-cell-wrap">{t("brain_ai.actions")}</th>
                                 </tr>
                             </thead>
                         </div>
@@ -89,8 +89,8 @@ function SeoArticles() {
                                                 key={row.id}
                                                 className={`text-[16px] text-[#1E1E1E] ${index !== articleData?.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
                                             >
-                                                <td className="px-[14px] py-[14px] min-w-[200px] max-w-[50%] w-full font-[600] text-[#1E1E1E] whitespace-nowrap">{row.article_title}</td>
-                                                <td className="py-[14px] min-w-[200px] max-w-[50%] w-full text-[#5A687C] whitespace-nowrap">{DateFormat(row.date)}</td>
+                                                <td className="px-[14px] py-[14px] min-w-[200px] max-w-[50%] w-full font-[600] text-[#1E1E1E] table-cell-wrap">{row.article_title}</td>
+                <td className="py-[14px] min-w-[200px] max-w-[50%] w-full text-[#5A687C] table-cell-wrap">{DateFormat(row.date)}</td>
                                                 <td ref={moreActionsRef} className="pr-[14px] relative">
                                                     <button
                                                         onClick={() => handleDropdownClick(index)}

@@ -19,7 +19,7 @@ const countries = [
 export default function CallAgentsPage() {
   const [agents, setAgents] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+  const [selectedCountry, setSelectedCountry] = useState(countries && countries.length > 0 ? countries[0] : { name: "United States", code: "US", dial_code: "+1", flag: us_flag });
   const [isOpen, setIsOpen] = useState(false);
   const [agent, setAgent] = useState({ agent_name: "", language: "", voice: "", type: "", phone_number: [] });
   const [error, setError] = useState("");

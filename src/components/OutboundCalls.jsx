@@ -166,15 +166,15 @@ export default function OutBoundCalls() {
                     <div className="px-5 w-full">
                         <thead> 
                             <tr className="text-left text-[#5a687c] text-[16px]">
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("emailings.campaign_name")}</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("appointment.agent_name")}</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("brain_ai.date")}</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.language")}</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.voice")}</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.receipient_no")}</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.status")}</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.duration")}</th>
-                                <th className="p-[14px] w-full font-[400] whitespace-nowrap">{t("phone.actions")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("emailings.campaign_name")}</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("appointment.agent_name")}</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("brain_ai.date")}</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.language")}</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.voice")}</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.receipient_no")}</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.status")}</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.duration")}</th>
+                    <th className="p-[14px] w-full font-[400] table-cell-wrap">{t("phone.actions")}</th>
                             </tr>
                         </thead>
                     </div>
@@ -188,12 +188,12 @@ export default function OutBoundCalls() {
                                             className={`${index !== agents.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
                                         >
                                             <td className="p-[14px] min-w-[200px] max-w-[17%] w-full  font-[600] text-[#1E1E1E] text-[16px]">{agent.campaign_name}</td>
-                                            <td className="py-[14px] pl-[18px] pr-[14px] min-w-[200px] max-w-[17%] w-full "><div className="flex flex-col text-[16px] text-[#1E1E1E] font-[400] whitespace-nowrap">{agent.agent_name}<span className="text-[#5A687C]">{agent.choosen}</span></div></td>
-                                            <td className="p-[14px] min-w-[200px] max-w-[17%] w-full  text-[#5A687C] whitespace-nowrap">{agent.date}</td>
+                                            <td className="py-[14px] pl-[18px] pr-[14px] min-w-[200px] max-w-[17%] w-full "><div className="flex flex-col text-[16px] text-[#1E1E1E] font-[400] table-cell-wrap">{agent.agent_name}<span className="text-[#5A687C]">{agent.choosen}</span></div></td>
+                      <td className="p-[14px] min-w-[200px] max-w-[17%] w-full  text-[#5A687C] table-cell-wrap">{agent.date}</td>
                                             <td className="p-[14px] min-w-[200px] max-w-[17%] w-full  text-[#5A687C]">{agent.language}</td>
-                                            <td className="py-[14px] pl-[5px] pr-[14px] min-w-[200px] max-w-[17%] w-full  text-[#5A687C] whitespace-nowrap">{agent.voice}</td>
+                                            <td className="py-[14px] pl-[5px] pr-[14px] min-w-[200px] max-w-[17%] w-full  text-[#5A687C] table-cell-wrap">{agent.voice}</td>
                                             <td className="py-[14px] pl-[5px] pr-[14px] min-w-[200px] max-w-[17%] w-full  text-[#5A687C]">{agent.recipient_no}</td>
-                                            <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[17%] w-full  whitespace-nowrap">
+                                            <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[17%] w-full table-cell-wrap">
                                                 <span className={`inline-block ${agent.status !== "Replied" ? "text-[#34C759]" : "text-[#FF3B30]"} text-[16px] font-[400] px-3 py-1 rounded-full`}>
                                                     {agent.status}
                                                 </span>

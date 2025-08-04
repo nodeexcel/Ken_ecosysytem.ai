@@ -93,6 +93,7 @@ const englishTranslation = {
     network_connection_error: "Network Connection Error",
     no_contact_found: "No Contacts Found",
     no_list_found: "No Lists Found",
+    no_results_found: "No results found",
     added_create_list: "Added Create List",
     file_required: "File is required",
     contacts: "Contacts",
