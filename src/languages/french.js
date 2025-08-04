@@ -966,7 +966,18 @@ const frenchTranslation = {
     short: "Court",
     long: "Long",
     date: "Date",
-    time: "Heure"
+    time: "Heure",
+    platform: "Plateforme",
+    account: "Compte",
+    add: "Ajouter",
+    post_text: "Texte de la publication",
+    labels: "Étiquettes",
+    clear: "Effacer",
+    hastags: "Hashtags",
+    ai_assistance: "Assistance IA",
+    post_photos_pdf: "Publier des photos au format PDF",
+    post_preview: "Aperçu de la publication"
+
   },
   calina: {
     create_new_chatbot: "Créer un nouveau chatbot",
@@ -1068,6 +1079,8 @@ const frenchTranslation = {
   scheduled: "Planifié",
   terminated: "Terminé",
   draft: "Brouillon",
+  publish: "Publier",
+  schedule: "Planifier",
   paused: "En pause",
   email_statistics: "Statistiques des e-mails",
   dashboard: "Tableau de bord",

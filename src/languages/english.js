@@ -954,6 +954,17 @@ const englishTranslation = {
     long: "Long",
     date: "Date",
     time: "Time",
+    platform:"Platform",
+    account:"Account",
+    add:"Add",
+    post_text:"Post text",
+    labels:"Labels",
+    clear:"Clear",
+    hastags:"Hashtags",
+    ai_assistance:"Ai Assistance",
+    post_photos_pdf:"Post photos as a PDF document",
+    post_preview:"Post Preview"
+
   },
   calina: {
     create_new_chatbot: "Create New Chatbot",
@@ -1055,6 +1066,8 @@ const englishTranslation = {
   scheduled: "Scheduled",
   terminated: "Terminated",
   draft: "Draft",
+  publish:"Publish",
+  schedule:"Schedule",
   paused: "Paused",
   email_statistics: "Email Statistics",
   dashboard: "Dashboard",
