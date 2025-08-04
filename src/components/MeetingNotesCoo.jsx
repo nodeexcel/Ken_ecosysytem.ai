@@ -1,11 +1,13 @@
 import CustomChat from "./CustomChat"
 import taraImg from "../assets/svg/tara_msg_logo.svg"
 import meetingImg from "../assets/svg/meeting_notes_coo.svg";
+import { useTranslation } from "react-i18next";
 
 function MeetingNotesCoo() {
+    const { t } = useTranslation()
     const listedData = {
-        header: "Meeting Notes Generator", label: "Meeting Notes Generator", description: "Generate concise notes based on meeting transcripts.",
-        form: { label_1: "Meeting Transcript", placeholder_1: "Choisir un fichier", label_2: "Custom Instructions (Optional)", placeholder_2: "Anything you want to tell the AI" },
+        header: t("tara.meeting_notes"), label: t("tara.meeting_notes"), description: t("tara.generate_descrip"),
+        form: { label_1: t("tara.meeting_transcript"), placeholder_1: t("rima.choose_a_file"), label_2: t("rima.custom_instructions"), placeholder_2: t("rima.custom_instructions_placeholder") },
         initialMessage: "Unable to generate a balance sheet: The uploaded document is not a bank statement; it is an eBook or informational guide related to health and wellness. No financial data available for extraction. Please upload an actual bank statement for accurate balance sheet creation",
         agentName: "Tara",
         agentImg: taraImg,

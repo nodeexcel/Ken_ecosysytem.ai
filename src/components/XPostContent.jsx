@@ -5,6 +5,7 @@ import xImg from "../assets/svg/x_content.svg";
 import { XPostCreate, XPostGet, XPostUpdate } from "../api/contentCreationAgent";
 import { v4 as uuidv4 } from 'uuid';
 import { formatTimeAgo } from "../utils/TimeFormat";
+import { useTranslation } from "react-i18next";
 
 function XPostContent() {
     const [messages, setMessages] = useState([]);
@@ -12,17 +13,18 @@ function XPostContent() {
     const [error, setError] = useState(null);
     const [formData, setFormData] = useState({})
     const agentName = "Constance";
+    const { t } = useTranslation()
 
 
     const validateForm = (formData) => {
         const newErrors = {};
         if (!formData?.additional_questions || formData.additional_questions.trim() === "") {
-            newErrors.additional_questions= "Topic is required.";
+            newErrors.additional_questions = `${t("topic")} ${t("is_required")}`;
         }
         if (!formData?.purpose || formData.purpose.trim() === "") {
-            newErrors.purpose= "Purpose is required.";
+            newErrors.purpose = `${t("purpose")} ${t("is_required")}`;
         }
-        
+
         setError(newErrors);
         console.log(newErrors)
         return Object.keys(newErrors).length === 0;
@@ -43,7 +45,7 @@ function XPostContent() {
             const response = await XPostCreate(payload);
             if (response?.status === 201) {
                 fetchXPosts();
-                setFormData({}); 
+                setFormData({});
                 setError(null); // Clear error on success
             }
         } catch (error) {
@@ -109,16 +111,16 @@ function XPostContent() {
     };
 
     const listedData = {
-        header: "X Post Generator",
-        label: "X Post Generator",
-        description: "Write creative posts for X.",
+        header: t("skills.constance_content3_header"),
+        label: t("skills.constance_content3_header"),
+        description: t("constance.x_descrp"),
         form: {
-            label_1: "Topic",
-            placeholder_1: "Ex. AI Revolution in Digital Ma..",
-            label_2: "Custom Instructions (Optional)",
-            placeholder_2: "Anything you want to tell the AI",
-            label_3: "Purpose",
-            placeholder_3: "Ex. Make a funny post"
+            label_1: t("topic"),
+            placeholder_1: t("topic_placeholder"),
+            label_2: t("rima.custom_instructions"),
+            placeholder_2: t("rima.custom_instructions_placeholder"),
+            label_3: t("purpose"),
+            placeholder_3: t("purpose_placeholder")
         },
         initialMessage: messages,
         agentName,
@@ -131,7 +133,7 @@ function XPostContent() {
         loadingChats,
         setLoadingChats,
         error, // Pass error to CustomChat
-        setError,formData, setFormData // Pass setError to CustomChat
+        setError, formData, setFormData // Pass setError to CustomChat
     };
 
     useEffect(() => {

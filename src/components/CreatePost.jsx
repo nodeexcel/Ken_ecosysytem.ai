@@ -265,7 +265,7 @@ export default function CreatePost({ onClose }) {
     <div className="flex flex-col gap-8">
       {/* Header */}
       <div className="flex flex-row items-center justify-between h-[38px]">
-        <h1 className="text-2xl font-semibold text-gray-900">{t("scheduler")}</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">{t("constance.scheduler")+' > '+t("brain_ai.create")}</h1>
         <button className="p-2 hover:bg-gray-100 rounded-full" onClick={onClose}>
           <X className="w-5 h-5 text-gray-500" />
         </button>

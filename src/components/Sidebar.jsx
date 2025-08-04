@@ -271,7 +271,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><GiftIcon status={renderColor(4)} /></div> <div className='hidden group-hover:block'><GiftIcon status={true} /></div> </div>
                             {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(4) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.support")}</p>}
                         </div>
-                        {!isOpen && <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[103px]' : 'md:left-[107px]'} left-[102px] bg-white shadow-md rounded p-2 z-[9999]`}>
+                        {!isOpen && <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[163px]' : 'md:left-[161px]'} left-[132px] bg-white shadow-md rounded p-2 z-[9999]`}>
                             <p className='font-[400]'>{t("sidebar.ecosystem_ai")}</p>
                         </div>}
                     </div>
@@ -328,7 +328,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                                 <h2 className="text-[20px] font-[600] text-[#1E1E1E]">
                                     {t("sidebar.lifetime_commission")}
                                 </h2>
-                                <h3 className='text-[16px] font-[400] text-[#5A687C]'>Share <span className='text-[#675FFF]'>Ecosysteme.ai</span> with your friends and get lifetime commission.</h3>
+                                <h3 className='text-[16px] font-[400] text-[#5A687C]'>{t("share")} <span className='text-[#675FFF]'>Ecosysteme.ai</span> {t("with_your_friends")}</h3>
                             </div>
                             <button
                                 className="bg-[#675FFF] cursor-pointer w-full text-white px-5 py-2 font-[500] test-[16px]  rounded-lg"

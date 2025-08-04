@@ -60,9 +60,9 @@ function AllAgentsSkills() {
             image: taraImg,
             path: "coo",
             cardStyles: "border-[#CEBFFD] bg-[#F6F3FF]",
-            cardContent: [{ header: "Presentations", content: "Create engaging presentations quickly and effortlessly.", img: taraSkillImg1, tab: "presentations" },
-            { header: "Meeting Notes Generator", content: "Summarize meetings into clear, actionable notes.", img: taraSkillImg2, tab: "meeting_notes" },
-            { header: "Connect WhatsApp", content: "Link WhatsApp for instant customer communication.", img: taraSkillImg3, tab: "connect_whatsApp" }
+            cardContent: [{ header: t("skills.tara_content1_header"), content: t("skills.tara_content1_description"), img: taraSkillImg1, tab: "presentations" },
+            { header: t("skills.tara_content2_header"), content: t("skills.tara_content2_description"), img: taraSkillImg2, tab: "meeting_notes" },
+            { header:t("skills.tara_content3_header"), content: t("skills.tara_content3_description"), img: taraSkillImg3, tab: "connect_whatsApp" }
             ]
         },
         {
@@ -72,10 +72,10 @@ function AllAgentsSkills() {
             image: constanceImg,
             path: "content-creation",
             cardStyles: "border-[#F8DDFF] bg-[#FDF6FF]",
-            cardContent: [{ header: "YouTube Script Writer", content: "Write compelling scripts for YouTube videos.", img: constanceSkillImg1, tab: "youtube" },
-            { header: "LinkedIn Nuke", content: "Automate LinkedIn messaging and outreach campaigns.", img: constanceSkillImg2, tab: "linkedin" },
-            { header: "X Post Generator", content: "Craft posts optimized for X (formerly Twitter).", img: constanceSkillImg3, tab: "x_post" },
-            { header: "Creation Studio", content: "Central hub for content and campaign creation.", img: constanceSkillImg4, tab: "creation_studio" }
+            cardContent: [{ header: t("skills.constance_content1_header"), content: t("skills.constance_content1_description"), img: constanceSkillImg1, tab: "youtube" },
+            { header: t("skills.constance_content2_header"), content: t("skills.constance_content2_description"), img: constanceSkillImg2, tab: "linkedin" },
+            { header: t("skills.constance_content3_header"), content: t("skills.constance_content3_description"), img: constanceSkillImg3, tab: "x_post" },
+            { header: t("skills.constance_content4_header"), content: t("skills.constance_content4_description"), img: constanceSkillImg4, tab: "creation_studio" }
             ]
         },
         {
@@ -86,8 +86,8 @@ function AllAgentsSkills() {
             path: "phone",
             cardStyles: "border-[#DBE5FF] bg-[#F2F5FF]",
             cardContent: [
-                { header: "Call Campaigns", content: "Launch and track automated outbound call campaigns.", img: tomSkillImg4, tab: "call-campaigns" },
-                { header: "Cold Calling Script", content: "Generate persuasive cold calling sales scripts.", img: tomSkillImg1, tab: "cold_calling" },
+                { header: t("skills.tom_content1_header"), content: t("skills.tom_content1_description"), img: tomSkillImg4, tab: "call-campaigns" },
+                { header: t("skills.tom_content2_header"), content: t("skills.tom_content2_description"), img: tomSkillImg1, tab: "cold_calling" },
                 // { header: "Phone Numbers", content: "Manage and assign business phone numbers easily.", img: tomSkillImg2 },
                 // { header: "Call Agents", content: "Add and manage your call support agents.", img: tomSkillImg3 },
                 // { header: "Outbound Calls", content: "Automate and scale your outbound call operations.", img: tomSkillImg5 },
@@ -101,7 +101,7 @@ function AllAgentsSkills() {
             image: sethImg,
             path: "appointment-setter",
             cardStyles: "border-[#FFE4C5] bg-[#FFFDFA]",
-            cardContent: [{ header: "Agents", content: "Manage agent performance and availability in real time.", img: sethSkillImg1, tab: "agents" },
+            cardContent: [{ header: t("skills.seth_content1_header"), content: t("skills.seth_content1_description"), img: sethSkillImg1, tab: "agents" },
                 // { header: "Conversations", content: "Monitor and review all customer communications.", img: sethSkillImg2 },
                 // { header: "Analytics", content: "Track performance metrics and campaign insights.", img: sethSkillImg3 }
             ]
@@ -113,10 +113,10 @@ function AllAgentsSkills() {
             image: calinaImg,
             path: "customer-support",
             cardStyles: "border-[#E3F6ED] bg-[#EFFFF7]",
-            cardContent: [{ header: "Smart Chatbot Generator", content: "Build intelligent chatbots without coding skills.", img: calinaSkillImg1, tab: "smart_bot" },
-            { header: "FAQ Generator", content: "Auto-generate FAQs based on customer queries.", img: calinaSkillImg2, tab: "faq_generator" },
-            { header: "User Guide Generator", content: "Create user guides from product descriptions.", img: calinaSkillImg3, tab: "user_guide" },
-            { header: "Customer Email Responder", content: "Automate replies to common customer emails.", img: calinaSkillImg4, tab: "email" }
+            cardContent: [{ header: t("skills.calina_content1_header"), content: t("skills.calina_content1_description"), img: calinaSkillImg1, tab: "smart_bot" },
+            { header:t("skills.calina_content2_header"), content: t("skills.calina_content2_description"), img: calinaSkillImg2, tab: "faq_generator" },
+            { header: t("skills.calina_content3_header"), content: t("skills.calina_content3_description"), img: calinaSkillImg3, tab: "user_guide" },
+            { header: t("skills.calina_content4_header"), content: t("skills.calina_content4_description"), img: calinaSkillImg4, tab: "email" }
             ]
         },
         {
@@ -126,7 +126,7 @@ function AllAgentsSkills() {
             image: rebeccaImg,
             path: "phone",
             cardStyles: "border-[#DBE5FF] bg-[#F2F5FF]",
-            cardContent: [{ header: "Inbound Calls", content: "Automate and scale your outbound call operations.", img: tomSkillImg6, tab: "inbound-calls" }]
+            cardContent: [{ header: t("skills.rebecca_content1_header"), content: t("skills.rebecca_content1_description"), img: tomSkillImg6, tab: "inbound-calls" }]
         },
         {
             name: "Emile",
@@ -135,7 +135,7 @@ function AllAgentsSkills() {
             image: emileImg,
             path: "campaigns",
             cardStyles: "border-[#CEBFFD] bg-[#F7F4FF]",
-            cardContent: [{ header: "Campaigns Generator", content: "Build multi-channel marketing campaigns instantly.", img: emileSkillImg1, tab: "campaigns" },
+            cardContent: [{ header: t("skills.emile_content1_header"), content: t("skills.emile_content1_description"), img: emileSkillImg1, tab: "campaigns" },
                 // { header: "Calendar", content: "Schedule meetings and deadlines in one place.", img: emileSkillImg2 }
             ]
         },
@@ -146,10 +146,10 @@ function AllAgentsSkills() {
             image: rimaImg,
             path: "hr",
             cardStyles: "border-[#FFE4C5] bg-[#FFF7EE]",
-            cardContent: [{ header: "Job Description Writer", content: "Write clear, role-specific job descriptions fast.", img: rimaSkillImg1, tab: "job_description_writer" },
-            { header: "Resume Screener", content: "Automatically filter and rank resumes efficiently.", img: rimaSkillImg2, tab: "resume_screener" },
-            { header: "Interview Planner", content: "Organize interviews and coordinate with candidates.", img: rimaSkillImg3, tab: "interview_planner" },
-            { header: "LinkedIn Outreacher", content: "Automate LinkedIn networking and lead generation.", img: constanceSkillImg2, tab: "linkedin" }
+            cardContent: [{ header: t("skills.rima_content1_header"), content: t("skills.rima_content1_description"), img: rimaSkillImg1, tab: "job_description_writer" },
+            { header:t("skills.rima_content2_header"), content: t("skills.rima_content2_description"), img: rimaSkillImg2, tab: "resume_screener" },
+            { header: t("skills.rima_content3_header"), content: t("skills.rima_content3_description"), img: rimaSkillImg3, tab: "interview_planner" },
+            { header: t("skills.rima_content4_header"), content: t("skills.rima_content4_description"), img: constanceSkillImg2, tab: "linkedin" }
             ]
         },
         {
@@ -159,10 +159,10 @@ function AllAgentsSkills() {
             image: finnImg,
             path: "accounting",
             cardStyles: "border-[#E3F6ED] bg-[#F4FDF9]",
-            cardContent: [{ header: "Balance Sheet Generator", content: "Create accurate balance sheets in seconds.", img: finnSkillImg1, tab: "balance_sheet" },
-            { header: "Profit Loss Calculator", content: "Instantly calculate your business profit and loss.", img: finnSkillImg2, tab: "profit_loss_calculator" },
-            { header: "Sales Forecaster", content: "Predict future sales with AI-powered insights.", img: finnSkillImg3, tab: "sales_forecaster" },
-            { header: "ROI Calculator", content: "Measure return on investment for any campaign.", img: finnSkillImg4, tab: "roi_calculator" }
+            cardContent: [{ header: t("skills.finn_content1_header"), content: t("skills.finn_content1_description"), img: finnSkillImg1, tab: "balance_sheet" },
+            { header: t("skills.finn_content2_header"), content: t("skills.finn_content2_description"), img: finnSkillImg2, tab: "profit_loss_calculator" },
+            { header: t("skills.finn_content3_header"), content: t("skills.finn_content3_description"), img: finnSkillImg3, tab: "sales_forecaster" },
+            { header: t("skills.finn_content4_header"), content: t("skills.finn_content4_description"), img: finnSkillImg4, tab: "roi_calculator" }
             ]
         },
         {
@@ -172,9 +172,9 @@ function AllAgentsSkills() {
             image: sandroImg,
             path: "seo",
             cardStyles: "border-[#F8DDFF] bg-[#FDF3FF]",
-            cardContent: [{ header: "Articles Generator", content: "Produce high-quality articles in minutes.", img: sandroSkillImg1, tab: "articles" },
-            { header: "Start SEO Automation", content: "Automate SEO tasks and content optimization.", img: sandroSkillImg2, tab: "automation" },
-            { header: "SEO Audit", content: "Run detailed SEO audits to improve rankings.", img: sandroSkillImg3, tab: "audit" }
+            cardContent: [{ header: t("skills.sandro_content1_header"), content: t("skills.sandro_content1_description"), img: sandroSkillImg1, tab: "articles" },
+            { header: t("skills.sandro_content2_header"), content: t("skills.sandro_content2_description"), img: sandroSkillImg2, tab: "automation" },
+            { header: t("skills.sandro_content3_header"), content: t("skills.sandro_content3_description"), img: sandroSkillImg3, tab: "audit" }
             ]
         },
     ];
@@ -188,7 +188,7 @@ function AllAgentsSkills() {
 
     return (
         <div className="w-full py-4 px-20 h-screen overflow-auto flex flex-col gap-6">
-            <h1 className="text-[24px] font-[600] text-[#1E1E1E] pb-2">All Agents</h1>
+            <h1 className="text-[24px] font-[600] text-[#1E1E1E] pb-2">{t("skills.all_agents")}</h1>
             <div className="h-full w-full py-5 flex flex-col gap-8">
                 {allAgentsData.map((each) => (
                     <div key={each.name} className="flex flex-col gap-6 pb-4">

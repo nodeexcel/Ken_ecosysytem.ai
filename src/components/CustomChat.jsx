@@ -262,6 +262,7 @@ const CustomChat = ({ listedProps }) => {
                                         type="file"
                                         name='additional_questions'
                                         onChange={handleChange}
+                                        placeholder={form.placeholder_1}
                                         className={`w-full bg-white p-2 rounded-lg border ${(error?.additional_questions) ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
                                     />
                                 ) : (

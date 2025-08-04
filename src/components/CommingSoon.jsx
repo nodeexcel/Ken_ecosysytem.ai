@@ -11,7 +11,7 @@ function CommingSoon() {
             </div>
             <div className="flex flex-col items-center gap-3">
                 <h2 className="text-[#675FFF] font-[700] text-[30px]">{t("coming_soon")}</h2>
-                <p className="text-[#1E1E1E] font-[500] text-[21px]">Just a moment… It can drop anytime.</p>
+                <p className="text-[#1E1E1E] font-[500] text-[21px]">{t("just_a_moment")}</p>
             </div>
 
         </div>
