@@ -12,13 +12,14 @@ import { useCallback } from "react";
 
 const CustomChat = ({ listedProps }) => {
     const { t } = useTranslation();
+    const fileInputRef = useRef(null);
     console.log(listedProps);
     const { header, label, description,
         form,
         initialMessage,
         agentName,
         agentImg,
-        headerLogo, handleGenerate, handleUpdate, messages, setMessages, loadingChats, setLoadingChats,error,setError, formData, setFormData } = listedProps
+        headerLogo, handleGenerate, handleUpdate, messages, setMessages, loadingChats, setLoadingChats, error, setError, formData, setFormData } = listedProps
 
     // Use error/setError from listedProps if provided, else local state
     const [localErrors, setLocalErrors] = useState({})
@@ -38,6 +39,10 @@ const CustomChat = ({ listedProps }) => {
             // Optionally handle error
         }
     }, []);
+
+    const handleTextInputClick = () => {
+        fileInputRef.current?.click();
+    };
 
     const socketRef = useRef(null);
     const socket2Ref = useRef(null);
@@ -228,11 +233,11 @@ const CustomChat = ({ listedProps }) => {
 
 
     const onGenerateClick = e => {
-    e.preventDefault()
-    if (handleGenerate) {
-      handleGenerate(formData)
+        e.preventDefault()
+        if (handleGenerate) {
+            handleGenerate(formData)
+        }
     }
-  }
     // if (loading) return <p className='flex justify-center items-center h-[100vh]'><span className='loader' /></p>
 
 
@@ -258,13 +263,25 @@ const CustomChat = ({ listedProps }) => {
                                     {form.label_1}
                                 </label>
                                 {(/file|bank statement/i.test(form.label_1) || /file|bank statement/i.test(form.placeholder_1)) ? (
-                                    <input
-                                        type="file"
-                                        name='additional_questions'
-                                        onChange={handleChange}
-                                        placeholder={form.placeholder_1}
-                                        className={`w-full bg-white p-2 rounded-lg border ${(error?.additional_questions) ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                                    />
+                                    <div>
+                                        <input
+                                            type="text"
+                                            name="additional_questions"
+                                            value={formData?.additional_questions || ''}
+                                            readOnly
+                                            onClick={handleTextInputClick}
+                                            className={`w-full bg-white p-2 rounded-lg border ${error?.additional_questions ? 'border-red-500' : 'border-[#e1e4ea]'
+                                                } focus:outline-none focus:border-[#675FFF]`}
+                                            placeholder={form.placeholder_1}
+                                        />
+                                        <input
+                                            type="file"
+                                            name="additional_questions"
+                                            ref={fileInputRef}
+                                            onChange={handleChange}
+                                            style={{ display: 'none' }}
+                                        />
+                                    </div>
                                 ) : (
                                     <input
                                         type="text"
@@ -393,8 +410,8 @@ const CustomChat = ({ listedProps }) => {
                                                     <>
                                                         <div
                                                             className={`max-w-[70%] w-fit text-[12px] font-[400] p-3 ${!message.isUser
-                                                                    ? "my-1 bg-[#F2F2F7] text-[#5A687C] rounded-b-[10px] rounded-r-[10px]"
-                                                                    : "ml-auto my-1 bg-[#675FFF] text-[#fff] rounded-b-[10px] rounded-l-[10px]"
+                                                                ? "my-1 bg-[#F2F2F7] text-[#5A687C] rounded-b-[10px] rounded-r-[10px]"
+                                                                : "ml-auto my-1 bg-[#675FFF] text-[#fff] rounded-b-[10px] rounded-l-[10px]"
                                                                 }`}
                                                         >
                                                             <p className="text-[16px] !whitespace-pre-wrap">
@@ -416,7 +433,7 @@ const CustomChat = ({ listedProps }) => {
                                                                     )}
                                                                 </div>
                                                                 <div onClick={() => handleMessageEdit(message)}>
-                                                                <Edit />
+                                                                    <Edit />
                                                                 </div>
                                                             </div>
                                                         )}

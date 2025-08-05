@@ -10,19 +10,21 @@ import { BsThreeDots } from 'react-icons/bs'
 import { X } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
+import { useTranslation } from 'react-i18next'
 
 function CustomerSupport() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("smart_bot")
     const [sidebarStatus, setSideBarStatus] = useState(false)
     const dispatch = useDispatch()
+    const { t } = useTranslation()
 
     const navigate = useNavigate()
 
     const sideMenuList = [
-        { label: "Smart Chatbot", icon: <AutomationIcon status={activeSidebarItem == "smart_bot"} />, hoverIcon: <AutomationIcon hover={true} />, path: "smart_bot" },
-        { label: "FAQ Generator", icon: <HelpIcon status={activeSidebarItem == "faq_generator"} />, hoverIcon: <HelpIcon hover={true} />, path: "faq_generator" },
-        { label: "User Guide Generator", icon: <CallAgent status={activeSidebarItem == "user_guide"} />, hoverIcon: <CallAgent hover={true} />, path: "user_guide" },
-        { label: "Customer Email Responder", icon: <EmailIcon status={activeSidebarItem == "email"} />, hoverIcon: <EmailIcon hover={true} />, path: "email" },
+        { label: t("calina.smart_chartbot"), icon: <AutomationIcon status={activeSidebarItem == "smart_bot"} />, hoverIcon: <AutomationIcon hover={true} />, path: "smart_bot" },
+        { label: t("skills.calina_content2_header"), icon: <HelpIcon status={activeSidebarItem == "faq_generator"} />, hoverIcon: <HelpIcon hover={true} />, path: "faq_generator" },
+        { label: t("skills.calina_content3_header"), icon: <CallAgent status={activeSidebarItem == "user_guide"} />, hoverIcon: <CallAgent hover={true} />, path: "user_guide" },
+        { label: t("skills.calina_content4_header"), icon: <EmailIcon status={activeSidebarItem == "email"} />, hoverIcon: <EmailIcon hover={true} />, path: "email" },
     ]
 
     const activeTab = useSelector((state) => state.skills)

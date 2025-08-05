@@ -9,7 +9,7 @@ const PhoneDashboard = () => {
   return (
 
     <div className="py-4 pr-2 flex flex-col gap-4 w-full h-screen overflow-auto ">
-      <h1 className="text-2xl font-bold mb-3 text-gray-800">Dashboard</h1>
+      <h1 className="text-2xl font-bold mb-3 text-gray-800">{ t("phone.dashboard")}</h1>
 
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Credit Panel */}
@@ -32,7 +32,7 @@ const PhoneDashboard = () => {
               <div className="flex items-center gap-2">
                 <span className={`text-xs px-2 py-1 rounded-full ${autoRefill ? "bg-green-100 text-green-600" : "bg-gray-200 text-gray-500"
                   }`}>
-                  {autoRefill ? "Active" : "Inactive"}
+                  {autoRefill ? t("phone.active") : t("phone.inactive")}
                 </span>
                 <button
                   onClick={() => setAutoRefill(!autoRefill)}

@@ -15,12 +15,12 @@ function LinkedInNukeContent() {
     const { t } = useTranslation()
 
     const options = [
-        { label: "Professional 🤵", key: "professional" },
-        { label: "Casual 😎", key: "casual" },
-        { label: "Friendly 😊", key: "friendly" },
-        { label: "Formal 🎩", key: "formal" },
-        { label: "Inspirational 🌟", key: "inspirational" },
-        { label: "Humorous 😅", key: "humorous" }
+        { label: `${t("chat_options.professional") + `🤵`}`, key: "professional" },
+        { label: `${t("chat_options.casual") + `😎`}`, key: "casual" },
+        { label: `${t("chat_options.friendly") + `😊`}`, key: "friendly" },
+        { label: `${t("chat_options.formal") + `🎩`}`, key: "formal" },
+        { label: `${t("chat_options.inspirational") + `🌟`}`, key: "inspirational" },
+        { label: `${t("chat_options.humorous") + `😅`}`, key: "humorous" }
     ];
 
     const agentName = "Constance";

@@ -1,11 +1,13 @@
 import CustomChat from "./CustomChat"
 import calinaImg from "../assets/svg/calina_msg_logo.svg"
 import faqImg from "../assets/svg/faq_customer_support.svg";
+import { useTranslation } from "react-i18next";
 
 function FaqCustomerSupport() {
+    const { t } = useTranslation();
     const listedData = {
-        header: "FAQ Generator", label: "FAQ Generator", description: "Create a comprehensive FAQ section for your brand or product.",
-        form: { label_1: "Additional Questions", placeholder_1: "Ex.: Warranty information, ass...", label_2: "Custom Instructions (Optional)", placeholder_2: "Anything you want to tell the AI" },
+        header: t("skills.calina_content2_header"), label: t("skills.calina_content2_header"), description: t("calina.faq_generator_descr"),
+        form: { label_1: t("calina.additional_questions"), placeholder_1: t("calina.additional_questions_placeholder"), label_2: t("rima.custom_instructions"), placeholder_2: t("rima.custom_instructions_placeholder") },
         initialMessage: "Unable to generate a balance sheet: The uploaded document is not a bank statement; it is an eBook or informational guide related to health and wellness. No financial data available for extraction. Please upload an actual bank statement for accurate balance sheet creation",
         agentName: "Caline",
         agentImg: calinaImg,

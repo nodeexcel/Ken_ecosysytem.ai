@@ -494,10 +494,10 @@ export default function CreatePost({ onClose }) {
             {/* Action Buttons at the bottom */}
             <div className="flex flex-row justify-center items-center gap-[9px] border-t border-[#E1E4EA] w-full min-h-[88px] absolute bottom-0 left-0 right-0 p-[25px] box-border bg-white">
               <button className={`flex flex-row items-center justify-center gap-[10px] h-[38px] rounded-[7px] border-[1.5px] px-[20px] py-[7px] text-[#5A687C] bg-[#FFFFFF] font-medium ${isSaving?.draft ? 'cursor-not-allowed' : 'cursor-pointer'}`} onClick={handleSaveDraft} disabled={isSaving?.draft}>
-                {isSaving?.draft ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : t("draft")}
+                {isSaving?.draft ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : t("draft")}
               </button>
               <button disabled={isSaving?.publish} onClick={handlePublish} className={`flex flex-row items-center justify-center gap-[10px] min-w-[96px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#675FFF] bg-transparent font-medium ${isSaving?.publish ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
-                {isSaving?.publish ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : t("publish")}
+                {isSaving?.publish ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : t("publish")}
               </button>
               <button className="flex cursor-pointer flex-row items-center justify-center gap-[10px] min-w-[112px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#FFFFFF] bg-[#675FFF] font-medium" onClick={() => setShowDateTimePicker(true)}>
                 {t("schedule")}
