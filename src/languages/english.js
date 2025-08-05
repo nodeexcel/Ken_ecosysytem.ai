@@ -343,6 +343,7 @@ const englishTranslation = {
       business_content: "For companies organized into functional departments.",
       enterprise_content: "Best performance, support and security.",
       month: "month",
+      year: "year",
       off: "Off",
       credits_per_month: "credits per month",
       user: "user",

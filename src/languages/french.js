@@ -623,6 +623,7 @@ const frenchTranslation = {
         "Pour les entreprises organisées en départements fonctionnels.",
       enterprise_content: "Performance, support et sécurité de haut niveau.",
       month: "mois",
+      year: "année",
       off: "Réduction",
       credits_per_month: "crédits par mois",
       user: "utilisateur",

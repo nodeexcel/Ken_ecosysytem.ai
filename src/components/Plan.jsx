@@ -162,7 +162,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
         key: "pro",
         svg: <ProPlanIcon />,
         price: "€989",
-        period: `/ ${t("settings.tab_2_list.month")}`,
+        period: `/ ${t("settings.tab_2_list.year")}`,
         description:
           `${t("settings.tab_2_list.pro_content")}`,
         features: [
@@ -182,7 +182,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
         key: "team",
         svg: <TeamPlanIcon />,
         price: "€1703",
-        period: `/ ${t("settings.tab_2_list.month")}`,
+        period: `/ ${t("settings.tab_2_list.year")}`,
         description: `${t("settings.tab_2_list.team_content")}`,
         features: [
           `2 500 ${t("settings.tab_2_list.credits_per_month")}`,
