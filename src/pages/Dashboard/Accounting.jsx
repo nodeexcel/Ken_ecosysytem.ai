@@ -45,10 +45,10 @@ function Accounting() {
 
     const sideMenuList = [
         { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
-        { label: `Balance Sheet Generator`, icon: <BalanceSheetIcon status={activeSidebarItem == "balance_sheet"} />, hoverIcon: <BalanceSheetIcon hover={true} />, path: "balance_sheet" },
-        { label: `Profit Loss Calculator`, icon: <CalculatorIcon status={activeSidebarItem == "profit_loss_calculator"} />, hoverIcon: <CalculatorIcon hover={true} />, path: "profit_loss_calculator" },
-        { label: `Sales Forecaster`, icon: <PhoneCampaign status={activeSidebarItem == "sales_forecaster"} />, hoverIcon: <PhoneCampaign hover={true} />, path: "sales_forecaster" },
-        { label: `ROI Calculator`, icon: <ROICalculatorIcon status={activeSidebarItem == "roi_calculator"} />, hoverIcon: <ROICalculatorIcon hover={true} />, path: "roi_calculator" },
+        { label: t("skills.finn_content1_header"), icon: <BalanceSheetIcon status={activeSidebarItem == "balance_sheet"} />, hoverIcon: <BalanceSheetIcon hover={true} />, path: "balance_sheet" },
+        { label: t("skills.finn_content2_header"), icon: <CalculatorIcon status={activeSidebarItem == "profit_loss_calculator"} />, hoverIcon: <CalculatorIcon hover={true} />, path: "profit_loss_calculator" },
+        { label: t("skills.finn_content3_header"), icon: <PhoneCampaign status={activeSidebarItem == "sales_forecaster"} />, hoverIcon: <PhoneCampaign hover={true} />, path: "sales_forecaster" },
+        { label: t("skills.finn_content4_header"), icon: <ROICalculatorIcon status={activeSidebarItem == "roi_calculator"} />, hoverIcon: <ROICalculatorIcon hover={true} />, path: "roi_calculator" },
     ]
 
     const activeTab = useSelector((state) => state.skills)

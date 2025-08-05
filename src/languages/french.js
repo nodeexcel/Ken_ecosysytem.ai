@@ -94,6 +94,15 @@ const frenchTranslation = {
     sandro_content3_header: "Audit SEO",
     sandro_content3_description: "Réalisez des audits SEO détaillés pour améliorer votre classement."
   },
+  finn_accounting: {
+    balance_sheet_descr: "Générez un bilan à partir de votre relevé bancaire.",
+    bank_statement: "Fichier de relevé bancaire",
+    profile_loss_calc_descr: "Calculez les profits et les pertes et obtenez des informations pertinentes.",
+    financial_data: "Fichier de données financières",
+    sales_forecaste_descr: "Prévisionnez et anticipez les ventes en fonction des tendances actuelles.",
+    sales_data: "Fichier de données de ventes",
+    roi_calculator_descr: "Calculez le retour sur investissement (ROI) de vos projets à partir des données financières téléchargées."
+  },
   brain_ai: {
     full_name: "Nom et prénom",
     email: "E-mail",
@@ -1039,7 +1048,17 @@ const frenchTranslation = {
     chat_bot_alpha: "Chatbot Alpha",
     smart_chatbot: "Chatbot intelligent",
     new_chatbot: "Nouveau chatbot",
-    no_chatbot_listed: "Aucune donnée de chatbot répertoriée"
+    no_chatbot_listed: "Aucune donnée de chatbot répertoriée",
+    smart_chartbot: "Chatbot Intelligent",
+    faq_generator_descr: "Créez une section FAQ complète pour votre marque ou produit.",
+    additional_questions: "Questions supplémentaires",
+    additional_questions_placeholder: "Ex. : Informations sur la garantie, ass...",
+    user_guide_descr: "Générez un guide utilisateur complet pour votre produit.",
+    additional_details: "Détails supplémentaires",
+    additional_details_placeholder: "Ex. : Conseils de dépannage, gar...",
+    customer_email_descr: "Répondez aux e-mails des clients de manière efficace et personnalisée.",
+    email_content: "Contenu de l'e-mail",
+    email_content_placeholder: "Ex. : 'J’ai reçu un article endommagé.."
   },
   rima: {
     hr_heading: "Ressources humaines",

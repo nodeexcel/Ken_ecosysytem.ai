@@ -97,6 +97,15 @@ const englishTranslation = {
     sandro_content3_header: "SEO Audit",
     sandro_content3_description: "Run detailed SEO audits to improve rankings."
   },
+  finn_accounting: {
+    balance_sheet_descr: "Generate a balance sheet based on your bank statement.",
+    bank_statement: "Bank Statement File",
+    profile_loss_calc_descr: "Calculate profit and loss and get provided with insights.",
+    financial_data: "Financial Data File",
+    sales_forecaste_descr: "Forecast and predict sales based on current trends.",
+    sales_data:"Sales Data File",
+    roi_calculator_descr:"Calculate ROI on your projects based on uploaded financial data.",
+  },
   brain_ai: {
     full_name: "Full Name",
     email: "Email",
@@ -536,7 +545,7 @@ const englishTranslation = {
     days: "Days",
     silent_hours: "Silent Hours",
     confirm_agent: "Confirm Agent",
-    account_msg:"Please select an account to integrate."
+    account_msg: "Please select an account to integrate."
   },
 
   phone: {
@@ -1028,7 +1037,17 @@ const englishTranslation = {
     chat_bot_alpha: "Chat bot alpha",
     smart_chatbot: "Smart Chatbot",
     new_chatbot: "New Chatbot",
-    no_chatbot_listed: "No Chatbot Data Listed"
+    no_chatbot_listed: "No Chatbot Data Listed",
+    smart_chartbot:"Smart Chatbot",
+    faq_generator_descr:"Create a comprehensive FAQ section for your brand or product.",
+    additional_questions:"Additional Questions",
+    additional_questions_placeholder:"Ex.: Warranty information, ass...",
+    user_guide_descr:"Generate a comprehensive user guide for your product.",
+    additional_details:"Additional Details",
+    additional_details_placeholder:"Ex.: Troubleshooting tips, war...",
+    customer_email_descr:"Respond to customer emails in an efficient and personalized manner.",
+    email_content:"Email Content",
+    email_content_placeholder:"Ex.: 'l received a damaged ite.."
   },
   rima: {
     hr_heading: "HR",
