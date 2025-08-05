@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from "react"
 import { X } from "lucide-react" // Removed ChevronLeft, ChevronRight
 import { UtcFormat } from "../utils/TimeFormat"
+import { useTranslation } from "react-i18next";
 
 function TimeSelector24({ value, onChange, onClose }) {
   // value: "HH : mm" or "HH:mm"
@@ -149,11 +150,12 @@ export default function DateTimePicker({ onClose, onSchedule, isSaving }) {
   const [showYearPicker, setShowYearPicker] = useState(false)
   const [showTimeDropdown, setShowTimeDropdown] = useState(false)
   const today = useMemo(() => new Date(), []) // Actual current date for 'Today' highlight
+  const { t } = useTranslation()
 
   const yearPickerRef = useRef(null)
   const currentYearRef = useRef(null)
 
-  const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  const daysOfWeek = [t("emailings.mon"), t("emailings.tue"), t("emailings.wed"), t("emailings.thu"), t("emailings.fri"), t("emailings.sat"), t("emailings.sun")]
 
   const calendarDays = useMemo(() => {
     const year = currentMonth.getFullYear()
@@ -380,7 +382,7 @@ export default function DateTimePicker({ onClose, onSchedule, isSaving }) {
         </div>
 
         <div className="mt-6 space-y-4">
-          <div className="text-base font-medium text-gray-700">Time</div>
+          <div className="text-base font-medium text-gray-700">{t("constance.time")}</div>
           {/* Time Input with Dropdown Selector */}
           <div className="relative w-full">
             <input
@@ -401,13 +403,13 @@ export default function DateTimePicker({ onClose, onSchedule, isSaving }) {
               </div>
             )}
           </div>
-          <div className="text-sm text-gray-500">Select a predefined timeslot</div>
+          <div className="text-sm text-gray-500">{t("predefined_time_slot")}</div>
         </div>
 
         <div className="mt-8 flex justify-center gap-[16px] ">
           <button className="rounded-md cursor-pointer border border-gray-300 px-5 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200
           w-[225px]" onClick={onClose}>
-            Cancel
+            {t("cancel")}
           </button>
           <button
             className={`w-[225px] ${isSaving ? 'cursor-not-allowed' : 'cursor-pointer'} bg-[#675FFF] rounded-md  px-5 py-2 text-base font-medium text-white border border-[#675FFF] hover:bg-v0-purple/90 focus:outline-none focus:ring-2 focus:ring-v0-purple`}
@@ -423,7 +425,7 @@ export default function DateTimePicker({ onClose, onSchedule, isSaving }) {
             }}
             disabled={isSaving}
           >
-            {isSaving ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : 'Schedule'}
+            {isSaving ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : t("schedule")}
           </button>
         </div>
       </div>

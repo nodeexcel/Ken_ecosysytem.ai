@@ -62,11 +62,11 @@ function AgentsSeth() {
                 setCampaignData(response.data.agent)
                 if (response.data.agent.length === 0) {
                     setLoading(false)
-                    setMessage(t("appointment.no_data_found"))
+                    setMessage(t("no_data"))
                 }
             } else {
                 setLoading(false)
-                setMessage(t("appointment.network_connection_error"))
+                setMessage(t("brain_ai.network_connection_error"))
             }
 
         } catch (error) {

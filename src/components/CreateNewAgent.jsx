@@ -189,7 +189,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 (formData.sequence.trigger === "Instagram" || formData.sequence.trigger === "Whatsapp") &&
                 !formData.platform_unique_id
             ) {
-                newErrors.platform_unique_id =  "Please select an account to integrate.";
+                newErrors.platform_unique_id =  t("appointment.account_msg");
             }
         }
 
@@ -241,7 +241,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const sequenceCards = [
         {
             id: 1,
-            title: "Trigger",
+            title: t("appointment.trigger"),
             key: "trigger",
             iconSrc: trigger,
             options: [
@@ -254,7 +254,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         },
         {
             id: 2,
-            title: "Delay",
+            title: t("appointment.delay"),
             key: "delay",
             iconSrc: delay,
             options: [{ label: "0", key: 0 },{ label: "1", key: 1 }, { label: "5", key: 5 }, { label: "10", key: 10 }, { label: "15", key: 15 }, { label: "20", key: 20 }, { label: "30", key: 30 }],
@@ -264,7 +264,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         },
         {
             id: 3,
-            title: "Channel",
+            title: t("appointment.channel"),
             key: "channel",
             iconSrc: channel,
             options: [{ label: "Whatsapp", key: "Whatsapp" }, { label: "Instagram", key: "Instagram" }],
@@ -274,7 +274,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         },
         {
             id: 4,
-            title: "Template",
+            title: t("appointment.template"),
             key: "template",
             iconSrc: template,
             options: [{ label: "Select", key: "Select" }, { label: "Select2", key: "Select2" }],
@@ -314,7 +314,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     ];
 
     const messageTimeRange = [
-        { label: "Number of days between each follow-up", key: "wait_time_for_follow_up", options: [{ label: "0", key: 0 }, { label: "5", key: 5 }, { label: "10", key: 10 }, { label: "15", key: 15 }, { label: "30", key: 30 }] }
+        { label: t("appointment.no_of_days_followups"), key: "wait_time_for_follow_up", options: [{ label: "0", key: 0 }, { label: "5", key: 5 }, { label: "10", key: 10 }, { label: "15", key: 15 }, { label: "30", key: 30 }] }
     ];
 
     const globalMessageTimeRange = [
@@ -700,7 +700,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             <label className="text-sm font-medium text-[#1e1e1e]">
                                 Webpage Link
                             </label>
-                            <div className="flex items-center border rounded-lg overflow-hidden w-full bg-white focus-within:border-[#675FFF] 
+                            <div className="flex items-center border rounded-lg overflow-hidden w-full bg-white focus-within:border-[#675FFF]
   border-[#e1e4ea] focus-within:ring-0">
                                 <span className="pl-3 pr-2 text-[#4B5563] bg-white focus:outline-none  font-medium  border-r border-[#e1e4ea]">
                                     http://
@@ -1308,7 +1308,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                             disabled={!formData.is_followups_enabled}
                                                             hideArrow={true}
                                                         />
-                                                        <span className="text-[#5A687C] absolute  right-2 text-[16px] font-[400]">Days</span>
+                                                        <span className="text-[#5A687C] absolute  right-2 text-[16px] font-[400]">{t("appointment.days")}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1523,7 +1523,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 {/* Silent Hours Section (single, non-removable time range) */}
                                 <div className="flex flex-col gap-1.5 flex-1 mt-4">
                                     <label className="text-sm font-medium text-[#1e1e1e]">
-                                        Silent Hours
+                                        {t("appointment.silent_hours")}
                                     </label>
                                     <div className="flex flex-row gap-4 w-full items-center">
                                         {/* Start Time */}
@@ -1542,7 +1542,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                 className="w-full p-2 pl-4 rounded-xl border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] text-base text-[#5A687C] bg-white h-11"
                                                 style={{ width: '248.5px' }}
                                             />
-                                            
+
                                         </div>
                                         {/* End Time */}
                                         <div className="relative flex-1" style={{ maxWidth: '248.5px', minWidth: '248.5px' }}>
@@ -1560,7 +1560,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                 className="w-full p-2 pl-4 rounded-xl border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] text-base text-[#5A687C] bg-white h-11"
                                                 style={{ width: '248.5px' }}
                                             />
-                                           
+
                                         </div>
                                     </div>
                                 </div>
@@ -1571,8 +1571,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                         {errors.error && <p className="text-red-500 text-sm mt-1">{errors.error}</p>}
 
                         {step === 3 && <div className="flex items-center gap-2 py-3">
-                            <button disabled={loading} onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()} className="bg-[#675FFF] cursor-pointer w-[162px] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
-                                {loading ? <div className="flex cursor-pointer items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : updateAgentStatus ? `${t("appointment.update_agent")}` : `Confirm Agent`}
+                            <button disabled={loading} onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()} className="bg-[#675FFF] cursor-pointer  text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
+                                {loading ? <div className="flex cursor-pointer items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : updateAgentStatus ? `${t("appointment.update_agent")}` : t("appointment.confirm_agent")}
                             </button>
                             <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-[7px] w-[162px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
                         </div>}
