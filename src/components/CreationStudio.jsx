@@ -480,7 +480,7 @@ function CreationStudio() {
                     {/* Date Field */}
                     <div className="flex flex-col gap-1.5 flex-1">
                         <label className="text-sm font-medium text-[#1e1e1e]">
-                            Date
+                            {t("constance.date")}
                         </label>
                         <div className="relative">
                             <input
@@ -507,7 +507,7 @@ function CreationStudio() {
                     {/* Time Field */}
                     <div className="flex flex-col gap-1.5 flex-1">
                         <label className="text-sm font-medium text-[#1e1e1e]">
-                            Time
+                              {t("constance.time")}
                         </label>
                         <div className="relative">
                             <input

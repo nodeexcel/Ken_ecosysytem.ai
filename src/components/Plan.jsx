@@ -161,57 +161,57 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
         name: `${t("settings.tab_2_list.pro")}`,
         key: "pro",
         svg: <ProPlanIcon />,
-        price: "€97",
-        period: `/ ${t("settings.tab_2_list.month")}`,
+        price: "€989",
+        period: `/ ${t("settings.tab_2_list.year")}`,
         description:
           `${t("settings.tab_2_list.pro_content")}`,
         features: [
-          `10000 ${t("settings.tab_2_list.credits_per_month")}`,
+          `1 000 ${t("settings.tab_2_list.credits_per_month")}`,
           `1 ${t("settings.tab_2_list.user")}`,
-          `100MB ${t("settings.tab_2_list.of_knowledge")}`,
+          `1GB ${t("settings.tab_2_list.of_knowledge")}`,
           `5 ${t("settings.tab_2_list.integrations")}`,
           `${t("settings.tab_2_list.schedule_tool_runs")}`,
           `${t("settings.tab_2_list.live_chat")}`,
         ],
         selected: true,
-        discount: `10% ${t("settings.tab_2_list.off")}`,
+        discount: `15% ${t("settings.tab_2_list.off")}`,
       },
       {
         id: import.meta.env.VITE_TEAM_PLAN,
         name: `${t("settings.tab_2_list.team")}`,
         key: "team",
         svg: <TeamPlanIcon />,
-        price: "€179",
-        period: `/ ${t("settings.tab_2_list.month")}`,
+        price: "€1703",
+        period: `/ ${t("settings.tab_2_list.year")}`,
         description: `${t("settings.tab_2_list.team_content")}`,
         features: [
-          `100 000 ${t("settings.tab_2_list.credits_per_month")}`,
+          `2 500 ${t("settings.tab_2_list.credits_per_month")}`,
           `5 ${t("settings.tab_2_list.users")}`,
-          `1GB ${t("settings.tab_2_list.of_knowledge")}`,
-          `${t("settings.tab_2_list.full_integrations")}`,
-          `${t("settings.tab_2_list.single_account_per_platform")}`,
+          `5GB ${t("settings.tab_2_list.of_knowledge")}`,
+          `${t("settings.tab_2_list.full_integrations")} ${t("settings.tab_2_list.single_account_per_platform")}`,
+          
           `${t("settings.tab_2_list.live_chat")}`,
         ],
-        discount: `10% ${t("settings.tab_2_list.off")}`,
+        discount: `15% ${t("settings.tab_2_list.off")}`,
       },
-      {
-        id: import.meta.env.VITE_BUSINESS_PLAN,
-        name: `${t("settings.tab_2_list.business")}`,
-        key: "business",
-        svg: <BusinessPlanIcon />,
-        price: "€279",
-        period: `/ ${t("settings.tab_2_list.month")}`,
-        description: `${t("settings.tab_2_list.business_content")}`,
-        features: [
-          `300 000 ${t("settings.tab_2_list.credits_per_month")}`,
-          `10 ${t("settings.tab_2_list.users")}`,
-          `${t("settings.tab_2_list.full_integrations_access")}`,
-          `${t("settings.tab_2_list.multi_account_mode")}`,
-          `${t("settings.tab_2_list.activity_center")}`,
-          `5GB ${t("settings.tab_2_list.of_knowledge")}`,
-          `${t("settings.tab_2_list.dedicated_slack_channel")}`,
-        ],
-      },
+      // {
+      //   id: import.meta.env.VITE_BUSINESS_PLAN,
+      //   name: `${t("settings.tab_2_list.business")}`,
+      //   key: "business",
+      //   svg: <BusinessPlanIcon />,
+      //   price: "€279",
+      //   period: `/ ${t("settings.tab_2_list.month")}`,
+      //   description: `${t("settings.tab_2_list.business_content")}`,
+      //   features: [
+      //     `300 000 ${t("settings.tab_2_list.credits_per_month")}`,
+      //     `10 ${t("settings.tab_2_list.users")}`,
+      //     `${t("settings.tab_2_list.full_integrations_access")}`,
+      //     `${t("settings.tab_2_list.multi_account_mode")}`,
+      //     `${t("settings.tab_2_list.activity_center")}`,
+      //     `5GB ${t("settings.tab_2_list.of_knowledge")}`,
+      //     `${t("settings.tab_2_list.dedicated_slack_channel")}`,
+      //   ],
+      // },
       {
         name: `${t("settings.tab_2_list.enterprise")}`,
         svg: <CustomPlanIcon />,
@@ -230,15 +230,15 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
       {
         name: `${t("settings.tab_2_list.pro")}`,
         svg: <ProPlanIcon />,
-        price: "€107",
+        price: "€97",
         key: "pro",
         period: `/ ${t("settings.tab_2_list.month")}`,
         description:
           `${t("settings.tab_2_list.pro_content")}`,
         features: [
-          `10000 ${t("settings.tab_2_list.credits_per_month")}`,
+          `1 000 ${t("settings.tab_2_list.credits_per_month")}`,
           `1 ${t("settings.tab_2_list.user")}`,
-          `100MB ${t("settings.tab_2_list.of_knowledge")}`,
+          `1GB ${t("settings.tab_2_list.of_knowledge")}`,
           `5 ${t("settings.tab_2_list.integrations")}`,
           `${t("settings.tab_2_list.schedule_tool_runs")}`,
           `${t("settings.tab_2_list.live_chat")}`,
@@ -249,35 +249,35 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
         name: `${t("settings.tab_2_list.team")}`,
         svg: <TeamPlanIcon />,
         key: "team",
-        price: "€199",
+        price: "€167",
         period: `/ ${t("settings.tab_2_list.month")}`,
         description: `${t("settings.tab_2_list.team_content")}`,
         features: [
-          `100 000 ${t("settings.tab_2_list.credits_per_month")}`,
+          `2 500 ${t("settings.tab_2_list.credits_per_month")}`,
           `5 ${t("settings.tab_2_list.users")}`,
-          `1GB ${t("settings.tab_2_list.of_knowledge")}`,
-          `${t("settings.tab_2_list.full_integrations")}`,
-          `${t("settings.tab_2_list.single_account_per_platform")}`,
+          `5GB ${t("settings.tab_2_list.of_knowledge")}`,
+          `${t("settings.tab_2_list.full_integrations")} ${t("settings.tab_2_list.single_account_per_platform")}`,
+          
           `${t("settings.tab_2_list.live_chat")}`,
         ],
       },
-      {
-        name: `${t("settings.tab_2_list.business")}`,
-        svg: <BusinessPlanIcon />,
-        key: "business",
-        price: "€309",
-        period: `/ ${t("settings.tab_2_list.month")}`,
-        description: `${t("settings.tab_2_list.business_content")}`,
-        features: [
-          `300 000 ${t("settings.tab_2_list.credits_per_month")}`,
-          `10 ${t("settings.tab_2_list.users")}`,
-          `${t("settings.tab_2_list.full_integrations_access")}`,
-          `${t("settings.tab_2_list.multi_account_mode")}`,
-          `${t("settings.tab_2_list.activity_center")}`,
-          `5GB ${t("settings.tab_2_list.of_knowledge")}`,
-          `${t("settings.tab_2_list.dedicated_slack_channel")}`,
-        ],
-      },
+      // {
+      //   name: `${t("settings.tab_2_list.business")}`,
+      //   svg: <BusinessPlanIcon />,
+      //   key: "business",
+      //   price: "€309",
+      //   period: `/ ${t("settings.tab_2_list.month")}`,
+      //   description: `${t("settings.tab_2_list.business_content")}`,
+      //   features: [
+      //     `300 000 ${t("settings.tab_2_list.credits_per_month")}`,
+      //     `10 ${t("settings.tab_2_list.users")}`,
+      //     `${t("settings.tab_2_list.full_integrations_access")}`,
+      //     `${t("settings.tab_2_list.multi_account_mode")}`,
+      //     `${t("settings.tab_2_list.activity_center")}`,
+      //     `5GB ${t("settings.tab_2_list.of_knowledge")}`,
+      //     `${t("settings.tab_2_list.dedicated_slack_channel")}`,
+      //   ],
+      // },
       {
         name: `${t("settings.tab_2_list.enterprise")}`,
         svg: <CustomPlanIcon />,
@@ -300,7 +300,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
       const filterData = plans.annual.filter((each) => each.key === userDetails?.subscriptionType)
       const index = plans.annual.findIndex((each) => each.key === userDetails?.subscriptionType)
       setPlanIndex(index)
-      setActivePlan(filterData?.[0].name)
+      setActivePlan(filterData?.[0]?.name)
     }
 
   }, [token, !userDetails.loading])
@@ -382,7 +382,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
           {plans[activeTab].map((plan, index) => (
             <div
               key={index}

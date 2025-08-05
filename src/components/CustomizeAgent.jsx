@@ -14,6 +14,7 @@ import sandro from '../assets/svg/sandro_logo.svg'
 import { DeleteIcon, UploadIcon } from "../icons/icons"
 import { testAgentChat } from "../api/appointmentSetter"
 import { v4 as uuidv4 } from 'uuid';
+import { useTranslation } from "react-i18next"
 
 function CustomizeAgent({ customIntegartion, setCustomStatus }) {
     const [activeTab, setActiveTab] = useState("customize")
@@ -21,6 +22,7 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
     const [errors, setErrors] = useState({})
     const [colorPickerStatus, setColorPickerStatus] = useState(false)
     const colorPickerRef = useRef()
+    const { t } = useTranslation()
 
     const [message, setMessage] = useState("")
     const [messages, setMessages] = useState([]);
@@ -103,7 +105,7 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
     };
 
 
-    const tabs = [{ label: "Customize", key: "customize" }, { label: "Share", key: "share" }]
+    const tabs = [{ label:t("calina.customize") , key: "customize" }, { label: t("calina.share"), key: "share" }]
 
     const avatarList = [
         { key: "tara", icon: tara }, { key: "constance", icon: constance }, { key: "rebecca", icon: rebecca },
@@ -112,9 +114,9 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
     ]
 
     const chatbotOptions = [{
-        key: "chat_bubble", label: "Display a chat bubble", content: "Add a floating chat icon at the bottom of your site, perfect for a discreet and always-accessible chatbot.", is_recommended: true
+        key: "chat_bubble", label: t("calina.display_a_chat_bubble"), content: t("calina.display_a_chat_bubble_descr"), is_recommended: true
     }, {
-        key: "iframe", label: "Integrate via iframe", content: "Embed the chatbot directly on a page of your site, always visible without needing to click on a bubble.", is_recommended: false
+        key: "iframe", label: t("calina.integrate_via_frame"), content: t("calina.integrate_via_frame_descr"), is_recommended: false
     }]
 
     const handleChange = (e) => {
@@ -158,7 +160,7 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                         <div className="rounded-[12px] p-[10px] bg-[#EBEFFF]">
                             {customIntegartion.icon}
                         </div>
-                        <h1 className="text-[#1E1E1E] text-[20px] font-[600]">Website</h1>
+                        <h1 className="text-[#1E1E1E] text-[20px] font-[600]">{customIntegartion.label}</h1>
                         <div className="bg-[#F2F2F7] p-[4px] flex rounded-[13px]">
                             {tabs.map((each) => (
                                 <p key={each.key} onClick={() => setActiveTab(each.key)} className={`py-[7px] cursor-pointer text-[16px] font-[500] px-[20px] ${activeTab === each.key ? 'bg-[#fff] rounded-[10px] text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{each.label}</p>
@@ -167,12 +169,12 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                     </div>
                     {activeTab === "customize" ? <div className="w-full flex gap-5">
                         <div className="w-[60%]">
-                            <h1 className="text-[#1E1E1E] font-[600] text-[16px] pb-4">Personalize your Chatbot</h1>
+                            <h1 className="text-[#1E1E1E] font-[600] text-[16px] pb-4">{t("calina.personalize_your_chatbox")}</h1>
                             <div className="flex flex-col gap-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                                     <div className="flex flex-col gap-1.5 w-full">
                                         <label className="text-sm font-medium text-[#1e1e1e]">
-                                            Display Name
+                                            {t("calina.display_name")}
                                         </label>
                                         <input
                                             type="text"
@@ -186,7 +188,7 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                                     </div>
                                     <div ref={colorPickerRef} className="flex flex-col gap-1.5 w-full">
                                         <label className="text-sm font-medium text-[#1e1e1e]">
-                                            Color
+                                            {t("calina.color")}
                                         </label>
                                         <div className="relative">
                                             <input
@@ -206,7 +208,7 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                                 </div>
                                 <div className="w-full">
                                     <label className="text-sm font-medium text-[#1e1e1e]">
-                                        Avatar
+                                        {t("calina.avatar")}
                                     </label>
                                     <div className="flex items-center gap-5">
                                         <div className="border border-[#E1E4EA] justify-around flex flex-col items-center w-[148px] h-[148px] p-[10px] rounded-[10px]">
@@ -230,7 +232,7 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                                 </div>
                                 <div className="flex flex-col gap-1.5 w-full">
                                     <label className="text-sm font-medium text-[#1e1e1e]">
-                                        Introduction to Chat
+                                        {t("calina.intro_chat")}
                                     </label>
                                     <textarea
                                         name='introduction_to_chat'
@@ -244,7 +246,7 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                                 </div>
                                 <div className="flex flex-col gap-1.5 w-full">
                                     <label className="text-sm font-medium text-[#1e1e1e]">
-                                        Domains name
+                                        {t("calina.domain_name")}
                                     </label>
                                     <input
                                         type="text"
@@ -252,14 +254,14 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                                         value={formData?.domain_name}
                                         onChange={handleChange}
                                         className={`w-full bg-white p-2 rounded-lg border ${errors.domain_name ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                                        placeholder="Enter domain name"
+                                        placeholder={t("calina.domain_name_placeholder")}
                                     />
                                     {errors.domain_name && <p className="text-red-500 text-sm mt-1">{errors.domain_name}</p>}
                                 </div>
                             </div>
                         </div>
                         <div className="w-[40%]">
-                            <h1 className="text-[#1E1E1E] font-[600] text-[16px]">Preview</h1>
+                            <h1 className="text-[#1E1E1E] font-[600] text-[16px]">{t("calina.preview")}</h1>
                             <div className="py-6 flex gap-6 w-full">
                                 <div className="h-[466px] relative border border-[#E1E4EA] rounded-lg">
                                     <div className="bg-[#F5F7FF] rounded-y-lg rounded-t-lg p-2 mb-4 flex items-center gap-3">
@@ -298,14 +300,14 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                                                 type="text"
                                                 value={message}
                                                 onChange={(e) => setMessage(e.target.value)}
-                                                placeholder="Type your message here..."
+                                                placeholder={t("type_message")}
                                                 className="flex w-full border bg-white border-[#E1E4EA] focus:outline-none focus:border-[#675FFF] rounded-lg px-4 py-2 text-[#5A687C]"
                                             />
                                             <button
                                                 onClick={handleSendMessage}
                                                 className="px-6 py-2 font-[500] text-[16px] bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white rounded-lg"
                                             >
-                                                Send
+                                                {t("send")}
                                             </button>
                                         </div>
                                     </div>
@@ -316,8 +318,8 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                     </div> :
                         <div className="w-full flex flex-col gap-3">
                             <div className="flex items-center justify-between">
-                                <h1 className="text-[#1E1E1E] font-[600] text-[16px] pb-4">Integrate your chatbot into your website</h1>
-                                <p className="text-[#FF9500] font-[400] text-[16px]">Action required from you</p>
+                                <h1 className="text-[#1E1E1E] font-[600] text-[16px] pb-4">{t("calina.integrate_your_chatbox")}</h1>
+                                <p className="text-[#FF9500] font-[400] text-[16px]">{t("calina.actions_required_from_you")}</p>
                             </div>
                             <ul className="flex w-full gap-2">
                                 {chatbotOptions.map((each) => (
@@ -329,7 +331,7 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                                             <div className="flex flex-col gap-2">
                                                 <div className="flex items-center justify-between py-1">
                                                     <h2 className="text-[#1E1E1E] text-[16px] font-[500]">{each.label}</h2>
-                                                    {each.is_recommended && <p className="text-[#1E1E1E] font-[400] text-[14px] rounded-[40px] py-[8px] px-[12px] bg-[#F0EFFF]">Recommended</p>}
+                                                    {each.is_recommended && <p className="text-[#1E1E1E] font-[400] text-[14px] rounded-[40px] py-[8px] px-[12px] bg-[#F0EFFF]">{t("calina.recommended")}</p>}
                                                 </div>
                                                 <p className="text-[#5A687C] text-[14px] font-[400]">{each.content}</p>
                                             </div>
@@ -338,15 +340,15 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                                 ))}
                             </ul>
                             <div className="flex flex-col gap-3">
-                                <h1 className="text-[#1E1E1E] font-[600] text-[16px]">Configuration</h1>
+                                <h1 className="text-[#1E1E1E] font-[600] text-[16px]">{t("calina.config")}</h1>
                                 <div className="flex flex-col gap-1">
-                                    <h2 className="text-[#1E1E1E] font-[600] text-[14px]">Install the following code on your site</h2>
-                                    <p className="text-[#5A687C] font-[400] text-[12px]">Place the code just before the closing tag on any page where you want to activate the chatbot.</p>
+                                    <h2 className="text-[#1E1E1E] font-[600] text-[14px]">{t("calina.install_following_code")}</h2>
+                                    <p className="text-[#5A687C] font-[400] text-[12px]">{t("calina.place_code")}</p>
                                 </div>
                                 <>
                                     <div className="flex items-center justify-between pb-1">
-                                        <p className="text-[#1E1E1E] font-[500] text-[14px]">Add Code Here</p>
-                                        <button className="border-[1.5px] cursor-pointer rounded-[7px] py-[4px] px-[14px] border-[#5F58E8] text-[#675FFF] text-[16px] font-[500]">Copy</button>
+                                        <p className="text-[#1E1E1E] font-[500] text-[14px]">{t("calina.add_code_here")}</p>
+                                        <button className="border-[1.5px] cursor-pointer rounded-[7px] py-[4px] px-[14px] border-[#5F58E8] text-[#675FFF] text-[16px] font-[500]">{t("calina.copy")}</button>
                                     </div>
                                     <textarea
                                         name='code'

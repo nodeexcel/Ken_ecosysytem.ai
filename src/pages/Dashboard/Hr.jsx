@@ -45,10 +45,10 @@ function Hr() {
 
     const sideMenuList = [
         { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
-        { label: `Job Description Writer`, icon: <DocIcon status={activeSidebarItem == "job_description_writer"} />, hoverIcon: <DocIcon hover={true} />, path: "job_description_writer" },
-        { label: `Resume Screener`, icon: <ResumeDocIcon status={activeSidebarItem == "resume_screener"} />, hoverIcon: <ResumeDocIcon hover={true} />, path: "resume_screener" },
-        { label: `Interview Planner`, icon: <InterviewPlannerIcon status={activeSidebarItem == "interview_planner"} />, hoverIcon: <InterviewPlannerIcon hover={true} />, path: "interview_planner" },
-        { label: `LinkedIn Outreacher`, icon: <LinkedInIcon status={activeSidebarItem == "linkedin"} />, hoverIcon: <LinkedInIcon hover={true} />, path: "linkedin" },
+        { label: t("skills.rima_content1_header"), icon: <DocIcon status={activeSidebarItem == "job_description_writer"} />, hoverIcon: <DocIcon hover={true} />, path: "job_description_writer" },
+        { label: t("skills.rima_content2_header"), icon: <ResumeDocIcon status={activeSidebarItem == "resume_screener"} />, hoverIcon: <ResumeDocIcon hover={true} />, path: "resume_screener" },
+        { label: t("skills.rima_content3_header"), icon: <InterviewPlannerIcon status={activeSidebarItem == "interview_planner"} />, hoverIcon: <InterviewPlannerIcon hover={true} />, path: "interview_planner" },
+        { label: t("skills.rima_content4_header"), icon: <LinkedInIcon status={activeSidebarItem == "linkedin"} />, hoverIcon: <LinkedInIcon hover={true} />, path: "linkedin" },
     ]
 
     const activeTab = useSelector((state) => state.skills)

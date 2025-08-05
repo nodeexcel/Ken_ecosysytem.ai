@@ -12,11 +12,11 @@ function CustomerSupportChat() {
     const [dropDown2, setDropDown2] = useState("all")
     const { t } = useTranslation()
 
-    const options = [{ label: "All", key: "all" }, { label: "Select 1", key: "select_1" }, { label: "Select 2", key: "select_2" }]
+    const options = [{ label: t("brain_ai.all"), key: "all" }, { label: "Select 1", key: "select_1" }, { label: "Select 2", key: "select_2" }]
     return (
         <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
             <h1 className="text-[24px] font-[600] text-[#1E1E1E]">Chats</h1>
-            <p className="text-[14px] font-[400] text-[#5A687C] py-1">View all chats handled by your chatbot here, with filters by date, integration, or tag.</p>
+            <p className="text-[14px] font-[400] text-[#5A687C] py-1">{t("calina.chats_descrp")}</p>
 
             <div className='flex flex-wrap gap-2'>
                 <div className="relative">
@@ -72,10 +72,10 @@ function CustomerSupportChat() {
                         <div className="flex justify-center items-center">
                             <img src={calinaImg} alt={"calina"} className="object-fit" />
                         </div>
-                        <p className="text-[#1E1E1E] text-[18px] font-[600]">No chats at the moment</p>
-                        <p className="text-[#5A687C] text-[14px] font-[400]">Your chatbot conversations will appear here</p>
+                        <p className="text-[#1E1E1E] text-[18px] font-[600]">{t("calina.no_charts_appear")}</p>
+                        <p className="text-[#5A687C] text-[14px] font-[400]">{t("calina.your_charts_conversations")}</p>
                         <div className="pt-2">
-                            <button className="border-[1.5px] text-[#fff] rounded-[7px] bg-[#675FFF] px-[20px] py-[7px] border-[#5F58E8]">Refresh</button>
+                            <button className="border-[1.5px] text-[#fff] rounded-[7px] bg-[#675FFF] px-[20px] py-[7px] border-[#5F58E8]">{t("refresh")}</button>
                         </div>
                     </div>
                 </div>

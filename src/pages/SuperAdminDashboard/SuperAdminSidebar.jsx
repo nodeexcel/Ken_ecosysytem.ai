@@ -1,38 +1,30 @@
 import React, { useEffect, useRef, useState } from 'react';
-import person from '../assets/images/person.svg'
-import switchuser from '../assets/images/switch_user.svg'
-import { GrAppsRounded } from 'react-icons/gr';
-import { IoNotificationsOutline, IoSettingsOutline } from 'react-icons/io5';
-import { HiOutlineDocumentText } from 'react-icons/hi';
-import { TfiHeadphoneAlt } from 'react-icons/tfi';
+import person from '../../assets/images/person.svg'
 import { RxHamburgerMenu } from 'react-icons/rx';
 import { IoClose } from 'react-icons/io5';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { LuBrain } from 'react-icons/lu';
 import { useDispatch, useSelector } from 'react-redux';
-import uk_flag from "../assets/images/uk_flag.png"
-import fr_flag from "../assets/images/fr_flag.png"
-import Notification from '../pages/Dashboard/Notification';
+import uk_flag from "../../assets/images/uk_flag.png"
+import fr_flag from "../../assets/images/fr_flag.png"
+import Notification from '../../pages/Dashboard/Notification';
 import { X } from 'lucide-react';
-import { getNavbarData } from '../store/navbarSlice';
-import { GiftIcon, SidebarBrainIcon, SidebarFourBoxIcon, SidebarHelpCenterIcon, SidebarNotificationIcon, SidebarSettingIcon, SkillsIcon } from '../icons/icons';
-import logo from '../assets/svg/dashboard_logo.svg'
-import { changeLanguage } from '../api/profile';
-import i18n from '../i18n';
-import lifeTimeImg from "../assets/svg/eco_systeme_lifetime_commission.svg"
+import { getNavbarData } from '../../store/navbarSlice';
+import { AgentIcon, CopyIcon, DollarIcon, GiftIcon, HomeIcon, UserIcon, SidebarBrainIcon, SidebarFourBoxIcon, SidebarHelpCenterIcon, SidebarNotificationIcon, SidebarSettingIcon, SkillsIcon } from '../../icons/icons';
+import logo from '../../assets/svg/dashboard_logo.svg'
+import { changeLanguage } from '../../api/profile';
+import i18n from '../../i18n';
+import lifeTimeImg from "../../assets/svg/eco_systeme_lifetime_commission.svg"
 import { useTranslation } from "react-i18next";
-import textLogo from '../assets/svg/ecosysteme.ai_logo.svg'
-import { discardSkillsData } from '../store/agentSkillsSlice';
+import textLogo from '../../assets/svg/ecosysteme.ai_logo.svg'
+import { discardSkillsData } from '../../store/agentSkillsSlice';
 
-const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
+const SuperAdminSidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     const navigate = useNavigate()
     const location = useLocation()
     const dispatch = useDispatch()
-    const userDetails = useSelector((state) => state.profile.user)
+    const userDetails = useSelector((state) => state.profile)
     const lastPath = location.pathname.split('/').filter(Boolean).pop();
     const { t } = useTranslation();
-
-    const paths = ['campaigns', 'phone', 'appointment-setter', "accounting", "hr", "coo", "seo", "content-creation", "customer-support"]
 
     const [isNotification, setIsNotification] = useState(false);
 
@@ -59,7 +51,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
 
     const renderLangSrc = () => {
         const filterSrc = languagesOptions.filter((e) => e.key === selectedLang)
-        return filterSrc[0].flag
+        return filterSrc[0] ? filterSrc[0].flag : languagesOptions[0].flag
     }
 
     const toggleDropdown = () => setShowDropdown(!showDropdown);
@@ -100,17 +92,21 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
 
 
     const handleSelect = (path, label) => {
-        if (userDetails?.isProfileComplete === false && path !== "settings") {
-            setModalStatus(true)
-        } else {
+        // if (userDetails?.isProfileComplete === false && path !== "settings") {
+        //     setModalStatus(true)
+        // } else {
             dispatch(getNavbarData(label))
             setShowDropdown(false)
-            navigate(path)
+            if (path === "settings") {
+                navigate("/super-admin/settings")
+            } else {
+                navigate(path)
+            }
             dispatch(discardSkillsData())
             if (isOpen) {
                 toggleSidebar()
             }
-        }
+        // }
     }
 
     const handleNotification = () => {
@@ -128,7 +124,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
         }
         else {
             dispatch(getNavbarData("Home"))
-            navigate("/dashboard")
+            navigate("/super-admin")
             dispatch(discardSkillsData())
             if (isOpen) {
                 toggleSidebar()
@@ -136,14 +132,27 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
         }
     }
 
+    const handleProfileClick = () => {
+        if (userDetails?.isProfileComplete === false) {
+            setModalStatus(true)
+        } else {
+            // Navigate to profile page or dashboard home
+            navigate("/super-admin")
+            if (isOpen) {
+                toggleSidebar()
+            }
+        }
+    }
+
     const renderColor = (index) => {
-        if (isNotification && index === 6) {
+        if (lastPath === "super-admin" && index === 0) {
             return true
         }
-        else if ((lastPath === "dashboard" || paths.includes(lastPath)) && index === 0) {
-            return true
-        }
-        else if (lastPath === sidebarItems[index].id) {
+        else if (sidebarItems[index] && lastPath === sidebarItems[index].id) {
+            console.log(lastPath, sidebarItems[index].id)
+            console.log(sidebarItems[index].id)
+            console.log(sidebarItems[index].id)
+            console.log(sidebarItems[index].id)
             return true
         }
         return false
@@ -161,13 +170,13 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
             >
                 {isOpen ? <IoClose size={24} /> : <RxHamburgerMenu size={24} color='#1e1e1e' />}
             </button>
-            <aside className={`bg-[#FFFFFF] ${isOpen && 'rounded-r-[8px] px-8 pt-3'} overflow-auto w-full border-r border-[#E1E4EA] h-full transition-all duration-300 ${isOpen ? 'w-[100px]' : 'w-0 overflow-auto'}  flex flex-col justify-between`}>
+            <aside className={`bg-[#675FFF] ${isOpen && 'rounded-r-[8px] px-8 pt-3'} overflow-auto w-full border-r border-[#E1E4EA] h-full transition-all duration-300 ${isOpen ? 'w-[100px]' : 'w-0 overflow-auto'}  flex flex-col justify-between`}>
                 <div className='flex flex-col'>
                     <div className={`flex ${!isOpen && 'justify-center'} py-4`} onClick={handleHome}>
                         <img src={isOpen ? textLogo : logo} alt='image' />
                     </div>
                     <hr className='text-[#E1E4EA]' />
-                    <div className='text-xl flex justify-center py-3'>
+                    <div className='text-xl flex justify-center py-3 cursor-pointer hover:opacity-80 transition-opacity' onClick={handleProfileClick}>
                         <img
                             src={userDetails?.image ?? person}
                             alt='image'
@@ -175,10 +184,20 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         />
                     </div>
                     <hr className='text-[#E1E4EA]' />
+                    
+                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[0].id, sidebarItems[0].label)}>
+                        <div className='flex items-center'>
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><HomeIcon status={renderColor(0)} /></div> <div className='hidden group-hover:block'><SidebarFourBoxIcon status={true} /></div> </div>
+                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(0) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.home")}</p>}
+                        </div>
+                        {!isOpen && <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[101px]' : 'md:left-[97px]'} left-[102px]  bg-white shadow-md rounded p-2 z-[9999]`}>
+                            <p className='font-[400]'>{t("sidebar.home")}</p>
+                        </div>}
+                    </div>
                     <div ref={noticationRef}>
                         <div className={`text-xl flex ${!isNotification && 'group'} hover:cursor-pointer ${!isOpen && 'justify-center'} relative py-3`} onClick={handleNotification}>
                             <div className='flex items-center'>
-                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarNotificationIcon status={renderColor(6)} /></div> <div className='hidden group-hover:block'><SidebarNotificationIcon status={true} /></div> </div>
+                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><UserIcon status={renderColor(6)} /></div> <div className='hidden group-hover:block'><UserIcon status={true} /></div> </div>
                                 {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(6) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.notification")}</p>}
                             </div>
                             {!isOpen && <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[116px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
@@ -187,24 +206,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         </div>
                         {isNotification && <Notification setNotification={setIsNotification} />}
                     </div>
-                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[0].id, sidebarItems[0].label)}>
-                        <div className='flex items-center'>
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarFourBoxIcon status={renderColor(0)} /></div> <div className='hidden group-hover:block'><SidebarFourBoxIcon status={true} /></div> </div>
-                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(0) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.home")}</p>}
-                        </div>
-                        {!isOpen && <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[101px]' : 'md:left-[97px]'} left-[102px]  bg-white shadow-md rounded p-2 z-[9999]`}>
-                            <p className='font-[400]'>{t("sidebar.home")}</p>
-                        </div>}
-                    </div>
-                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[7].id, sidebarItems[7].label)}>
-                        <div className='flex items-center'>
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SkillsIcon status={renderColor(7)} /></div> <div className='hidden group-hover:block'><SkillsIcon status={true} /></div> </div>
-                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(7) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.skills")}</p>}
-                        </div>
-                        {!isOpen && <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[120px]' : 'md:left-[95px]'} left-[102px] bg-white shadow-md rounded p-2 z-[9999]`}>
-                            <p className='font-[400]'>{t("sidebar.skills")}</p>
-                        </div>}
-                    </div>
+                    
                     <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
                         <div className='flex items-center'>
                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarBrainIcon status={renderColor(1)} /></div> <div className='hidden group-hover:block'><SidebarBrainIcon status={true} /></div> </div>
@@ -214,13 +216,41 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                             <p className='font-[400]'>{t("sidebar.brain_ai")}</p>
                         </div>}
                     </div>
+
+                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
+                        <div className='flex items-center'>
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><AgentIcon status={renderColor(1)} /></div> <div className='hidden group-hover:block'><AgentIcon status={true} /></div> </div>
+                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(1) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.copy_link")}</p>}
+                        </div>
+                        {!isOpen && <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[102px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
+                            <p className='font-[400]'>{t("Agent Monitoring")}</p>
+                        </div>}
+                    </div>
+                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
+                        <div className='flex items-center'>
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><DollarIcon status={renderColor(1)} /></div> <div className='hidden group-hover:block'><CopyIcon status={true} /></div> </div>
+                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(1) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.copy_link")}</p>}
+                        </div>
+                        {!isOpen && <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[102px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
+                            <p className='font-[400]'>{t("Billing & Subscriptions")}</p>
+                        </div>}
+                    </div>
+                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
+                        <div className='flex items-center'>
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><CopyIcon status={renderColor(1)} /></div> <div className='hidden group-hover:block'><CopyIcon status={true} /></div> </div>
+                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(1) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.copy_link")}</p>}
+                        </div>
+                        {!isOpen && <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[102px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
+                            <p className='font-[400]'>{t("Logs & Troublshooting")}</p>
+                        </div>}
+                    </div>
                     <hr className='text-[#E1E4EA]' />
                 </div>
                 <div className='flex flex-col'>
                     <hr className='text-[#E1E4EA]' />
-                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[2].id, sidebarItems[2].label)}>
+                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect("settings", "Settings")}>
                         <div className='flex items-center'>
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarSettingIcon status={renderColor(2)} /></div> <div className='hidden group-hover:block'><SidebarSettingIcon status={true} /></div> </div>
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarSettingIcon className='text-white' status={renderColor(2)} /></div> <div className='hidden group-hover:block'><SidebarSettingIcon className='text-white' status={true} /></div> </div>
                             {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(2) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.settings")}</p>}
                         </div>
                         {!isOpen && <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[113px]' : 'md:left-[104px]'} left-[102px] bg-white shadow-md rounded p-2 z-[9999]`}>
@@ -257,24 +287,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         </div>}
                     </div>
                     <hr className='text-[#E1E4EA]' />
-                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={redirectHelpCenterDoc}>
-                        <div className='flex items-center'>
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarHelpCenterIcon status={renderColor(3)} /></div> <div className='hidden group-hover:block'><SidebarHelpCenterIcon status={true} /></div> </div>
-                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(3) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.help_center")}</p>}
-                        </div>
-                        {!isOpen && <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[118px]' : 'md:left-[113px]'} left-[102px] bg-white shadow-md rounded p-2 z-[9999]`}>
-                            <p className='font-[400]'>{t("sidebar.help_center")}</p>
-                        </div>}
-                    </div>
-                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => setCommissionStatus(true)}>
-                        <div className='flex items-center'>
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><GiftIcon status={renderColor(4)} /></div> <div className='hidden group-hover:block'><GiftIcon status={true} /></div> </div>
-                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(4) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.support")}</p>}
-                        </div>
-                        {!isOpen && <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[163px]' : 'md:left-[161px]'} left-[132px] bg-white shadow-md rounded p-2 z-[9999]`}>
-                            <p className='font-[400]'>{t("sidebar.ecosystem_ai")}</p>
-                        </div>}
-                    </div>
+                    
                     {/* <div className='text-xl flex justify-center py-4' onClick={() => handleSelect(sidebarItems[5].id)}>
                         <img src={switchuser} alt='aiframe' color={renderColor(5)} />
                     </div> */}
@@ -328,7 +341,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                                 <h2 className="text-[20px] font-[600] text-[#1E1E1E]">
                                     {t("sidebar.lifetime_commission")}
                                 </h2>
-                                <h3 className='text-[16px] font-[400] text-[#5A687C]'>{t("share")} <span className='text-[#675FFF]'>Ecosysteme.ai</span> {t("with_your_friends")}</h3>
+                                <h3 className='text-[16px] font-[400] text-[#5A687C]'>Share <span className='text-[#675FFF]'>Ecosysteme.ai</span> with your friends and get lifetime commission.</h3>
                             </div>
                             <button
                                 className="bg-[#675FFF] cursor-pointer w-full text-white px-5 py-2 font-[500] test-[16px]  rounded-lg"
@@ -347,4 +360,4 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     );
 };
 
-export default Sidebar;
+export default SuperAdminSidebar;

@@ -61,15 +61,15 @@ const Knowledge = () => {
     files: { label: `${t("brain_ai.knowledge.files_label")}` }
   }
 
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     if (moreActionsRef.current && !moreActionsRef.current.contains(event.target)) {
-  //       setActiveDropdown(null);
-  //     }
-  //   };
-  //   document.addEventListener('mousedown', handleClickOutside);
-  //   return () => document.removeEventListener('mousedown', handleClickOutside);
-  // }, []);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (moreActionsRef.current && !moreActionsRef.current.contains(event.target)) {
+        setActiveDropdown(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -292,7 +292,10 @@ const Knowledge = () => {
                 </div>)}
               </div>
             </div> :
-              <NoData t={t} setOpen={() => setOpen(true)} />}
+              <NoData t={t} setOpen={() => {
+                setOpen(true);
+                setActiveDropdown(null);
+              }} />}
           </>
         )
 
@@ -345,7 +348,11 @@ const Knowledge = () => {
                   </div>
                 </div>)}
               </div>
-            </div> : <NoData t={t} setOpen={() => setOpen(true)} />}
+            </div> :
+              <NoData t={t} setOpen={() => {
+                setOpen(true);
+                setActiveDropdown(null);
+              }} />}
           </>
         )
       default:
@@ -398,7 +405,10 @@ const Knowledge = () => {
                 </div>)}
               </div>
             </div> :
-              <NoData t={t} setOpen={() => setOpen(true)} />}
+              <NoData t={t} setOpen={() => {
+                setOpen(true);
+                setActiveDropdown(null);
+              }} />}
           </>
         )
     }
@@ -412,7 +422,10 @@ const Knowledge = () => {
         <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
           {t("brain_ai.knowledge.sub_heading")}
         </h1>
-        <button onClick={() => setOpen(true)} className="flex items-center cursor-pointer gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
+        <button onClick={() => {
+          setOpen(true);
+          setActiveDropdown(null);
+        }} className="flex items-center cursor-pointer gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
           <span className="font-medium text-base leading-6">
             {t("brain_ai.knowledge.add")} {renderHeader()}
           </span>
@@ -422,11 +435,15 @@ const Knowledge = () => {
       <div className="flex items-start relative self-stretch w-full flex-[0_0_auto] border-b border-[#e1e4ea]">
         {tabs.map((e) => <button
           key={e.key}
-          onClick={() => setActiveTab(e.key)}
-          className={`inline-flex cursor-pointer items-center justify-center gap-1 p-2.5 relative flex-[0_0_auto] border-b-2 ${activeTab === e.key
-            ? "border-[#5E54FF] text-primary-color"
-            : "border-[#e1e4ea] text-text-grey"
-            } rounded-none`}
+          onClick={() => {
+            setActiveTab(e.key);
+            setActiveDropdown(null);
+          }}
+          className={`inline-flex cursor-pointer items-center justify-center gap-1 p-2.5 relative flex-[0_0_auto] border-b-2 transition-colors duration-200 ${
+            activeTab === e.key
+              ? "border-[#5E54FF] text-primary-color"
+              : "border-[#e1e4ea] text-text-grey hover:text-[#5E54FF] hover:border-[#D9D6FF]"
+          } rounded-none`}
         >
           <span className={`font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === e.key ? "text-[#5E54FF]"
             : "text-[#5A687C] "}`}>

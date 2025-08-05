@@ -99,7 +99,7 @@ const NotificationsComponent = ({ setNotification }) => {
           {/* Today section */}
           <div className="flex items-center gap-2.5 p-2.5 relative self-stretch w-full flex-[0_0_auto] bg-gray-50">
             <h2 className="relative w-fit mt-[-1.00px] font-semibold text-gray-500 text-base tracking-[-0.32px] leading-5 whitespace-nowrap">
-              Today
+              {t("today")}
             </h2>
           </div>
           <section className="flex flex-col items-start gap-3 p-3 w-full">

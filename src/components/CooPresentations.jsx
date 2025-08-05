@@ -8,6 +8,7 @@ function CooPresentations() {
     const [presentationData, setPresentationData] = useState([])
     const [loading, setLoading] = useState(true)
     const [activeDropdown, setActiveDropdown] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
     const moreActionsRef = useRef()
     const { t } = useTranslation();
 
@@ -67,6 +68,11 @@ function CooPresentations() {
         }
     }
 
+    // Filter presentations based on search term
+    const filteredPresentations = presentationData.filter(presentation =>
+        presentation.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
             {/* Header */}
@@ -79,7 +85,12 @@ function CooPresentations() {
                 </button>
             </div>
             <div>
-                <input placeholder={t("brain_ai.search")} className="max-w-[399px] bg-white focus:outline-none focus:border-[#675FFF] w-full rounded-[8px] border border-[#E1E4EA] py-[5px] px-[14px]" />
+                <input 
+                    placeholder={t("brain_ai.search")} 
+                    className="max-w-[399px] bg-white focus:outline-none focus:border-[#675FFF] w-full rounded-[8px] border border-[#E1E4EA] py-[5px] px-[14px]" 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
             </div>
             {/* Table */}
             <div className="w-full">
@@ -87,25 +98,25 @@ function CooPresentations() {
                     <div className="px-5 w-full">
                         <thead>
                             <tr className="text-left text-[#5A687C] text-[16px]">
-                                <th className="px-[14px] py-[14px] min-w-[200px] max-w-[35%] w-full font-[400] whitespace-nowrap">{t("brain_ai.name")}</th>
-                                <th className="px-[14px] py-[14px] min-w-[200px] max-w-[35%] w-full font-[400] whitespace-nowrap">{t("brain_ai.status")}</th>
-                                <th className="px-[14px] py-[14px] min-w-[200px] max-w-[35%] w-full font-[400] whitespace-nowrap">{t("brain_ai.date")}</th>
-                                <th className="py-[14px] w-full font-[400] whitespace-nowrap">{t("brain_ai.actions")}</th>
+                                <th className="px-[14px] py-[14px] min-w-[200px] max-w-[35%] w-full font-[400] table-cell-wrap">{t("brain_ai.name")}</th>
+              <th className="px-[14px] py-[14px] min-w-[200px] max-w-[35%] w-full font-[400] table-cell-wrap">{t("brain_ai.status")}</th>
+              <th className="px-[14px] py-[14px] min-w-[200px] max-w-[35%] w-full font-[400] table-cell-wrap">{t("brain_ai.date")}</th>
+              <th className="py-[14px] w-full font-[400] table-cell-wrap">{t("brain_ai.actions")}</th>
                             </tr>
                         </thead>
                     </div>
                     <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
                         {loading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
-                            presentationData.length !== 0 ?
+                            filteredPresentations.length !== 0 ?
                                 <tbody className="w-full">
-                                    {presentationData.map((row, index) =>
+                                    {filteredPresentations.map((row, index) =>
                                         <tr
                                             key={row.id}
                                             className={`text-[16px] text-[#1E1E1E] ${index !== presentationData?.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
                                         >
-                                            <td className="px-[14px] py-[14px] min-w-[200px] max-w-[35%] w-full font-[600] text-[#1E1E1E] whitespace-nowrap">{row.name}</td>
-                                            <td className="px-[14px] py-[14px] min-w-[200px] max-w-[35%] w-full font-[600] text-[#1E1E1E] whitespace-nowrap"><span className={`border text-[14px] rounded-[16px] px-[10px] py-[2px] font-[500] ${renderClasses(row.status)}`}>{renderStatusLabel(row.status)}</span></td>
-                                            <td className="py-[14px] min-w-[200px] max-w-[35%] w-full text-[#5A687C] whitespace-nowrap">{DateFormat(row.date)}</td>
+                                            <td className="px-[14px] py-[14px] min-w-[200px] max-w-[35%] w-full font-[600] text-[#1E1E1E] table-cell-wrap">{row.name}</td>
+                <td className="px-[14px] py-[14px] min-w-[200px] max-w-[35%] w-full font-[600] text-[#1E1E1E] table-cell-wrap"><span className={`border text-[14px] rounded-[16px] px-[10px] py-[2px] font-[500] ${renderClasses(row.status)}`}>{renderStatusLabel(row.status)}</span></td>
+                <td className="py-[14px] min-w-[200px] max-w-[35%] w-full text-[#5A687C] table-cell-wrap">{DateFormat(row.date)}</td>
                                             <td ref={moreActionsRef} className="pr-[14px] relative">
                                                 <button
                                                     onClick={() => handleDropdownClick(index)}

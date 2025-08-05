@@ -189,12 +189,12 @@ function CampaignDashboard() {
                         <div className="px-5 w-full">
                             <thead>
                                 <tr className="text-left text-[#5A687C]">
-                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">{t("brain_ai.name")}</th>
-                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">{t("emailings.sent")}</th>
-                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">{t("emailings.sent_to")}</th>
-                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">{t("emailings.campaign_status")}</th>
-                                    {/* <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[17%] w-full text-[16px] font-[400]">Status</th> */}
-                                    <th className="p-[14px] whitespace-nowrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">{t("brain_ai.actions")}</th>
+                                    <th className="p-[14px] table-cell-wrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">{t("brain_ai.name")}</th>
+                    <th className="p-[14px] table-cell-wrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">{t("emailings.sent")}</th>
+                    <th className="p-[14px] table-cell-wrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">{t("emailings.sent_to")}</th>
+                    <th className="p-[14px] table-cell-wrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">{t("emailings.campaign_status")}</th>
+                    {/* <th className="p-[14px] table-cell-wrap min-w-[190px] max-w-[17%] w-full text-[16px] font-[400]">Status</th> */}
+                    <th className="p-[14px] table-cell-wrap min-w-[190px] max-w-[25%] w-full text-[16px] font-[400]">{t("brain_ai.actions")}</th>
                                 </tr>
                             </thead>
                         </div>

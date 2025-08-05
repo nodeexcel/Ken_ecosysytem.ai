@@ -126,10 +126,10 @@ export default function CreatePost({ onClose }) {
   // Handle Draft button click
   const handleSaveDraft = async () => {
     let newErrors = {};
-    if (!text) newErrors.text = 'Post text is required.';
-    if (!platform) newErrors.platform = 'Platform is required.';
-    if (!selectedAccount) newErrors.selectedAccount = 'Account is required.';
-    if (platform === "instagram" && !document) newErrors.document = 'File/Image is required.';
+    if (!text) newErrors.text = `${t("constance.post_text") + " " + t("is_required")}`;
+    if (!platform) newErrors.platform = `${t("constance.platform") + " " + t("is_required")}`;
+    if (!selectedAccount) newErrors.selectedAccount = `${t("constance.account") + " " + t("is_required")}`;
+    if (platform === "instagram" && !document) newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
     try {
@@ -162,10 +162,10 @@ export default function CreatePost({ onClose }) {
     setSuccessMessage("");
     setErrorMessage("");
     let newErrors = {};
-    if (!text) newErrors.text = 'Post text is required.';
-    if (!platform) newErrors.platform = 'Platform is required.';
-    if (!selectedAccount) newErrors.selectedAccount = 'Account is required.';
-    if (platform === "instagram" && !document) newErrors.document = 'File/Image is required.';
+    if (!text) newErrors.text = `${t("constance.post_text") + " " + t("is_required")}`;
+    if (!platform) newErrors.platform = `${t("constance.platform") + " " + t("is_required")}`;
+    if (!selectedAccount) newErrors.selectedAccount = `${t("constance.account") + " " + t("is_required")}`;
+    if (platform === "instagram" && !document) newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
     try {
@@ -201,10 +201,10 @@ export default function CreatePost({ onClose }) {
   };
   const handleSchedule = async (scheduledDate, scheduledTime) => {
     let newErrors = {};
-    if (!text) newErrors.text = 'Post text is required.';
-    if (!platform) newErrors.platform = 'Platform is required.';
-    if (!selectedAccount) newErrors.selectedAccount = 'Account is required.';
-    if (platform === "instagram" && !document) newErrors.document = 'File/Image is required.';
+    if (!text) newErrors.text = `${t("constance.post_text") + " " + t("is_required")}`;
+    if (!platform) newErrors.platform = `${t("constance.platform") + " " + t("is_required")}`;
+    if (!selectedAccount) newErrors.selectedAccount = `${t("constance.account") + " " + t("is_required")}`;
+    if (platform === "instagram" && !document) newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
     try {
@@ -265,7 +265,7 @@ export default function CreatePost({ onClose }) {
     <div className="flex flex-col gap-8">
       {/* Header */}
       <div className="flex flex-row items-center justify-between h-[38px]">
-        <h1 className="text-2xl font-semibold text-gray-900">{t("scheduler")}</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">{t("constance.scheduler") + ' > ' + t("brain_ai.create")}</h1>
         <button className="p-2 hover:bg-gray-100 rounded-full" onClick={onClose}>
           <X className="w-5 h-5 text-gray-500" />
         </button>
@@ -280,7 +280,7 @@ export default function CreatePost({ onClose }) {
             <div className="flex flex-col pt-3 w-[184px] max-h-[70px] gap-[6px] absolute top-[0px] left-[16px]">
               {/* Select Platform */}
               <div className="mb-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Select Platform</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t("select") + " " + t("constance.platform")}</label>
                 <div className="relative mb-4">
                   <SelectDropdown
                     name="platform"
@@ -294,7 +294,7 @@ export default function CreatePost({ onClose }) {
                       setPlatform(val);
                       if (errors.platform) setErrors(prev => ({ ...prev, platform: undefined }));
                     }}
-                    placeholder="Select Platform"
+                    placeholder={t("select") + " " + t("constance.platform")}
                     className={`w-full`}
                     errors={errors}
                   />
@@ -303,7 +303,7 @@ export default function CreatePost({ onClose }) {
               </div>
               {/* Select Account */}
               <div className="mb-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Select Account</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t("select") + " " + t("constance.account")}</label>
                 <div className="relative mb-4">
                   {/*
                       The following static options are used for demo purposes only.
@@ -323,7 +323,7 @@ export default function CreatePost({ onClose }) {
                     }}
                     // disabled={platform !== "instagram" || accountsOptionsLoading}
                     className={`w-full`}
-                    placeholder="Select Account"
+                    placeholder={t("select") + " " + t("constance.account")}
                     errors={errors}
                   />
                   {accountsError && <div className="text-red-500 text-xs mt-1">{accountsError}</div>}
@@ -352,7 +352,7 @@ export default function CreatePost({ onClose }) {
             {/* Add Account button with border styling - positioned to match Draft buttons exactly */}
             <div className="absolute bottom-0 left-0 right-0 border-t border-[#E1E4EA] min-h-[88px] p-[25px] bg-white flex items-center">
               <button className="w-full  text-sm text-[#5A687C] text-center font-medium border border-gray-200 rounded-md py-2 bg-white">
-                Add Account
+                {t("constance.add") + " " + t("constance.account")}
               </button>
             </div>
           </div>
@@ -373,11 +373,11 @@ export default function CreatePost({ onClose }) {
                 <div className="flex flex-row items-center gap-[6px] w-[178px] h-[27px]">
                   <button className="flex flex-row items-center gap-[4px] w-[103px] h-[27px] rounded-[4px] border border-[#E1E4EA] px-[10px] py-[6px] text-xs text-gray-600 hover:text-gray-800 bg-white">
                     <Tag className="w-3 h-3" />
-                    Add Labels
+                    {t("constance.add") + " " + t("constance.labels")}
                   </button>
                   <button className="flex flex-row items-center gap-[4px] w-[69px] h-[27px] rounded-[4px] border border-[#E1E4EA] px-[10px] py-[6px] text-xs text-gray-600 hover:text-gray-800 bg-white">
                     <CircleX className="w-3 h-3" />
-                    Clear
+                    {t("constance.clear")}
                   </button>
                 </div>
               </div>
@@ -394,7 +394,7 @@ export default function CreatePost({ onClose }) {
                   if (errors.text) setErrors(prev => ({ ...prev, text: undefined }));
                 }}
                 className={`w-full pl-3 h-[48px] font-normal text-[16px] focus:outline-none focus:border focus:border-[#675FFF] text-[#5A687C] rounded-md  mb-4 ${errors.text ? 'border border-red-500' : ''}`}
-                placeholder="Test Post"
+                placeholder={t("constance.post_text")}
                 style={{ fontWeight: 400, fontStyle: "normal", letterSpacing: 0 }}
                 ref={textInputRef}
               />
@@ -407,14 +407,14 @@ export default function CreatePost({ onClose }) {
                     style={{ width: "94px", height: "27px" }}
                   >
                     <Hash className="w-3 h-3" />
-                    Hashtags
+                    {t("constance.hastags")}
                   </button>
                   <button
                     className="flex items-center gap-[4px] rounded-[4px] border border-[#E1E4EA] px-[10px] py-[6px] text-xs text-gray-600 hover:text-gray-800 bg-white"
                     style={{ width: "118px", height: "27px" }}
                   >
                     <StarsIcon className="w-3 h-3" />
-                    Ai Assistance
+                    {t("constance.ai_assistance")}
                   </button>
                 </div>
                 <div className="flex flex-row items-center gap-[6px]" style={{ width: "126px", height: "27px" }}>
@@ -435,7 +435,7 @@ export default function CreatePost({ onClose }) {
 
               {/* Upload Section */}
               <div className="mb-4 w-full">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Upload File / Images (webp, jpeg, png, pdf, mp4) *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t("brain_ai.upload_file_images_placeholder")} (webp, jpeg, png, pdf, mp4) *</label>
                 <input
                   type="file"
                   accept="image/webp,image/jpeg,image/png,application/pdf/,video/mp4"
@@ -453,17 +453,17 @@ export default function CreatePost({ onClose }) {
                   tabIndex={0}
                 >
                   <UploadIcon className="w-8 h-8 text-[#675FFF] mx-auto mb-2" />
-                  <p className="text-sm text-gray-600 font-medium">Upload from your computer</p>
-                  <p className="text-xs text-gray-500 mt-1">or drag and drop</p>
+                  <p className="text-sm text-gray-600 font-medium">{t("brain_ai.upload_from_your_computer")}</p>
+                  <p className="text-xs text-gray-500 mt-1">{t("brain_ai.or_drag_and_drop")}</p>
                 </div>
                 {fileName && (
-                  <div className="text-xs text-gray-700 mt-2">Selected file: <span className="font-medium">{fileName}</span></div>
+                  <div className="text-xs text-gray-700 mt-2">{t("brain_ai.selected_file")} <span className="font-medium">{fileName}</span></div>
                 )}
                 {errors.document && <div className="text-red-500 text-xs mt-1">{errors.document}</div>}
                 <div className="flex items-start justify-start mt-3">
                   <label className="flex items-center gap-2 text-sm text-gray-700">
                     <input type="checkbox" className="rounded border-gray-300 w-[21px] h-[21px]" />
-                    <span className="text-[#5A687C] text-[14px] leading-[23.8px]">Post photos as a PDF document</span>
+                    <span className="text-[#5A687C] text-[14px] leading-[23.8px]">{t("constance.post_photos_pdf")}</span>
                   </label>
                 </div>
               </div>
@@ -494,13 +494,13 @@ export default function CreatePost({ onClose }) {
             {/* Action Buttons at the bottom */}
             <div className="flex flex-row justify-center items-center gap-[9px] border-t border-[#E1E4EA] w-full min-h-[88px] absolute bottom-0 left-0 right-0 p-[25px] box-border bg-white">
               <button className={`flex flex-row items-center justify-center gap-[10px] h-[38px] rounded-[7px] border-[1.5px] px-[20px] py-[7px] text-[#5A687C] bg-[#FFFFFF] font-medium ${isSaving?.draft ? 'cursor-not-allowed' : 'cursor-pointer'}`} onClick={handleSaveDraft} disabled={isSaving?.draft}>
-                {isSaving?.draft ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : 'Draft'}
+                {isSaving?.draft ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : t("draft")}
               </button>
               <button disabled={isSaving?.publish} onClick={handlePublish} className={`flex flex-row items-center justify-center gap-[10px] min-w-[96px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#675FFF] bg-transparent font-medium ${isSaving?.publish ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
-                {isSaving?.publish ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : 'Publish'}
+                {isSaving?.publish ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : t("publish")}
               </button>
               <button className="flex cursor-pointer flex-row items-center justify-center gap-[10px] min-w-[112px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#FFFFFF] bg-[#675FFF] font-medium" onClick={() => setShowDateTimePicker(true)}>
-                Schedule
+                {t("schedule")}
               </button>
             </div>
             {successMessage && <div className="text-green-600 text-sm mt-2 text-center">{successMessage}</div>}
@@ -512,18 +512,17 @@ export default function CreatePost({ onClose }) {
           <div className="w-[287px] h-[726px] bg-white border-l border-[#E1E4EA] rounded-tr-[16px] rounded-br-[16px] p-4 flex flex-col">
             <div className="flex flex-col gap-[14px] w-full mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Post Preview</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t("constance.post_preview")}</label>
                 <div className="relative w-full h-[44px]">
                   <SelectDropdown
                     name="platform-preview"
                     options={[
-                      { key: "", label: "Select Platform" },
                       { key: "linkedin", label: "Linkedin" },
                       // Add more platforms as needed
                     ]}
                     value={platform}
                     onChange={setPlatform}
-                    placeholder="Select Platform"
+                    placeholder={t("select") + " " + t("constance.platform")}
                     className="w-full"
                   />
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />

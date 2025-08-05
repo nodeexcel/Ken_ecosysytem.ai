@@ -6,24 +6,25 @@ import youtubeImg from "../assets/svg/youtube_content.svg";
 import { YoutubePostCreate, YoutubePostGet, YoutubePostUpdate } from "../api/contentCreationAgent";
 import { v4 as uuidv4 } from 'uuid';
 import { formatTimeAgo } from "../utils/TimeFormat";
+import { useTranslation } from "react-i18next";
 
 function YoutubeScriptContent() {
     const [messages, setMessages] = useState([]);
     const [loadingChats, setLoadingChats] = useState(false);
     const [resetForm, setResetForm] = useState(null);
-    const [error, setError]= useState(null);
+    const [error, setError] = useState(null);
     const [formData, setFormData] = useState({})
     const agentName = "Constance";
-
+    const { t } = useTranslation()
 
 
 
     const validateForm = (formData) => {
         const newErrors = {};
         if (!formData?.additional_questions || formData.additional_questions.trim() === "") {
-            newErrors.additional_questions= "Topic is required.";
+            newErrors.additional_questions = `${t("topic")} ${t("is_required")}`;
         }
-        
+
         setError(newErrors);
         console.log(newErrors)
         return Object.keys(newErrors).length === 0;
@@ -34,7 +35,7 @@ function YoutubeScriptContent() {
         if (!validateForm(formData)) {
             return
         }
-        
+
         setLoadingChats(true);
         const payload = {
             topic: formData?.additional_questions,
@@ -45,8 +46,8 @@ function YoutubeScriptContent() {
             const response = await YoutubePostCreate(payload);
             if (response?.status === 201) {
                 fetchYoutubeScripts();
-                setFormData({}); 
-                if (resetForm) resetForm(); 
+                setFormData({});
+                if (resetForm) resetForm();
             }
         } catch (error) {
             setMessages(prev => [
@@ -111,14 +112,14 @@ function YoutubeScriptContent() {
     };
 
     const listedData = {
-        header: "YouTube Script Writer",
-        label: "YouTube Script Writer",
-        description: "Generate a YouTube video script.",
+        header: t("skills.constance_content1_header"),
+        label: t("skills.constance_content1_header"),
+        description: t("constance.youtube_descrp"),
         form: {
-            label_1: "Topic",
-            placeholder_1: "Ex. AI Revolution in Digital Ma..",
-            label_2: "Custom Instructions (Optional)",
-            placeholder_2: "Anything you want to tell the AI"
+            label_1: t("topic"),
+            placeholder_1: t("topic_placeholder"),
+            label_2: t("rima.custom_instructions"),
+            placeholder_2: t("rima.custom_instructions_placeholder")
         },//"Anything you want to tell the AI",
         initialMessage: messages,
         agentName,
@@ -132,14 +133,14 @@ function YoutubeScriptContent() {
         setLoadingChats,
         setFormReset: setResetForm,
         error, // Pass error to CustomChat
-        setError,formData, setFormData // Pass setError to CustomChat
+        setError, formData, setFormData // Pass setError to CustomChat
     };
 
     useEffect(() => {
         fetchYoutubeScripts();
     }, []);
 
-    
+
 
     return <CustomChat listedProps={listedData} />;
 }

@@ -20,7 +20,7 @@ export default function PhoneNumbers() {
 
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState("outbound")
-  const [selectedCountry, setSelectedCountry] = useState(countries[240]);
+  const [selectedCountry, setSelectedCountry] = useState(countries && countries.length > 0 ? countries[240] : { name: "United States", code: "US", dial_code: "+1", flag: "us" });
   const [isOpen, setIsOpen] = useState(false);
   const [number, setNumber] = useState("");
   const [phoneName, setPhoneName] = useState("");
@@ -220,7 +220,7 @@ export default function PhoneNumbers() {
                       className={`text-[16px] text-[#1E1E1E] ${index !== rows?.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
                     >
                       <td className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] text-[#1E1E1E]">{renderPhoneNumber(row.phone_number, row.country)}</td>
-                      <td className="py-[14px] pl-[24px] pr-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C] whitespace-nowrap">{row.country}</td>
+                      <td className="py-[14px] pl-[24px] pr-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C] table-cell-wrap">{row.country}</td>
                       <td className="p-[14px] min-w-[200px] max-w-[17%] w-full">
                         <div className="flex w-[120px] justify-between items-center">
                           <span
@@ -241,7 +241,7 @@ export default function PhoneNumbers() {
                       <td className="py-[14px] pl-[14px] pr-[14px] min-w-[186px] max-w-[17%] w-full">
                         {row.direction === "inbound" ? <InboundCall active={true} /> : <OutboundCall active={true} />}
                       </td>
-                      <td className="min-w-[210px] max-w-[17%] w-full text-[#5A687C] whitespace-nowrap">{DateFormat(row.creation_date)}</td>
+                      <td className="min-w-[210px] max-w-[17%] w-full text-[#5A687C] table-cell-wrap">{DateFormat(row.creation_date)}</td>
 
                       <td className="p-[14px] pr-[30px] w-full">
                         <button
@@ -339,8 +339,8 @@ export default function PhoneNumbers() {
                       className="w-[120px] flex hover:cursor-pointer relative border-none justify-between gap-1 items-center border py-1 text-left"
                     >
                       <div className="flex items-center gap-2 mr-3">
-                        <p className={`fi fi-${selectedCountry.flag} fis w-4 h-4 rounded-full`}></p>
-                        <p className="text-[#5A687C] font-[400] text-[16px]">{selectedCountry.dial_code}</p>
+                        {selectedCountry && <p className={`fi fi-${selectedCountry.flag} fis w-4 h-4 rounded-full`}></p>}
+                        <p className="text-[#5A687C] font-[400] text-[16px]">{selectedCountry ? selectedCountry.dial_code : "+1"}</p>
                       </div>
                       <FaChevronDown color="#5A687C" className={`w-[10px]  transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
                       <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />

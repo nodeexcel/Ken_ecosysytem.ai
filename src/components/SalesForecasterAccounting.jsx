@@ -1,11 +1,13 @@
 import CustomChat from "./CustomChat"
 import finnImg from "../assets/svg/finn_msg_logo.svg"
 import salesForecasterImg from "../assets/svg/sales_forecaster_accounting.svg";
+import { useTranslation } from "react-i18next";
 
 function SalesForecasterAccounting() {
+    const { t } = useTranslation()
     const listedData = {
-        header: "Sales Forecaster", label: "Sales Forecaster", description: "Forecast and predict sales based on current trends.",
-        form: { label_1: "Sales Data File", placeholder_1: "Sales Data File", label_2: "Custom Instructions (Optional)", placeholder_2: "Anything you want to tell the AI" },
+        header: t("skills.finn_content3_header"), label: t("skills.finn_content3_header"), description: t("finn_accounting.sales_forecaste_descr"),
+        form: { label_1: t("finn_accounting.sales_data"), placeholder_1: t("finn_accounting.sales_data"), label_2: t("rima.custom_instructions"), placeholder_2: t("rima.custom_instructions_placeholder") },
         initialMessage: "Unable to generate a balance sheet: The uploaded document is not a bank statement; it is an eBook or informational guide related to health and wellness. No financial data available for extraction. Please upload an actual bank statement for accurate balance sheet creation",
         agentName: "Finn",
         agentImg: finnImg,
