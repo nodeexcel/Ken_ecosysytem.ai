@@ -1344,10 +1344,10 @@ const ContactsPage = () => {
               <button onClick={() => {
                 setOpenImport(false)
                 setSelectedFile(null)
-              }} className="w-[208px] text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+              }} className="w-[208px] text-[16px] hover:bg-[#F5F7FA] hover:border-[#CBD2E0] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                 {t("brain_ai.cancel")}
               </button>
-              <button onClick={handleUploadFile} className={`w-[208px] cursor-pointer text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
+              <button onClick={handleUploadFile} className={`w-[208px] hover:bg-[#4c43e6] hover:shadow-md cursor-pointer text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
                 {loading ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : `${t("brain_ai.save")}`}
               </button>
             </div>

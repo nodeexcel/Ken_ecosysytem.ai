@@ -123,14 +123,15 @@ function GenerateSeoArticle({ setGenerateSeoArticleOpen }) {
                         <input
                             value={formData.keyword}
                             name="keyword"
+                            type="text"     
                             placeholder={t("sandro.keywords")}
                             className={`w-full text-[#1e1e1e] px-[12px] py-[8px] border bg-white rounded-[8px] focus:outline-none focus:border-[#675FFF] ${errors.keyword ? 'border-red-500' : 'border-[#E1E4EA]'}`}
                             onChange={(e) => {
                                 setFormData((prev) => ({
-                                    ...prev, article_language: e.target.value
+                                    ...prev, keyword: e.target.value
                                 }))
                                 setErrors((prev) => ({
-                                    ...prev, article_language: ""
+                                    ...prev, keyword: ""
                                 }))
                             }}
                         />
