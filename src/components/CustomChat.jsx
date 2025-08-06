@@ -262,7 +262,7 @@ const CustomChat = ({ listedProps }) => {
                                 <label className="text-sm font-medium text-[#1e1e1e]">
                                     {form.label_1}
                                 </label>
-                                {(/file|bank statement/i.test(form.label_1) || /file|bank statement/i.test(form.placeholder_1)) ? (
+                                {form?.filesStatus ? (
                                     <div>
                                         <input
                                             type="text"
