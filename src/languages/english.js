@@ -1169,7 +1169,9 @@ const englishTranslation = {
   seo_website_url_is_required: "Url is required",
   mark_all_read: "Mark all as Read",
   tomorrow: "Tomorrow",
-  scheduler: "Scheduler > Create"
+  scheduler: "Scheduler > Create",
+  by_continuing:"By continuing, you agree to our",
+  privacy_policy:"Privacy Policy"
 
 };
 export default englishTranslation;
