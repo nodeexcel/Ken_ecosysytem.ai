@@ -13,6 +13,7 @@ import { LeftArrow } from "../icons/icons";
 import Integration from "./Integration";
 import { deleteGoogleCalendarAccount, deleteInstaAccount, deleteLinkedInAccount, deleteWhatsappAccount } from "../api/brainai";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 
 
@@ -33,6 +34,13 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
         { label: `${t("brain_ai.integrations.orsay_sample")}`, status: "Approved", description: `${t("brain_ai.integrations.orsay_description")}` }
     ]
 
+    const renderPath = (path) => {
+        if (path === "terms") {
+            window.open("https://www.ecosysteme.ai/terms", "_blank");
+        } else {
+            window.open("https://www.ecosysteme.ai/privacy", "_blank");
+        }
+    }
 
     const handleDeleteInsta = async (id) => {
         try {
@@ -397,6 +405,12 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                                         <p className="text-[16px] font-[400] text-[#5A687C]">
                                             {t("brain_ai.integrations.log_in_with")} {integartionData.name} {t("brain_ai.integrations.your_permissions")}
                                         </p>
+                                        <p className="text-[14px] text-[#5A687C]">
+                                        {t("by_continuing")}{" "}
+                                        <span className="text-[#5E54FF] underline cursor-pointer" onClick={() => renderPath("privacy")}>
+                                            {t("privacy_policy")}
+                                        </span>.
+    </p>
                                     </div>
                                     <div className="flex flex-col gap-5 w-full mt-4">
                                         <a href={integartionData.path} target="_blank">

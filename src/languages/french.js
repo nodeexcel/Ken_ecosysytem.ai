@@ -934,7 +934,7 @@ const frenchTranslation = {
       "Entrez une URL de site web valide (http:// ou https://).",
     seo_analyze: "Analyse SEO",
     smart_seo:
-      "Un audit SEO intelligent en un clic. Entrez l’URL de votre page et Lou vous montrera comment optimiser vos mots-clés, titres, balises et structure pour mieux vous positionner sur Google.",
+      "Un audit SEO intelligent en un clic. Entrez l’URL de votre page et nous vous montrera comment optimiser vos mots-clés, titres, balises et structure pour mieux vous positionner sur Google.",
     analyze_website: "Analysez le SEO de votre site web",
     here_seo_report: "Voici votre rapport SEO :",
     andro_generated_report: "Sandro génère votre rapport...",
@@ -1180,7 +1180,8 @@ const frenchTranslation = {
   outlook_calendar: "Outlook Calendar",
   seo_website_url_is_required: "L’URL est requise",
   mark_all_read: "Tout marquer comme lu",
-  tomorrow: "Demain"
-
+  tomorrow: "Demain",
+  by_continuing: "En continuant, vous acceptez notre",
+  privacy_policy: "Politique de confidentialité"
 };
 export default frenchTranslation;

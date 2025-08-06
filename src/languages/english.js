@@ -926,7 +926,7 @@ const englishTranslation = {
     website_url_is_required: "Website url is required.",
     enter_valid_url_website: "Enter a valid website URL (http:// or https://).",
     seo_analyze: "Seo analyze",
-    smart_seo: "A smart SEO audit in one click. Enter your page URL and Lou will show you how to optimize your keywords, titles, tags, and structure to climb higher on Google. ",
+    smart_seo: "A smart SEO audit in one click. Enter your page URL and You will show you how to optimize your keywords, titles, tags, and structure to climb higher on Google. ",
     analyze_website: "Analyze your website's SEO",
     here_seo_report: "Here is your SEO report:",
     sandro_generated_report: "Sandro generates your report...",
@@ -1169,7 +1169,9 @@ const englishTranslation = {
   seo_website_url_is_required: "Url is required",
   mark_all_read: "Mark all as Read",
   tomorrow: "Tomorrow",
-  scheduler: "Scheduler > Create"
+  scheduler: "Scheduler > Create",
+  by_continuing:"By continuing, you agree to our",
+  privacy_policy:"Privacy Policy"
 
 };
 export default englishTranslation;
