@@ -1180,7 +1180,8 @@ const frenchTranslation = {
   outlook_calendar: "Outlook Calendar",
   seo_website_url_is_required: "L’URL est requise",
   mark_all_read: "Tout marquer comme lu",
-  tomorrow: "Demain"
-
+  tomorrow: "Demain",
+  by_continuing: "En continuant, vous acceptez notre",
+  privacy_policy: "Politique de confidentialité"
 };
 export default frenchTranslation;

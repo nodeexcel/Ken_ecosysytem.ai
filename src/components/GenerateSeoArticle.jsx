@@ -26,6 +26,19 @@ function GenerateSeoArticle({ setGenerateSeoArticleOpen }) {
             content: `${t("sandro.long_article_content")}`
         }
     ]
+    const validateForm = () => {
+        const newErrors = {};
+        
+        if (!formData.article_language) newErrors.article_language = t("field is required");
+        if (formData.no_of_images === '' || formData.no_of_images === null) newErrors.no_of_images = t("field is required");
+        if (!formData.size_of_your_blog_post) newErrors.size_of_your_blog_post = t("field is required");
+        if (!formData.keyword.trim()) newErrors.keyword = t("field is required");
+        if (!formData.writing_instructions.trim()) newErrors.writing_instructions = t("field is required");
+    
+        setErrors(newErrors);
+    
+        return Object.keys(newErrors).length === 0;
+    };
 
     useEffect(() => {
         let interval;
@@ -99,7 +112,7 @@ function GenerateSeoArticle({ setGenerateSeoArticleOpen }) {
                             className=""
                             errors={errors}
                         />
-                        {errors.no_of_images && <p className="text-red-500 text-sm mt-1">{errors.no_of_images}</p>}
+                        {errors.no_of_images && <p className="text-red-500 text-sm mt-1">{errors.no_of_images}</p>} 
                     </div>
                     <div className="flex flex-col gap-1.5 w-full">
                         <label className="text-sm font-medium text-[#1e1e1e]">
@@ -140,7 +153,7 @@ function GenerateSeoArticle({ setGenerateSeoArticleOpen }) {
                 </div>
                 <div className="flex flex-col gap-1.5 w-full">
                     <label className="text-sm font-medium text-[#1e1e1e]">
-                    {t("sandro.choose_right_article")}
+                    {t("sandro.choose_right_article")}  
                     </label>
                     <ul className="flex flex-col gap-1">
                         {articleStaticData.map((e) => (
@@ -152,7 +165,7 @@ function GenerateSeoArticle({ setGenerateSeoArticleOpen }) {
                 </div>
                 <div className="flex flex-col gap-1.5 w-full">
                     <label className="text-sm font-medium text-[#1e1e1e]">
-                    {t("sandro.writing_instructions")}
+                        {t("sandro.writing_instructions")} 
                     </label>
                     <textarea
                         rows={10}
@@ -168,17 +181,21 @@ function GenerateSeoArticle({ setGenerateSeoArticleOpen }) {
                 </div>
                 <div>
                     <button
-                        onClick={() => setGenerateArticle(true)}
+                        onClick={() => {
+                            if (validateForm()) {
+                                setGenerateArticle(true);
+                            }
+                        }}
                         className="bg-[#675FFF] cursor-pointer border border-[#5F58E8] text-white font-medium rounded-lg px-5 py-2 flex items-center gap-2"
                     >
-                        {t("sandro.generate_article")}
+                                {t("sandro.generate_article")} 
                     </button>
                 </div>
             </div>
                 : loadingStatus === 100 ? <div className="border border-[#E1E4EA] bg-white p-[24px] rounded-[10px] gap-[20px] flex flex-col">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2"> 
                         <div className="flex justify-center items-center">
-                            <img src={sandroImg} alt={"sandro"} className="object-fit" />
+                            <img src={sandroImg} alt={"sandro"} className="object-fit" />  
                         </div>
                         <p className="text-[#5A687C] text-[12px] font-[600]">{t("sandro.here_your_article")}</p>
                     </div>
@@ -191,14 +208,14 @@ function GenerateSeoArticle({ setGenerateSeoArticleOpen }) {
                             <SendIcon /></div>
                     </div>
                     <div className="flex">
-                        <img src={articleImg} alt={"article"} className="object-fit" />
+                        <img src={articleImg} alt={"article"} className="object-fit" /> 
                     </div>
 
                 </div> : <div className="border border-[#E1E4EA] bg-white p-[24px] justify-center items-center rounded-[10px] flex flex-col h-full">
                     <div className="flex flex-col gap-3 items-center">
                         <div className="flex items-center gap-2">
                             <div className="flex justify-center items-center">
-                                <img src={sandroImg} alt={"sandro"} className="object-fit" />
+                                <img src={sandroImg} alt={"sandro"} className="object-fit" /> 
                             </div>
                             <p className="text-[#1E1E1E] text-[16px] font-[600]">{t("sandro.sandro_preparing")}</p>
                         </div>

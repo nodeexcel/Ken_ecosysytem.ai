@@ -72,7 +72,6 @@ const ContactsPage = () => {
   const [contactIsEdit, setContactIsEdit] = useState("")
   const [selectedData, setSelectedData] = useState({})
   const [openUpward, setOpenUpward] = useState(false);
-  const buttonRef = useRef(null);
 
   const countryRef = useRef()
   const moreActionsRef = useRef()
@@ -110,13 +109,24 @@ const ContactsPage = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (moreActionsRef.current && !moreActionsRef.current.contains(event.target)) {
+      // Simple check: if click is not on the dropdown or its trigger button, close dropdown
+      const clickedElement = event.target;
+      const isDropdownClick = clickedElement.closest('[data-dropdown]');
+      const isTriggerClick = clickedElement.closest('button[onclick*="handleDropdownClick"]');
+      
+      if (!isDropdownClick && !isTriggerClick) {
         setActiveDropdown(null);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    
+    if (activeDropdown !== null) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [activeDropdown]);
 
   // useEffect(() => {
   //   if (activeDropdown) {
@@ -1026,12 +1036,12 @@ const ContactsPage = () => {
                             )}
                           </td>
                           <td className="py-[14px]  pl-[5px] pr-[14px] min-w-[200px] max-w-[25%] w-full font-[400] text-[#5A687C] whitespace-nowrap">{format(list.createdDate, 'dd/MM/yyyy hh:mm a')}</td>
-                          <td className="px-[14px] relative w-full" ref={moreActionsRef}>
-                            <button ref={buttonRef} onClick={() => handleDropdownClick(index)} className="p-2 cursor-pointer rounded-lg relative">
+                          <td className="px-[14px] relative w-full">
+                            <button onClick={() => handleDropdownClick(index)} className="p-2 cursor-pointer rounded-lg relative">
                               <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
                             </button>
                             {activeDropdown === index && (
-                              <div className={`absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ${openUpward ? 'bottom-full mb-1' : 'mt-1'} ring-gray-300 ring-opacity-5 z-9999999999`}>
+                              <div ref={moreActionsRef} data-dropdown className={`absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ${openUpward ? 'bottom-full mb-1' : 'mt-1'} ring-gray-300 ring-opacity-5 z-9999999999`}>
                                 <div className="py-1">
                                   <button
                                     className="block group cursor-pointer w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"

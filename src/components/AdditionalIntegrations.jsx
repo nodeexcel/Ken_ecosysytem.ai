@@ -406,9 +406,9 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                                             {t("brain_ai.integrations.log_in_with")} {integartionData.name} {t("brain_ai.integrations.your_permissions")}
                                         </p>
                                         <p className="text-[14px] text-[#5A687C]">
-                                        {t("By continuing, you agree to our")}{" "}
+                                        {t("by_continuing")}{" "}
                                         <span className="text-[#5E54FF] underline cursor-pointer" onClick={() => renderPath("privacy")}>
-                                            {t("Privacy Policy")}
+                                            {t("privacy_policy")}
                                         </span>.
     </p>
                                     </div>
