@@ -894,13 +894,13 @@ const englishTranslation = {
     choose_right_article:
       "Here's what can help you choose the right article length:",
     writing_instructions: "Writing instructions",
-    writng_instruction_placeholder: `Par exemple, demandez à Lou de rédiger un article SEO ciblant les professionnels, tout en gardant un ton accessible :
+    writng_instruction_placeholder: `For example, ask You to write a SEO article targeting professionals, while keeping the tone accessible:
 
-• Ton : professionnel mais facile à lire
-• Structure : une introduction, 3 à 5 sections, et une conclusion
-• Style : clair, concis, sans jargon inutile
-• Longueur : environ 700 à 900 mots
-• Conclusion : inclure un appel à l'action pour inciter les lecteurs à en savoir plus ou à contacter l'entreprise`,
+    • Tone: professional but easy to read
+    • Structure: an introduction, 3 to 5 sections, and a conclusion
+    • Style: clear, concise, without unnecessary jargon
+    • Length: around 700 to 900 words
+    • Conclusion: include a call to action encouraging readers to learn more or contact the company`,    
     here_your_article: "Here is your article",
     ethical_changes: "The ethical challenges of artificial intelligence.",
     sandro_preparing: "Sandro is preparing your article..."
