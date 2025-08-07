@@ -494,7 +494,11 @@ const englishTranslation = {
     reset: "Reset",
     message: "Message",
     type_message: "Type your message here",
-
+    more_information:"More information",
+    more_info_placeholder:"Enter your information for setter here",
+    first_message:"First message(optional)",
+    first_message_placeholder:"Enter more information for setter here",
+    behavior:"Behavior",
     input_whatsapp: "Enter your WhatsApp Number",
 
     object_of_agent: "Objective of the agent",
@@ -516,9 +520,10 @@ const englishTranslation = {
     choose_calendar_validation: "Calender must bet chosen",
     whatsapp_no_validation: "WhatsApp number is required.",
     object_of_agent_validation: "Objective of the agent is required",
-
+    webpage_link:"Webpage Link",
+    enter_link:"Enter link",
+    whatsapp_number:"WhatsApp Number",
     followup_validation: "Followup is required",
-    behavior: "3 Behavior",
     prompt: "Prompt",
     prompt_guild: "Provide any guidelines, instructions, or relevant context to shape your AI agent’s behavior.",
     prompt_input: "Enter your prompt here",

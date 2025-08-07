@@ -668,7 +668,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                         <div className="flex-1">
                             <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
                                 <label className="text-sm font-medium text-[#1e1e1e]">
-                                    WhatsApp Number
+                                    {t("appointment.whatsapp_number")}
                                 </label>
                                 <input
                                     type="text"
@@ -698,7 +698,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-1 w-full">
                         <div className="flex flex-col gap-1.5 w-full">
                             <label className="text-sm font-medium text-[#1e1e1e]">
-                                Webpage Link
+                                {t("appointment.webpage_link")}
                             </label>
                             <div className="flex items-center border rounded-lg overflow-hidden w-full bg-white focus-within:border-[#675FFF]
   border-[#e1e4ea] focus-within:ring-0">
@@ -711,7 +711,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     value={formData?.webpage_link}
                                     onChange={handleChange}
                                     className="flex-1 p-2 px-3 text-[#4B5563] bg-white focus:outline-none"
-                                    placeholder="Enter link"
+                                    placeholder={t("appointment.enter_link")}
                                 />
                             </div>
 
@@ -988,7 +988,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                         const found = languagesOptions?.length > 0 && languagesOptions.find(d => d.key === lan);
                                                         return found?.label;
                                                     }).join(', ')
-                                                    : 'Select Languages'}</span>
+                                                    : `${t("appointment.select")+" "+t("appointment.languages")}`}</span>
                                                 <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showLanguageSelector ? 'transform rotate-180' : ''}`} />
                                             </button>
                                             {showLanguageSelector && (
@@ -1337,7 +1337,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 3 ? 'bg-[#675FFF]' : statusSteps.step3 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step3 ? <CheckIcon /> : '3'}</p>
-                                    <p className={`text-[14px] font-[600] ${step === 3 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>Behavior</p>
+                                    <p className={`text-[14px] font-[600] ${step === 3 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("appointment.behavior")}</p>
                                 </div>
                                 {step !== 3 && <RightArrowIcon />}
                             </div>
@@ -1347,7 +1347,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 {/* Prompt */}
                                 <div className="flex flex-col gap-1.5 flex-1">
                                     <label className="text-sm font-medium text-[#1e1e1e]">
-                                    More information
+                                    {t("appointment.more_information")}
                                         <span className="text-[#675fff]">*</span>
                                     </label>
                                     <p className='text-[#5A687C] text-[14px] font-[400]'>{t("appointment.prompt_guild")}</p>
@@ -1357,14 +1357,14 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         value={formData?.prompt}
                                         rows={3}
                                         className={`w-full bg-white p-2 rounded-lg border  ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                        placeholder="Enter your information for setter here"
+                                        placeholder={t("appointment.more_info_placeholder")}
                                     />
                                     {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
                                 </div>
                                 {/* More informations for the setter */}
                                 <div className="flex flex-col gap-1.5 flex-1">
                                     <label className="text-sm font-medium text-[#1e1e1e]">
-                                        First message(optional)
+                                        {t("appointment.first_message")}
                                         {/* <span className="text-[#675fff]">*</span> */}
                                     </label>
                                     <textarea
@@ -1373,7 +1373,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         value={formData?.first_message}
                                         rows={3}
                                         className="w-full bg-white p-2 rounded-lg border border-[#e1e4ea] resize-none focus:outline-none focus:border-[#675FFF]"
-                                        placeholder="Enter more information for setter here"
+                                        placeholder= {t("appointment.first_message_placeholder")}
                                     />
                                 </div>
 

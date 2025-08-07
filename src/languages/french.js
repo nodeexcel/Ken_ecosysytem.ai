@@ -344,6 +344,12 @@ const frenchTranslation = {
     type_message: "Tapez votre message ici",
 
     input_whatsapp: "Entrez votre numéro WhatsApp",
+    more_information: "Plus d'informations",
+    more_info_placeholder: "Entrez vos informations pour le setter ici",
+    first_message: "Premier message (optionnel)",
+    first_message_placeholder: "Entrez plus d'informations pour le setter ici",
+    behavior: "Comportement",
+
 
     object_of_agent: "Objectif de l’agent",
     book_call: "Planifier un appel",
@@ -364,9 +370,10 @@ const frenchTranslation = {
     choose_calendar_validation: "Un calendrier doit être choisi",
     whatsapp_no_validation: "Le numéro WhatsApp est requis.",
     object_of_agent_validation: "L’objectif de l’agent est requis",
-
+    webpage_link: "Lien de la page Web",
+    enter_link: "Entrez le lien",
+    whatsapp_number: "Numéro WhatsApp",
     followup_validation: "La relance est requise",
-    behavior: "3 Comportements",
     prompt: "Invite",
     prompt_guild:
       "Fournissez des instructions, directives ou contexte pour orienter le comportement de votre agent IA.",
@@ -1142,7 +1149,7 @@ const frenchTranslation = {
     content6_description: "Va droit au but, sans détour. Efficace et sûr de lui dans la conduite du prospect.",
     content7: "Empathique",
     content7_description: "Écoute attentivement, montre de la compréhension et s’adapte à l’état émotionnel du prospect."
-},
+  },
   no_data: "Aucune donnée trouvée",
   processing: "Traitement en cours...",
   refresh: "Actualiser",
