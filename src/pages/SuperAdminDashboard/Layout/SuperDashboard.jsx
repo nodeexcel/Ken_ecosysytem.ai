@@ -46,8 +46,11 @@ function SuperDashboard() {
 
     const SidebarItems = [
         { id: "", label: "Home" },
-        { id: "users", label: "Users" },
-        { id: "agents", label: "Agents" },
+        { id: "agent-monitoring", label: "Brain AI" },
+        { id: "agent-monitoring", label: "Agent Monitoring" },
+        { id: "user-management", label: "User Management" },
+        { id: "billing-subscriptions", label: "Billing & Subscriptions" },
+        { id: "logs-troubleshooting", label: "Logs & Troubleshooting" },
         { id: "settings", label: "Settings" },
         { id: "help_center", label: "Help center" },
         { id: "support", label: "Support" }

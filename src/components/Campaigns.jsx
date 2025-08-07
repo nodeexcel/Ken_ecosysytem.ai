@@ -37,18 +37,25 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
             return { hour, minute: minutes, period };
         }
         try {
-            const matches = initialTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+            const matches = initialTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM|Après-midi)/i);
             if (matches) {
+                let period = matches[3].toUpperCase();
+                // Convert English to translated format
+                if (period === 'PM') {
+                    period = `${t("emailings.pm")}`;
+                } else if (period === 'AM') {
+                    period = `${t("emailings.am")}`;
+                }
                 return {
                     hour: matches[1].padStart(2, '0'),
                     minute: matches[2],
-                    period: matches[3].toUpperCase()
+                    period: period
                 };
             }
         } catch (e) {
             console.error('Error parsing initial time:', e);
         }
-        return { hour: '11', minute: '01', period: 'PM' };
+        return { hour: '11', minute: '01', period: `${t("emailings.pm")}` };
     };
     const isTimeBeforeMinAllowed = (hour, minute, period) => {
         const now = new Date();
@@ -63,7 +70,7 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
         const minTime = new Date();
         minTime.setMinutes(minTime.getMinutes() + 30);
 
-        const h24 = parseInt(hour, 10) % 12 + (period === 'PM' ? 12 : 0);
+        const h24 = parseInt(hour, 10) % 12 + (period === `${t("emailings.pm")}` ? 12 : 0);
         const candidate = new Date(
             now.getFullYear(),
             now.getMonth(),
@@ -73,7 +80,8 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
             0
         );
 
-        return candidate < minTime;
+        const result = candidate < minTime;
+        return result;
     };
 
     const { hour, minute, period } = parseInitialTime();
@@ -81,6 +89,7 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
     const [selectedHour, setSelectedHour] = useState(hour);
     const [selectedMinute, setSelectedMinute] = useState(minute);
     const [selectedPeriod, setSelectedPeriod] = useState(period);
+    const [isManualClick, setIsManualClick] = useState(false);
 
     const hoursRef = useRef(null);
     const minutesRef = useRef(null);
@@ -88,7 +97,7 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
 
     const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
     const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
-    const periods = ['AM', 'PM'];
+    const periods = [`${t("emailings.am")}`, `${t("emailings.pm")}`];
 
     const circularHours = [...hours, ...hours, ...hours];
     const circularMinutes = [...minutes, ...minutes, ...minutes];
@@ -102,11 +111,15 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
 
         const scrollTop = ref.current.scrollTop;
         const itemsLength = originalItems.length;
-        const centerPosition = scrollTop + 72;
+        // Calculate the center position more accurately
+        // The center highlight is at 72px from top, so we need to account for that
+        const centerPosition = scrollTop + 72; // 72px is the top offset of the center highlight
         const centerIndex = Math.round(centerPosition / itemHeight);
         const actualIndex = centerIndex % itemsLength;
         const selectedItem = originalItems[actualIndex];
         setValue(selectedItem);
+        
+        // Handle circular scrolling boundaries
         const totalItems = circularItems.length;
         const threshold = itemHeight * 2;
         if (scrollTop < threshold) {
@@ -146,24 +159,30 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
         if (isCircular) {
             const index = items.indexOf(value);
             if (index !== -1) {
-                const centerOffset = 2;
+                // Calculate the center position: container height (170px) - item height (36px) = 134px, then divide by 2 = 67px
+                // This positions the selected item in the center of the visible area
+                const centerOffset = 2; // 2 items above the center
                 ref.current.scrollTop = (items.length + index - centerOffset) * height;
             }
         } else {
             const index = items.indexOf(value);
             if (index !== -1) {
-                const paddedIndex = index + 2;
-                const centerOffset = 2;
-                ref.current.scrollTop = (paddedIndex - centerOffset) * height;
+                // For non-circular scroll (AM/PM), center the item properly
+                // Account for the 2 empty items at the beginning of paddedPeriods
+                const centerOffset = 2; // 2 items above the center
+                ref.current.scrollTop = (index + 2 - centerOffset) * height;
             }
         }
     };
 
     useEffect(() => {
         if (hoursRef.current && minutesRef.current && periodRef.current) {
-            scrollToItem(hoursRef, hours, selectedHour, itemHeight, true);
-            scrollToItem(minutesRef, minutes, selectedMinute, itemHeight, true);
-            scrollToItem(periodRef, periods, selectedPeriod);
+            // Add a small delay to ensure the DOM is fully rendered
+            setTimeout(() => {
+                scrollToItem(hoursRef, hours, selectedHour, itemHeight, true);
+                scrollToItem(minutesRef, minutes, selectedMinute, itemHeight, true);
+                scrollToItem(periodRef, periods, selectedPeriod);
+            }, 50);
         }
     }, []);
 
@@ -179,23 +198,32 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
                 if (isCircular && circularItems) {
                     handleCircularScroll(ref, items, circularItems, setValue);
                 } else {
+                    if (isManualClick) return; // Skip if manual click is in progress
+                    
                     const scrollTop = ref.current.scrollTop;
-                    const index = Math.round(scrollTop / height);
-                    if (index < 0) {
+                    // Calculate the center position accounting for the 72px offset
+                    const centerPosition = scrollTop + 72;
+                    const index = Math.round(centerPosition / height);
+                    
+                    // For AM/PM, account for the padding (2 empty items at the beginning)
+                    const actualIndex = index - 2;
+                    
+                    if (actualIndex < 0) {
                         ref.current.scrollTop = 0;
                         setValue(items[0]);
                         return;
                     }
 
-                    if (index >= items.length) {
+                    if (actualIndex >= items.length) {
                         ref.current.scrollTop = (items.length - 1) * height;
                         setValue(items[items.length - 1]);
                         return;
                     }
 
-                    if (index >= 0 && index < items.length) {
-                        setValue(items[index]);
-                        ref.current.scrollTop = index * height;
+                    if (actualIndex >= 0 && actualIndex < items.length) {
+                        setValue(items[actualIndex]);
+                        // Center the selected item properly
+                        ref.current.scrollTop = (index - 2) * height;
                     }
                 }
             }, 50);
@@ -235,12 +263,17 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
     }, []);
 
     const handlePeriodScroll = () => {
-        if (!periodRef.current) return;
+        if (!periodRef.current || isManualClick) return;
         const scrollTop = periodRef.current.scrollTop;
-        const index = Math.round(scrollTop / itemHeight);
+        // Calculate the center position accounting for the 72px offset
+        const centerPosition = scrollTop + 72;
+        const index = Math.round(centerPosition / itemHeight);
 
-        if (index >= 0 && index < periods.length) {
-            setSelectedPeriod(periods[index]);
+        // Account for the padding (2 empty items at the beginning)
+        const actualIndex = index - 2;
+        
+        if (actualIndex >= 0 && actualIndex < periods.length) {
+            setSelectedPeriod(periods[actualIndex]);
         }
     };
 
@@ -260,15 +293,17 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
                     <div className="flex-1">
                         <div
                             ref={hoursRef}
-                            className="h-full overflow-auto scrollbar-hide gap-19"
+                            className="h-full overflow-auto scrollbar-hide"
+                            style={{ scrollSnapType: 'y mandatory' }}
                         >
                             <div className="px-2">
                                 {circularHours.map((hour, index) => (
                                     <div
                                         key={`hour-${index}`}
-                                        className={`h-[36px] flex items-center justify-center text-[14px]
+                                        className={`h-[36px] flex items-center justify-center text-[14px] scroll-snap-align-center
                                             ${isSelected(hour, selectedHour) ? 'text-[#675FFF] font-semibold' : 'text-gray-500'}
                                             ${isTimeBeforeMinAllowed(hour, selectedMinute, selectedPeriod) ? 'text-gray-300' : ''}`}
+                                        style={{ scrollSnapAlign: 'center' }}
                                         onClick={() => {
                                             if (hour && !isTimeBeforeMinAllowed(hour, selectedMinute, selectedPeriod)) {
                                                 setSelectedHour(hour);
@@ -293,14 +328,16 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
                         <div
                             ref={minutesRef}
                             className="h-full overflow-auto scrollbar-hide"
+                            style={{ scrollSnapType: 'y mandatory' }}
                         >
                             <div className="px-2">
                                 {circularMinutes.map((minute, index) => (
                                     <div
                                         key={`minute-${index}`}
-                                        className={`h-[36px] flex items-center justify-center text-[14px]
+                                        className={`h-[36px] flex items-center justify-center text-[14px] scroll-snap-align-center
                                             ${isSelected(minute, selectedMinute) ? 'text-[#675FFF] font-semibold' : 'text-gray-500'}
                                             ${isTimeBeforeMinAllowed(selectedHour, minute, selectedPeriod) ? 'text-gray-300' : ''}`}
+                                        style={{ scrollSnapAlign: 'center' }}
                                         onClick={() => {
                                             if (minute && !isTimeBeforeMinAllowed(selectedHour, minute, selectedPeriod)) {
                                                 setSelectedMinute(minute);
@@ -320,19 +357,23 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
                         <div
                             ref={periodRef}
                             className="h-full overflow-auto scrollbar-hide"
+                            style={{ scrollSnapType: 'y mandatory' }}
                             onScroll={handlePeriodScroll}
                         >
                             <div className="px-2">
                                 {paddedPeriods.map((period, index) => (
                                     <div
                                         key={`period-${index}`}
-                                        className={`h-[36px] flex items-center justify-center text-[14px]
-                                            ${isSelected(period, selectedPeriod) ? 'text-[#675FFF] font-semibold' : 'text-gray-500'}
-                                            ${isTimeBeforeMinAllowed(selectedHour, selectedMinute, period) ? 'text-gray-300' : ''}`}
+                                        className={`h-[36px] flex items-center justify-center text-[14px] scroll-snap-align-center
+                                            ${period && isSelected(period, selectedPeriod) ? 'text-[#675FFF] font-semibold' : 'text-gray-500'}`}
+                                        style={{ scrollSnapAlign: 'center' }}
                                         onClick={() => {
-                                            if (period && !isTimeBeforeMinAllowed(selectedHour, selectedMinute, period)) {
+                                            if (period && period !== '') {
+                                                setIsManualClick(true);
                                                 setSelectedPeriod(period);
                                                 scrollToItem(periodRef, periods, period);
+                                                // Reset the flag after a short delay
+                                                setTimeout(() => setIsManualClick(false), 100);
                                             }
                                         }}
                                     >
@@ -487,17 +528,24 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
             }
 
             if (!formData.main_subject.trim()) newErrors.main_subject = `${t("emailings.main_subject_required")}`;
+            if (!accountSelect) newErrors.account = `${t("emailings.account_required")}`;
             if (!formData.cta_type) newErrors.cta_type = `${t("emailings.cta_required")}`;
             if (formData.cta_type === "book_a_meeting") {
-                if (!formData.calender_choosed) newErrors.calender_choosed = `${t("emailings.meeting_link_required")}`;
-            } else if (formData.cta_type === "purchase" || formData.cta_type === "visit_a_page") {
+                if (!formData.calender_choosed.trim()) {
+                    newErrors.calender_choosed = `${t("emailings.meeting_link_required")}`;
+                } else if (!/^https?:\/\/\S+$/.test(formData.calender_choosed.trim())) {
+                    newErrors.calender_choosed = `${t("emailings.enter_valid_url")}`;
+                }
+            } else if (formData.cta_type === "send_to_a_link" || formData.cta_type === "visit_a_page") {
                 if (!formData.url.trim()) {
                     newErrors.url = `${t("emailings.url_required")}`;
                 } else if (!/^https?:\/\/\S+$/.test(formData.url)) {
                     newErrors.url = `${t("emailings.enter_valid_url")}`;
                 }
             } else if (formData.cta_type === "download") {
-                newErrors.file = `${t("emailings.upload_file_required")}`
+                if (!formData.file) {
+                    newErrors.file = `${t("emailings.upload_file_required")}`;
+                }
             }
         }
 
@@ -511,6 +559,13 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                 newErrors.start_date = `${t("emailings.start_date_required")}`;
             } else if (!/^\d{4}-\d{2}-\d{2}$/.test(formData.start_date)) {
                 newErrors.start_date = `${t("emailings.start_date_format")}`;
+            } else {
+                const selectedDate = new Date(formData.start_date);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                if (selectedDate < today) {
+                    newErrors.start_date = `${t("emailings.start_date_past")}`;
+                }
             }
 
             if (!Array.isArray(formData.frequency) || formData.frequency.length === 0) {
@@ -526,7 +581,9 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
         if (step === 3) {
             if (!formData.text_length) newErrors.text_length = `${t("emailings.text_length_required")}`;
             if (!formData.product_or_service_feature.trim()) newErrors.product_or_service_feature = `${t("emailings.product_service_required")}`;
-            if (!formData.custom_prompt.trim()) newErrors.custom_prompt = `${t("emailings.custom_prompt")}`;
+            if (formData.include_brainai && !formData.custom_prompt.trim()) {
+                newErrors.custom_prompt = `${t("emailings.custom_prompt")}`;
+            }
         }
 
         setErrors(newErrors);
@@ -633,6 +690,27 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
             ...prev, [name]: value
         }))
         setErrors((prev) => ({ ...prev, [name]: "" }))
+        
+        // Real-time URL validation for CTA fields
+        if (name === 'url' && value.trim() && (formData.cta_type === "send_to_a_link" || formData.cta_type === "visit_a_page")) {
+            if (!/^https?:\/\/\S+$/.test(value.trim())) {
+                setErrors((prev) => ({ ...prev, url: `${t("emailings.enter_valid_url")}` }))
+            }
+        }
+        
+        // Real-time validation for meeting link
+        if (name === 'calender_choosed' && formData.cta_type === "book_a_meeting") {
+            if (value.trim() && !/^https?:\/\/\S+$/.test(value.trim())) {
+                setErrors((prev) => ({ ...prev, calender_choosed: `${t("emailings.enter_valid_url")}` }))
+            }
+        }
+        
+        // Real-time validation for custom prompt when AI brain is enabled
+        if (name === 'custom_prompt' && formData.include_brainai) {
+            if (!value.trim()) {
+                setErrors((prev) => ({ ...prev, custom_prompt: `${t("emailings.custom_prompt")}` }))
+            }
+        }
     }
 
     const getEmailCampaigndData = async () => {
@@ -650,6 +728,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                     campaign_objective: isCustomObjective ? 'other' : campaign.campaign_objective,
                     campaign_objective_other: isCustomObjective ? campaign.campaign_objective : '',
                 });
+                setAccountSelect(campaign.account || "")
                 setStatusSteps({ step1: true, step2: true, step3: true })
             }
         } catch (error) {
@@ -699,7 +778,9 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                     send_time_window: "", start_date: "", frequency: [], include_branding: false, include_brainai: false,
                     custom_prompt: "", text_length: "", product_or_service_feature: "", review: false, is_draft: false
                 })
+                setAccountSelect("")
                 setStatusSteps({ step1: false, step2: false, step3: false })
+                setErrors({})
                 break;
             case 2:
                 setFormData((prev) => ({
@@ -1128,7 +1209,13 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                                 calender_choosed: "",
                                                 file: ""
                                             }))
-                                            setErrors((prev) => ({ ...prev, cta_type: "" }))
+                                            setErrors((prev) => ({ 
+                                                ...prev, 
+                                                cta_type: "",
+                                                url: "",
+                                                calender_choosed: "",
+                                                file: ""
+                                            }))
                                         }
                                         }
                                         placeholder={t("emailings.select")}
@@ -1137,7 +1224,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                 </div>
                                 {renderCTAField()}
 
-                                <hr style={{ color: "#E1E4EA" }} />
+                                {/* <hr style={{ color: "#E1E4EA" }} /> */}
 
                                 <div className="flex items-center gap-2">
                                     <button onClick={() => {
@@ -1269,8 +1356,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                                 const selectedDate = new Date(e.target.value);
                                                 if (isValid(selectedDate)) {
                                                     setFormData((prev) => ({
-                                                        ...prev, start_date: format(selectedDate, 'yyyy-MM-dd'),
-                                                        send_time_window: ""
+                                                        ...prev, start_date: format(selectedDate, 'yyyy-MM-dd')
                                                     }))
                                                     setErrors((prev) => ({ ...prev, start_date: "" }))
                                                 } else {
@@ -1375,7 +1461,13 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                             </div>
                                         </label>
                                         <button
-                                            onClick={() => setFormData((prev) => ({ ...prev, include_brainai: !formData.include_brainai }))}
+                                            onClick={() => {
+                                                setFormData((prev) => ({ ...prev, include_brainai: !formData.include_brainai }));
+                                                // Clear custom prompt error when AI brain is disabled
+                                                if (formData.include_brainai) {
+                                                    setErrors((prev) => ({ ...prev, custom_prompt: "" }));
+                                                }
+                                            }}
                                             className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${formData.include_brainai ? "bg-[#7065F0]" : "bg-[#E1E4EA]"}`}
                                         >
                                             <span
