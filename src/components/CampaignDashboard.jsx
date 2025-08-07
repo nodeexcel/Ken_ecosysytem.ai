@@ -289,7 +289,7 @@ function CampaignDashboard() {
                                                 </td>
                                             </tr>
                                         ))}
-                                    </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">{t("emailings.no_campaign_listed")}</p>}
+                                    </tbody> : <p className   ="flex justify-center items-center h-34 text-[#1E1E1E]">{t("emailings.no_campaign_listed")}</p>}
                         </div>
                     </table>
                 </div>

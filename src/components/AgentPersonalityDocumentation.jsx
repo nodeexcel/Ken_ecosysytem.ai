@@ -1,20 +1,23 @@
 import { useNavigate } from 'react-router-dom'
 import logo from '/ecosystem_logo.svg'
+import { useTranslation } from 'react-i18next'
 
-const staticData = {
-    header: "Agent personality",
-    list: [
-        { header: "Friendly", description: "Warm, approachable, and conversational. Builds trust with ease." },
-        { header: "Professional", description: "Clear, polite, and to-the-point. Business-like without being cold." },
-        { header: "Energetic", description: "Enthusiastic, motivating, and full of positive drive. Sparks engagement." },
-        { header: "Relaxed", description: "Casual, laid-back, and easygoing. Makes the lead feel at ease." },
-        { header: "Results-Oriented", description: "Focused on outcomes, speaks with clarity and confidence. Keeps the discussion moving forward." },
-        { header: "Direct", description: "Straight to the point, no fluff. Efficient and confident in guiding the prospect." },
-        { header: "Empathetic", description: " Listens carefully, shows understanding, and adapts to the lead’s emotional state." }
-    ]
-}
 
 function AgentPersonalityDocumentation() {
+    const { t } = useTranslation()
+
+    const staticData = {
+        header: t("agent_personality.header"),
+        list: [
+            { header: t("agent_personality.content1"), description: t("agent_personality.content1_description") },
+            { header: t("agent_personality.content2"), description: t("agent_personality.content2_description") },
+            { header: t("agent_personality.content3"), description: t("agent_personality.content3_description") },
+            { header: t("agent_personality.content4"), description: t("agent_personality.content4_description") },
+            { header: t("agent_personality.content5"), description: t("agent_personality.content5_description") },
+            { header: t("agent_personality.content6"), description: t("agent_personality.content6_description") },
+            { header: t("agent_personality.content7"), description: t("agent_personality.content7_description") }
+        ]
+    }
     const navigate = useNavigate()
     return (
         <div className="h-full overflow-auto w-full bg-[#F6F7F9]">

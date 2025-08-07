@@ -344,6 +344,12 @@ const frenchTranslation = {
     type_message: "Tapez votre message ici",
 
     input_whatsapp: "Entrez votre numéro WhatsApp",
+    more_information: "Plus d'informations",
+    more_info_placeholder: "Entrez vos informations pour le setter ici",
+    first_message: "Premier message (optionnel)",
+    first_message_placeholder: "Entrez plus d'informations pour le setter ici",
+    behavior: "Comportement",
+
 
     object_of_agent: "Objectif de l’agent",
     book_call: "Planifier un appel",
@@ -364,9 +370,10 @@ const frenchTranslation = {
     choose_calendar_validation: "Un calendrier doit être choisi",
     whatsapp_no_validation: "Le numéro WhatsApp est requis.",
     object_of_agent_validation: "L’objectif de l’agent est requis",
-
+    webpage_link: "Lien de la page Web",
+    enter_link: "Entrez le lien",
+    whatsapp_number: "Numéro WhatsApp",
     followup_validation: "La relance est requise",
-    behavior: "3 Comportements",
     prompt: "Invite",
     prompt_guild:
       "Fournissez des instructions, directives ou contexte pour orienter le comportement de votre agent IA.",
@@ -755,6 +762,7 @@ const frenchTranslation = {
     time_window_required: "La plage horaire d'envoi est requise.",
     start_date_required: "La date de début est requise.",
     start_date_format: "La date de début doit être au format AAAA-MM-JJ.",
+    start_date_past: "La date de début ne peut pas être dans le passé.",
     atleast_frequency:
       "Au moins une option de fréquence doit être sélectionnée.",
     atleast_target: "Au moins une option de cible doit être sélectionnée.",
@@ -778,10 +786,11 @@ const frenchTranslation = {
     campaign_goals: "Objectifs de la campagne",
     select: "Sélectionner",
     subject: "Sujet",
-    subject_placeholder: "Entrer le sujet principal",
+    subject_placeholder: "Entrez ligne d'objet",
     other: "Autre",
     other_placeholder: "Entrer un autre objectif de campagne",
     account: "Compte",
+    account_required: "La sélection du compte est requise.",
     account_placeholder: "Sélectionnez vos comptes emailing connectés",
     cta_type: "Type d'appel à l'action",
     target_scheduling: "Ciblage & Planification",
@@ -1125,6 +1134,23 @@ const frenchTranslation = {
     resume_label2: "Instructions personnalisées (optionnel)",
     resume_placeholder2: "Tout ce que vous souhaitez indiquer à l’IA",
     resume_initial_message: "Impossible de générer un bilan : le document téléchargé n’est pas un relevé bancaire, mais un eBook ou un guide informatif lié à la santé et au bien-être. Aucune donnée financière disponible pour extraction. Veuillez télécharger un véritable relevé bancaire pour créer un bilan précis."
+  },
+  agent_personality: {
+    header: "Personnalité de l’agent",
+    content1: "Amical",
+    content1_description: "Chaleureux, accessible et conversationnel. Inspire facilement la confiance.",
+    content2: "Professionnel",
+    content2_description: "Clair, poli et direct. Sérieux sans être froid.",
+    content3: "Énergique",
+    content3_description: "Enthousiaste, motivant et plein d’entrain. Suscite l’engagement.",
+    content4: "Détendu",
+    content4_description: "Décontracté, calme et facile à vivre. Met le prospect à l’aise.",
+    content5: "Orienté Résultats",
+    content5_description: "Concentré sur les résultats, s’exprime avec clarté et assurance. Fait avancer la discussion.",
+    content6: "Direct",
+    content6_description: "Va droit au but, sans détour. Efficace et sûr de lui dans la conduite du prospect.",
+    content7: "Empathique",
+    content7_description: "Écoute attentivement, montre de la compréhension et s’adapte à l’état émotionnel du prospect."
   },
   no_data: "Aucune donnée trouvée",
   processing: "Traitement en cours...",
