@@ -900,7 +900,7 @@ const englishTranslation = {
     • Structure: an introduction, 3 to 5 sections, and a conclusion
     • Style: clear, concise, without unnecessary jargon
     • Length: around 700 to 900 words
-    • Conclusion: include a call to action encouraging readers to learn more or contact the company`,    
+    • Conclusion: include a call to action encouraging readers to learn more or contact the company`,
     here_your_article: "Here is your article",
     ethical_changes: "The ethical challenges of artificial intelligence.",
     sandro_preparing: "Sandro is preparing your article..."
@@ -1112,6 +1112,23 @@ const englishTranslation = {
     resume_label2: "Custom Instructions (Optional)",
     resume_placeholder2: "Anything you want to tell the AI",
     resume_initial_message: "Unable to generate a balance sheet: The uploaded document is not a bank statement; it is an eBook or informational guide related to health and wellness. No financial data available for extraction. Please upload an actual bank statement for accurate balance sheet creation"
+  },
+  agent_personality:{
+    header:"Agent personality",
+    content1:"Friendly",
+    content1_description:"Warm, approachable, and conversational. Builds trust with ease.",
+    content2:"Professional",
+    content2_description:"Clear, polite, and to-the-point. Business-like without being cold.",
+    content3:"Energetic",
+    content3_description:"Enthusiastic, motivating, and full of positive drive. Sparks engagement.",
+    content4:"Relaxed",
+    content4_description:"Casual, laid-back, and easygoing. Makes the lead feel at ease.",
+    content5:"Results-Oriented",
+    content5_description:"Focused on outcomes, speaks with clarity and confidence. Keeps the discussion moving forward.",
+    content6:"Direct",
+    content6_description:"Straight to the point, no fluff. Efficient and confident in guiding the prospect.",
+    content7:"Empathetic",
+    content7_description:"Listens carefully, shows understanding, and adapts to the lead’s emotional state."
   },
 
   no_data: "No Data Found",

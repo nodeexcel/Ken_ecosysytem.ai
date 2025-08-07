@@ -1126,6 +1126,23 @@ const frenchTranslation = {
     resume_placeholder2: "Tout ce que vous souhaitez indiquer à l’IA",
     resume_initial_message: "Impossible de générer un bilan : le document téléchargé n’est pas un relevé bancaire, mais un eBook ou un guide informatif lié à la santé et au bien-être. Aucune donnée financière disponible pour extraction. Veuillez télécharger un véritable relevé bancaire pour créer un bilan précis."
   },
+  agent_personality: {
+    header: "Personnalité de l’agent",
+    content1: "Amical",
+    content1_description: "Chaleureux, accessible et conversationnel. Inspire facilement la confiance.",
+    content2: "Professionnel",
+    content2_description: "Clair, poli et direct. Sérieux sans être froid.",
+    content3: "Énergique",
+    content3_description: "Enthousiaste, motivant et plein d’entrain. Suscite l’engagement.",
+    content4: "Détendu",
+    content4_description: "Décontracté, calme et facile à vivre. Met le prospect à l’aise.",
+    content5: "Orienté Résultats",
+    content5_description: "Concentré sur les résultats, s’exprime avec clarté et assurance. Fait avancer la discussion.",
+    content6: "Direct",
+    content6_description: "Va droit au but, sans détour. Efficace et sûr de lui dans la conduite du prospect.",
+    content7: "Empathique",
+    content7_description: "Écoute attentivement, montre de la compréhension et s’adapte à l’état émotionnel du prospect."
+},
   no_data: "Aucune donnée trouvée",
   processing: "Traitement en cours...",
   refresh: "Actualiser",
