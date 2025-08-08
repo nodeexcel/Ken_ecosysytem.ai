@@ -1171,6 +1171,7 @@ const englishTranslation = {
   chats: "Chats",
   send: "Send",
   type_message: "Type your message here ....",
+  disable_type_message:"Agent is enabled you are not able to chat!",
   account_chat: "Accounting Chat",
   share: "Share",
   with_your_friends: "with your friends and get lifetime commission.",
