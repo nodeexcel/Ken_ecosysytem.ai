@@ -342,7 +342,7 @@ const frenchTranslation = {
     reset: "Réinitialiser",
     message: "Message",
     type_message: "Tapez votre message ici",
-
+    disable_type_message:"L'agent est activé, vous ne pouvez pas discuter !",
     input_whatsapp: "Entrez votre numéro WhatsApp",
     more_information: "Plus d'informations",
     more_info_placeholder: "Entrez vos informations pour le setter ici",

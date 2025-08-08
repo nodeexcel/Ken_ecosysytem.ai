@@ -350,7 +350,7 @@ const DemoChat = () => {
                                     <input
                                         type="text"
                                         className="flex-1 w-full px-4 py-2 outline-none border-none text-sm"
-                                        placeholder={agentEnabled ? "Agent is enabled you are not able to chat!" : "Type your message here ...."}
+                                        placeholder={agentEnabled ? t("disable_type_message") : t("type_message")}
                                         disabled={agentEnabled}
                                         value={input}
                                         onChange={(e) => setInput(e.target.value)}
