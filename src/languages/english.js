@@ -494,7 +494,11 @@ const englishTranslation = {
     reset: "Reset",
     message: "Message",
     type_message: "Type your message here",
-
+    more_information:"More information",
+    more_info_placeholder:"Enter your information for setter here",
+    first_message:"First message(optional)",
+    first_message_placeholder:"Enter more information for setter here",
+    behavior:"Behavior",
     input_whatsapp: "Enter your WhatsApp Number",
 
     object_of_agent: "Objective of the agent",
@@ -516,9 +520,10 @@ const englishTranslation = {
     choose_calendar_validation: "Calender must bet chosen",
     whatsapp_no_validation: "WhatsApp number is required.",
     object_of_agent_validation: "Objective of the agent is required",
-
+    webpage_link:"Webpage Link",
+    enter_link:"Enter link",
+    whatsapp_number:"WhatsApp Number",
     followup_validation: "Followup is required",
-    behavior: "3 Behavior",
     prompt: "Prompt",
     prompt_guild: "Provide any guidelines, instructions, or relevant context to shape your AI agent’s behavior.",
     prompt_input: "Enter your prompt here",
@@ -758,6 +763,7 @@ const englishTranslation = {
     time_window_required: "Send time window is required.",
     start_date_required: "Start date is required.",
     start_date_format: "Start date must be in YYYY-MM-DD format.",
+    start_date_past: "Start date cannot be in the past.",
     atleast_frequency: "At least one frequency option must be selected.",
     atleast_target: "At least one Target option must be selected.",
     text_length_required: "Text length is required.",
@@ -777,10 +783,11 @@ const englishTranslation = {
     campaign_goals: "Campaign Goals",
     select: "Select",
     subject: "Subject",
-    subject_placeholder: "Enter main subject",
+    subject_placeholder: "Enter subject line",
     other: "Other",
     other_placeholder: "Enter Campaign Objective Other",
     account: "Account",
+    account_required: "Account selection is required.",
     account_placeholder: "Select your connected emailing accounts",
     cta_type: "CTA Type",
     target_scheduling: "Targeting & Scheduling",
@@ -894,13 +901,13 @@ const englishTranslation = {
     choose_right_article:
       "Here's what can help you choose the right article length:",
     writing_instructions: "Writing instructions",
-    writng_instruction_placeholder: `Par exemple, demandez à Lou de rédiger un article SEO ciblant les professionnels, tout en gardant un ton accessible :
+    writng_instruction_placeholder: `For example, ask You to write a SEO article targeting professionals, while keeping the tone accessible:
 
-• Ton : professionnel mais facile à lire
-• Structure : une introduction, 3 à 5 sections, et une conclusion
-• Style : clair, concis, sans jargon inutile
-• Longueur : environ 700 à 900 mots
-• Conclusion : inclure un appel à l'action pour inciter les lecteurs à en savoir plus ou à contacter l'entreprise`,
+    • Tone: professional but easy to read
+    • Structure: an introduction, 3 to 5 sections, and a conclusion
+    • Style: clear, concise, without unnecessary jargon
+    • Length: around 700 to 900 words
+    • Conclusion: include a call to action encouraging readers to learn more or contact the company`,
     here_your_article: "Here is your article",
     ethical_changes: "The ethical challenges of artificial intelligence.",
     sandro_preparing: "Sandro is preparing your article..."
@@ -1112,6 +1119,23 @@ const englishTranslation = {
     resume_label2: "Custom Instructions (Optional)",
     resume_placeholder2: "Anything you want to tell the AI",
     resume_initial_message: "Unable to generate a balance sheet: The uploaded document is not a bank statement; it is an eBook or informational guide related to health and wellness. No financial data available for extraction. Please upload an actual bank statement for accurate balance sheet creation"
+  },
+  agent_personality:{
+    header:"Agent personality",
+    content1:"Friendly",
+    content1_description:"Warm, approachable, and conversational. Builds trust with ease.",
+    content2:"Professional",
+    content2_description:"Clear, polite, and to-the-point. Business-like without being cold.",
+    content3:"Energetic",
+    content3_description:"Enthusiastic, motivating, and full of positive drive. Sparks engagement.",
+    content4:"Relaxed",
+    content4_description:"Casual, laid-back, and easygoing. Makes the lead feel at ease.",
+    content5:"Results-Oriented",
+    content5_description:"Focused on outcomes, speaks with clarity and confidence. Keeps the discussion moving forward.",
+    content6:"Direct",
+    content6_description:"Straight to the point, no fluff. Efficient and confident in guiding the prospect.",
+    content7:"Empathetic",
+    content7_description:"Listens carefully, shows understanding, and adapts to the lead’s emotional state."
   },
 
   no_data: "No Data Found",

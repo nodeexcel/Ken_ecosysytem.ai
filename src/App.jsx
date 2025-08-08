@@ -37,6 +37,8 @@ import "slick-carousel/slick/slick-theme.css";
 // import SuperAdminDashboard from './pages/SuperAdminDashboard/SuperAdminDashboard';
 // import UserManagement from './pages/SuperAdminDashboard/UserManagement'
 import { Toaster } from 'react-hot-toast'
+// import AgentMonitoring from './pages/SuperAdminDashboard/AgentMonitoring'
+
 
 
 
@@ -52,6 +54,7 @@ function App() {
         {/* <Route path='/super-admin' element={<SuperDashboard/>}>
           <Route path='' element={<SuperAdminDashboard />} />
           <Route path="user-management" element={<UserManagement/>}/>
+          <Route path="agent-monitoring" element={<AgentMonitoring/>}/>
         </Route> */}
         <Route path='/create-password' element={<SetPassword />} />
         <Route path='/reset-password' element={<ResetPassword />} />

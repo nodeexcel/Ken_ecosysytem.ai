@@ -2,9 +2,11 @@ import CustomChat from "./CustomChat";
 import rimaImg from "../assets/svg/rima_msg_logo.svg";
 import jobImg from "../assets/svg/job_description_hr.svg";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 function JobDescriptionHr() {
     const { t } = useTranslation();
+    const [formData, setFormData] = useState({});
   const listedData = {
     header: `${t("rima.job_description_writer")}`,
     label: `${t("rima.job_description_writer")}`,
@@ -20,6 +22,7 @@ function JobDescriptionHr() {
     agentName: "Rima",
     agentImg: rimaImg,
     headerLogo: jobImg,
+    formData, setFormData
   };
   return <CustomChat listedProps={listedData} />;
 }

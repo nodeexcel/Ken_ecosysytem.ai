@@ -292,7 +292,7 @@ const DemoChat = () => {
                                     </div>
 
                                     <div className="flex items-center gap-2">
-                                        <span className="text-sm text-gray-500">{t("appointment.agentEnabled")}</span>
+                                        <span className="text-sm text-gray-500">{t("appointment.agent_enable")}</span>
                                         <label className="relative inline-flex items-center cursor-pointer">
                                             <input
                                                 type="checkbox"

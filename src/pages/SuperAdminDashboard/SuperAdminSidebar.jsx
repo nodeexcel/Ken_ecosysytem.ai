@@ -99,8 +99,10 @@ const SuperAdminSidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
             setShowDropdown(false)
             if (path === "settings") {
                 navigate("/super-admin/settings")
+            } else if (path === "") {
+                navigate("/super-admin")
             } else {
-                navigate(path)
+                navigate(`/super-admin/${path}`)
             }
             dispatch(discardSkillsData())
             if (isOpen) {
@@ -197,8 +199,8 @@ const SuperAdminSidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                     <div ref={noticationRef}>
                         <div className={`text-xl flex ${!isNotification && 'group'} hover:cursor-pointer ${!isOpen && 'justify-center'} relative py-3`} onClick={handleNotification}>
                             <div className='flex items-center'>
-                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><UserIcon status={renderColor(6)} /></div> <div className='hidden group-hover:block'><UserIcon status={true} /></div> </div>
-                                {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(6) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.notification")}</p>}
+                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><UserIcon status={false} /></div> <div className='hidden group-hover:block'><UserIcon status={true} /></div> </div>
+                                {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] text-[#1e1e1e]`}>{t("sidebar.notification")}</p>}
                             </div>
                             {!isOpen && <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[116px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
                                 <p className='font-[400]'>{t("sidebar.notification")}</p>
@@ -209,52 +211,61 @@ const SuperAdminSidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                     
                     <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
                         <div className='flex items-center'>
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarBrainIcon status={renderColor(1)} /></div> <div className='hidden group-hover:block'><SidebarBrainIcon status={true} /></div> </div>
-                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(1) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.brain_ai")}</p>}
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarBrainIcon status={renderColor(1)}  /></div> <div className='hidden group-hover:block'><SidebarBrainIcon status={true} /></div> </div>
+                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(1) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{sidebarItems[1].label}</p>}
                         </div>
                         {!isOpen && <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[102px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[400]'>{t("sidebar.brain_ai")}</p>
+                            <p className='font-[400]'>{sidebarItems[1].label}</p>
                         </div>}
                     </div>
 
-                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
+                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[2].id, sidebarItems[2].label)}>
                         <div className='flex items-center'>
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><AgentIcon status={renderColor(1)} /></div> <div className='hidden group-hover:block'><AgentIcon status={true} /></div> </div>
-                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(1) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.copy_link")}</p>}
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><AgentIcon status={renderColor(2)} /></div> <div className='hidden group-hover:block'><AgentIcon status={true} /></div> </div>
+                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(2) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{sidebarItems[2].label}</p>}
                         </div>
                         {!isOpen && <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[102px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[400]'>{t("Agent Monitoring")}</p>
+                            <p className='font-[400]'>{sidebarItems[2].label}</p>
                         </div>}
                     </div>
-                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
+                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[3].id, sidebarItems[3].label)}>
                         <div className='flex items-center'>
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><DollarIcon status={renderColor(1)} /></div> <div className='hidden group-hover:block'><CopyIcon status={true} /></div> </div>
-                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(1) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.copy_link")}</p>}
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><UserIcon status={renderColor(3)} /></div> <div className='hidden group-hover:block'><UserIcon status={true} /></div> </div>
+                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(3) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{sidebarItems[3].label}</p>}
                         </div>
                         {!isOpen && <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[102px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[400]'>{t("Billing & Subscriptions")}</p>
+                            <p className='font-[400]'>{sidebarItems[3].label}</p>
                         </div>}
                     </div>
-                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
+                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[4].id, sidebarItems[4].label)}>
                         <div className='flex items-center'>
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><CopyIcon status={renderColor(1)} /></div> <div className='hidden group-hover:block'><CopyIcon status={true} /></div> </div>
-                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(1) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.copy_link")}</p>}
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><DollarIcon status={renderColor(4)} /></div> <div className='hidden group-hover:block'><DollarIcon status={true} /></div> </div>
+                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(4) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{sidebarItems[4].label}</p>}
                         </div>
                         {!isOpen && <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[102px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[400]'>{t("Logs & Troublshooting")}</p>
+                            <p className='font-[400]'>{sidebarItems[4].label}</p>
+                        </div>}
+                    </div>
+                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[5].id, sidebarItems[5].label)}>
+                        <div className='flex items-center'>
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><CopyIcon status={renderColor(5)} /></div> <div className='hidden group-hover:block'><CopyIcon status={true} /></div> </div>
+                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(5) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{sidebarItems[5].label}</p>}
+                        </div>
+                        {!isOpen && <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[102px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
+                            <p className='font-[400]'>{sidebarItems[5].label}</p>
                         </div>}
                     </div>
                     <hr className='text-[#E1E4EA]' />
                 </div>
                 <div className='flex flex-col'>
                     <hr className='text-[#E1E4EA]' />
-                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect("settings", "Settings")}>
+                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[6].id, sidebarItems[6].label)}>
                         <div className='flex items-center'>
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarSettingIcon className='text-white' status={renderColor(2)} /></div> <div className='hidden group-hover:block'><SidebarSettingIcon className='text-white' status={true} /></div> </div>
-                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(2) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.settings")}</p>}
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarSettingIcon className='text-white' status={renderColor(6)} /></div> <div className='hidden group-hover:block'><SidebarSettingIcon className='text-white' status={true} /></div> </div>
+                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(6) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{sidebarItems[6].label}</p>}
                         </div>
                         {!isOpen && <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[113px]' : 'md:left-[104px]'} left-[102px] bg-white shadow-md rounded p-2 z-[9999]`}>
-                            <p className='font-[400]'>{t("sidebar.settings")}</p>
+                            <p className='font-[400]'>{sidebarItems[6].label}</p>
                         </div>}
                     </div>
                     <div
