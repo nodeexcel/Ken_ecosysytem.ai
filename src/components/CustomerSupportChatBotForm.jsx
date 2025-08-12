@@ -4,7 +4,7 @@ import { SelectDropdown } from "./Dropdown";
 import { useTranslation } from "react-i18next";
 import CustomizeAgent from "./CustomizeAgent";
 
-function CustomerSupportChatBotForm() {
+function CustomerSupportChatBotForm({ onCancel }) {
     const [formData, setFormData] = useState({ bot_name: "", role: "", personality: "", prompt: "", transfer: "", file: [], free_text: "" })
     const [errors, setErrors] = useState({})
     const [step, setStep] = useState(1)
@@ -111,7 +111,25 @@ function CustomerSupportChatBotForm() {
     }
 
     const handleCancel = (value) => {
-        setStatusSteps({ step1: false, step2: false, step3: false, step4: false })
+        // Reset all form state
+        setFormData({ bot_name: "", role: "", personality: "", prompt: "", transfer: "", file: [], free_text: "" });
+        setErrors({});
+        setStep(1);
+        setStatusSteps({ step1: false, step2: false, step3: false, step4: false });
+        setSelectedFile(null);
+        setCustomStatus(false);
+        setCustomIntegartion({});
+        setDragActive(false);
+        
+        // Clear file input reference
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+        
+        // Call the parent's cancel callback to return to chatbot list
+        if (onCancel) {
+            onCancel();
+        }
     }
 
     const handleSelectSteps = (selectStep) => {
@@ -178,7 +196,7 @@ function CustomerSupportChatBotForm() {
                                             ...prev, role: ""
                                         }))
                                     }}
-                                    placeholder={t("select")}
+                                    placeholder={t("role")}
                                     className=""
                                     errors={errors}
                                 />
@@ -186,7 +204,7 @@ function CustomerSupportChatBotForm() {
                             </div>
                             <div className="flex flex-col gap-1.5 flex-1">
                                 <label className="text-sm font-medium text-[#1e1e1e]">
-                                    {t("calina.personality")}
+                                    {t("phone.language")}
                                 </label>
                                 <p className="text-[#5A687C] font-[400] text-[12px]">{t("calina.personality_description")}</p>
                             </div>
@@ -206,7 +224,7 @@ function CustomerSupportChatBotForm() {
                                             ...prev, personality: ""
                                         }))
                                     }}
-                                    placeholder={t("emailings.select")}
+                                    placeholder={t("calina.personality")}
                                     className=""
                                     errors={errors}
                                 />
@@ -401,7 +419,7 @@ function CustomerSupportChatBotForm() {
                         <div className="flex items-center gap-2">
                             <button onClick={() => {
                                 handleContinue(4)
-                            }} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("continue")}</button>
+                            }} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("brain_ai.create")}</button>
                             <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
                         </div>
 

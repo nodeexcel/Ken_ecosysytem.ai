@@ -5,6 +5,8 @@ import DatePicker from "react-datepicker";
 import { LuCalendarDays } from "react-icons/lu";
 import { SelectDropdown } from "./Dropdown";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { FaChevronDown } from "react-icons/fa";
 
 const agents = [
     {
@@ -54,6 +56,11 @@ const countries = [
 
 export default function OutBoundCalls() {
     const { t } = useTranslation();
+    const countryData = useSelector((state) => state.country.data);
+    const [countriesList, setCountriesList] = useState(countryData || []);
+    const [selectedCountry, setSelectedCountry] = useState(countryData && countryData.length > 0 ? countryData[240] : { name: "United States", code: "US", dial_code: "+1", flag: "us" });
+    const [isOpen, setIsOpen] = useState(false);
+    const countryRef = useRef();
     const [showModal, setShowModal] = useState(false);
     const [secondModel, setSecondModel] = useState(false);
     const [toggleTom, setToggleTom] = useState(true);
@@ -68,6 +75,15 @@ export default function OutBoundCalls() {
             setLoading(false)
         }
     }, [agents])
+
+    useEffect(() => {
+        if (countryData && countryData.length > 0) {
+            setCountriesList(countryData);
+            if (!selectedCountry || selectedCountry.code === "US") {
+                setSelectedCountry(countryData[240] || countryData[0]);
+            }
+        }
+    }, [countryData]);
 
     // Add filter state
     const [filters, setFilters] = useState({
@@ -92,6 +108,30 @@ export default function OutBoundCalls() {
         if (showModal) document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [showModal]);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (countryRef.current && !countryRef.current.contains(event.target)) {
+                setIsOpen(false);
+                setCountriesList(countryData);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [countryData]);
+
+    const handleSearch = (e) => {
+        const searchValue = e.target.value.toLowerCase();
+        if (searchValue === "") {
+            setCountriesList(countryData);
+            return;
+        }
+        const filteredRows = countryData.filter((country) =>
+            country.name.toLowerCase().includes(searchValue) ||
+            country.dial_code.toLowerCase().includes(searchValue)
+        );
+        setCountriesList(filteredRows);
+    };
 
     const handleDropdownClick = (index) => {
         setActiveDropdown(activeDropdown === index ? null : index);
@@ -337,17 +377,48 @@ export default function OutBoundCalls() {
                                 <label className="text-sm text-gray-600 font-medium block mb-1">
                                     {t("phone.phone_number")}
                                 </label>
-                                <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-4 py-2  focus-within:border-[#675FFF]">
-                                    <select
-                                        className="outline-none bg-transparent pr-2 text-xl focus:outline-none"
-                                        value={countries[0].code}
-                                    >
-                                        {countries.map((country) => (
-                                            <option key={country.code} value={country.code}>
-                                                {country.flag} {country.dial_code}
-                                            </option>
-                                        ))}
-                                    </select>
+                                <div ref={countryRef} className="flex group items-center focus-within:border-[#675FFF] gap-2 border border-gray-300 rounded-lg px-4 py-2">
+                                    <div className="relative">
+                                        <button
+                                            onClick={() => setIsOpen(!isOpen)}
+                                            className="w-[120px] flex hover:cursor-pointer relative border-none justify-between gap-1 items-center border py-1 text-left"
+                                        >
+                                            <div className="flex items-center gap-2 mr-3">
+                                                {selectedCountry && <p className={`fi fi-${selectedCountry.flag} fis w-4 h-4 rounded-full`}></p>}
+                                                <p className="text-[#5A687C] font-[400] text-[16px]">{selectedCountry ? selectedCountry.dial_code : "+1"}</p>
+                                            </div>
+                                            <FaChevronDown color="#5A687C" className={`w-[10px] transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
+                                            <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />
+                                        </button>
+                                        {isOpen && (
+                                            <div className="absolute px-1 z-10 rounded-md shadow-lg border border-gray-200 max-h-40 overflow-auto top-6 w-full left-[-13px] bg-white mt-1">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search"
+                                                    onChange={handleSearch}
+                                                    className="w-full px-3 py-2 border-b border-gray-200 outline-none text-sm"
+                                                />
+                                                {countriesList.length > 0 ? (
+                                                    countriesList.map((country, idx) => (
+                                                        <div
+                                                            key={idx}
+                                                            onClick={() => {
+                                                                setSelectedCountry(country);
+                                                                setIsOpen(false);
+                                                                setCountriesList(countryData);
+                                                            }}
+                                                            className={`flex px-2 gap-2 hover:bg-[#F4F5F6] hover:rounded-lg my-1 py-2 ${selectedCountry?.code === country?.code ? "bg-[#F4F5F6] rounded-lg" : ""} cursor-pointer items-center`}
+                                                        >
+                                                            <p className={`fi fi-${country.flag} fis w-4 h-4 rounded-full`}></p>
+                                                            <p className="text-[#5A687C] font-[400] text-[16px]">{country.dial_code}</p>
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <p className="text-center text-sm text-gray-500 py-2">No results found</p>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
                                     <input
                                         type="tel"
                                         placeholder={t("phone.enter_number")}
@@ -391,7 +462,7 @@ export default function OutBoundCalls() {
 
                             <div className="flex gap-4 mt-6 justify-between">
                                 <button onClick={() => setSecondModel(true)} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px] hover:border-[#675FFF] focus:border-[#675FFF] focus:outline-none">
-                    {t("phone.test_call")}
+                    {t("phone.cancel")}
                                 </button>
                                 <button className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]  focus:bg-[#5A52E5] focus:outline-none">
                                     {t("phone.test_call")}

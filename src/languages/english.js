@@ -1033,7 +1033,7 @@ const englishTranslation = {
     all: "All",
     user_requested: "The user requests to be contacted",
     request_after_x_attempt: "The AI doesn't understand the request after X attempts",
-    detect_keyword: `The A1 detects a keyword (e.g., "help," "human")`,
+    detect_keyword: `The AI detects a keyword (e.g., "help," "human")`,
     website: "Website",
     website_content: "Connect your chatbot to Website and let it respond to your customers messages",
     messenger: "Messenger",

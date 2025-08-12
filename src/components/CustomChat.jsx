@@ -19,7 +19,7 @@ const CustomChat = ({ listedProps }) => {
         initialMessage,
         agentName,
         agentImg,
-        headerLogo, handleGenerate, handleUpdate, messages, setMessages, loadingChats, setLoadingChats, error, setError, formData, setFormData } = listedProps
+        headerLogo, handleGenerate, handleUpdate, messages, setMessages, loadingChats, setLoadingChats, error: propError, setError: propSetError, formData: propFormData, setFormData: propSetFormData } = listedProps
 
     // Use error/setError from listedProps if provided, else local state
     const [localErrors, setLocalErrors] = useState({})
@@ -29,6 +29,15 @@ const CustomChat = ({ listedProps }) => {
     const [editContent, setEditContent] = useState("");
     const [copiedMessageId, setCopiedMessageId] = useState(null);
     const [favoriteMessages, setFavoriteMessages] = useState({});
+
+    // Fallback state for formData and setFormData if not provided in props
+    const [localFormData, setLocalFormData] = useState({});
+    const formData = propFormData !== undefined ? propFormData : localFormData;
+    const setFormData = propSetFormData !== undefined ? propSetFormData : setLocalFormData;
+    
+    // Fallback state for error and setError if not provided in props
+    const error = propError !== undefined ? propError : localErrors;
+    const setError = propSetError !== undefined ? propSetError : setLocalErrors;
 
     const handleCopy = useCallback(async (message) => {
         try {

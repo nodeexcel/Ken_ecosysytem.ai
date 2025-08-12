@@ -49,7 +49,7 @@ function SuperDashboard() {
         { id: "agent-monitoring", label: "Brain AI" },
         { id: "agent-monitoring", label: "Agent Monitoring" },
         { id: "user-management", label: "User Management" },
-        { id: "billing-subscriptions", label: "Billing & Subscriptions" },
+        { id: "billing-subscription", label: "Billing & Subscriptions" },
         { id: "logs-troubleshooting", label: "Logs & Troubleshooting" },
         { id: "settings", label: "Settings" },
         { id: "help_center", label: "Help center" },

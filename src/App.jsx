@@ -33,11 +33,14 @@ import CustomerSupport from './pages/Dashboard/CustomerSupport'
 import Skills from './pages/Dashboard/Skills'
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-// import SuperDashboard from './pages/SuperAdminDashboard/Layout/SuperDashboard';
-// import SuperAdminDashboard from './pages/SuperAdminDashboard/SuperAdminDashboard';
-// import UserManagement from './pages/SuperAdminDashboard/UserManagement'
+import SuperDashboard from './pages/SuperAdminDashboard/Layout/SuperDashboard';
+import SuperAdminDashboard from './pages/SuperAdminDashboard/SuperAdminDashboard';
+import UserManagement from './pages/SuperAdminDashboard/UserManagement'
 import { Toaster } from 'react-hot-toast'
-// import AgentMonitoring from './pages/SuperAdminDashboard/AgentMonitoring'
+import AgentMonitoring from './pages/SuperAdminDashboard/AgentMonitoring'
+import BillingSubscription from './pages/SuperAdminDashboard/BillingSubscription'
+import LogsTroubleshooting from './pages/SuperAdminDashboard/LogsTroubleshooting'
+import SuperAdminSetting from './pages/SuperAdminDashboard/SuperAdmingSetting'
 
 
 
@@ -51,11 +54,14 @@ function App() {
       <Toaster />
       <Routes>
         <Route path='/' element={<Login />} />
-        {/* <Route path='/super-admin' element={<SuperDashboard/>}>
+        <Route path='/super-admin' element={<SuperDashboard/>}>
           <Route path='' element={<SuperAdminDashboard />} />
           <Route path="user-management" element={<UserManagement/>}/>
           <Route path="agent-monitoring" element={<AgentMonitoring/>}/>
-        </Route> */}
+          <Route path="billing-subscription" element={<BillingSubscription/>}/>
+          <Route path="logs-troubleshooting" element={<LogsTroubleshooting/>}/>
+          <Route path="settings" element={<SuperAdminSetting/>}/>
+        </Route>
         <Route path='/create-password' element={<SetPassword />} />
         <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/pricing' element={<PricingPage />} />
