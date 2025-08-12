@@ -8,6 +8,8 @@ import CustomerSupportChat from "./CustomerSupportChat";
 
 function SmartChatbot() {
     const [chatbotData, setChatbotData] = useState([])
+    const [filteredChatbotData, setFilteredChatbotData] = useState([])
+    const [searchQuery, setSearchQuery] = useState("")
     const [loading, setLoading] = useState(true)
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [chatBotFormStatus, setChatBotFormStatus] = useState(false);
@@ -33,6 +35,7 @@ function SmartChatbot() {
     useEffect(() => {
         setTimeout(() => {
             setChatbotData(staticData)
+            setFilteredChatbotData(staticData)
         }, 3000)
     }, [])
 
@@ -41,6 +44,18 @@ function SmartChatbot() {
             setLoading(false)
         }
     }, [chatbotData])
+
+    // Filter chatbots based on search query
+    useEffect(() => {
+        if (searchQuery.trim() === "") {
+            setFilteredChatbotData(chatbotData)
+        } else {
+            const filtered = chatbotData.filter(chatbot =>
+                chatbot.bot_name.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+            setFilteredChatbotData(filtered)
+        }
+    }, [searchQuery, chatbotData])
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -57,6 +72,10 @@ function SmartChatbot() {
         setActiveDropdown(activeDropdown === index ? null : index);
     };
 
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value)
+    }
+
     return (
         <>
             {!chatBotFormStatus ? <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
@@ -71,7 +90,12 @@ function SmartChatbot() {
                     </button>
                 </div>
                 <div>
-                    <input placeholder={t("brain_ai.search")} className="max-w-[399px] bg-white focus:outline-none focus:border-[#675FFF] w-full rounded-[8px] border border-[#E1E4EA] py-[5px] px-[14px]" />
+                    <input 
+                        placeholder={t("brain_ai.search")} 
+                        className="max-w-[399px] bg-white focus:outline-none focus:border-[#675FFF] w-full rounded-[8px] border border-[#E1E4EA] py-[5px] px-[14px]"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                    />
                 </div>
                 {/* Table */}
                 <div className="w-full">
@@ -88,12 +112,12 @@ function SmartChatbot() {
                         </div>
                         <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
                             {loading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
-                                chatbotData.length !== 0 ?
+                                filteredChatbotData.length !== 0 ?
                                     <tbody className="w-full">
-                                        {chatbotData.map((row, index) =>
+                                        {filteredChatbotData.map((row, index) =>
                                             <tr
                                                 key={row.id}
-                                                className={`text-[16px] text-[#1E1E1E] ${index !== chatbotData?.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
+                                                className={`text-[16px] text-[#1E1E1E] ${index !== filteredChatbotData?.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
                                             >
                                                 <td className="px-[14px] py-[14px] min-w-[200px] max-w-[32%] w-full font-[600] text-[#1E1E1E] whitespace-nowrap">{row.bot_name}</td>
                                                 <td className="py-[14px] px-[14px] min-w-[200px] max-w-[38%] w-full text-[#5A687C] whitespace-nowrap">{DateFormat(row.date)}</td>
@@ -145,7 +169,7 @@ function SmartChatbot() {
                         </div>
                     </table>
                 </div>
-            </div> : openChats ? <CustomerSupportChat /> : <CustomerSupportChatBotForm />}
+            </div> : openChats ? <CustomerSupportChat /> : <CustomerSupportChatBotForm onCancel={() => setChatBotFormStatus(false)} />}
         </>
     )
 }

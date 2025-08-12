@@ -37,9 +37,11 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
             setMessages([
                 { id: uuidv4(), sender: "agent", isUser: false, text: `I'm ${(formData.avatar.slice(0, 1).toUpperCase()) + formData.avatar.slice(1)}, your appointment setter. How can I assist you today?` }
             ])
+        } else {
+            setMessages([
+                { id: uuidv4(), sender: "agent", isUser: false, text: "I'm your AI assistant. How can I assist you today?" }
+            ])
         }
-
-
     }, [formData])
 
     useEffect(() => {
@@ -213,9 +215,20 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                                     <div className="flex items-center gap-5">
                                         <div className="border border-[#E1E4EA] justify-around flex flex-col items-center w-[148px] h-[148px] p-[10px] rounded-[10px]">
                                             <div className="rounded-full h-[63px] w-[63px] flex justify-center items-center bg-[#F0EFFF]">
-                                                <img src={avatarMap[formData.avatar]} alt={formData.avatar} className="object-fit" />
+                                                {formData.avatar ? (
+                                                    <img src={avatarMap[formData.avatar]} alt={formData.avatar} className="object-fit " />
+                                                ) : (
+                                                    <div className="text-[#5A687C] text-sm  font-medium">No Avatar</div>
+                                                )}
                                             </div>
-                                            <DeleteIcon />
+                                            {formData.avatar && (
+                                                <div 
+                                                    className="cursor-pointer hover:opacity-70 transition-opacity"
+                                                    onClick={() => setFormData(prev => ({ ...prev, avatar: "" }))}
+                                                >
+                                                    <DeleteIcon />
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="h-[148px] border-r border-[#E1E4EA]"></div>
                                         <div className="flex gap-2 flex-wrap">
@@ -266,20 +279,26 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                                 <div className="h-[466px] relative border border-[#E1E4EA] rounded-lg">
                                     <div className="bg-[#F5F7FF] rounded-y-lg rounded-t-lg p-2 mb-4 flex items-center gap-3">
                                         <div className="w-[45px] h-[45px] rounded-full bg-[#fff] flex items-center justify-center">
-                                            <img src={avatarMap[formData.avatar]} alt={formData.avatar} className="object-fit" />
+                                            {formData.avatar ? (
+                                                <img src={avatarMap[formData.avatar]} alt={formData.avatar} className="object-fit" />
+                                            ) : (
+                                                <div className="text-[#5A687C] text-sm font-medium">?</div>
+                                            )}
                                         </div>
-                                        <div className="font-[600] text-[18px] text-[#1E1E1E]">{`${(formData.avatar.slice(0, 1).toUpperCase()) + formData.avatar.slice(1)} `} (AI Agent)</div>
+                                        <div className="font-[600] text-[18px] text-[#1E1E1E]">
+                                            {formData.avatar ? `${(formData.avatar.slice(0, 1).toUpperCase()) + formData.avatar.slice(1)} (AI Agent)` : "AI Agent"}
+                                        </div>
                                     </div>
                                     <div className="flex flex-col justify-between h-full">
                                         <div ref={agentChatRef} className="px-4 overflow-auto max-h-[300px] mb-2">
                                             {messages.map((msg,) => (
                                                 <div key={msg.id} className="flex flex-col">
-                                                    {!msg.isUser && (
+                                                    {/* {!msg.isUser && (
                                                         <div className="flex items-center gap-2 mb-1 mr-auto w-fit max-w-[80%]">
                                                             <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] font-[600] text-[#675FFF]">E</div>
                                                             <span className="text-sm font-medium">Ecosystem.ai</span>
                                                         </div>
-                                                    )}
+                                                    )} */}
                                                     {msg.isUser && (
                                                         <div className="flex items-center gap-1 mt-1 ml-auto w-fit max-w-[80%]">
                                                             <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] text-[#675FFF] font-[600]">U</div>

@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { MoreHorizontal, X } from "lucide-react";
 import { BritishFlag, Delete, Notes, Phone, TestCall, ThreeDots } from "../icons/icons";
 import DatePicker from "react-datepicker";
 import { LuCalendarDays } from "react-icons/lu";
 import { useTranslation } from "react-i18next";
+import { format } from "date-fns";
 
 const agents = [
     {
@@ -77,6 +78,37 @@ export default function InBoundCalls() {
         setActiveDropdown(activeDropdown === index ? null : index);
     };
 
+    // Filter agents based on date range and recipient search
+    const filteredAgents = useMemo(() => {
+        return agents.filter((agent) => {
+            // Filter by date range
+            const agentDateParts = agent.date.split('-');
+            // Convert DD-MM-YYYY to Date object
+            const agentDate = new Date(agentDateParts[2], agentDateParts[1] - 1, agentDateParts[0]);
+            
+            const start = startDate ? new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()) : null;
+            const end = endDate ? new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 23, 59, 59, 999) : null;
+            
+            let dateInRange = true;
+            if (start && end) {
+                dateInRange = agentDate >= start && agentDate <= end;
+            } else if (start) {
+                dateInRange = agentDate >= start;
+            } else if (end) {
+                dateInRange = agentDate <= end;
+            }
+            
+            // Filter by recipient search
+            const recipientMatch = !recipient || 
+                agent.caller_no.toLowerCase().includes(recipient.toLowerCase()) ||
+                agent.agent_name.toLowerCase().includes(recipient.toLowerCase()) ||
+                agent.voice.toLowerCase().includes(recipient.toLowerCase()) ||
+                agent.language.toLowerCase().includes(recipient.toLowerCase());
+            
+            return dateInRange && recipientMatch;
+        });
+    }, [agents, startDate, endDate, recipient]);
+
     return (
         <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
             {/* Header */}
@@ -96,9 +128,11 @@ export default function InBoundCalls() {
                     <DatePicker
                         selected={startDate}
                         onChange={(date) => setStartDate(date)}
+                        dateFormat="dd/MM/yyyy"
+                        placeholderText={t("phone.start_date")}
                         customInput={
-                            <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px]  focus:border-[#675FFF] focus:outline-none">
-                                {t("phone.start_date")}
+                            <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px] focus:border-[#675FFF] focus:outline-none">
+                                {startDate ? format(startDate, 'dd/MM/yyyy') : t("phone.start_date")}
                                 <LuCalendarDays className="text-[16px]" />
                             </button>
                         }
@@ -108,9 +142,12 @@ export default function InBoundCalls() {
                     <DatePicker
                         selected={endDate}
                         onChange={(date) => setEndDate(date)}
+                        dateFormat="dd/MM/yyyy"
+                        minDate={startDate}
+                        placeholderText={t("phone.end_date")}
                         customInput={
                             <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px] focus:border-[#675FFF] focus:outline-none">
-                            {t("phone.end_date")}
+                                {endDate ? format(endDate, 'dd/MM/yyyy') : t("phone.end_date")}
                                 <LuCalendarDays className="text-[16px]" />
                             </button>
                         }
@@ -121,7 +158,7 @@ export default function InBoundCalls() {
                         value={recipient}
                         onChange={(e) => setRecipient(e.target.value)}
                         placeholder={t("phone.receipient")}
-                        className="bg-white border text-[#5A687C] max-w-[152px] text-[16px] font-[400] w-fit border-[#E1E4EA] px-4 py-2 rounded-lg  focus:border-[#675FFF] focus:outline-none"
+                        className="bg-white border text-[#5A687C] max-w-[152px] text-[16px] font-[400] w-fit border-[#E1E4EA] px-4 py-2 rounded-lg focus:border-[#675FFF] focus:outline-none"
                     />
                 </div>
             </div>
@@ -145,12 +182,12 @@ export default function InBoundCalls() {
                     </div>
                     <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
                         {loading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
-                            agents.length !== 0 ?
+                            filteredAgents.length !== 0 ?
                                 <tbody className="w-full">
-                                    {agents.map((agent, index) => (
+                                    {filteredAgents.map((agent, index) => (
                                         <tr
                                             key={agent.id}
-                                            className={`text-[16px] ${index !== agents.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
+                                            className={`text-[16px] ${index !== filteredAgents.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
                                         >
                                             <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#1E1E1E] font-[600]">{agent.agent_name}</td>
                                             <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.date}</td>

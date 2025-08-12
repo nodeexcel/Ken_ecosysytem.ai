@@ -31,8 +31,8 @@ export const SelectDropdown = ({ name, options, placeholder = 'Select', value, o
         }
     }, [isOpen]);
 
-    const handleSelect = (option) => {
-        onChange(option);
+    const handleSelect = (optionKey) => {
+        onChange(optionKey);
         setIsOpen(false);
     };
 

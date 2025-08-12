@@ -142,8 +142,14 @@ const Agents = () => {
           <div className="flex gap-2 items-center h-[57px]">
             <h1 className="text-[20px] font-[600] pl-10 lg:pl-3">{t("home")}</h1>
           </div>
-          <div>
+          <div className="flex gap-2 items-center">
+          <div className="flex gap-2 items-center">
+            <button className='bg-[#675FFF] py-2 px-10 text-[14px] rounded-lg text-white cursor-pointer' onClick={() => navigate("/super-admin")}>{t("super admin")}</button>
+          </div>  
+          <div className="flex gap-2 items-center">
             <button className='bg-[#675FFF] py-2 px-10 text-[14px] rounded-lg text-white cursor-pointer' onClick={handleLogout}>{t("logout")}</button>
+          </div>
+          
           </div>
         </div>
         <hr className='text-[#E1E4EA]' />

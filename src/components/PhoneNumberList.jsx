@@ -175,7 +175,7 @@ export default function PhoneNumbers() {
     setCountries(filteredRows);
   }
   const renderPhoneNumber = (phone, country) => {
-    const filterCode = countries.filter((e) => e.name === country)
+    const filterCode = countrieData.filter((e) => e.name === country)
     return `${filterCode[0]?.dial_code}${phone}`
   }
 
@@ -241,7 +241,9 @@ export default function PhoneNumbers() {
                       <td className="py-[14px] pl-[14px] pr-[14px] min-w-[186px] max-w-[17%] w-full">
                         {row.direction === "inbound" ? <InboundCall active={true} /> : <OutboundCall active={true} />}
                       </td>
-                      <td className="min-w-[210px] max-w-[17%] w-full text-[#5A687C] table-cell-wrap">{DateFormat(row.creation_date)}</td>
+                      <td className="min-w-[210px] max-w-[17%] w-full text-[#5A687C] table-cell-wrap">
+                        {DateFormat(row.creation_date)}
+                      </td>
 
                       <td className="p-[14px] pr-[30px] w-full">
                         <button
@@ -333,7 +335,7 @@ export default function PhoneNumbers() {
                   }
                 </label>
                 <div ref={countryRef} className={`flex group items-center focus-within:border-[#675FFF] gap-2 border ${error.number ? 'border-red-500' : 'border-[#E1E4EA]'} rounded-lg px-4 py-2`}>
-                  <div className="relative">
+                  <div className="relative isolate">
                     <button
                       onClick={() => setIsOpen(!isOpen)}
                       className="w-[120px] flex hover:cursor-pointer relative border-none justify-between gap-1 items-center border py-1 text-left"
@@ -346,7 +348,7 @@ export default function PhoneNumbers() {
                       <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />
                     </button>
                     {isOpen && (
-                      <div className="absolute px-1 z-10 rounded-md shadow-lg border border-gray-200 max-h-30 overflow-auto top-6 w-full left-[-13px] bg-white mt-1">
+                      <div className="absolute px-1 z-[9999] rounded-md shadow-lg border border-gray-200 max-h-[200px] overflow-auto top-6 w-full left-[-13px] bg-white mt-1 isolate transform-gpu will-change-transform">
                         <input type="text" placeholder="Search"  className="w-full px-3 py-2 border-b border-gray-200 outline-none text-sm" onChange={searchHandle} />
                         {countries.map((country,idx) => (
                           <div
