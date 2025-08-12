@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import uk_flag from "../../assets/images/uk_flag.png"
 import fr_flag from "../../assets/images/fr_flag.png"
-import Notification from '../../pages/Dashboard/Notification';
+// import Notification from '../../pages/Dashboard/Notification';
 import { X } from 'lucide-react';
 import { getNavbarData } from '../../store/navbarSlice';
 import { AgentIcon, CopyIcon, DollarIcon, GiftIcon, HomeIcon, UserIcon, SidebarBrainIcon, SidebarFourBoxIcon, SidebarHelpCenterIcon, SidebarNotificationIcon, SidebarSettingIcon, SkillsIcon } from '../../icons/icons';
@@ -206,7 +206,7 @@ const SuperAdminSidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                                 <p className='font-[400]'>{t("sidebar.notification")}</p>
                             </div>}
                         </div>
-                        {isNotification && <Notification setNotification={setIsNotification} />}
+                        {/* {isNotification && <Notification setNotification={setIsNotification} />} */}
                     </div>
                     
                     <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
