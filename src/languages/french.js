@@ -381,6 +381,7 @@ const frenchTranslation = {
     sequence: "Séquence",
     create_agent: "Créer l’agent",
     update_agent: "Mettre à jour l’agent",
+    preview_agent: "Aperçu de l'agent",
     field_required: "Ce champ est requis",
     update: "Mettre à jour",
     mark_as_inactive: "Marquer comme inactif",
