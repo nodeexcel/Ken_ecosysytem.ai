@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import uk_flag from "../../assets/images/uk_flag.png"
 import fr_flag from "../../assets/images/fr_flag.png"
-import Notification from '../../pages/Dashboard/Notification';
+// import Notification from '../../pages/Dashboard/Notification';
 import { X } from 'lucide-react';
 import { getNavbarData } from '../../store/navbarSlice';
 import { AgentIcon, CopyIcon, DollarIcon, GiftIcon, HomeIcon, UserIcon, SidebarBrainIcon, SidebarFourBoxIcon, SidebarHelpCenterIcon, SidebarNotificationIcon, SidebarSettingIcon, SkillsIcon } from '../../icons/icons';
@@ -151,10 +151,6 @@ const SuperAdminSidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
             return true
         }
         else if (sidebarItems[index] && lastPath === sidebarItems[index].id) {
-            console.log(lastPath, sidebarItems[index].id)
-            console.log(sidebarItems[index].id)
-            console.log(sidebarItems[index].id)
-            console.log(sidebarItems[index].id)
             return true
         }
         return false
@@ -189,7 +185,7 @@ const SuperAdminSidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                     
                     <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[0].id, sidebarItems[0].label)}>
                         <div className='flex items-center'>
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><HomeIcon status={renderColor(0)} /></div> <div className='hidden group-hover:block'><SidebarFourBoxIcon status={true} /></div> </div>
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><HomeIcon status={renderColor(0)} /></div> <div className='hidden group-hover:block'><HomeIcon status={true} /></div> </div>
                             {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(0) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.home")}</p>}
                         </div>
                         {!isOpen && <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[101px]' : 'md:left-[97px]'} left-[102px]  bg-white shadow-md rounded p-2 z-[9999]`}>
@@ -206,12 +202,12 @@ const SuperAdminSidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                                 <p className='font-[400]'>{t("sidebar.notification")}</p>
                             </div>}
                         </div>
-                        {isNotification && <Notification setNotification={setIsNotification} />}
+                        {/* {isNotification && <Notification setNotification={setIsNotification} />} */}
                     </div>
                     
                     <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
                         <div className='flex items-center'>
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarBrainIcon status={renderColor(1)}  /></div> <div className='hidden group-hover:block'><SidebarBrainIcon status={true} /></div> </div>
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarBrainIcon status="white"  /></div> <div className='hidden group-hover:block'><SidebarBrainIcon status="white" /></div> </div>
                             {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(1) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{sidebarItems[1].label}</p>}
                         </div>
                         {!isOpen && <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[102px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
@@ -259,9 +255,9 @@ const SuperAdminSidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                 </div>
                 <div className='flex flex-col'>
                     <hr className='text-[#E1E4EA]' />
-                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[6].id, sidebarItems[6].label)}>
+                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3 ${renderColor(6) ? 'bg-white rounded-lg mx-2' : ''}`} onClick={() => handleSelect(sidebarItems[6].id, sidebarItems[6].label)}>
                         <div className='flex items-center'>
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarSettingIcon className='text-white' status={renderColor(6)} /></div> <div className='hidden group-hover:block'><SidebarSettingIcon className='text-white' status={true} /></div> </div>
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarSettingIcon className={renderColor(6) ? 'text-[#675FFF]' : 'text-white'} status={renderColor(6) ? "#675FFF" : "white"} /></div> <div className='hidden group-hover:block'><SidebarSettingIcon className='text-[#675FFF]' status="#675FFF" /></div> </div>
                             {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(6) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{sidebarItems[6].label}</p>}
                         </div>
                         {!isOpen && <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[113px]' : 'md:left-[104px]'} left-[102px] bg-white shadow-md rounded p-2 z-[9999]`}>

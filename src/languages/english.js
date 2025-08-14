@@ -531,6 +531,7 @@ const englishTranslation = {
     sequence: "Sequence",
     create_agent: "Create Agent",
     update_agent: "Update Agent",
+    preview_agent: "Preview Agent",
     field_required: "This field is required'",
     update: "Update",
     mark_as_inactive: "Mark as Inactive",
