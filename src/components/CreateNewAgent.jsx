@@ -18,7 +18,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const [formData, setFormData] = useState({
         agent_name: "",
         gender: '',
-        // age: '', // Commented out as per Figma design
+        age: '',
         agent_language: [], agent_personality: "", business_description: "", your_business_offer: "",
         qualification_questions: [""],
         sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
@@ -170,7 +170,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         if (step === 1) {
             if (!formData.agent_name.trim()) newErrors.agent_name = t("appointment.agent_name_validation");
             if (!formData.gender) newErrors.gender = t("appointment.gender_validation");
-            // if (!formData.age) newErrors.age = t("appointment.age_validation"); // Commented out as per Figma design
+            if (!formData.age) newErrors.age = t("appointment.age_validation"); // Commented out as per Figma design
             if (formData.agent_language.length === 0) newErrors.agent_language = t("appointment.agent_language_validation");
             if (!formData.agent_personality) newErrors.agent_personality = t("appointment.agent_personality_validation");
         }
@@ -241,12 +241,15 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const sequenceCards = [
         {
             id: 1,
-            title: t("appointment.channel"),
-            key: "channel",
-            iconSrc: channel,
-            options: [{ label: "Whatsapp", key: "Whatsapp" }, { label: "Instagram", key: "Instagram" }],
-            options2: [{ label: "Whatsapp", key: "Whatsapp" }, { label: "Email", key: "email" }, { label: "SMS", key: "SMS" }],
-            value: "Instagram",
+            title: t("appointment.trigger"),
+            key: "trigger",
+            iconSrc: trigger,
+            options: [
+                // { label: "Systeme.io", key: "systeme.io" },
+                //  { label: "Clickfunnels", key: "clickfunnels" },
+                { label: "Whatsapp", key: "Whatsapp" },
+                { label: "Instagram", key: "Instagram" }],
+            value: "systeme.io",
             selected: true,
         },
         {
@@ -261,15 +264,12 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         },
         {
             id: 3,
-            title: t("appointment.trigger"),
-            key: "trigger",
-            iconSrc: trigger,
-            options: [
-                // { label: "Systeme.io", key: "systeme.io" },
-                //  { label: "Clickfunnels", key: "clickfunnels" },
-                { label: "Whatsapp", key: "Whatsapp" },
-                { label: "Instagram", key: "Instagram" }],
-            value: "systeme.io",
+            title: t("appointment.channel"),
+            key: "channel",
+            iconSrc: channel,
+            options: [{ label: "Whatsapp", key: "Whatsapp" }, { label: "Instagram", key: "Instagram" }],
+            options2: [{ label: "Whatsapp", key: "Whatsapp" }, { label: "Email", key: "email" }, { label: "SMS", key: "SMS" }],
+            value: "Instagram",
             selected: true,
         },
         {
@@ -364,7 +364,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 setFormData({
                     agent_name: "",
                     gender: '',
-                    // age: '', // Commented out as per Figma design
+                    age: '', // Commented out as per Figma design
                     agent_language: [], agent_personality: "", business_description: "", your_business_offer: "",
                     qualification_questions: [""],
                     sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
@@ -823,12 +823,6 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 <div className="flex justify-between items-center">
                     <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">{t("appointment.create_new_agent")}</h1>
                     <div className='flex gap-2'>
-                        <button onClick={() => setPreviewAgent(true)} className="bg-white text-[16px] font-[500] text-[#5A687C] border-[1.5px] border-[#E1E4EA] rounded-md text-sm md:text-base px-4 py-2">
-                            {t("appointment.preview_agent")}
-                        </button>
-                        <button disabled={loading} onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()} className="bg-[#675FFF] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
-                            {loading ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : updateAgentStatus ? t("appointment.update_agent") : t("appointment.create_agent")}
-                        </button>
                     </div>
                 </div>
                 <div className="flex flex-col gap-8 w-full">
@@ -901,7 +895,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             />
                                             {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
                                         </div>
-                                        {/* <div className="flex flex-col gap-1.5 w-full">
+                                        <div className="flex flex-col gap-1.5 w-full">
                                             <label className="text-sm font-medium text-[#1e1e1e]">
                                                 {t("appointment.age")}<span className="text-[#675fff]">*</span>
                                             </label>
@@ -923,7 +917,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                 placeholder={t("appointment.agent_age_placeholder")}
                                             />
                                             {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
-                                        </div> */}
+                                        </div>
                                     </div>
                                 </div>
 
