@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { Search, ChevronDown, Calendar, MoreHorizontal, Mail, Phone } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { Search, ChevronDown, Calendar, MoreHorizontal, Mail, Phone, Download, Trash2 } from "lucide-react"
 import { SelectDropdown } from "../../components/Dropdown"
 
 // Mock data for Logs & Troubleshooting
@@ -65,9 +65,11 @@ const LogsTroubleshooting = () => {
   const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedAgent, setSelectedAgent] = useState("All")
-  const [selectedUser, setSelectedUser] = useState("All")
+  const [selectedUser] = useState("All")
   const [dateRange, setDateRange] = useState("")
   const [logs, setLogs] = useState(logsData)
+  const [openDropdown, setOpenDropdown] = useState(null)
+  const dropdownRef = useRef(null)
 
   const handleSearch = () => {
     console.log("Search clicked")
@@ -80,9 +82,38 @@ const LogsTroubleshooting = () => {
   }
 
   const handleActionClick = (logId) => {
-    console.log("Action clicked for log:", logId)
-    // Add action menu functionality here
+    setOpenDropdown(openDropdown === logId ? null : logId)
   }
+
+  const handleDownloadLog = (logId) => {
+    console.log("Download log for:", logId)
+    setOpenDropdown(null)
+    // Add download log functionality here
+  }
+
+  const handleDeleteLog = (logId) => {
+    console.log("Delete log for:", logId)
+    setOpenDropdown(null)
+    // Add delete log functionality here
+  }
+
+  const closeDropdown = () => {
+    setOpenDropdown(null)
+  }
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(null)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   const filteredLogs = logs.filter(
     (log) =>
@@ -267,7 +298,7 @@ const LogsTroubleshooting = () => {
                           <span className="text-[#5A687C]">{log.description}</span>
                         </td>
                         <td className="py-4 px-4">
-                          <div className="flex items-center justify-center">
+                          <div className="flex items-center justify-center relative" ref={dropdownRef}>
                             <button
                               onClick={() => handleActionClick(log.id)}
                               className="p-2 text-[#5A687C] hover:text-[#675FFF] hover:bg-[#335BFB1A] rounded-lg transition-colors"
@@ -275,6 +306,29 @@ const LogsTroubleshooting = () => {
                             >
                               <MoreHorizontal className="w-4 h-4" />
                             </button>
+                            
+                            {/* Dropdown Menu */}
+                            {openDropdown === log.id && (
+                              <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                <div className="py-1">
+                                  <button
+                                    onClick={() => handleDownloadLog(log.id)}
+                                    className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                  >
+                                    <Download className="w-4 h-4 text-gray-600" />
+                                    <span>Download Log</span>
+                                  </button>
+                                  <div className="border-t border-gray-200"></div>
+                                  <button
+                                    onClick={() => handleDeleteLog(log.id)}
+                                    className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                                  >
+                                    <Trash2 className="w-4 h-4 text-red-600" />
+                                    <span>Delete Log</span>
+                                  </button>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </td>
                       </tr>
