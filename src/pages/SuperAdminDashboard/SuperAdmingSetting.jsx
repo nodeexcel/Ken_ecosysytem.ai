@@ -1,6 +1,6 @@
 
 import { useState } from "react"
-import { Camera } from "lucide-react"
+import { Camera, SquarePen, Eye, EyeOff, Lock } from "lucide-react"
 
 const SuperAdminSetting = () => {
   const [activeTab, setActiveTab] = useState("My Profile")
@@ -15,6 +15,20 @@ const SuperAdminSetting = () => {
     country: "United States",
   })
 
+  // Password state
+  const [passwords, setPasswords] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: ""
+  })
+  
+  // Password visibility state
+  const [showPasswords, setShowPasswords] = useState({
+    currentPassword: false,
+    newPassword: false,
+    confirmPassword: false
+  })
+
 const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -27,8 +41,27 @@ const handleInputChange = (field, value) => {
     // Add update functionality here
   }
 
+  const handlePasswordChange = (field, value) => {
+    setPasswords(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
+
+  const togglePasswordVisibility = (field) => {
+    setShowPasswords(prev => ({
+      ...prev,
+      [field]: !prev[field]
+    }))
+  }
+
+  const handleUpdatePassword = () => {
+    console.log("Updating password:", passwords)
+    // Add password update functionality here
+  }
+
   return (
-    <div className="w-[50%]">
+    <div className="">
       {/* Header */}
       <div className="m-0">
         <h1 className="w-full mt-0.5 border-b border-[#E1E4EA] font-medium p-2 ml-0 m-0 text-[#1E1E1E] text-[26px]">
@@ -63,7 +96,7 @@ const handleInputChange = (field, value) => {
 
         {/* Profile Form */}
         {activeTab === "My Profile" && (
-          <div className="border border-[#e1e4ea] bg-[#FFFFFF] rounded-lg p-8">
+          <div className="w-[50%] border border-[#e1e4ea] bg-[#FFFFFF] rounded-lg p-8">
             {/* Avatar Section */}
             <div className="flex justify-center mb-8">
               <div className="relative">
@@ -71,7 +104,7 @@ const handleInputChange = (field, value) => {
                   <div className="w-12 h-12 rounded-full bg-white"></div>
                 </div>
                 <button className="absolute bottom-0 right-0 w-8 h-8 bg-[#675FFF] rounded-full flex items-center justify-center text-white hover:bg-[#5A4FE6] transition-colors">
-                  <Camera className="w-4 h-4" />
+                <SquarePen className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -107,7 +140,7 @@ const handleInputChange = (field, value) => {
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
-                  className="w-full px-4 py-3 border border-[#e1e4ea] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#675FFF] focus:border-transparent text-[#1E1E1E] bg-[#E1E4EA]"
+                  className="w-full px-4 py-3 border border-[#e1e4ea] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#675FFF] focus:border-transparent text-[#1E1E1E] bg-white"
                   disabled
                 />
               </div>
@@ -141,7 +174,7 @@ const handleInputChange = (field, value) => {
                   type="text"
                   value={formData.role}
                   onChange={(e) => handleInputChange("role", e.target.value)}
-                  className="w-full px-4 py-3 border border-[#e1e4ea] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#675FFF] focus:border-transparent text-[#1E1E1E] bg-[#E1E4EA]"
+                  className="w-full px-4 py-3 border border-[#e1e4ea] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#675FFF] focus:border-transparent text-[#1E1E1E] bg-white"
                   disabled
                 />
               </div>
@@ -183,31 +216,98 @@ const handleInputChange = (field, value) => {
 
         {/* Change Password Tab */}
         {activeTab === "Change Password" && (
-          <div className="border border-[#e1e4ea] bg-[#FFFFFF] rounded-lg p-8">
+          <div className="w-[50%] border border-[#e1e4ea] bg-[#FFFFFF] rounded-lg p-8">
             <div className="max-w-md">
               <div className="space-y-6">
+                {/* Current Password */}
                 <div>
                   <label className="block text-[#1E1E1E] text-sm font-medium mb-2">Current Password</label>
-                  <input
-                    type="password"
-                    className="w-full px-4 py-3 border border-[#e1e4ea] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#675FFF] focus:border-transparent text-[#1E1E1E] bg-white"
-                  />
+                  <div className="relative">
+                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                      <Lock className="w-4 h-4 text-gray-500" />
+                    </div>
+                    <input
+                      type={showPasswords.currentPassword ? "text" : "password"}
+                      value={passwords.currentPassword}
+                      onChange={(e) => handlePasswordChange("currentPassword", e.target.value)}
+                      className="w-full pl-10 pr-12 py-3 border border-[#e1e4ea] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#675FFF] focus:border-transparent text-[#1E1E1E] bg-white"
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => togglePasswordVisibility("currentPassword")}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    >
+                      {showPasswords.currentPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
+
+                {/* New Password */}
                 <div>
                   <label className="block text-[#1E1E1E] text-sm font-medium mb-2">New Password</label>
-                  <input
-                    type="password"
-                    className="w-full px-4 py-3 border border-[#e1e4ea] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#675FFF] focus:border-transparent text-[#1E1E1E] bg-white"
-                  />
+                  <div className="relative">
+                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                      <Lock className="w-4 h-4 text-gray-500" />
+                    </div>
+                    <input
+                      type={showPasswords.newPassword ? "text" : "password"}
+                      value={passwords.newPassword}
+                      onChange={(e) => handlePasswordChange("newPassword", e.target.value)}
+                      className="w-full pl-10 pr-12 py-3 border border-[#e1e4ea] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#675FFF] focus:border-transparent text-[#1E1E1E] bg-white"
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => togglePasswordVisibility("newPassword")}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    >
+                      {showPasswords.newPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
+
+                {/* Confirm Password */}
                 <div>
-                  <label className="block text-[#1E1E1E] text-sm font-medium mb-2">Confirm New Password</label>
-                  <input
-                    type="password"
-                    className="w-full px-4 py-3 border border-[#e1e4ea] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#675FFF] focus:border-transparent text-[#1E1E1E] bg-white"
-                  />
+                  <label className="block text-[#1E1E1E] text-sm font-medium mb-2">Confirm Password</label>
+                  <div className="relative">
+                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                      <Lock className="w-4 h-4 text-gray-500" />
+                    </div>
+                    <input
+                      type={showPasswords.confirmPassword ? "text" : "password"}
+                      value={passwords.confirmPassword}
+                      onChange={(e) => handlePasswordChange("confirmPassword", e.target.value)}
+                      className="w-full pl-10 pr-12 py-3 border border-[#e1e4ea] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#675FFF] focus:border-transparent text-[#1E1E1E] bg-white"
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => togglePasswordVisibility("confirmPassword")}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    >
+                      {showPasswords.confirmPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
-                <button className="px-6 py-3 bg-[#675FFF] text-white font-medium rounded-lg hover:bg-[#5A4FE6] transition-colors focus:outline-none focus:ring-2 focus:ring-[#675FFF] focus:ring-offset-2">
+
+                {/* Update Password Button */}
+                <button 
+                  onClick={handleUpdatePassword}
+                  className=" px-6 py-3 bg-[#675FFF] text-white font-medium rounded-lg hover:bg-[#5A4FE6] transition-colors focus:outline-none focus:ring-2 focus:ring-[#675FFF] focus:ring-offset-2"
+                >
                   Update Password
                 </button>
               </div>
