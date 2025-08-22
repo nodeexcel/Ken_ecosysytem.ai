@@ -69,6 +69,7 @@ const LogsTroubleshooting = () => {
   const [dateRange, setDateRange] = useState("")
   const [logs, setLogs] = useState(logsData)
   const [openDropdown, setOpenDropdown] = useState(null)
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 })
   const dropdownRef = useRef(null)
 
   const handleSearch = () => {
@@ -81,8 +82,26 @@ const LogsTroubleshooting = () => {
     // Add download functionality here
   }
 
-  const handleActionClick = (logId) => {
-    setOpenDropdown(openDropdown === logId ? null : logId)
+  const handleActionClick = (logId, event) => {
+    if (openDropdown === logId) {
+      setOpenDropdown(null)
+    } else {
+      // Calculate position for the dropdown
+      const button = event.currentTarget
+      const rect = button.getBoundingClientRect()
+      
+      // Calculate left position to ensure dropdown doesn't go off-screen
+      let left = rect.right - 192 // 192px is the width of dropdown (w-48 = 12rem = 192px)
+      if (left < 0) {
+        left = rect.left // Align to left edge of button if dropdown would go off-screen
+      }
+      
+      setDropdownPosition({
+        top: rect.bottom + 8, // 8px margin, no need to add scrollY with fixed positioning
+        left: left
+      })
+      setOpenDropdown(logId)
+    }
   }
 
   const handleDownloadLog = (logId) => {
@@ -109,11 +128,28 @@ const LogsTroubleshooting = () => {
       }
     }
 
+    const handleScroll = () => {
+      if (openDropdown) {
+        setOpenDropdown(null)
+      }
+    }
+
+    const handleResize = () => {
+      if (openDropdown) {
+        setOpenDropdown(null)
+      }
+    }
+
     document.addEventListener('mousedown', handleClickOutside)
+    window.addEventListener('scroll', handleScroll, true)
+    window.addEventListener('resize', handleResize)
+    
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('scroll', handleScroll, true)
+      window.removeEventListener('resize', handleResize)
     }
-  }, [])
+  }, [openDropdown])
 
   const filteredLogs = logs.filter(
     (log) =>
@@ -300,7 +336,7 @@ const LogsTroubleshooting = () => {
                         <td className="py-4 px-4">
                           <div className="flex items-center justify-center relative" ref={dropdownRef}>
                             <button
-                              onClick={() => handleActionClick(log.id)}
+                              onClick={(event) => handleActionClick(log.id, event)}
                               className="p-2 text-[#5A687C] hover:text-[#675FFF] hover:bg-[#335BFB1A] rounded-lg transition-colors"
                               title="More actions"
                             >
@@ -309,7 +345,13 @@ const LogsTroubleshooting = () => {
                             
                             {/* Dropdown Menu */}
                             {openDropdown === log.id && (
-                              <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                              <div 
+                                className="fixed w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+                                style={{ 
+                                  top: dropdownPosition.top, 
+                                  left: dropdownPosition.left 
+                                }}
+                              >
                                 <div className="py-1">
                                   <button
                                     onClick={() => handleDownloadLog(log.id)}
