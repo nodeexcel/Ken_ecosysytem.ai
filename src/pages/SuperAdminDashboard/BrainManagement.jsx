@@ -1,54 +1,62 @@
 import React, { useState } from "react";
-import { Search, Eye, Trash2 } from 'lucide-react';
+import { Search, ChevronDown, Eye, Download, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 // Mock data for AI Brain Management
 const brainData = [
   {
     id: 1,
-    name: "Stephanie Nicol",
-    initials: "SN",
-    users: 6,
-    appointments: 12,
-    emailSent: 15,
-    callHandled: 17,
-    status: "Online",
+    name: "Judith Rodriguez",
+    initials: "JR",
+    websiteSources: 4,
+    files: 3,
+    snippets: 12,
+    status: "Active",
     isActive: true,
   },
   {
     id: 2,
-    name: "Lorri Warf",
-    initials: "LW",
-    users: 6,
-    appointments: 12,
-    emailSent: 15,
-    callHandled: 17,
-    status: "Offline",
+    name: "Iva Ryan",
+    initials: "IR",
+    websiteSources: 4,
+    files: 3,
+    snippets: 12,
+    status: "Active",
     isActive: true,
   },
   {
     id: 3,
-    name: "Ricky Smith",
-    initials: "RS",
-    users: 6,
-    appointments: 12,
-    emailSent: 15,
-    callHandled: 17,
-    status: "Online",
+    name: "Dennis Callis",
+    initials: "DC",
+    websiteSources: 4,
+    files: 3,
+    snippets: 12,
+    status: "Active",
     isActive: true,
   },
+  {
+    id: 4,
+    name: "Eddie Lake",
+    initials: "EL",
+    websiteSources: 4,
+    files: 3,
+    snippets: 12,
+    status: "Active",
+    isActive: true,
+  }
 ];
 
-const AgentMonitoring = () => {
+const BrainManagement = () => {
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState(""); 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("Status");
   const [users, setUsers] = useState(brainData);
   const navigate = useNavigate();
 
   const handleToggleUser = (userId) => {
     setUsers(users.map(user => 
       user.id === userId 
-        ? { ...user, isActive: !user.isActive, status: user.isActive ? "Offline" : "Online" }
+        ? { ...user, isActive: !user.isActive, status: user.isActive ? "Inactive" : "Active" }
         : user
     ));
   };
@@ -72,14 +80,14 @@ const AgentMonitoring = () => {
 
   const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        (user.status === "Online" || user.status === "Offline")
+    (selectedStatus === "Status" || user.status === selectedStatus)
   );
 
   return (
     <div>
       <div className="m-0">
         <h1 className="w-full mt-0.5 border-b border-[#E1E4EA] font-medium p-2 ml-0 m-0 font-Semibold text-[#1E1E1E] text-[26px]">
-          Agent Monitoring
+          AI Brain Management
         </h1>
       </div>
 
@@ -91,22 +99,24 @@ const AgentMonitoring = () => {
         ) : (
           <>
             {/* Main Content */}
-            <div className="flex flex-col gap-6 ">
+            <div className="flex flex-col gap-6">
               {/* Filters */}
               <div className="flex flex-col sm:flex-row gap-4 mb-6 w-full">
                 <div className="flex flex-row gap-4 w-[290px] h-[34px]">
                 <div className="relative">
-                  <select   
+                  <select 
+                    value={selectedStatus}
+                    onChange={(e) => setSelectedStatus(e.target.value)}
                     className="appearance-none bg-white border border-[#e1e4ea] rounded-lg px-4 py-2 pr-10 text-[#5A687C] focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[120px]"
                   >
                     <option value="Status">Status</option>
-                    <option value="Online">Online</option>
-                    <option value="Offline">Offline</option>
-                  </select> 
-                  
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                 </div>
 
-                <div className="relative flex-1 bg-[#FFFFFF] rounded-lg h-[34px]">
+                <div className="relative flex-1 max-w-md bg-[#FFFFFF] rounded-lg ">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 " />
                   <input
                     type="text"
@@ -125,19 +135,16 @@ const AgentMonitoring = () => {
                   <thead>
                     <tr>
                       <th className="text-left py-3 px-4 text-[#5A687C] text-[14px] font-medium w-1/6">
-                        Agent Name
+                        User Name
                       </th>
                       <th className="text-center py-3 px-4 text-[#5A687C] text-[14px] font-medium w-1/6">
-                        Users
+                        Website Sources
                       </th>
                       <th className="text-center py-3 px-4 text-[#5A687C] text-[14px] font-medium w-1/6">
-                        Appointments
+                        Files
                       </th>
                       <th className="text-center py-3 px-4 text-[#5A687C] text-[14px] font-medium w-1/6">
-                        Email Sent
-                      </th>
-                      <th className="text-center py-3 px-4 text-[#5A687C] text-[14px] font-medium w-1/6">
-                        Call Handled    
+                        Snippets
                       </th>
                       <th className="text-center py-3 px-4 text-[#5A687C] text-[14px] font-medium w-1/6">
                         Status
@@ -171,35 +178,40 @@ const AgentMonitoring = () => {
                           </td>
                           <td className="py-4 px-4 text-center w-1/6">
                             <span className="text-[#1E1E1E] font-medium">
-                              {user.users}
+                              {user.websiteSources}
                             </span>
                           </td>
                           <td className="py-4 px-4 text-center w-1/6">
                             <span className="text-[#1E1E1E] font-medium">
-                              {user.appointments}
+                              {user.files}
                             </span>
                           </td>
                           <td className="py-4 px-4 text-center w-1/6">
                             <span className="text-[#1E1E1E] font-medium">
-                                {user.emailSent}
+                              {user.snippets}
                             </span>
                           </td>
-                          <td className="py-4 px-4 text-center w-1/6">
-                            <span className="text-[#1E1E1E] font-medium">
-                              {user.callHandled}
-                            </span> 
-                          </td>
-                          
                           <td className="py-4 px-4 w-1/6">
                             <div className="flex items-center justify-center gap-3">
-                              <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold ${
-                                user.status === "Online"
-                                  ? "bg-[#34C7591A] text-[#34C759] border border-[#34C759]" 
-                                  : "bg-[#5A687C1A] text-[#5C636E] border border-[#8C929B]"
+                              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                                user.isActive 
+                                  ? "bg-green-100 text-green-800" 
+                                  : "bg-gray-100 text-gray-800"
                               }`}>
-                                {user.status}       
+                                {user.status}
                               </span>
-
+                              <button
+                                onClick={() => handleToggleUser(user.id)}
+                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                                  user.isActive ? "bg-blue-600" : "bg-gray-200"
+                                }`}
+                              >
+                                <span
+                                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                    user.isActive ? "translate-x-6" : "translate-x-1"
+                                  }`}
+                                />
+                              </button>
                             </div>
                           </td>
                           <td className="py-4 px-4 w-1/6">
@@ -210,6 +222,13 @@ const AgentMonitoring = () => {
                                 title="View"
                               >
                                 <Eye className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDownload(user.id)}
+                                className="p-2 text-[#675FFF] hover:text-[#675FFF] hover:bg-[#335BFB1A] rounded-lg transition-colors"
+                                title="Download"
+                              >
+                                <Download className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => handleDelete(user.id)}
@@ -240,4 +259,4 @@ const AgentMonitoring = () => {
   );
 };
 
-  export default AgentMonitoring;
+  export default BrainManagement;

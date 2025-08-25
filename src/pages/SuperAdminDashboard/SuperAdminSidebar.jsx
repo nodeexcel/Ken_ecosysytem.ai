@@ -192,7 +192,7 @@ const SuperAdminSidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                             <p className='font-[400]'>{t("sidebar.home")}</p>
                         </div>}
                     </div>
-                    <div ref={noticationRef}>
+                    {/* <div ref={noticationRef}>
                         <div className={`text-xl flex ${!isNotification && 'group'} hover:cursor-pointer ${!isOpen && 'justify-center'} relative py-3`} onClick={handleNotification}>
                             <div className='flex items-center'>
                                 <div className="flex items-center gap-2"><div className='group-hover:hidden'><UserIcon status={false} /></div> <div className='hidden group-hover:block'><UserIcon status={true} /></div> </div>
@@ -201,17 +201,16 @@ const SuperAdminSidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                             {!isOpen && <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[116px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
                                 <p className='font-[400]'>{t("sidebar.notification")}</p>
                             </div>}
-                        </div>
+                        </div> */}
                         {/* {isNotification && <Notification setNotification={setIsNotification} />} */}
-                    </div>
-                    
-                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
+                    {/* </div> */}
+                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[3].id, sidebarItems[3].label)}>
                         <div className='flex items-center'>
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarBrainIcon status="white"  /></div> <div className='hidden group-hover:block'><SidebarBrainIcon status="white" /></div> </div>
-                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(1) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{sidebarItems[1].label}</p>}
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><UserIcon status={renderColor(3)} /></div> <div className='hidden group-hover:block'><UserIcon status={true} /></div> </div>
+                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(3) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{sidebarItems[3].label}</p>}
                         </div>
                         {!isOpen && <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[102px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[400]'>{sidebarItems[1].label}</p>
+                            <p className='font-[400]'>{sidebarItems[3].label}</p>
                         </div>}
                     </div>
 
@@ -224,15 +223,19 @@ const SuperAdminSidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                             <p className='font-[400]'>{sidebarItems[2].label}</p>
                         </div>}
                     </div>
-                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[3].id, sidebarItems[3].label)}>
+                    
+                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
                         <div className='flex items-center'>
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><UserIcon status={renderColor(3)} /></div> <div className='hidden group-hover:block'><UserIcon status={true} /></div> </div>
-                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(3) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{sidebarItems[3].label}</p>}
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarBrainIcon status="white"  /></div> <div className='hidden group-hover:block'><SidebarBrainIcon status="white" /></div> </div>
+                            {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(1) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{sidebarItems[1].label}</p>}
                         </div>
                         {!isOpen && <div className="flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed md:left-[102px] left-[102px] bg-white shadow-md rounded p-2 z-[9999]">
-                            <p className='font-[400]'>{sidebarItems[3].label}</p>
+                            <p className='font-[400]'>{sidebarItems[1].label}</p>
                         </div>}
                     </div>
+
+                    
+                    
                     <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[4].id, sidebarItems[4].label)}>
                         <div className='flex items-center'>
                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><DollarIcon status={renderColor(4)} /></div> <div className='hidden group-hover:block'><DollarIcon status={true} /></div> </div>
@@ -257,7 +260,7 @@ const SuperAdminSidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                     <hr className='text-[#E1E4EA]' />
                     <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3 ${renderColor(6) ? 'bg-white rounded-lg mx-2' : ''}`} onClick={() => handleSelect(sidebarItems[6].id, sidebarItems[6].label)}>
                         <div className='flex items-center'>
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarSettingIcon className={renderColor(6) ? 'text-[#675FFF]' : 'text-white'} status={renderColor(6) ? "#675FFF" : "white"} /></div> <div className='hidden group-hover:block'><SidebarSettingIcon className='text-[#675FFF]' status="#675FFF" /></div> </div>
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarSettingIcon className={renderColor(6) ? 'text-[#675FFF]' : 'text-white'} status={renderColor(6) ? "#675FFF" : "white"} /></div> <div className='hidden group-hover:block'  ><SidebarSettingIcon className='text-[#675FFF]' status="#675FFF" /></div> </div>
                             {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(6) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{sidebarItems[6].label}</p>}
                         </div>
                         {!isOpen && <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[113px]' : 'md:left-[104px]'} left-[102px] bg-white shadow-md rounded p-2 z-[9999]`}>
