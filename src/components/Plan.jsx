@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { loadStripe } from "@stripe/stripe-js";
 import { AddIcon, BusinessPlanIcon, CheckedCircle, CreditsIcon, CustomPlanIcon, EditPlanIcon, EmptyCircle, MembersIcon, OfferIcon, PaymentsIcon, PaymentsViewIcon, ProPlanIcon, RefreshIcon, TeamPlanIcon } from "../icons/icons";
 import { SelectDropdown } from "./Dropdown";
+import { DateFormat } from "../utils/TimeFormat";
 
 const CreditPopup = ({ t, onClose, onOpen, userDetails }) => {
   const staticCredits = [{ label: 500, value: "35€", priceId: import.meta.env.VITE_CREDITS_500_ID }, { label: 1000, value: "65€", priceId: import.meta.env.VITE_CREDITS_1000_ID }, { label: 2000, value: "110€", priceId: import.meta.env.VITE_CREDITS_2000_ID }]
@@ -147,7 +148,7 @@ const CreditPopup = ({ t, onClose, onOpen, userDetails }) => {
 };
 
 const PlanManagementPopup = ({ t, onClose, onOpen }) => {
-  const [activeTab, setActiveTab] = useState("annual");
+  const [activeTab, setActiveTab] = useState("yearly");
   const [activePlan, setActivePlan] = useState("");
   const [planIndex, setPlanIndex] = useState();
 
@@ -155,9 +156,9 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
   const token = useSelector((state) => state.auth.token)
 
   const plans = {
-    annual: [
+    yearly: [
       {
-        id: import.meta.env.VITE_PRO_PLAN,
+        id: import.meta.env.VITE_YEARLY_PRO_PLAN,
         name: `${t("settings.tab_2_list.pro")}`,
         key: "pro",
         svg: <ProPlanIcon />,
@@ -177,7 +178,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
         discount: `15% ${t("settings.tab_2_list.off")}`,
       },
       {
-        id: import.meta.env.VITE_TEAM_PLAN,
+        id: import.meta.env.VITE_YEARLY_TEAM_PLAN,
         name: `${t("settings.tab_2_list.team")}`,
         key: "team",
         svg: <TeamPlanIcon />,
@@ -189,7 +190,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
           `5 ${t("settings.tab_2_list.users")}`,
           `5GB ${t("settings.tab_2_list.of_knowledge")}`,
           `${t("settings.tab_2_list.full_integrations")} ${t("settings.tab_2_list.single_account_per_platform")}`,
-          
+
           `${t("settings.tab_2_list.live_chat")}`,
         ],
         discount: `15% ${t("settings.tab_2_list.off")}`,
@@ -228,6 +229,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
     ],
     monthly: [
       {
+        id: import.meta.env.VITE_MONTHLY_PRO_PLAN,
         name: `${t("settings.tab_2_list.pro")}`,
         svg: <ProPlanIcon />,
         price: "€97",
@@ -246,6 +248,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
         selected: true,
       },
       {
+        id: import.meta.env.VITE_MONTHLY_TEAM_PLAN,
         name: `${t("settings.tab_2_list.team")}`,
         svg: <TeamPlanIcon />,
         key: "team",
@@ -257,7 +260,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
           `5 ${t("settings.tab_2_list.users")}`,
           `5GB ${t("settings.tab_2_list.of_knowledge")}`,
           `${t("settings.tab_2_list.full_integrations")} ${t("settings.tab_2_list.single_account_per_platform")}`,
-          
+
           `${t("settings.tab_2_list.live_chat")}`,
         ],
       },
@@ -297,13 +300,41 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
 
   useEffect(() => {
     if (token && !userDetails.loading) {
-      const filterData = plans.annual.filter((each) => each.key === userDetails?.subscriptionType)
-      const index = plans.annual.findIndex((each) => each.key === userDetails?.subscriptionType)
-      setPlanIndex(index)
-      setActivePlan(filterData?.[0]?.name)
+      if (userDetails?.subscriptionType === "trail") {
+        setActivePlan("")
+        setPlanIndex(0)
+        setActiveTab("yearly")
+      }
+      else {
+        const filterData = plans?.[userDetails?.subscriptionDurationType].filter((each) => each.key === userDetails?.subscriptionType)
+        const index = plans?.[userDetails?.subscriptionDurationType].findIndex((each) => each.key === userDetails?.subscriptionType)
+        setPlanIndex(index)
+        setActiveTab(userDetails?.subscriptionDurationType)
+        setActivePlan(filterData?.[0]?.key)
+      }
     }
 
   }, [token, !userDetails.loading])
+
+  const handleDisablePlan = (index, key) => {
+    if (new Date() > new Date(userDetails?.subscriptionEndDate)) {
+      return false
+    } else if (userDetails?.subscriptionType === "trial") {
+      return true
+    } else if (userDetails?.subscriptionDurationType === activeTab) {
+      if ((index < planIndex) || (key === userDetails?.subscriptionType)) {
+        return true
+      } else {
+        return false
+      }
+    } else {
+      if (userDetails?.subscriptionDurationType === "monthly"){
+        return false
+      }
+      return true
+    }
+  }
+
 
   const handleSelectPlan = (plan) => {
     setActivePlan(plan)
@@ -328,6 +359,18 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
     }
   }
 
+  const renderPlanExpire = () => {
+    if (userDetails?.subscriptionType == 'trial') {
+      if (new Date() > new Date(userDetails?.subscriptionEndDate)) {
+        return <p className="text-red-500 pb-3">Your Trail Plan ended on {DateFormat(userDetails?.subscriptionEndDate)}</p>
+      } else {
+        return <p className="text-green-500 pb-3">Your Trail Plan ends on {DateFormat(userDetails?.subscriptionEndDate)}</p>
+      }
+    } else if (new Date() > new Date(userDetails?.subscriptionEndDate)) {
+      return <p className="text-red-500 pb-3">Your current plan ended on {DateFormat(userDetails?.subscriptionEndDate)}</p>
+    }
+  }
+
   if (userDetails?.loading) return <p className='flex justify-center items-center h-full'><span className='loader' /></p>
 
 
@@ -342,11 +385,11 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
             <span className="text-[16px] sm:text-[20px] font-[600] ">{t("settings.tab_2_list.manage_plan")}</span>
             <div className="flex gap-2 bg-[#F2F2F7] p-1 rounded-lg">
               <button
-                className={`flex-1 px-3 py-2 rounded-lg cursor-pointer text-sm font-medium ${activeTab === "annual"
+                className={`flex-1 px-3 py-2 rounded-lg cursor-pointer text-sm font-medium ${activeTab === "yearly"
                   ? "bg-white text-black"
                   : "bg-transparent text-[#5A687C]"
                   }`}
-                onClick={() => setActiveTab("annual")}
+                onClick={() => setActiveTab("yearly")}
               >
                 {t("settings.tab_2_list.annual")}
               </button>
@@ -381,13 +424,14 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
             </button>
           </div>
         </div>
+        {renderPlanExpire()}
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
           {plans[activeTab].map((plan, index) => (
             <div
               key={index}
-              onClick={index >= planIndex ? () => handleSelectPlan(plan.name) : undefined}
-              className={`border ${activePlan === plan.name && index >= planIndex ? "border-[#675FFF]" : "border-[#E1E4EA]"} rounded-xl p-4`}
+              onClick={index >= planIndex ? () => handleSelectPlan(plan.key) : undefined}
+              className={`border ${((userDetails?.subscriptionDurationType === activeTab) && (index == planIndex)) ? "border-[#675FFF]" : "border-[#E1E4EA]"} rounded-xl p-4`}
             >
               <div className="flex justify-between mb-4">
                 <div className="flex flex-col gap-2">
@@ -412,16 +456,16 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
               </div>
               <p className="text-[#5A687C] text-[14px] font-[400] mb-4">{plan.description}</p>
               <button
-                disabled={index < planIndex || plan.key === userDetails?.subscriptionType}
+                disabled={handleDisablePlan(index, plan.key)}
                 onClick={() => handlePayment(plan.id)}
-                className={`w-full py-2 px-3 font-[500] rounded-lg mb-4 text-[13px] sm:text-sm ${(plan.key === userDetails?.subscriptionType || index < planIndex)
+                className={`w-full py-2 px-3 font-[500] rounded-lg mb-4 text-[13px] sm:text-sm ${handleDisablePlan(index, plan.key)
                   ? "bg-gray-100 cursor-not-allowed text-[#5A687C]"
                   : plan.key === "enterprise"
                     ? "border-[1.5px] border-[#5F58E8] text-[#675FFF]"
                     : "bg-[#675FFF] text-white cursor-pointer"
                   }`}
               >
-                {plan.key === userDetails?.subscriptionType
+                {handleDisablePlan(index, plan.key) && ((userDetails?.subscriptionDurationType === activeTab) && (index == planIndex))
                   ? `${t("settings.tab_2_list.selected")}`
                   : plan.key === "enterprise"
                     ? `${t("settings.tab_2_list.get_a_quote")}`
@@ -440,7 +484,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
           ))}
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
