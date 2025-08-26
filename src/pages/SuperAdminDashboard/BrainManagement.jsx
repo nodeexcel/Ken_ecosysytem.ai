@@ -64,7 +64,7 @@ const BrainManagement = () => {
   const handleView = (userId) => {
     console.log("View user:", userId);
     // Add view functionality here
-    navigate(`/super-admin/agent-monitoring-sub`);
+    navigate(`/super-admin/brain-management-sub`);
   };
 
   const handleDownload = (userId) => {

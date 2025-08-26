@@ -1,37 +1,44 @@
 import { useState } from "react"
-import { Search, Download, Trash2 } from "lucide-react"
+import { Search, Download, Trash2, Mail, Phone, Calendar } from "lucide-react"
 
 // Mock data for the user profile
 const userData = {
-  name: "Judith Rodriguez",
-  initials: "JR",
+  name: "Stephanie Nichol",
+  initials: "SN",
   stats: [
-    { label: "Website Sources", value: 6 },
-    { label: "Files", value: 12 },
-    { label: "Snippets", value: 15 },
+    { label: "Users", value: 6 },
+    { label: "Appointments", value: 12 },
+    { label: "Email Sent/Open Rate", value: 15 },
+    { label: "Call Handled", value: 14 },
   ],
-  status: "Active",
+  status: "Online",
 }
 
 // Mock data for files table
 const filesData = [
   {
     id: 1,
-    name: "Xyz file.pdf",
-    type: "PDF",
-    uploaded: "2 days ago",
+    name: "Kurt Batese",
+    email: "alex941@outlook.com",
+    Active_agents: { icon: "Mail", text: "Emailing" },
+    status: "Active",
+    isActive: true,
   },
   {
     id: 2,
-    name: "Xyz file.pdf",
-    type: "PDF",
-    uploaded: "2 days ago",
+    name: "Chris Glasser",
+    email: "eddie_lake@gmail.com",
+    Active_agents: { icon: "Phone", text: "Telephony" },
+    status: "Active",
+    isActive: true,
   },
   {
     id: 3,
-    name: "Xyz file.pdf",
-    type: "PDF",
-    uploaded: "2 days ago",
+    name: "Corina McCoy",
+    email: "autumn_philips@aol.com",
+    Active_agents: { icon: "Calendar", text: "Appointment" },
+    status: "Active",
+    isActive: true,
   },
 ]
 
@@ -43,6 +50,14 @@ const AgentMonitoringSub = () => {
 
   const handleDeleteFile = (fileId) => {
     setFiles(files.filter((file) => file.id !== fileId))
+  }
+
+  const handleToggleStatus = (fileId) => {
+    setFiles(files.map((file) => 
+      file.id === fileId 
+        ? { ...file, isActive: !file.isActive, status: file.isActive ? "Inactive" : "Active" }
+        : file
+    ))
   }
 
   const handleDownloadFile = (fileId) => {
@@ -60,7 +75,7 @@ const AgentMonitoringSub = () => {
     <div>
       <div className="m-0">
         <h1 className="w-full mt-0.5 border-b border-[#E1E4EA] font-medium p-2 ml-0 m-0 font-Semibold text-[#1E1E1E] text-[26px]">
-          AI Brain Management
+          Agent Monitoring
         </h1>
       </div>
 
@@ -83,7 +98,7 @@ const AgentMonitoringSub = () => {
                 <div className="flex-1">
                   <h2 className="text-[#1E1E1E] text-[20px] font-[600] mb-4">{userData.name}</h2>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-fit">
+                  <div className="flex items-center gap-6 flex-wrap">
                     {userData.stats.map((stat, index) => (
                       <div key={index} className="flex flex-col">
                         <span className="text-[#5A687C] text-[14px] mb-1">{stat.label}</span>
@@ -102,7 +117,7 @@ const AgentMonitoringSub = () => {
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-[#e1e4ea]">
+            {/* <div className="flex border-b border-[#e1e4ea]">
               {["Files", "Snippets", "Website Sources"].map((tab) => (
                 <button
                   key={tab}
@@ -116,65 +131,108 @@ const AgentMonitoringSub = () => {
                   {tab}
                 </button>
               ))}
+            </div> */}
+            {/* sub heading */}
+            <div className="flex items-center gap-4">
+              <h2 className="text-[#1E1E1E] text-[30px] font-[600]">Users</h2>
             </div>
 
-            {/* Search Bar */}
-            <div className="relative max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-fit pl-10 pr-4 py-2 border border-[#e1e4ea] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#675FFF]"
-              />
+            {/* Filter and Search Row */}
+            <div className="flex items-center gap-4">
+              {/* Filter Dropdown */}
+              <div className="relative">
+                <select className="appearance-none pl-4 pr-10 py-2 border border-[#e1e4ea] bg-white rounded-lg text-[#1E1E1E] focus:outline-none focus:ring-2 focus:ring-[#675FFF] cursor-pointer">
+                  <option value="all">Channel: All</option>
+                  <option value="email">Email</option>
+                  <option value="chat">Chat</option>
+                  <option value="phone">Phone</option>
+                  <option value="social">Social Media</option>
+                </select>
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Search Bar */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 pr-4 py-2 border border-[#e1e4ea] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#675FFF]"
+                />
+              </div>
             </div>
 
             {/* Table Headers */}
             <div className="px-6">
               <div className="grid grid-cols-12 gap-4 py-2">
-                <div className="col-span-4 text-[#5A687C] text-[14px] font-medium">Name</div>
-                <div className="col-span-2 text-[#5A687C] text-[14px] font-medium">Type</div>
-                <div className="col-span-3 text-[#5A687C] text-[14px] font-medium">Uploaded</div>
-                <div className="col-span-3 text-[#5A687C] text-[14px] font-medium text-right">Action</div>
+                <div className="col-span-4 text-[#5A687C] text-[14px] font-medium">User Name</div>
+                <div className="col-span-3 text-[#5A687C] text-[14px] font-medium">Email</div>
+                <div className="col-span-3 text-[#5A687C] text-[14px] font-medium">Active Agents</div>
+                <div className="col-span-2 text-[#5A687C] text-[14px] font-medium">Status</div>
               </div>
             </div>
 
             {/* Content Container */}
             <div className="border border-[#e1e4ea] bg-[#FFFFFF] rounded-lg">
-              {/* Files Table */}
+              {/* Users Table */}
               <div className="p-6">
                 <div className="overflow-x-auto">
                   <div className="w-full">
-                    {filteredFiles.map((file, index) => (
+                    {filteredFiles.map((user, index) => (
                       <div
-                        key={file.id}
+                        key={user.id}
                         className={`grid grid-cols-12 gap-4 py-4 ${index > 0 ? "border-t border-[#e1e4ea]" : ""}`}
                       >
                         <div className="col-span-4">
-                          <span className="text-[#1E1E1E] font-medium">{file.name}</span>
+                          <span className="text-[#1E1E1E] font-medium">{user.name}</span>
+                        </div>
+                        <div className="col-span-3">
+                          <span className="text-[#5A687C]">{user.email}</span>
+                        </div>
+                        <div className="col-span-3">
+                          <span
+                            className={`inline-flex items-center gap-1 px-3 py-1 rounded-lg text-sm font-medium  ${
+                              user.Active_agents.icon === "Mail" 
+                                ? "bg-[#FF95001A] text-[#FF9F1C]" 
+                                : user.Active_agents.icon === "Phone"
+                                ? "bg-[#675FFF1A] text-[#675FFF]"
+                                : "bg-[#34C7591A] text-[#34C759]"
+                            }`}
+                          >
+                            <span>
+                              {user.Active_agents.icon === "Mail" && <Mail className="w-4 h-4" />}
+                              {user.Active_agents.icon === "Phone" && <Phone className="w-4 h-4" />}
+                              {user.Active_agents.icon === "Calendar" && <Calendar className="w-4 h-4" />}
+                            </span>
+                            {user.Active_agents.text}
+                          </span>
                         </div>
                         <div className="col-span-2">
-                          <span className="text-[#5A687C]">{file.type}</span>
-                        </div>
-                        <div className="col-span-3">
-                          <span className="text-[#5A687C]">{file.uploaded}</span>
-                        </div>
-                        <div className="col-span-3">
-                          <div className="flex items-center justify-end gap-3">
+                          <div className="flex items-center justify-center gap-3">
+                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${
+                              user.isActive 
+                                ? "bg-[#34C7591A] text-[#34C759] border-[#34C759]" 
+                                : "bg-gray-100 text-gray-800"
+                            }`}>
+                              {user.status}
+                            </span>
                             <button
-                              onClick={() => handleDownloadFile(file.id)}
-                              className="p-2 text-[#675FFF] hover:bg-[#675FFF] hover:text-white rounded-lg transition-colors"
-                              title="Download"
+                              onClick={() => handleToggleStatus(user.id)}
+                              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                                user.isActive ? "bg-[#335CFF]" : "bg-[#E1E4EA]"
+                              }`}
                             >
-                              <Download className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteFile(file.id)}
-                              className="p-2 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-colors"
-                              title="Delete"
-                            >
-                              <Trash2 className="w-4 h-4" />
+                              <span
+                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                  user.isActive ? "translate-x-6" : "translate-x-1"
+                                }`}
+                              />
                             </button>
                           </div>
                         </div>
@@ -191,4 +249,4 @@ const AgentMonitoringSub = () => {
   )
 }
 
-export default AgentMonitoringSub
+export default AgentMonitoringSub;
