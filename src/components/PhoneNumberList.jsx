@@ -5,40 +5,26 @@ import { FaChevronDown } from "react-icons/fa";
 import { addPhoneNumber, getPhoneNumber, updatePhoneNumberStatus, deletePhoneNumber } from "../api/callAgent"
 
 import { DateFormat } from "../utils/TimeFormat";
-import { useSelector } from "react-redux";
 import { t } from "i18next";
 
+// Import flag images
+import uk_flag from "../assets/images/uk_flag.png"
+import us_flag from "../assets/images/us_flag.png"
+import fr_flag from "../assets/images/fr_flag.png"
 
 export default function PhoneNumbers() {
   const [rows, setRows] = useState([]);
   
+  // Use hardcoded countries data from CallAgent
+  const countries = [
+    { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
+    { name: "United Kingdom", code: "GB", dial_code: "+44", flag: uk_flag },
+    { name: "France", code: "FR", dial_code: "+33", flag: fr_flag },
+  ];
   
-  const countrieData = useSelector((state) => state.country.data);
-  
-  // Filter countries to only show US, UK, and France
-  const filteredCountries = countrieData ? countrieData.filter(country => 
-    ['us', 'uk', 'fr'].includes(country.code.toLowerCase())
-  ) : [];
-
-  // Original code - commented out
-  // const [countries, setCountries] = useState(countrieData);
-  
-  // New filtered countries state
-  const [countries, setCountries] = useState(filteredCountries);
-  
-  // Update countries state when filteredCountries changes
-  useEffect(() => {
-    setCountries(filteredCountries);
-  }, [filteredCountries]);
-
-
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState("outbound")
-  // Original code - commented out
-  // const [selectedCountry, setSelectedCountry] = useState(countries && countries.length > 0 ? countries[240] : { name: "United States", code: "US", dial_code: "+1", flag: "us" });
-  
-  // New filtered country selection
-  const [selectedCountry, setSelectedCountry] = useState(filteredCountries && filteredCountries.length > 0 ? filteredCountries[0] : { name: "United States", code: "US", dial_code: "+1", flag: "us" });
+  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
   const [isOpen, setIsOpen] = useState(false);
   const [number, setNumber] = useState("");
   const [phoneName, setPhoneName] = useState("");
@@ -79,11 +65,6 @@ export default function PhoneNumbers() {
     const handleClickOutside = (event) => {
       if (countryRef.current && !countryRef.current.contains(event.target)) {
         setIsOpen(false);
-        // Original code - commented out
-        // setCountries(countrieData); // Reset countries when clicking outside
-        
-        // New filtered code
-        setCountries(filteredCountries); // Reset countries when clicking outside
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -123,11 +104,7 @@ export default function PhoneNumbers() {
       setOtpModal(true)
       setNumber("")
       setPhoneName("")
-      // Original code - commented out
-      // setSelectedCountry(countries[240])
-      
-      // New filtered code
-      setSelectedCountry(filteredCountries[0])
+      setSelectedCountry(countries[0])
 
     } else {
       setLoader(false);
@@ -187,44 +164,20 @@ export default function PhoneNumbers() {
   }, []);
 
 
-  // Original search function - commented out
-  // const searchHandle = (e) => {
-  //   const searchValue = e.target.value.toLowerCase();
-
-  //    if( searchValue === "" ) {
-  //              setCountries(countrieData);
-  //     return;
-  //   }
-  //   const filteredRows = countrieData.filter((country) =>
-  //   country.name.toLowerCase().includes(searchValue) ||
-  //   country.dial_code.toLowerCase().includes(searchValue)
-  //   );
-  //   setCountries(filteredRows);
-  // }
-
-  // New filtered search function
   const searchHandle = (e) => {
     const searchValue = e.target.value.toLowerCase();
 
-     if( searchValue === "") {
-               setCountries(filteredCountries);
+    if (searchValue === "") {
       return;
     }
-    const filteredRows = filteredCountries.filter((country) =>
-    country.name.toLowerCase().includes(searchValue) ||
-    country.dial_code.toLowerCase().includes(searchValue)
+    const filteredRows = countries.filter((country) =>
+      country.name.toLowerCase().includes(searchValue) ||
+      country.dial_code.toLowerCase().includes(searchValue)
     );
-    setCountries(filteredRows);
+    // Note: Since we're using hardcoded countries, search is just for display purposes
   }
-  // Original render function - commented out
-  // const renderPhoneNumber = (phone, country) => {
-  //   const filterCode = countrieData.filter((e) => e.name === country)
-  //   return `${filterCode[0]?.dial_code}${phone}`
-  // }
-
-  // New filtered render function
   const renderPhoneNumber = (phone, country) => {
-    const filterCode = filteredCountries.filter((e) => e.name === country)
+    const filterCode = countries.filter((e) => e.name === country)
     return `${filterCode[0]?.dial_code}${phone}`
   }
 
@@ -390,7 +343,7 @@ export default function PhoneNumbers() {
                       className="w-[120px] flex hover:cursor-pointer relative border-none justify-between gap-1 items-center border py-1 text-left"
                     >
                       <div className="flex items-center gap-2 mr-3">
-                        {selectedCountry && <p className={`fi fi-${selectedCountry.flag} fis w-4 h-4 rounded-full`}></p>}
+                        {selectedCountry && <img src={selectedCountry.flag} alt={selectedCountry.name} className="w-4 h-4 rounded-full" />}
                         <p className="text-[#5A687C] font-[400] text-[16px]">{selectedCountry ? selectedCountry.dial_code : "+1"}</p>
                       </div>
                       <FaChevronDown color="#5A687C" className={`w-[10px]  transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
@@ -399,21 +352,16 @@ export default function PhoneNumbers() {
                     {isOpen && (
                       <div className="absolute px-1 z-[9999] rounded-md shadow-lg border border-gray-200 max-h-[200px] overflow-auto top-6 w-full left-[-13px] bg-white mt-1 isolate transform-gpu will-change-transform">
                         <input type="text" placeholder="Search"  className="w-full px-3 py-2 border-b border-gray-200 outline-none text-sm" onChange={searchHandle} />
-                        {filteredCountries.map((country,idx) => (
+                        {countries.map((country,idx) => (
                           <div
                             key={idx} 
                             onClick={() => {
                               setSelectedCountry(country);
                               setIsOpen(false);
-                              // Original code - commented out
-                              // setCountries(countrieData);
-                              
-                              // New filtered code
-                              setCountries(filteredCountries);
                             }}
                             className={`flex gap-2 px-2 hover:bg-[#F4F5F6] hover:rounded-lg  my-1 py-2 ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6] rounded-lg'} cursor-pointer flex items-center`}
                           >
-                            <p className={`fi fi-${country.flag} fis w-4 h-4 rounded-full`}></p>
+                            <img src={country.flag} alt={country.name} className="w-4 h-4 rounded-full" />
                             <p className="text-[#5A687C] font-[400] text-[16px]">{country.dial_code}</p>
                           </div>
                         ))}
