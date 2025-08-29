@@ -42,6 +42,35 @@ import finnSkillImg4 from "../assets/svg/skills_finn_4.svg";
 import sandroSkillImg1 from "../assets/svg/skills_sandro_1.svg";
 import sandroSkillImg2 from "../assets/svg/skills_sandro_2.svg";
 import sandroSkillImg3 from "../assets/svg/skills_sandro_3.svg";
+import presentation from "../assets/svg/presentation.svg"
+import meetingNotes from "../assets/svg/meeting_notes.svg"
+import whatsapp from "../assets/svg/whats_app.svg"
+import youtube from "../assets/svg/youtube.svg"
+import linkedin from "../assets/svg/linked_in.svg"
+import twitter from  "../assets/svg/twitter.svg"
+import creation from "../assets/svg/creation.svg"
+import campaign from "../assets/svg/campaign.svg"
+import callCalling from "../assets/svg/call_calling.svg"
+import agents from "../assets/svg/agents.svg"
+import smartChatbot from "../assets/svg/smart_chatbot.svg"
+import faq from "../assets/svg/faq.svg"
+import user_guide from "../assets/svg/user_guide.svg"
+import customer_email from "../assets/svg/customer_email.svg"
+import inbound from "../assets/svg/inbound.svg"
+import job_description from "../assets/svg/job_description.svg"
+import balancesheet from "../assets/svg/balancesheet.svg"
+import profit from "../assets/svg/profit.svg"
+import sales from "../assets/svg/sales.svg"
+import roi from "../assets/svg/roi.svg"
+import article from "../assets/svg/article.svg"
+import start_seo from "../assets/svg/start_seo.svg"
+import search from "../assets/svg/search.svg"
+import resume from "../assets/svg/resume.svg"
+import interviewer from "../assets/svg/interviewer.svg"
+
+
+
+
 import { useDispatch } from "react-redux";
 import { getAgentSkillsData } from "../store/agentSkillsSlice";
 import { useNavigate } from "react-router-dom";
@@ -60,9 +89,9 @@ function AllAgentsSkills() {
             image: taraImg,
             path: "coo",
             cardStyles: "border-[#CEBFFD] bg-[#F6F3FF]",
-            cardContent: [{ header: t("skills.tara_content1_header"), content: t("skills.tara_content1_description"), img: taraSkillImg1, tab: "presentations" },
-            { header: t("skills.tara_content2_header"), content: t("skills.tara_content2_description"), img: taraSkillImg2, tab: "meeting_notes" },
-            { header:t("skills.tara_content3_header"), content: t("skills.tara_content3_description"), img: taraSkillImg3, tab: "connect_whatsApp" }
+            cardContent: [{ header: t("skills.tara_content1_header"), content: t("skills.tara_content1_description"), img: presentation, tab:"presentation"  },
+            { header: t("skills.tara_content2_header"), content: t("skills.tara_content2_description"), img: meetingNotes, tab: "meeting_notes" },
+            { header:t("skills.tara_content3_header"), content: t("skills.tara_content3_description"), img: whatsapp, tab: "connect_whatsApp" }
             ]
         },
         {
@@ -72,10 +101,10 @@ function AllAgentsSkills() {
             image: constanceImg,
             path: "content-creation",
             cardStyles: "border-[#F8DDFF] bg-[#FDF6FF]",
-            cardContent: [{ header: t("skills.constance_content1_header"), content: t("skills.constance_content1_description"), img: constanceSkillImg1, tab: "youtube" },
-            { header: t("skills.constance_content2_header"), content: t("skills.constance_content2_description"), img: constanceSkillImg2, tab: "linkedin" },
-            { header: t("skills.constance_content3_header"), content: t("skills.constance_content3_description"), img: constanceSkillImg3, tab: "x_post" },
-            { header: t("skills.constance_content4_header"), content: t("skills.constance_content4_description"), img: constanceSkillImg4, tab: "creation_studio" }
+            cardContent: [{ header: t("skills.constance_content1_header"), content: t("skills.constance_content1_description"), img: youtube, tab: "youtube" },
+            { header: t("skills.constance_content2_header"), content: t("skills.constance_content2_description"), img: linkedin, tab: "linkedin" },
+            { header: t("skills.constance_content3_header"), content: t("skills.constance_content3_description"), img: twitter, tab: "x_post" },
+            { header: t("skills.constance_content4_header"), content: t("skills.constance_content4_description"), img: creation, tab: "creation_studio" }
             ]
         },
         {
@@ -86,8 +115,8 @@ function AllAgentsSkills() {
             path: "phone",
             cardStyles: "border-[#DBE5FF] bg-[#F2F5FF]",
             cardContent: [
-                { header: t("skills.tom_content1_header"), content: t("skills.tom_content1_description"), img: tomSkillImg4, tab: "call-campaigns" },
-                { header: t("skills.tom_content2_header"), content: t("skills.tom_content2_description"), img: tomSkillImg1, tab: "cold_calling" },
+                { header: t("skills.tom_content1_header"), content: t("skills.tom_content1_description"), img: campaign, tab: "call-campaigns" },
+                { header: t("skills.tom_content2_header"), content: t("skills.tom_content2_description"), img: callCalling, tab: "cold_calling" },
                 // { header: "Phone Numbers", content: "Manage and assign business phone numbers easily.", img: tomSkillImg2 },
                 // { header: "Call Agents", content: "Add and manage your call support agents.", img: tomSkillImg3 },
                 // { header: "Outbound Calls", content: "Automate and scale your outbound call operations.", img: tomSkillImg5 },
@@ -101,7 +130,7 @@ function AllAgentsSkills() {
             image: sethImg,
             path: "appointment-setter",
             cardStyles: "border-[#FFE4C5] bg-[#FFFDFA]",
-            cardContent: [{ header: t("skills.seth_content1_header"), content: t("skills.seth_content1_description"), img: sethSkillImg1, tab: "agents" },
+            cardContent: [{ header: t("skills.seth_content1_header"), content: t("skills.seth_content1_description"), img: agents, tab: "agents" },
                 // { header: "Conversations", content: "Monitor and review all customer communications.", img: sethSkillImg2 },
                 // { header: "Analytics", content: "Track performance metrics and campaign insights.", img: sethSkillImg3 }
             ]
@@ -113,10 +142,10 @@ function AllAgentsSkills() {
             image: calinaImg,
             path: "customer-support",
             cardStyles: "border-[#E3F6ED] bg-[#EFFFF7]",
-            cardContent: [{ header: t("skills.calina_content1_header"), content: t("skills.calina_content1_description"), img: calinaSkillImg1, tab: "smart_bot" },
-            { header:t("skills.calina_content2_header"), content: t("skills.calina_content2_description"), img: calinaSkillImg2, tab: "faq_generator" },
-            { header: t("skills.calina_content3_header"), content: t("skills.calina_content3_description"), img: calinaSkillImg3, tab: "user_guide" },
-            { header: t("skills.calina_content4_header"), content: t("skills.calina_content4_description"), img: calinaSkillImg4, tab: "email" }
+            cardContent: [{ header: t("skills.calina_content1_header"), content: t("skills.calina_content1_description"), img: smartChatbot, tab: "smart_bot" },
+            { header:t("skills.calina_content2_header"), content: t("skills.calina_content2_description"), img: faq, tab: "faq_generator" },
+            { header: t("skills.calina_content3_header"), content: t("skills.calina_content3_description"), img: user_guide, tab: "user_guide" },
+            { header: t("skills.calina_content4_header"), content: t("skills.calina_content4_description"), img: customer_email, tab: "email" }
             ]
         },
         {
@@ -126,7 +155,7 @@ function AllAgentsSkills() {
             image: rebeccaImg,
             path: "phone",
             cardStyles: "border-[#DBE5FF] bg-[#F2F5FF]",
-            cardContent: [{ header: t("skills.rebecca_content1_header"), content: t("skills.rebecca_content1_description"), img: tomSkillImg6, tab: "inbound-calls" }]
+            cardContent: [{ header: t("skills.rebecca_content1_header"), content: t("skills.rebecca_content1_description"), img: inbound, tab: "inbound-calls" }]
         },
         {
             name: "Emile",
@@ -135,7 +164,7 @@ function AllAgentsSkills() {
             image: emileImg,
             path: "campaigns",
             cardStyles: "border-[#CEBFFD] bg-[#F7F4FF]",
-            cardContent: [{ header: t("skills.emile_content1_header"), content: t("skills.emile_content1_description"), img: emileSkillImg1, tab: "campaigns" },
+            cardContent: [{ header: t("skills.emile_content1_header"), content: t("skills.emile_content1_description"), img: campaign, tab: "campaigns" },
                 // { header: "Calendar", content: "Schedule meetings and deadlines in one place.", img: emileSkillImg2 }
             ]
         },
@@ -146,10 +175,10 @@ function AllAgentsSkills() {
             image: rimaImg,
             path: "hr",
             cardStyles: "border-[#FFE4C5] bg-[#FFF7EE]",
-            cardContent: [{ header: t("skills.rima_content1_header"), content: t("skills.rima_content1_description"), img: rimaSkillImg1, tab: "job_description_writer" },
-            { header:t("skills.rima_content2_header"), content: t("skills.rima_content2_description"), img: rimaSkillImg2, tab: "resume_screener" },
-            { header: t("skills.rima_content3_header"), content: t("skills.rima_content3_description"), img: rimaSkillImg3, tab: "interview_planner" },
-            { header: t("skills.rima_content4_header"), content: t("skills.rima_content4_description"), img: constanceSkillImg2, tab: "linkedin" }
+            cardContent: [{ header: t("skills.rima_content1_header"), content: t("skills.rima_content1_description"), img: job_description, tab: "job_description_writer" },
+            { header:t("skills.rima_content2_header"), content: t("skills.rima_content2_description"), img: resume, tab: "resume_screener" },
+            { header: t("skills.rima_content3_header"), content: t("skills.rima_content3_description"), img: interviewer, tab: "interview_planner" },
+            { header: t("skills.rima_content4_header"), content: t("skills.rima_content4_description"), img: linkedin, tab: "linkedin" }
             ]
         },
         {
@@ -159,10 +188,10 @@ function AllAgentsSkills() {
             image: finnImg,
             path: "accounting",
             cardStyles: "border-[#E3F6ED] bg-[#F4FDF9]",
-            cardContent: [{ header: t("skills.finn_content1_header"), content: t("skills.finn_content1_description"), img: finnSkillImg1, tab: "balance_sheet" },
-            { header: t("skills.finn_content2_header"), content: t("skills.finn_content2_description"), img: finnSkillImg2, tab: "profit_loss_calculator" },
-            { header: t("skills.finn_content3_header"), content: t("skills.finn_content3_description"), img: finnSkillImg3, tab: "sales_forecaster" },
-            { header: t("skills.finn_content4_header"), content: t("skills.finn_content4_description"), img: finnSkillImg4, tab: "roi_calculator" }
+            cardContent: [{ header: t("skills.finn_content1_header"), content: t("skills.finn_content1_description"), img: balancesheet, tab: "balance_sheet" },
+            { header: t("skills.finn_content2_header"), content: t("skills.finn_content2_description"), img: profit, tab: "profit_loss_calculator" },
+            { header: t("skills.finn_content3_header"), content: t("skills.finn_content3_description"), img: sales, tab: "sales_forecaster" },
+            { header: t("skills.finn_content4_header"), content: t("skills.finn_content4_description"), img: roi, tab: "roi_calculator" }
             ]
         },
         {
@@ -172,9 +201,9 @@ function AllAgentsSkills() {
             image: sandroImg,
             path: "seo",
             cardStyles: "border-[#F8DDFF] bg-[#FDF3FF]",
-            cardContent: [{ header: t("skills.sandro_content1_header"), content: t("skills.sandro_content1_description"), img: sandroSkillImg1, tab: "articles" },
-            { header: t("skills.sandro_content2_header"), content: t("skills.sandro_content2_description"), img: sandroSkillImg2, tab: "automation" },
-            { header: t("skills.sandro_content3_header"), content: t("skills.sandro_content3_description"), img: sandroSkillImg3, tab: "audit" }
+            cardContent: [{ header: t("skills.sandro_content1_header"), content: t("skills.sandro_content1_description"), img: article, tab: "articles" },
+            { header: t("skills.sandro_content2_header"), content: t("skills.sandro_content2_description"), img: start_seo, tab: "automation" },
+            { header: t("skills.sandro_content3_header"), content: t("skills.sandro_content3_description"), img: search, tab: "audit" }
             ]
         },
     ];

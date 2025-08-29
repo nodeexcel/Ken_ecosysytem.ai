@@ -14,13 +14,31 @@ export default function PhoneNumbers() {
   
   
   const countrieData = useSelector((state) => state.country.data);
+  
+  // Filter countries to only show US, UK, and France
+  const filteredCountries = countrieData ? countrieData.filter(country => 
+    ['us', 'uk', 'fr'].includes(country.code.toLowerCase())
+  ) : [];
 
-  const [countries, setCountries] = useState(countrieData);
+  // Original code - commented out
+  // const [countries, setCountries] = useState(countrieData);
+  
+  // New filtered countries state
+  const [countries, setCountries] = useState(filteredCountries);
+  
+  // Update countries state when filteredCountries changes
+  useEffect(() => {
+    setCountries(filteredCountries);
+  }, [filteredCountries]);
 
 
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState("outbound")
-  const [selectedCountry, setSelectedCountry] = useState(countries && countries.length > 0 ? countries[240] : { name: "United States", code: "US", dial_code: "+1", flag: "us" });
+  // Original code - commented out
+  // const [selectedCountry, setSelectedCountry] = useState(countries && countries.length > 0 ? countries[240] : { name: "United States", code: "US", dial_code: "+1", flag: "us" });
+  
+  // New filtered country selection
+  const [selectedCountry, setSelectedCountry] = useState(filteredCountries && filteredCountries.length > 0 ? filteredCountries[0] : { name: "United States", code: "US", dial_code: "+1", flag: "us" });
   const [isOpen, setIsOpen] = useState(false);
   const [number, setNumber] = useState("");
   const [phoneName, setPhoneName] = useState("");
@@ -61,7 +79,11 @@ export default function PhoneNumbers() {
     const handleClickOutside = (event) => {
       if (countryRef.current && !countryRef.current.contains(event.target)) {
         setIsOpen(false);
-        setCountries(countrieData); // Reset countries when clicking outside
+        // Original code - commented out
+        // setCountries(countrieData); // Reset countries when clicking outside
+        
+        // New filtered code
+        setCountries(filteredCountries); // Reset countries when clicking outside
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -101,7 +123,11 @@ export default function PhoneNumbers() {
       setOtpModal(true)
       setNumber("")
       setPhoneName("")
-      setSelectedCountry(countries[240])
+      // Original code - commented out
+      // setSelectedCountry(countries[240])
+      
+      // New filtered code
+      setSelectedCountry(filteredCountries[0])
 
     } else {
       setLoader(false);
@@ -161,21 +187,44 @@ export default function PhoneNumbers() {
   }, []);
 
 
+  // Original search function - commented out
+  // const searchHandle = (e) => {
+  //   const searchValue = e.target.value.toLowerCase();
+
+  //    if( searchValue === "" ) {
+  //              setCountries(countrieData);
+  //     return;
+  //   }
+  //   const filteredRows = countrieData.filter((country) =>
+  //   country.name.toLowerCase().includes(searchValue) ||
+  //   country.dial_code.toLowerCase().includes(searchValue)
+  //   );
+  //   setCountries(filteredRows);
+  // }
+
+  // New filtered search function
   const searchHandle = (e) => {
     const searchValue = e.target.value.toLowerCase();
 
      if( searchValue === "") {
-       setCountries(countrieData);
+               setCountries(filteredCountries);
       return;
     }
-    const filteredRows = countrieData.filter((country) =>
+    const filteredRows = filteredCountries.filter((country) =>
     country.name.toLowerCase().includes(searchValue) ||
     country.dial_code.toLowerCase().includes(searchValue)
     );
     setCountries(filteredRows);
   }
+  // Original render function - commented out
+  // const renderPhoneNumber = (phone, country) => {
+  //   const filterCode = countrieData.filter((e) => e.name === country)
+  //   return `${filterCode[0]?.dial_code}${phone}`
+  // }
+
+  // New filtered render function
   const renderPhoneNumber = (phone, country) => {
-    const filterCode = countrieData.filter((e) => e.name === country)
+    const filterCode = filteredCountries.filter((e) => e.name === country)
     return `${filterCode[0]?.dial_code}${phone}`
   }
 
@@ -350,13 +399,17 @@ export default function PhoneNumbers() {
                     {isOpen && (
                       <div className="absolute px-1 z-[9999] rounded-md shadow-lg border border-gray-200 max-h-[200px] overflow-auto top-6 w-full left-[-13px] bg-white mt-1 isolate transform-gpu will-change-transform">
                         <input type="text" placeholder="Search"  className="w-full px-3 py-2 border-b border-gray-200 outline-none text-sm" onChange={searchHandle} />
-                        {countries.map((country,idx) => (
+                        {filteredCountries.map((country,idx) => (
                           <div
                             key={idx} 
                             onClick={() => {
                               setSelectedCountry(country);
                               setIsOpen(false);
-                              setCountries(countrieData);
+                              // Original code - commented out
+                              // setCountries(countrieData);
+                              
+                              // New filtered code
+                              setCountries(filteredCountries);
                             }}
                             className={`flex gap-2 px-2 hover:bg-[#F4F5F6] hover:rounded-lg  my-1 py-2 ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6] rounded-lg'} cursor-pointer flex items-center`}
                           >

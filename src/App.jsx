@@ -43,6 +43,7 @@ import SuperAdminSetting from './pages/SuperAdminDashboard/SuperAdmingSetting'
 import BrainManagement from './pages/SuperAdminDashboard/BrainManagement'
 import BrainManagementSub from './pages/SuperAdminDashboard/BrainManagementSub'
 import AgentMonitoring from './pages/SuperAdminDashboard/AgentMonitoring'
+import AgentMonitoringSub from './pages/SuperAdminDashboard/AgentMonitoringSub'
 
 
 
@@ -62,6 +63,7 @@ import AgentMonitoring from './pages/SuperAdminDashboard/AgentMonitoring'
           <Route path="agent-monitoring" element={<AgentMonitoring/>}/>
           <Route path="brain-management" element={<BrainManagement/>}/>
           <Route path="brain-management-sub" element={<BrainManagementSub/>}/>
+          <Route path="agent-monitoring-sub" element={<AgentMonitoringSub/>}/>
           <Route path="billing-subscription" element={<BillingSubscription/>}/>
           <Route path="logs-troubleshooting" element={<LogsTroubleshooting/>}/>
           <Route path="settings" element={<SuperAdminSetting/>}/>
