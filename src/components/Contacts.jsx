@@ -168,9 +168,6 @@ const ContactsPage = () => {
     } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(addNewContact.email)) {
       errors.email = `${t("brain_ai.invalid_email_format")}`;
     }
-    if (!addNewContact.companyName) {
-      errors.companyName = `${t("brain_ai.company_name_required")}`;
-    }
     setError(errors);
     return Object.keys(errors).length === 0;
   }
@@ -1512,7 +1509,6 @@ const ContactsPage = () => {
               <div>
                 <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
                   {t("brain_ai.company_name")}
-                  <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -1522,10 +1518,6 @@ const ContactsPage = () => {
                   placeholder={t("brain_ai.company_name_placeholder")}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#675FFF]"
                 />
-
-                {error.companyName && (
-                  <p className="text-red-500 text-sm mt-1">{error.companyName}</p>
-                )}
               </div>
             </div>
             {error.success && (

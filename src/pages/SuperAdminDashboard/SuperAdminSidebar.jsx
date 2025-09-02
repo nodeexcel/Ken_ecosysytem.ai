@@ -9,7 +9,7 @@ import fr_flag from "../../assets/images/fr_flag.png"
 // import Notification from '../../pages/Dashboard/Notification';
 import { X } from 'lucide-react';
 import { getNavbarData } from '../../store/navbarSlice';
-import { AgentIcon, CopyIcon, DollarIcon, GiftIcon, HomeIcon, UserIcon, SidebarBrainIcon, SidebarFourBoxIcon, SidebarHelpCenterIcon, SidebarNotificationIcon, SidebarSettingIcon, SkillsIcon } from '../../icons/icons';
+import { AgentIcon, CopyIcon, DollarIcon, HomeIcon, UserIcon, SidebarBrainIcon, SidebarSettingIcon} from '../../icons/icons';
 import logo from '../../assets/svg/dashboard_logo.svg'
 import { changeLanguage } from '../../api/profile';
 import i18n from '../../i18n';
@@ -258,15 +258,50 @@ const SuperAdminSidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                 </div>
                 <div className='flex flex-col'>
                     <hr className='text-[#E1E4EA]' />
-                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3 ${renderColor(6) ? 'bg-white rounded-lg mx-2' : ''}`} onClick={() => handleSelect(sidebarItems[6].id, sidebarItems[6].label)}>
+                    {/* <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3 ${renderColor(6) ? 'bg-white rounded-lg mx-2' : ''}`} onClick={() => handleSelect(sidebarItems[6].id, sidebarItems[6].label)}>
                         <div className='flex items-center'>
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarSettingIcon className={renderColor(6) ? 'text-[#675FFF]' : 'text-white'} status={renderColor(6) ? "#675FFF" : "white"} /></div> <div className='hidden group-hover:block'  ><SidebarSettingIcon className='text-[#675FFF]' status="#675FFF" /></div> </div>
+                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarSettingIcon className={renderColor(6) ? 'text-[#675FFF]' : 'text-white'} status={renderColor(6) ? "#675FFF" : "white"} /></div> <div className='hidden group-hover:block'  ><SidebarSettingIcon className='text-white' status="#675FFF" /></div> </div>
                             {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(6) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{sidebarItems[6].label}</p>}
                         </div>
                         {!isOpen && <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[113px]' : 'md:left-[104px]'} left-[102px] bg-white shadow-md rounded p-2 z-[9999]`}>
                             <p className='font-[400]'>{sidebarItems[6].label}</p>
                         </div>}
-                    </div>
+                    </div> */}
+
+<div 
+  className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3 ${renderColor(6) ? 'rounded-lg mx-2' : ''}`} 
+  onClick={() => handleSelect(sidebarItems[6].id, sidebarItems[6].label)}
+>
+  <div className='flex items-center'>
+    <div className="flex items-center gap-2">
+      <div className='group-hover:hidden'>
+        <SidebarSettingIcon 
+          className={renderColor(6) ? 'text-[#675FFF]' : 'text-white'} 
+          status={renderColor(6) ? "#675FFF" : "white"} 
+        />
+      </div> 
+      <div className='hidden group-hover:block'>
+        <SidebarSettingIcon className='text-white' status="#675FFF" />
+      </div> 
+    </div>
+    {isOpen && (
+      <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(6) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>
+        {sidebarItems[6].label}
+      </p>
+    )}
+  </div>
+
+  {!isOpen && (
+    <div 
+      className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${
+        i18n.language === "fr" ? 'md:left-[113px]' : 'md:left-[104px]'
+      } left-[102px] bg-white shadow-md rounded p-2 z-[9999]`}
+    >
+      <p className='font-[400]'>{sidebarItems[6].label}</p>
+    </div>
+  )}
+</div>
+
                     <div
                         ref={languageRef}
                         className={`relative ${!showDropdown && 'group'} text-xl flex ${!isOpen ? 'justify-center' : 'pl-3'} py-3 cursor-pointer`}
