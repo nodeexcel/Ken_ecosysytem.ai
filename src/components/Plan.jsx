@@ -159,10 +159,10 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
     yearly: [
       {
         id: import.meta.env.VITE_YEARLY_PRO_PLAN,
-        name: `${t("settings.tab_2_list.pro")}`,
-        key: "pro",
+        name: `${t("Standard")}`,
+        key: "pro", 
         svg: <ProPlanIcon />,
-        price: "€989",
+        price: "€931",
         period: `/ ${t("settings.tab_2_list.year")}`,
         description:
           `${t("settings.tab_2_list.pro_content")}`,
@@ -175,14 +175,14 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
           `${t("settings.tab_2_list.live_chat")}`,
         ],
         selected: true,
-        discount: `15% ${t("settings.tab_2_list.off")}`,
+        discount: `20% ${t("settings.tab_2_list.off")}`,
       },
       {
         id: import.meta.env.VITE_YEARLY_TEAM_PLAN,
-        name: `${t("settings.tab_2_list.team")}`,
+        name: `${t("Pro")}`,
         key: "team",
         svg: <TeamPlanIcon />,
-        price: "€1703",
+        price: "€1603",
         period: `/ ${t("settings.tab_2_list.year")}`,
         description: `${t("settings.tab_2_list.team_content")}`,
         features: [
@@ -193,7 +193,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
 
           `${t("settings.tab_2_list.live_chat")}`,
         ],
-        discount: `15% ${t("settings.tab_2_list.off")}`,
+        discount: `20% ${t("settings.tab_2_list.off")}`,
       },
       // {
       //   id: import.meta.env.VITE_BUSINESS_PLAN,
