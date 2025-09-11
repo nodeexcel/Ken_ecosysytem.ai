@@ -29,7 +29,7 @@ export const createPhoneCampaign= async (payload) => {
         return response;
     } catch (error) {
         console.error(error);
-        return error;
+        throw error;
     }
 };
 
@@ -143,4 +143,18 @@ export const duplicateCampaign=async (id)=>{
         console.error(error);
         return error;
       }
+}
+
+export const getAgents = async () => {
+    try {
+        const response = await agentInstance.get(`/get-phone-agent-details`,
+            {
+                content_type: "application/json",
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
 }

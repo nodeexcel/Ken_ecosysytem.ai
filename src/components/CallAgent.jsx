@@ -79,7 +79,7 @@ export default function CallAgentsPage() {
 
   const renderPhoneNumber = (phone, country) => {
     const filterCode = countries.filter((e) => e.name === country)
-    return `${filterCode[0]?.dial_code}-${phone.slice(0, 3)}-${phone.slice(3, 6)}-${phone.slice(6)}`
+    return `${filterCode[0]?.dial_code}${phone.slice(0, 3)}${phone.slice(3, 6)}${phone.slice(6)}`
   }
 
   useEffect(() => {
@@ -149,7 +149,7 @@ export default function CallAgentsPage() {
       if (response.status === 200) {
         if (response.data.phone_numbers?.length > 0) {
           const data = response.data.phone_numbers.map((e) => ({
-            label: renderPhoneNumber(e.phone_number, e.country),
+            label: e.phone_number,
             key: e.phone_number
           }))
           setPhoneNumbers(data)
