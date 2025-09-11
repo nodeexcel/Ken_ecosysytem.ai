@@ -221,7 +221,7 @@ export default function PhoneNumbers() {
                       key={row.id}
                       className={`text-[16px] text-[#1E1E1E] ${index !== rows?.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
                     >
-                      <td className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] text-[#1E1E1E]">{renderPhoneNumber(row.phone_number, row.country)}</td>
+                      <td className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] text-[#1E1E1E]">{row.phone_number}</td>
                       <td className="py-[14px] pl-[24px] pr-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C] table-cell-wrap">{row.country}</td>
                       <td className="p-[14px] min-w-[200px] max-w-[17%] w-full">
                         <div className="flex w-[120px] justify-between items-center">
