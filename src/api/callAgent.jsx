@@ -144,3 +144,17 @@ export const duplicateCampaign=async (id)=>{
         return error;
       }
 }
+
+export const getAgents = async () => {
+    try {
+        const response = await agentInstance.get(`/get-phone-agent-details`,
+            {
+                content_type: "application/json",
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+}
