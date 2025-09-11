@@ -672,7 +672,7 @@ export default function CallCampaign() {
               setEditData()
               resetForm()
             }} className="text-[14px] font-[400] text-[#5A687C] hover:text-[#5a687cdb] cursor-pointer">{`${t("phone.call_campaigns")} > ${editData ? `${campaign.campaign_name}` : 'New Campaign'}`}</h1>
-            <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{editData ? t("phone.edit_campaign"): t('phone.add_campaign')} </h1>
+            <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{editData ? t("phone.edit_campaign"): t('phone.add_campaignsd')} </h1>
           </div>
           <div className="w-full"
           >
@@ -706,7 +706,7 @@ export default function CallCampaign() {
                 {errors.campaign_type && <p className="text-red-500 text-sm mt-1">{errors.campaign_type}</p>}
               </div>
 
-              {/* <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Language</label>
                   <SelectDropdown
@@ -737,7 +737,7 @@ export default function CallCampaign() {
                   />
                   {errors.voice && <p className="text-red-500 text-sm mt-1">{errors.voice}</p>}
                 </div>
-              </div> */}
+              </div>
 
               {/* <div className="grid grid-cols-2 gap-4">
                 <div>
