@@ -77,6 +77,7 @@ export default function CallCampaign() {
   const [deleteRow, setDeleteRow] = useState(null);
   const [contactLists, setContactLists] = useState([]);
   const [showListTargetSelector, setShowListTargetSelector] = useState(false);
+  const [apiMessage, setApiMessage] = useState({ type: '', message: '' });
   const targetListRef = useRef()
   const {t}=useTranslation();
 
@@ -101,7 +102,6 @@ export default function CallCampaign() {
     { key: "french", label: "French" },
     { key: "spanish", label: "Spanish" }
   ];
-
   const voiceOptions = [
     // { key: "", label: "Voice" },
     { key: "male", label: `${t("male")}` },
@@ -122,7 +122,7 @@ export default function CallCampaign() {
       choose_calendar: "",
       max_call_time: 10,
       tag: "",
-      target_lists: [],
+      target_lists: "",
       agent: 0,
       country: "USA",
       phone_number: "",
@@ -260,7 +260,7 @@ export default function CallCampaign() {
       choose_calendar: "",
       max_call_time: 10,
       tag: '',
-      target_lists: [],
+      target_lists: "",
       agent: 0,
       country: "USA",
       phone_number: "",
@@ -299,20 +299,36 @@ export default function CallCampaign() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoader(true);
+    setApiMessage({ type: '', message: '' });
 
     if (validateForm()) {
-
-      const response = await createPhoneCampaign(campaign);
-
-
-      if (response.status === 200) {
-        console.log(response.data);
-
+      try {
+        // Convert target_lists to strings as required by API
+        const campaignData = {
+          ...campaign,
+          target_lists: parseInt(campaign.target_lists)
+        };
+        console.log("Submitting campaign data:", campaignData);
+        const response = await createPhoneCampaign(campaignData);
+        console.log("API Response:", response);
+        
+        if (response && response.status === 200) {
+          console.log("Campaign created successfully:", response.data)  
+          setApiMessage({ type: 'success', message: 'Campaign created successfully!' });
+          setTimeout(() => {
+            setShowModal(false);
+            resetForm();
+            handleGetPhoneCampaign();
+            setApiMessage({ type: '', message: '' });
+          }, 1500);
+        } else {
+          console.error("Failed to create campaign:", response);
+          
+        }
+      } catch (error) {
+        console.error("Error creating campaign:", error);
+        setApiMessage({ type: 'error', message: '' });
       }
-      setShowModal(false);
-      handleGetPhoneCampaign();
-      // Submit logic here
-
     } else {
       console.log("Validation failed");
       console.log("Errors:", errors);
@@ -800,38 +816,22 @@ export default function CallCampaign() {
                 </div>
                 {errors.tag && <p className="text-red-500 text-sm mt-1">{errors.tag}</p>}
               </div>
-              <div className="relative" ref={targetListRef}>
+              <div>
                 <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.target_contact_lists")}</label>
-                <button
-                  onClick={() => setShowListTargetSelector((prev) => !prev)}
-                  className={`w-full flex items-center justify-between focus:outline-none focus:border-[#675FFF] bg-white border ${errors.target_lists ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
-                >
-                  <span className={`truncate ${campaign.target_lists?.length > 0 ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{campaign.target_lists?.length > 0
-                    ? campaign.target_lists.map(dayKey => {
-                      const found = contactLists?.length > 0 && contactLists.find(d => d.key === dayKey);
-                      return found?.label;
-                    }).join(', ')
-                    : t('select')}</span>
-                  <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showListTargetSelector ? 'transform rotate-180' : ''}`} />
-                </button>
-                {showListTargetSelector && (
-                  <div className="absolute z-50 mt-1 w-full">
-                    <CustomSelector
-                      options={contactLists?.length > 0 && contactLists}
-                      setShowSelector={setShowListTargetSelector}
-                      value={campaign.target_lists}
-                      onChange={(updated) => {
-                        setCampaign((prev) => ({
-                          ...prev,
-                          target_lists: updated,
-                        }))
-                        setErrors((prev) => ({ ...prev, target_lists: "" }))
-                      }
-                      }
-                      ref={targetListRef}
-                    />
-                  </div>
-                )}
+                <SelectDropdown
+                  name="target_lists"
+                  options={contactLists?.length > 0 && contactLists}
+                  value={campaign.target_lists}
+                  onChange={(updated) => {
+                    setCampaign((prev) => ({
+                      ...prev,
+                      target_lists: updated,
+                    }))
+                    setErrors((prev) => ({ ...prev, target_lists: "" }))
+                  }}
+                  errors={errors}
+                  placeholder={t("select")}
+                />
                 {errors.target_lists && <p className="text-red-500 text-sm mt-1">{errors.target_lists}</p>}
                 <button className="text-[#7065F0] text-sm font-medium mt-1">+ {t("phone.create_contact_list")}</button>
               </div>
@@ -847,6 +847,19 @@ export default function CallCampaign() {
                   errors={errors}
                 />
                 {errors.agent && <p className="text-red-500 text-sm mt-1">{errors.agent}</p>}
+              </div>
+
+              <div>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.phone_number")}</label>
+                <SelectDropdown
+                  name="phone_number"
+                  options={phoneNumbers.map(phone => ({ key: phone.phone_number, label: phone.phone_number }))}
+                  placeholder={t("select")}
+                  value={campaign.phone_number}
+                  onChange={(value) => handleCampaignForm({ target: { name: 'phone_number', value } })}
+                  errors={errors}
+                />
+                {errors.phone_number && <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>}
               </div>
 
               {/* <div>
@@ -953,7 +966,20 @@ export default function CallCampaign() {
                 }} className="w-[195px] cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                   {t("phone.cancel")}
                 </button>
-              </div> : <div className="flex gap-4 mt-6">
+              </div> : 
+              <div>
+                {/* API Message Display */}
+                {apiMessage.message && (
+                <div className={`mt-4 p-3 rounded-lg ${
+                  apiMessage.type === 'success' 
+                    ? 'bg-green-100 text-green-800 border border-green-200' 
+                    : 'bg-red-100 text-red-800 border border-red-200'
+                }`}>
+                  {apiMessage.message}
+                </div>
+              )}
+
+              <div className="flex gap-4 mt-6">
                 <button onClick={() => {
                   setSecondModel(true)
                   setShowModal(false)
@@ -974,6 +1000,7 @@ export default function CallCampaign() {
 
                 </button>
 
+              </div>
               </div>}
             </div>
           </div>
