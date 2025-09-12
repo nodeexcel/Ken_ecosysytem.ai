@@ -559,6 +559,8 @@ const englishTranslation = {
     receptionist: "Receptionist",
     phone_outreach: "Phone Outreach",
     phone: "Phone",
+    max_50_char_required_validation: "Minimum 50 characters required for call script.",
+    tag_required: "Tag is required.",
     dashboard: "Dashboard",
     phone_numbers: "Phone Numbers",
     phone_number: "Phone Number",

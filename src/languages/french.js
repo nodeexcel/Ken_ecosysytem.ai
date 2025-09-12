@@ -411,6 +411,8 @@ const frenchTranslation = {
     receptionist: "Réceptionniste",
     phone_outreach: "Appels Sortants",
     phone: "Téléphone",
+    max_50_char_required_validation: "Minimum 50 caractères requis pour le script.",
+    tag_required: "Le tag est requis.",
     dashboard: "Tableau de Bord",
     phone_numbers: "Numéros de Téléphone",
     phone_number: "Numéro de Téléphone",

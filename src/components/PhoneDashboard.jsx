@@ -32,10 +32,10 @@ const PhoneDashboard = () => {
             error: null
           });
         } else {
-          setDashboardData(prev => ({ ...prev, error: 'Failed to fetch agents', loading: false }));
+          setDashboardData(prev => ({ ...prev, loading: false }));
         }
       } catch (err) {
-        setDashboardData(prev => ({ ...prev, error: 'Error fetching agents', loading: false }));
+        setDashboardData(prev => ({ ...prev, loading: false }));
         console.error('Error fetching agents:', err);
       }
     };

@@ -161,9 +161,9 @@ export default function CallCampaign() {
 
     if (!campaign.campaign_name.trim()) newErrors.campaign_name = t("phone.campaign_name_required");
     if (!campaign.campaign_type.trim()) newErrors.campaign_type =t("phone.campaign_type_required");
-    // if (!campaign.language) newErrors.language = "Language is required.";
-    // if (!campaign.voice) newErrors.voice = "Voice selection is required.";
-    // if (!campaign.choose_calendar) newErrors.choose_calendar = "Calendar selection is required.";
+    if (!campaign.language) newErrors.language = "Language is required.";
+    if (!campaign.voice) newErrors.voice = "Voice selection is required.";
+    if (!campaign.choose_calendar) newErrors.choose_calendar = "Calendar selection is required.";
     if (!campaign.max_call_time || campaign.max_call_time <= 0) newErrors.max_call_time = t("phone.campaign_call_time_validation");
     if (!campaign.tag) newErrors.tag = t("phone.tag_required");
     if (!campaign.target_lists || campaign.target_lists.length === 0) newErrors.target_lists = t("phone.atleast_one_target_required");
@@ -672,7 +672,7 @@ export default function CallCampaign() {
               setEditData()
               resetForm()
             }} className="text-[14px] font-[400] text-[#5A687C] hover:text-[#5a687cdb] cursor-pointer">{`${t("phone.call_campaigns")} > ${editData ? `${campaign.campaign_name}` : 'New Campaign'}`}</h1>
-            <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{editData ? t("phone.edit_campaign"): t('phone.add_campaignsd')} </h1>
+            <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{editData ? t("phone.edit_campaign"): t('phone.add_campaign')} </h1>
           </div>
           <div className="w-full"
           >
@@ -739,7 +739,7 @@ export default function CallCampaign() {
                 </div>
               </div>
 
-              {/* <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Choose Calendar</label>
                   <SelectDropdown
@@ -771,7 +771,7 @@ export default function CallCampaign() {
                   />
                   {errors.max_call_time && <p className="text-red-500 text-sm mt-1">{errors.max_call_time}</p>}
                 </div>
-              </div> */}
+              </div>
 
               <div>
                 <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.max_call_time")}</label>
