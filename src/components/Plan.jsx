@@ -306,8 +306,8 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
         setActiveTab("yearly")
       }
       else {
-        const filterData = plans?.[userDetails?.subscriptionDurationType].filter((each) => each.key === userDetails?.subscriptionType)
-        const index = plans?.[userDetails?.subscriptionDurationType].findIndex((each) => each.key === userDetails?.subscriptionType)
+        const filterData = plans?.[userDetails?.subscriptionDurationType]?.filter((each) => each.key === userDetails?.subscriptionType)
+        const index = plans?.[userDetails?.subscriptionDurationType]?.findIndex((each) => each.key === userDetails?.subscriptionType)
         setPlanIndex(index)
         setActiveTab(userDetails?.subscriptionDurationType)
         setActivePlan(filterData?.[0]?.key)

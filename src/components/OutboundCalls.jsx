@@ -49,10 +49,14 @@ import { outboundCall } from "../api/callAgent";
 //     },
 // ];
 
+import uk_flag from "../assets/images/uk_flag.png"
+import us_flag from "../assets/images/us_flag.png"
+import fr_flag from "../assets/images/fr_flag.png"
+
 const countries = [
-    { name: "United States", code: "US", dial_code: "+1", flag: <BritishFlag /> },
-    { name: "United Kingdom", code: "GB", dial_code: "+44", flag: <BritishFlag /> },
-    { name: "India", code: "IN", dial_code: "+91", flag: <BritishFlag /> },
+    { name: "United States", code: "US", dial_code: "+1", flag: us_flag},
+    { name: "United Kingdom", code: "GB", dial_code: "+44", flag: uk_flag },
+    { name: "France", code: "FR", dial_code: "+33", flag: fr_flag },
     // Add more countries as needed
 ];
 
@@ -457,7 +461,7 @@ export default function OutBoundCalls() {
                                             className="w-[120px] flex hover:cursor-pointer relative border-none justify-between gap-1 items-center border py-1 text-left"
                                         >
                                             <div className="flex items-center gap-2 mr-3">
-                                                {selectedCountry && <p className={`fi fi-${selectedCountry.flag} fis w-4 h-4 rounded-full`}></p>}
+                                                {selectedCountry && <img src={selectedCountry.flag} alt={selectedCountry.name} className="w-4 h-4 rounded-full" />}
                                                 <p className="text-[#5A687C] font-[400] text-[16px]">{selectedCountry ? selectedCountry.dial_code : "+1"}</p>
                                             </div>
                                             <FaChevronDown color="#5A687C" className={`w-[10px] transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
@@ -482,7 +486,7 @@ export default function OutBoundCalls() {
                                                             }}
                                                             className={`flex px-2 gap-2 hover:bg-[#F4F5F6] hover:rounded-lg my-1 py-2 ${selectedCountry?.code === country?.code ? "bg-[#F4F5F6] rounded-lg" : ""} cursor-pointer items-center`}
                                                         >
-                                                            <p className={`fi fi-${country.flag} fis w-4 h-4 rounded-full`}></p>
+                                                            <img src={country.flag} alt={country.name} className="w-4 h-4 rounded-full" />
                                                             <p className="text-[#5A687C] font-[400] text-[16px]">{country.dial_code}</p>
                                                         </div>
                                                     ))

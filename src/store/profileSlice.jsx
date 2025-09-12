@@ -25,6 +25,7 @@ const profileSlice = createSlice({
          */
         getProfileData: (state, action) => {
             state.user = action.payload;
+            state.user.subscriptionDurationType = state.user.subscriptionDurationType || "monthly";
             state.loading = false;
         },
         /**
