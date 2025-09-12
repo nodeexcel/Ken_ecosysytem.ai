@@ -158,3 +158,31 @@ export const getAgents = async () => {
         return error;
     }
 }
+
+export const outboundCall = async () => {
+    try {
+        const response = await agentInstance.get('/outbound-call-details',
+            {
+                content_type: "application/json",
+            }
+         );
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+}
+
+export const inboundCall = async () => {
+    try {
+        const response = await agentInstance.get('/inbound-call-details',
+            {
+                content_type: "application/json",
+            }
+         );
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+}

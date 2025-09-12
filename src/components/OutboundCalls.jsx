@@ -7,45 +7,47 @@ import { SelectDropdown } from "./Dropdown";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { FaChevronDown } from "react-icons/fa";
+import { outboundCall } from "../api/callAgent";
 
-const agents = [
-    {
-        id: 1,
-        campaign_name: "XYZ Campaign",
-        agent_name: "Sami",
-        choosen: "chosen by the user",
-        date: "02-05-2024",
-        language: "Francais",
-        voice: "Nicolas Petit",
-        recipient_no: "4177809025",
-        status: "No Answer",
-        duration: "1:00 hr"
-    },
-    {
-        id: 2,
-        campaign_name: "XYZ Campaign",
-        agent_name: "Sami",
-        choosen: "chosen by the user",
-        date: "02-05-2024",
-        language: "Francais",
-        voice: "Nicolas Petit",
-        recipient_no: "4177809025",
-        status: "Replied",
-        duration: "1:00 hr"
-    },
-    {
-        id: 3,
-        campaign_name: "XYZ Campaign",
-        agent_name: "Sami",
-        choosen: "chosen by the user",
-        date: "02-05-2024",
-        language: "Francais",
-        voice: "Nicolas Petit",
-        recipient_no: "4177809025",
-        status: "Replied",
-        duration: "1:00 hr"
-    },
-];
+// Mock data for fallback
+// const mockAgents = [
+//     {
+//         id: 1,
+//         campaign_name: "XYZ Campaign",
+//         agent_name: "Sami",
+//         choosen: "chosen by the user",
+//         date: "02-05-2024",
+//         language: "Francais",
+//         voice: "Nicolas Petit",
+//         recipient_no: "4177809025",
+//         status: "No Answer",
+//         duration: "1:00 hr"
+//     },
+//     {
+//         id: 2,
+//         campaign_name: "XYZ Campaign",
+//         agent_name: "Sami",
+//         choosen: "chosen by the user",
+//         date: "02-05-2024",
+//         language: "Francais",
+//         voice: "Nicolas Petit",
+//         recipient_no: "4177809025",
+//         status: "Replied",
+//         duration: "1:00 hr"
+//     },
+//     {
+//         id: 3,
+//         campaign_name: "XYZ Campaign",
+//         agent_name: "Sami",
+//         choosen: "chosen by the user",
+//         date: "02-05-2024",
+//         language: "Francais",
+//         voice: "Nicolas Petit",
+//         recipient_no: "4177809025",
+//         status: "Replied",
+//         duration: "1:00 hr"
+//     },
+// ];
 
 const countries = [
     { name: "United States", code: "US", dial_code: "+1", flag: <BritishFlag /> },
@@ -56,9 +58,9 @@ const countries = [
 
 export default function OutBoundCalls() {
     const { t } = useTranslation();
-    const countryData = useSelector((state) => state.country.data);
-    const [countriesList, setCountriesList] = useState(countryData || []);
-    const [selectedCountry, setSelectedCountry] = useState(countryData && countryData.length > 0 ? countryData[240] : { name: "United States", code: "US", dial_code: "+1", flag: "us" });
+    // const countryData = useSelector((state) => state.country.data);
+    const [countriesList, setCountriesList] = useState(countries);
+    const [selectedCountry, setSelectedCountry] = useState(countries[0]);
     const [isOpen, setIsOpen] = useState(false);
     const countryRef = useRef();
     const [showModal, setShowModal] = useState(false);
@@ -68,22 +70,23 @@ export default function OutBoundCalls() {
     const [startDate, setStartDate] = useState(new Date())
     const [endDate, setEndDate] = useState(new Date())
     const [activeDropdown, setActiveDropdown] = useState(null);
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true);
+    const [agents, setAgents] = useState([]);
+    const [error, setError] = useState(null);
 
+    // Fetch outbound calls data on component mount
     useEffect(() => {
-        if (agents.length > 0) {
-            setLoading(false)
-        }
-    }, [agents])
+        fetchOutboundCalls();
+    }, []);
 
-    useEffect(() => {
-        if (countryData && countryData.length > 0) {
-            setCountriesList(countryData);
-            if (!selectedCountry || selectedCountry.code === "US") {
-                setSelectedCountry(countryData[240] || countryData[0]);
-            }
-        }
-    }, [countryData]);
+    // useEffect(() => {
+    //     if (countryData && countryData.length > 0) {
+    //         setCountriesList(countryData);
+    //         if (!selectedCountry || selectedCountry.code === "US") {
+    //             setSelectedCountry(countryData[240] || countryData[0]);
+    //         }
+    //     }
+    // }, [countryData]);
 
     // Add filter state
     const [filters, setFilters] = useState({
@@ -99,6 +102,53 @@ export default function OutBoundCalls() {
         { key: "def-campaign", label: "DEF Campaign" }
     ];
 
+    // Function to fetch outbound call data
+    const fetchOutboundCalls = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await outboundCall();
+            
+            // Handle the API response structure: { success: [...] }
+            let agentsData = [];
+            if (response && response.data && response.data.success) {
+                agentsData = Array.isArray(response.data.success) ? response.data.success : [];
+            } else if (response && response.success) {
+                agentsData = Array.isArray(response.success) ? response.success : [];
+            } else if (Array.isArray(response)) {
+                agentsData = response;
+            }
+            
+            // Transform the data to match the expected format
+            const transformedData = agentsData.map((item, index) => ({
+                id: index + 1,
+                campaign_name: item.campaign_name || "N/A",
+                agent_name: item.agent_name || "N/A",
+                choosen: "chosen by the user",
+                date: item.date ? new Date(item.date).toLocaleDateString() : "N/A",
+                language: item.langauage || "N/A", // Note: API has typo "langauage"
+                voice: item.voice || "N/A",
+                recipient_no: item.recipient_no || "N/A",
+                status: item.status ? item.status.charAt(0).toUpperCase() + item.status.slice(1) : "N/A",
+                duration: item.duration ? `${Math.floor(item.duration / 60)}:${(item.duration % 60).toString().padStart(2, '0')} min` : "N/A"
+            }));
+            
+            if (transformedData.length > 0) {
+                setAgents(transformedData);
+            } else {
+                // Fallback to mock data if API doesn't return expected format
+                // setAgents(mockAgents);
+            }
+        } catch (error) {
+            console.error('Error fetching outbound calls:', error);
+            setError('Failed to load outbound calls data');
+            // Fallback to mock data on error
+            // setAgents(mockAgents);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         function handleClickOutside(event) {
             if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -113,20 +163,20 @@ export default function OutBoundCalls() {
         const handleClickOutside = (event) => {
             if (countryRef.current && !countryRef.current.contains(event.target)) {
                 setIsOpen(false);
-                setCountriesList(countryData);
+                setCountriesList(countries);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [countryData]);
+    }, []);
 
     const handleSearch = (e) => {
         const searchValue = e.target.value.toLowerCase();
         if (searchValue === "") {
-            setCountriesList(countryData);
+            setCountriesList(countries);
             return;
         }
-        const filteredRows = countryData.filter((country) =>
+        const filteredRows = countries.filter((country) =>
             country.name.toLowerCase().includes(searchValue) ||
             country.dial_code.toLowerCase().includes(searchValue)
         );
@@ -136,6 +186,8 @@ export default function OutBoundCalls() {
     const handleDropdownClick = (index) => {
         setActiveDropdown(activeDropdown === index ? null : index);
     };
+
+    
 
     return (
         <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
@@ -203,26 +255,42 @@ export default function OutBoundCalls() {
             {/* Table */}
             <div className="overflow-auto w-full">
                 <table className="w-full">
-                    <div className="px-5 w-full">
-                        <thead> 
-                            <tr className="text-left text-[#5a687c] text-[16px]">
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("emailings.campaign_name")}</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("appointment.agent_name")}</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("brain_ai.date")}</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.language")}</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.voice")}</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.receipient_no")}</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.status")}</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.duration")}</th>
-                    <th className="p-[14px] w-full font-[400] table-cell-wrap">{t("phone.actions")}</th>
+                    <thead> 
+                        <tr className="text-left text-[#5a687c] text-[16px]">
+                            <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("emailings.campaign_name")}</th>
+                            <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("appointment.agent_name")}</th>
+                            <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("brain_ai.date")}</th>
+                            <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.language")}</th>
+                            <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.voice")}</th>
+                            <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.receipient_no")}</th>
+                            <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.status")}</th>
+                            <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.duration")}</th>
+                            <th className="p-[14px] w-full font-[400] table-cell-wrap">{t("phone.actions")}</th>
+                        </tr>
+                    </thead>
+                    <tbody className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
+                        {loading ? (
+                            <tr>
+                                <td colSpan="9" className="text-center py-8">
+                                    <span className="loader" />
+                                </td>
                             </tr>
-                        </thead>
-                    </div>
-                    <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
-                        {loading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
-                            agents.length !== 0 ?
-                                <tbody className="w-full">
-                                    {agents.map((agent, index) => (
+                        ) : error ? (
+                            <tr>
+                                <td colSpan="9" className="text-center py-8">
+                                    <div className="flex flex-col items-center justify-center text-center">
+                                        <p className="text-red-500 mb-2">{error}</p>
+                                        <button 
+                                            onClick={fetchOutboundCalls}
+                                            className="px-4 py-2 bg-[#7065F0] text-white rounded-lg hover:bg-[#5A52E5]"
+                                        >
+                                            Retry
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ) : Array.isArray(agents) && agents.length !== 0 ? (
+                            agents.map((agent, index) => (
                                         <tr
                                             key={agent.id}
                                             className={`${index !== agents.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
@@ -234,7 +302,7 @@ export default function OutBoundCalls() {
                                             <td className="py-[14px] pl-[5px] pr-[14px] min-w-[200px] max-w-[17%] w-full  text-[#5A687C] table-cell-wrap">{agent.voice}</td>
                                             <td className="py-[14px] pl-[5px] pr-[14px] min-w-[200px] max-w-[17%] w-full  text-[#5A687C]">{agent.recipient_no}</td>
                                             <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[17%] w-full table-cell-wrap">
-                                                <span className={`inline-block ${agent.status !== "Replied" ? "text-[#34C759]" : "text-[#FF3B30]"} text-[16px] font-[400] px-3 py-1 rounded-full`}>
+                                                <span className={`inline-block ${agent.status.toLowerCase() === "replied" ? "text-[#34C759]" : "text-[#FF3B30]"} text-[16px] font-[400] px-3 py-1 rounded-full`}>
                                                     {agent.status}
                                                 </span>
                                             </td>
@@ -281,10 +349,15 @@ export default function OutBoundCalls() {
                                                 )}
                                             </td>
                                         </tr>
-                                    ))}
-                                </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">{t("phone.no_outbound_calls")}</p>}
-                    </div>
-
+                                    ))
+                        ) : (
+                            <tr>
+                                <td colSpan="9" className="text-center py-8 text-[#1E1E1E]">
+                                    {t("phone.no_outbound_calls")}
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
                 </table>
             </div>
 
@@ -405,7 +478,7 @@ export default function OutBoundCalls() {
                                                             onClick={() => {
                                                                 setSelectedCountry(country);
                                                                 setIsOpen(false);
-                                                                setCountriesList(countryData);
+                                                                setCountriesList(countries);
                                                             }}
                                                             className={`flex px-2 gap-2 hover:bg-[#F4F5F6] hover:rounded-lg my-1 py-2 ${selectedCountry?.code === country?.code ? "bg-[#F4F5F6] rounded-lg" : ""} cursor-pointer items-center`}
                                                         >
