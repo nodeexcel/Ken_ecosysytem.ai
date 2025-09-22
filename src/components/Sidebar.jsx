@@ -48,7 +48,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     //     fr: { label: 'French', flag: fr_flag }
     // };
 
-    const languagesOptions = [{ label: "ENG", flag: uk_flag, key: "en" }, { label: "FR", flag: fr_flag, key: "fr" }]
+    const languagesOptions = [{ label: "ENG", flag: uk_flag, key: "en",name:'english' }, { label: "FR", flag: fr_flag, key: "fr",name:'french' }]
 
 
     useEffect(() => {
@@ -58,7 +58,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     }, [userDetails])
 
     const renderLangSrc = () => {
-        const filterSrc = languagesOptions.filter((e) => e.key === selectedLang)
+        const filterSrc = languagesOptions.filter((e) => e.key === selectedLang||e.name===selectedLang);
         return filterSrc[0].flag
     }
 

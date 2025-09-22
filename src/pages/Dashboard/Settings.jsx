@@ -20,6 +20,10 @@ import { useTranslation } from "react-i18next";
 import { BsThreeDots } from "react-icons/bs";
 import default_avatar from '../../assets/images/default_avatar.png';
 
+import { parsePhoneNumberFromString } from "libphonenumber-js";
+
+
+
 
 // User profile data
 const profileData = {
@@ -144,7 +148,6 @@ const SettingsPage = () => {
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [deleteModalStatus, setDeleteModalStatus] = useState(false)
   const [successModalStatus, setSuccessModalStatus] = useState('')
-  const [searchTerm, setSearchTerm] = useState("");
 
   const users = useSelector((state) => state.auth);
 
@@ -170,6 +173,16 @@ const SettingsPage = () => {
 
   }, [filteredMembers])
 
+
+  function validatePhoneNumber(phoneNumber) {
+  try {
+    const parsed = parsePhoneNumberFromString(phoneNumber);
+    return parsed && parsed.isValid();
+  } catch (err) {
+    return false;
+  }
+}
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -184,10 +197,9 @@ const SettingsPage = () => {
     } else if (profileFormData.lastName.length > 50) {
       newErrors.lastName = "Last name must be at most 50 characters.";
     }
-
-    if (profileFormData.phoneNumber === null || profileFormData.phoneNumber === "")
+    if (profileFormData.phoneNumber === null|| profileFormData.phoneNumber === "")
       { newErrors.phoneNumber = `${t("settings.tab_1_list.phone_required")}`;
-  } else if (!/^\+?[0-9\s]+$/.test(profileFormData.phoneNumber)) {
+  } else if (!validatePhoneNumber(`${selectedCountry.dial_code}${profileFormData.phoneNumber}`) ) {
     newErrors.phoneNumber = `${t("brain_ai.invalid_phone_no")}`;
   }
 

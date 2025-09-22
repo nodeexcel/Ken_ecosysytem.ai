@@ -1306,6 +1306,7 @@ const ContactsPage = () => {
                       ref={fileInputRef}
                       onChange={handleFileChange}
                       className="hidden"
+                       accept=".csv" 
                     />
                   </div>
 
