@@ -89,8 +89,9 @@ function Dashboard() {
                     i18n.changeLanguage('en');
                     localStorage.setItem("lan", 'en')
                 } else {
-                    i18n.changeLanguage(response?.data?.language);
-                    localStorage.setItem("lan", response?.data?.language)
+                    const lang=response?.data?.language==='english'?'en':response?.data?.language==='french'?'fr':response?.data?.language
+                    i18n.changeLanguage(lang);
+                    localStorage.setItem("lan", lang)
                 }
 
             } else if (response.status === 404) {
