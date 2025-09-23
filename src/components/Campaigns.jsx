@@ -5,11 +5,12 @@ import { format, isValid } from 'date-fns';
 import { createEmailCampaign, getEmailCampaignById, updateEmailCampaign } from '../api/emailCampaign';
 import { getLists } from '../api/brainai';
 import { useTranslation } from "react-i18next";
+import { useNavigate } from 'react-router-dom';
 
 
 
 const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
-    
+
     const { t } = useTranslation();
     const parseInitialTime = () => {
         if (!initialTime) {
@@ -86,6 +87,8 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
 
     const { hour, minute, period } = parseInitialTime();
 
+    const navigate = useNavigate()
+
     const [selectedHour, setSelectedHour] = useState(hour);
     const [selectedMinute, setSelectedMinute] = useState(minute);
     const [selectedPeriod, setSelectedPeriod] = useState(period);
@@ -118,7 +121,7 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
         const actualIndex = centerIndex % itemsLength;
         const selectedItem = originalItems[actualIndex];
         setValue(selectedItem);
-        
+
         // Handle circular scrolling boundaries
         const totalItems = circularItems.length;
         const threshold = itemHeight * 2;
@@ -199,15 +202,15 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
                     handleCircularScroll(ref, items, circularItems, setValue);
                 } else {
                     if (isManualClick) return; // Skip if manual click is in progress
-                    
+
                     const scrollTop = ref.current.scrollTop;
                     // Calculate the center position accounting for the 72px offset
                     const centerPosition = scrollTop + 72;
                     const index = Math.round(centerPosition / height);
-                    
+
                     // For AM/PM, account for the padding (2 empty items at the beginning)
                     const actualIndex = index - 2;
-                    
+
                     if (actualIndex < 0) {
                         ref.current.scrollTop = 0;
                         setValue(items[0]);
@@ -271,7 +274,7 @@ const TimeSelector = ({ onSave, onCancel, initialTime, start_date }) => {
 
         // Account for the padding (2 empty items at the beginning)
         const actualIndex = index - 2;
-        
+
         if (actualIndex >= 0 && actualIndex < periods.length) {
             setSelectedPeriod(periods[actualIndex]);
         }
@@ -424,11 +427,12 @@ const CustomSelector = ({ options, setShowSelector, value = [], onChange, ref })
             : [...value, e];
         onChange(newSelection);
     };
+    const navigate = useNavigate()
     return (
         <div className="bg-white rounded-lg shadow-lg">
             <div className="max-h-60 overflow-auto">
                 <ul className="py-1 px-2 flex flex-col gap-1 my-1">
-                    {options?.length > 0 && options.map((e) => (
+                    {options?.length > 0 ? options.map((e) => (
                         <li
                             key={e.key}
                             onClick={() => toggleChange(e.key)}
@@ -448,7 +452,25 @@ const CustomSelector = ({ options, setShowSelector, value = [], onChange, ref })
                             </div>
                             <span>{e.label}</span>
                         </li>
-                    ))}
+                    )) :
+                        <>
+                            <li className="py-2 px-4 text-[#5A687C] mx-auto">
+                                No List Available
+                            </li>
+
+                            <li className="py-2 px-4">
+
+
+                                <button onClick={() => navigate('/dashboard/brain')
+                                } className="px-5 rounded-[7px] w-full py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white cursor-pointer">Add List</button>
+                            </li>
+
+                        </>
+
+
+
+
+                    }
                 </ul>
             </div>
         </div>
@@ -498,9 +520,9 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
     const campaignObjectiveOptions = [{ label: `${t("emailings.promote_an_offer")}`, key: "promote_an_offer" }, { label: `${t("emailings.inform_educate")}`, key: "inform_educate" }, { label: `${t("emailings.re_engage")}`, key: "re_engage_leads" }, { label: `${t("emailings.announce_new_feature")}`, key: "announce_a_new_feature" }, { label: `${t("emailings.other")}`, key: "other" }]
 
-    const ctaTypeOptions = [{ label: `${t("emailings.book_meeting")}`, key: "book_a_meeting" }, { label:`${t("emailings.send_to_link")}`, key: "send_to_a_link" }, { label: `${t("emailings.ask_for_reply")}`, key: "reply" }];
+    const ctaTypeOptions = [{ label: `${t("emailings.book_meeting")}`, key: "book_a_meeting" }, { label: `${t("emailings.send_to_link")}`, key: "send_to_a_link" }, { label: `${t("emailings.ask_for_reply")}`, key: "reply" }];
 
-    const toneOptions = [{ label: `${t("emailings.professional")}`, key: "professional" }, { label: `${t("emailings.friendly")}`, key: "friendly" }, { label:`${t("emailings.storytelling")}` , key: "storytelling" }, { label:`${t("emailings.provocation")}`, key: "provocation" },
+    const toneOptions = [{ label: `${t("emailings.professional")}`, key: "professional" }, { label: `${t("emailings.friendly")}`, key: "friendly" }, { label: `${t("emailings.storytelling")}`, key: "storytelling" }, { label: `${t("emailings.provocation")}`, key: "provocation" },
     { label: `${t("emailings.educational")}`, key: "educational" }, { label: `${t("emailings.inspiring")}`, key: "inspiring" }];
 
     const calendarOptions = [{ label: "Calendly", key: "calendly" }, { label: "Google Calendar", key: "google_calendar" }]
@@ -512,7 +534,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
     const listOfTargetOptions = [{ label: `${t("emailings.segment_a")}`, key: "segment_a" }, { label: "Segment B", key: "segment_b" }]
 
-    const daysOptions = [{ label: `${t("emailings.monday")}`, key: 'monday' }, { label: `${t("emailings.tuesday")}`, key: "tuesday" }, { label:`${t("emailings.wednesday")}`, key: "wednesday" }, { label: `${t("emailings.thursday")}`, key: "thursday" }, { label: `${t("emailings.friday")}`, key: "friday" }, { label: `${t("emailings.saturday")}`, key: "saturday" }, { label: `${t("emailings.sunday")}`, key: "sunday" }];
+    const daysOptions = [{ label: `${t("emailings.monday")}`, key: 'monday' }, { label: `${t("emailings.tuesday")}`, key: "tuesday" }, { label: `${t("emailings.wednesday")}`, key: "wednesday" }, { label: `${t("emailings.thursday")}`, key: "thursday" }, { label: `${t("emailings.friday")}`, key: "friday" }, { label: `${t("emailings.saturday")}`, key: "saturday" }, { label: `${t("emailings.sunday")}`, key: "sunday" }];
 
 
     const validateForm = () => {
@@ -520,7 +542,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
 
         if (step === 1) {
-            if (!formData.campaign_title.trim()) newErrors.campaign_title =`${t("emailings.campaign_title_required")}`;
+            if (!formData.campaign_title.trim()) newErrors.campaign_title = `${t("emailings.campaign_title_required")}`;
             if (!formData.campaign_objective) newErrors.campaign_objective = `${t("emailings.campaign_objective_required")}`;
 
             if (formData.campaign_objective === 'other' && !formData.campaign_objective_other.trim()) {
@@ -552,7 +574,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
 
         if (step === 2) {
             if (!formData.desired_tone) newErrors.desired_tone = `${t("emailings.desired_tone_required")}`;
-            if (!formData.language) newErrors.language =`${t("emailings.language_required")}`;
+            if (!formData.language) newErrors.language = `${t("emailings.language_required")}`;
             if (!formData.send_time_window) newErrors.send_time_window = `${t("emailings.time_window_required")}`;
 
             if (!formData.start_date) {
@@ -641,7 +663,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
         const file = e.target.files?.[0];
         setErrors((prev) => ({ ...prev, file: "" }))
         if (file && file.type !== "application/pdf") {
-            setErrors((prev) => ({ ...prev, file:  `${t("brain_ai.knowledge.only_pdf_files_allowed")}` }));
+            setErrors((prev) => ({ ...prev, file: `${t("brain_ai.knowledge.only_pdf_files_allowed")}` }));
             e.target.files = '';
             return;
         }
@@ -690,21 +712,21 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
             ...prev, [name]: value
         }))
         setErrors((prev) => ({ ...prev, [name]: "" }))
-        
+
         // Real-time URL validation for CTA fields
         if (name === 'url' && value.trim() && (formData.cta_type === "send_to_a_link" || formData.cta_type === "visit_a_page")) {
             if (!/^https?:\/\/\S+$/.test(value.trim())) {
                 setErrors((prev) => ({ ...prev, url: `${t("emailings.enter_valid_url")}` }))
             }
         }
-        
+
         // Real-time validation for meeting link
         if (name === 'calender_choosed' && formData.cta_type === "book_a_meeting") {
             if (value.trim() && !/^https?:\/\/\S+$/.test(value.trim())) {
                 setErrors((prev) => ({ ...prev, calender_choosed: `${t("emailings.enter_valid_url")}` }))
             }
         }
-        
+
         // Real-time validation for custom prompt when AI brain is enabled
         if (name === 'custom_prompt' && formData.include_brainai) {
             if (!value.trim()) {
@@ -998,7 +1020,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                     {t("brain_ai.upload_from_your_computer")}
                                 </p>
                                 <p className="text-[14px] font-[500] text-[#5A687C] mt-1">
-                                {t("brain_ai.or_drag_and_drop")}
+                                    {t("brain_ai.or_drag_and_drop")}
                                 </p>
                                 <input
                                     type="file"
@@ -1209,8 +1231,8 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                                 calender_choosed: "",
                                                 file: ""
                                             }))
-                                            setErrors((prev) => ({ 
-                                                ...prev, 
+                                            setErrors((prev) => ({
+                                                ...prev,
                                                 cta_type: "",
                                                 url: "",
                                                 calender_choosed: "",
@@ -1490,7 +1512,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                             <div className="relative group">
                                                 <Info className="text-gray-500 cursor-pointer" size={16} />
                                                 <div className="absolute bottom-full mb-1 w-60 left-8 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:flex transition-opacity duration-200 z-10">
-                                                {t("emailings.length_for_email")}
+                                                    {t("emailings.length_for_email")}
                                                 </div>
                                             </div>
                                         </label>
@@ -1550,7 +1572,9 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                         </div>
 
                         {step === 3 && <div className="flex gap-4 pt-2">
-                            {isEdit ? <button disabled={updateStatus} className="px-4 font-[500] w-[200px] py-2 bg-[#675FFF] text-white rounded-lg" onClick={() => handleUpdate(false)}>{updateStatus ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : `${t("emailings.update_campaign")}`}</button> :
+                            {isEdit ? 
+                            <button disabled={updateStatus} className="px-4 font-[500] w-[200px] py-2 bg-[#675FFF] text-white rounded-lg" onClick={() => handleUpdate(false)}>{updateStatus ?
+                                 <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : `${t("emailings.update_campaign")}`}</button> :
                                 <button disabled={submitStatus} className="px-4 font-[500] w-[200px] py-2 bg-[#675FFF] text-white rounded-lg" onClick={() => handleSubmit(false)}>{submitStatus ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : `${t("emailings.launch_campaign")}`}</button>}
                             {isEdit ? <button disabled={updateSaveDraftStatus} className="px-4 font-[500] w-[200px] py-2 border text-[#5A687C] border-[#E1E4EA] rounded-lg" onClick={() => handleUpdate(true)}>{updateSaveDraftStatus ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : `${t("emailings.save_as_draft")}`}</button> :
                                 <button disabled={saveDraftStatus} className="px-4 font-[500] w-[200px] py-2 border text-[#5A687C] border-[#E1E4EA] rounded-lg" onClick={() => handleSubmit(true)}>{saveDraftStatus ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : `${t("emailings.save_as_draft")}`}</button>}

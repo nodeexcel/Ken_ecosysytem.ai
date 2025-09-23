@@ -37,7 +37,7 @@ export const SelectDropdown = ({ name, options, placeholder = 'Select', value, o
     };
 
     // Fix: allow 0 as a valid value
-    const optionLabel = (value !== undefined && value !== null) ? options.find((e) => e.key === value) : null;
+    const optionLabel = (value !== undefined && value !== null&& value!=="") ? options.find((e) => e.key === value) : null;
 
     return (
         <div ref={dropdownRef} className={`relative ${className}`}>

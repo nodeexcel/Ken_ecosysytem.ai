@@ -101,7 +101,7 @@ export default function PhoneNumbers() {
       fetchPhoneNumbers();
       setShowModal(false);
       setLoader(false);
-      setOtpModal(true)
+      // setOtpModal(true)
       setNumber("")
       setPhoneName("")
       setSelectedCountry(countries[0])
@@ -428,7 +428,7 @@ export default function PhoneNumbers() {
           </div>
         </div>
       )}
-
+{/* 
       {
         otpModal && (
           <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -461,7 +461,7 @@ export default function PhoneNumbers() {
             </div>
           </div>
         )
-      }
+      } */}
 
       {
         deleteRow && (
