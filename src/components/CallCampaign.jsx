@@ -899,7 +899,7 @@ export default function CallCampaign() {
                     name="phone_number"
                     value={campaign.phone_number}
                     onChange={handleCampaignForm}
-                    className="w-full outline-none bg-transparent text-[#5A687C] px-2"
+                    className="w-full outline-none bg-transparent text-[#5A687ChandleEditCampaigAre you sure you want to delete this call campaign?] px-2"
                   >
                     <option value="" className="text-gray-500">Select</option>
                     {phoneNumbers.map((phone) => (
@@ -1087,7 +1087,7 @@ export default function CallCampaign() {
 
       {
         deleteRow && (
-          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999]">
             <div className="bg-white rounded-2xl w-[400px] p-6 relative shadow-lg">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">{t("phone.delete_call_campaign")}</h2>
               <p className="text-gray-500 mb-4">{t("phone.delete_call_campaign_msg")}</p>
@@ -1106,7 +1106,7 @@ export default function CallCampaign() {
                   className="w-full text-[16px] cursor-pointer text-white rounded-[8px] bg-red-500 h-[38px] flex justify-center items-center gap-2 relative"
                 >
                   {
-                    t("phone.delete")
+                    t("brain_ai.delete")
                   }
                   {/* <span className="loader"></span> */}
                 </button>
