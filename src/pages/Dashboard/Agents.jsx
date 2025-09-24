@@ -82,7 +82,7 @@ const Agents = () => {
     },
     {
       name: "Emile",
-      role: `${t("emailing")}`,
+      role: `${t("email")}`,
       gradient: "bg-gradient-to-br from-[#CEBFFD] to-[#CEBFFD]",
       path: "/dashboard/campaigns",
       label: "Emailing",
@@ -106,7 +106,7 @@ const Agents = () => {
     },
     {
       name: "Sandro",
-      role: `${t("seo")}`,
+      role: `${t("seo_name")}`,
       gradient: "bg-gradient-to-br from-[#F8DDFF] to-[#F8DDFF]",
       path: "/dashboard/seo",
       label: "Sandro",
@@ -140,10 +140,14 @@ const Agents = () => {
         <div className='flex justify-between px-2 items-center'>
           {/* <MdOutlineKeyboardArrowLeft size={25} /> */}
           <div className="flex gap-2 items-center h-[57px]">
-            <h1 className="text-[20px] font-[600] pl-3">{t("home")}</h1>
+            <h1 className="text-[20px] font-[600] pl-10 lg:pl-3">{t("home")}</h1>
           </div>
-          <div>
+          <div className="flex gap-2 items-center">
+            
+          <div className="flex gap-2 items-center">
             <button className='bg-[#675FFF] py-2 px-10 text-[14px] rounded-lg text-white cursor-pointer' onClick={handleLogout}>{t("logout")}</button>
+          </div>
+          
           </div>
         </div>
         <hr className='text-[#E1E4EA]' />
@@ -183,7 +187,7 @@ const Agents = () => {
                       {employee.name}
                       <br />
                     </span>
-                    <span>{employee.role}</span>
+                    <span className="text-[15px]">{employee.role}</span>
                   </div>
                   <CircleArrowRightIcon className="absolute w-5 h-5 top-0 right-0 text-[#1E1E1E]" />
                 </div>

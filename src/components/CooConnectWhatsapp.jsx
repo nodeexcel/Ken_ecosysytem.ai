@@ -1,7 +1,9 @@
+import CommingSoon from "./CommingSoon";
+
 function CooConnectWhatsapp() {
     return (
         <div className='flex justify-center items-center h-screen'>
-            Comming Soon
+            <CommingSoon />
         </div>
     )
 }

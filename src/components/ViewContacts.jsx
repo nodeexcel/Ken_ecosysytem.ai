@@ -3,16 +3,18 @@ import { Delete } from '../icons/icons';
 import { DateFormat } from '../utils/TimeFormat';
 import { X } from 'lucide-react';
 import { getListedContacts, removeContactFromList } from '../api/brainai';
+import { useTranslation } from "react-i18next";
 
 function ViewContacts({ setSelectedData, selectedData }) {
     const [allContacts, setAllContacts] = useState([]);
     const [loading, setLoading] = useState(true)
+    const { t } = useTranslation();
     const tableHeaders = [
-        { name: "Full Name", width: "flex-1" },
-        { name: "Email", width: "w-[290px]" },
-        { name: "Phone No", width: "flex-1" },
-        { name: "Date Created", width: "flex-1" },
-        { name: "Actions", width: "w-[120px]" },
+        { name: `${t("brain_ai.full_name")}`, width: "flex-1" },
+        { name: `${t("brain_ai.email")}`, width: "w-[290px]" },
+        { name: `${t("brain_ai.phone_no")}`, width: "flex-1" },
+        { name: `${t("brain_ai.date_created")}`, width: "flex-1" },
+        { name: `${t("brain_ai.actions")}`, width: "w-[120px]" },
     ];
     const [formCreateList, setFormCreateList] = useState({ listName: '', contactsId: [] });
 
@@ -104,7 +106,7 @@ function ViewContacts({ setSelectedData, selectedData }) {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl w-full max-w-[80vw] max-h-[80vh] overflow-auto  p-6 relative shadow-lg">
                 <button
-                    className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                    className="absolute top-4 cursor-pointer right-4 text-gray-500 hover:text-gray-700"
                     onClick={() => {
                         setSelectedData({})
                     }}
@@ -115,9 +117,9 @@ function ViewContacts({ setSelectedData, selectedData }) {
                 <div className='flex flex-col gap-5 py-5'>
                     <h1 className='text-[#1E1E1E] font-[600] text-[16px]'>{selectedData?.listName} contacts</h1>
                     {formCreateList.contactsId?.length > 0 && <div className='flex gap-4 items-center'>
-                        <p className='text-[#1E1E1E] font-[600] text-[16px]'>{formCreateList.contactsId?.length + ' Contact Selected'}</p>
-                        <button onClick={() => handleDeleteContact(formCreateList.contactsId)} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#FF2D55] rounded-[7px] text-[#FF2D55]">
-                            Delete
+                        <p className='text-[#1E1E1E] font-[600] text-[16px]'>{formCreateList.contactsId?.length + " "+`${t("brain_ai.contacts_selected")}`}</p>
+                        <button onClick={() => handleDeleteContact(formCreateList.contactsId)} className="flex cursor-pointer items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#FF2D55] rounded-[7px] text-[#FF2D55]">
+                            {t("brain_ai.delete")}
                         </button>
                     </div>}
                     <div className="overflow-auto w-full">
@@ -177,14 +179,14 @@ function ViewContacts({ setSelectedData, selectedData }) {
                                                     </td>
                                                     <td className="p-[14px]  w-full text-sm text-[#5A687C]">
                                                         <div className="flex items-center gap-3.5">
-                                                            <div onClick={() => handleDeleteContact([contact.id])}>
+                                                            <div className='cursor-pointer' onClick={() => handleDeleteContact([contact.id])}>
                                                                 <Delete className="text-red-500" />
                                                             </div>
                                                         </div>
                                                     </td>
                                                 </tr>
                                             ))}
-                                        </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Contacts Listed</p>}
+                                        </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">{t("brain_ai.no_contact_message")}</p>}
                             </div>
                         </table>
                     </div>

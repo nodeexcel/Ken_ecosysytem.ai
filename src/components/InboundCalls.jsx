@@ -1,41 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { MoreHorizontal, X } from "lucide-react";
 import { BritishFlag, Delete, Notes, Phone, TestCall, ThreeDots } from "../icons/icons";
 import DatePicker from "react-datepicker";
 import { LuCalendarDays } from "react-icons/lu";
+import { useTranslation } from "react-i18next";
+import { format } from "date-fns";
+import { inboundCall } from "../api/callAgent";
 
-const agents = [
-    {
-        id: 1,
-        agent_name: "Sami",
-        date: "02-05-2024",
-        language: "Francais",
-        voice: "Nicolas Petit",
-        caller_no: "+4177809025",
-        status: "No Answer",
-        duration: "1:00 hr"
-    },
-    {
-        id: 2,
-        agent_name: "Sami",
-        date: "02-05-2024",
-        language: "Francais",
-        voice: "Nicolas Petit",
-        caller_no: "+4177809025",
-        status: "Replied",
-        duration: "1:00 hr"
-    },
-    {
-        id: 3,
-        agent_name: "Sami",
-        date: "02-05-2024",
-        language: "Francais",
-        voice: "Nicolas Petit",
-        caller_no: "+4177809025",
-        status: "Replied",
-        duration: "1:00 hr"
-    },
-];
+// Static data removed - now using API data
 
 const countries = [
     { name: "United States", code: "US", dial_code: "+1", flag: <BritishFlag /> },
@@ -45,6 +17,7 @@ const countries = [
 ];
 
 export default function InBoundCalls() {
+    const { t } = useTranslation();
     const [showModal, setShowModal] = useState(false);
     const [secondModel, setSecondModel] = useState(false);
     const [toggleTom, setToggleTom] = useState(true);
@@ -53,13 +26,37 @@ export default function InBoundCalls() {
     const [endDate, setEndDate] = useState(new Date())
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [recipient, setRecipient] = useState("");
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true);
+    const [agents, setAgents] = useState([]);
+    const [error, setError] = useState(null);
 
+    // Fetch inbound calls data on component mount
     useEffect(() => {
-        if (agents.length > 0) {
-            setLoading(false)
-        }
-    }, [agents])
+        const fetchInboundCalls = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                const response = await inboundCall();
+                
+                // Ensure we always set an array
+                if (response && response.data && Array.isArray(response.data)) {
+                    setAgents(response.data);
+                } else if (response && Array.isArray(response)) {
+                    setAgents(response);
+                } else {
+                    setAgents([]);
+                }
+            } catch (err) {
+                console.error('Error fetching inbound calls:', err);
+                setError('Failed to load inbound calls data');
+                setAgents([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchInboundCalls();
+    }, []);
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -75,11 +72,56 @@ export default function InBoundCalls() {
         setActiveDropdown(activeDropdown === index ? null : index);
     };
 
+    // Filter agents based on date range and recipient search
+    const filteredAgents = useMemo(() => {
+        // Ensure agents is an array before filtering
+        if (!Array.isArray(agents)) {
+            return [];
+        }
+        
+        return agents.filter((agent) => {
+            // Safety check for agent object
+            if (!agent || typeof agent !== 'object') {
+                return false;
+            }
+            
+            // Filter by date range
+            let dateInRange = true;
+            if (agent.date && typeof agent.date === 'string') {
+                const agentDateParts = agent.date.split('-');
+                if (agentDateParts.length === 3) {
+                    // Convert DD-MM-YYYY to Date object
+                    const agentDate = new Date(agentDateParts[2], agentDateParts[1] - 1, agentDateParts[0]);
+                    
+                    const start = startDate ? new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()) : null;
+                    const end = endDate ? new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 23, 59, 59, 999) : null;
+                    
+                    if (start && end) {
+                        dateInRange = agentDate >= start && agentDate <= end;
+                    } else if (start) {
+                        dateInRange = agentDate >= start;
+                    } else if (end) {
+                        dateInRange = agentDate <= end;
+                    }
+                }
+            }
+            
+            // Filter by recipient search
+            const recipientMatch = !recipient || 
+                (agent.caller_no && agent.caller_no.toLowerCase().includes(recipient.toLowerCase())) ||
+                (agent.agent_name && agent.agent_name.toLowerCase().includes(recipient.toLowerCase())) ||
+                (agent.voice && agent.voice.toLowerCase().includes(recipient.toLowerCase())) ||
+                (agent.language && agent.language.toLowerCase().includes(recipient.toLowerCase()));
+            
+            return dateInRange && recipientMatch;
+        });
+    }, [agents, startDate, endDate, recipient]);
+
     return (
         <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold text-black">Inbound Calls</h1>
+                <h1 className="text-2xl font-semibold text-black">{t("phone.inbound_calls")}</h1>
                 {/* <button
                     className="bg-[#7065F0] text-white font-medium px-5 py-2 rounded-lg shadow"
                     onClick={() => setShowModal(true)}
@@ -94,9 +136,11 @@ export default function InBoundCalls() {
                     <DatePicker
                         selected={startDate}
                         onChange={(date) => setStartDate(date)}
+                        dateFormat="dd/MM/yyyy"
+                        placeholderText={t("phone.start_date")}
                         customInput={
-                            <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px]  focus:border-[#675FFF] focus:outline-none">
-                                Start Date
+                            <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px] focus:border-[#675FFF] focus:outline-none">
+                                {startDate ? format(startDate, 'dd/MM/yyyy') : t("phone.start_date")}
                                 <LuCalendarDays className="text-[16px]" />
                             </button>
                         }
@@ -106,9 +150,12 @@ export default function InBoundCalls() {
                     <DatePicker
                         selected={endDate}
                         onChange={(date) => setEndDate(date)}
+                        dateFormat="dd/MM/yyyy"
+                        minDate={startDate}
+                        placeholderText={t("phone.end_date")}
                         customInput={
                             <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px] focus:border-[#675FFF] focus:outline-none">
-                                End Date
+                                {endDate ? format(endDate, 'dd/MM/yyyy') : t("phone.end_date")}
                                 <LuCalendarDays className="text-[16px]" />
                             </button>
                         }
@@ -118,8 +165,8 @@ export default function InBoundCalls() {
                     <input
                         value={recipient}
                         onChange={(e) => setRecipient(e.target.value)}
-                        placeholder="Recipient"
-                        className="bg-white border text-[#5A687C] max-w-[152px] text-[16px] font-[400] w-fit border-[#E1E4EA] px-4 py-2 rounded-lg  focus:border-[#675FFF] focus:outline-none"
+                        placeholder={t("phone.receipient")}
+                        className="bg-white border text-[#5A687C] max-w-[152px] text-[16px] font-[400] w-fit border-[#E1E4EA] px-4 py-2 rounded-lg focus:border-[#675FFF] focus:outline-none"
                     />
                 </div>
             </div>
@@ -129,81 +176,98 @@ export default function InBoundCalls() {
                     <div className="px-5 w-full">
                         <thead>
                             <tr className="text-left text-[#5a687c] text-[16px]">
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Agent Name</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Date</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Language</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Voice</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Caller no</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Status</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Duration</th>
-                                <th className="p-[14px]  w-full font-[400] whitespace-nowrap">Actions</th>
+                              <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("emailings.campaign_name")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("appointment.agent_name")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("brain_ai.date")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.language")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.voice")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.receipient_no")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.status")}</th>
+                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.duration")}</th>
+                                <th className="p-[14px] w-full font-[400] whitespace-nowrap">{t("phone.actions")}</th>
                             </tr>
                         </thead>
                     </div>
                     <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
-                        {loading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
-                            agents.length !== 0 ?
-                                <tbody className="w-full">
-                                    {agents.map((agent, index) => (
-                                        <tr
-                                            key={agent.id}
-                                            className={`text-[16px] ${index !== agents.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
-                                        >
-                                            <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#1E1E1E] font-[600]">{agent.agent_name}</td>
-                                            <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.date}</td>
-                                            <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.language}</td>
-                                            <td className="py-[14px] pl-[10px] pr-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.voice}</td>
-                                            <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.caller_no}</td>
-                                            <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[17%] w-full">
-                                                <span className={`inline-block ${agent.status !== "Replied" ? "text-[#34C759]" : "text-[#FF3B30]"} text-[16px] font-[400] px-3 py-1 rounded-full`}>
-                                                    {agent.status}
-                                                </span>
-                                            </td>
-                                            <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.duration}</td>
-                                            <td className="p-[14px]  w-full">
-                                                <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
-                                                    <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
-                                                </button>
-                                                {activeDropdown === index && (
-                                                    <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
-                                                        <div className="py-1">
+                        {loading ? (
+                            <div className="flex justify-center items-center h-34">
+                                <span className="loader" />
+                            </div>
+                        ) : error ? (
+                            <div className="flex flex-col justify-center items-center h-34 text-center">
+                                <p className="text-[#FF3B30] text-[16px] mb-2">{error}</p>
+                                <button 
+                                    onClick={() => window.location.reload()} 
+                                    className="text-[#675FFF] text-[14px] hover:underline"
+                                >
+                                    Try Again
+                                </button>
+                            </div>
+                        ) : filteredAgents.length !== 0 ? (
+                            <tbody className="w-full">
+                                {filteredAgents.map((agent, index) => (
+                                    <tr
+                                        key={agent.id}
+                                        className={`text-[16px] ${index !== filteredAgents.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
+                                    >
+                                        <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#1E1E1E] font-[600]">{agent.agent_name}</td>
+                                        <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.date}</td>
+                                        <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.language}</td>
+                                        <td className="py-[14px] pl-[10px] pr-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.voice}</td>
+                                        <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.caller_no}</td>
+                                        <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[17%] w-full">
+                                            <span className={`inline-block ${agent.status !== "Replied" ? "text-[#34C759]" : "text-[#FF3B30]"} text-[16px] font-[400] px-3 py-1 rounded-full`}>
+                                                {agent.status}
+                                            </span>
+                                        </td>
+                                        <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.duration}</td>
+                                        <td className="p-[14px]  w-full">
+                                            <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
+                                                <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
+                                            </button>
+                                            {activeDropdown === index && (
+                                                <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                                                    <div className="py-1">
+                                                        <button
+                                                            className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
+                                                            onClick={() => {
+                                                                // Handle edit action
+                                                                setActiveDropdown(null);
+                                                            }}
+                                                        >
+                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Phone /></div> <div className='hidden group-hover:block'><Phone active={true} /></div> <span>Listen the call</span> </div>
+                                                        </button>
+                                                        <button
+                                                            className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
+                                                            onClick={() => {
+                                                                // Handle delete action
+                                                                setActiveDropdown(null);
+                                                            }}
+                                                        >
+                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>Notes</span> </div>
+                                                        </button>
+                                                        <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                                                        <div className='py-2'>
                                                             <button
-                                                                className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
-                                                                onClick={() => {
-                                                                    // Handle edit action
-                                                                    setActiveDropdown(null);
-                                                                }}
-                                                            >
-                                                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><Phone /></div> <div className='hidden group-hover:block'><Phone active={true} /></div> <span>Listen the call</span> </div>
-                                                            </button>
-                                                            <button
-                                                                className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
+                                                                className="block w-full text-left hover:rounded-lg px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
                                                                 onClick={() => {
                                                                     // Handle delete action
                                                                     setActiveDropdown(null);
                                                                 }}
                                                             >
-                                                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>Notes</span> </div>
+                                                                <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">Delete</span> </div>
                                                             </button>
-                                                            <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                                                            <div className='py-2'>
-                                                                <button
-                                                                    className="block w-full text-left hover:rounded-lg px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
-                                                                    onClick={() => {
-                                                                        // Handle delete action
-                                                                        setActiveDropdown(null);
-                                                                    }}
-                                                                >
-                                                                    <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">Delete</span> </div>
-                                                                </button>
-                                                            </div>
                                                         </div>
                                                     </div>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Inbound Calls Listed</p>}
+                                                </div>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        ) : (
+                            <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Inbound Calls Listed</p>
+                        )}
                     </div>
 
                 </table>
@@ -230,7 +294,7 @@ export default function InBoundCalls() {
                                 <label className="block text-sm text-gray-700 mb-1">Campaign Name</label>
                                 <input
                                     type="text"
-                                    placeholder="Enter campaign name"
+                                    placeholder={t("phone.enter_campaign_name")}
                                     className="w-full px-4 py-2 border rounded-lg border-gray-300  focus:border-[#675FFF] focus:outline-none"
                                 />
                             </div>
@@ -297,7 +361,7 @@ export default function InBoundCalls() {
                                     </select>
                                     <input
                                         type="tel"
-                                        placeholder="Enter number"
+                                        placeholder={t("phone.enter_number")}
                                         className="w-full outline-none focus:outline-none"
                                     />
                                 </div>

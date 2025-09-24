@@ -20,11 +20,15 @@ function AcceptInvitation() {
 
         try {
             const response = await acceptInviteEmail({token})
+            console.log(response,"responseeeeeedddddd")
             if (response?.status===200) {
                 navigate("/")
             }
+            else {
+                setError(response?.response?.data?.message || "Something went wrong")
+            }
         } catch (err) {
-            console.log(err)
+            setError(err?.response?.data?.data?.message )
         } finally {
             setLoading(false);
         }
@@ -42,14 +46,14 @@ function AcceptInvitation() {
                         ? `${email} has been invited to join a team. Click below to accept the invitation.`
                         : 'You have received an invitation. Click below to accept it.'}
                 </p>
+                {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
                 <button
                     onClick={handleAccept}
                     disabled={loading}
                     className={`w-full ${loading ? "bg-[#675fff79]" : "bg-[#675FFF] cursor-pointer"} text-white py-2 rounded-lg transition`}
-                >
+                >       
                     {loading ? <div className="flex items-center justify-center gap-2"><p>Accepting...</p><span className="loader" /></div> : 'Accept Invitation'}
                 </button>
-                {error && <p className="text-sm text-red-500 mt-4">{error}</p>}
             </div>
         </div>
     );

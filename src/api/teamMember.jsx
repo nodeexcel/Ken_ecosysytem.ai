@@ -29,3 +29,14 @@ export const getTeamMembers = async () => {
         return error;
     }
 };
+
+export const removeTeamMember = async (memberId) => {
+    try {
+        console.log(memberId);
+        const response = await axiosInstance.patch(`/api/users/delete-member`,{memberId:memberId});
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+}

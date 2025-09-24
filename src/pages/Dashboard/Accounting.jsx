@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { ConversationIcon, LeftArrow } from '../../icons/icons'
+import { BalanceSheetIcon, CalculatorIcon, ConversationIcon, LeftArrow, PhoneCampaign, ROICalculatorIcon } from '../../icons/icons'
 import finnImg from "../../assets/svg/finn_logo.svg"
 import { useNavigate } from 'react-router-dom'
 import finnMsgLogo from '../../assets/svg/finn_msg_logo.svg'
@@ -7,6 +7,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { deleteChat, getAccountingChatById, getAccountingChats, updateChatName } from '../../api/account'
 import AgentChatBox from '../../components/AgentChatBox'
 import { formatTimeAgo } from '../../utils/TimeFormat'
+import { useTranslation } from "react-i18next";
+import BalanceSheetAccounting from '../../components/BalanceSheetAccounting'
+import ProfitLossCalculatorAccounting from '../../components/ProfitLossCalculatorAccounting'
+import SalesForecasterAccounting from '../../components/SalesForecasterAccounting'
+import ROICalculatorAccounting from '../../components/ROICalculatorAccounting'
+import { X } from 'lucide-react'
+import { BsThreeDots } from 'react-icons/bs'
+import chatInstance from '../../api/chatInstance'
+import { useDispatch, useSelector } from 'react-redux'
+import { discardSkillsData } from '../../store/agentSkillsSlice'
 
 function Accounting() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -22,17 +32,32 @@ function Accounting() {
     const [name, setName] = useState("")
     const [updateNameLoading, setUpdateNameLoading] = useState(false)
     const [editData, setEditData] = useState({})
+    const [sidebarStatus, setSideBarStatus] = useState(false)
     const socketRef = useRef(null)
     const socket2Ref = useRef(null)
-    const newwebsocketurl = "ws://116.202.210.102:8000/new-accounting-chat"
-    const websocketurl = "ws://116.202.210.102:8000/accounting"
+    const newwebsocketurl = `${chatInstance}/new-accounting-chat`
+    const websocketurl = `${chatInstance}/accounting`
     const initialMessage = "Hi! I’m Finn, your Finance and Accounting expert. \nI’m here to help you manage your cash flow, track expenses, generate financial reports, and keep your books clean, without the headache.\nFrom invoicing and cost analysis to budgeting and tax prep, I’ve got your numbers covered. \nJust tell me what you need.I can analyze your data, highlight financial risks, and help you make smarter business decisions in real time. \nReady to get your finances in order and grow with clarity ? Let’s dive in 💼"
 
     const navigate = useNavigate()
+    const { t } = useTranslation()
+    const dispatch = useDispatch()
 
     const sideMenuList = [
-        { label: "Chat", icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
+        { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
+        { label: t("skills.finn_content1_header"), icon: <BalanceSheetIcon status={activeSidebarItem == "balance_sheet"} />, hoverIcon: <BalanceSheetIcon hover={true} />, path: "balance_sheet" },
+        { label: t("skills.finn_content2_header"), icon: <CalculatorIcon status={activeSidebarItem == "profit_loss_calculator"} />, hoverIcon: <CalculatorIcon hover={true} />, path: "profit_loss_calculator" },
+        { label: t("skills.finn_content3_header"), icon: <PhoneCampaign status={activeSidebarItem == "sales_forecaster"} />, hoverIcon: <PhoneCampaign hover={true} />, path: "sales_forecaster" },
+        { label: t("skills.finn_content4_header"), icon: <ROICalculatorIcon status={activeSidebarItem == "roi_calculator"} />, hoverIcon: <ROICalculatorIcon hover={true} />, path: "roi_calculator" },
     ]
+
+    const activeTab = useSelector((state) => state.skills)
+
+    useEffect(() => {
+        if (activeTab.label !== null) {
+            setActiveSidebarItem(activeTab.label)
+        }
+    }, [activeTab.loading])
 
     useEffect(() => {
         if (chatList?.length > 0) {
@@ -81,7 +106,7 @@ function Accounting() {
                 isUser,
                 content,
                 sender: isUser ? "User" : "Ecosystem.ai",
-                time: msg?.message_at ? formatTimeAgo(msg?.message_at) : "Just now",
+                time: msg?.message_at ? formatTimeAgo(msg?.message_at) : `${t("seo.just_now")}`,
                 status: "Read"
             };
         });
@@ -106,7 +131,7 @@ function Accounting() {
 
     const handleUpdateName = async () => {
         if (!name) {
-            setErrors((prev) => ({ ...prev, name: "Enter the name" }))
+            setErrors((prev) => ({ ...prev, name: `${t("seo.enter_name")}` }))
             return
         }
         try {
@@ -141,9 +166,9 @@ function Accounting() {
         }
     }
 
-    const staticSuggestions = [{ label: "Would you like advice on optimizing your cash flow?", key: "I would you like advice on optimizing my cash flow." },
-    { label: "I need template for my forecast budget.", key: "I need template for my forecast budget." },
-    { label: "How to organize my expenses and icome efficiently.", key: "How to organize my expenses and icome efficiently." }
+    const staticSuggestions = [{ label: `${t("tara.optimizing")}`, key: `${t("tara.accountings_key")}` },
+    { label: `${t("tara.forecast_budget")}`, key: `${t("tara.forecast_budget")}` },
+    { label: `${t("tara.efficiently")}`, key: `${t("tara.efficiently_key")}` }
     ]
 
 
@@ -180,7 +205,8 @@ function Accounting() {
         handleChatHistoryId: handleChatHistoryId,
         socketRef: socketRef,
         socket2Ref: socket2Ref,
-        staticSuggestions: staticSuggestions
+        staticSuggestions: staticSuggestions,
+        nameColor: "#53AF86"
     }
 
     const stopTranscription = () => {
@@ -194,6 +220,14 @@ function Accounting() {
 
     const renderMainContent = () => {
         switch (activeSidebarItem) {
+            case "balance_sheet":
+                return <BalanceSheetAccounting />
+            case "profit_loss_calculator":
+                return <ProfitLossCalculatorAccounting />
+            case "sales_forecaster":
+                return <SalesForecasterAccounting />
+            case "roi_calculator":
+                return <ROICalculatorAccounting />
             default:
                 return <AgentChatBox listedProps={listedProps} />
         }
@@ -201,30 +235,32 @@ function Accounting() {
     }
 
     return (
-        <div className="h-full w-full">
+        <div className="h-full w-full relative">
+            <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><BsThreeDots size={24} color='#1e1e1e' /></div>
             <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
                 {/* Sidebar */}
-                <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
+                <div className="lg:flex hidden flex-col bg-white gap-8 border-r border-[#E1E4EA] min-w-[272px] h-full">
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
                             stopTranscription()
+                            dispatch(discardSkillsData())
                         }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}
-                                <h1 className="text-[20px] font-[600]">Accounting</h1>
+                                <h1 className="text-[20px] font-[600]">{t("accouting")}</h1>
                             </div>
                         </div>
                         <hr className='text-[#E1E4EA]' />
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-3">
-                        <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
+                        <div className="bg-[#F7F7FF] border border-[#E9E8FF] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
                             <div className="flex justify-center items-center">
                                 <img src={finnImg} alt={"finn"} className="object-fit" />
                             </div>
                             <div className="flex flex-col">
                                 <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Finn</h1>
-                                <p className="text-[#5A687C] text-[14px] font-[400]">Accounting</p>
+                                <p className="text-[#5A687C] text-[14px] font-[400]">{t("accouting")}</p>
                             </div>
                         </div>
                         {sideMenuList.map((e, i) => <div
@@ -243,10 +279,62 @@ function Accounting() {
                 </div>
 
                 {/* Main Content */}
-                <div className="w-full py-3 pr-4 overflow-x-hidden">
+                <div className="w-full overflow-x-hidden pr-0 py-8 pl-3 lg:pl-0 lg:pr-4 lg:py-3">
                     {renderMainContent()}
                 </div>
             </div>
+            {sidebarStatus &&
+                <div className="lg:hidden fixed inset-0 bg-black/20 flex items-end z-50">
+                    <div className="flex relative flex-col bg-white gap-8 rounded-t-[20px] w-full max-h-[80%] overflow-auto py-8">
+                        <button
+                            className="absolute top-4 cursor-pointer right-4 text-[#1e1e1e]"
+                            onClick={() => {
+                                setSideBarStatus(false)
+                            }}
+                        >
+                            <X size={20} />
+                        </button>
+                        <div className=''>
+                            <div className='flex justify-center items-center cursor-pointer' onClick={() => {
+                                navigate("/dashboard")
+                                stopTranscription()
+                            }}>
+                                <div className="flex gap-4 pl-3 items-center h-[57px]">
+                                    {/* <LeftArrow /> */}
+                                    <h1 className="text-[20px] font-[600]">{t("accouting")}</h1>
+                                </div>
+                            </div>
+                            <hr className='text-[#E1E4EA]' />
+                        </div>
+                        <div className="flex flex-col w-full items-start gap-2 relative px-5">
+                            <div className="bg-[#F7F7FF] border border-[#E9E8FF] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
+                                <div className="flex justify-center items-center">
+                                    <img src={finnImg} alt={"finn"} className="object-fit" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Finn</h1>
+                                    <p className="text-[#5A687C] text-[14px] font-[400]">{t("accouting")}</p>
+                                </div>
+                            </div>
+                            {sideMenuList.map((e, i) => <div
+                                key={i}
+                                onClick={() => {
+                                    setActiveSidebarItem(e.path)
+                                    setSideBarStatus(false)
+                                }}
+                                className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                                    }`}
+                            >
+                                {activeSidebarItem === `${e.path}` ? e.icon :
+                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'>{e.icon}</div> <div className='hidden group-hover:block'>{e.hoverIcon}</div></div>}
+                                <span className={`font-[400] text-[16px] ${activeSidebarItem === `${e.path}` ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                                    {e.label}
+                                </span>
+                            </div>)}
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     )
 }

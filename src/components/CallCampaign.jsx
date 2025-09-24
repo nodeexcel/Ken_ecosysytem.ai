@@ -14,25 +14,10 @@ import { format } from "date-fns";
 import { SelectDropdown } from "./Dropdown";
 import { getLists } from "../api/brainai";
 import { DateFormat } from "../utils/TimeFormat";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
-const staticData = [
-  {
-    label: "Total calls",
-    value: "0"
-  },
-  {
-    label: "Unsuccessful calls",
-    value: "0"
-  },
-  {
-    label: "Average call duration",
-    value: "0"
-  },
-  {
-    label: "Total call time",
-    value: "00:00:00"
-  }
-]
+
 
 const renderColor = (text) => {
   switch (text) {
@@ -57,6 +42,25 @@ const countries = [
 ];
 
 export default function CallCampaign() {
+
+  const staticData = [
+  {
+    label: "Total calls",
+    value: "0"
+  },
+  {
+    label: "Unsuccessful calls",
+    value: "0"
+  },
+  {
+    label: "Average call duration",
+    value: "0"
+  },
+  {
+    label: "Total call time",
+    value: "00:00:00"
+  }
+]
   const [showModal, setShowModal] = useState(false);
   const [secondModel, setSecondModel] = useState(false);
   const [toggleTom, setToggleTom] = useState(true);
@@ -64,8 +68,8 @@ export default function CallCampaign() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [viewReportModel, setViewReportModel] = useState(false);
   const [editData, setEditData] = useState();
-  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
-  const [isOpen, setIsOpen] = useState(false);
+  // const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+  // const [isOpen, setIsOpen] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const dispatch = useDispatch()
   const [agents, setAgent] = useState([]);
@@ -74,7 +78,10 @@ export default function CallCampaign() {
   const [deleteRow, setDeleteRow] = useState(null);
   const [contactLists, setContactLists] = useState([]);
   const [showListTargetSelector, setShowListTargetSelector] = useState(false);
+  const [apiMessage, setApiMessage] = useState({ type: '', message: '' });
   const targetListRef = useRef()
+  const {t}=useTranslation();
+  const navigator=useNavigate()
 
   // Add filter state
   const [filters, setFilters] = useState({
@@ -97,16 +104,15 @@ export default function CallCampaign() {
     { key: "french", label: "French" },
     { key: "spanish", label: "Spanish" }
   ];
-
   const voiceOptions = [
     // { key: "", label: "Voice" },
-    { key: "male", label: "Male" },
-    { key: "female", label: "Female" },
-    { key: "neutral", label: "Neutral" }
+    { key: "male", label: `${t("male")}` },
+    { key: "female", label: `${t("female")}`},
+    { key: "neutral", label: `${t("neutral")}` }
   ];
 
-  const tagsOptions = [{ label: "Interested", key: "interested" }, { label: "Not Interested", key: "not_interested" },
-  { label: "Messaging", key: "messaging" }, { label: "No Answer", key: "no_answer" }, { label: "Recall Requested", key: "recall_requested" }
+  const tagsOptions = [{ label: `${t("interested")}`, key: "interested" }, { label: `${t("not_interested")}`, key: "not_interested" },
+  { label: `${t("messaging")}`, key: "messaging" }, { label: `${t("appointment.no_answer")}`, key: "no_answer" }, { label: `${t("recall_request")}`, key: "recall_requested" }
   ]
 
   const [campaign, setCampaign] = useState(
@@ -118,7 +124,7 @@ export default function CallCampaign() {
       choose_calendar: "",
       max_call_time: 10,
       tag: "",
-      target_lists: [],
+      target_lists: "",
       agent: 0,
       country: "USA",
       phone_number: "",
@@ -155,21 +161,21 @@ export default function CallCampaign() {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!campaign.campaign_name.trim()) newErrors.campaign_name = "Campaign name is required.";
-    if (!campaign.campaign_type.trim()) newErrors.campaign_type = "Campaign Type is required.";
-    // if (!campaign.language) newErrors.language = "Language is required.";
-    // if (!campaign.voice) newErrors.voice = "Voice selection is required.";
-    // if (!campaign.choose_calendar) newErrors.choose_calendar = "Calendar selection is required.";
-    if (!campaign.max_call_time || campaign.max_call_time <= 0) newErrors.max_call_time = "Enter a valid call time.";
-    if (!campaign.tag) newErrors.tag = "Tag is required.";
-    if (!campaign.target_lists || campaign.target_lists.length === 0) newErrors.target_lists = "At least one target list is required.";
-    if (!campaign.agent) newErrors.agent = "Agent selection is required.";
+    if (!campaign.campaign_name.trim()) newErrors.campaign_name = t("phone.campaign_name_required");
+    if (!campaign.campaign_type.trim()) newErrors.campaign_type =t("phone.campaign_type_required");
+    if (!campaign.language) newErrors.language = "Language is required.";
+    if (!campaign.voice) newErrors.voice = "Voice selection is required.";
+    if (!campaign.choose_calendar) newErrors.choose_calendar = "Calendar selection is required.";
+    if (!campaign.max_call_time || campaign.max_call_time <= 0) newErrors.max_call_time = t("phone.campaign_call_time_validation");
+    if (!campaign.tag) newErrors.tag = t("phone.tag_required");
+    if (!campaign.target_lists || campaign.target_lists.length === 0) newErrors.target_lists = t("phone.atleast_one_target_required");
+    if (!campaign.agent) newErrors.agent = t("phone.agent_validation");
     // if (!campaign.country) newErrors.country = "Country is required.";
-    if (!campaign.phone_number) newErrors.phone_number = "Phone number is required.";
-    if (!campaign.catch_phrase.trim()) newErrors.catch_phrase = "Catch phrase is required.";
-    if (!campaign.call_script.trim()) newErrors.call_script = "Call script is required.";
-    if (campaign.catch_phrase.trim().length < 20) newErrors.catch_phrase = "Minimum 20 characters required for catch phrase.";
-    if (campaign.call_script.trim().length < 50) newErrors.call_script = "Minimum 50 characters required for call script.";
+    if (!campaign.phone_number) newErrors.phone_number = t("phone.phone_number_validation");
+    if (!campaign.catch_phrase.trim()) newErrors.catch_phrase = t("phone.catch_phase");
+    if (!campaign.call_script.trim()) newErrors.call_script =t("phone.call_script_validation");
+    if (campaign.catch_phrase.trim().length < 20) newErrors.catch_phrase = t("phone.min_20_char_required_validation");
+    if (campaign.call_script.trim().length < 50) newErrors.call_script =t("phone.max_50_char_required_validation");
 
     setErrors(newErrors);
 
@@ -256,7 +262,7 @@ export default function CallCampaign() {
       choose_calendar: "",
       max_call_time: 10,
       tag: '',
-      target_lists: [],
+      target_lists: "",
       agent: 0,
       country: "USA",
       phone_number: "",
@@ -295,20 +301,36 @@ export default function CallCampaign() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoader(true);
+    setApiMessage({ type: '', message: '' });
 
     if (validateForm()) {
-
-      const response = await createPhoneCampaign(campaign);
-
-
-      if (response.status === 200) {
-        console.log(response.data);
-
+      try {
+        // Convert target_lists to strings as required by API
+        const campaignData = {
+          ...campaign,
+          target_lists: parseInt(campaign.target_lists)
+        };
+        console.log("Submitting campaign data:", campaignData);
+        const response = await createPhoneCampaign(campaignData);
+        console.log("API Response:", response);
+        
+        if (response && response.status === 201) {
+          console.log("Campaign created successfully:", response.data)  
+          setApiMessage({ type: 'success', message: 'Campaign created successfully!' });
+          setTimeout(() => {
+            setShowModal(false);
+            resetForm();
+            handleGetPhoneCampaign();
+            setApiMessage({ type: '', message: '' });
+          }, 1500);
+        } else {
+          console.error("Failed to create campaign:", response);
+          
+        }
+      } catch (error) {
+        console.error("Error creating campaign:", error);
+        setApiMessage({ type: 'error', message: '' });
       }
-      setShowModal(false);
-      handleGetPhoneCampaign();
-      // Submit logic here
-
     } else {
       console.log("Validation failed");
       console.log("Errors:", errors);
@@ -467,7 +489,7 @@ export default function CallCampaign() {
         <div className="py-4 pr-2 flex flex-col gap-4 w-full h-screen overflow-auto">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-semibold text-black">Call Campaign</h1>
+            <h1 className="text-2xl font-semibold text-black">{t("phone.call_campaigns")}</h1>
             <button
               className="bg-[#7065F0] text-white font-medium px-5 py-2 rounded-lg shadow cursor-pointer"
               onClick={() => {
@@ -476,7 +498,9 @@ export default function CallCampaign() {
                 setSecondModel(false)
               }}
             >
-              New Campaign
+              {
+                t("emailings.new_campaign")
+              }
             </button>
           </div>
 
@@ -486,7 +510,7 @@ export default function CallCampaign() {
               <SelectDropdown
                 name="country"
                 options={countryOptions}
-                placeholder="Country"
+                placeholder={t("phone.country")}
                 value={filters.country}
                 onChange={(value) => setFilters({ ...filters, country: value })}
               />
@@ -496,7 +520,7 @@ export default function CallCampaign() {
               <SelectDropdown
                 name="language"
                 options={languageOptions}
-                placeholder="Language"
+                placeholder={t("phone.language")}
                 value={filters.language}
                 onChange={(value) => setFilters({ ...filters, language: value })}
               />
@@ -506,7 +530,7 @@ export default function CallCampaign() {
               <SelectDropdown
                 name="voice"
                 options={voiceOptions}
-                placeholder="Voice"
+                placeholder={t("phone.voice")}
                 value={filters.voice}
                 onChange={(value) => setFilters({ ...filters, voice: value })}
               />
@@ -519,13 +543,13 @@ export default function CallCampaign() {
               <div className="px-5 w-full">
                 <thead>
                   <tr className="text-left text-[#5a687c] text-[16px]">
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Campaign Name</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Agent Name</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Creation Date</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Language</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Total Calls</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Status</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">Actions</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("emailings.campaign_name")}</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("appointment.agent_name")}</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.creation_date")}</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.language")}</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.total_call")}</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.status")}</th>
+                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.active")}</th>
                   </tr>
                 </thead>
               </div>
@@ -550,7 +574,7 @@ export default function CallCampaign() {
                         <td className="p-[14px] min-w-[200px] max-w-[17%] w-full whitespace-nowrap">
                           <div className='flex items-center gap-2'>
                             <button className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg cursor-pointer' onClick={() => setShowReport(true)}>
-                              View Report
+                             {t("emailings.view_report")}
                             </button>
                             <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative">
                               <div className='bg-[#F4F5F6] p-2 rounded-lg cursor-pointer'><ThreeDots /></div>
@@ -568,7 +592,7 @@ export default function CallCampaign() {
 
                                       }}
                                     >
-                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>Edit</span> </div>
+                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
                                     </button>
                                     <button
                                       className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500] cursor-pointer"
@@ -578,7 +602,7 @@ export default function CallCampaign() {
                                         handleDuplicate(agent.id);
                                       }}
                                     >
-                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>Duplicate</span> </div>
+                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>{t("appointment.duplicate")}</span> </div>
                                     </button>
                                     <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                                     <div className="py-2">
@@ -591,7 +615,7 @@ export default function CallCampaign() {
 
                                         }}
                                       >
-                                        <div className="flex items-center gap-2 cursor-pointer">{<Delete />} <span>Delete</span> </div>
+                                        <div className="flex items-center gap-2 cursor-pointer">{<Delete />} <span>{t("delete")}</span> </div>
                                       </button>
                                     </div>
                                   </div>
@@ -603,7 +627,7 @@ export default function CallCampaign() {
                         </td>
                       </tr>
                     ))}
-                  </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Call Campaign Listed</p>}
+                  </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">{t("phone.no_call_listed")}</p>}
               </div>
 
             </table>
@@ -611,14 +635,14 @@ export default function CallCampaign() {
           {viewReportModel && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl w-full max-w-[678px] p-6 relative shadow-lg">
               <button
-                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-700"
                 onClick={() => setViewReportModel(false)}
               >
                 <X size={20} />
               </button>
 
               <h2 className="text-[20px] font-[600] text-[#1E1E1E] my-4">
-                Campaign Name : Inbound.4d74997e-2c17-4024-98c4-
+                {t("emailings.campaign_name")} : Inbound.4d74997e-2c17-4024-98c4-
                 5fbca9d4f5d1
               </h2>
               <div className="grid grid-cols-2 gap-5 w-full">
@@ -649,17 +673,17 @@ export default function CallCampaign() {
               setShowModal(false)
               setEditData()
               resetForm()
-            }} className="text-[14px] font-[400] text-[#5A687C] hover:text-[#5a687cdb] cursor-pointer">{`Call Campaigns > ${editData ? `${campaign.campaign_name}` : 'New Campaign'}`}</h1>
-            <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{editData ? 'Edit' : 'Add New'} Campaigns</h1>
+            }} className="text-[14px] font-[400] text-[#5A687C] hover:text-[#5a687cdb] cursor-pointer">{`${t("phone.call_campaigns")} > ${editData ? `${campaign.campaign_name}` : 'New Campaign'}`}</h1>
+            <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{editData ? t("phone.edit_campaign"): t('phone.add_campaign')} </h1>
           </div>
           <div className="w-full"
           >
             <div className="space-y-4">
               <div>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Campaign Name</label>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("emailings.campaign_name")}</label>
                 <input
                   type="text"
-                  placeholder="Enter campaign name"
+                  placeholder={t("phone.enter_campaign_name")}
                   className={`w-full px-4 py-2 bg-white border rounded-lg ${errors.campaign_name ? 'border-red-500' : 'border-[#E1E4EA]'}  focus:outline-none focus:border-[#675FFF]`}
 
                   name="campaign_name"
@@ -669,14 +693,14 @@ export default function CallCampaign() {
                 {errors.campaign_name && <p className="text-red-500 text-sm mt-1">{errors.campaign_name}</p>}
               </div>
               <div>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Campaign Type</label>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.campaign_type")}</label>
                 <SelectDropdown
                   name="campaign_type"
                   options={[
-                    { key: "outbound", label: "Outbound call campaign" },
-                    { key: "inbound", label: "Inbound call campaign" }
+                    { key: "outbound", label: t("phone.outbound_call") },
+                    { key: "inbound", label: t("phone.inbound_call") }
                   ]}
-                  placeholder="Select"
+                  placeholder={t("select")}
                   value={campaign.campaign_type}
                   onChange={(value) => handleCampaignForm({ target: { name: 'campaign_type', value } })}
                   errors={errors}
@@ -684,7 +708,7 @@ export default function CallCampaign() {
                 {errors.campaign_type && <p className="text-red-500 text-sm mt-1">{errors.campaign_type}</p>}
               </div>
 
-              {/* <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Language</label>
                   <SelectDropdown
@@ -715,9 +739,9 @@ export default function CallCampaign() {
                   />
                   {errors.voice && <p className="text-red-500 text-sm mt-1">{errors.voice}</p>}
                 </div>
-              </div> */}
+              </div>
 
-              {/* <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Choose Calendar</label>
                   <SelectDropdown
@@ -749,10 +773,10 @@ export default function CallCampaign() {
                   />
                   {errors.max_call_time && <p className="text-red-500 text-sm mt-1">{errors.max_call_time}</p>}
                 </div>
-              </div> */}
+              </div>
 
               <div>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Maximum Call Time in Minutes</label>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.max_call_time")}</label>
                 <input
                   type="text"
                   name='max_call_time'
@@ -768,12 +792,12 @@ export default function CallCampaign() {
                     }
                   }}
                   className={`w-full bg-white p-2 rounded-lg border ${errors.max_call_time ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                  placeholder="Enter number"
+                  placeholder={t("phone.enter_number")}
                 />
                 {errors.max_call_time && <p className="text-red-500 text-sm mt-1">{errors.max_call_time}</p>}
               </div>
               <div>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Select Your Tags</label>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.select_your_tag")}</label>
                 <div className="flex justify-between items-center px-3">
                   {tagsOptions.map((e) => (
                     <div key={e.key} className="flex items-center cursor-pointer" onClick={() => {
@@ -794,53 +818,50 @@ export default function CallCampaign() {
                 </div>
                 {errors.tag && <p className="text-red-500 text-sm mt-1">{errors.tag}</p>}
               </div>
-              <div className="relative" ref={targetListRef}>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Target Contact Lists</label>
-                <button
-                  onClick={() => setShowListTargetSelector((prev) => !prev)}
-                  className={`w-full flex items-center justify-between focus:outline-none focus:border-[#675FFF] bg-white border ${errors.target_lists ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 cursor-pointer`}
-                >
-                  <span className={`truncate ${campaign.target_lists?.length > 0 ? 'text-[#1E1E1E]' : 'text-[#5A687C]'}`}>{campaign.target_lists?.length > 0
-                    ? campaign.target_lists.map(dayKey => {
-                      const found = contactLists?.length > 0 && contactLists.find(d => d.key === dayKey);
-                      return found?.label;
-                    }).join(', ')
-                    : 'Select'}</span>
-                  <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showListTargetSelector ? 'transform rotate-180' : ''}`} />
-                </button>
-                {showListTargetSelector && (
-                  <div className="absolute z-50 mt-1 w-full">
-                    <CustomSelector
-                      options={contactLists?.length > 0 && contactLists}
-                      setShowSelector={setShowListTargetSelector}
-                      value={campaign.target_lists}
-                      onChange={(updated) => {
-                        setCampaign((prev) => ({
-                          ...prev,
-                          target_lists: updated,
-                        }))
-                        setErrors((prev) => ({ ...prev, target_lists: "" }))
-                      }
-                      }
-                      ref={targetListRef}
-                    />
-                  </div>
-                )}
+              <div>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.target_contact_lists")}</label>
+                <SelectDropdown
+                  name="target_lists"
+                  options={contactLists?.length > 0 && contactLists}
+                  value={campaign.target_lists}
+                  onChange={(updated) => {
+                    setCampaign((prev) => ({
+                      ...prev,
+                      target_lists: updated,
+                    }))
+                    setErrors((prev) => ({ ...prev, target_lists: "" }))
+                  }}
+                  errors={errors}
+                  placeholder={t("select")}
+                />
                 {errors.target_lists && <p className="text-red-500 text-sm mt-1">{errors.target_lists}</p>}
-                <button className="text-[#7065F0] text-sm font-medium mt-1">+ Create New Contact List</button>
+                <button className="text-[#7065F0] text-sm font-medium mt-1" onClick={()=>navigator('/dashboard/brain')}>+ {t("phone.create_contact_list")}</button>
               </div>
 
               <div>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Choose an Agent</label>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.choose_an_agent")}</label>
                 <SelectDropdown
                   name="agent"
                   options={agents.map(agent => ({ key: agent.id.toString(), label: agent.agent_name }))}
-                  placeholder="Select"
+                  placeholder={t("select")}
                   value={campaign.agent.toString()}
                   onChange={(value) => handleCampaignForm({ target: { name: 'agent', value: parseInt(value) } })}
                   errors={errors}
                 />
                 {errors.agent && <p className="text-red-500 text-sm mt-1">{errors.agent}</p>}
+              </div>
+
+              <div>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.phone_number")}</label>
+                <SelectDropdown
+                  name="phone_number"
+                  options={phoneNumbers.map(phone => ({ key: phone.phone_number, label: phone.phone_number }))}
+                  placeholder={t("select")}
+                  value={campaign.phone_number}
+                  onChange={(value) => handleCampaignForm({ target: { name: 'phone_number', value } })}
+                  errors={errors}
+                />
+                {errors.phone_number && <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>}
               </div>
 
               {/* <div>
@@ -878,7 +899,7 @@ export default function CallCampaign() {
                     name="phone_number"
                     value={campaign.phone_number}
                     onChange={handleCampaignForm}
-                    className="w-full outline-none bg-transparent text-[#5A687C] px-2"
+                    className="w-full outline-none bg-transparent text-[#5A687ChandleEditCampaigAre you sure you want to delete this call campaign?] px-2"
                   >
                     <option value="" className="text-gray-500">Select</option>
                     {phoneNumbers.map((phone) => (
@@ -893,11 +914,13 @@ export default function CallCampaign() {
 
               <div className="flex items-center justify-between mt-2">
                 <span className="text-[14px] font-[500] text-[#1E1E1E]">
-                  Tom, Engages the Conversation
+                  {
+                    t("phone.tom_engages_conversation")
+                  }
                 </span>
                 <button
                   onClick={() => setToggleTom(!toggleTom)}
-                  className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${toggleTom ? "bg-[#7065F0]" : "bg-gray-300"
+                  className={`w-11 h-6 cursor-pointer rounded-full relative transition-colors duration-300 ${toggleTom ? "bg-[#7065F0]" : "bg-gray-300"
                     }`}
                 >
                   <span
@@ -908,9 +931,9 @@ export default function CallCampaign() {
               </div>
 
               <div>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Your Catch Phrase</label>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.your_catch_phrase")}</label>
                 <textarea
-                  placeholder="Enter your catch phrase"
+                  placeholder={t("phone.catch_phrase_placeholder")}
                   className={`w-full px-4 py-2 border rounded-lg resize-none  ${errors.catch_phrase ? 'border-red-500' : 'border-[#E1E4EA]'}  focus:outline-none focus:border-[#675FFF]`}
                   rows={4}
                   value={campaign.catch_phrase}
@@ -920,9 +943,9 @@ export default function CallCampaign() {
                 {errors.catch_phrase && <p className="text-red-500 text-sm mt-1">{errors.catch_phrase}</p>}
               </div>
               <div>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Your Call Script</label>
+                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.call_script")}</label>
                 <textarea
-                  placeholder="Enter your call script"
+                  placeholder={t("phone.placeholder_call_script")}
                   className={`w-full px-4 py-2 border rounded-lg resize-none  ${errors.call_script ? 'border-red-500' : 'border-[#E1E4EA]'}  focus:outline-none focus:border-[#675FFF]`}
                   rows={4}
                   value={campaign.call_script}
@@ -933,39 +956,53 @@ export default function CallCampaign() {
               </div>
 
               {editData ? <div className="flex gap-4 mt-6">
-                <button className="w-[195px]  text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+                <button className="w-[195px] cursor-pointer text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
                   onClick={handleEditCampaign} disabled={loader}
                 >
-                  Save Campaign
+                  {t("phone.save_campaign")}
                 </button>
                 <button onClick={() => {
                   setShowModal(false)
                   setEditData()
                   resetForm()
-                }} className="w-[195px]  text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
-                  Cancel
+                }} className="w-[195px] cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                  {t("phone.cancel")}
                 </button>
-              </div> : <div className="flex gap-4 mt-6">
+              </div> : 
+              <div>
+                {/* API Message Display */}
+                {apiMessage.message && (
+                <div className={`mt-4 p-3 rounded-lg ${
+                  apiMessage.type === 'success' 
+                    ? 'bg-green-100 text-green-800 border border-green-200' 
+                    : 'bg-red-100 text-red-800 border border-red-200'
+                }`}>
+                  {apiMessage.message}
+                </div>
+              )}
+
+              <div className="flex gap-4 mt-6">
                 <button onClick={() => {
                   setSecondModel(true)
-                  setShowModal(false)
-                }} className="w-[195px] text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
-                  Test Call
+                  // setShowModal(false)
+                }} className="w-[195px] text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                  {t("phone.test_call")}
                 </button>
 
 
                 <button
-                  className="w-[195px] text-[16px] text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
+                  className="w-[195px] text-[16px] cursor-pointer text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
                   disabled={loader}
                   onClick={handleSubmit}
                 >
 
-                  <p>   Launch Calls</p>
+                  <p>  {t("phone.launch_call")}</p>
                   {loader && <span className="loader text-[#5E54FF]"></span>}
 
 
                 </button>
 
+              </div>
               </div>}
             </div>
           </div>
@@ -974,7 +1011,7 @@ export default function CallCampaign() {
       {secondModel && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
         <div className="bg-white rounded-2xl w-full max-w-[514px] p-6 relative shadow-lg">
           <button
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            className="absolute top-4 cursor-pointer right-4 text-gray-500 hover:text-gray-700"
             onClick={() => {
               setSecondModel(false)
             }}
@@ -983,10 +1020,10 @@ export default function CallCampaign() {
           </button>
 
           <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-1">
-            Test Call
+            {t("phone.test_call")}
           </h2>
           <p className="text-gray-500 text-sm mb-4">
-            Test your call with <span className="text-[#5E54FF]">Tom</span>
+           {t("phone.test_call_with")}<span className="text-[#5E54FF]">Tom</span>
           </p>
           <div className="flex flex-col my-5 justify-center items-center gap-3">
             <div><TestCall /></div>
@@ -995,14 +1032,15 @@ export default function CallCampaign() {
           <div className="flex gap-2 mt-4">
             <button
               onClick={() => setSecondModel(false)}
-              className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
+              className="w-full cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
             >
-              I Haven't Received A Call
+             {t("phone.not_received_a_call")}
             </button>
             <button
-              className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+              className="w-full cursor-pointer text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+              onClick={ ()=> setSecondModel(false)}
             >
-              Finish The Test
+              {t("phone.finish_test")}
             </button>
           </div>
         </div>
@@ -1013,7 +1051,7 @@ export default function CallCampaign() {
           <div class="bg-white rounded-xl shadow-lg p-6 w-[500px]">
             <div class="flex justify-between items-start mb-4">
               <div>
-                <h4 className="text-md font-semibold text-gray-800">Campaign Name :  Inbound.4d74997e-2c17-4024-98c4-5fbca9d4f5d1</h4>
+                <h4 className="text-md font-semibold text-gray-800">{t("emailing.campaign_name")} :  Inbound.4d74997e-2c17-4024-98c4-5fbca9d4f5d1</h4>
 
 
 
@@ -1023,21 +1061,21 @@ export default function CallCampaign() {
 
             <div class="grid grid-cols-2 gap-4 mb-8">
               <div class=" rounded-lg border border-gray-200 ">
-                <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">Total calls</p>
+                <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">{t("phone.total_call")}</p>
                 <p class="text-xl font-semibold text-gray-900 m-2">0</p>
               </div>
 
               <div class=" rounded-lg border border-gray-200 ">
-                <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">Unsuccessful calls</p>
+                <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">{t("phone.unsuccessful_call")}</p>
                 <p class="text-xl font-semibold text-gray-900 m-2">0</p>
               </div>
               <div class=" rounded-lg border border-gray-200 ">
-                <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">Average call duration</p>
+                <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">{t("phone.average_call")}</p>
                 <p class="text-xl font-semibold text-gray-900 m-2">0</p>
               </div>
 
               <div class=" rounded-lg border border-gray-200 ">
-                <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">Total call time</p>
+                <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">{t("phone.total_call_time")}</p>
                 <p class="text-xl font-semibold text-gray-900 m-2">00:00:00</p>
               </div>
             </div>
@@ -1049,25 +1087,27 @@ export default function CallCampaign() {
 
       {
         deleteRow && (
-          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999]">
             <div className="bg-white rounded-2xl w-[400px] p-6 relative shadow-lg">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">Delete Call Campaign</h2>
-              <p className="text-gray-500 mb-4">Are you sure you want to delete this call cmapagin?</p>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">{t("phone.delete_call_campaign")}</h2>
+              <p className="text-gray-500 mb-4">{t("phone.delete_call_campaign_msg")}</p>
               <div className="flex gap-2">
                 <button
                   onClick={() => setDeleteRow(null)}
-                  className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
+                  className="w-full text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
                 >
-                  Cancel
+                  {t("phone.cancel")}
                 </button>
                 <button
                   onClick={() => {
                     removeRow(deleteRow);
 
                   }}
-                  className="w-full text-[16px] text-white rounded-[8px] bg-red-500 h-[38px] flex justify-center items-center gap-2 relative"
+                  className="w-full text-[16px] cursor-pointer text-white rounded-[8px] bg-red-500 h-[38px] flex justify-center items-center gap-2 relative"
                 >
-                  Delete
+                  {
+                    t("brain_ai.delete")
+                  }
                   {/* <span className="loader"></span> */}
                 </button>
               </div>

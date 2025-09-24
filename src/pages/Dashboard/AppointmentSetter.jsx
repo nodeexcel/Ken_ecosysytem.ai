@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import agents from '../../assets/svg/campaign_image2.svg'
 import conversation from '../../assets/svg/conversation.svg'
 import analytics from '../../assets/svg/analytics.svg'
@@ -11,18 +11,35 @@ import { AnalyticsIcon, ConversationIcon, LeftArrow, TeamMemberIcon } from '../.
 import sethImg from "../../assets/svg/seth_logo.svg"
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next';
+import { BsThreeDots } from 'react-icons/bs'
+import { X } from 'lucide-react'
+import { useDispatch, useSelector } from 'react-redux'
+import { discardSkillsData } from '../../store/agentSkillsSlice'
 
 function AppointmentSetter() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("agents")
+    const [sidebarStatus, setSideBarStatus] = useState(false)
+
+    const { t } = useTranslation();
+    const dispatch = useDispatch()
 
     const navigate = useNavigate()
 
     const sideMenuList = [
-        { label: "Agents", icon: <TeamMemberIcon status={activeSidebarItem == "agents"} />, hoverIcon: <TeamMemberIcon hover={true} />, path: "agents" },
-        { label: "Conversations", icon: <ConversationIcon status={activeSidebarItem == "conversations"} />, hoverIcon: <ConversationIcon hover={true} />, path: "conversations" },
-        { label: "Analytics", icon: <AnalyticsIcon status={activeSidebarItem == "analytics"} />, hoverIcon: <AnalyticsIcon hover={true} />, path: "analytics" },
+        { label: t("appointment.agents"), icon: <TeamMemberIcon status={activeSidebarItem == "agents"} />, hoverIcon: <TeamMemberIcon hover={true} />, path: "agents" },
+        { label: t("appointment.conversations"), icon: <ConversationIcon status={activeSidebarItem == "conversations"} />, hoverIcon: <ConversationIcon hover={true} />, path: "conversations" },
+        { label: t("appointment.analytics"), icon: <AnalyticsIcon status={activeSidebarItem == "analytics"} />, hoverIcon: <AnalyticsIcon hover={true} />, path: "analytics" },
         // { label: "Demo Chat", icon: <ConversationIcon status={activeSidebarItem == "demo"} />, path: "demo" },
     ]
+
+    const activeTab = useSelector((state) => state.skills)
+
+    useEffect(() => {
+        if (activeTab.label !== null) {
+            setActiveSidebarItem(activeTab.label)
+        }
+    }, [activeTab.loading])
 
     const renderMainContent = () => {
         switch (activeSidebarItem) {
@@ -38,27 +55,31 @@ function AppointmentSetter() {
 
     }
     return (
-        <div className="h-full w-full">
+        <div className="h-full w-full relative">
+            <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><BsThreeDots size={24} color='#1e1e1e' /></div>
             <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
                 {/* Sidebar */}
-                <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
+                <div className="lg:flex hidden flex-col bg-white gap-8 border-r border-[#E1E4EA] min-w-[272px] h-full">
                     <div className=''>
-                        <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
+                        <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
+                            navigate("/dashboard")
+                            dispatch(discardSkillsData())
+                        }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}
-                                <h1 className="text-[20px] font-[600]">Appointment Setter</h1>
+                                <h1 className="text-[20px] font-[600]">{t("appointment.appointment_setter")}</h1>
                             </div>
                         </div>
                         <hr className='text-[#E1E4EA]' />
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-3">
-                        <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
+                        <div className="bg-[#F7F7FF] border border-[#E9E8FF] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
                             <div className="flex justify-center items-center">
                                 <img src={sethImg} alt={"seth"} className="object-fit" />
                             </div>
                             <div className="flex flex-col">
                                 <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Seth</h1>
-                                <p className="text-[#5A687C] text-[14px] font-[400]">Appointment Setter</p>
+                                <p className="text-[#5A687C] text-[14px] font-[400]">{t("appointment.appointment_setter")}</p>
                             </div>
                         </div>
                         {sideMenuList.map((e, i) => <div
@@ -77,10 +98,59 @@ function AppointmentSetter() {
                 </div>
 
                 {/* Main Content */}
-                <div className="w-full py-3 pr-4 overflow-x-hidden">
+                <div className="w-full overflow-x-hidden pr-0 py-8 pl-3 lg:pl-0 lg:pr-4 lg:py-3">
                     {renderMainContent()}
                 </div>
             </div>
+            {sidebarStatus &&
+                <div className="lg:hidden fixed inset-0 bg-black/20 flex items-end z-50">
+                    <div className="flex relative flex-col bg-white gap-8 rounded-t-[20px] w-full max-h-[80%] overflow-auto py-8">
+                        <button
+                            className="absolute top-4 cursor-pointer right-4 text-[#1e1e1e]"
+                            onClick={() => {
+                                setSideBarStatus(false)
+                            }}
+                        >
+                            <X size={20} />
+                        </button>
+                        <div className=''>
+                            <div className='flex justify-center items-center cursor-pointer' onClick={() => navigate("/dashboard")}>
+                                <div className="flex gap-4 pl-3 items-center h-[57px]">
+                                    {/* <LeftArrow /> */}
+                                    <h1 className="text-[20px] font-[600]">{t("appointment.appointment_setter")}</h1>
+                                </div>
+                            </div>
+                            <hr className='text-[#E1E4EA]' />
+                        </div>
+                        <div className="flex flex-col w-full items-start gap-2 relative px-5">
+                            <div className="bg-[#F7F7FF] border border-[#E9E8FF] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
+                                <div className="flex justify-center items-center">
+                                    <img src={sethImg} alt={"seth"} className="object-fit" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Seth</h1>
+                                    <p className="text-[#5A687C] text-[14px] font-[400]">{t("appointment.appointment_setter")}</p>
+                                </div>
+                            </div>
+                            {sideMenuList.map((e, i) => <div
+                                key={i}
+                                onClick={() => {
+                                    setActiveSidebarItem(e.path)
+                                    setSideBarStatus(false)
+                                }}
+                                className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                                    }`}
+                            >
+                                {activeSidebarItem === `${e.path}` ? e.icon :
+                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'>{e.icon}</div> <div className='hidden group-hover:block'>{e.hoverIcon}</div></div>}
+                                <span className={`font-[400] text-[16px] ${activeSidebarItem === `${e.path}` ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                                    {e.label}
+                                </span>
+                            </div>)}
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     )
 }

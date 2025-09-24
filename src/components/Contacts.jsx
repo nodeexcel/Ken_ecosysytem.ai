@@ -13,6 +13,8 @@ import { SelectDropdown } from "./Dropdown";
 import { useSelector } from "react-redux";
 import ViewContacts from "./ViewContacts";
 import { useTranslation } from "react-i18next";
+import toast from "react-hot-toast";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 const countries = [
   { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
@@ -37,6 +39,7 @@ const ContactsPage = () => {
   const [contactSearch, setContactSearch] = useState("")
   const [listSearch, setListSearch] = useState("")
   const countryData = useSelector((state) => state.country.data)
+  const [countries, setCountries] = useState(countryData);
   const { t } = useTranslation();
 
   const fileInputRef = useRef(null);
@@ -54,7 +57,7 @@ const ContactsPage = () => {
   const [listLoading, setListLoading] = useState(false);
   const [addContactModal, setAddContactModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState(countryData[240]);
+  const [selectedCountry, setSelectedCountry] = useState(countryData && countryData.length > 0 ? countryData[240] : { name: "United States", code: "US", dial_code: "+1", flag: "us" });
   const [addNewContact, setAddNewContact] = useState({
     firstName: '',
     lastName: '',
@@ -69,8 +72,11 @@ const ContactsPage = () => {
   const [isEdit, setIsEdit] = useState("");
   const [contactIsEdit, setContactIsEdit] = useState("")
   const [selectedData, setSelectedData] = useState({})
+  const [openUpward, setOpenUpward] = useState(false);
+  
 
   const countryRef = useRef()
+  const moreActionsRef = useRef()
 
 
   const startIndex = (currentPage - 1) * rowsPerPage;
@@ -81,6 +87,7 @@ const ContactsPage = () => {
     const handleClickOutside = (event) => {
       if (countryRef.current && !countryRef.current.contains(event.target)) {
         setIsOpen(false);
+        setCountries(countryData);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -88,41 +95,98 @@ const ContactsPage = () => {
   }, []);
 
 
+  const searchHandle = (e) => {
+    const searchValue = e.target.value.toLowerCase();
+
+    if (searchValue === "") {
+      setCountries(countryData);
+      return;
+    }
+    const filteredRows = countryData.filter((country) =>
+      country.name.toLowerCase().includes(searchValue) ||
+      country.dial_code.toLowerCase().includes(searchValue)
+    );
+    setCountries(filteredRows);
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Simple check: if click is not on the dropdown or its trigger button, close dropdown
+      const clickedElement = event.target;
+      const isDropdownClick = clickedElement.closest('[data-dropdown]');
+      const isTriggerClick = clickedElement.closest('button[onclick*="handleDropdownClick"]');
+      
+      if (!isDropdownClick && !isTriggerClick) {
+        setActiveDropdown(null);
+      }
+    };
+    
+    if (activeDropdown !== null) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [activeDropdown]);
+
+  // useEffect(() => {
+  //   if (activeDropdown) {
+  //     const rect = buttonRef.current.getBoundingClientRect();
+  //     const dropdownHeight = 159;
+  //     const spaceBelow = window.innerHeight - rect.bottom;
+  //     const spaceAbove = rect.top;
+  //     console.log(spaceBelow, dropdownHeight, spaceAbove)
+  //     if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
+  //       setOpenUpward(true);
+  //     } else {
+  //       setOpenUpward(false);
+  //     }
+  //   }
+  // }, [activeDropdown]);
+
+  
+  function validatePhoneNumber(phoneNumber) {
+  try {
+    const parsed = parsePhoneNumberFromString(phoneNumber);
+    return parsed && parsed.isValid();
+  } catch (err) {
+    return false;
+  }
+}
+
+
   const validateSubmit = () => {
     const errors = {};
     if (!addNewContact.firstName) {
       errors.firstName = `${t("brain_ai.first_name_required")}`;
+    } else if (!addNewContact.firstName.trim()) {
+      errors.firstName = `${t("first name cannot be blank")}`;
     }
     if (!addNewContact.lastName) {
       errors.lastName = `${t("brain_ai.last_name_required")}`;
+    } else if (!addNewContact.lastName.trim()) {
+      errors.lastName = `${t("last name annot be blank")}`;
     }
     if (!addNewContact.phone) {
       errors.phone = `${t("brain_ai.phone_no_required")}`;
-    } else if (!/^\+?[0-9\s]+$/.test(addNewContact.phone)) {
+    } else if (!validatePhoneNumber(selectedCountry.dial_code + addNewContact.phone) )  {
       errors.phone = `${t("brain_ai.invalid_phone_no")}`;
     }
-    //  else if (addNewContact.phone.replace(/\D/g, "").length !== 10) {
-    //   errors.phone = "Phone number must be exactly 10 digits";
-    // }
     if (!addNewContact.email) {
       errors.email = `${t("brain_ai.email_required")}`;
-    }
-    if (!addNewContact.companyName) {
-      errors.companyName = `${t("brain_ai.company_name_required")}`;
+    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(addNewContact.email)) {
+      errors.email = `${t("brain_ai.invalid_email_format")}`;
     }
     setError(errors);
     return Object.keys(errors).length === 0;
   }
 
 
-  const handleRowsPerPageChange = (e) => {
-    setRowsPerPage(Number(e.target.value));
-    setCurrentPage(1);
-  };
-
 
   const handleAddContactChange = (e) => {
     const { name, value } = e.target;
+    // Store the value as is, but validation will check for trimmed value
     setAddNewContact((prev) => ({ ...prev, [name]: value }));
     setError((prev) => ({ ...prev, [name]: '' }));
   }
@@ -141,8 +205,15 @@ const ContactsPage = () => {
     console.log(addNewContact)
     setLoading(true)
     try {
-      const response = await newContactAdd({ ...addNewContact, phone: selectedCountry.dial_code + " " + addNewContact.phone })
+      const response = await newContactAdd({ 
+        ...addNewContact, 
+        firstName: addNewContact.firstName.trim(),
+        lastName: addNewContact.lastName.trim(),
+        phone: selectedCountry.dial_code + " " + addNewContact.phone 
+      })
+      
       if (response?.status === 201) {
+        toast.success(response?.data?.message || "Contact added successfully!");
         setError((prev) => ({ ...prev, success: response?.data?.message }))
         setTimeout(() => {
           setAddContactModal(false);
@@ -158,7 +229,10 @@ const ContactsPage = () => {
         });
         setSelectedCountry(countryData[240])
         getAllContacts();
-      } else {
+          
+        
+      }
+       else {
         console.log(response)
         setError((prev) => ({ ...prev, error: response?.data?.message || `${t("brain_ai.network_connection_error")}` }))
       }
@@ -176,7 +250,13 @@ const ContactsPage = () => {
     }
     setLoading(true)
     try {
-      const response = await updateContact({ ...addNewContact, phone: selectedCountry.dial_code + " " + addNewContact.phone, contactId: contactIsEdit })
+      const response = await updateContact({ 
+        ...addNewContact, 
+        firstName: addNewContact.firstName.trim(),
+        lastName: addNewContact.lastName.trim(),
+        phone: selectedCountry.dial_code + " " + addNewContact.phone, 
+        contactId: contactIsEdit 
+      })
       if (response?.status === 200) {
         setError((prev) => ({ ...prev, success: response?.data?.message }))
         setTimeout(() => {
@@ -334,6 +414,7 @@ const ContactsPage = () => {
       const response = await deleteContact(payload);
       if (response?.status === 200) {
         getAllContacts();
+        toast.success(response?.data?.message);
       }
     } catch (error) {
       console.log(error)
@@ -547,6 +628,7 @@ const ContactsPage = () => {
       if (response?.status === 200) {
         setOpenImport(false)
         getAllContacts()
+        setSelectedFile(null)
       } else {
         console.log(response)
       }
@@ -619,27 +701,36 @@ const ContactsPage = () => {
 
 
   return (
-    <div className="flex overflow-auto pr-4 py-4 flex-col w-full items-start gap-6 ">
+    <div className="flex h-full overflow-auto lg:pl-0 pl-4 pr-4 py-4 flex-col w-full items-start gap-6 ">
       <div className="flex flex-col items-start gap-2.5 w-full">
         <div className="flex items-center justify-between w-full">
           <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
-           {t("brain_ai.contacts")}
+            {t("brain_ai.contacts")}
           </h1>
 
           <div className="flex gap-2.5 items-center">
-            {activeTab !== "lists" && <button className="flex items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#E1E4EA] rounded-[7px] bg-white">
+            {activeTab !== "lists" && <button className="flex items-center gap-2.5 cursor-pointer px-5 py-[7px] border-[1.5px] border-[#E1E4EA] rounded-[7px] bg-white hover:bg-[#F5F7FA] hover:border-[#CBD2E0]">
               <Download color="#5A687C" />
-              <span className="font-[500] text-[16px] leading-6 text-[#5A687C]">
+              <span className="font-[500] text-[16px] leading-6 text-[#5A687C] cursor-pointer">
                 {t("brain_ai.export")}
               </span>
             </button>}
 
-            {activeTab !== "lists" && <button onClick={() => setOpenImport(true)} className="flex items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5F58E8] rounded-[7px] bg-white">
+            {activeTab !== "lists" && <button onClick={() => {
+              setOpenImport(true);
+              setActiveDropdown(null);
+            }} className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5F58E8] rounded-[7px] bg-white hover:bg-[#F4F3FF] hover:border-[#4E46D4]">
               <Upload color="#675FFF" />
               <span className="font-[500] text-[16px] leading-6 text-[#675FFF]">{t("brain_ai.import")}</span>
             </button>}
 
-            <button onClick={activeTab === "lists" ? () => setOpen(true) : () => setAddContactModal(true)} className="flex items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
+            <button onClick={activeTab === "lists" ? () => {
+              setOpen(true);
+              setActiveDropdown(null);
+            } : () => {
+              setAddContactModal(true);
+              setActiveDropdown(null);
+            }} className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white hover:bg-[#5f58e8]">
               <span className="font-medium text-base leading-6">
                 {activeTab === `${t("brain_ai.lists")}` ? `${t("brain_ai.create_list")}` : `${t("brain_ai.add_contact")}`}
               </span>
@@ -650,20 +741,28 @@ const ContactsPage = () => {
         <div className="w-full border-b border-[#e1e4ea]">
           <div className="flex items-start">
             <button
-              onClick={() => setActiveTab("all-contacts")}
-              className={`inline-flex items-center justify-center gap-1 p-2.5 border-b-2 ${activeTab === "all-contacts"
-                ? "border-[#675fff] text-[#675FFF]"
-                : "border-transparent text-[#5A687C]"
-                }`}
+              onClick={() => {
+                setActiveTab("all-contacts");
+                setActiveDropdown(null);
+              }}
+              className={`inline-flex cursor-pointer items-center justify-center gap-1 p-2.5 border-b-2 transition-colors duration-200 ${
+                activeTab === "all-contacts"
+                  ? "border-[#675FFF] text-[#675FFF]"
+                  : "border-transparent text-[#5A687C] hover:text-[#675FFF] hover:border-[#D9D6FF]"
+              }`}
             >
-             {t("brain_ai.all_contacts")}
+              {t("brain_ai.all_contacts")}
             </button>
             <button
-              onClick={() => setActiveTab("lists")}
-              className={`inline-flex items-center justify-center gap-1 p-2.5 border-b-2 ${activeTab === "lists"
-                ? "border-[#675fff] text-[#675FFF]"
-                : "border-transparent text-[#5A687C]"
-                }`}
+              onClick={() => {
+                setActiveTab("lists");
+                setActiveDropdown(null);
+              }}
+              className={`inline-flex cursor-pointer items-center justify-center gap-1 p-2.5 border-b-2 transition-colors duration-200 ${
+                activeTab === "lists"
+                  ? "border-[#675FFF] text-[#675FFF]  "
+                  : "border-transparent text-[#5A687C] hover:text-[#675FFF] hover:border-[#D9D6FF]"
+              }`}
             >
               {t("brain_ai.list")}
             </button>
@@ -679,18 +778,18 @@ const ContactsPage = () => {
                 options={channelOptions}
                 value={channelSelect}
                 onChange={(updated) => setChannelSelect(updated)}
-                placeholder="Select"
+                placeholder={t("brain_ai.select")}
                 className="w-[198px]"
-                extraName="Channel"
+                extraName={t("brain_ai.channel")}
               />
               <SelectDropdown
                 name="all_contacts_status"
                 options={statusOptions}
                 value={statusSelect}
                 onChange={(updated) => setStatusSelect(updated)}
-                placeholder="Select"
+                placeholder={t("brain_ai.select")}
                 className="w-[215px]"
-                extraName="Status"
+                extraName={t("brain_ai.status")}
               />
               <div className="relative w-[179px]">
                 <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -702,11 +801,14 @@ const ContactsPage = () => {
                 />
               </div>
               {(activeTab !== "lists" && formCreateList.contactsId?.length > 0) && <div className="flex items-center gap-2">
-                <button onClick={() => setCreateList(true)} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5f58e8] rounded-[7px] text-[#675FFF]">
-                  Add to a list
+                <button onClick={() => {
+                  setCreateList(true);
+                  setActiveDropdown(null);
+                }} className="flex cursor-pointer items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5f58e8] rounded-[7px] text-[#675FFF]">
+                  {t("brain_ai.add_to_list")}
                 </button>
-                <button onClick={() => handleDeleteContact(formCreateList.contactsId)} className="flex items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#FF2D55] rounded-[7px] text-[#FF2D55]">
-                  Delete
+                <button onClick={() => handleDeleteContact(formCreateList.contactsId)} className="flex cursor-pointer items-center text-[16px] font-[500] gap-2.5 px-5 py-[7px] border-[1.5px] border-[#FF2D55] rounded-[7px] text-[#FF2D55]">
+                  {t("delete")}
                 </button>
               </div>}
             </div>
@@ -768,7 +870,7 @@ const ContactsPage = () => {
                           </td>
                           <td className="p-[14px]  w-full text-sm text-[#5A687C]">
                             <div className="flex items-center gap-3.5">
-                              <div onClick={() => {
+                              <div className="cursor-pointer" onClick={() => {
                                 setContactIsEdit(contact.id);
                                 setAddContactModal(true);
                                 const { countryCode, number } = extractPhoneDetails(contact.phone);
@@ -778,42 +880,43 @@ const ContactsPage = () => {
                               }}>
                                 <Edit />
                               </div>
-                              <div onClick={() => handleDeleteContact([contact.id])}>
+                              <div className="cursor-pointer" onClick={() => handleDeleteContact([contact.id])}>
                                 <Delete className="text-red-500" />
                               </div>
                             </div>
                           </td>
                         </tr>
                       ))}
-                    </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Contacts Listed</p>}
+                    </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">{t("brain_ai.no_contact_message")}</p>}
               </div>
             </table>
           </div>
-          <div className="flex justify-between items-center mt-4 px-4 flex-wrap gap-3 w-full">
-            <div className="flex items-center gap-2 text-[16px] text-[#5A687C]">
-              <div>
-                Showing {(currentPage - 1) * rowsPerPage + 1} - {Math.min((currentPage) * rowsPerPage, totalContacts)} of {totalContacts}
+          {allContacts.length > 0 ? (
+            <div className="flex justify-between items-center mt-4 px-4 flex-wrap gap-3 w-full">
+              <div className="flex items-center gap-2 text-[16px] text-[#5A687C]">
+                <div>
+                  {t("brain_ai.showing")} {(currentPage - 1) * rowsPerPage + 1} - {Math.min((currentPage) * rowsPerPage, totalContacts)} {t("brain_ai.of")} {totalContacts}
 
+                </div>
+                |
+                <span>{t("brain_ai.rows_per_page")}</span>
+                <SelectDropdown
+                  name="rowsPerPage"
+                  options={rowsPerPageOptions}
+                  value={rowsPerPage}
+                  onChange={(updated) => {
+                    setRowsPerPage(Number(updated));
+                    setCurrentPage(1);
+                  }}
+                  placeholder={t("brain_ai.select")}
+                  className=""
+                />
               </div>
-              |
-              <span>Rows per page:</span>
-              <SelectDropdown
-                name="rowsPerPage"
-                options={rowsPerPageOptions}
-                value={rowsPerPage}
-                onChange={(updated) => {
-                  setRowsPerPage(Number(updated));
-                  setCurrentPage(1);
-                }}
-                placeholder="Select"
-                className=""
-              />
-            </div>
-            <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="text-gray-600 h-[32px] w-[32px] flex justify-center items-center rounded-md border border-[#E1E4EA] hover:text-black disabled:opacity-30"
+                className="text-[#1e1e1e] disabled:cursor-not-allowed cursor-pointer h-[32px] w-[32px] flex justify-center items-center rounded-md border border-[#E1E4EA] hover:text-black disabled:opacity-30"
               >
                 <FiChevronLeft />
               </button>
@@ -848,7 +951,7 @@ const ContactsPage = () => {
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
-                      className={`h-[32px] w-[32px] flex justify-center items-center rounded-md text-[16px] border ${currentPage === page
+                      className={`h-[32px] w-[32px] cursor-pointer flex justify-center items-center rounded-md text-[16px] border ${currentPage === page
                         ? 'bg-[#675FFF] text-white'
                         : 'bg-white text-[#5A687C] border-[#E1E4EA]'
                         }`}
@@ -863,12 +966,17 @@ const ContactsPage = () => {
               <button
                 onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="text-gray-600 rounded-md  border border-[#E1E4EA] h-[32px] w-[32px] flex justify-center items-center hover:text-black disabled:opacity-30"
+                className="text-[#1e1e1e] disabled:cursor-not-allowed cursor-pointer rounded-md  border border-[#E1E4EA] h-[32px] w-[32px] flex justify-center items-center hover:text-black disabled:opacity-30"
               >
                 <FiChevronRight />
               </button>
             </div>
           </div>
+          ) : (
+            <div className="flex justify-center items-center mt-4 px-4 w-full text-[16px] text-[#5A687C]">
+              {t("brain_ai.no_results_found")}
+            </div>
+          )}
         </>
       ) :
 
@@ -880,9 +988,9 @@ const ContactsPage = () => {
                 options={channelOptions}
                 value={channelSelectList}
                 onChange={(updated) => setChannelSelectList(updated)}
-                placeholder="Select"
+                placeholder={t("brain_ai.select")}
                 className="w-[198px]"
-                extraName="Channel"
+                extraName={t("brain_ai.channel")}
               />
               <div className="relative w-[179px]">
                 <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -895,7 +1003,7 @@ const ContactsPage = () => {
               </div>
             </div>
           </div>
-          <div className="overflow-auto w-full">
+          <div className="w-full h-full overflow-auto" >
             <table className="w-full">
               <div className="px-5 w-full">
                 <thead>
@@ -904,7 +1012,7 @@ const ContactsPage = () => {
                     <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">{t("brain_ai.active_contacts")}</th>
                     <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">{t("brain_ai.channel")}</th>
                     <th className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">{t("brain_ai.created_date")}</th>
-                    <th className="p-[14px] w-full font-[400] whitespace-nowrap">{t("brain_ai.actions")}</th>
+                    <th className="p-[14px] w-full font-[400] whitespace-nowrap">{t("brain_ai.action")}</th>
                   </tr>
                 </thead>
               </div>
@@ -929,57 +1037,57 @@ const ContactsPage = () => {
                               </div>
                             )}
                           </td>
-                          <td className="py-[14px] pl-[5px] pr-[14px] min-w-[200px] max-w-[25%] w-full font-[400] text-[#5A687C] whitespace-nowrap">{format(list.createdDate, 'dd/MM/yyyy hh:mm a')}</td>
-                          <td className="p-[14px] w-full">
-                            <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative">
+                          <td className="py-[14px]  pl-[5px] pr-[14px] min-w-[200px] max-w-[25%] w-full font-[400] text-[#5A687C] whitespace-nowrap">{format(list.createdDate, 'dd/MM/yyyy hh:mm a')}</td>
+                          <td className="px-[14px] relative w-full">
+                            <button onClick={() => handleDropdownClick(index)} className="p-2 cursor-pointer rounded-lg relative">
                               <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
-                              {activeDropdown === index && (
-                                <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
-                                  <div className="py-1">
+                            </button>
+                            {activeDropdown === index && (
+                              <div ref={moreActionsRef} data-dropdown className={`absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ${openUpward ? 'bottom-full mb-1' : 'mt-1'} ring-gray-300 ring-opacity-5 z-9999999999`}>
+                                <div className="py-1">
+                                  <button
+                                    className="block group cursor-pointer w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
+                                    onClick={() => {
+                                      handleEditList(list);
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("brain_ai.edit")}</span> </div>
+                                  </button>
+                                  <button
+                                    className="block group cursor-pointer w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
+                                    onClick={() => {
+                                      setSelectedData(list)
+                                      setActiveDropdown(null);
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>{t("brain_ai.view_contacts")}</span> </div>
+                                  </button>
+                                  <button
+                                    className="block group cursor-pointer w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
+                                    onClick={() => {
+                                      handleDuplicateList(list.id);
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>{t("brain_ai.duplicate")}</span> </div>
+                                  </button>
+                                  <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                                  <div className='py-2'>
                                     <button
-                                      className="block group w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
+                                      className="block w-full cursor-pointer text-left hover:rounded-lg  px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
                                       onClick={() => {
-                                        handleEditList(list);
+                                        handleDeleteList(list.id);
                                       }}
                                     >
-                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("brain_ai.edit")}</span> </div>
+                                      <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">{t("brain_ai.delete")}</span> </div>
                                     </button>
-                                    <button
-                                      className="block group w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
-                                      onClick={() => {
-                                        setSelectedData(list)
-                                        setActiveDropdown(null);
-                                      }}
-                                    >
-                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>{t("brain_ai.view_contacts")}</span> </div>
-                                    </button>
-                                    <button
-                                      className="block group w-full hover:rounded-lg  text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
-                                      onClick={() => {
-                                        handleDuplicateList(list.id);
-                                      }}
-                                    >
-                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>{t("brain_ai.duplicate")}</span> </div>
-                                    </button>
-                                    <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                                    <div className='py-2'>
-                                      <button
-                                        className="block w-full text-left hover:rounded-lg  px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
-                                        onClick={() => {
-                                          handleDeleteList(list.id);
-                                        }}
-                                      >
-                                        <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">{t("brain_ai.delete")}</span> </div>
-                                      </button>
-                                    </div>
                                   </div>
                                 </div>
-                              )}
-                            </button>
+                              </div>
+                            )}
                           </td>
                         </tr>
                       ))}
-                    </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Contacts Listed</p>}
+                    </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">{t("brain_ai.no_contact_message")}</p>}
               </div>
             </table>
           </div>
@@ -997,7 +1105,7 @@ const ContactsPage = () => {
                 setFormErrors({})
                 setIsEdit("");
               }}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+              className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
             >
               <X className="w-5 h-5" />
             </button>
@@ -1059,10 +1167,10 @@ const ContactsPage = () => {
                 setFormData({ listName: '', description: '', channel: '' })
                 setFormErrors({})
                 setIsEdit("");
-              }} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+              }} className="w-full cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                 {t("brain_ai.cancel")}
               </button>
-              <button onClick={!isEdit ? () => handleSubmit() : () => handleUpdateList()} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
+              <button onClick={!isEdit ? () => handleSubmit() : () => handleUpdateList()} className={`w-full cursor-pointer text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
                 {loading ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : `${t("brain_ai.save")}`}
               </button>
             </div>
@@ -1078,7 +1186,7 @@ const ContactsPage = () => {
                 setFormCreateList({ listName: "", contactsId: [] })
                 setCreateListErrors({})
               }}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+              className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
             >
               <X className="w-5 h-5" />
             </button>
@@ -1151,10 +1259,10 @@ const ContactsPage = () => {
                     setFormCreateList({ listName: "", contactsId: [] })
                     setCreateListErrors({})
                   }
-                }} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
-                  Cancel
+                }} className="w-full cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                  {t("brain_ai.cancel")}
                 </button>
-                <button onClick={handleListSubmit} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
+                <button onClick={handleListSubmit} className={`w-full text-[16px] cursor-pointer text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
                   {loading ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : `${t("brain_ai.save")}`}
                 </button>
               </div>
@@ -1172,16 +1280,16 @@ const ContactsPage = () => {
                 setOpenImport(false)
                 setSelectedFile(null)
               }}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+              className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
             >
               <X className="w-5 h-5" />
             </button>
 
             <h2 className="text-[#1E1E1E] font-[600] text-[20px] mb-2">{t("brain_ai.upload_your_files")}</h2>
-            <p className="text-[16px] font-[400] text-[#5A687C]">{t("brain_ai.before_uploading_files")} <span onClick={handleDownload} className="text-[#675FFF]">{t("brain_ai.download_sample_file")}</span> {t("brain_ai.or")} <span className="text-[#675FFF]">{t("brain_ai.learn_more")}</span>.</p>
+            <p className="text-[16px] font-[400] text-[#5A687C]">{t("brain_ai.before_uploading_files")} <span onClick={handleDownload} className="text-[#675FFF] cursor-pointer">{t("brain_ai.download_sample_file")}</span> {t("brain_ai.or")} <span className="text-[#675FFF] cursor-pointer">{t("brain_ai.learn_more")}</span>.</p>
             <div className="flex flex-col gap-2">
               <div>
-                <label className="block text-sm font-medium mb-1">{t("brain_ai.upload_file_images")}</label>
+                <label className="block text-sm font-medium mb-1">{t("brain_ai.upload_file_images_placeholder")}</label>
                 <div className="mt-2">
                   <div
                     onClick={handleClick}
@@ -1196,13 +1304,14 @@ const ContactsPage = () => {
                       {t("brain_ai.upload_from_your_computer")}
                     </p>
                     <p className="text-[14px] font-[500] text-[#5A687C] mt-1">
-                    {t("brain_ai.or_drag_and_drop")}
+                      {t("brain_ai.or_drag_and_drop")}
                     </p>
                     <input
                       type="file"
                       ref={fileInputRef}
                       onChange={handleFileChange}
                       className="hidden"
+                       accept=".csv" 
                     />
                   </div>
 
@@ -1244,14 +1353,14 @@ const ContactsPage = () => {
                 </div>
               </div> */}
             </div>
-            <div className="flex gap-2 mt-3">
+            <div className="flex justify-end gap-2 mt-3">
               <button onClick={() => {
                 setOpenImport(false)
                 setSelectedFile(null)
-              }} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+              }} className="w-[208px] text-[16px] hover:bg-[#F5F7FA] hover:border-[#CBD2E0] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                 {t("brain_ai.cancel")}
               </button>
-              <button onClick={handleUploadFile} className={`w-full text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
+              <button onClick={handleUploadFile} className={`w-[208px] hover:bg-[#4c43e6] hover:shadow-md cursor-pointer text-[16px] text-white rounded-[8px] ${loading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
                 {loading ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : `${t("brain_ai.save")}`}
               </button>
             </div>
@@ -1263,7 +1372,7 @@ const ContactsPage = () => {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl w-[510px] max-h-[85vh] overflow-auto  p-6 relative shadow-lg">
             <button
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-700"
               onClick={() => {
                 setAddContactModal(false)
                 setContactIsEdit("")
@@ -1281,7 +1390,6 @@ const ContactsPage = () => {
             >
               <X size={20} />
             </button>
-
             <h2 className="text-xl font-semibold text-gray-800 mb-5">
               {contactIsEdit ? `${t("brain_ai.update")}` : `${t("brain_ai.add_new")}`} {t("brain_ai.contact")}
             </h2>
@@ -1291,6 +1399,7 @@ const ContactsPage = () => {
                 <div>
                   <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
                     {t("brain_ai.first_name")}
+                    <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -1307,7 +1416,8 @@ const ContactsPage = () => {
                 </div>
                 <div>
                   <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
-                   {t("brain_ai.last_name")}
+                    {t("brain_ai.last_name")}
+                    <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -1327,6 +1437,7 @@ const ContactsPage = () => {
               <div>
                 <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
                   {t("brain_ai.number")}
+                  <span className="text-red-500">*</span>
                 </label>
                 <div ref={countryRef} className="flex group items-center focus-within:border-[#675FFF] gap-2 border border-gray-300 rounded-lg px-4 py-2">
                   <div className="relative">
@@ -1335,15 +1446,17 @@ const ContactsPage = () => {
                       className="w-[120px] flex hover:cursor-pointer relative border-none justify-between gap-1 items-center border py-1 text-left"
                     >
                       <div className="flex items-center gap-2 mr-3">
-                        <p className={`fi fi-${selectedCountry.flag} fis w-4 h-4 rounded-full`}></p>
-                        <p className="text-[#5A687C] font-[400] text-[16px]">{selectedCountry.dial_code}</p>
+                        {selectedCountry && <p className={`fi fi-${selectedCountry.flag} fis w-4 h-4 rounded-full`}></p>}
+                        <p className="text-[#5A687C] font-[400] text-[16px]">{selectedCountry ? selectedCountry.dial_code : "+1"}</p>
                       </div>
                       <FaChevronDown color="#5A687C" className={`w-[10px]  transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
                       <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />
                     </button>
+
                     {isOpen && (
                       <div className="absolute px-1 z-10 rounded-md shadow-lg border border-gray-200 max-h-40 overflow-auto top-6 w-full left-[-13px] bg-white mt-1">
-                        {countryData.map((country,idx) => (
+                        <input type="text" placeholder="Search" className="w-full px-3 py-2 border-b border-gray-200 outline-none text-sm" onChange={searchHandle} />
+                        {countries.map((country, idx) => (
                           <div
                             key={idx}
                             onClick={() => {
@@ -1362,7 +1475,7 @@ const ContactsPage = () => {
                     )}
                   </div>
                   <input
-                    type="tel"
+                    type="text"
                     name="phone"
                     value={addNewContact.phone}
                     onChange={handleAddContactChange}
@@ -1384,9 +1497,10 @@ const ContactsPage = () => {
               <div>
                 <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
                   {t("settings.tab_1_list.email_address")}
+                  <span className="text-red-500">*</span>
                 </label>
                 <input
-                  type="text"
+                  type="email"
                   name="email"
                   value={addNewContact.email}
                   onChange={handleAddContactChange}
@@ -1407,13 +1521,9 @@ const ContactsPage = () => {
                   name="companyName"
                   value={addNewContact.companyName}
                   onChange={handleAddContactChange}
-                  placeholder="Enter company Name "
+                  placeholder={t("brain_ai.company_name_placeholder")}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#675FFF]"
                 />
-
-                {error.companyName && (
-                  <p className="text-red-500 text-sm mt-1">{error.companyName}</p>
-                )}
               </div>
             </div>
             {error.success && (
@@ -1446,12 +1556,16 @@ const ContactsPage = () => {
                   setSelectedCountry(countryData[240])
                   setError({})
                 }}
-                className="w-full text-[16px] text-[#5A687C] bg-white border-[1.5px] border-[#E1E4EA] rounded-[8px] h-[38px]"
+                className="w-full cursor-pointer text-[16px] text-[#5A687C] bg-white border-[1.5px] border-[#E1E4EA] rounded-[8px] h-[38px] hover:bg-[#F5F7FA] hover:border-[#CBD2E0]"
               >
                 Cancel
               </button>
               <button
-                className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
+                className={`w-full cursor-pointer text-[16px] text-white rounded-[8px] h-[38px] flex items-center justify-center gap-2 relative transition-all duration-200 ${
+                  loading
+                    ? 'bg-[#5E54FF] opacity-70 cursor-not-allowed'
+                    : 'bg-[#5E54FF] hover:bg-[#4c43e6] hover:shadow-md'
+                }`}
                 disabled={loading}
                 onClick={contactIsEdit ? () => handleUpdateContactSubmit() : () => handleNewContactSubmit()}
               >

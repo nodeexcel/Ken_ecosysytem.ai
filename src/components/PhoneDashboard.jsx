@@ -1,40 +1,84 @@
 import { Plus } from 'lucide-react'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useTranslation } from "react-i18next";
+import { getAgents } from '../api/callAgent';
 
 const PhoneDashboard = () => {
 
   const [autoRefill, setAutoRefill] = useState(true);
+  const [dashboardData, setDashboardData] = useState({
+    agents: 0,
+    campaigns: 0,
+    outbound_calls: 0,
+    inbound_calls: 0,
+    loading: true,
+    error: null
+  });
+  const {t}=useTranslation();
+
+  useEffect(() => {
+    const fetchAgents = async () => {
+      try {
+        setDashboardData(prev => ({ ...prev, loading: true }));
+        const response = await getAgents();
+        console.log(response,"wsdfedfwedf");
+        if (response.data && response.data.success) {
+          setDashboardData({
+            agents: response.data.success.agents,
+            campaigns: response.data.success.campaigns,
+            outbound_calls: response.data.success.outbound_calls,
+            inbound_calls: response.data.success.inbound_calls,
+            loading: false,
+            error: null
+          });
+        } else {
+          setDashboardData(prev => ({ ...prev, loading: false }));
+        }
+      } catch (err) {
+        setDashboardData(prev => ({ ...prev, loading: false }));
+        console.error('Error fetching agents:', err);
+      }
+    };
+
+    fetchAgents();
+  }, []);
   return (
 
     <div className="py-4 pr-2 flex flex-col gap-4 w-full h-screen overflow-auto ">
-      <h1 className="text-2xl font-bold mb-3 text-gray-800">Dashboard</h1>
+      <h1 className="text-2xl font-bold mb-3 text-gray-800">{ t("phone.dashboard")}</h1>
+      
+      {dashboardData.error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {dashboardData.error}
+        </div>
+      )}
 
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Credit Panel */}
         <div className="w-full lg:w-[360px] h-[410px] rounded-lg border border-[#E1E4EA] bg-white  flex flex-col justify-between">
 
           <div className="flex items-center justify-between bg-[#F1F1FF] px-5 py-4 rounded-t-lg">
-            <h2 className="font-[400] text-[14px] text-[#1E1E1E]">Credit</h2>
-            <button className="bg-[#675FFF] border border-[#5F58E8] text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center  gap-1">
+            <h2 className="font-[400] text-[14px] text-[#1E1E1E]">{t("settings.tab_2_list.credit")}</h2>
+            <button className="bg-[#675FFF] cursor-pointer border border-[#5F58E8] text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center  gap-1">
               <Plus size={16} />
-              Add Credit
+              {t("phone.add_credit")}
             </button>
           </div>
 
           <div className="p-6">
             <h3 className="text-5xl font-bold mb-2">$0</h3>
-            <p className="text-black mb-6 font-[500]">Credit 0.20$/mnt</p>
+            <p className="text-black mb-6 font-[500]">{t("settings.tab_2_list.credit")} 0.20$/mnt</p>
 
             <div className="flex items-center justify-between">
-              <span className="text-sm text-[#1E1E1E]">Auto-refill is</span>
+              <span className="text-sm text-[#1E1E1E]">{t("phone.auto_refill_is")}</span>
               <div className="flex items-center gap-2">
                 <span className={`text-xs px-2 py-1 rounded-full ${autoRefill ? "bg-green-100 text-green-600" : "bg-gray-200 text-gray-500"
                   }`}>
-                  {autoRefill ? "Active" : "Inactive"}
+                  {autoRefill ? t("phone.active") : t("phone.inactive")}
                 </span>
                 <button
                   onClick={() => setAutoRefill(!autoRefill)}
-                  className={`w-10 h-6 rounded-full flex items-center px-1 transition-colors duration-300 ${autoRefill ? "bg-indigo-500" : "bg-gray-300"
+                  className={`w-10 h-6 cursor-pointer rounded-full flex items-center px-1 transition-colors duration-300 ${autoRefill ? "bg-indigo-500" : "bg-gray-300"
                     }`}
                 >
                   <div
@@ -58,10 +102,13 @@ const PhoneDashboard = () => {
                 <path d="M12.078 5C12.078 5.99456 11.6829 6.94839 10.9796 7.65165C10.2764 8.35491 9.32254 8.75 8.32798 8.75C7.33342 8.75 6.37959 8.35491 5.67633 7.65165C4.97307 6.94839 4.57798 5.99456 4.57798 5C4.57798 4.00544 4.97307 3.05161 5.67633 2.34835C6.37959 1.64509 7.33342 1.25 8.32798 1.25C9.32254 1.25 10.2764 1.64509 10.9796 2.34835C11.6829 3.05161 12.078 4.00544 12.078 5ZM0.828979 19.118C0.861114 17.1504 1.66532 15.2742 3.06816 13.894C4.471 12.5139 6.36007 11.7405 8.32798 11.7405C10.2959 11.7405 12.185 12.5139 13.5878 13.894C14.9906 15.2742 15.7948 17.1504 15.827 19.118C13.4744 20.1968 10.9161 20.7535 8.32798 20.75C5.65198 20.75 3.11198 20.166 0.828979 19.118Z" stroke="#675FFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold">1</h3>
-            <p className="text-[#1E1E1E]">Agent</p>
-            <p className="text-sm text-[#5A687C]">You have 1 agent active now</p>
-            <a href="#" className="text-[#675FFF] mt-2 inline-block text-sm font-[400] underline">See More</a>
+            <h3 className="text-2xl font-bold">
+              {dashboardData.loading ? '...' : dashboardData.agents}
+            </h3>
+            <p className="text-[#1E1E1E]">{t("phone.agent")}</p>
+            <p className="text-sm text-[#5A687C]">
+              {dashboardData.loading ? 'Loading...' : dashboardData.agents === 1 ? t("phone.one_agent_active") : `${dashboardData.agents} agents active`}
+            </p>
           </div>
 
           {/* Campaigns */}
@@ -74,10 +121,13 @@ const PhoneDashboard = () => {
             </div>
 
 
-            <h3 className="text-2xl font-bold">0</h3>
-            <p className="text-[#1E1E1E]">Campaigns</p>
-            <p className="text-sm text-[#5A687C]">You don’t have campaigns yet</p>
-            <a href="#" className="text-[#675FFF] mt-2 inline-block text-sm font-[400] underline">See More</a>
+            <h3 className="text-2xl font-bold">
+              {dashboardData.loading ? '...' : dashboardData.campaigns}
+            </h3>
+            <p className="text-[#1E1E1E]">{t("emailings.campaigns")}</p>
+            <p className="text-sm text-[#5A687C]">
+              {dashboardData.loading ? 'Loading...' : dashboardData.campaigns === 0 ? t("phone.dont_have_call") : `${dashboardData.campaigns} campaigns active`}
+            </p>
           </div>
 
           {/* Called Clients */}
@@ -89,10 +139,13 @@ const PhoneDashboard = () => {
                 <path d="M1.578 5.75C1.578 14.034 8.294 20.75 16.578 20.75H18.828C19.4247 20.75 19.997 20.5129 20.419 20.091C20.8409 19.669 21.078 19.0967 21.078 18.5V17.128C21.078 16.612 20.727 16.162 20.226 16.037L15.803 14.931C15.363 14.821 14.901 14.986 14.63 15.348L13.66 16.641C13.378 17.017 12.891 17.183 12.45 17.021C10.8129 16.4191 9.32616 15.4686 8.09278 14.2352C6.85941 13.0018 5.90888 11.5151 5.307 9.878C5.145 9.437 5.311 8.95 5.687 8.668L6.98 7.698C7.343 7.427 7.507 6.964 7.397 6.525L6.291 2.102C6.23014 1.85869 6.08972 1.6427 5.89206 1.48834C5.69439 1.33397 5.45081 1.25008 5.2 1.25H3.828C3.23127 1.25 2.65897 1.48705 2.23701 1.90901C1.81506 2.33097 1.578 2.90326 1.578 3.5V5.75Z" stroke="#F60C9D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold">0</h3>
-            <p className="text-[#1E1E1E]">Called clients</p>
-            <p className="text-sm text-[#5A687C]">You don’t have calls yet</p>
-            <a href="#" className="text-[#675FFF] mt-2 inline-block text-sm font-[400] underline">See More</a>
+            <h3 className="text-2xl font-bold">
+              {dashboardData.loading ? '...' : dashboardData.outbound_calls}
+            </h3>
+            <p className="text-[#1E1E1E]">{t("phone.called_clients")}</p>
+            <p className="text-sm text-[#5A687C]">
+              {dashboardData.loading ? 'Loading...' : dashboardData.outbound_calls === 0 ? t("phone.dont_have_call") : `${dashboardData.outbound_calls} calls made`}
+            </p>
           </div>
 
           {/* Average Call Duration */}
@@ -104,25 +157,27 @@ const PhoneDashboard = () => {
 
             </div>
             <h3 className="text-2xl font-bold">00:00:00</h3>
-            <p className="text-[#1E1E1E]">Average call duration</p>
-            <p className="text-sm text-[#5A687C]">You don’t have calls yet</p>
-            <a href="#" className="text-[#675FFF] mt-2 inline-block text-sm font-[400] underline">See More</a>
+            <p className="text-[#1E1E1E]">{t("phone.average_call_duration")}</p>
+            <p className="text-sm text-[#5A687C]">{t("phone.dont_have_call")}</p>
           </div>
 
-             {/* call recive */}
+          {/* call recive */}
 
-               <div className="rounded-lg border border-[#E1E4EA] bg-white p-4 flex  flex-col gap-1">
+          <div className="rounded-lg border border-[#E1E4EA] bg-white p-4 flex  flex-col gap-1">
             <div className="flex w-10 h-10  justify-center border boarder-2 border-[#E1E4EA] rounded-[10px] p-2">
               <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M13.25 8.75V4.25M13.25 8.75H17.75M13.25 8.75L19.25 2.75M16.25 20.75C7.966 20.75 1.25 14.034 1.25 5.75V3.5C1.25 2.90326 1.48705 2.33097 1.90901 1.90901C2.33097 1.48705 2.90326 1.25 3.5 1.25H4.872C5.388 1.25 5.838 1.601 5.963 2.102L7.069 6.525C7.179 6.965 7.015 7.427 6.652 7.698L5.359 8.668C5.17393 8.80198 5.037 8.99207 4.96854 9.21005C4.90009 9.42803 4.90375 9.66227 4.979 9.878C5.58087 11.5151 6.53141 13.0018 7.76478 14.2352C8.99815 15.4686 10.4849 16.4191 12.122 17.021C12.563 17.183 13.05 17.017 13.332 16.641L14.302 15.348C14.4348 15.1708 14.6169 15.0366 14.8256 14.9625C15.0342 14.8883 15.2601 14.8773 15.475 14.931L19.898 16.037C20.398 16.162 20.75 16.612 20.75 17.128V18.5C20.75 19.0967 20.5129 19.669 20.091 20.091C19.669 20.5129 19.0967 20.75 18.5 20.75H16.25Z" stroke="#30B0C7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-</svg>
+                <path d="M13.25 8.75V4.25M13.25 8.75H17.75M13.25 8.75L19.25 2.75M16.25 20.75C7.966 20.75 1.25 14.034 1.25 5.75V3.5C1.25 2.90326 1.48705 2.33097 1.90901 1.90901C2.33097 1.48705 2.90326 1.25 3.5 1.25H4.872C5.388 1.25 5.838 1.601 5.963 2.102L7.069 6.525C7.179 6.965 7.015 7.427 6.652 7.698L5.359 8.668C5.17393 8.80198 5.037 8.99207 4.96854 9.21005C4.90009 9.42803 4.90375 9.66227 4.979 9.878C5.58087 11.5151 6.53141 13.0018 7.76478 14.2352C8.99815 15.4686 10.4849 16.4191 12.122 17.021C12.563 17.183 13.05 17.017 13.332 16.641L14.302 15.348C14.4348 15.1708 14.6169 15.0366 14.8256 14.9625C15.0342 14.8883 15.2601 14.8773 15.475 14.931L19.898 16.037C20.398 16.162 20.75 16.612 20.75 17.128V18.5C20.75 19.0967 20.5129 19.669 20.091 20.091C19.669 20.5129 19.0967 20.75 18.5 20.75H16.25Z" stroke="#30B0C7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
 
 
             </div>
-            <h3 className="text-2xl font-bold">0</h3>
-            <p className="text-[#1E1E1E]">Called Received</p>
-            <p className="text-sm text-[#5A687C]">You don't have received calls yet</p>
-            <a href="#" className="text-[#675FFF] mt-2 inline-block text-sm font-[400] underline">See More</a>
+            <h3 className="text-2xl font-bold">
+              {dashboardData.loading ? '...' : dashboardData.inbound_calls}
+            </h3>
+            <p className="text-[#1E1E1E]">{t("phone.call_recieved")}</p>
+            <p className="text-sm text-[#5A687C]">
+              {dashboardData.loading ? 'Loading...' : dashboardData.inbound_calls === 0 ? t("phone.dont_have_call") : `${dashboardData.inbound_calls} calls received`}
+            </p>
           </div>
         </div>
       </div>

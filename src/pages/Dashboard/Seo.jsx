@@ -10,6 +10,12 @@ import SeoArticles from '../../components/SeoArticles'
 import SeoAudit from '../../components/SeoAudit'
 import SeoAutomation from '../../components/SeoAutomation'
 import { formatTimeAgo } from '../../utils/TimeFormat'
+import { useTranslation } from "react-i18next";
+import { BsThreeDots } from 'react-icons/bs'
+import { X } from 'lucide-react'
+import chatInstance from '../../api/chatInstance'
+import { useDispatch, useSelector } from 'react-redux'
+import { discardSkillsData } from '../../store/agentSkillsSlice'
 
 function Seo() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
@@ -25,20 +31,31 @@ function Seo() {
     const [name, setName] = useState("")
     const [updateNameLoading, setUpdateNameLoading] = useState(false)
     const [editData, setEditData] = useState({})
+    const [sidebarStatus, setSideBarStatus] = useState(false)
     const socketRef = useRef(null)
     const socket2Ref = useRef(null)
-    const newwebsocketurl = "ws://116.202.210.102:8000/new-seo-agent-chat"
-    const websocketurl = "ws://116.202.210.102:8000/seo-agent"
+    const newwebsocketurl = `${chatInstance}/new-seo-agent-chat`
+    const websocketurl = `${chatInstance}/seo-agent`
     const initialMessage = "Hi there! I’m Sandro, your SEO Expert. \nI’m here to help you boost your website’s visibility, generate high-quality traffic, and improve your search engine rankings — all automatically. \nI can research keywords, optimize blog posts, create SEO-friendly content, and publish directly to your CMS like WordPress, Wix, or Shopify. \nWant to start ranking higher on Google without lifting a finger? Just tell me your goal, and I’ll take it from there. \nReady to grow your traffic? 🚀"
-
+    const { t } = useTranslation();
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     const sideMenuList = [
-        { label: "Chat", icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
-        { label: "Articles", icon: <ArticleIcon status={activeSidebarItem == "articles"} />, hoverIcon: <ArticleIcon hover={true} />, path: "articles" },
-        { label: "Start SEO Automation", icon: <AutomationIcon status={activeSidebarItem == "automation"} />, hoverIcon: <AutomationIcon hover={true} />, path: "automation" },
-        { label: "SEO Audit", icon: <AuditIcon status={activeSidebarItem == "audit"} />, hoverIcon: <AuditIcon hover={true} />, path: "audit" },
+        { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
+        { label: `${t("seo.articles")}`, icon: <ArticleIcon status={activeSidebarItem == "articles"} />, hoverIcon: <ArticleIcon hover={true} />, path: "articles" },
+        { label: `${t("seo.start_seo_automation")}`, icon: <AutomationIcon status={activeSidebarItem == "automation"} />, hoverIcon: <AutomationIcon hover={true} />, path: "automation" },
+        { label: `${t("seo.seo_audit")}`, icon: <AuditIcon status={activeSidebarItem == "audit"} />, hoverIcon: <AuditIcon hover={true} />, path: "audit" },
     ]
+
+
+    const activeTab = useSelector((state) => state.skills)
+
+    useEffect(() => {
+        if (activeTab.label !== null) {
+            setActiveSidebarItem(activeTab.label)
+        }
+    }, [activeTab.loading])
 
     useEffect(() => {
         if (chatList?.length > 0) {
@@ -86,7 +103,7 @@ function Seo() {
                 isUser,
                 content,
                 sender: isUser ? "User" : "Ecosystem.ai",
-                time: msg?.message_at ? formatTimeAgo(msg?.message_at) : "Just now",
+                time: msg?.message_at ? formatTimeAgo(msg?.message_at) : `${t("seo.just_now")}`,
                 status: "Read"
             };
         });
@@ -111,7 +128,7 @@ function Seo() {
 
     const handleUpdateName = async () => {
         if (!name) {
-            setErrors((prev) => ({ ...prev, name: "Enter the name" }))
+            setErrors((prev) => ({ ...prev, name: `${t("seo.enter_name")}` }))
             return
         }
         try {
@@ -146,9 +163,9 @@ function Seo() {
         }
     }
 
-    const staticSuggestions = [{ label: "Would you like advice on optimizing your cash flow?", key: "Would you like advice on optimizing my cash flow?" },
-    { label: "I need template for my forecast budget.", key: "I need template for my forecast budget." },
-    { label: "How to organize my expenses and income efficiently.", key: "How to organize my expenses and income efficiently." }
+    const staticSuggestions = [{ label: `${t("seo.how_to_analyze")}`, key: `${t("seo.how_to_analyze_key")}` },
+    { label: `${t("seo.need_a_template")}`, key: `${t("seo.need_a_template_key")}` },
+    { label: `${t("seo.most_relevent_keyword")}`, key: `${t("seo.most_relevent_keyword_key")}` }
     ]
 
     const listedProps = {
@@ -184,7 +201,8 @@ function Seo() {
         handleChatHistoryId: handleChatHistoryId,
         socketRef: socketRef,
         socket2Ref: socket2Ref,
-        staticSuggestions: staticSuggestions
+        staticSuggestions: staticSuggestions,
+        nameColor: "#C76FFF"
     }
 
     const stopTranscription = () => {
@@ -195,7 +213,6 @@ function Seo() {
             socketRef.current.close()
         }
     }
-
 
     const renderMainContent = () => {
         switch (activeSidebarItem) {
@@ -211,30 +228,32 @@ function Seo() {
 
     }
     return (
-        <div className="h-full w-full">
+        <div className="h-full w-full relative">
+            <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><BsThreeDots size={24} color='#1e1e1e' /></div>
             <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
                 {/* Sidebar */}
-                <div className="flex flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
+                <div className="lg:flex hidden flex-col bg-white gap-8 border-r border-[#E1E4EA] min-w-[272px] h-full">
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
                             stopTranscription()
+                            dispatch(discardSkillsData())
                         }}>
                             <div className="flex gap-4 pl-3 items-center h-[57px]">
                                 {/* <LeftArrow /> */}
-                                <h1 className="text-[20px] font-[600]">SEO</h1>
+                                <h1 className="text-[20px] font-[600]">{t("seo.seo_heading")}</h1>
                             </div>
                         </div>
                         <hr className='text-[#E1E4EA]' />
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-3">
-                        <div className="bg-[#F7F7FF] border border-[#E9E8FF]  w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
+                        <div className="bg-[#F7F7FF] border border-[#E9E8FF] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
                             <div className="flex justify-center items-center">
                                 <img src={sandroImg} alt={"sandro"} className="object-fit" />
                             </div>
                             <div className="flex flex-col">
-                                <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Sandro</h1>
-                                <p className="text-[#5A687C] text-[14px] font-[400]">SEO</p>
+                                <h1 className="text-[#1E1E1E] text-[16px] font-[600]">{t("seo.sandro")}</h1>
+                                <p className="text-[#5A687C] text-[14px] font-[400]">{t("seo.seo_heading")}</p>
                             </div>
                         </div>
                         {sideMenuList.map((e, i) => <div
@@ -253,10 +272,62 @@ function Seo() {
                 </div>
 
                 {/* Main Content */}
-                <div className="w-full py-3 pr-4 overflow-x-hidden">
+                <div className="w-full overflow-x-hidden pr-0 py-8 pl-3 lg:pr-4 lg:py-3">
                     {renderMainContent()}
                 </div>
             </div>
+            {sidebarStatus &&
+                <div className="lg:hidden fixed inset-0 bg-black/20 flex items-end z-50">
+                    <div className="flex relative flex-col bg-white gap-8 rounded-t-[20px] w-full max-h-[80%] overflow-auto py-8">
+                        <button
+                            className="absolute top-4 cursor-pointer right-4 text-[#1e1e1e]"
+                            onClick={() => {
+                                setSideBarStatus(false)
+                            }}
+                        >
+                            <X size={20} />
+                        </button>
+                        <div className=''>
+                            <div className='flex justify-center items-center cursor-pointer' onClick={() => {
+                                navigate("/dashboard")
+                                stopTranscription()
+                            }}>
+                                <div className="flex gap-4 pl-3 items-center h-[57px]">
+                                    {/* <LeftArrow /> */}
+                                    <h1 className="text-[20px] font-[600]">{t("seo.seo_heading")}</h1>
+                                </div>
+                            </div>
+                            <hr className='text-[#E1E4EA]' />
+                        </div>
+                        <div className="flex flex-col w-full items-start gap-2 relative px-5">
+                            <div className="bg-[#F7F7FF] border border-[#E9E8FF] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
+                                <div className="flex justify-center items-center">
+                                    <img src={sandroImg} alt={"sandro"} className="object-fit" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <h1 className="text-[#1E1E1E] text-[16px] font-[600]">{t("seo.sandro")}</h1>
+                                    <p className="text-[#5A687C] text-[14px] font-[400]">{t("seo.seo_heading")}</p>
+                                </div>
+                            </div>
+                            {sideMenuList.map((e, i) => <div
+                                key={i}
+                                onClick={() => {
+                                    setActiveSidebarItem(e.path)
+                                    setSideBarStatus(false)
+                                }}
+                                className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                                    }`}
+                            >
+                                {activeSidebarItem === `${e.path}` ? e.icon :
+                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'>{e.icon}</div> <div className='hidden group-hover:block'>{e.hoverIcon}</div></div>}
+                                <span className={`font-[400] text-[16px] ${activeSidebarItem === `${e.path}` ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                                    {e.label}
+                                </span>
+                            </div>)}
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     )
 }

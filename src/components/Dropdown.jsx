@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-export const SelectDropdown = ({ name, options, placeholder = 'Select', value, onChange, className = '', errors, disabled, extraName }) => {
+export const SelectDropdown = ({ name, options, placeholder = 'Select', value, onChange, className = '', errors, disabled, extraName, hideArrow = false }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [openUpward, setOpenUpward] = useState(false);
     const dropdownRef = useRef(null);
@@ -31,12 +31,13 @@ export const SelectDropdown = ({ name, options, placeholder = 'Select', value, o
         }
     }, [isOpen]);
 
-    const handleSelect = (option) => {
-        onChange(option);
+    const handleSelect = (optionKey) => {
+        onChange(optionKey);
         setIsOpen(false);
     };
 
-    const optionLabel = value && options.find((e) => e.key === value);
+    // Fix: allow 0 as a valid value
+    const optionLabel = (value !== undefined && value !== null&& value!=="") ? options.find((e) => e.key === value) : null;
 
     return (
         <div ref={dropdownRef} className={`relative ${className}`}>
@@ -50,7 +51,9 @@ export const SelectDropdown = ({ name, options, placeholder = 'Select', value, o
                 <span className={`block truncate ${!optionLabel ? 'text-[#5A687C]' : `${name == "lead_status" ? 'text-[#675FFF]' : 'text-[#1E1E1E]'}`}`}>
                     {extraName ? `${extraName}: ${optionLabel?.label}` : (optionLabel?.label || placeholder)}
                 </span>
-                <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
+                {!hideArrow && (
+                  <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
+                )}
             </button>
             {isOpen && (
                 <div
@@ -60,7 +63,7 @@ export const SelectDropdown = ({ name, options, placeholder = 'Select', value, o
                         {options?.length > 0 && options.map((option) => (
                             <li
                                 key={option.key}
-                                className={`cursor-pointer font-[500] select-none relative px-4 py-2 hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF] ${value === option.key ? 'text-[#675FFF] bg-[#F4F5F6] rounded-lg' : 'text-[#5A687C]'}`}
+                                className={`cursor-pointer font-[400] select-none relative px-4 py-2 hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF] ${value === option.key ? 'text-[#675FFF] bg-[#F4F5F6] rounded-lg' : 'text-[#5A687C]'}`}
                                 onClick={() => handleSelect(option.key)}
                             >
                                 {option.label}

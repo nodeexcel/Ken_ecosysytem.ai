@@ -15,19 +15,19 @@ import click_funnels from '../assets/svg/click-funnels.svg'
 import AdditionalIntegration from './AdditionalIntegrations';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNavbarData } from '../store/navbarSlice'
-import { getGoogleCalendarAccounts, getInstaAccounts, getWhatsappAccounts } from '../api/brainai';
+import { getGoogleCalendarAccounts, getInstaAccounts, getLinkedInAccounts, getWhatsappAccounts } from '../api/brainai';
 // Define the integrations data
 
 
-const Integration = () => {
-  const [firstRender, setFirstRender] = useState(true)
+const Integration = ({ firstRender, setFirstRender }) => {
   const [integartionData, setIntegrationData] = useState({})
   const [instagramData, setInstagramData] = useState([])
   const [whatsappData, setWhatsappData] = useState([])
   const [googleCalendarData, setGoogleCalendarData] = useState([])
+  const [linkedInData, setLinkedInData] = useState([])
   const dispatch = useDispatch();
   const userDetails = useSelector((state) => state.profile.user)
-  const [loading, setLoading] = useState({ instagram: true, whatsapp: true, google_calendar: true })
+  const [loading, setLoading] = useState({ instagram: true, whatsapp: true, google_calendar: true, linkedin: true })
 
   const handleInstagram = async () => {
     try {
@@ -47,6 +47,28 @@ const Integration = () => {
       console.log(error)
       setLoading((prev) => ({
         ...prev, instagram: false
+      }))
+    }
+  }
+
+  const handleLinkedIn = async () => {
+    try {
+
+      const response = await getLinkedInAccounts();
+      if (response?.status === 200) {
+        console.log(response?.data?.linkedin_account_info)
+        setLinkedInData(response?.data?.linkedin_account_info);
+        if (response?.data?.linkedin_account_info?.length === 0) {
+          setLoading((prev) => ({
+            ...prev, linkedin: false
+          }))
+        }
+      }
+
+    } catch (error) {
+      console.log(error)
+      setLoading((prev) => ({
+        ...prev, linkedin: false
       }))
     }
   }
@@ -112,13 +134,14 @@ const Integration = () => {
     handleInstagram()
     handleWhatsapp()
     handleGoogleCalender()
+    handleLinkedIn()
   }, [])
 
   const integrations = [
     {
       icon: instagram,
       name: "Instagram",
-      connectedAccounts: instagramData.length,
+      connectedAccounts: instagramData?.length,
       path: import.meta.env.VITE_INSTA_URL + `&state=${userDetails.id}`,
     },
     {
@@ -129,7 +152,8 @@ const Integration = () => {
     {
       icon: linkedin,
       name: "LinkedIn",
-      connectedAccounts: 0,
+      connectedAccounts: linkedInData?.length,
+      path: import.meta.env.VITE_LINKEDIN_URL + `&state=${userDetails.id}`,
     },
     {
       icon: facebook,
@@ -149,13 +173,13 @@ const Integration = () => {
     {
       icon: google_calender,
       name: "Google Calendar",
-      connectedAccounts: googleCalendarData.length,
+      connectedAccounts: googleCalendarData?.length,
       path: import.meta.env.VITE_GOOGLE_CALENDAR_URL + `&state=${userDetails.id}`,
     },
     {
       icon: whatsapp,
       name: "WhatsApp",
-      connectedAccounts: whatsappData.length,
+      connectedAccounts: whatsappData?.length,
       path: import.meta.env.VITE_WHATS_APP_URL + `&state=${userDetails.id}`,
     },
     {
@@ -189,7 +213,7 @@ const Integration = () => {
   if (loading.whatsapp && loading.instagram) return <p className='flex justify-center items-center h-full'><span className='loader' /></p>
 
   return (
-    <div className={`flex flex-col  ${firstRender ? 'py-4' : 'pb-4'}  pr-4 w-full items-start gap-6 `}>
+    <div className={`flex flex-col  ${firstRender ? 'py-4 pr-4' : 'pb-4 pr-0'} w-full items-start gap-6 `}>
       {firstRender ? <>
         {/* Header */}
         <header className="flex items-center justify-between w-full ">
@@ -204,7 +228,7 @@ const Integration = () => {
             <div
               key={index}
               onClick={() => handleClick(integration)}
-              className="w-full md:max-w-[763px] mx-auto bg-white border-[0.5px] border-solid border-[#e1e4ea] rounded-lg"
+              className="w-full cursor-pointer hover:opacity-70 md:max-w-[763px] mx-auto bg-white border-[0.5px] border-solid border-[#e1e4ea] rounded-lg"
             >
               <div className="flex items-center justify-between p-5">
                 <div className="flex items-center gap-2.5">
@@ -232,7 +256,7 @@ const Integration = () => {
             </div>
           ))}
         </div>
-      </> : <AdditionalIntegration setInstagramData={setInstagramData} instagramData={instagramData} integartionData={integartionData} setFirstRender={setFirstRender} whatsappData={whatsappData} setWhatsappData={setWhatsappData} googleCalendarData={googleCalendarData} setGoogleCalendarData={setGoogleCalendarData} />}
+      </> : <AdditionalIntegration setInstagramData={setInstagramData} instagramData={instagramData} integartionData={integartionData} setFirstRender={setFirstRender} whatsappData={whatsappData} setWhatsappData={setWhatsappData} googleCalendarData={googleCalendarData} setGoogleCalendarData={setGoogleCalendarData} linkedInData={linkedInData} setLinkedInData={setLinkedInData}/>}
     </div>
   )
 }

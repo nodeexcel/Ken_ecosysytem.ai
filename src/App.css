@@ -71,6 +71,18 @@ body {
   font-family: "Inter", sans-serif;
 }
 
+.thinking {
+  width: 12px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  animation: dot 1s infinite linear;
+}
+@keyframes dot {
+  100% {
+    background: #3737377f;
+  }
+}
+
 .three-dots {
   margin-left: 10px;
   width: 8px;

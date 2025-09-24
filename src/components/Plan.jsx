@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import { addCredits, updateSubscriptionPaymentStatus } from "../api/payment";
 import { useSelector } from "react-redux";
 import { loadStripe } from "@stripe/stripe-js";
-import { CheckedCircle, EmptyCircle, OfferIcon } from "../icons/icons";
+import { AddIcon, BusinessPlanIcon, CheckedCircle, CreditsIcon, CustomPlanIcon, EditPlanIcon, EmptyCircle, MembersIcon, OfferIcon, PaymentsIcon, PaymentsViewIcon, ProPlanIcon, RefreshIcon, TeamPlanIcon } from "../icons/icons";
 import { SelectDropdown } from "./Dropdown";
+import { DateFormat } from "../utils/TimeFormat";
 
-const CreditPopup = ({ t, onClose, onOpen, stripePromise, userDetails }) => {
+const CreditPopup = ({ t, onClose, onOpen, userDetails }) => {
   const staticCredits = [{ label: 500, value: "35€", priceId: import.meta.env.VITE_CREDITS_500_ID }, { label: 1000, value: "65€", priceId: import.meta.env.VITE_CREDITS_1000_ID }, { label: 2000, value: "110€", priceId: import.meta.env.VITE_CREDITS_2000_ID }]
   const [selectedCredit, setSelectedCredit] = useState(staticCredits[2]);
   const [loading, setLoading] = useState(false)
@@ -20,6 +21,7 @@ const CreditPopup = ({ t, onClose, onOpen, stripePromise, userDetails }) => {
         userId: userDetails.id
       }
       const response = await addCredits(payload);
+      const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
       const stripe = await stripePromise;
       console.log(response)
       if (response.status === 200 && stripe) {
@@ -34,32 +36,33 @@ const CreditPopup = ({ t, onClose, onOpen, stripePromise, userDetails }) => {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-4 sm:p-6 w-[75%] h-[60vh] lg:h-[511px] lg:w-[516px] overflow-y-auto relative">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <div className="p-2 bg-[#335BFB1A] rounded-lg">
-              <img src="/src/assets/svg/coins.svg" alt="" />
+      <div className="bg-white rounded-xl p-4 max-w-[515px] max-h-[514px] w-full h-full overflow-auto relative">
+        <div className="flex flex-col gap-3 pt-6 pb-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="p-2 bg-[#335BFB1A] rounded-lg">
+                <img src="/src/assets/svg/coins.svg" alt="" />
+              </div>
+              <span className="text-[20px]  font-[600] "> {t("settings.tab_2_list.yours_credits")}</span>
             </div>
-            <span className="text-[20px]  font-[600] "> {t("settings.tab_2_list.yours_credits")}</span>
+            <button
+              onClick={onClose}
+              className="text-gray-500 cursor-pointer absolute right-2 top-2 hover:text-gray-700"
+            >
+              <X />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-500 absolute right-2 top-2 hover:text-gray-700"
-          >
-            <X />
-          </button>
-        </div>
 
-        {/* <div className="bg-[#5E54FF] text-white p-4 rounded-lg mb-6 flex justify-between items-center ">
+          {/* <div className="bg-[#5E54FF] text-white p-4 rounded-lg mb-6 flex justify-between items-center ">
           <div className=" text-[16px]  font-[500] text-[#E1E4EA] ">
             Available Credit
           </div>
           <div className="text-[36px] font-700   font-semibold">100</div>
         </div> */}
 
-        <div className="mb-6">
-          <h3 className="text-[17px] font-[600]  my-4"> {t("settings.tab_2_list.add_credits")}</h3>
-          {/* <div className="relative mb-4">
+          <div className="">
+            <h3 className="text-[17px] font-[600]  my-4"> {t("settings.tab_2_list.add_credits")}</h3>
+            {/* <div className="relative mb-4">
             <input
               type="range"
               min="100"
@@ -78,7 +81,7 @@ const CreditPopup = ({ t, onClose, onOpen, stripePromise, userDetails }) => {
               <span className="text-[17px] font-[600]  ">30000</span>
             </div>
           </div> */}
-          {/* <div className="flex flex-wrap gap-2 mb-4">
+            {/* <div className="flex flex-wrap gap-2 mb-4">
             {creditOptions.map((credit, index) => (
               <button
                 key={index}
@@ -105,46 +108,47 @@ const CreditPopup = ({ t, onClose, onOpen, stripePromise, userDetails }) => {
               max="30000"
             />
           </div> */}
-          {staticCredits.map((each) => (
-            <div key={each.value} className="my-3" onClick={() => setSelectedCredit(each)}>
-              <div className={`flex justify-between items-center px-4 py-3 rounded-lg ${selectedCredit.value === each.value ? 'bg-[#675FFF]' : 'bg-[#F2F2F7]'}`}>
-                <div className={`${selectedCredit.value === each.value ? 'text-[#fff]' : 'text-[#1E1E1E]'} flex items-center gap-2 text-[17px] font-[600]`}>
-                  <h2>{each.label}  {t("settings.tab_2_list.credits")} = </h2>
-                  <h2>{each.value}</h2>
+            {staticCredits.map((each) => (
+              <div key={each.value} className="my-3 cursor-pointer" onClick={() => setSelectedCredit(each)}>
+                <div className={`flex justify-between items-center px-4 py-3 rounded-lg ${selectedCredit.value === each.value ? 'bg-[#675FFF]' : 'bg-[#F2F2F7]'}`}>
+                  <div className={`${selectedCredit.value === each.value ? 'text-[#fff]' : 'text-[#1E1E1E]'} flex items-center gap-2 text-[17px] font-[600]`}>
+                    <h2>{each.label}  {t("settings.tab_2_list.credits")} = </h2>
+                    <h2>{each.value}</h2>
+                  </div>
+                  {selectedCredit.value === each.value ? <CheckedCircle /> : <EmptyCircle />}
                 </div>
-                {selectedCredit.value === each.value ? <CheckedCircle /> : <EmptyCircle />}
               </div>
-            </div>
-          ))}
-          <button
-            onClick={() => {
-              onClose()
-              onOpen()
-            }}
-            className="flex-1 py-2 my-4 px-4 border-[1.5px] font-[500] border-[#675FFF] rounded-lg text-[#675FFF]"
-          >
-            {t("settings.tab_2_list.upgrade_plan")}
-          </button>
-        </div>
+            ))}
+            <button
+              onClick={() => {
+                onClose()
+                onOpen()
+              }}
+              className="flex-1 cursor-pointer py-2 my-4 px-4 border-[1.5px] font-[500] border-[#675FFF] rounded-lg text-[#675FFF]"
+            >
+              {t("settings.tab_2_list.upgrade_plan")}
+            </button>
+          </div>
 
-        <div className="flex gap-4">
-          <button
-            onClick={onClose}
-            className="flex-1 py-2 px-4 border border-[#5A687C] rounded-lg text-[#5A687C]"
-          >
-            {t("cancel")}
-          </button>
-          <button disabled={loading} onClick={handleAddCredits} className="flex-1 py-2 px-4 bg-[#675FFF] text-white rounded-lg">
-            {loading ? <div className="flex items-center justify-center gap-2"><p> {t("processing")}</p><span className="loader" /></div> : `${t("settings.tab_2_list.add") + " " + selectedCredit.label + " " + t("settings.tab_2_list.credits")}`}
-          </button>
+          <div className="flex gap-4">
+            <button
+              onClick={onClose}
+              className="flex-1 cursor-pointer py-2 px-4 border border-[#5A687C] rounded-lg text-[#5A687C]"
+            >
+              {t("cancel")}
+            </button>
+            <button disabled={loading} onClick={handleAddCredits} className="flex-1 cursor-pointer py-2 px-4 bg-[#675FFF] text-white rounded-lg">
+              {loading ? <div className="flex items-center justify-center gap-2"><p> {t("processing")}</p><span className="loader" /></div> : `${t("settings.tab_2_list.add") + " " + selectedCredit.label + " " + t("settings.tab_2_list.credits")}`}
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-const PlanManagementPopup = ({ t, onClose, onOpen, stripePromise }) => {
-  const [activeTab, setActiveTab] = useState("annual");
+const PlanManagementPopup = ({ t, onClose, onOpen }) => {
+  const [activeTab, setActiveTab] = useState("yearly");
   const [activePlan, setActivePlan] = useState("");
   const [planIndex, setPlanIndex] = useState();
 
@@ -152,66 +156,66 @@ const PlanManagementPopup = ({ t, onClose, onOpen, stripePromise }) => {
   const token = useSelector((state) => state.auth.token)
 
   const plans = {
-    annual: [
+    yearly: [
       {
-        id: import.meta.env.VITE_PRO_PLAN,
-        name: `${t("settings.tab_2_list.pro")}`,
-        key: "pro",
-        svg: '/src/assets/svg/table.svg',
-        price: "€97",
-        period: `/ ${t("settings.tab_2_list.month")}`,
+        id: import.meta.env.VITE_YEARLY_PRO_PLAN,
+        name: `${t("Standard")}`,
+        key: "pro", 
+        svg: <ProPlanIcon />,
+        price: "€931",
+        period: `/ ${t("settings.tab_2_list.year")}`,
         description:
           `${t("settings.tab_2_list.pro_content")}`,
         features: [
-          `10000 ${t("settings.tab_2_list.credits_per_month")}`,
+          `1 000 ${t("settings.tab_2_list.credits_per_month")}`,
           `1 ${t("settings.tab_2_list.user")}`,
-          `100MB ${t("settings.tab_2_list.of_knowledge")}`,
+          `1GB ${t("settings.tab_2_list.of_knowledge")}`,
           `5 ${t("settings.tab_2_list.integrations")}`,
           `${t("settings.tab_2_list.schedule_tool_runs")}`,
           `${t("settings.tab_2_list.live_chat")}`,
         ],
         selected: true,
-        discount: `10% ${t("settings.tab_2_list.off")}`,
+        discount: `20% ${t("settings.tab_2_list.off")}`,
       },
       {
-        id: import.meta.env.VITE_TEAM_PLAN,
-        name: `${t("settings.tab_2_list.team")}`,
+        id: import.meta.env.VITE_YEARLY_TEAM_PLAN,
+        name: `${t("Pro")}`,
         key: "team",
-        svg: '/src/assets/svg/house.svg',
-        price: "€179",
-        period: `/ ${t("settings.tab_2_list.month")}`,
+        svg: <TeamPlanIcon />,
+        price: "€1603",
+        period: `/ ${t("settings.tab_2_list.year")}`,
         description: `${t("settings.tab_2_list.team_content")}`,
         features: [
-          `100 000 ${t("settings.tab_2_list.credits_per_month")}`,
+          `2 500 ${t("settings.tab_2_list.credits_per_month")}`,
           `5 ${t("settings.tab_2_list.users")}`,
-          `1GB ${t("settings.tab_2_list.of_knowledge")}`,
-          `${t("settings.tab_2_list.full_integrations")}`,
-          `${t("settings.tab_2_list.single_account_per_platform")}`,
+          `5GB ${t("settings.tab_2_list.of_knowledge")}`,
+          `${t("settings.tab_2_list.full_integrations")} ${t("settings.tab_2_list.single_account_per_platform")}`,
+
           `${t("settings.tab_2_list.live_chat")}`,
         ],
-        discount: `10% ${t("settings.tab_2_list.off")}`,
+        discount: `20% ${t("settings.tab_2_list.off")}`,
       },
-      {
-        id: import.meta.env.VITE_BUSINESS_PLAN,
-        name: `${t("settings.tab_2_list.business")}`,
-        key: "business",
-        svg: '/src/assets/svg/building.svg',
-        price: "€279",
-        period: `/ ${t("settings.tab_2_list.month")}`,
-        description: `${t("settings.tab_2_list.business_content")}`,
-        features: [
-          `300 000 ${t("settings.tab_2_list.credits_per_month")}`,
-          `10 ${t("settings.tab_2_list.users")}`,
-          `${t("settings.tab_2_list.full_integrations_access")}`,
-          `${t("settings.tab_2_list.multi_account_mode")}`,
-          `${t("settings.tab_2_list.activity_center")}`,
-          `5GB ${t("settings.tab_2_list.of_knowledge")}`,
-          `${t("settings.tab_2_list.dedicated_slack_channel")}`,
-        ],
-      },
+      // {
+      //   id: import.meta.env.VITE_BUSINESS_PLAN,
+      //   name: `${t("settings.tab_2_list.business")}`,
+      //   key: "business",
+      //   svg: <BusinessPlanIcon />,
+      //   price: "€279",
+      //   period: `/ ${t("settings.tab_2_list.month")}`,
+      //   description: `${t("settings.tab_2_list.business_content")}`,
+      //   features: [
+      //     `300 000 ${t("settings.tab_2_list.credits_per_month")}`,
+      //     `10 ${t("settings.tab_2_list.users")}`,
+      //     `${t("settings.tab_2_list.full_integrations_access")}`,
+      //     `${t("settings.tab_2_list.multi_account_mode")}`,
+      //     `${t("settings.tab_2_list.activity_center")}`,
+      //     `5GB ${t("settings.tab_2_list.of_knowledge")}`,
+      //     `${t("settings.tab_2_list.dedicated_slack_channel")}`,
+      //   ],
+      // },
       {
         name: `${t("settings.tab_2_list.enterprise")}`,
-        svg: '/src/assets/svg/buildings.svg',
+        svg: <CustomPlanIcon />,
         key: "enterprise",
         price: `${t("settings.tab_2_list.custom")}`,
         description: "Best performance, support and security.",
@@ -225,17 +229,18 @@ const PlanManagementPopup = ({ t, onClose, onOpen, stripePromise }) => {
     ],
     monthly: [
       {
+        id: import.meta.env.VITE_MONTHLY_PRO_PLAN,
         name: `${t("settings.tab_2_list.pro")}`,
-        svg: '/src/assets/svg/table.svg',
-        price: "€107",
+        svg: <ProPlanIcon />,
+        price: "€97",
         key: "pro",
         period: `/ ${t("settings.tab_2_list.month")}`,
         description:
           `${t("settings.tab_2_list.pro_content")}`,
         features: [
-          `10000 ${t("settings.tab_2_list.credits_per_month")}`,
+          `1 000 ${t("settings.tab_2_list.credits_per_month")}`,
           `1 ${t("settings.tab_2_list.user")}`,
-          `100MB ${t("settings.tab_2_list.of_knowledge")}`,
+          `1GB ${t("settings.tab_2_list.of_knowledge")}`,
           `5 ${t("settings.tab_2_list.integrations")}`,
           `${t("settings.tab_2_list.schedule_tool_runs")}`,
           `${t("settings.tab_2_list.live_chat")}`,
@@ -243,41 +248,42 @@ const PlanManagementPopup = ({ t, onClose, onOpen, stripePromise }) => {
         selected: true,
       },
       {
+        id: import.meta.env.VITE_MONTHLY_TEAM_PLAN,
         name: `${t("settings.tab_2_list.team")}`,
-        svg: '/src/assets/svg/house.svg',
+        svg: <TeamPlanIcon />,
         key: "team",
-        price: "€199",
+        price: "€167",
         period: `/ ${t("settings.tab_2_list.month")}`,
         description: `${t("settings.tab_2_list.team_content")}`,
         features: [
-          `100 000 ${t("settings.tab_2_list.credits_per_month")}`,
+          `2 500 ${t("settings.tab_2_list.credits_per_month")}`,
           `5 ${t("settings.tab_2_list.users")}`,
-          `1GB ${t("settings.tab_2_list.of_knowledge")}`,
-          `${t("settings.tab_2_list.full_integrations")}`,
-          `${t("settings.tab_2_list.single_account_per_platform")}`,
+          `5GB ${t("settings.tab_2_list.of_knowledge")}`,
+          `${t("settings.tab_2_list.full_integrations")} ${t("settings.tab_2_list.single_account_per_platform")}`,
+
           `${t("settings.tab_2_list.live_chat")}`,
         ],
       },
-      {
-        name: `${t("settings.tab_2_list.business")}`,
-        svg: '/src/assets/svg/building.svg',
-        key: "business",
-        price: "€309",
-        period: `/ ${t("settings.tab_2_list.month")}`,
-        description: `${t("settings.tab_2_list.business_content")}`,
-        features: [
-          `300 000 ${t("settings.tab_2_list.credits_per_month")}`,
-          `10 ${t("settings.tab_2_list.users")}`,
-          `${t("settings.tab_2_list.full_integrations_access")}`,
-          `${t("settings.tab_2_list.multi_account_mode")}`,
-          `${t("settings.tab_2_list.activity_center")}`,
-          `5GB ${t("settings.tab_2_list.of_knowledge")}`,
-          `${t("settings.tab_2_list.dedicated_slack_channel")}`,
-        ],
-      },
+      // {
+      //   name: `${t("settings.tab_2_list.business")}`,
+      //   svg: <BusinessPlanIcon />,
+      //   key: "business",
+      //   price: "€309",
+      //   period: `/ ${t("settings.tab_2_list.month")}`,
+      //   description: `${t("settings.tab_2_list.business_content")}`,
+      //   features: [
+      //     `300 000 ${t("settings.tab_2_list.credits_per_month")}`,
+      //     `10 ${t("settings.tab_2_list.users")}`,
+      //     `${t("settings.tab_2_list.full_integrations_access")}`,
+      //     `${t("settings.tab_2_list.multi_account_mode")}`,
+      //     `${t("settings.tab_2_list.activity_center")}`,
+      //     `5GB ${t("settings.tab_2_list.of_knowledge")}`,
+      //     `${t("settings.tab_2_list.dedicated_slack_channel")}`,
+      //   ],
+      // },
       {
         name: `${t("settings.tab_2_list.enterprise")}`,
-        svg: '/src/assets/svg/buildings.svg',
+        svg: <CustomPlanIcon />,
         key: "enterprise",
         price: `${t("settings.tab_2_list.custom")}`,
         description: "Best performance, support and security.",
@@ -294,13 +300,41 @@ const PlanManagementPopup = ({ t, onClose, onOpen, stripePromise }) => {
 
   useEffect(() => {
     if (token && !userDetails.loading) {
-      const filterData = plans.annual.filter((each) => each.key === userDetails?.subscriptionType)
-      const index = plans.annual.findIndex((each) => each.key === userDetails?.subscriptionType)
-      setPlanIndex(index)
-      setActivePlan(filterData?.[0].name)
+      if (userDetails?.subscriptionType === "trail") {
+        setActivePlan("")
+        setPlanIndex(0)
+        setActiveTab("yearly")
+      }
+      else {
+        const filterData = plans?.[userDetails?.subscriptionDurationType]?.filter((each) => each.key === userDetails?.subscriptionType)
+        const index = plans?.[userDetails?.subscriptionDurationType]?.findIndex((each) => each.key === userDetails?.subscriptionType)
+        setPlanIndex(index)
+        setActiveTab(userDetails?.subscriptionDurationType)
+        setActivePlan(filterData?.[0]?.key)
+      }
     }
 
   }, [token, !userDetails.loading])
+
+  const handleDisablePlan = (index, key) => {
+    if (new Date() > new Date(userDetails?.subscriptionEndDate)) {
+      return false
+    } else if (userDetails?.subscriptionType === "trial") {
+      return true
+    } else if (userDetails?.subscriptionDurationType === activeTab) {
+      if ((index < planIndex) || (key === userDetails?.subscriptionType)) {
+        return true
+      } else {
+        return false
+      }
+    } else {
+      if (userDetails?.subscriptionDurationType === "monthly"){
+        return false
+      }
+      return true
+    }
+  }
+
 
   const handleSelectPlan = (plan) => {
     setActivePlan(plan)
@@ -313,6 +347,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen, stripePromise }) => {
         priceId: id
       }
       const response = await updateSubscriptionPaymentStatus(payload)
+      const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
       const stripe = await stripePromise;
       console.log(response)
       if (response.status === 200 && stripe) {
@@ -321,6 +356,18 @@ const PlanManagementPopup = ({ t, onClose, onOpen, stripePromise }) => {
 
     } catch (error) {
       console.log(error)
+    }
+  }
+
+  const renderPlanExpire = () => {
+    if (userDetails?.subscriptionType == 'trial') {
+      if (new Date() > new Date(userDetails?.subscriptionEndDate)) {
+        return <p className="text-red-500 pb-3">Your Trail Plan ended on {DateFormat(userDetails?.subscriptionEndDate)}</p>
+      } else {
+        return <p className="text-green-500 pb-3">Your Trail Plan ends on {DateFormat(userDetails?.subscriptionEndDate)}</p>
+      }
+    } else if (new Date() > new Date(userDetails?.subscriptionEndDate)) {
+      return <p className="text-red-500 pb-3">Your current plan ended on {DateFormat(userDetails?.subscriptionEndDate)}</p>
     }
   }
 
@@ -338,16 +385,16 @@ const PlanManagementPopup = ({ t, onClose, onOpen, stripePromise }) => {
             <span className="text-[16px] sm:text-[20px] font-[600] ">{t("settings.tab_2_list.manage_plan")}</span>
             <div className="flex gap-2 bg-[#F2F2F7] p-1 rounded-lg">
               <button
-                className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium ${activeTab === "annual"
+                className={`flex-1 px-3 py-2 rounded-lg cursor-pointer text-sm font-medium ${activeTab === "yearly"
                   ? "bg-white text-black"
                   : "bg-transparent text-[#5A687C]"
                   }`}
-                onClick={() => setActiveTab("annual")}
+                onClick={() => setActiveTab("yearly")}
               >
                 {t("settings.tab_2_list.annual")}
               </button>
               <button
-                className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium ${activeTab === "monthly"
+                className={`flex-1 px-3 py-2 cursor-pointer rounded-lg text-sm font-medium ${activeTab === "monthly"
                   ? "bg-white text-black"
                   : "bg-transparent text-[#5A687C]"
                   }`}
@@ -360,74 +407,76 @@ const PlanManagementPopup = ({ t, onClose, onOpen, stripePromise }) => {
           <div className="flex items-center gap-4">
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 absolute top-1 right-1"
+              className="text-gray-500 cursor-pointer hover:text-gray-700 absolute top-1 right-1"
             >
               <X />
             </button>
           </div>
           <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <button className="text-[#1E1E1E] text-[14px] font-[400]">
+            <button className="text-[#1E1E1E] cursor-pointer text-[14px] font-[400]">
               {t("settings.tab_2_list.manage_payment_method")}
             </button>
             <button onClick={() => {
               onClose()
               onOpen()
-            }} className="text-[#FF3B30] text-[14px] font-[400]">
+            }} className="text-[#FF3B30] cursor-pointer text-[14px] font-[400]">
               {t("settings.tab_2_list.cancel_subscription")}
             </button>
           </div>
         </div>
+        {renderPlanExpire()}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
           {plans[activeTab].map((plan, index) => (
             <div
               key={index}
-              onClick={index >= planIndex ? () => handleSelectPlan(plan.name) : undefined}
-              className={`border ${activePlan === plan.name && index >= planIndex ? "border-[#675FFF]" : "border-[#E1E4EA]"} rounded-xl p-4`}
+              onClick={index >= planIndex ? () => handleSelectPlan(plan.key) : undefined}
+              className={`border ${((userDetails?.subscriptionDurationType === activeTab) && (index == planIndex)) ? "border-[#675FFF]" : "border-[#E1E4EA]"} rounded-xl p-4`}
             >
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex justify-between mb-4">
                 <div className="flex flex-col gap-2">
-                  <div className="p-2 rounded-lg">
-                    <img src={plan.svg} alt="" className="w-8 h-8 object-contain" />
+                  <div>
+                    {plan.svg}
                   </div>
-                  <span className="font-[600] text-[15px] sm:text-[16px] ">{plan.name}</span>
+                  <span className="font-[600] text-[#1E1E1E] text-[18px] ">{plan.name}</span>
                 </div>
                 {plan.discount && (
-                  <span className="text-[#34C759] text-[13px] sm:text-[14px]  bg-[#34C7591A] px-2 py-1 rounded whitespace-nowrap">
+                  <div className="text-[#34C759] h-fit text-[18px] font-[600] bg-[#34C7591A] p-[10px] rounded-[11px] whitespace-nowrap">
                     {plan.discount}
-                  </span>
+                  </div>
                 )}
               </div>
               <div className="flex items-baseline gap-1 mb-2 flex-wrap">
-                <span className="text-[18px] sm:text-[22px] font-[600] ">{plan.price}</span>
+                <p className="text-[22px] text-[#1E1E1E] font-[600] ">{plan.price}</p>
                 {plan.period && (
-                  <span className="text-[#5A687C] font-[600] text-[13px] sm:text-[14px]">
+                  <span className="text-[#5A687C] font-[600] text-[16px]">
                     {plan.period}
                   </span>
                 )}
               </div>
-              <p className="text-gray-600 text-[13px] sm:text-sm mb-4 line-clamp-2">{plan.description}</p>
+              <p className="text-[#5A687C] text-[14px] font-[400] mb-4">{plan.description}</p>
               <button
-                disabled={index < planIndex || plan.key === userDetails?.subscriptionType}
+                disabled={handleDisablePlan(index, plan.key)}
                 onClick={() => handlePayment(plan.id)}
-                className={`w-full py-2 px-3 rounded-lg mb-4 text-[13px] sm:text-sm ${(plan.key === userDetails?.subscriptionType || index < planIndex)
-                  ? "bg-gray-100 text-gray-700"
+                className={`w-full py-2 px-3 font-[500] rounded-lg mb-4 text-[13px] sm:text-sm ${handleDisablePlan(index, plan.key)
+                  ? "bg-gray-100 cursor-not-allowed text-[#5A687C]"
                   : plan.key === "enterprise"
-                    ? "border border-[#5E54FF] text-[#5E54FF]"
-                    : "bg-[#5E54FF] text-white"
+                    ? "border-[1.5px] border-[#5F58E8] text-[#675FFF]"
+                    : "bg-[#675FFF] text-white cursor-pointer"
                   }`}
               >
-                {plan.key === userDetails?.subscriptionType
+                {handleDisablePlan(index, plan.key) && ((userDetails?.subscriptionDurationType === activeTab) && (index == planIndex))
                   ? `${t("settings.tab_2_list.selected")}`
                   : plan.key === "enterprise"
                     ? `${t("settings.tab_2_list.get_a_quote")}`
                     : `${t("settings.tab_2_list.upgrade")}`}
               </button>
+              <p className="text-[#5A687C] font-[500] text-[14px] pb-4">{t("settings.tab_2_list.include")}</p>
               <div className="space-y-2.5">
                 {plan.features.map((feature, idx) => (
                   <div key={idx} className="flex items-start gap-2">
-                    <img src="/src/assets/svg/check.svg" alt="" className="w-4 h-4 mt-0.5" />
-                    <span className="text-[13px] sm:text-sm">{feature}</span>
+                    <div><CheckedCircle status={true} /></div>
+                    <p className="text-sm font-[500] text-[#5A687C]">{feature}</p>
                   </div>
                 ))}
               </div>
@@ -435,7 +484,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen, stripePromise }) => {
           ))}
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
@@ -453,7 +502,7 @@ const CancelSubscriptionPopup = ({ t, onClose }) => {
           </div>
           <button
             onClick={onClose}
-            className="text-gray-500 absolute right-2 top-2 hover:text-gray-700"
+            className="text-gray-500 cursor-pointer absolute right-2 top-2 hover:text-gray-700"
           >
             <X />
           </button>
@@ -492,12 +541,12 @@ const CancelSubscriptionPopup = ({ t, onClose }) => {
         </div>
 
         <div className="flex gap-4 mt-5">
-          <button className="flex-1 py-2 px-4 bg-[#675FFF] text-white rounded-lg">
+          <button className="flex-1 cursor-pointer py-2 px-4 bg-[#675FFF] text-white rounded-lg">
             {t("settings.tab_2_list.accept_discount")}
           </button>
           <button
             onClick={() => setInitailTab(false)}
-            className="flex-1 py-2 px-4 border border-[#FF3B30] rounded-lg text-[#FF3B30]"
+            className="flex-1 py-2 px-4 cursor-pointer border border-[#FF3B30] rounded-lg text-[#FF3B30]"
           >
             {t("settings.tab_2_list.no_i_cancel")}
           </button>
@@ -509,7 +558,7 @@ const CancelSubscriptionPopup = ({ t, onClose }) => {
           </div>
           <button
             onClick={onClose}
-            className="text-gray-500 absolute right-2 top-2 hover:text-gray-700"
+            className="text-gray-500 cursor-pointer absolute right-2 top-2 hover:text-gray-700"
           >
             <X />
           </button>
@@ -553,11 +602,11 @@ const CancelSubscriptionPopup = ({ t, onClose }) => {
         <div className="flex gap-4 mt-5">
           <button
             onClick={onClose}
-            className="flex-1 p-2 text-center bg-[#FF3B30] rounded-lg text-[#fff]"
+            className="flex-1 cursor-pointer p-2 text-center bg-[#FF3B30] rounded-lg text-[#fff]"
           >
             {t("settings.tab_2_list.confirm_cancel")}
           </button>
-          <button onClick={onClose} className="flex-1 w-full text-center p-2 bg-trasparent border border-[#5A687C] text-[#5A687C] rounded-lg">
+          <button onClick={onClose} className="flex-1 cursor-pointer w-full text-center p-2 bg-trasparent border border-[#5A687C] text-[#5A687C] rounded-lg">
             {t("settings.tab_2_list.i_changed_my_mind")}
           </button>
         </div>
@@ -566,53 +615,53 @@ const CancelSubscriptionPopup = ({ t, onClose }) => {
   )
 }
 
-const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPlanPopup }) => {
+const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPlanPopup, handleAddSeatsTeam }) => {
   const [showCreditPopup, setShowCreditPopup] = useState(false);
   const [cancelPopup, setCancelPopup] = useState(false);
   const [roleSelect, setRoleSelect] = useState("All");
   const [pastMonths, setPastMonths] = useState(6);
-  const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
-  const userDetails = useSelector((state) => state.profile.user)
+  const userDetails = useSelector((state) => state.profile.user);
+  const [creditUsageData, setCreditUsageData] = useState([])
 
-  const creditUsageData = [
-    {
-      item: "AI Agents - LLM and Tool Cost",
-      credit: "500.000",
-      usedBy: "Sami",
-      dateTime: "27/03/2025 03:30 PM",
-    },
-    {
-      item: "AI Agents - LLM and Tool Cost",
-      credit: "500.000",
-      usedBy: "Jeson",
-      dateTime: "27/03/2025 03:30 PM",
-    },
-    {
-      item: "AI Agents - LLM and Tool Cost",
-      credit: "500.000",
-      usedBy: "Marcus",
-      dateTime: "27/03/2025 03:30 PM",
-    },
-    {
-      item: "AI Agents - LLM and Tool Cost",
-      credit: "500.000",
-      usedBy: "Robert",
-      dateTime: "27/03/2025 03:30 PM",
-    },
-    {
-      item: "AI Agents - LLM and Tool Cost",
-      credit: "500.000",
-      usedBy: "Robert",
-      dateTime: "27/03/2025 03:30 PM",
-    },
-  ];
+  // const creditUsageData = [
+  //   {
+  //     item: "AI Agents - LLM and Tool Cost",
+  //     credit: "500.000",
+  //     usedBy: "Sami",
+  //     dateTime: "27/03/2025 03:30 PM",
+  //   },
+  //   {
+  //     item: "AI Agents - LLM and Tool Cost",
+  //     credit: "500.000",
+  //     usedBy: "Jeson",
+  //     dateTime: "27/03/2025 03:30 PM",
+  //   },
+  //   {
+  //     item: "AI Agents - LLM and Tool Cost",
+  //     credit: "500.000",
+  //     usedBy: "Marcus",
+  //     dateTime: "27/03/2025 03:30 PM",
+  //   },
+  //   {
+  //     item: "AI Agents - LLM and Tool Cost",
+  //     credit: "500.000",
+  //     usedBy: "Robert",
+  //     dateTime: "27/03/2025 03:30 PM",
+  //   },
+  //   {
+  //     item: "AI Agents - LLM and Tool Cost",
+  //     credit: "500.000",
+  //     usedBy: "Robert",
+  //     dateTime: "27/03/2025 03:30 PM",
+  //   },
+  // ];
   const role = useSelector((state) => state.profile.user.role)
 
   const roleOptions = [{ label: `${t("settings.tab_3_list.all")}`, key: "All" }, { label: `${t("settings.tab_3_list.admin")}`, key: "Admin" }, { label: `${t("settings.tab_3_list.member")}`, key: "Member" }, { label: `${t("settings.tab_3_list.guest")}`, key: "Guest" }]
   const pastMonthOptions = [{ label: `${t("settings.tab_2_list.past_6_months")}`, key: 6 }, { label: `${t("settings.tab_2_list.past_3_months")}`, key: 3 }, { label: `${t("settings.tab_2_list.past_2_months")}`, key: 2 }]
 
   return (
-    <div className="py-2 pr-4 w-full">
+    <div className="py-2 pr-4 w-full h-full">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h1 className="text-[20px] sm:text-[24px] font-semibold">
@@ -620,17 +669,17 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
         </h1>
         <button
           onClick={() => setShowPlanPopup(true)}
-          className="w-full sm:w-auto px-4 py-2 text-[#5E54FF] text-[16px]  border border-[#5E54FF] hover:bg-indigo-50 rounded-lg"
+          className="w-full cursor-pointer sm:w-auto px-4 py-2 text-[#5E54FF] text-[16px]  border border-[#5E54FF] hover:bg-indigo-50 rounded-lg"
         >
           {t("settings.tab_2_list.manage_plan")}
         </button>
       </div>
 
       {showPlanPopup && (
-        <PlanManagementPopup t={t} onClose={() => setShowPlanPopup(false)} onOpen={() => setCancelPopup(true)} stripePromise={stripePromise} />
+        <PlanManagementPopup t={t} onClose={() => setShowPlanPopup(false)} onOpen={() => setCancelPopup(true)} />
       )}
       {showCreditPopup && (
-        <CreditPopup t={t} onClose={() => setShowCreditPopup(false)} onOpen={() => setShowPlanPopup(true)} stripePromise={stripePromise} userDetails={userDetails} />
+        <CreditPopup t={t} onClose={() => setShowCreditPopup(false)} onOpen={() => setShowPlanPopup(true)} userDetails={userDetails} />
       )}
       {cancelPopup && (
         <CancelSubscriptionPopup t={t} onClose={() => setCancelPopup(false)} />
@@ -646,21 +695,21 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
               <div className="">
-                <img src="/src/assets/svg/plan.svg" alt="" />
+                <CreditsIcon />
               </div>
               <span className="text-[16px] font-[600]   "> {t("settings.tab_2_list.plan")}</span>
             </div>
-            <button className="text-gray-400 hover:text-gray-600 cursor-pointer bg-[#F2F2F7] rounded-lg px-2 py-2"
+            <button className="cursor-pointer"
               onClick={() => setShowCreditPopup(true)}
             >
-              <img src="/src/assets/svg/planedit.svg" alt="" />
+              <EditPlanIcon />
             </button>
           </div>
           <h1 className=" mb-2 text-sm font-[400]  text-[#5A687C] " > {t("settings.tab_2_list.available_credits")}</h1>
           <div className="flex items-center gap-2">
             <span className="text-[24px] font-[600]  ">{teamMembersData?.credits}</span>
-            <button onClick={() => setShowCreditPopup(true)} className="px-2 rounded-[5px] py-2 text-[14px] flex items-center gap-1 bg-[#335BFB1A] text-[#675FFF] font-[600] ">
-              <img src="/src/assets/svg/add.svg" alt="" />
+            <button onClick={() => setShowCreditPopup(true)} className="px-2 cursor-pointer rounded-[5px] py-2 text-[14px] flex items-center gap-1 bg-[#335BFB1A] text-[#675FFF] font-[600] ">
+              <AddIcon />
               <span> {t("settings.tab_2_list.add_credits")}</span>
             </button>
           </div>
@@ -671,15 +720,13 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
               <div className="">
-                <img src="/src/assets/svg/payment.svg" alt="" />
+                <PaymentsIcon />
               </div>
               <span className="font-medium"> {t("settings.tab_2_list.payment")}</span>
             </div>
-            <button onClick={() => setActiveSidebarItem("transaction-history")} className="text-[#5E54FF] font-[600] text-sm hover:underline flex items-center gap-2 ">
-              {t("settings.tab_2_list.view_details")}{" "}
-              <span>
-                <img src="/src/assets/svg/details.svg" alt="" />
-              </span>
+            <button onClick={() => setActiveSidebarItem("transaction-history")} className="text-[#5E54FF] font-[600] text-sm cursor-pointer hover:underline flex items-center gap-2 ">
+              <span>{t("settings.tab_2_list.view_details")}{" "}</span>
+              <span className="pb-0.5"><PaymentsViewIcon /></span>
             </button>
           </div>
           <div className="inline-block w-fit px-4 py-2 bg-green-50 text-[#34C759] font-[600] rounded-lg text-sm">
@@ -692,12 +739,12 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
               <div className="">
-                <img src="/src/assets/svg/members.svg" alt="" />
+                <MembersIcon />
               </div>
               <span className="font-medium"> {t("settings.tab_2_list.members_seats")}</span>
             </div>
-            <button className="text-[#5E54FF] font-[600] text-sm hover:underline flex items-center gap-1 ">
-              <img src="/src/assets/svg/add.svg" alt="" />
+            <button onClick={handleAddSeatsTeam} className="text-[#5E54FF] font-[600] cursor-pointer text-sm hover:underline flex items-center gap-1 ">
+              <AddIcon />
               {t("settings.tab_2_list.add_seats")}{" "}
             </button>
           </div>
@@ -722,7 +769,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
               onChange={(updated) => {
                 setRoleSelect(updated)
               }}
-              placeholder="Select"
+              placeholder={t("brain_ai.select")}
               className="w-[155px]"
             />
             <SelectDropdown
@@ -732,11 +779,11 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
               onChange={(updated) => {
                 setPastMonths(updated)
               }}
-              placeholder="Select"
+              placeholder={t("brain_ai.select")}
               className="w-[160px]"
             />
             <div className="flex items-center px-3 gap-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-[8px] py-[8px]">
-              <img src="/src/assets/svg/refresh.svg" alt="" />
+              <RefreshIcon />
               <button className="text-[16px] cursor-pointer text-[#5A687C]">
                 {t("refresh")}
               </button>
@@ -784,6 +831,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
               ))}
             </tbody>
           </table>
+          {creditUsageData?.length == 0 && <p className="text-center h-20 pt-5">{t("no_data")}</p>}
         </div>
       </div>
     </div>

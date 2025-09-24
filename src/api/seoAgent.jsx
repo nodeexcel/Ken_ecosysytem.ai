@@ -1,8 +1,8 @@
-import axiosInstance from "./axiosInstance";
+import agentInstance from "./agentInstance";
 
 export const getSeoChats = async () => {
     try {
-        const response = await axiosInstance.get(`http://116.202.210.102:8000/get-seo-chats`);
+        const response = await agentInstance.get(`/get-seo-chats`);
         return response;
     } catch (error) {
         console.error(error);
@@ -12,7 +12,7 @@ export const getSeoChats = async () => {
 
 export const getSeoChatById = async (id) => {
     try {
-        const response = await axiosInstance.get(`http://116.202.210.102:8000/get-seo-chat/${id}`);
+        const response = await agentInstance.get(`/get-seo-chat/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -22,7 +22,7 @@ export const getSeoChatById = async (id) => {
 
 export const updateSeoChatName = async (id, payload) => {
     try {
-        const response = await axiosInstance.patch(`http://116.202.210.102:8000/update-seo-chat-name/${id}`, payload);
+        const response = await agentInstance.patch(`/update-seo-chat-name/${id}`, payload);
         return response;
     } catch (error) {
         console.error(error);
@@ -32,7 +32,7 @@ export const updateSeoChatName = async (id, payload) => {
 
 export const deleteSeoChat = async (id) => {
     try {
-        const response = await axiosInstance.delete(`http://116.202.210.102:8000/delete-seo-chat/${id}`);
+        const response = await agentInstance.delete(`/delete-seo-chat/${id}`);
         return response;
     } catch (error) {
         console.error(error);

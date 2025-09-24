@@ -1,24 +1,28 @@
 import { useEffect, useState } from 'react'
 import { campaignStatics } from '../api/emailCampaign';
+import { useTranslation } from "react-i18next";
 
-const staticData = [
-    {
-        header: "Campaign", list: [
-            { label: "Running", key: "running" }, { label: "Scheduled", key: "scheduled" }, { label: "Terminated", key: "terminated" },
-            { label: "Issue Detected", key: "issue_detected" }, { label: "Draft", key: "draft" }, { label: "Paused", key: "paused" }
-        ]
-    },
-    {
-        header: "Email Statistics", list: [
-            { label: "Total Emails sent", value: 10 }, { label: "Emails Delivered", value: 12 }, { label: "Emails Opened", value: 14 },
-            { label: "Email Clicks", value: 12 }, { label: "Bounced Emails", value: 10 }
-        ]
-    }
-]
+
 
 function EmailDashboard() {
     const [loading, setLoading] = useState(true);
     const [campaignData, setCampaignData] = useState({})
+    const { t } = useTranslation();
+
+    const staticData = [
+        {
+            header: `${t("emailings.campaign")}`, list: [
+                { label: `${t("running")}`, key: "running" }, { label: `${t("scheduled")}`, key: "scheduled" }, { label: `${t("terminated")}`, key: "terminated" },
+                { label: `${t("emailings.issue_detected")}`, key: "issue_detected" }, { label: `${t("draft")}`, key: "draft" }, { label: `${t("paused")}`, key: "paused" }
+            ]
+        },
+        {
+            header: `${t("email_statistics")}`, list: [
+                { label: `${t("emailings.total_email_sent")}`, value: 10 }, { label: `${t("emailings.email_delivered")}`, value: 12 }, { label: `${t("emailings.email_opened")}`, value: 14 },
+                { label: `${t("emailings.email_clicks")}`, value: 12 }, { label: `${t("emailings.bounced_email")}`, value: 10 }
+            ]
+        }
+    ]
 
     useEffect(() => {
         getCampaignData()
@@ -49,7 +53,7 @@ function EmailDashboard() {
     return (
         <div className="w-full p-4 flex flex-col gap-4 overflow-auto h-screen">
             <div className="flex justify-between items-center mb-2">
-                <h1 className="text-[#1E1E1E] font-[600] text-xl md:text-[24px]">Dashboard</h1>
+                <h1 className="text-[#1E1E1E] font-[600] text-xl md:text-[24px]">{t("dashboard")}</h1>
             </div>
             {loading ? <div className='flex justify-center items-center h-[50vh]'><span className='loader' /></div> : <>
 

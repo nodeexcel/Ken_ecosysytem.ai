@@ -1,6 +1,6 @@
 
 import { useNavigate } from 'react-router-dom'
-import logo from '/ecosystem_logo.svg'
+import logo from '../assets/svg/ecosysteme.ai_logo.svg'
 
 const staticData = {
     header: "Privacy Policy",
@@ -44,14 +44,13 @@ function PrivacyPolicy() {
     return (
         <div className="h-full overflow-auto w-full bg-[#F6F7F9]">
             <div className='flex justify-between p-4 items-center bg-[#E7E6F9]'>
-                <div className="flex justify-center items-center gap-3">
+                <div className="flex justify-center items-center gap-3 pl-3">
                     <div>
-                        <img src={logo} alt="logo" className="w-[47.15px] h-[52px]" />
+                        <img src={logo} alt="logo" className="object-fit" />
                     </div>
-                    <h1 className="text-[28px] font-semibold onest text-[#1E1E1E]">Ecosysteme.ai</h1>
                 </div>
                 <div>
-                    <button onClick={()=>navigate("/")} className='bg-[#675FFF] cursor-pointer border border-[#5F58E8] px-3 py-2 rounded-lg text-[#fff] text-[16px] font-[500]'>
+                    <button onClick={() => navigate("/")} className='bg-[#675FFF] cursor-pointer border border-[#5F58E8] px-3 py-2 rounded-lg text-[#fff] text-[16px] font-[500]'>
                         Log in
                     </button>
                 </div>

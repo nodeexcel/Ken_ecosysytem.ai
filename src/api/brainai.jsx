@@ -1,8 +1,9 @@
 import axiosInstance from "./axiosInstance";
+import agentInstance from "./agentInstance";
 
 export const knowledgeBase = async (payload) => {
     try {
-        const response = await axiosInstance.post("http://116.202.210.102:8000/knowledge-base", payload,
+        const response = await agentInstance.post("/knowledge-base", payload,
             {
                 headers: {
                     "Content-Type": "multipart/form-data"
@@ -18,7 +19,7 @@ export const knowledgeBase = async (payload) => {
 
 export const getKnowledgeSnippets = async () => {
     try {
-        const response = await axiosInstance.get("http://116.202.210.102:8000/snippets");
+        const response = await agentInstance.get("/snippets");
         return response;
     } catch (error) {
         console.error(error);
@@ -28,7 +29,7 @@ export const getKnowledgeSnippets = async () => {
 
 export const deleteKnowledgeSnippets = async (id) => {
     try {
-        const response = await axiosInstance.delete(`http://116.202.210.102:8000/knowledge-base/${id}`);
+        const response = await agentInstance.delete(`/knowledge-base/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -158,7 +159,7 @@ export const deleteList = async (id) => {
 
 export const getInstaAccounts = async () => {
     try {
-        const response = await axiosInstance.get(`http://116.202.210.102:8000/get-insta-accounts`);
+        const response = await agentInstance.get(`/get-insta-accounts`);
         return response;
     } catch (error) {
         console.error(error);
@@ -169,7 +170,7 @@ export const getInstaAccounts = async () => {
 
 export const deleteInstaAccount = async (id) => {
     try {
-        const response = await axiosInstance.delete(`http://116.202.210.102:8000/delete-insta-account/${id}`);
+        const response = await agentInstance.delete(`/delete-insta-account/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -180,7 +181,7 @@ export const deleteInstaAccount = async (id) => {
 
 export const getWhatsappAccounts = async () => {
     try {
-        const response = await axiosInstance.get(`http://116.202.210.102:8000/get-whatsapp-accounts`);
+        const response = await agentInstance.get(`/get-whatsapp-accounts`);
         return response;
     } catch (error) {
         console.error(error);
@@ -191,7 +192,7 @@ export const getWhatsappAccounts = async () => {
 
 export const deleteWhatsappAccount = async (id) => {
     try {
-        const response = await axiosInstance.delete(`http://116.202.210.102:8000/delete-whatsapp-account/${id}`);
+        const response = await agentInstance.delete(`/delete-whatsapp-account/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -202,7 +203,7 @@ export const deleteWhatsappAccount = async (id) => {
 
 export const getGoogleCalendarAccounts = async () => {
     try {
-        const response = await axiosInstance.get(`http://116.202.210.102:8000/get-calendar-accounts`);
+        const response = await agentInstance.get(`/get-calendar-accounts`);
         return response;
     } catch (error) {
         console.error(error);
@@ -213,7 +214,7 @@ export const getGoogleCalendarAccounts = async () => {
 
 export const deleteGoogleCalendarAccount = async (id) => {
     try {
-        const response = await axiosInstance.delete(`http://116.202.210.102:8000/delete-google-calendar-account/${id}`);
+        const response = await agentInstance.delete(`/delete-google-calendar-account/${id}`);
         return response;
     } catch (error) {
         console.error(error);
@@ -221,6 +222,26 @@ export const deleteGoogleCalendarAccount = async (id) => {
     }
 }
 
+export const getLinkedInAccounts = async () => {
+    try {
+        const response = await agentInstance.get(`/get-linkedin-accounts`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+}
+
+
+export const deleteLinkedInAccount = async (id) => {
+    try {
+        const response = await agentInstance.delete(`/delete-linkedin-account/${id}`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+}
 
 export const getListedContacts = async (id) => {
     try {

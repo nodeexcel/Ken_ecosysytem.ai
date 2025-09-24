@@ -10,6 +10,8 @@ import { appointmentSetter, getAppointmentSetterById, updateAppointmentSetter } 
 import AgentPreviewModal from './AgentPreview'
 import { getGoogleCalendarAccounts, getInstaAccounts, getWhatsappAccounts } from '../api/brainai'
 import { SelectDropdown } from './Dropdown'
+import { useTranslation } from 'react-i18next'
+import bgback from '../assets/images/bgback.svg'
 
 function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentStatus }) {
 
@@ -25,15 +27,19 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         // reply_min_time: 15,
         // reply_max_time: 60,
         is_followups_enabled: true,
-        follow_up_details: { number_of_followups: '', min_time: 15, max_time: 60 },
+        follow_up_details: { number_of_followups: '', wait_time_for_follow_up: 5 },
         emoji_frequency: 25,
         // directness: 2,a
         webpage_link: "",
         // webpage_type: "",
         whatsapp_number: '',
         platform_unique_id: '',
-        calendar_id: ''
+        calendar_id: '',
+        // more_info_setter: '',
+        silent_hours: [{ start: '', end: '' }],
     })
+
+    const { t } = useTranslation();
     const [loadingStatus, setLoadingStatus] = useState(true)
     const [dataRenderStatus, setDataRenderStatus] = useState(true)
 
@@ -159,50 +165,60 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const validateForm = () => {
         const newErrors = {};
 
+        console.log(step);
 
         if (step === 1) {
-            if (!formData.agent_name.trim()) newErrors.agent_name = "Agent name is required.";
-            if (!formData.gender) newErrors.gender = "Gender is required.";
-            if (!formData.age) newErrors.age = "Age is required.";
-            if (formData.agent_language.length === 0) newErrors.agent_language = "Language is required.";
-            if (!formData.agent_personality) newErrors.agent_personality = "Agent personality is required.";
+            if (!formData.agent_name.trim()) newErrors.agent_name = t("appointment.agent_name_validation");
+            if (!formData.gender) newErrors.gender = t("appointment.gender_validation");
+            if (!formData.age) newErrors.age = t("appointment.age_validation"); // Commented out as per Figma design
+            if (formData.agent_language.length === 0) newErrors.agent_language = t("appointment.agent_language_validation");
+            if (!formData.agent_personality) newErrors.agent_personality = t("appointment.agent_personality_validation");
         }
 
         if (step === 3) {
-            if (!formData.prompt) newErrors.prompt = "Prompt is required.";
+            if (!formData.prompt) newErrors.prompt = t("appointment.prompt_validation");
             formData.qualification_questions.forEach((e, i) => {
                 if (e === "") {
-                    newErrors[`qualification_questions[${i}]`] = "Qualification must be chosen.";
+                    newErrors[`qualification_questions[${i}]`] = t("appointment.prompt_validation");
                 }
             });
+
+            console.log(formData);
+            // Add validation for platform_unique_id when Instagram or Whatsapp is selected
+            if (
+                (formData.sequence.trigger === "Instagram" || formData.sequence.trigger === "Whatsapp") &&
+                !formData.platform_unique_id
+            ) {
+                newErrors.platform_unique_id =  t("appointment.account_msg");
+            }
         }
 
         if (step === 2) {
-            if (!formData.business_description.trim()) newErrors.business_description = "Business description is required.";
-            if (formData.business_description.trim().length > 1 && formData.business_description.length < 50) newErrors.business_description = "Min 50 characters are required.";
-            if (!formData.your_business_offer.trim()) newErrors.your_business_offer = "Business offer is required.";
-            if (formData.your_business_offer.trim().length > 1 && formData.your_business_offer.length < 50) newErrors.your_business_offer = "Min 50 characters are required.";
-            if (!formData.objective_of_the_agent) newErrors.objective_of_the_agent = "Objective of the agent is required.";
+            if (!formData.business_description.trim()) newErrors.business_description = t("appointment.business_des_validation");
+            if (formData.business_description.trim().length > 1 && formData.business_description.length < 50) newErrors.business_description = t("appointment.min_char_validation");
+            if (!formData.your_business_offer.trim()) newErrors.your_business_offer = t("appointment.business_offer_validation");
+            if (formData.your_business_offer.trim().length > 1 && formData.your_business_offer.length < 50) newErrors.your_business_offer = t("appointment.min_char_validation");
+            if (!formData.objective_of_the_agent) newErrors.objective_of_the_agent = t("appointment.object_of_agent_validation");
             if (formData.objective_of_the_agent === "book_call") {
                 if (!formData.calendar_choosed) {
-                    newErrors.calendar_choosed = "Calendar must be chosen.";
+                    newErrors.calendar_choosed = t("appointment.choose_calendar_validation");
                 }
             }
             if (formData.objective_of_the_agent === "book_call") {
                 if (formData.calendar_choosed === "google_calendar") {
                     if (!formData.calendar_id) {
-                        newErrors.calendar_id = "Calendar Account must be chosen.";
+                        newErrors.calendar_id = t("appointment.calendar_validation");
                     }
                 }
             }
             if (formData.objective_of_the_agent === "whatsapp_number") {
                 if (!formData.whatsapp_number) {
-                    newErrors.whatsapp_number = "Whatsapp Number is required.";
+                    newErrors.whatsapp_number = t("appointment.whatsapp_no_validation");
                 }
             }
             if (formData.objective_of_the_agent === "web_page") {
                 if (!formData.webpage_link.trim()) {
-                    newErrors.webpage_link = "Webpage link is required.";
+                    newErrors.webpage_link = t("appointment.website_link_validation");
                 }
                 // if (!formData.webpage_type.trim()) {
                 //     newErrors.webpage_type = "Webpage type is required.";
@@ -212,7 +228,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 if (formData.follow_up_details.number_of_followups === 0) {
                     newErrors.number_of_followups = "";
                 } else {
-                    newErrors.number_of_followups = "followup is required.";
+                    newErrors.number_of_followups = t("appointment.followup_validation");
                 }
             }
         }
@@ -225,26 +241,30 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const sequenceCards = [
         {
             id: 1,
-            title: "Trigger",
+            title: t("appointment.trigger"),
             key: "trigger",
             iconSrc: trigger,
-            options: [{ label: "Systeme.io", key: "systeme.io" }, { label: "Clickfunnels", key: "clickfunnels" }, { label: "Whatsapp", key: "Whatsapp" }, { label: "Instagram", key: "Instagram" }],
+            options: [
+                // { label: "Systeme.io", key: "systeme.io" },
+                //  { label: "Clickfunnels", key: "clickfunnels" },
+                { label: "Whatsapp", key: "Whatsapp" },
+                { label: "Instagram", key: "Instagram" }],
             value: "systeme.io",
             selected: true,
         },
         {
             id: 2,
-            title: "Delay",
+            title: t("appointment.delay"),
             key: "delay",
             iconSrc: delay,
-            options: [{ label: "5", key: 5 }, { label: "10", key: 10 }, { label: "15", key: 15 }, { label: "20", key: 20 }, { label: "30", key: 30 }],
+            options: [{ label: "0", key: 0 },{ label: "1", key: 1 }, { label: "5", key: 5 }, { label: "10", key: 10 }, { label: "15", key: 15 }, { label: "20", key: 20 }, { label: "30", key: 30 }],
             value: 15,
             unit: "Min",
             selected: false,
         },
         {
             id: 3,
-            title: "Channel",
+            title: t("appointment.channel"),
             key: "channel",
             iconSrc: channel,
             options: [{ label: "Whatsapp", key: "Whatsapp" }, { label: "Instagram", key: "Instagram" }],
@@ -254,7 +274,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         },
         {
             id: 4,
-            title: "Template",
+            title: t("appointment.template"),
             key: "template",
             iconSrc: template,
             options: [{ label: "Select", key: "Select" }, { label: "Select2", key: "Select2" }],
@@ -278,9 +298,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     ];
 
     const objectiveAgent = [
-        { label: "Book a Call", key: "book_call" },
-        { label: "Send to a web page", key: "web_page" },
-        { label: "Send to a WhatsApp Number", key: "whatsapp_number" }
+        { label: t("appointment.book_call"), key: "book_call" },
+        { label: t("appointment.send_to_web_page"), key: "web_page" },
+        { label: t("appointment.sent_to_whatsapp"), key: "whatsapp_number" }
 
     ]
 
@@ -294,8 +314,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     ];
 
     const messageTimeRange = [
-        { label: "Min. Message time range", key: "min_time", options: [{ label: "5", key: 5 }, { label: "10", key: 10 }, { label: "15", key: 15 }, { label: "30", key: 30 }] },
-        { label: "Max. Message time range", key: "max_time", options: [{ label: "30", key: 30 }, { label: "45", key: 45 }, { label: "60", key: 60 }, { label: "90", key: 90 }] }
+        { label: t("appointment.no_of_days_followups"), key: "wait_time_for_follow_up", options: [{ label: "0", key: 0 }, { label: "5", key: 5 }, { label: "10", key: 10 }, { label: "15", key: 15 }, { label: "30", key: 30 }] }
     ];
 
     const globalMessageTimeRange = [
@@ -304,18 +323,18 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     ];
 
     const agentsPersonalityOptions = [
-        { label: "Friendly", key: "friendly" },
-        { label: "Professional", key: "professional" },
-        { label: "Energetic", key: "energetic" },
-        { label: "Relaxed", key: "relaxed" },
-        { label: "Results-Oriented", key: "results_oriented" },
-        { label: "Direct", key: "direct" },
-        { label: "Emphatic", key: "emphatic" },
+        { label: t("appointment.friendly"), key: "friendly" },
+        { label: t("appointment.professional"), key: "professional" },
+        { label: t("appointment.energetic"), key: "energetic" },
+        { label: t("appointment.relaxed"), key: "relaxed" },
+        { label: t("appointment.results_oriented"), key: "results_oriented" },
+        { label: t("appointment.direct"), key: "direct" },
+        { label: t("appointment.empathetic"), key: "emphatic" },
     ]
 
     const genderOptions = [
-        { label: "Male", key: "male" },
-        { label: "Female", key: "female" }
+        { label: t("appointment.male"), key: "male" },
+        { label: t("appointment.female"), key: "female" }
     ]
 
     const calendarOptions = [
@@ -336,10 +355,16 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const handleCancel = (value) => {
         switch (value) {
             case 1:
+                // Close the form and reset data
+                setOpen(false);
+                // Reset update agent status if we were editing
+                if (updateAgentStatus) {
+                    setUpdateAgentStatus(false);
+                }
                 setFormData({
                     agent_name: "",
                     gender: '',
-                    age: '',
+                    age: '', // Commented out as per Figma design
                     agent_language: [], agent_personality: "", business_description: "", your_business_offer: "",
                     qualification_questions: [""],
                     sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
@@ -356,7 +381,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     whatsapp_number: '',
                     platform_unique_id: '',
                     calendar_id: '',
-                    prompt: ''
+                    prompt: '',
+                    // more_info_setter: '',
                 })
                 setStatusSteps({ step1: false, step2: false, step3: false })
                 break;
@@ -373,7 +399,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     whatsapp_number: '',
                     platform_unique_id: '',
                     calendar_id: '',
-                    prompt: ''
+                    prompt: '',
+                    // more_info_setter: '',
                 }))
                 setStep(1)
                 setStatusSteps((prev) => ({ ...prev, step2: false, step3: false }))
@@ -384,7 +411,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     qualification_questions: [""],
                     sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
                     platform_unique_id: '',
-                    prompt: ''
+                    prompt: '',
+                    // more_info_setter: '',
                 }))
                 setStep(2)
                 setStatusSteps((prev) => ({ ...prev, step3: false }))
@@ -406,12 +434,12 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             setStep(selectStep)
         } else if (!statusSteps.step1) {
             validateForm()
-            setErrors((prev) => ({ ...prev, step1: "First Please Complete Identity Section" }))
+            setErrors((prev) => ({ ...prev, step1: t("appointment.first_form_validation") }))
             setStep(1)
         }
         else if (!statusSteps.step2) {
             validateForm()
-            setErrors((prev) => ({ ...prev, step2: "First Please Complete Objective Section" }))
+            setErrors((prev) => ({ ...prev, step2: t("appointment.second_form_validation") }))
             setStep(2)
         } else {
             setStep(selectStep)
@@ -429,6 +457,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     follow_up_details: response.data.agent.is_followups_enabled
                         ? response.data.agent.follow_up_details
                         : formData.follow_up_details,
+                    // more_info_setter: response.data.agent.more_info_setter || '',
                 };
                 setFormData(payload)
                 setStatusSteps({ step1: true, step2: true, step3: true })
@@ -515,6 +544,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             follow_up_details: formData.is_followups_enabled
                 ? formData.follow_up_details
                 : {},
+            // more_info_setter: formData.more_info_setter || '',
         };
         console.log(finalPayload, "payload")
         try {
@@ -543,6 +573,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
 
     const handleSubmit = async () => {
+        console.log(validateForm());
         if (!validateForm()) {
             console.log("Form validation failed", errors);
             return;
@@ -552,6 +583,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             follow_up_details: formData.is_followups_enabled
                 ? formData.follow_up_details
                 : {},
+            // more_info_setter: formData.more_info_setter || '',
         };
         console.log(finalPayload, "payload")
         try {
@@ -642,7 +674,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                         <div className="flex-1">
                             <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
                                 <label className="text-sm font-medium text-[#1e1e1e]">
-                                    WhatsApp Number
+                                    {t("appointment.whatsapp_number")}
                                 </label>
                                 <input
                                     type="text"
@@ -660,7 +692,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     //     }
                                     // }}
                                     className={`w-full p-2 rounded-lg border ${errors.whatsapp_number ? 'border-red-500' : 'border-[#e1e4ea]'} bg-white focus:outline-none focus:border-[#675FFF]`}
-                                    placeholder="Enter your WhatsApp Number"
+                                    placeholder={t("appointment.input_whatsapp")}
                                 />
                                 {errors.whatsapp_number && <p className="text-red-500 text-sm mt-1">{errors.whatsapp_number}</p>}
                             </div>
@@ -672,16 +704,23 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-1 w-full">
                         <div className="flex flex-col gap-1.5 w-full">
                             <label className="text-sm font-medium text-[#1e1e1e]">
-                                Webpage Link
+                                {t("appointment.webpage_link")}
                             </label>
-                            <input
-                                type="text"
-                                name='webpage_link'
-                                value={formData?.webpage_link}
-                                onChange={handleChange}
-                                className={`w-full p-2 rounded-lg border ${errors.webpage_link ? 'border-red-500' : 'border-[#e1e4ea]'} bg-white focus:outline-none focus:border-[#675FFF]`}
-                                placeholder="http://  Enter link"
-                            />
+                            <div className="flex items-center border rounded-lg overflow-hidden w-full bg-white focus-within:border-[#675FFF]
+  border-[#e1e4ea] focus-within:ring-0">
+                                <span className="pl-3 pr-2 text-[#4B5563] bg-white focus:outline-none  font-medium  border-r border-[#e1e4ea]">
+                                    http://
+                                </span>
+                                <input
+                                    type="text"
+                                    name="webpage_link"
+                                    value={formData?.webpage_link}
+                                    onChange={handleChange}
+                                    className="flex-1 p-2 px-3 text-[#4B5563] bg-white focus:outline-none"
+                                    placeholder={t("appointment.enter_link")}
+                                />
+                            </div>
+
                             {errors.webpage_link && <p className="text-red-500 text-sm mt-1">{errors.webpage_link}</p>}
                         </div>
                         {/* <div className="flex flex-col items-start gap-1.5 w-full">
@@ -712,7 +751,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     <div className="flex items-start gap-3 w-full mt-2">
                         <div className="flex flex-col gap-2 w-full">
                             <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
-                                <label className="font-medium text-[#1e1e1e] text-sm">Select Calendar</label>
+                                <label className="font-medium text-[#1e1e1e] text-sm">{t("appointment.select_calender")}</label>
                                 {/* <select
                                     name="calendar"
                                     value={formData.calendar_choosed}
@@ -741,7 +780,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         }))
                                         setErrors((prev) => ({ ...prev, calendar_choosed: '' }))
                                     }}
-                                    placeholder="Select"
+                                    placeholder={t("appointment.select")}
                                     className="w-full"
                                     errors={errors}
                                 />
@@ -749,7 +788,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             </div>
                             {formData.calendar_choosed === "google_calendar" &&
                                 <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
-                                    <label className="font-medium text-[#1e1e1e] text-sm">Select Google Calendar Account</label>
+                                    <label className="font-medium text-[#1e1e1e] text-sm">{t("appointment.select_google_calendar")}</label>
                                     <SelectDropdown
                                         name="calendar_id"
                                         options={googleCalendarData}
@@ -762,7 +801,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             }))
                                             setErrors((prev) => ({ ...prev, calendar_id: '' }))
                                         }}
-                                        placeholder="Select"
+                                        placeholder={t("appointment.select")}
                                         className="w-full"
                                         errors={errors}
                                     />
@@ -782,14 +821,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         <>
             <div className="w-full py-4 pr-4 flex flex-col gap-4 ">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">{updateAgentStatus ? 'Update' : 'Create New'} Agent</h1>
+                    <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">{t("appointment.create_new_agent")}</h1>
                     <div className='flex gap-2'>
-                        {/* <button onClick={() => setPreviewAgent(true)} className="bg-white text-[16px] font-[500] text-[#5A687C] border-[1.5px] border-[#E1E4EA] rounded-md text-sm md:text-base px-4 py-2">
-                            Preview Agent
-                        </button> */}
-                        {/* <button disabled={loading} onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()} className="bg-[#675FFF] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
-                            {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : updateAgentStatus ? "Update Agent" : " Create Agent"}
-                        </button> */}
                     </div>
                 </div>
                 <div className="flex flex-col gap-8 w-full">
@@ -803,12 +836,12 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 </header> */}
                     <div className="flex flex-col gap-4 w-full">
                         <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
-                            <div className="flex justify-between items-center" onClick={() => {
+                            <div className="flex justify-between cursor-pointer items-center" onClick={() => {
                                 handleSelectSteps(1)
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 1 ? 'bg-[#675FFF]' : statusSteps.step1 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step1 ? <CheckIcon /> : '1'}</p>
-                                    <p className={`text-[14px] font-[600] ${step === 1 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>Identity</p>
+                                    <p className={`text-[14px] font-[600] ${step === 1 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("appointment.identify")}</p>
                                 </div>
                                 {step !== 1 && <RightArrowIcon />}
                             </div>
@@ -818,7 +851,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                                     <div className="flex flex-col gap-1.5 w-full">
                                         <label className="text-sm font-medium text-[#1e1e1e]">
-                                            Agent Name<span className="text-[#675fff]">*</span>
+                                            {t("appointment.agent_name")}<span className="text-[#675fff]">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -826,14 +859,14 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             value={formData?.agent_name}
                                             onChange={handleChange}
                                             className={`w-full bg-white p-2 rounded-lg border ${errors.agent_name ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                                            placeholder="Enter your agent name"
+                                            placeholder={t("appointment.agent_name_placeholder")}
                                         />
                                         {errors.agent_name && <p className="text-red-500 text-sm mt-1">{errors.agent_name}</p>}
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                                         <div className="flex flex-col gap-1.5 flex-1">
                                             <label className="text-sm font-medium text-[#1e1e1e]">
-                                                Gender<span className="text-[#675fff]">*</span>
+                                                {t("appointment.gender")}<span className="text-[#675fff]">*</span>
                                             </label>
                                             {/* <select
                                         name='gender'
@@ -856,7 +889,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                         ...prev, gender: ""
                                                     }))
                                                 }}
-                                                placeholder="Select"
+                                                placeholder={t("appointment.select")}
                                                 className=""
                                                 errors={errors}
                                             />
@@ -864,7 +897,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         </div>
                                         <div className="flex flex-col gap-1.5 w-full">
                                             <label className="text-sm font-medium text-[#1e1e1e]">
-                                                Age<span className="text-[#675fff]">*</span>
+                                                {t("appointment.age")}<span className="text-[#675fff]">*</span>
                                             </label>
                                             <input
                                                 type="text"
@@ -881,7 +914,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                     }
                                                 }}
                                                 className={`w-full bg-white p-2 rounded-lg border ${errors.age ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                                                placeholder="Enter your agent age"
+                                                placeholder={t("appointment.agent_age_placeholder")}
                                             />
                                             {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
                                         </div>
@@ -894,9 +927,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     <div className="flex flex-col gap-1.5 flex-1">
                                         <div className='flex justify-between items-center'>
                                             <label className="text-sm font-medium text-[#1e1e1e]">
-                                                Agent personality<span className="text-[#675fff]">*</span>
+                                                {t("appointment.agent_personality")}<span className="text-[#675fff]">*</span>
                                             </label>
-                                            <a href='/agent-personality-documentation' target='_blank' className='flex items-center hover:underline gap-1 text-[14px] text-[#675FFF] font-[500]'>Learn more<RequestSend status={true} /></a>
+                                            <a href='/agent-personality-documentation' target='_blank' className='flex items-center hover:underline gap-1 text-[14px] text-[#675FFF] font-[500]'>{t("appointment.learn_more")}<RequestSend status={true} /></a>
                                         </div>
                                         {/* <select
                                     name='agent_personality'
@@ -921,7 +954,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                     ...prev, agent_personality: ""
                                                 }))
                                             }}
-                                            placeholder="Choose your agent personality"
+                                            placeholder={t("appointment.choose_your_personality_placeholder")}
                                             className=""
                                             errors={errors}
                                         />
@@ -944,7 +977,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     <div className='flex flex-col gap-1.5 flex-1'>
                                         <div className="relative" ref={dropdownRef}>
                                             <label className="text-sm font-medium text-[#1e1e1e]">
-                                                Agent Language<span className="text-[#675fff]">*</span>
+                                                {t("appointment.agent_language")}<span className="text-[#675fff]">*</span>
                                             </label>
                                             <button
                                                 onClick={() => setShowLanguageSelector((prev) => !prev)}
@@ -955,7 +988,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                         const found = languagesOptions?.length > 0 && languagesOptions.find(d => d.key === lan);
                                                         return found?.label;
                                                     }).join(', ')
-                                                    : 'Select Languages'}</span>
+                                                    : `${t("appointment.select")+" "+t("appointment.languages")}`}</span>
                                                 <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showLanguageSelector ? 'transform rotate-180' : ''}`} />
                                             </button>
                                             {showLanguageSelector && (
@@ -978,21 +1011,38 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 </div>
 
                                 {/* Emoji Frequency */}
-                                <div className="flex flex-col gap-3 p-3.5 bg-[#fff] border border-[#E1E4EA] rounded-[10px] w-full">
+                                <div className="flex justify-between gap-3 p-3.5 bg-[#fff] border border-[#E1E4EA] rounded-[10px] w-full">
                                     <div className='flex gap-1'>
                                         <div className="text-base font-medium text-[#1e1e1e]">
-                                            Emoji Frequency<span className="text-[#675fff]">*</span>
+                                            {t("appointment.emoji_freq")}<span className="text-[#675fff]">*</span>
                                         </div>
-                                        <div className="text-xs text-gray-500">
-                                            (100% is implemented on every message)
+                                        <div className="text-[12px] text-[#5A687C] pt-0.5">
+                                            {t("appointment.pow_msg")}
                                         </div>
                                     </div>
-                                    <label className="text-sm font-medium text-[#1e1e1e]">
-                                        Number of followups
-                                    </label>
+                                    <div>
+                                        <button
+                                            onClick={() => setFormData((prev) => ({
+                                                ...prev,
+                                                emoji_frequency: formData.emoji_frequency == 25 ? 0 : 25
+                                            }))}
+                                            className={`relative cursor-pointer w-11 h-6 flex items-center rounded-full transition-colors duration-300 ${formData.emoji_frequency ? "bg-[#675fff]" : "bg-gray-300"
+                                                }`}
+                                        >
+                                            <span
+                                                className={`inline-block w-5 h-5 transform bg-white rounded-full transition-transform duration-300 ${formData.emoji_frequency ? "translate-x-5" : "translate-x-1"
+                                                    }`}
+                                            />
+                                        </button>
+                                    </div>
+                                    {/* <label className="text-sm font-medium text-[#1e1e1e]">
+                                   {
+                                    t("appointment.no_of_follower")
+                                   }
+                                    </label> */}
 
                                     {/* Using grid layout */}
-                                    <div className="grid grid-col-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 w-full">
+                                    {/* <div className="grid grid-col-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 w-full">
                                         {emojiOptions.map((option) => (
                                             <div
                                                 key={option.id}
@@ -1012,7 +1062,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                                             </div>
                                         ))}
-                                    </div>
+                                    </div> */}
                                 </div>
 
                                 <hr style={{ color: "#E1E4EA" }} />
@@ -1020,8 +1070,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <div className="flex items-center gap-2">
                                     <button onClick={() => {
                                         handleContinue(2)
-                                    }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
-                                    <button onClick={() => handleCancel(1)} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                                    }} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("appointment.continue")}</button>
+                                    <button onClick={() => handleCancel(1)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("appointment.cancel")}</button>
                                 </div>
 
                             </div>}
@@ -1029,12 +1079,12 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                         {errors.step1 && <p className="text-red-500 text-sm mt-1">{errors.step1}</p>}
 
                         <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
-                            <div className="flex justify-between items-center" onClick={() => {
+                            <div className="flex justify-between cursor-pointer items-center" onClick={() => {
                                 handleSelectSteps(2)
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 2 ? 'bg-[#675FFF]' : statusSteps.step2 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step2 ? <CheckIcon /> : '2'}</p>
-                                    <p className={`text-[14px] font-[600] ${step === 2 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>Objective</p>
+                                    <p className={`text-[14px] font-[600] ${step === 2 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("appointment.objective")}</p>
                                 </div>
                                 {step !== 2 && <RightArrowIcon />}
                             </div>
@@ -1045,7 +1095,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <div className="flex flex-col md:flex-row gap-4 w-full">
                                     <div className="flex flex-col gap-1.5 flex-1">
                                         <label className="text-sm font-medium text-[#1e1e1e]">
-                                            Business description in 1 sentence
+                                            {t("appointment.business_description")}
                                             <span className="text-[#675fff]">*</span>
                                         </label>
                                         <textarea
@@ -1054,13 +1104,13 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             value={formData?.business_description}
                                             rows={4}
                                             className={`w-full bg-white p-2 rounded-lg border  ${errors.business_description ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                            placeholder="Enter your business description"
+                                            placeholder={t("appointment.business_description_placeholder")}
                                         />
                                         {errors.business_description && <p className="text-red-500 text-sm mt-1">{errors.business_description}</p>}
                                     </div>
                                     <div className="flex flex-col gap-1.5 flex-1">
                                         <label className="text-sm font-medium text-[#1e1e1e]">
-                                            Your business offer<span className="text-[#675fff]">*</span>
+                                            {t("appointment.business_offer")}<span className="text-[#675fff]">*</span>
                                         </label>
                                         <textarea
                                             name='your_business_offer'
@@ -1068,7 +1118,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             value={formData?.your_business_offer}
                                             rows={4}
                                             className={`w-full bg-white p-2 rounded-lg border  ${errors.your_business_offer ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                            placeholder="Share everything you want the AI to know about your offer"
+                                            placeholder={t("appointment.agent_business_placeholder")}
                                         />
                                         {errors.your_business_offer && <p className="text-red-500 text-sm mt-1">{errors.your_business_offer}</p>}
                                     </div>
@@ -1078,7 +1128,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <div className="flex flex-col items-start gap-3 p-3.5 w-full bg-[#fff] border border-[#E1E4EA] rounded-[10px]">
                                     <div className="flex items-center gap-2.5 w-full">
                                         <div className="flex-1">
-                                            <div className="font-medium text-[#1e1e1e] text-base">Objective of the agent</div>
+                                            <div className="font-medium text-[#1e1e1e] text-base">{t("appointment.business_offer")}</div>
                                         </div>
                                     </div>
 
@@ -1126,7 +1176,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                 ...prev,
                                                 is_followups_enabled: !formData.is_followups_enabled
                                             }))}
-                                            className={`relative w-11 h-6 flex items-center rounded-full transition-colors duration-300 ${formData.is_followups_enabled ? "bg-[#675fff]" : "bg-gray-300"
+                                            className={`relative cursor-pointer w-11 h-6 flex items-center rounded-full transition-colors duration-300 ${formData.is_followups_enabled ? "bg-[#675fff]" : "bg-gray-300"
                                                 }`}
                                         >
                                             <span
@@ -1135,14 +1185,18 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             />
                                         </button>
                                         <span className="font-medium text-base text-black">
-                                            Enable followups
+                                            {
+                                                t("appointment.enable_followup")
+                                            }
                                         </span>
                                     </div>
 
 
                                     <div className="flex flex-col gap-1.5 w-full">
                                         <label className="text-sm font-medium text-[#1e1e1e]">
-                                            Number of followups
+                                            {
+                                                t("appointment.number_followup")
+                                            }
                                         </label>
                                         <input
                                             type="number"
@@ -1172,14 +1226,14 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                                                 // Clear error if value is valid (including 0)
                                                 if (value === '' || isNaN(parsedValue)) {
-                                                    setErrors((prev) => ({ ...prev, [name]: 'This field is required' }));
+                                                    setErrors((prev) => ({ ...prev, [name]: t("appointment.field_required") }));
                                                 } else {
                                                     setErrors((prev) => ({ ...prev, [name]: '' }));
                                                 }
                                             }}
-
-                                            className={`w-full p-2 bg-white rounded-lg border ${errors.number_of_followups ? 'border-red-500' : 'border-[#e1e4ea]'} no-spinner focus:outline-none focus:border-[#675FFF]`}
-                                            placeholder="Please enter a number from 1 to 10"
+                                            style={{ width: '300px' }}
+                                            className={`p-2 bg-white rounded-lg border ${errors.number_of_followups ? 'border-red-500' : 'border-[#e1e4ea]'} no-spinner focus:outline-none focus:border-[#675FFF]`}
+                                            placeholder={t("appointment.enter_number_between")}
                                         />
 
                                         {errors.number_of_followups && <p className="text-red-500 text-sm mt-1">{errors.number_of_followups}</p>}
@@ -1211,10 +1265,10 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         {messageTimeRange.map((each) => (
                                             <div key={each.key} className="flex flex-col items-start gap-1.5 w-full">
                                                 <label className="font-medium text-[#1e1e1e] text-sm">
-                                                    {each.label}<span className="text-[#675fff]">*</span>
+                                                    {each.label}<span className="text-[#675fff]"></span>
                                                 </label>
                                                 <div className="flex items-center w-full">
-                                                    <div className="flex relative items-center justify-between w-full">
+                                                    <div className="flex relative items-center justify-between">
                                                         {/* <select
                                                     className="flex-1 bg-transparent text-text-black text-base focus:outline-none appearance-none"
                                                     name={each.key}
@@ -1248,12 +1302,13 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                                     },
                                                                 }));
                                                             }}
-                                                            placeholder="Select"
-                                                            className="w-full"
+                                                            placeholder={t("appointment.select")}
+                                                            className="w-[300px]"
                                                             errors={errors}
                                                             disabled={!formData.is_followups_enabled}
+                                                            hideArrow={true}
                                                         />
-                                                        <span className="text-[#5A687C] absolute right-8 text-[16px] font-[400]">Minutes</span>
+                                                        <span className="text-[#5A687C] absolute  right-2 text-[16px] font-[400]">{t("appointment.days")}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1269,20 +1324,20 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <div className="flex items-center gap-2">
                                     <button onClick={() => {
                                         handleContinue(3)
-                                    }} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">Continue</button>
-                                    <button onClick={() => handleCancel(2)} className="px-5 rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                                    }} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("appointment.continue")}</button>
+                                    <button onClick={() => handleCancel(2)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("appointment.cancel")}</button>
                                 </div>
                             </div>}
                         </div>
                         {errors.step2 && <p className="text-red-500 text-sm mt-1">{errors.step2}</p>}
 
                         <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
-                            <div className="flex justify-between items-center" onClick={() => {
+                            <div className="flex cursor-pointer justify-between items-center" onClick={() => {
                                 handleSelectSteps(3)
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 3 ? 'bg-[#675FFF]' : statusSteps.step3 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step3 ? <CheckIcon /> : '3'}</p>
-                                    <p className={`text-[14px] font-[600] ${step === 3 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>Behavior</p>
+                                    <p className={`text-[14px] font-[600] ${step === 3 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("appointment.behavior")}</p>
                                 </div>
                                 {step !== 3 && <RightArrowIcon />}
                             </div>
@@ -1292,25 +1347,40 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 {/* Prompt */}
                                 <div className="flex flex-col gap-1.5 flex-1">
                                     <label className="text-sm font-medium text-[#1e1e1e]">
-                                        Prompt
+                                    {t("appointment.more_information")}
                                         <span className="text-[#675fff]">*</span>
                                     </label>
-                                    <p className='text-[#5A687C] text-[14px] font-[400]'>Provide any guidelines, instructions, or relevant context to shape your AI agent’s behavior.</p>
+                                    <p className='text-[#5A687C] text-[14px] font-[400]'>{t("appointment.prompt_guild")}</p>
                                     <textarea
                                         name='prompt'
                                         onChange={handleChange}
                                         value={formData?.prompt}
                                         rows={3}
                                         className={`w-full bg-white p-2 rounded-lg border  ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                        placeholder="Enter your prompt here"
+                                        placeholder={t("appointment.more_info_placeholder")}
                                     />
                                     {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
+                                </div>
+                                {/* More informations for the setter */}
+                                <div className="flex flex-col gap-1.5 flex-1">
+                                    <label className="text-sm font-medium text-[#1e1e1e]">
+                                        {t("appointment.first_message")}
+                                        {/* <span className="text-[#675fff]">*</span> */}
+                                    </label>
+                                    <textarea
+                                        name='first_message'
+                                        onChange={handleChange}
+                                        value={formData?.first_message}
+                                        rows={3}
+                                        className="w-full bg-white p-2 rounded-lg border border-[#e1e4ea] resize-none focus:outline-none focus:border-[#675FFF]"
+                                        placeholder= {t("appointment.first_message_placeholder")}
+                                    />
                                 </div>
 
                                 {/* Qualification Questions */}
                                 <div className="flex flex-col gap-1.5 w-full">
                                     <label className="text-sm font-medium text-[#1e1e1e]">
-                                        Qualification questions<span className="text-[#675fff]">*</span>
+                                        {t("appointment.qualification_questions")}<span className="text-[#675fff]">*</span>
                                     </label>
                                     {formData.qualification_questions.map((question, index) => (
                                         <div key={index} className="flex items-center gap-2 w-full">
@@ -1319,7 +1389,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                 name={`qualification_questions[${index}]`}
                                                 value={question}
                                                 onChange={handleChange}
-                                                placeholder="Enter your Question"
+                                                placeholder={t("appointment.enter_question")}
                                                 className={`flex-1 bg-white p-2 rounded-lg border ${errors[`qualification_questions[${index}]`] ? "border-red-500" : "border-[#e1e4ea]"} focus:outline-none focus:border-[#675FFF]`} />
                                             {index === formData.qualification_questions.length - 1 ? (
                                                 <button type="button" onClick={addQuestion}>
@@ -1337,9 +1407,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 </div>
 
                                 {/* Sequence Section */}
-                                <div className="p-3 w-full relative bg-white rounded-2xl  border border-solid border-[#e1e4ea]">
+                                <div className="p-3 w-full relative bg-white rounded-2xl border border-solid border-[#e1e4ea]" style={{ backgroundImage: `url(${bgback})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundPosition: 'center' }}>
                                     <div className="font-medium text-[#1e1e1e] text-base py-2">
-                                        Sequence
+                                        {t("appointment.sequence")}
                                     </div>
 
                                     <div className="flex items-center justify-between">
@@ -1399,55 +1469,44 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                                     console.log(updated)
                                                                     setFormData((prev) => ({
                                                                         ...prev,
+                                                                        platform_unique_id:'',
                                                                         sequence: {
                                                                             ...prev.sequence,
                                                                             [card.key]: card.key === "delay" ? parseInt(updated) : updated,
                                                                         },
                                                                     }));
                                                                 }}
-                                                                placeholder="Select"
+                                                                placeholder={t("appointment.select")}
                                                                 className=""
                                                                 errors={errors}
-                                                                disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
+                                                                disabled={((formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel") || (formData.sequence.trigger === "Instagram" && card.key === "template")}
                                                             />
-                                                            {((card.key === "trigger" || card.key === "channel") && (formData.sequence.trigger === "Instagram" || formData.sequence.trigger === "Whatsapp" || formData.sequence.channel === "Channel")) &&
-                                                                // <select
-                                                                //     name="platform_unique_id"
-                                                                //     className="w-full my-2 h-8 py-1 px-3 bg-white border border-[#e1e4ea] rounded-lg text-base text-[#1e1e1e] shadow-sm"
-                                                                //     value={formData.platform_unique_id}
-                                                                //     onChange={(e) => {
-                                                                //         const { name, value } = e.target;
-                                                                //         setFormData((prev) => ({
-                                                                //             ...prev,
-                                                                //             platform_unique_id: value,
-                                                                //         }));
-                                                                //     }}
-                                                                //     disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
-                                                                // >
-                                                                //     <option value="" disabled>Select</option>
-                                                                //     {instagramData?.length > 0 && instagramData.map((e) => (
-                                                                //         <option key={e.instagram_user_id} value={e.instagram_user_id}>
-                                                                //             {e.username}
-                                                                //         </option>
-                                                                //     ))}
-                                                                // </select>
-                                                                <SelectDropdown
-                                                                    name="platform_unique_id"
-                                                                    options={formData.sequence.trigger === "Instagram" ? instagramData?.length > 0 && instagramData : whatsappData?.length > 0 && whatsappData}
-                                                                    value={formData.platform_unique_id}
-                                                                    onChange={(updated) => {
-                                                                        setFormData((prev) => ({
-                                                                            ...prev, platform_unique_id: updated
-                                                                        }))
-                                                                    }}
-                                                                    placeholder="Account"
-                                                                    className="mt-2"
-                                                                    errors={errors}
-                                                                    disabled={(formData.sequence.trigger === "Whatsapp" || formData.sequence.trigger === "Instagram") && card.key === "channel"}
-                                                                />
-
+                                                            {((card.key === "trigger" || card.key === "channel") && (formData.sequence.trigger === "Instagram" || formData.sequence.trigger === "Whatsapp")) &&
+                                                                <>
+                                                                    <SelectDropdown
+                                                                        name="platform_unique_id"
+                                                                        options={
+                                                                            formData.sequence.trigger === "Instagram"
+                                                                                ? (Array.isArray(instagramData) ? instagramData : [])
+                                                                                : (Array.isArray(whatsappData) ? whatsappData : [])
+                                                                        }
+                                                                        value={formData.platform_unique_id}
+                                                                        onChange={(updated) => {
+                                                                            setFormData((prev) => ({
+                                                                                ...prev, platform_unique_id: updated
+                                                                            }))
+                                                                            setErrors((prev) => ({ ...prev, platform_unique_id: "" }))
+                                                                        }}
+                                                                        placeholder={t("appointment.account")}
+                                                                        className="mt-2"
+                                                                        errors={errors}
+                                                                        disabled={false}
+                                                                    />
+                                                                    {errors.platform_unique_id && (
+                                                                        <p className="text-red-500 text-sm mt-1">{errors.platform_unique_id}</p>
+                                                                    )}
+                                                                </>
                                                             }
-
                                                             {card.unit && (
                                                                 <span className="absolute right-8 top-1/2 transform -translate-y-1/2 text-sm text-[#5A687C]">
                                                                     {card.unit}
@@ -1461,16 +1520,61 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     </div>
                                 </div>
 
+                                {/* Silent Hours Section (single, non-removable time range) */}
+                                <div className="flex flex-col gap-1.5 flex-1 mt-4">
+                                    <label className="text-sm font-medium text-[#1e1e1e]">
+                                        {t("appointment.silent_hours")}
+                                    </label>
+                                    <div className="flex flex-row gap-4 w-full items-center">
+                                        {/* Start Time */}
+                                        <div className="relative flex-1" style={{ maxWidth: '248.5px', minWidth: '248.5px' }}>
+                                            <input
+                                                type="time"
+                                                value={formData.silent_hours && formData.silent_hours[0] ? formData.silent_hours[0].start : ''}
+                                                onChange={e => {
+                                                    const updated = [{
+                                                        start: e.target.value,
+                                                        end: formData.silent_hours && formData.silent_hours[0] ? formData.silent_hours[0].end : ''
+                                                    }];
+                                                    setFormData(prev => ({ ...prev, silent_hours: updated }));
+                                                }}
+                                                placeholder="Start"
+                                                className="w-full p-2 pl-4 rounded-xl border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] text-base text-[#5A687C] bg-white h-11"
+                                                style={{ width: '248.5px' }}
+                                            />
+
+                                        </div>
+                                        {/* End Time */}
+                                        <div className="relative flex-1" style={{ maxWidth: '248.5px', minWidth: '248.5px' }}>
+                                            <input
+                                                type="time"
+                                                value={formData.silent_hours && formData.silent_hours[0] ? formData.silent_hours[0].end : ''}
+                                                onChange={e => {
+                                                    const updated = [{
+                                                        start: formData.silent_hours && formData.silent_hours[0] ? formData.silent_hours[0].start : '',
+                                                        end: e.target.value
+                                                    }];
+                                                    setFormData(prev => ({ ...prev, silent_hours: updated }));
+                                                }}
+                                                placeholder="End"
+                                                className="w-full p-2 pl-4 rounded-xl border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] text-base text-[#5A687C] bg-white h-11"
+                                                style={{ width: '248.5px' }}
+                                            />
+
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>}
                         </div>
                         {errors.success && <p className="text-green-500 text-sm mt-1">{errors.success}</p>}
                         {errors.error && <p className="text-red-500 text-sm mt-1">{errors.error}</p>}
 
                         {step === 3 && <div className="flex items-center gap-2 py-3">
-                            <button disabled={loading} onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()} className="bg-[#675FFF] w-[162px] text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
-                                {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : updateAgentStatus ? "Update Agent" : " Create Agent"}
+                            <button disabled={loading} onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()} className="bg-[#675FFF] cursor-pointer  text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
+                                {loading ? <div className="flex cursor-pointer items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : updateAgentStatus ? `${t("appointment.update_agent")}` : t("appointment.confirm_agent")}
                             </button>
-                            <button onClick={() => handleCancel(3)} className="px-5 rounded-[7px] w-[162px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">Cancel</button>
+                            <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-[7px] w-[162px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("appointment.cancel")}</button>
                         </div>}
 
                         {/* Message Time Range */}
@@ -1564,7 +1668,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <div className="flex items-center px-3 gap-2 border border-[#E1E4EA] rounded-[8px] h-[38px]">
                                     <LuRefreshCw color="#5E54FF" />
                                     <button className="text-[16px] text-[#5A687C]">
-                                        Reset
+                                        {
+                                            t("appointment.reset")
+                                        }
                                     </button>
                                 </div>
                             </div>
@@ -1577,7 +1683,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             name="channel"
                                             className="w-full bg-white px-4 py-2 rounded-lg "
                                         >
-                                            <option value="" disabled>Select</option>
+                                            <option value="" disabled>{t("appointment.select")}</option>
                                             <option value="email">Email</option>
                                             <option value="Member">Member</option>
                                             <option value="Guest">Guest</option>
@@ -1585,12 +1691,12 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-[14px] font-medium text-[#292D32] my-2">Message</label>
+                                    <label className="block text-[14px] font-medium text-[#292D32] my-2">{t("appointment.message")}</label>
                                     <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
                                         <textarea
                                             type="text"
                                             name="message"
-                                            placeholder="Type message"
+                                            placeholder={t("appointment.type_message")}
                                             rows={4}
                                             className="w-full focus:outline-none"
                                         />
@@ -1601,7 +1707,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                             <div className="flex gap-2 mt-3">
                                 <button onClick={() => setUpdateAgent(false)} className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
-                                    Cancel
+                                    {t("appointment.test")}
                                 </button>
                                 <button onClick={() => {
                                     setUpdateAgentStatus(false)
@@ -1624,7 +1730,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             onClick={() => {
                                 setErrorMessage('')
                             }}
-                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+                            className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
                         >
                             <X className="w-5 h-5" />
                         </button>
@@ -1637,7 +1743,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     onClick={() => setErrorMessage('')}
                                     className={`w-fit bg-[#675FFF] cursor-pointer text-white py-[7px] px-[20px] rounded-[8px] font-semibold  transition`}
                                 >
-                                    Ok
+                                    {t("appointment.ok")}
                                 </button>
                             </div>
                         </div>
