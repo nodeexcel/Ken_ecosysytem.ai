@@ -196,7 +196,7 @@ function CustomerSupportChatBotForm({ onCancel }) {
                                             ...prev, role: ""
                                         }))
                                     }}
-                                    placeholder={t("role")}
+                                    placeholder={t("calina.role")}
                                     className=""
                                     errors={errors}
                                 />

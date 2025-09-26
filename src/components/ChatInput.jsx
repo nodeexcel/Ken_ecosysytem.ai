@@ -1,15 +1,30 @@
 import { useState, useRef, useEffect } from "react";
 import EmojiPicker from "emoji-picker-react";
+import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
 import { EmojiIcon, ImageChatIcon, MicChatIcon, PaperClipChatIcon } from "../icons/icons";
 
 const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = "Type a message..." }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const pickerRef = useRef(null);
+  const inputRef = useRef(null);
+
+  // Speech recognition hook
+  const { transcript, listening, resetTranscript } = useSpeechRecognition();
 
   const handleEmojiSelect = (emojiData) => {
-    onChange(value + emojiData.emoji); // append selected emoji
-     // close picker after selection
+    onChange(value + emojiData.emoji);
   };
+
+  // Update input when transcript changes
+  useEffect(() => {
+    if (transcript) {
+      onChange(transcript);
+      // Scroll input to end
+      if (inputRef.current) {
+        inputRef.current.scrollLeft = inputRef.current.scrollWidth;
+      }
+    }
+  }, [transcript, onChange]);
 
   // Close picker on outside click
   useEffect(() => {
@@ -22,11 +37,21 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Toggle speech recognition
+  const toggleListening = () => {
+    if (listening) {
+      SpeechRecognition.stopListening();
+    } else {
+      resetTranscript();
+      SpeechRecognition.startListening({ continuous: true, language: "en-US" });
+    }
+  };
+
   return (
     <div className="w-full mx-auto p-2 relative">
       <form
         onSubmit={onSend}
-        className="flex w-full flex-col items-center gap-2 p-2 rounded-2xl border border-gray-300 shadow-sm bg-white"
+        className="flex w-full flex-col items-center gap-2 p-2 rounded-2xl border border-gray-300 shadow-sm bg-white relative"
       >
         {/* Emoji Picker */}
         {showEmojiPicker && (
@@ -53,14 +78,32 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
           </div>
         )}
 
+        {/* Mic modal above input */}
+        {listening && (
+          <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-full text-sm shadow-lg flex items-center gap-2">
+            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+            <span>Listening...</span>
+            {/* Stop button next to the text */}
+            <button
+              type="button"
+              onClick={toggleListening}
+              className="ml-2 p-1 hover:bg-gray-700 rounded-full"
+            >
+              ✖️
+            </button>
+          </div>
+        )}
+
         {/* Input */}
         <div className="flex items-center w-full border-b border-gray-200 pb-2">
           <input
+            ref={inputRef}
             type="text"
-            className="flex-1 w-full px-6 py-3 outline-none border-none text-sm"
+            className="flex-1 w-full px-6 py-3 outline-none border-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed overflow-x-auto whitespace-nowrap"
             placeholder={placeholder}
             value={value}
             onChange={(e) => onChange(e.target.value)}
+            disabled={listening} // disable typing while listening
           />
         </div>
 
@@ -79,7 +122,15 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
             <div className="p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px]">
               <PaperClipChatIcon />
             </div>
-            <div className="p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px]">
+
+            {/* Mic icon */}
+            <div
+              className={`relative p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] ${
+                listening ? "text-red-500" : ""
+              }`}
+              onClick={toggleListening}
+              title={listening ? "Stop Recording" : "Start Recording"}
+            >
               <MicChatIcon />
             </div>
           </div>
@@ -88,7 +139,9 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
           <button
             disabled={!value}
             type="submit"
-            className={`${value ? "bg-indigo-500 cursor-pointer" : "bg-gray-400 cursor-not-allowed"} text-white px-4 py-2 rounded-md transition`}
+            className={`${
+              value ? "bg-indigo-500 cursor-pointer" : "bg-gray-400 cursor-not-allowed"
+            } text-white px-4 py-2 rounded-md transition`}
           >
             {sendLabel}
           </button>
