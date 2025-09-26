@@ -364,26 +364,34 @@ function CustomizeAgent({ customIntegartion, setCustomStatus }) {
                                     <h2 className="text-[#1E1E1E] font-[600] text-[14px]">{t("calina.install_following_code")}</h2>
                                     <p className="text-[#5A687C] font-[400] text-[12px]">{t("calina.place_code")}</p>
                                 </div>
-                                <>
-                                    <div className="flex items-center justify-between pb-1">
-                                        <p className="text-[#1E1E1E] font-[500] text-[14px]">{t("calina.add_code_here")}</p>
-                                        <button className="border-[1.5px] cursor-pointer rounded-[7px] py-[4px] px-[14px] border-[#5F58E8] text-[#675FFF] text-[16px] font-[500]">{t("calina.copy")}</button>
-                                    </div>
-                                    <textarea
-                                        name='code'
-                                        onChange={(e) => setCode(e.target.value)}
-                                        value={code}
-                                        rows={8}
-                                        className={`w-full text-[16px] font-[400] bg-white p-2 rounded-lg border border-[#e1e4ea] resize-none focus:outline-none focus:border-[#675FFF]`}
-                                        placeholder={`<script>document.addEventListener("DOMContentLoaded", ( ) { var e = document.createElement("iframe"); e.src =
-"https://applimova.ai/embededChatbot?id=6863d9859ecd340a75d9b215"; const i = innerWidth < 768, o = i ? "90%" : "420px", t = i ?
-"calc(lOOvh - 100px)" : "600px"; Object.assign(e.style, { position: "fixed", bottom: right: i ? "5%" "30px", border: "none", zlndex: "1000",
-width: o, height: t, borderRadius: "IOpx" }); document.body.appendChild(e); window.addEventListener("message", n { const d =
-n.data; if (d && typeof d === "object") { if (d.chatbotOpen === true) { e.style.width = o, e.style.height = t } else if (d.chatbotOpen
-=== false) { e.style.width = "50px", e.style.height = "70px" } } }) });
-< /script>`}
-                                    />
-                                </>
+                            <>
+  <div className="flex items-center justify-between pb-1">
+    <p className="text-[#1E1E1E] font-[500] text-[14px]">{t("calina.add_code_here")}</p>
+    <button
+      className="border-[1.5px] cursor-pointer rounded-[7px] py-[4px] px-[14px] border-[#5F58E8] text-[#675FFF] text-[16px] font-[500]"
+      onClick={() => {
+        navigator.clipboard.writeText(code)
+          .then(() => {
+            // optional: show feedback to user
+          
+          })
+          .catch((err) => console.error("Failed to copy: ", err));
+      }}
+    >
+      {t("calina.copy")}
+    </button>
+  </div>
+
+  <textarea
+    name="code"
+    onChange={(e) => setCode(e.target.value)}
+    value={code}
+    rows={8}
+    className={`w-full text-[16px] font-[400] bg-white p-2 rounded-lg border border-[#e1e4ea] resize-none focus:outline-none focus:border-[#675FFF]`}
+    placeholder={`<script>document.addEventListener("DOMContentLoaded", () => { /* your code */ });</script>`}
+  />
+</>
+
                             </div>
                         </div>}
                 </div>
