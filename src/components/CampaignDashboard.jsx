@@ -48,15 +48,15 @@ function CampaignDashboard() {
     }, [newCampaignStatus])
 
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (moreActionsRef.current && !moreActionsRef.current.contains(event.target)) {
-                setActiveDropdown(null);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+useEffect(() => {
+    const handleClickOutside = (event) => {
+        const isDropdownClick = event.target.closest('.dropdown-container');
+        if (!isDropdownClick) setActiveDropdown(null);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+}, []);
+
 
     const toggleStatus = async (index, key, id) => {
         try {
@@ -102,6 +102,7 @@ function CampaignDashboard() {
     }
 
     const handleEdit = (id) => {
+        console.log(id);
         setIsEdit(id)
         setNewCampaignStatus(true)
         setActiveDropdown(null);
@@ -234,11 +235,12 @@ function CampaignDashboard() {
                                                     <div className='flex items-center gap-2'>
                                                         <button onClick={() => setViewReportModel(true)} className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg'>
                                                             {t("emailings.view_report")}
-                                                        </button>
-                                                        <button ref={moreActionsRef} onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
+                                                        </button>   
+                                                        <div   className="dropdown-container">
+                                                               <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
                                                             <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
                                                             {activeDropdown === index && (
-                                                                <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                                                                <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10 dropdown-menu">
                                                                     <div className="py-1">
                                                                         <button
                                                                             className="block w-full text-left font-[500] group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg"
@@ -284,7 +286,13 @@ function CampaignDashboard() {
                                                                     </div>
                                                                 </div>
                                                             )}
-                                                        </button>
+                                                        </button></div>  
+                                                        
+
+
+                                                        
+                                                                                                      
+                                                     
                                                     </div>
                                                 </td>
                                             </tr>

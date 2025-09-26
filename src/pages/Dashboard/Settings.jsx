@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteProfile, getProfile, updateProfile } from "../../api/profile";
 import { updatePassword } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
-import { getTeamMembers, sendInviteEmail } from "../../api/teamMember";
+import { getTeamMembers, removeTeamMember, sendInviteEmail } from "../../api/teamMember";
 import TransactionHistory from "../../components/TransactionHistory";
 import { Delete, Edit, LeftArrow, PasswordLock, PlanIcon, ProfileEditIcon, RefreshIcon, Settings, SuccessIcon, TeamMemberIcon, ThreeDots } from "../../icons/icons";
 import { discardData } from "../../store/profileSlice";
@@ -21,6 +21,7 @@ import { BsThreeDots } from "react-icons/bs";
 import default_avatar from '../../assets/images/default_avatar.png';
 
 import { parsePhoneNumberFromString } from "libphonenumber-js";
+import { set } from "date-fns";
 
 
 
@@ -49,6 +50,8 @@ const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const [activeSidebarItem, setActiveSidebarItem] = useState("general");
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [userToEdit,setUserToEdit]=useState(null);
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -84,7 +87,6 @@ const SettingsPage = () => {
   const [sidebarStatus, setSideBarStatus] = useState(false)
   const countryRef = useRef()
 
-  console.log(selectedCountry, "selectedCountry")
 
 
   const token = useSelector((state) => state.auth.token);
@@ -414,6 +416,7 @@ const SettingsPage = () => {
   };
 
   const handleDropdownClick = (index) => {
+  
     setActiveDropdown(activeDropdown === index ? null : index);
   };
 
@@ -459,6 +462,25 @@ const SettingsPage = () => {
     } finally {
       setInviteEmailLoading(false)
     }
+  }
+
+  const handleDeleteUser=async ()=>{
+    try{
+     
+      const response=await removeTeamMember(userToEdit.id);   
+      if(response?.status===200){
+        setSuccess({emailInvite:response?.data?.message})
+        renderTeamMembers()
+     
+      }
+
+    }catch(error){
+      console.log(error)
+    }finally{
+         setActiveDropdown(null);
+        setIsDeleteOpen(false);
+    }
+
   }
 
   const handleInviteTeam = () => {
@@ -606,10 +628,10 @@ const SettingsPage = () => {
                           ))}
                         </select> */}
                       </td>
-                      {userDetails?.user?.role === 'Admin' && (
+                      {user?.role.toLowerCase() !== 'admin' && (
                         <td className="text-right bg-[#FAFBFD]">
                           <button
-                            onClick={() => handleDropdownClick(index)}
+                            onClick={() => {handleDropdownClick(index); setUserToEdit(user); console.log(user)}}
                             className="text-gray-500 cursor-pointer hover:text-gray-700"
                           >
                             <EllipsisVertical />
@@ -619,9 +641,8 @@ const SettingsPage = () => {
                               <div className="py-1">
                                 <button
                                   className="block group w-full cursor-pointer text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
-                                  onClick={() => {
-                                    // Handle edit action
-                                    setActiveDropdown(null);
+                                  onClick={() => {                                       
+                                   setActiveDropdown(null);
                                   }}
                                 >
                                   <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span> {t("edit")}</span> </div>
@@ -631,8 +652,8 @@ const SettingsPage = () => {
                                   <button
                                     className="block w-full cursor-pointer text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
                                     onClick={() => {
-                                      // Handle delete action
-                                      setActiveDropdown(null);
+                                      // Handle delete action                                      
+                                           setIsDeleteOpen(true);                                      
                                     }}
                                   >
                                     <div className="flex items-center gap-2">{<Delete />} <span> {t("delete")}</span> </div>
@@ -1418,6 +1439,34 @@ const SettingsPage = () => {
                 }}
               >
                 {t("appointment.ok")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+            {isDeleteOpen && (
+        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-[1px] bg-opacity-50 z-50">
+          <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md mx-auto text-center">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Confirm Delete
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete this user? This action cannot be undone.
+            </p>
+
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={()=>setIsDeleteOpen(false)}
+                className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteUser}
+                className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
+              >
+                Yes, Delete
               </button>
             </div>
           </div>

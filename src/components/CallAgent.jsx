@@ -175,6 +175,8 @@ export default function CallAgentsPage() {
   };
 
   const submitForm = async (e) => {
+    
+    try{
     e.preventDefault();
     if (!isValidForm()) {
       return;
@@ -186,12 +188,16 @@ export default function CallAgentsPage() {
         setLoader(true);
         setAgent({ agent_name: "", language: "", voice: "", type: "", phone_number: "" });
         fetchAgents();
-      } else {
-        console.log("Error creating agent:", response);
+      } else { 
+    error.response=response.response?.data?.error|| "An error occurred";
+    setError({...error});
       }
       setLoader(false);
     }
+  } catch (error) {
+    setLoader(false);
   }
+}
 
   const fetchAgents = async () => {
     try {
@@ -471,7 +477,9 @@ export default function CallAgentsPage() {
                 </div>
 
               </div>
+
             </div>
+              {error.response && <p className="text-red-500 text-sm mt-1">{error.response}</p>}
 
             {/* Footer */}
             <div className="flex gap-2 mt-4">
@@ -493,6 +501,7 @@ export default function CallAgentsPage() {
                 <p> {t("phone.add_number")}</p>
                 {loader && <span className="loader text-[#5E54FF]"></span>}
               </button>
+              
             </div>
           </div>
                   </div>

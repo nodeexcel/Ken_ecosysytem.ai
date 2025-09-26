@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import ViewContacts from "./ViewContacts";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 const countries = [
   { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
@@ -72,6 +73,7 @@ const ContactsPage = () => {
   const [contactIsEdit, setContactIsEdit] = useState("")
   const [selectedData, setSelectedData] = useState({})
   const [openUpward, setOpenUpward] = useState(false);
+  
 
   const countryRef = useRef()
   const moreActionsRef = useRef()
@@ -143,6 +145,16 @@ const ContactsPage = () => {
   //   }
   // }, [activeDropdown]);
 
+  
+  function validatePhoneNumber(phoneNumber) {
+  try {
+    const parsed = parsePhoneNumberFromString(phoneNumber);
+    return parsed && parsed.isValid();
+  } catch (err) {
+    return false;
+  }
+}
+
 
   const validateSubmit = () => {
     const errors = {};
@@ -158,10 +170,8 @@ const ContactsPage = () => {
     }
     if (!addNewContact.phone) {
       errors.phone = `${t("brain_ai.phone_no_required")}`;
-    } else if (!/^\+?[0-9\s]+$/.test(addNewContact.phone)) {
+    } else if (!validatePhoneNumber(selectedCountry.dial_code + addNewContact.phone) )  {
       errors.phone = `${t("brain_ai.invalid_phone_no")}`;
-    } else if (addNewContact.phone.replace(/\D/g, "").length > 15) {
-      errors.phone = `${t("The phone number must contain a maximum of 15 digits.")}`;
     }
     if (!addNewContact.email) {
       errors.email = `${t("brain_ai.email_required")}`;
@@ -172,11 +182,6 @@ const ContactsPage = () => {
     return Object.keys(errors).length === 0;
   }
 
-
-  const handleRowsPerPageChange = (e) => {
-    setRowsPerPage(Number(e.target.value));
-    setCurrentPage(1);
-  };
 
 
   const handleAddContactChange = (e) => {
@@ -1470,7 +1475,7 @@ const ContactsPage = () => {
                     )}
                   </div>
                   <input
-                    type="number"
+                    type="text"
                     name="phone"
                     value={addNewContact.phone}
                     onChange={handleAddContactChange}

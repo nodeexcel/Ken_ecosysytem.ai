@@ -15,6 +15,7 @@ import { SelectDropdown } from "./Dropdown";
 import { getLists } from "../api/brainai";
 import { DateFormat } from "../utils/TimeFormat";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -80,6 +81,7 @@ export default function CallCampaign() {
   const [apiMessage, setApiMessage] = useState({ type: '', message: '' });
   const targetListRef = useRef()
   const {t}=useTranslation();
+  const navigator=useNavigate()
 
   // Add filter state
   const [filters, setFilters] = useState({
@@ -312,7 +314,7 @@ export default function CallCampaign() {
         const response = await createPhoneCampaign(campaignData);
         console.log("API Response:", response);
         
-        if (response && response.status === 200) {
+        if (response && response.status === 201) {
           console.log("Campaign created successfully:", response.data)  
           setApiMessage({ type: 'success', message: 'Campaign created successfully!' });
           setTimeout(() => {
@@ -833,7 +835,7 @@ export default function CallCampaign() {
                   placeholder={t("select")}
                 />
                 {errors.target_lists && <p className="text-red-500 text-sm mt-1">{errors.target_lists}</p>}
-                <button className="text-[#7065F0] text-sm font-medium mt-1">+ {t("phone.create_contact_list")}</button>
+                <button className="text-[#7065F0] text-sm font-medium mt-1" onClick={()=>navigator('/dashboard/brain')}>+ {t("phone.create_contact_list")}</button>
               </div>
 
               <div>
@@ -897,7 +899,7 @@ export default function CallCampaign() {
                     name="phone_number"
                     value={campaign.phone_number}
                     onChange={handleCampaignForm}
-                    className="w-full outline-none bg-transparent text-[#5A687C] px-2"
+                    className="w-full outline-none bg-transparent text-[#5A687ChandleEditCampaigAre you sure you want to delete this call campaign?] px-2"
                   >
                     <option value="" className="text-gray-500">Select</option>
                     {phoneNumbers.map((phone) => (
@@ -982,7 +984,7 @@ export default function CallCampaign() {
               <div className="flex gap-4 mt-6">
                 <button onClick={() => {
                   setSecondModel(true)
-                  setShowModal(false)
+                  // setShowModal(false)
                 }} className="w-[195px] text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
                   {t("phone.test_call")}
                 </button>
@@ -1036,6 +1038,7 @@ export default function CallCampaign() {
             </button>
             <button
               className="w-full cursor-pointer text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+              onClick={ ()=> setSecondModel(false)}
             >
               {t("phone.finish_test")}
             </button>
@@ -1084,7 +1087,7 @@ export default function CallCampaign() {
 
       {
         deleteRow && (
-          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999]">
             <div className="bg-white rounded-2xl w-[400px] p-6 relative shadow-lg">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">{t("phone.delete_call_campaign")}</h2>
               <p className="text-gray-500 mb-4">{t("phone.delete_call_campaign_msg")}</p>
@@ -1103,7 +1106,7 @@ export default function CallCampaign() {
                   className="w-full text-[16px] cursor-pointer text-white rounded-[8px] bg-red-500 h-[38px] flex justify-center items-center gap-2 relative"
                 >
                   {
-                    t("phone.delete")
+                    t("brain_ai.delete")
                   }
                   {/* <span className="loader"></span> */}
                 </button>
