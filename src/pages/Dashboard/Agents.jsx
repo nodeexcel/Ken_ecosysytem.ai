@@ -82,7 +82,7 @@ const Agents = () => {
     },
     {
       name: "Emile",
-      role: `${t("email")}`,
+      role: `${t("emailing")}`,
       gradient: "bg-gradient-to-br from-[#CEBFFD] to-[#CEBFFD]",
       path: "/dashboard/campaigns",
       label: "Emailing",

@@ -9,6 +9,8 @@ const englishTranslation = {
   customer_support: "Customer Support",
   receptionist: "Receptionist",
   email: "Emailing",
+  emailing: "Emailing",
+  Newsletter:"New Sletter",
   hr: "HR",
   accouting: "Accounting",
   seo_name: "SEO",
@@ -1083,7 +1085,13 @@ const englishTranslation = {
     install_following_code:"Install the following code on your site",
     place_code:"Place the code just before the closing tag on any page where you want to activate the chatbot.",
     add_code_here:"Add Code Here",
-    copy:"Copy"
+    copy:"Copy",
+    faq_generator:"Quickly generate helpful FAQs from customer queries.",
+    faq_generator_key:"Quickly generate helpful FAQs from customer queries.",
+    user_guide_prompt:"Create step-by-step guides to assist your customers.",
+    user_guide_prompt_key:"Create step-by-step guides to assist your customers.",
+    quick_email_responder:"Draft instant, professional replies to customer emails.",
+    quick_email_responder_key:"Draft instant, professional replies to customer emails."
   },
   rima: {
     hr_heading: "HR",

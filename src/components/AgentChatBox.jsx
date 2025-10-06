@@ -24,6 +24,7 @@ import { useSelector } from "react-redux"
 import { formatTimeAgo } from "../utils/TimeFormat"
 import { useTranslation } from "react-i18next"
 import ChatInput from "./ChatInput"
+import { useLocation } from "react-router-dom"
 
 const AgentChatBox = ({ listedProps }) => {
   const {
@@ -71,6 +72,7 @@ const AgentChatBox = ({ listedProps }) => {
   const [likedMessages, setLikedMessages] = useState({})
   const [dislikedMessages, setDislikedMessages] = useState({})
   const [searchQuery, setSearchQuery] = useState("")
+  const location = useLocation();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -98,10 +100,11 @@ const AgentChatBox = ({ listedProps }) => {
     return conversationName.includes(searchTerm)
   })
 
-  const sendToSocket = () => {
+  const sendToSocket = (msgObject) => {
     console.log(WebSocket.OPEN, WebSocket.CONNECTING)
-
-    const messageToSend = input
+    // const messageToSend = input
+    const directValue = ({message:input})
+    const messageToSend = msgObject ? JSON.stringify(msgObject) : JSON.stringify(directValue)
     if (!messageToSend) return
 
     try {
@@ -127,7 +130,7 @@ const AgentChatBox = ({ listedProps }) => {
       const agentMessage = {
         id: uuidv4(),
         isUser: true,
-        content: messageToSend,
+        content: msgObject ? msgObject.message : directValue.message,
         sender: "User",
         time: formatTimeAgo(new Date()),
         status: "Read",
@@ -148,7 +151,6 @@ const AgentChatBox = ({ listedProps }) => {
         const responseText = event.data
         console.log("💬 Bot:", responseText)
         const parsedMessage = JSON.parse(responseText)
-        console.log("💬 Bot:", parsedMessage)
 
         const userMessage = {
           id: uuidv4(),
@@ -174,10 +176,8 @@ const AgentChatBox = ({ listedProps }) => {
 
   const sendToSocket2 = () => {
     console.log(WebSocket.OPEN, WebSocket.CONNECTING)
-
     const messageToSend = input
     if (!messageToSend) return
-
     try {
       console.log(socket2Ref)
       if (socket2Ref.current?.readyState == WebSocket.OPEN) {
@@ -219,7 +219,6 @@ const AgentChatBox = ({ listedProps }) => {
 
       socket2Ref.current.onmessage = async (event) => {
         const responseText = event.data
-        console.log("💬 Bot:", responseText)
         const parsedMessage = JSON.parse(responseText)
         console.log("💬 Bot:", parsedMessage)
 
@@ -319,9 +318,20 @@ const AgentChatBox = ({ listedProps }) => {
     }
   }
 
-  const handleSelectMessage = (value) => {
-    setInput(value)
+const handleSelectMessage = (value) => {
+  setInput(value);
+
+  if (location.pathname === "/dashboard/hr" || location.pathname === "/dashboard/customer-support") {
+    const matchedSuggestion = suggestionsChat.find((item) => item.key === value);
+    const msgObject = {
+      message: value,
+      ...(matchedSuggestion?.agent_type && { agent_type: matchedSuggestion.agent_type }),
+    };
+
+    sendToSocket(msgObject);
+    setInput("");
   }
+};
 
   const parseMarkdown = (text) => {
     return text
@@ -333,10 +343,10 @@ const AgentChatBox = ({ listedProps }) => {
   }
 
   const suggestionsChat = [
-    { label: staticSuggestions[0].label, icon: <BulbIcon />, key: staticSuggestions[0].key },
-    { label: staticSuggestions[1].label, icon: <EditIcon />, key: staticSuggestions[1].key },
-    { label: staticSuggestions[2].label, icon: <SearchChatIcon />, key: staticSuggestions[2].key },
-  ]
+  { label: staticSuggestions[0].label, icon: <BulbIcon />, key: staticSuggestions[0].key, agent_type: staticSuggestions[0].agent_type },
+  { label: staticSuggestions[1].label, icon: <EditIcon />, key: staticSuggestions[1].key, agent_type: staticSuggestions[1].agent_type },
+  { label: staticSuggestions[2].label, icon: <SearchChatIcon />, key: staticSuggestions[2].key, agent_type: staticSuggestions[2].agent_type },
+];
 
 
 

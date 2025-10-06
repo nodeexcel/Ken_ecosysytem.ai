@@ -159,7 +159,7 @@ function AllAgentsSkills() {
         },
         {
             name: "Emile",
-            role: t("email"),
+            role: t("emailing"),
             gradient: "bg-gradient-to-br from-[#CEBFFD] to-[#CEBFFD]",
             image: emileImg,
             path: "campaigns",

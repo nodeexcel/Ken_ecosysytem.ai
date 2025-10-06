@@ -767,7 +767,7 @@ export default function Calendar({status=true}) {
 
   return (
     <div className="gap-6 h-screen overflow-auto py-4 pr-2">
-      {status && <h1 className="font-semibold text-[#1e1e1e] mb-5 text-2xl leading-8">Scheduler</h1>}
+      {status && <h1 className="font-semibold text-[#1e1e1e] mb-5 text-2xl leading-8">{t("constance.scheduler")}</h1>}
       <div className="w-full  mx-auto bg-white rounded-xl border border-[#E1E4EA]">
         {renderCalendarHeader()}
         {currentView === "month" && renderMonthView()}

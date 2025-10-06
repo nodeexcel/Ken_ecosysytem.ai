@@ -45,10 +45,10 @@ function Hr() {
 
     const sideMenuList = [
         { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
-        { label: t("skills.rima_content1_header"), icon: <DocIcon status={activeSidebarItem == "job_description_writer"} />, hoverIcon: <DocIcon hover={true} />, path: "job_description_writer" },
+        // { label: t("skills.rima_content1_header"), icon: <DocIcon status={activeSidebarItem == "job_description_writer"} />, hoverIcon: <DocIcon hover={true} />, path: "job_description_writer" },
         { label: t("skills.rima_content2_header"), icon: <ResumeDocIcon status={activeSidebarItem == "resume_screener"} />, hoverIcon: <ResumeDocIcon hover={true} />, path: "resume_screener" },
-        { label: t("skills.rima_content3_header"), icon: <InterviewPlannerIcon status={activeSidebarItem == "interview_planner"} />, hoverIcon: <InterviewPlannerIcon hover={true} />, path: "interview_planner" },
-        { label: t("skills.rima_content4_header"), icon: <LinkedInIcon status={activeSidebarItem == "linkedin"} />, hoverIcon: <LinkedInIcon hover={true} />, path: "linkedin" },
+        // { label: t("skills.rima_content3_header"), icon: <InterviewPlannerIcon status={activeSidebarItem == "interview_planner"} />, hoverIcon: <InterviewPlannerIcon hover={true} />, path: "interview_planner" },
+        // { label: t("skills.rima_content4_header"), icon: <LinkedInIcon status={activeSidebarItem == "linkedin"} />, hoverIcon: <LinkedInIcon hover={true} />, path: "linkedin" },
     ]
 
     const activeTab = useSelector((state) => state.skills)
@@ -166,9 +166,9 @@ function Hr() {
         }
     }
 
-    const staticSuggestions = [{ label: `${t("rima.perfect_job_description")}`, key: `${t("rima.perfect_job_description_key")}` },
-    { label: `${t("rima.hire_faster")}`, key: `${t("rima.hire_faster_key")}` },
-    { label: `${t("rima.qualified_candidates")}`, key: `${t("rima.qualified_candidates_key")}` }
+    const staticSuggestions = [{ label: `${t("rima.perfect_job_description")}`, key: `${t("rima.perfect_job_description_key")}`,agent_type: "job_description_writer" },
+    { label: `${t("rima.hire_faster")}`, key: `${t("rima.hire_faster_key")}`, agent_type: "interview_planner" },
+    { label: `${t("rima.qualified_candidates")}`, key: `${t("rima.qualified_candidates_key")}`, agent_type: "linkedin_outreacher" }
     ]
 
     const listedProps = {
