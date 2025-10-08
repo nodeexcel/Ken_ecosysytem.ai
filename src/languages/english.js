@@ -11,7 +11,7 @@ const englishTranslation = {
   receptionist: "Receptionist",
   email: "Emailing",
   emailing: "Emailing",
-  Newsletter:"New Sletter",
+  Newsletter:"Newsletter",
   hr: "HR",
   accouting: "Accounting",
   seo_name: "SEO",
