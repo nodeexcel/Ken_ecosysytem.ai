@@ -5,6 +5,7 @@ const englishTranslation = {
   coo: "Executive Assistant",
   content_creation: "Content Creation",
   phone_outreach: "Phone Outreach",
+  phone_outreach_new: "Phone Outreach",
   appointment_setter: "Appointment Setter",
   customer_support: "Customer Support",
   receptionist: "Receptionist",

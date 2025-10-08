@@ -50,7 +50,7 @@ const Agents = () => {
     },
     {
       name: "Tom",
-      role: `${t("phone_outreach")}`,
+      role: `${t("phone_outreach_new")}`,
       gradient: "bg-gradient-to-br from-[#DBE5FF] to-[#DBE5FF]",
       path: "/dashboard/phone",
       label: "Tom & Rebecca, Phone",
@@ -82,7 +82,7 @@ const Agents = () => {
     },
     {
       name: "Emile",
-      role: `${t("emailing")}`,
+      role: `${t("email")}`,
       gradient: "bg-gradient-to-br from-[#CEBFFD] to-[#CEBFFD]",
       path: "/dashboard/campaigns",
       label: "Emailing",
