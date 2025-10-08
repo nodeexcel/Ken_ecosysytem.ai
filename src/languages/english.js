@@ -984,6 +984,8 @@ const englishTranslation = {
     video: "Video",
     reel: "Reel",
     eng: "ENG",
+    video_type_first: "Short",
+    video_type_second: "Long",
     fr: "FR",
     add_creation_studio: "Add Creation Studio",
     text: "Text",

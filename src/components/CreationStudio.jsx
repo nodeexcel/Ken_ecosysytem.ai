@@ -310,6 +310,7 @@ function CreationStudio() {
     const postTypeOptions = [{ label: `${t("constance.generic")}`, key: "generic" }, { label: `${t("constance.meme")}`, key: "meme" }, { label: `${t("constance.quoted")}`, key: "quotes" }]
     const mediaTypeOptions = [{ label: `${t("constance.single_image")}`, key: "single_image" }, { label: `${t("constance.carousel")}`, key: "carousel" }, { label: `${t("constance.video")}`, key: "video" }, { label: `${t("constance.reel")}`, key: "reel" }]
     const languageOptions = [{ label: `${t("constance.eng")}`, key: "english" }, { label: `${t("constance.fr")}`, key: "french" }]
+    const VideoOptions = [{ label: `${t("constance.video_type_first")}`, key: "short" }, { label: `${t("constance.video_type_second")}`, key: "long" }]
     // Removed videoDurationOptions as we're changing to free text input
 
 
@@ -467,13 +468,21 @@ function CreationStudio() {
                         <label className="text-sm font-medium text-[#1e1e1e]">
                             {t("constance.video_duration")}
                         </label>
-                        <input
-                            type="text"
+                        <SelectDropdown
                             name="video_duration"
-                            value={formData?.video_duration || ""}
-                            onChange={handleChange}
-                            className={`w-full bg-white p-2 rounded-lg border ${errors.video_duration ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                            placeholder={t("constance.video_duration_placeholder") || "Enter video duration (e.g., 30 seconds, 2 minutes)"}
+                            options={VideoOptions}
+                            value={formData?.video_duration}
+                            onChange={(updated) => {
+                                setFormData((prev) => ({
+                                    ...prev, video_duration: updated
+                                }))
+                                setErrors((prev) => ({
+                                    ...prev, video_duration: ""
+                                }))
+                            }}
+                            placeholder={t("select")}
+                            className=""
+                            errors={errors}
                         />
                         {errors.video_duration && <p className="text-red-500 text-sm mt-1">{errors.video_duration}</p>}
                     </div>}

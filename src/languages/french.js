@@ -996,6 +996,8 @@ const frenchTranslation = {
     video: "Vidéo",
     reel: "Reel",
     eng: "ANG",
+    video_type_first: "Courte",
+    video_type_second: "Longue",
     fr: "FR",
     add_creation_studio: "Ajouter un studio de création",
     text: "Texte",
