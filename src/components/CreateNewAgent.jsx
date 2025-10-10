@@ -176,12 +176,12 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         }
 
         if (step === 3) {
-            if (!formData.prompt) newErrors.prompt = t("appointment.prompt_validation");
-            formData.qualification_questions.forEach((e, i) => {
-                if (e === "") {
-                    newErrors[`qualification_questions[${i}]`] = t("appointment.prompt_validation");
-                }
-            });
+            // if (!formData.prompt) newErrors.prompt = t("appointment.prompt_validation");
+            // formData.qualification_questions.forEach((e, i) => {
+            //     if (e === "") {
+            //         newErrors[`qualification_questions[${i}]`] = t("appointment.prompt_validation");
+            //     }
+            // });
 
             console.log(formData);
             // Add validation for platform_unique_id when Instagram or Whatsapp is selected
@@ -541,6 +541,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         }
         const finalPayload = {
             ...formData,
+            qualification_questions: formData.qualification_questions.filter(question => question.trim() !== ""),
             follow_up_details: formData.is_followups_enabled
                 ? formData.follow_up_details
                 : {},
@@ -580,6 +581,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         }
         const finalPayload = {
             ...formData,
+             qualification_questions: formData.qualification_questions.filter(question => question.trim() !== ""),
             follow_up_details: formData.is_followups_enabled
                 ? formData.follow_up_details
                 : {},

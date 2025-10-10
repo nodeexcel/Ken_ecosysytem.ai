@@ -175,7 +175,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         />
                     </div>
                     <hr className='text-[#E1E4EA]' />
-                    <div ref={noticationRef}>
+                    {/* <div ref={noticationRef}>
                         <div className={`text-xl flex ${!isNotification && 'group'} hover:cursor-pointer ${!isOpen && 'justify-center'} relative py-3`} onClick={handleNotification}>
                             <div className='flex items-center'>
                                 <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarNotificationIcon status={renderColor(6)} /></div> <div className='hidden group-hover:block'><SidebarNotificationIcon status={true} /></div> </div>
@@ -186,7 +186,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                             </div>}
                         </div>
                         {isNotification && <Notification setNotification={setIsNotification} />}
-                    </div>
+                    </div> */}
                     <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[0].id, sidebarItems[0].label)}>
                         <div className='flex items-center'>
                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarFourBoxIcon status={renderColor(0)} /></div> <div className='hidden group-hover:block'><SidebarFourBoxIcon status={true} /></div> </div>
