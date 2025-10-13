@@ -196,7 +196,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                             <p className='font-[400]'>{t("sidebar.home")}</p>
                         </div>}
                     </div>
-                    <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[7].id, sidebarItems[7].label)}>
+                    {/* <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[7].id, sidebarItems[7].label)}>
                         <div className='flex items-center'>
                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><SkillsIcon status={renderColor(7)} /></div> <div className='hidden group-hover:block'><SkillsIcon status={true} /></div> </div>
                             {isOpen && <p className={`font-[400] text-[16px] group-hover:text-[#675FFF] ${renderColor(7) ? 'text-[#675FFF]' : 'text-[#1e1e1e]'}`}>{t("sidebar.skills")}</p>}
@@ -204,7 +204,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                         {!isOpen && <div className={`flex-col mb-1 gap-1 transform -translate-x-1/2 text-[#5A687C] text-xs  py-1 px-2 hidden group-hover:flex transition-opacity duration-200 fixed ${i18n.language === "fr" ? 'md:left-[120px]' : 'md:left-[95px]'} left-[102px] bg-white shadow-md rounded p-2 z-[9999]`}>
                             <p className='font-[400]'>{t("sidebar.skills")}</p>
                         </div>}
-                    </div>
+                    </div> */}
                     <div className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`} onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}>
                         <div className='flex items-center'>
                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><SidebarBrainIcon status={renderColor(1)} /></div> <div className='hidden group-hover:block'><SidebarBrainIcon status={true} /></div> </div>
