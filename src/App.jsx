@@ -44,9 +44,7 @@ import BrainManagement from './pages/SuperAdminDashboard/BrainManagement'
 import BrainManagementSub from './pages/SuperAdminDashboard/BrainManagementSub'
 import AgentMonitoring from './pages/SuperAdminDashboard/AgentMonitoring'
 import AgentMonitoringSub from './pages/SuperAdminDashboard/AgentMonitoringSub'
-
-
-
+import EmbededChatbot from './pages/embededChatbot/embededChatbot'
 
 
 
@@ -56,6 +54,7 @@ import AgentMonitoringSub from './pages/SuperAdminDashboard/AgentMonitoringSub'
     <div className='h-screen inter'>
       <Toaster />
       <Routes>
+          <Route path="/embededChatbot" element={<EmbededChatbot/>} />
         <Route path='/' element={<Login />} />
         <Route path='/super-admin' element={<SuperDashboard/>}>
           <Route path='' element={<SuperAdminDashboard />} />

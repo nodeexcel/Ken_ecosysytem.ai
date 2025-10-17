@@ -1018,6 +1018,7 @@ const englishTranslation = {
   },
   calina: {
     create_new_chatbot: "Create New Chatbot",
+    edit_new_chatbot: "Edit Chatbot",
     bot_details: "Bot Details",
     bot_name: "Bot Name",
     bot_name_placeholder: "Ex. Ecosystem",
@@ -1094,7 +1095,8 @@ const englishTranslation = {
     user_guide_prompt:"Create step-by-step guides to assist your customers.",
     user_guide_prompt_key:"Create step-by-step guides to assist your customers.",
     quick_email_responder:"Draft instant, professional replies to customer emails.",
-    quick_email_responder_key:"Draft instant, professional replies to customer emails."
+    quick_email_responder_key:"Draft instant, professional replies to customer emails.",
+
   },
   rima: {
     hr_heading: "HR",

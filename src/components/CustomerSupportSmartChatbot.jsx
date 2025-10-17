@@ -4,6 +4,7 @@ import { Delete, Edit, ThreeDots } from "../icons/icons"
 import CustomerSupportChatBotForm from "./CustomerSupportChatBotForm"
 import { useTranslation } from "react-i18next";
 import CustomerSupportChat from "./CustomerSupportChat";
+import { deleteSmartChatBotById, getSmartBotById, getSmartBots } from "../api/customerSupport";
 
 
 function SmartChatbot() {
@@ -15,29 +16,13 @@ function SmartChatbot() {
     const [chatBotFormStatus, setChatBotFormStatus] = useState(false);
     const [openChats, setOpenChats] = useState(false)
     const moreActionsRef = useRef()
+    const [rows, setRows] = useState([]);
+    const [loadingChats, setLoadingChats] = useState(false);
+    const [deleteRow, setDeleteRow] = useState(null);
+    const [editData, setEditData] = useState();
+    const [agentId, setAgentId] = useState();
+    const [selectedBotData, setSelectedBotData] = useState(null);
     const { t } = useTranslation()
-
-    const staticData = [
-        {
-            id: 1,
-            bot_name: `${t("calina.chat_bot_alpha")}`,
-            date: new Date(),
-            tota_chats: 10,
-        },
-        {
-            id: 2,
-            bot_name: `${t("calina.chat_bot_alpha")}`,
-            date: new Date(),
-            tota_chats: 10,
-        },
-    ]
-
-    useEffect(() => {
-        setTimeout(() => {
-            setChatbotData(staticData)
-            setFilteredChatbotData(staticData)
-        }, 3000)
-    }, [])
 
     useEffect(() => {
         if (chatbotData?.length > 0) {
@@ -57,16 +42,6 @@ function SmartChatbot() {
         }
     }, [searchQuery, chatbotData])
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (moreActionsRef.current && !moreActionsRef.current.contains(event.target)) {
-                setActiveDropdown(null);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
-
 
     const handleDropdownClick = (index) => {
         setActiveDropdown(activeDropdown === index ? null : index);
@@ -75,6 +50,65 @@ function SmartChatbot() {
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value)
     }
+
+    const fetchSmartBots = async () => {
+        try {
+            const response = await getSmartBots();
+            if (response.status === 200) {
+                const bots = response.data.success || [];
+                setRows(bots);
+                setChatbotData(bots);
+                setFilteredChatbotData(bots);
+                setLoading(false);
+            } else {
+                console.error("Failed to fetch smart bots");
+                setLoading(false);
+            }
+        } catch (error) {
+            console.error("Error fetching smart bots:", error);
+            setLoading(false);
+        }
+    };
+    const handleGetSmartBot = async (id) => {
+        try {
+            setLoadingChats(true)
+            const response = await getSmartBotById(id);
+            console.log(response.data)
+            if (response.status === 200) {
+                setSelectedBotData(response.data.success); 
+                // setMessages(data)
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoadingChats(false)
+        }
+    }
+
+    const handleDelete = async (id) => {
+        try {
+            const response = await deleteSmartChatBotById(id)
+            if (response?.status === 200) {
+                fetchSmartBots()
+                setDeleteRow(null);
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    useEffect(() => {
+        if (rows && rows.length > 0) {
+            setLoading(false)
+        }
+    }, [rows])
+
+    useEffect(() => {
+        fetchSmartBots();
+    }, []);
+
+
 
     return (
         <>
@@ -90,8 +124,8 @@ function SmartChatbot() {
                     </button>
                 </div>
                 <div>
-                    <input 
-                        placeholder={t("brain_ai.search")} 
+                    <input
+                        placeholder={t("brain_ai.search")}
                         className="max-w-[399px] bg-white focus:outline-none focus:border-[#675FFF] w-full rounded-[8px] border border-[#E1E4EA] py-[5px] px-[14px]"
                         value={searchQuery}
                         onChange={handleSearchChange}
@@ -112,21 +146,23 @@ function SmartChatbot() {
                         </div>
                         <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
                             {loading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
-                                filteredChatbotData.length !== 0 ?
+                                filteredChatbotData?.length !== 0 ?
                                     <tbody className="w-full">
-                                        {filteredChatbotData.map((row, index) =>
+                                        {filteredChatbotData?.map((row, index) =>
                                             <tr
                                                 key={row.id}
                                                 className={`text-[16px] text-[#1E1E1E] ${index !== filteredChatbotData?.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
                                             >
                                                 <td className="px-[14px] py-[14px] min-w-[200px] max-w-[32%] w-full font-[600] text-[#1E1E1E] whitespace-nowrap">{row.bot_name}</td>
-                                                <td className="py-[14px] px-[14px] min-w-[200px] max-w-[38%] w-full text-[#5A687C] whitespace-nowrap">{DateFormat(row.date)}</td>
-                                                <td className="py-[14px] px-[14px] min-w-[200px] max-w-[38%] w-full text-[#5A687C] whitespace-nowrap">{row.tota_chats}</td>
+                                                <td className="py-[14px] px-[14px] min-w-[200px] max-w-[38%] w-full text-[#5A687C] whitespace-nowrap">{row.date ? DateFormat(row.date) : "11 Oct 2025, 10:30 AM"}</td>
+                                                <td className="py-[14px] px-[14px] min-w-[200px] max-w-[38%] w-full text-[#5A687C] whitespace-nowrap">{row.chats}</td>
                                                 <td ref={moreActionsRef} className="pr-[14px] relative">
                                                     <div className="flex items-center gap-2">
                                                         <button onClick={() => {
                                                             setChatBotFormStatus(true)
                                                             setOpenChats(true)
+                                                            setAgentId(row.id)
+
                                                         }} className="border-[1.5px] cursor-pointer border-[#5F58E8] text-[#675FFF] font-[500] text-[16px] py-[7px] px-[20px] rounded-[7px]">{t("open")}</button>
                                                         <div>
                                                             <button
@@ -138,9 +174,13 @@ function SmartChatbot() {
                                                                 <div className="absolute right-6 px-2 w-52 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[10]">
                                                                     <div className="py-1">
                                                                         <button
+                                                                            type="button"
                                                                             className="block w-full group cursor-pointer text-left px-4 hover:rounded-lg py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
                                                                             onClick={() => {
                                                                                 setActiveDropdown(null);
+                                                                                setChatBotFormStatus(true)
+                                                                                setEditData(row.id)
+                                                                                handleGetSmartBot(row.id);
                                                                             }}
                                                                         >
                                                                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
@@ -151,6 +191,7 @@ function SmartChatbot() {
                                                                                 className="block w-full cursor-pointer text-left px-4 hover:rounded-lg py-2 text-sm text-red-600 hover:bg-[#F4F5F6] font-[500]"
                                                                                 onClick={() => {
                                                                                     setActiveDropdown(null);
+                                                                                    setDeleteRow(row.id);
                                                                                 }}
                                                                             >
                                                                                 <div className="flex items-center gap-2">{<Delete />} <span>{t("delete")}</span> </div>
@@ -169,7 +210,37 @@ function SmartChatbot() {
                         </div>
                     </table>
                 </div>
-            </div> : openChats ? <CustomerSupportChat /> : <CustomerSupportChatBotForm onCancel={() => setChatBotFormStatus(false)} />}
+            </div> : openChats ? <CustomerSupportChat agentId={agentId} /> : <CustomerSupportChatBotForm onCancel={() => setChatBotFormStatus(false)} editData={selectedBotData} editDataId={editData} />}
+
+            {
+                deleteRow && (
+                    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999]">
+                        <div className="bg-white rounded-2xl w-[400px] p-6 relative shadow-lg">
+                            <h2 className="text-xl font-semibold text-gray-800 mb-4">Delete Smart Bot</h2>
+                            <p className="text-gray-500 mb-4">Are you sure you want to delete this Smart Bot?</p>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setDeleteRow(null)}
+                                    className="w-full text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
+                                >
+                                    {t("phone.cancel")}
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        handleDelete(deleteRow);
+
+                                    }}
+                                    className="w-full text-[16px] cursor-pointer text-white rounded-[8px] bg-red-500 h-[38px] flex justify-center items-center gap-2 relative"
+                                >
+                                    {
+                                        t("brain_ai.delete")
+                                    }
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
         </>
     )
 }

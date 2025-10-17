@@ -1030,6 +1030,7 @@ const frenchTranslation = {
   },
   calina: {
     create_new_chatbot: "Créer un nouveau chatbot",
+    edit_new_chatbot: "Modifier le chatbot",
     bot_details: "Détails du bot",
     bot_name: "Nom du bot",
     bot_name_placeholder: "Ex. Écosystème",
@@ -1106,7 +1107,7 @@ const frenchTranslation = {
     user_guide_prompt:"Créez des guides étape par étape pour aider vos clients.",
     user_guide_prompt_key:"Créez des guides étape par étape pour aider vos clients.",
     quick_email_responder:"Rédigez des réponses instantanées et professionnelles aux e-mails des clients.",
-    quick_email_responder_key:"Rédigez des réponses instantanées et professionnelles aux e-mails des clients."
+    quick_email_responder_key:"Rédigez des réponses instantanées et professionnelles aux e-mails des clients.",
 
   },
   rima: {

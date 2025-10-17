@@ -1,16 +1,21 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CheckIcon, FacebookIcon, RightArrowIcon, SlackIcon, UploadIcon, WebsiteIcon, WhatsAppIcon } from "../icons/icons";
 import { SelectDropdown } from "./Dropdown";
 import { useTranslation } from "react-i18next";
 import CustomizeAgent from "./CustomizeAgent";
+import { createSmartBot, intregateWebsiteChatById, updateSmartbot } from "../api/customerSupport";
 
-function CustomerSupportChatBotForm({ onCancel }) {
-    const [formData, setFormData] = useState({ bot_name: "", role: "", personality: "", prompt: "", transfer: "", file: [], free_text: "" })
-    const [errors, setErrors] = useState({})
+function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
+    const [formData, setFormData] = useState({ bot_name: "", role: "", personality: "", prompt: "", transfer: "", file: [], reference_text: "", transfer_case: {} })
+    // const [errors, setErrors] = useState({})
     const [step, setStep] = useState(1)
     const [statusSteps, setStatusSteps] = useState({ step1: false, step2: false, step3: false, step4: false })
     const [customStatus, setCustomStatus] = useState(false)
     const [customIntegartion, setCustomIntegartion] = useState({})
+    const [loading, setLoading] = useState(false)
+    const [agentId, setAgentId] = useState(null);
+    const [smartBotData, setSmartBotData] = useState(null);
+
 
     const fileInputRef = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -20,6 +25,23 @@ function CustomerSupportChatBotForm({ onCancel }) {
 
     const handleClick = () => {
         fileInputRef.current?.click();
+    };
+
+
+    const [errors, setErrors] = useState({
+        bot_name: "", role: "", personality: "", prompt: "", transfer: "", file: [], reference_text: "", transfer_case: {}
+    });
+
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!formData.bot_name.trim()) newErrors.bot_name = "Bot name is required";
+        if (!formData.prompt.trim()) newErrors.prompt = "Prompt is required";
+        if (!formData.role) newErrors.role = "Role is required";
+        if (!formData.personality) newErrors.personality = "Personality is required";
+        setErrors(newErrors);
+
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleFileChange = (e) => {
@@ -36,7 +58,6 @@ function CustomerSupportChatBotForm({ onCancel }) {
                 ...prev,
                 file: file,
             }))
-            console.log('Selected file:', file);
         }
     };
 
@@ -65,7 +86,6 @@ function CustomerSupportChatBotForm({ onCancel }) {
                 ...prev,
                 file: file,
             }))
-            console.log('Dropped file:', file);
         }
     };
 
@@ -76,7 +96,7 @@ function CustomerSupportChatBotForm({ onCancel }) {
         { label: `${t("calina.energetic")}`, key: "energetic" },
         { label: `${t("calina.relaxed")}`, key: "relaxed" },
         { label: `${t("calina.result_oriented")}`, key: "results_oriented" },
-        { label:`${t("calina.direct")}`, key: "direct" },
+        { label: `${t("calina.direct")}`, key: "direct" },
         { label: `${t("calina.empathic")}`, key: "emphatic" },
     ]
 
@@ -106,13 +126,16 @@ function CustomerSupportChatBotForm({ onCancel }) {
     }
 
     const handleContinue = (nextStep) => {
+        if (!validateForm()) {
+            return;
+        }
         setStatusSteps((prev) => ({ ...prev, [`step${step}`]: true }))
         setStep(nextStep)
     }
 
     const handleCancel = (value) => {
         // Reset all form state
-        setFormData({ bot_name: "", role: "", personality: "", prompt: "", transfer: "", file: [], free_text: "" });
+        setFormData({ bot_name: "", role: "", personality: "", prompt: "", transfer_case: {}, file: [], reference_text: "" });
         setErrors({});
         setStep(1);
         setStatusSteps({ step1: false, step2: false, step3: false, step4: false });
@@ -120,12 +143,12 @@ function CustomerSupportChatBotForm({ onCancel }) {
         setCustomStatus(false);
         setCustomIntegartion({});
         setDragActive(false);
-        
+
         // Clear file input reference
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
-        
+
         // Call the parent's cancel callback to return to chatbot list
         if (onCancel) {
             onCancel();
@@ -141,17 +164,95 @@ function CustomerSupportChatBotForm({ onCancel }) {
         else if (!statusSteps.step2) {
             setStep(2)
         }
-        else if (!statusSteps.step3) {
-            setStep(3)
-        }
+        // else if (!statusSteps.step3) {
+        //     setStep(3)
+        // }
         else {
             setStep(selectStep)
         }
     }
 
+    const handleSubmit = async () => {
+        if (!validateForm()) {
+            console.log("Form validation failed", errors);
+            return;
+        }
+        const finalPayload = {
+            ...formData
+        };
+
+        console.log(editData, editDataId, "payload")
+        try {
+            setLoading(true)
+            let response;
+            if (editData) {
+                response = await updateSmartbot(editDataId, finalPayload);
+            } else {
+                response = await createSmartBot(finalPayload);
+            }
+            console.log(response)
+            if (response.status === 201) {
+                const successData = response?.data;
+                if (successData?.agent_id) {
+                    setAgentId(successData.agent_id);
+                }
+                setErrors((prev) => ({ ...prev, success: response?.data?.success }))
+                setTimeout(() => {
+                    // setOpen(true)
+                    setErrors({})
+                }, 3000)
+            } else {
+                setLoading(false)
+                if (response?.response?.data?.error) {
+                    setErrorMessage(response?.response?.data?.error)
+                }
+            }
+        } catch (error) {
+            setErrors((prev) => ({ ...prev, error: 'Network Error' }))
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+
+    useEffect(() => {
+        if (editData) {
+            setFormData({
+                bot_name: editData.bot_name || "",
+                role: editData.role || "",
+                personality: editData.personality || "",
+                prompt: editData.prompt || "",
+                transfer: editData.transfer || "",
+                file: editData.file || [],
+                reference_text: editData.reference_text || "",
+                transfer_case: editData.transfer_case || {}
+            });
+        }
+    }, [editData]);
+
+    const handleGetWebsiteLink = async () => {
+        if (editDataId) {
+            try {
+                const response = await intregateWebsiteChatById(editDataId);
+                if (response.status === 200 && response?.data?.success) {
+                    setSmartBotData(response?.data?.success);
+                }
+            } catch (error) {
+                console.log(error);
+            } finally {
+                // setLoadingChats(false);
+            }
+        } else {
+            console.log("error")
+        }
+
+    };
+
     return (
         <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
-            <h1 className="text-[#1E1E1E] font-[600] text-[24px]">{t("calina.create_new_chatbot")}</h1>
+            {/* <h1 className="text-[#1E1E1E] font-[600] text-[24px]">{t("calina.create_new_chatbot")}</h1> */}
+            <h1 className="text-[#1E1E1E] font-[600] text-[24px]">{editData ? t("calina.edit_new_chatbot") : t("calina.create_new_chatbot")}</h1>
             <div className="h-full flex flex-col gap-4 w-full">
                 <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
                     <div className="flex justify-between items-center" onClick={() => {
@@ -168,7 +269,7 @@ function CustomerSupportChatBotForm({ onCancel }) {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                             <div className="flex flex-col gap-1.5 w-full">
                                 <label className="text-sm font-medium text-[#1e1e1e]">
-                                {t("calina.bot_name")}<span className="text-[#675fff]">*</span>
+                                    {t("calina.bot_name")}<span className="text-[#675fff]">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -210,7 +311,7 @@ function CustomerSupportChatBotForm({ onCancel }) {
                             </div>
                             <div className="flex flex-col gap-1.5 flex-1">
                                 <label className="text-sm font-medium text-[#1e1e1e]">
-                                {t("calina.personality")}
+                                    {t("calina.personality")}
                                 </label>
                                 <SelectDropdown
                                     name="personality"
@@ -233,7 +334,7 @@ function CustomerSupportChatBotForm({ onCancel }) {
                         </div>
                         <div className="flex flex-col gap-1.5 w-full">
                             <label className="text-sm font-medium text-[#1e1e1e]">
-                            {t("calina.prompt")}
+                                {t("calina.prompt")}
                             </label>
                             <textarea
                                 name='prompt'
@@ -271,35 +372,41 @@ function CustomerSupportChatBotForm({ onCancel }) {
                         <hr style={{ color: "#E1E4EA" }} />
                         <div className="flex flex-col gap-1 w-full">
                             <p className="text-sm font-medium text-[#1e1e1e] pb-4">
-                            {t("calina.transfer_optional")}<span className="text-[#5A687C] text-xs font-[400]">{t("calina.optional")}</span>
+                                {t("calina.transfer_optional")}<span className="text-[#5A687C] text-xs font-[400]">{t("calina.optional")}</span>
                             </p>
                             <label className="text-sm font-medium text-[#1e1e1e] pb-2">
-                            {t("calina.end_the_conversation")}<span className="text-[#5A687C] text-xs font-[400]">{t("calina.main_condition")}</span>
+                                {t("calina.end_the_conversation")}<span className="text-[#5A687C] text-xs font-[400]">{t("calina.main_condition")}</span>
                             </label>
                             <ul className="flex flex-col gap-2.5">
                                 {transferOptions.map((each) => (
                                     <li
                                         key={each.key}
-                                        onClick={() => setFormData((prev) => ({ ...prev, transfer: each.key }))}
-                                        className={`border border-[#E1E4EA] rounded-[6px] p-[12px] cursor-pointer flex items-center hover:bg-[#F4F5F6] hover:rounded-lg text-[#1e1e1e] gap-2 ${formData?.transfer === (each.key)
-                                            && 'bg-[#F4F5F6] rounded-lg text-[#675FFF]'
+                                        onClick={() =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                transfer_case: { key: each.key, label: each.label },
+                                            }))
+                                        }
+                                        className={`border border-[#E1E4EA] rounded-[6px] p-[12px] cursor-pointer flex items-center hover:bg-[#F4F5F6] hover:rounded-lg text-[#1e1e1e] gap-2 ${formData?.transfer_case?.key === each.key &&
+                                            "bg-[#F4F5F6] rounded-lg text-[#675FFF]"
                                             }`}
                                     >
                                         <div
-                                            className={`w-4 h-4 rounded border flex items-center justify-center ${formData?.transfer === (each.key)
-                                                ? 'border-[#675FFF] bg-[#675FFF]'
-                                                : 'border-[#E1E4EA]'
+                                            className={`w-4 h-4 rounded border flex items-center justify-center ${formData?.transfer_case?.key === each.key
+                                                ? "border-[#675FFF] bg-[#675FFF]"
+                                                : "border-[#E1E4EA]"
                                                 }`}
                                         >
-                                            {formData?.transfer === (each.key) && (
+                                            {formData?.transfer_case?.key === each.key && (
                                                 <span className="text-white text-xs">✓</span>
                                             )}
                                         </div>
                                         <span>{each.label}</span>
                                     </li>
+
                                 ))}
                             </ul>
-                            {errors.transfer && <p className="text-red-500 text-sm mt-1">{errors.transfer}</p>}
+                            {/* {errors.transfer_case && <p className="text-red-500 text-sm mt-1">{errors.transfer_case}</p>} */}
                         </div>
 
                         <hr style={{ color: "#E1E4EA" }} />
@@ -357,7 +464,7 @@ function CustomerSupportChatBotForm({ onCancel }) {
                                         <strong>{t("brain_ai.selected_file")}</strong> {selectedFile.name}
                                     </div>
                                 )}
-                                {errors.file && <p className='my-1 text-[#FF3B30]'>{errors.file}</p>}
+                                {/* {errors.file && <p className='my-1 text-[#FF3B30]'>{errors.file}</p>} */}
                             </div>
                         </div>
                         <div className="flex flex-col gap-1.5 w-full">
@@ -365,22 +472,22 @@ function CustomerSupportChatBotForm({ onCancel }) {
                                 {t("free_text")}
                             </label>
                             <textarea
-                                name='free_text'
+                                name='reference_text'
                                 onChange={handleChange}
-                                value={formData?.free_text}
+                                value={formData?.reference_text}
                                 rows={4}
-                                className={`w-full bg-white p-2 rounded-lg border  ${errors.free_text ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
+                                className={`w-full bg-white p-2 rounded-lg border  ${errors.reference_text ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
                                 placeholder={t("calina.prompt_hello")}
                             />
-                            {errors.free_text && <p className="text-red-500 text-sm mt-1">{errors.free_text}</p>}
+                            {errors.reference_text && <p className="text-red-500 text-sm mt-1">{errors.reference_text}</p>}
                         </div>
 
                         <hr style={{ color: "#E1E4EA" }} />
 
                         <div className="flex items-center gap-2">
-                            <button onClick={() => {
-                                handleContinue(4)
-                            }} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("continue")}</button>
+                            <button onClick={
+                                handleSubmit
+                            } className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{editData ? t("brain_ai.update") : t("brain_ai.create")}</button>
                             <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
                         </div>
 
@@ -407,6 +514,7 @@ function CustomerSupportChatBotForm({ onCancel }) {
                                     <button onClick={() => {
                                         setCustomIntegartion(each)
                                         setCustomStatus(true)
+                                        handleGetWebsiteLink()
                                     }}
                                         disabled={!each.is_active}
                                         className={`w-full px-[20px] py-[7px] border-[1.5px] font-[500] text-[16px] rounded-[7px] ${each.is_active ? 'bg-[#675FFF] border-[#5F58E8] text-[#fff] cursor-pointer' : 'border-[#E1E4EA] bg-[#E1E4EA] text-[#5A687C]'}`}>{each.is_active ? `${t("brain_ai.update")}` : `${t("coming_soon")}`}</button>
@@ -416,17 +524,10 @@ function CustomerSupportChatBotForm({ onCancel }) {
 
                         <hr style={{ color: "#E1E4EA" }} />
 
-                        <div className="flex items-center gap-2">
-                            <button onClick={() => {
-                                handleContinue(4)
-                            }} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("brain_ai.create")}</button>
-                            <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
-                        </div>
-
                     </div>}
                 </div>
             </div>
-            {customStatus && <CustomizeAgent customIntegartion={customIntegartion} setCustomStatus={setCustomStatus} />}
+            {customStatus && <CustomizeAgent customIntegartion={customIntegartion} setCustomStatus={setCustomStatus} agentId={agentId} editDataId={editDataId} websiteData={smartBotData} />}
         </div >
     )
 }
