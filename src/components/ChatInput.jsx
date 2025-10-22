@@ -7,24 +7,38 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const pickerRef = useRef(null);
   const inputRef = useRef(null);
+  const [isListening, setIsListening] = useState(false);
+  const [originalValue, setOriginalValue] = useState(""); // Store original value before voice input
 
   // Speech recognition hook
-  const { transcript, listening, resetTranscript } = useSpeechRecognition();
+  const { 
+    transcript, 
+    listening, 
+    resetTranscript, 
+    browserSupportsSpeechRecognition 
+  } = useSpeechRecognition();
+
+  // Check if browser supports speech recognition
+  if (!browserSupportsSpeechRecognition) {
+    console.warn('Browser does not support speech recognition');
+  }
 
   const handleEmojiSelect = (emojiData) => {
     onChange(value + emojiData.emoji);
   };
 
-  // Update input when transcript changes
+  // Update input when transcript changes - show original value + transcript while listening
   useEffect(() => {
-    if (transcript) {
-      onChange(transcript);
+    if (transcript && isListening) {
+      // Combine original value with current transcript
+      const combinedValue = originalValue ? `${originalValue} ${transcript}` : transcript;
+      onChange(combinedValue);
       // Scroll input to end
       if (inputRef.current) {
         inputRef.current.scrollLeft = inputRef.current.scrollWidth;
       }
     }
-  }, [transcript, onChange]);
+  }, [transcript, isListening, originalValue, onChange]);
 
   // Close picker on outside click
   useEffect(() => {
@@ -37,13 +51,47 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Cleanup speech recognition on unmount
+  useEffect(() => {
+    return () => {
+      if (listening) {
+        SpeechRecognition.stopListening();
+      }
+    };
+  }, [listening]);
+
+  // Reset original value when not listening
+  useEffect(() => {
+    if (!listening) {
+      setOriginalValue("");
+    }
+  }, [listening]);
+
   // Toggle speech recognition
   const toggleListening = () => {
+    if (!browserSupportsSpeechRecognition) {
+      alert('Your browser does not support speech recognition. Please use Chrome, Edge, or Safari.');
+      return;
+    }
+
     if (listening) {
       SpeechRecognition.stopListening();
+      setIsListening(false);
+      // Finalize the value: original value + final transcript
+      if (transcript) {
+        const finalValue = originalValue ? `${originalValue} ${transcript}` : transcript;
+        onChange(finalValue);
+      }
     } else {
+      // Store the current value before starting voice input
+      setOriginalValue(value);
       resetTranscript();
-      SpeechRecognition.startListening({ continuous: true, language: "en-US" });
+      setIsListening(true);
+      SpeechRecognition.startListening({ 
+        continuous: true, 
+        language: "en-US",
+        interimResults: true
+      });
     }
   };
 
@@ -82,7 +130,7 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
         {listening && (
           <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-full text-sm shadow-lg flex items-center gap-2">
             <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-            <span>Listening...</span>
+            <span>Listening... Speak now</span>
             {/* Stop button next to the text */}
             <button
               type="button"
@@ -127,9 +175,15 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
             <div
               className={`relative p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] ${
                 listening ? "text-red-500" : ""
-              }`}
-              onClick={toggleListening}
-              title={listening ? "Stop Recording" : "Start Recording"}
+              } ${!browserSupportsSpeechRecognition ? "opacity-50 cursor-not-allowed" : ""}`}
+              onClick={browserSupportsSpeechRecognition ? toggleListening : undefined}
+              title={
+                !browserSupportsSpeechRecognition 
+                  ? "Speech recognition not supported" 
+                  : listening 
+                    ? "Stop Recording" 
+                    : "Start Recording"
+              }
             >
               <MicChatIcon />
             </div>
