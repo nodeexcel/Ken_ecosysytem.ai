@@ -18,9 +18,16 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
     browserSupportsSpeechRecognition 
   } = useSpeechRecognition();
 
-  // Check if browser supports speech recognition
+  // Check if browser supports speech recognition and if we're in a secure context
+  const isSecureContext = window.isSecureContext || window.location.protocol === 'https:';
+  const speechSupported = browserSupportsSpeechRecognition && isSecureContext;
+  
   if (!browserSupportsSpeechRecognition) {
     console.warn('Browser does not support speech recognition');
+  }
+  
+  if (!isSecureContext) {
+    console.warn('Speech recognition requires HTTPS in production');
   }
 
   const handleEmojiSelect = (emojiData) => {
@@ -60,6 +67,7 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
     };
   }, [listening]);
 
+
   // Reset original value when not listening
   useEffect(() => {
     if (!listening) {
@@ -69,8 +77,12 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
 
   // Toggle speech recognition
   const toggleListening = () => {
-    if (!browserSupportsSpeechRecognition) {
-      alert('Your browser does not support speech recognition. Please use Chrome, Edge, or Safari.');
+    if (!speechSupported) {
+      if (!isSecureContext) {
+        alert('Speech recognition requires HTTPS. Please ensure your site is served over HTTPS.');
+      } else {
+        alert('Your browser does not support speech recognition. Please use Chrome, Edge, or Safari.');
+      }
       return;
     }
 
@@ -87,6 +99,7 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
       setOriginalValue(value);
       resetTranscript();
       setIsListening(true);
+      
       SpeechRecognition.startListening({ 
         continuous: true, 
         language: "en-US",
@@ -147,7 +160,7 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
           <input
             ref={inputRef}
             type="text"
-            className="flex-1 w-full px-6 py-3 outline-none border-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed overflow-x-auto whitespace-nowrap"
+            className="flex-1 w-full px-6 py-3 outline-none   border-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed overflow-x-auto whitespace-nowrap"
             placeholder={placeholder}
             value={value}
             onChange={(e) => onChange(e.target.value)}
@@ -175,11 +188,11 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
             <div
               className={`relative p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] ${
                 listening ? "text-red-500" : ""
-              } ${!browserSupportsSpeechRecognition ? "opacity-50 cursor-not-allowed" : ""}`}
-              onClick={browserSupportsSpeechRecognition ? toggleListening : undefined}
+              } ${!speechSupported ? "opacity-50 cursor-not-allowed" : ""}`}
+              onClick={speechSupported ? toggleListening : undefined}
               title={
-                !browserSupportsSpeechRecognition 
-                  ? "Speech recognition not supported" 
+                !speechSupported 
+                  ? (isSecureContext ? "Speech recognition not supported" : "Speech recognition requires HTTPS")
                   : listening 
                     ? "Stop Recording" 
                     : "Start Recording"
