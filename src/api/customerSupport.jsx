@@ -210,3 +210,17 @@ export const deleteSmartBotChatById = async (id) => {
 };
 
 
+export const intregrateWhatsapp = async (agent_id, payload) => {
+    try {
+        const response = await agentInstance.post(`/link-customer-support/whatsapp/${agent_id}`,payload);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+
+
+
+
+

@@ -3,18 +3,24 @@ import { CheckIcon, FacebookIcon, RightArrowIcon, SlackIcon, UploadIcon, Website
 import { SelectDropdown } from "./Dropdown";
 import { useTranslation } from "react-i18next";
 import CustomizeAgent from "./CustomizeAgent";
-import { createSmartBot, intregateWebsiteChatById, updateSmartbot } from "../api/customerSupport";
+import { createSmartBot, intregateWebsiteChatById, intregrateWhatsapp, updateSmartbot } from "../api/customerSupport";
+import { getWhatsappAccounts } from "../api/brainai";
 
 function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
     const [formData, setFormData] = useState({ bot_name: "", role: "", personality: "", prompt: "", transfer: "", file: [], reference_text: "", transfer_case: {} })
     // const [errors, setErrors] = useState({})
+    const [whatsappFormData, SetWhatsappFormData] = useState({
+        platform_unique_id: ""
+    })
     const [step, setStep] = useState(1)
     const [statusSteps, setStatusSteps] = useState({ step1: false, step2: false, step3: false, step4: false })
     const [customStatus, setCustomStatus] = useState(false)
+    const [openWhatsappModal, SetopenWhatsappModal] = useState(false)
     const [customIntegartion, setCustomIntegartion] = useState({})
     const [loading, setLoading] = useState(false)
     const [agentId, setAgentId] = useState(null);
     const [smartBotData, setSmartBotData] = useState(null);
+    const [whatsappData, setWhatsappData] = useState([])
 
 
     const fileInputRef = useRef(null);
@@ -115,7 +121,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
     const integrationsData = [
         { label: `${t("calina.website")}`, icon: <WebsiteIcon />, content: `${t("calina.website_content")}`, is_active: true },
         { label: `${t("calina.messenger")}`, icon: <FacebookIcon />, content: `${t("calina.messenger_content")}`, is_active: false },
-        { label: `${t("calina.whatsapp")}`, icon: <WhatsAppIcon />, content: `${t("calina.whatsapp_content")}`, is_active: false },
+        { label: `${t("calina.whatsapp")}`, icon: <WhatsAppIcon />, content: `${t("calina.whatsapp_content")}`, is_active: true },
         { label: `${t("calina.slack")}`, icon: <SlackIcon />, content: `${t("calina.slack_content")}`, is_active: false }
     ]
 
@@ -217,6 +223,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
 
 
     useEffect(() => {
+        handleWhatsapp();
         if (editData) {
             setFormData({
                 bot_name: editData.bot_name || "",
@@ -248,6 +255,48 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
         }
 
     };
+
+
+    const handleWhatsapp = async () => {
+        try {
+
+            const response = await getWhatsappAccounts();
+            if (response?.status === 200) {
+                console.log(response?.data?.whatsapp_account_info)
+                const data = response?.data?.whatsapp_account_info
+                if (data?.length > 0) {
+                    const updatedFormat = data.map((e) => ({
+                        label: e.username,
+                        key: e.whatsapp_phone_id
+                    }));
+                    setWhatsappData(updatedFormat)
+                } else {
+                    setWhatsappData(data);
+                }
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const whatsappIntregrate = async () => {
+        const payload = {
+            integration_platform: "Whatsapp",
+            platform_id: whatsappFormData.platform_unique_id,
+        };
+        let agent_id = agentId || editDataId || ""
+        try {
+            const response = await intregrateWhatsapp(agent_id, payload);
+            console.log("Response:", response);
+            if(response.status==201 || response.status==200){
+                SetWhatsappFormData("")
+                SetopenWhatsappModal("")
+            }
+        } catch (error) {
+            console.error("Error integrating WhatsApp:", error);
+        }
+    }
 
     return (
         <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
@@ -513,8 +562,14 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                     <p className="text-[#5A687C] text-[14px] font-[400]">{each.content}</p>
                                     <button onClick={() => {
                                         setCustomIntegartion(each)
-                                        setCustomStatus(true)
+                                        // setCustomStatus(true)
                                         handleGetWebsiteLink()
+                                        // SetopenWhatsappModal(true)
+                                        if (each.label.toLowerCase().includes("whatsapp")) {
+                                            SetopenWhatsappModal(true);
+                                        } else if (each.label.toLowerCase().includes("website")) {
+                                            setCustomStatus(true);
+                                        }
                                     }}
                                         disabled={!each.is_active}
                                         className={`w-full px-[20px] py-[7px] border-[1.5px] font-[500] text-[16px] rounded-[7px] ${each.is_active ? 'bg-[#675FFF] border-[#5F58E8] text-[#fff] cursor-pointer' : 'border-[#E1E4EA] bg-[#E1E4EA] text-[#5A687C]'}`}>{each.is_active ? `${t("brain_ai.update")}` : `${t("coming_soon")}`}</button>
@@ -528,6 +583,53 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                 </div>
             </div>
             {customStatus && <CustomizeAgent customIntegartion={customIntegartion} setCustomStatus={setCustomStatus} agentId={agentId} editDataId={editDataId} websiteData={smartBotData} />}
+
+            {
+                openWhatsappModal && (
+                    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999]">
+                        <div className="bg-white rounded-2xl w-[600px] p-8 relative shadow-lg">
+                            <h2 className="text-xl font-semibold text-gray-800 mb-4">Whatsapp Intregration</h2>
+                            <p className="text-gray-500 mb-4">Are you sure you want to Whatsapp Intregration for this Smart Bot?</p>
+                            <div className="pb-4">
+                                <SelectDropdown
+                                    name="platform_unique_id"
+                                    options={Array.isArray(whatsappData) ? whatsappData : []}
+                                    value={whatsappFormData.platform_unique_id}
+                                    onChange={(updated) => {
+                                        console.log("Selected value:", updated);
+                                        SetWhatsappFormData((prev) => ({
+                                            ...prev,
+                                            platform_unique_id: updated
+                                        }));
+                                        // setErrors((prev) => ({ ...prev, platform_unique_id: "" }));
+                                    }}
+                                    placeholder={t("appointment.account")}
+                                    className="mt-2"
+                                    errors={errors}
+                                    disabled={false}
+                                />
+                            </div>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => SetopenWhatsappModal(null)}
+                                    className="w-full text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
+                                >
+                                    {t("phone.cancel")}
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        whatsappIntregrate();
+
+                                    }}
+                                    className="w-full text-[16px] cursor-pointer text-white rounded-[8px] bg-red-500 h-[38px] flex justify-center items-center gap-2 relative"
+                                >
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
         </div >
     )
 }
