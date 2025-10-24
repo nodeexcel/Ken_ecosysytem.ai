@@ -1,34 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import EmojiPicker from "emoji-picker-react";
-import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
 import { EmojiIcon, ImageChatIcon, MicChatIcon, PaperClipChatIcon } from "../icons/icons";
+import useWebSpeechAPI from "../hooks/useWebSpeechAPI";
 
 const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = "Type a message..." }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const pickerRef = useRef(null);
   const inputRef = useRef(null);
-  const [isListening, setIsListening] = useState(false);
   const [originalValue, setOriginalValue] = useState(""); // Store original value before voice input
 
-  // Speech recognition hook
-  const { 
-    transcript, 
-    listening, 
-    resetTranscript, 
-    browserSupportsSpeechRecognition 
-  } = useSpeechRecognition();
-
-  // Check if browser supports speech recognition and if we're in a secure context
-  const isSecureContext = window.isSecureContext || window.location.protocol === 'https:';
-  const speechSupported = browserSupportsSpeechRecognition && isSecureContext;
-  
-  if (!browserSupportsSpeechRecognition) {
-    console.warn('Browser does not support speech recognition');
-  }
-  
-  if (!isSecureContext) {
-    console.warn('Speech recognition requires HTTPS in production');
-  }
+  // Use Web Speech API hook
+  const { isListening, transcript, isSupported, error, timeLeft, startListening, stopListening } = useWebSpeechAPI();
 
   const handleEmojiSelect = (emojiData) => {
     onChange(value + emojiData.emoji);
@@ -37,15 +19,18 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
   // Update input when transcript changes - show original value + transcript while listening
   useEffect(() => {
     if (transcript && isListening) {
-      // Combine original value with current transcript
-      const combinedValue = originalValue ? `${originalValue} ${transcript}` : transcript;
+      // Merge voice transcript with whatever was already typed
+      const combinedValue = originalValue
+        ? `${originalValue.trim()} ${transcript.trim()}`
+        : transcript.trim();
+
       onChange(combinedValue);
-      // Scroll input to end
       if (inputRef.current) {
         inputRef.current.scrollLeft = inputRef.current.scrollWidth;
       }
     }
   }, [transcript, isListening, originalValue, onChange]);
+
 
   // Close picker on outside click
   useEffect(() => {
@@ -58,56 +43,28 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Cleanup speech recognition on unmount
-  useEffect(() => {
-    return () => {
-      if (listening) {
-        SpeechRecognition.stopListening();
-      }
-    };
-  }, [listening]);
-
-
   // Reset original value when not listening
   useEffect(() => {
-    if (!listening) {
+    if (!isListening) {
       setOriginalValue("");
     }
-  }, [listening]);
+  }, [isListening]);
 
   // Toggle speech recognition
   const toggleListening = () => {
-    console.log("calling==========")
-    if (!speechSupported) {
-      if (!isSecureContext) {
-        alert('Speech recognition requires HTTPS. Please ensure your site is served over HTTPS.');
-      } else {
-        alert('Your browser does not support speech recognition. Please use Chrome, Edge, or Safari.');
-      }
+    if (!isSupported) {
+      alert('Speech recognition is not supported in your browser.');
       return;
     }
 
-    if (listening) {
-      SpeechRecognition.stopListening();
-      setIsListening(false);
-      // Finalize the value: original value + final transcript
-      if (transcript) {
-        const finalValue = originalValue ? `${originalValue} ${transcript}` : transcript;
-        onChange(finalValue);
-      }
+    if (isListening) {
+      stopListening();
     } else {
-      // Store the current value before starting voice input
-      setOriginalValue(value);
-      resetTranscript();
-      setIsListening(true);
-      
-      SpeechRecognition.startListening({ 
-        continuous: true, 
-        language: "en-US",
-        interimResults: true
-      });
+      setOriginalValue(value); // store whatever user already typed
+      startListening();
     }
   };
+
 
   return (
     <div className="w-full mx-auto p-2 relative">
@@ -141,11 +98,10 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
         )}
 
         {/* Mic modal above input */}
-        {listening && (
+        {isListening && (
           <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-full text-sm shadow-lg flex items-center gap-2">
             <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
             <span>Listening... Speak now</span>
-            {/* Stop button next to the text */}
             <button
               type="button"
               onClick={toggleListening}
@@ -156,6 +112,7 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
           </div>
         )}
 
+
         {/* Input */}
         <div className="flex items-center w-full border-b border-gray-200 pb-2">
           <input
@@ -165,7 +122,7 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
             placeholder={placeholder}
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            disabled={listening} // disable typing while listening
+            disabled={isListening} // disable typing while listening
           />
         </div>
 
@@ -187,15 +144,14 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
 
             {/* Mic icon */}
             <div
-              className={`relative p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] ${
-                listening ? "text-red-500" : ""
-              } ${!speechSupported ? "opacity-50 cursor-not-allowed" : ""}`}
-              onClick={toggleListening}
+              className={`relative p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] ${isListening ? "text-red-500" : ""
+                } ${!isSupported ? "opacity-50 cursor-not-allowed" : ""}`}
+              onClick={isSupported ? toggleListening : undefined}
               title={
-                !speechSupported 
-                  ? (isSecureContext ? "Speech recognition not supported" : "Speech recognition requires HTTPS")
-                  : listening 
-                    ? "Stop Recording" 
+                !isSupported
+                  ? "Speech recognition not supported"
+                  : isListening
+                    ? "Stop Recording"
                     : "Start Recording"
               }
             >
@@ -207,9 +163,8 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
           <button
             disabled={!value}
             type="submit"
-            className={`${
-              value ? "bg-indigo-500 cursor-pointer" : "bg-gray-400 cursor-not-allowed"
-            } text-white px-4 py-2 rounded-md transition`}
+            className={`${value ? "bg-indigo-500 cursor-pointer" : "bg-gray-400 cursor-not-allowed"
+              } text-white px-4 py-2 rounded-md transition`}
           >
             {sendLabel}
           </button>
