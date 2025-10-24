@@ -77,6 +77,7 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
 
   // Toggle speech recognition
   const toggleListening = () => {
+    console.log("calling==========")
     if (!speechSupported) {
       if (!isSecureContext) {
         alert('Speech recognition requires HTTPS. Please ensure your site is served over HTTPS.');
@@ -189,7 +190,7 @@ const ChatInput = ({ value, onChange, onSend, sendLabel = "Send", placeholder = 
               className={`relative p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] ${
                 listening ? "text-red-500" : ""
               } ${!speechSupported ? "opacity-50 cursor-not-allowed" : ""}`}
-              onClick={speechSupported ? toggleListening : undefined}
+              onClick={toggleListening}
               title={
                 !speechSupported 
                   ? (isSecureContext ? "Speech recognition not supported" : "Speech recognition requires HTTPS")
