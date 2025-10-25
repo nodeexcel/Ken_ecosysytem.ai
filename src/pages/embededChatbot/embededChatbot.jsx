@@ -5,6 +5,7 @@ import { chatWithChatId, createConversationByAgentId, getChatByChatId, getEmbede
 const EmbededChatbot = () => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
+    
     const [loadingChats, setLoadingChats] = useState(false);
     const [response, setResponse] = useState(false);
     const [chatId, setChatId] = useState(null);
@@ -164,62 +165,82 @@ const EmbededChatbot = () => {
     };
 
     return (
-        <div className="relative flex flex-col w-full h-screen bg-gradient-to-b from-gray-50 to-white text-gray-800 pt-2">
-            <div className="mb-4 h-full mr-8">
-                <main className="flex-1 overflow-y-auto px-2 md:px-4 py-6 flex flex-col gap-4 h-[77%]">
-                    {messages.map((msg, idx) => (
-                        <div
-                            key={idx}
-                            className={`flex items-end gap-2 ${msg.from === "user" ? "justify-end" : "justify-start"
-                                }`}
-                        >
-                            {msg.from === "bot" && (
-                                <img
-                                    src={botAvatar}
-                                    alt="Bot Avatar"
-                                    className="w-10 h-10 rounded-full border border-gray-300"
-                                />
-                            )}
-                            <div
-                                className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm md:text-base leading-relaxed shadow-sm transition-all duration-300 ${msg.from === "user"
-                                    ? "bg-blue-600 text-white rounded-br-none"
-                                    : "bg-gray-200 text-gray-800 rounded-bl-none"
-                                    }`}
-                            >
-                                {msg.text}
-                            </div>
-                        </div>
-                    ))}
-                    <div ref={chatEndRef} />
-                </main>
-
-                <footer className="border-t border-gray-200 bg-white p-4 md:p-6 flex items-center gap-3">
-                    <input
-                        type="text"
-                        placeholder="Type your message..."
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        className="flex-1 bg-gray-100 rounded-full px-5 py-3 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <button
-                        onClick={handleSend}
-                        className="px-5 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition"
-                    >
-                        Send
-                    </button>
-                </footer>
-
-            </div>
-            <div className="absolute bottom-6 right-6">
-                <img
-                    src={botAvatar}
-                    alt="Bot Avatar"
-                    className="w-14 h-14 rounded-full border-4 border-white shadow-lg hover:scale-105 transition-transform cursor-pointer"
-                />
-            </div>
+  <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end">
+    {/* Chat Area */}
+    {open && (
+      <div className="mb-2 w-[98vw] h-[85vh] bg-white shadow-2xl rounded-2xl flex flex-col overflow-hidden border border-gray-200 animate-[slideUp_0.3s_ease]">
+        {/* Header */}
+        <div className="flex items-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-t-2xl">
+          <img
+            src={botAvatar}
+            alt="Bot Avatar"
+            className="w-10 h-10 rounded-full border border-white"
+          />
+          <h2 className="text-sm font-semibold">Chat Assistant</h2>
         </div>
-    );
+
+        {/* Messages */}
+        <main className="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-gray-50">
+          {messages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`flex items-end ${
+                msg.from === "user" ? "justify-end" : "justify-start"
+              }`}
+            >
+              {msg.from === "bot" && (
+                <img
+                  src={botAvatar}
+                  alt="Bot Avatar"
+                  className="w-11 h-11 rounded-full border border-gray-300 mr-2"
+                />
+              )}
+              <div
+                className={`max-w-[75%] px-4 py-2 rounded-2xl text-sm leading-relaxed shadow-sm ${
+                  msg.from === "user"
+                    ? "bg-blue-600 text-white rounded-br-none"
+                    : "bg-gray-200 text-gray-800 rounded-bl-none"
+                }`}
+              >
+                {msg.text}
+              </div>
+            </div>
+          ))}
+          <div ref={chatEndRef} />
+        </main>
+
+        {/* Input */}
+        <footer className="border-t border-gray-200 bg-white px-4 py-3 flex items-center gap-3">
+          <input
+            type="text"
+            placeholder="Type your message..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={handleKeyPress}
+            className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={handleSend}
+            className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition"
+          >
+            Send
+          </button>
+        </footer>
+      </div>
+    )}
+
+    <div
+      className="w-16 h-16 rounded-full shadow-lg cursor-pointer border-4 border-white bg-white flex items-center justify-center hover:scale-105 transition-transform"
+    >
+      <img
+        src={botAvatar}
+        alt="Bot Avatar"
+        className="w-14 h-14 rounded-full object-cover"
+      />
+    </div>
+  </div>
+);
+
 };
 
 export default EmbededChatbot;
