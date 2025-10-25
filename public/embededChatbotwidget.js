@@ -1,6 +1,6 @@
-(function() {
+(function () {
     'use strict';
-    
+
     // Configuration
     const WIDGET_CONFIG = {
         baseUrl: 'https://www.app.ecosysteme.ai', // Your deployed URL
@@ -22,7 +22,7 @@
 
     // Utility functions
     const isMobile = () => window.innerWidth < 768;
-    
+
     const getWidgetDimensions = () => {
         if (isMobile()) {
             return {
@@ -60,7 +60,7 @@
                 </svg>
             </div>
         `;
-        
+
         button.addEventListener('click', toggleWidget);
         return button;
     };
@@ -68,40 +68,39 @@
     const createIframe = () => {
         const iframe = document.createElement('iframe');
         const dimensions = getWidgetDimensions();
-        
-        // Use your existing embededChatbot route
         iframe.src = `${WIDGET_CONFIG.baseUrl}/embededChatbot?id=${widgetState.agentId}`;
         iframe.style.cssText = `
-            position: fixed;
-            bottom: ${isMobile() ? '5%' : '20px'};
-            right: ${isMobile() ? '5%' : '20px'};
-            width: ${dimensions.width};
-            height: ${dimensions.height};
-            border: none;
-            border-radius: ${WIDGET_CONFIG.borderRadius};
-            z-index: ${WIDGET_CONFIG.zIndex};
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(20px);
-        `;
-        
+    position: fixed;
+    bottom: ${isMobile() ? '90px' : '90px'};
+    right: ${isMobile() ? '5%' : '20px'};
+    width: ${dimensions.width};
+    height: ${dimensions.height};
+    border: none;
+    border-radius: ${WIDGET_CONFIG.borderRadius};
+    z-index: ${parseInt(WIDGET_CONFIG.zIndex) + 1};
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+`;
+
+
         // Add fade-in animation
         setTimeout(() => {
             iframe.style.opacity = '1';
             iframe.style.transform = 'translateY(0)';
         }, 100);
-        
+
         return iframe;
     };
 
     const showWidget = () => {
         if (widgetState.iframe) return;
-        
+
         widgetState.iframe = createIframe();
         document.body.appendChild(widgetState.iframe);
         widgetState.isOpen = true;
-        
+
         // Hide toggle button when widget is open
         if (widgetState.toggleButton) {
             widgetState.toggleButton.style.display = 'none';
@@ -110,17 +109,17 @@
 
     const hideWidget = () => {
         if (!widgetState.iframe) return;
-        
+
         widgetState.iframe.style.opacity = '0';
         widgetState.iframe.style.transform = 'translateY(20px)';
-        
+
         setTimeout(() => {
             if (widgetState.iframe && widgetState.iframe.parentNode) {
                 widgetState.iframe.parentNode.removeChild(widgetState.iframe);
             }
             widgetState.iframe = null;
             widgetState.isOpen = false;
-            
+
             // Show toggle button again
             if (widgetState.toggleButton) {
                 widgetState.toggleButton.style.display = 'flex';
@@ -151,16 +150,16 @@
             console.error('Chatbot Widget: Agent ID is required');
             return;
         }
-        
+
         widgetState.agentId = agentId;
-        
+
         // Create toggle button
         widgetState.toggleButton = createToggleButton();
         document.body.appendChild(widgetState.toggleButton);
-        
+
         // Add event listeners
         window.addEventListener('resize', handleResize);
-        
+
         // Auto-show widget if specified in URL
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('chatbot') === 'open') {
