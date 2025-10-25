@@ -165,10 +165,10 @@ const EmbededChatbot = () => {
     };
 
     return (
-  <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end">
+  <div className="fixed bottom-6 right-6 left-6 z-[9999] flex flex-col items-end w-[98vw]">
     {/* Chat Area */}
     {open && (
-      <div className="mb-2 w-[98vw] h-[85vh] bg-white shadow-2xl rounded-2xl flex flex-col overflow-hidden border border-gray-200 animate-[slideUp_0.3s_ease]">
+      <div className="mb-2 w-[98vw] h-[85vh] bg-white shadow-xl rounded-2xl flex flex-col overflow-hidden border border-gray-300">
         {/* Header */}
         <div className="flex items-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-t-2xl">
           <img
