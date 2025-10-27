@@ -20,7 +20,7 @@ function ContentCreationCalender() {
       const response = await getCalenderScheduledContent();
       console.log(response,response.data.success,"response===========")
       if (response.status === 200) {
-        const bots = response.content_details.success || [];
+        const bots = response.data.content_details || [];
         SetCalnderData(bots)
         
       } else {
@@ -89,9 +89,9 @@ function ContentCreationCalender() {
       {showCreatePost ? (
         <CreatePost onClose={() => setShowCreatePost(false)} />
       ) : activeTab === "calendar" ? (
-        <CalendarPost status={false} />
+        <CalendarPost status={false} calenderData={calnderData} />
       ) : activeTab === "list" ? (
-        <CalendarPostListView />
+        <CalendarPostListView calenderData={calnderData} />
       ) : (
         <div className="w-full h-[400px] flex items-center justify-center bg-[#FFF8F8] border border-dashed border-[#FFD6D6] rounded-xl text-[#C85C5C] font-medium">
           🕓 Unschedule Post Content (Coming Soon)
