@@ -1,15 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import CreatePost from "./CreatePost";
 import CalendarPost from "./CalendarPost";
 import CalendarPostListView from './CalenderPostListView'
 import calendar from "../assets/svg/calenderIcon.svg";
 import list from "../assets/svg/listIcon.svg";
+import { getCalenderScheduledContent } from "../api/contentCreationAgent";
 
 function ContentCreationCalender() {
   const { t } = useTranslation();
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [activeTab, setActiveTab] = useState("calendar");
+  const [calnderData, SetCalnderData] = useState("calendar");
+
+
+
+  const fetchScduledContent = async () => {
+    try {
+      const response = await getCalenderScheduledContent();
+      console.log(response,response.data.success,"response===========")
+      if (response.status === 200) {
+        const bots = response.content_details.success || [];
+        SetCalnderData(bots)
+        
+      } else {
+        console.error("Failed to fetch calender data");
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error fetching calender data:", error);
+      setLoading(false);
+    }
+  };
+
+    useEffect(() => {
+      fetchScduledContent()
+    }, [])
 
   return (
     <div className="w-full p-4 flex flex-col gap-4 overflow-auto h-screen">
@@ -66,7 +92,7 @@ function ContentCreationCalender() {
         <CalendarPost status={false} />
       ) : activeTab === "list" ? (
         <CalendarPostListView />
-      ): (
+      ) : (
         <div className="w-full h-[400px] flex items-center justify-center bg-[#FFF8F8] border border-dashed border-[#FFD6D6] rounded-xl text-[#C85C5C] font-medium">
           🕓 Unschedule Post Content (Coming Soon)
         </div>

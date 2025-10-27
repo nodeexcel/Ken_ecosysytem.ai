@@ -211,3 +211,14 @@ export const getContentCreationCalender = async () => {
         return error;
     }
 };
+
+
+export const getCalenderScheduledContent = async () => {
+    try {
+        const response = await agentInstance.get(`/get-scheduled-content`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};

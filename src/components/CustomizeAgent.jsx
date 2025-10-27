@@ -192,7 +192,7 @@ function CustomizeAgent({ customIntegartion, setCustomStatus, agentId, editDataI
             const response = await addAvatars(payload);
             console.log("Upload response:", response);
 
-            if (response.status === 200) {
+            if (response.status === 201) {
                 console.log("Avatar uploaded successfully");
                 fetchAvatars();
             } else {
