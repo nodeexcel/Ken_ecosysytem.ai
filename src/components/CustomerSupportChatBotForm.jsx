@@ -7,7 +7,7 @@ import { createSmartBot, intregateWebsiteChatById, intregrateWhatsapp, updateSma
 import { getWhatsappAccounts } from "../api/brainai";
 
 function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
-    const [formData, setFormData] = useState({ bot_name: "", role: "", personality: "", prompt: "", transfer: "", file: [], reference_text: "", transfer_case: {} })
+    const [formData, setFormData] = useState({ bot_name: "", role: "", personality: "", prompt: "", transfer: "", file: [], reference_text: "", transfer_case: {}, include_brainai: false })
     // const [errors, setErrors] = useState({})
     const [whatsappFormData, SetWhatsappFormData] = useState({
         platform_unique_id: ""
@@ -25,6 +25,10 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
 
     const fileInputRef = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [showUploadProgress, setShowUploadProgress] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const uploadTimerRef = useRef(null);
     const [dragActive, setDragActive] = useState(false);
 
     const { t } = useTranslation()
@@ -64,6 +68,22 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                 ...prev,
                 file: file,
             }))
+            setUploadProgress(0);
+            setIsUploading(true);
+            setShowUploadProgress(true);
+            if (uploadTimerRef.current) clearInterval(uploadTimerRef.current);
+            uploadTimerRef.current = setInterval(() => {
+                setUploadProgress((prev) => {
+                    const next = Math.min(prev + Math.floor(Math.random() * 15) + 6, 100);
+                    if (next >= 100) {
+                        clearInterval(uploadTimerRef.current);
+                        uploadTimerRef.current = null;
+                        setIsUploading(false);
+                        setShowUploadProgress(false);
+                    }
+                    return next;
+                });
+            }, 200);
         }
     };
 
@@ -92,6 +112,22 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                 ...prev,
                 file: file,
             }))
+            setUploadProgress(0);
+            setIsUploading(true);
+            setShowUploadProgress(true);
+            if (uploadTimerRef.current) clearInterval(uploadTimerRef.current);
+            uploadTimerRef.current = setInterval(() => {
+                setUploadProgress((prev) => {
+                    const next = Math.min(prev + Math.floor(Math.random() * 12) + 6, 100);
+                    if (next >= 100) {
+                        clearInterval(uploadTimerRef.current);
+                        uploadTimerRef.current = null;
+                        setIsUploading(false);
+                        setShowUploadProgress(false);
+                    }
+                    return next;
+                });
+            }, 200);
         }
     };
 
@@ -131,6 +167,16 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
         setErrors((prev) => ({ ...prev, [name]: '' }))
     }
 
+    useEffect(() => {
+        // Cleanup progress timer on unmount
+        return () => {
+            if (uploadTimerRef.current) {
+                clearInterval(uploadTimerRef.current);
+                uploadTimerRef.current = null;
+            }
+        }
+    }, [])
+
     const handleContinue = (nextStep) => {
         if (!validateForm()) {
             return;
@@ -141,11 +187,18 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
 
     const handleCancel = (value) => {
         // Reset all form state
-        setFormData({ bot_name: "", role: "", personality: "", prompt: "", transfer_case: {}, file: [], reference_text: "" });
+        setFormData({ bot_name: "", role: "", personality: "", prompt: "", transfer_case: {}, file: [], reference_text: "", include_brainai: false });
         setErrors({});
         setStep(1);
         setStatusSteps({ step1: false, step2: false, step3: false, step4: false });
         setSelectedFile(null);
+        setIsUploading(false);
+        setUploadProgress(0);
+        setShowUploadProgress(false);
+        if (uploadTimerRef.current) {
+            clearInterval(uploadTimerRef.current);
+            uploadTimerRef.current = null;
+        }
         setCustomStatus(false);
         setCustomIntegartion({});
         setDragActive(false);
@@ -162,6 +215,9 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
     }
 
     const handleSelectSteps = (selectStep) => {
+        if (!editData && selectStep === 4 && !statusSteps.step3) {
+            return;
+        }
         if (statusSteps[`step${selectStep}`]) {
             setStep(selectStep)
         } else if (!statusSteps.step1) {
@@ -202,6 +258,16 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                 if (successData?.agent_id) {
                     setAgentId(successData.agent_id);
                 }
+                // Reset upload UI on successful creation
+                setShowUploadProgress(false);
+                setIsUploading(false);
+                setUploadProgress(0);
+                setStatusSteps((prev) => ({
+                    ...prev,
+                    step3: true,
+                    step4: true
+                }));
+                setStep(4);
                 setErrors((prev) => ({ ...prev, success: response?.data?.success }))
                 setTimeout(() => {
                     // setOpen(true)
@@ -233,7 +299,15 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                 transfer: editData.transfer || "",
                 file: editData.file || [],
                 reference_text: editData.reference_text || "",
-                transfer_case: editData.transfer_case || {}
+                transfer_case: editData.transfer_case || {},
+                include_brainai: editData.include_brainai || false
+            });
+
+            setStatusSteps({
+                step1: true,
+                step2: true,
+                step3: true,
+                step4: true
             });
         }
     }, [editData]);
@@ -281,17 +355,22 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
     }
 
     const whatsappIntregrate = async () => {
+        if (!whatsappFormData.platform_unique_id) {
+            return;
+        }
+
         const payload = {
             integration_platform: "Whatsapp",
             platform_id: whatsappFormData.platform_unique_id,
         };
-        let agent_id = agentId || editDataId || ""
+        const agent_id = agentId || editDataId || "";
         try {
             const response = await intregrateWhatsapp(agent_id, payload);
-            console.log("Response:", response);
-            if(response.status==201 || response.status==200){
-                SetWhatsappFormData("")
-                SetopenWhatsappModal("")
+            if (response.status == 201 || response.status == 200) {
+                // reset and close
+                SetWhatsappFormData({ platform_unique_id: "" });
+                SetopenWhatsappModal(false);
+                handleCancel();
             }
         } catch (error) {
             console.error("Error integrating WhatsApp:", error);
@@ -508,9 +587,20 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                     />
                                 </div>
 
-                                {selectedFile && (
+                                {!isUploading && selectedFile && (
                                     <div className="mt-3 text-sm text-gray-700">
                                         <strong>{t("brain_ai.selected_file")}</strong> {selectedFile.name}
+                                        <p className="text-green-500">File Uploaded Successfully!</p>
+                                    </div>
+                                    
+
+                                )}
+                                {showUploadProgress && isUploading && (
+                                    <div className="mt-3 w-full">
+                                        <div className="w-full h-[14px] rounded-[40px] bg-[#D7D4FF]">
+                                            <div className={`h-[14px] bg-[#675FFF] ${uploadProgress >= 100 ? 'rounded-[40px]' : 'rounded-l-[40px]'}`} style={{ width: `${uploadProgress}%` }}></div>
+                                        </div>
+                                        <p className="text-[#5A687C] text-[12px] mt-1">{uploadProgress}% Uploading...</p>
                                     </div>
                                 )}
                                 {/* {errors.file && <p className='my-1 text-[#FF3B30]'>{errors.file}</p>} */}
@@ -529,6 +619,32 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                 placeholder={t("calina.prompt_hello")}
                             />
                             {errors.reference_text && <p className="text-red-500 text-sm mt-1">{errors.reference_text}</p>}
+                        </div>
+
+                        {/* Use AI Brain Toggle */}
+                        <div className="flex items-center justify-between">
+                            <label className="text-sm font-medium mb-1 flex items-center gap-2">
+                                <p>Take Resources from AI Brain</p>
+                                <div className="relative group">
+                                    <div className="absolute bottom-full flex-col mb-1 gap-1 w-60 left-3 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:flex transition-opacity duration-200 z-10">
+                                        {t("emailings.continue_same_spirit")}
+                                    </div>
+                                </div>
+                            </label>
+                            <button
+                                onClick={() => {
+                                    setFormData((prev) => ({ ...prev, include_brainai: !formData.include_brainai }));
+                                   
+                                    if (formData.include_brainai) {
+                                        setErrors((prev) => ({ ...prev, custom_prompt: "" }));
+                                    }
+                                }}
+                                className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${formData.include_brainai ? "bg-[#7065F0]" : "bg-[#E1E4EA]"}`}
+                            >
+                                <span
+                                    className={`block w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${formData.include_brainai ? "translate-x-5" : "translate-x-0.5"}`}
+                                ></span>
+                            </button>
                         </div>
 
                         <hr style={{ color: "#E1E4EA" }} />
