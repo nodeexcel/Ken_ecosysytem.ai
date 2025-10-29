@@ -5,7 +5,7 @@ import { getContentCreationCalender } from "../api/contentCreationAgent"
 import { SelectDropdown } from "./Dropdown"
 import { useTranslation } from "react-i18next";
 
-export default function CalendarPost({status=true}) {
+export default function CalendarPost({status=true, calenderData=[]}) {
   // Get current date information
   const today = new Date()
   const { t } = useTranslation();
@@ -56,7 +56,6 @@ export default function CalendarPost({status=true}) {
     return newEvents.filter((event) => {
       const eventDate = parseDate(event.scheduled_date)
       return (
-        event.scheduled_type === "schedule" &&
         eventDate &&
         eventDate.getDate() === day &&
         eventDate.getMonth() === month &&
@@ -97,6 +96,12 @@ export default function CalendarPost({status=true}) {
   const calculateEventPosition = (timeStr) => {
     const { minutes } = parseTime(timeStr)
     return (minutes / 60) * 100
+  }
+
+  // Helper to format date as YYYY-MM-DD (or empty if none)
+  const formatDate = (dateStr) => {
+    if (!dateStr || dateStr === "None") return "";
+    return dateStr;
   }
 
   // Helper to format time as HH:MM
@@ -152,25 +157,29 @@ export default function CalendarPost({status=true}) {
 
   const calendarOptions = [{ label: `${t("emailings.month_view")}`, key: "month" }, { label: `${t("emailings.week_view")}`, key: "week" }, { label: `${t("emailings.day_view")}`, key: "day" }]
 
-  // Fetch content creation calendar data
-  const getScheduleDate = async () => {
-    try {
-      const response = await getContentCreationCalender()
-      if (response?.status === 200 && response?.data?.content_details?.length > 0) {
-        setNewEvents(response.data.content_details)
-      } else {
-        setLoading(false)
-        setNewEvents([])
-      }
-    } catch (error) {
-      setLoading(false)
-      setNewEvents([])
-    }
-  }
-
+  // Initialize events from props; if empty, fall back to API
   useEffect(() => {
-    getScheduleDate()
-  }, [])
+    if (calenderData && Array.isArray(calenderData) && calenderData.length > 0) {
+      setNewEvents(calenderData)
+      setLoading(false)
+    } else {
+      // Optional fallback to API if no prop provided
+      (async () => {
+        try {
+          const response = await getContentCreationCalender()
+          if (response?.status === 200 && response?.data?.content_details?.length > 0) {
+            setNewEvents(response.data.content_details)
+          } else {
+            setNewEvents([])
+          }
+        } catch (error) {
+          setNewEvents([])
+        } finally {
+          setLoading(false)
+        }
+      })()
+    }
+  }, [calenderData])
 
   // Helper functions for date manipulation
   function getFirstDayOfWeek(date) {
@@ -393,8 +402,11 @@ export default function CalendarPost({status=true}) {
                   const statusStyles = getStatusStyles(event.scheduled_type)
                   return (
                     <div key={eventIndex} className={`text-xs ${statusStyles.bg} flex items-center gap-1 p-1 mb-1 rounded`}>
-                      <div className="text-[12px] font-[600] text-[#000]">{event.platform}</div>
+                      <div className="text-[12px] font-[600] text-[#000]">{event.platform} - {formatDate(event.scheduled_date)}</div>
                       <div className="text-[#5A687C] text-[12px] font-[600]">{formatTimeHHMM(event.scheduled_time)}</div>
+                      <div className={`text-[11px] font-[500] ${statusStyles.text} rounded-full border ${statusStyles.border} px-1 bg-white`}>
+                        {renderStatusLabel(event.scheduled_type)}
+                      </div>
                     </div>
                   )
                 })}
@@ -486,7 +498,7 @@ export default function CalendarPost({status=true}) {
                           style={{ top: `${topPosition}%` }}
                         >
                           <div className="text-[12px] font-[400] text-[#5A687C]">{formatTimeHHMM(event.scheduled_time)}</div>
-                          <div className="text-[14px] font-[600] text-[#1E1E1E]">{event.platform}</div>
+                          <div className="text-[14px] font-[600] text-[#1E1E1E]">{event.platform} - {formatDate(event.scheduled_date)}</div>
                           <div
                             className={`text-[12px] font-[500] ${statusStyles.text} rounded-full border ${statusStyles.border} w-fit px-1.5 py-0.5 bg-white`}
                           >
@@ -537,7 +549,7 @@ export default function CalendarPost({status=true}) {
                       style={{ top: `${topPosition}%` }}
                     >
                       <div className="text-[12px] font-[400] text-[#5A687C]">{formatTimeHHMM(event.scheduled_time)}</div>
-                      <div className="text-[14px] font-[600] text-[#1E1E1E]">{event.platform}</div>
+                      <div className="text-[14px] font-[600] text-[#1E1E1E]">{event.platform} - {formatDate(event.scheduled_date)}</div>
                       <div
                         className={`text-[12px] font-[500] ${statusStyles.text} rounded-full border ${statusStyles.border} w-fit px-1.5 py-0.5 bg-white`}
                       >

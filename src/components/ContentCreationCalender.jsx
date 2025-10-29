@@ -73,16 +73,6 @@ function ContentCreationCalender() {
               <img src={list} alt="List" className="w-4 h-4" />
               List View
             </button>
-            <button
-              onClick={() => setActiveTab("UnschedulePost")}
-              className={`flex items-center gap-2 px-4 py-4 rounded-[8px] text-sm font-medium w-[277px] ${activeTab === "UnschedulePost"
-                ? "bg-white text-[#1E1E1E] m-1"
-                : "text-[#5A687C]"
-                }`}
-            >
-              <img src={list} alt="Unschedule" className="w-4 h-4" />
-              Unschedule Post
-            </button>
           </div>
         </>
       )}
@@ -90,12 +80,8 @@ function ContentCreationCalender() {
         <CreatePost onClose={() => setShowCreatePost(false)} />
       ) : activeTab === "calendar" ? (
         <CalendarPost status={false} calenderData={calnderData} />
-      ) : activeTab === "list" ? (
+      ): (
         <CalendarPostListView calenderData={calnderData} />
-      ) : (
-        <div className="w-full h-[400px] flex items-center justify-center bg-[#FFF8F8] border border-dashed border-[#FFD6D6] rounded-xl text-[#C85C5C] font-medium">
-          🕓 Unschedule Post Content (Coming Soon)
-        </div>
       )
       }
     </div >

@@ -21,6 +21,7 @@ export default function CreatePost({ onClose }) {
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef();
   const [fileName, setFileName] = useState("");
+  const [preview, setPreview] = useState(null);
   // State for Instagram accounts
   const [accountsOptions, setAccountsOptions] = useState([]);
   const [accountsOptionsLoading, setAccountsOptionsLoading] = useState(false);
@@ -83,9 +84,10 @@ export default function CreatePost({ onClose }) {
       return;
     }
     setFileName(file.name);
+    setDocument(file);
     const reader = new FileReader();
     reader.onloadend = () => {
-      setDocument(file); // base64 string only
+      setPreview(reader.result); // base64 string only
       if (errors.document) setErrors(prev => ({ ...prev, document: undefined }));
     };
     reader.readAsDataURL(file);
@@ -259,6 +261,8 @@ export default function CreatePost({ onClose }) {
     setText("");
     setDocument(null);
     setFileName("");
+    setPreview(null);
+
   };
 
   return (
@@ -532,13 +536,32 @@ export default function CreatePost({ onClose }) {
             </div>
 
             {/* Preview Content */}
-            <div className="flex-1 flex  ">
-              <img
-                src={inkartinkLogo}
-                alt="INKARTINK Logo"
-                className="w-[260px] h-[234px] rounded-md object-contain"
-              />
+            <div className="flex-1 flex justify-center">
+              <div className="relative w-[260px] h-[234px] rounded-md overflow-hidden flex items-center justify-center bg-gray-50 border border-gray-200">
+                {preview ? (
+                  preview.startsWith("data:image") ? (
+                    <img
+                      src={preview}
+                      alt="Uploaded Preview"
+                      className="absolute inset-0 w-full h-full object-contain"
+                    />
+                  ) : preview.startsWith("data:application/pdf") ? (
+                    <embed
+                      src={preview}
+                      type="application/pdf"
+                      className="absolute inset-0 w-full h-full object-contain"
+                    />
+                  ) : null
+                ) : (
+                  <img
+                    src={inkartinkLogo}
+                    alt="Default Preview"
+                    className="absolute inset-0 w-full h-full object-contain"
+                  />
+                )}
+              </div>
             </div>
+
           </div>
         </div>
       </div>
