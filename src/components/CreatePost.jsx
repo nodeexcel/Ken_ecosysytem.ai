@@ -7,6 +7,9 @@ import { publishContent, saveDraftContent, scheduleContent } from '../api/conten
 import { getInstaAccounts, getLinkedInAccounts } from '../api/brainai';
 import { SelectDropdown } from "./Dropdown";
 import { Duplicate } from "../icons/icons";
+import instagram from '../assets/svg/instagram.svg'
+import linkedin from '../assets/svg/linkedin.svg'
+import twitter from '../assets/svg/twitter.svg'
 
 export default function CreatePost({ onClose }) {
   const { t } = useTranslation();
@@ -367,8 +370,14 @@ export default function CreatePost({ onClose }) {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="flex flex-row items-center gap-2 bg-[#F0EFFF] p-2 rounded-lg">
-                  <div className="w-8 h-8 bg-[#0277B5] rounded flex items-center justify-end flex-col">
-                    <span className="text-white text-2xl font-bold">in</span>
+                  <div className="w-8 h-8 rounded flex items-center justify-center">
+                    {platform === "instagram" ? (
+                      <img src={instagram} alt="Instagram" className="w-7 h-7" />
+                    ) : platform === "X" ? (
+                      <img src={twitter} alt="X / Twitter" className="w-7 h-7" />
+                    ) : (
+                      <img src={linkedin} alt="LinkedIn" className="w-7 h-7" />
+                    )}
                   </div>
                 </div>
 
