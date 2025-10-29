@@ -257,14 +257,14 @@ function CustomizeAgent({ customIntegartion, setCustomStatus, agentId, editDataI
                 console.log("link bot intregrate successfully==========")
                 // setCustomStatus(false)
                 setIntegrationSuccess(true);
+                // Switch to Share tab after successful creation/update
+                setActiveTab("share");
             } else {
                 console.log("link-bot intregration failed ")
             }
         } catch (error) {
             console.log(error)
-        } finally {
-            // setLoading(false)
-        };
+        } 
     };
 
     useEffect(() => {
