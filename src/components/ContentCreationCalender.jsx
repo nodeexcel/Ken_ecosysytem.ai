@@ -11,7 +11,7 @@ function ContentCreationCalender() {
   const { t } = useTranslation();
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [activeTab, setActiveTab] = useState("calendar");
-  const [calnderData, SetCalnderData] = useState("calendar");
+  const [calnderData, SetCalnderData] = useState([]);
 
 
 
@@ -25,11 +25,9 @@ function ContentCreationCalender() {
         
       } else {
         console.error("Failed to fetch calender data");
-        setLoading(false);
       }
     } catch (error) {
       console.error("Error fetching calender data:", error);
-      setLoading(false);
     }
   };
 
