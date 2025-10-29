@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { ChevronLeft, ChevronRight, X } from "lucide-react"
 import successImg from "../assets/svg/success.svg"
-import { getContentCreationCalender } from "../api/contentCreationAgent"
+// removed API fallback; events now come exclusively from props
 import { SelectDropdown } from "./Dropdown"
 import { useTranslation } from "react-i18next";
 
@@ -157,28 +157,15 @@ export default function CalendarPost({status=true, calenderData=[]}) {
 
   const calendarOptions = [{ label: `${t("emailings.month_view")}`, key: "month" }, { label: `${t("emailings.week_view")}`, key: "week" }, { label: `${t("emailings.day_view")}`, key: "day" }]
 
-  // Initialize events from props; if empty, fall back to API
+  // Local dummy data for development. Same keys as API: platform, scheduled_type, scheduled_date, scheduled_time
+  // Initialize events from props only
   useEffect(() => {
-    if (calenderData && Array.isArray(calenderData) && calenderData.length > 0) {
+    if (Array.isArray(calenderData)) {
       setNewEvents(calenderData)
-      setLoading(false)
     } else {
-      // Optional fallback to API if no prop provided
-      (async () => {
-        try {
-          const response = await getContentCreationCalender()
-          if (response?.status === 200 && response?.data?.content_details?.length > 0) {
-            setNewEvents(response.data.content_details)
-          } else {
-            setNewEvents([])
-          }
-        } catch (error) {
-          setNewEvents([])
-        } finally {
-          setLoading(false)
-        }
-      })()
+      setNewEvents([])
     }
+    setLoading(false)
   }, [calenderData])
 
   // Helper functions for date manipulation
@@ -401,12 +388,12 @@ export default function CalendarPost({status=true, calenderData=[]}) {
                 {dayEvents.map((event, eventIndex) => {
                   const statusStyles = getStatusStyles(event.scheduled_type)
                   return (
-                    <div key={eventIndex} className={`text-xs ${statusStyles.bg} flex items-center gap-1 p-1 mb-1 rounded`}>
-                      <div className="text-[12px] font-[600] text-[#000]">{event.platform} - {formatDate(event.scheduled_date)}</div>
-                      <div className="text-[#5A687C] text-[12px] font-[600]">{formatTimeHHMM(event.scheduled_time)}</div>
-                      <div className={`text-[11px] font-[500] ${statusStyles.text} rounded-full border ${statusStyles.border} px-1 bg-white`}>
+                    <div key={eventIndex} className={`text-xs ${statusStyles.bg} flex flex-col items-start gap-0 p-2 mb-1 rounded`}>
+                      <div className="text-[12px] font-[700] text-[#1E1E1E]">{event.platform}</div>
+                      <div className={`mt-0.5 text-[11px] font-[600] ${statusStyles.text} rounded-full border ${statusStyles.border} px-1 bg-white`}>
                         {renderStatusLabel(event.scheduled_type)}
                       </div>
+                      <div className="mt-0.5 text-[#5A687C] text-[12px] font-[600]">{formatTimeHHMM(event.scheduled_time)}</div>
                     </div>
                   )
                 })}
@@ -497,13 +484,9 @@ export default function CalendarPost({status=true, calenderData=[]}) {
                           className={`${statusStyles.bg} p-2 rounded cursor-pointer absolute left-1 right-1 z-10`}
                           style={{ top: `${topPosition}%` }}
                         >
-                          <div className="text-[12px] font-[400] text-[#5A687C]">{formatTimeHHMM(event.scheduled_time)}</div>
-                          <div className="text-[14px] font-[600] text-[#1E1E1E]">{event.platform} - {formatDate(event.scheduled_date)}</div>
-                          <div
-                            className={`text-[12px] font-[500] ${statusStyles.text} rounded-full border ${statusStyles.border} w-fit px-1.5 py-0.5 bg-white`}
-                          >
-                            {renderStatusLabel(event.scheduled_type)}
-                          </div>
+                          <div className="text-[14px] font-[700] text-[#1E1E1E]">{event.platform}</div>
+                          <div className={`mt-0.5 text-[12px] font-[500] ${statusStyles.text} rounded-full border ${statusStyles.border} w-fit px-1.5 py-0.5 bg-white`}>{renderStatusLabel(event.scheduled_type)}</div>
+                          <div className="mt-0.5 text-[12px] font-[400] text-[#5A687C]">{formatTimeHHMM(event.scheduled_time)}</div>
                         </div>
                       )
                     })}
@@ -548,13 +531,9 @@ export default function CalendarPost({status=true, calenderData=[]}) {
                       className={`${statusStyles.bg} p-2 rounded-l cursor-pointer w-full absolute z-10`}
                       style={{ top: `${topPosition}%` }}
                     >
-                      <div className="text-[12px] font-[400] text-[#5A687C]">{formatTimeHHMM(event.scheduled_time)}</div>
-                      <div className="text-[14px] font-[600] text-[#1E1E1E]">{event.platform} - {formatDate(event.scheduled_date)}</div>
-                      <div
-                        className={`text-[12px] font-[500] ${statusStyles.text} rounded-full border ${statusStyles.border} w-fit px-1.5 py-0.5 bg-white`}
-                      >
-                        {renderStatusLabel(event.scheduled_type)}
-                      </div>
+                      <div className="text-[14px] font-[700] text-[#1E1E1E]">{event.platform}</div>
+                      <div className={`mt-0.5 text-[12px] font-[500] ${statusStyles.text} rounded-full border ${statusStyles.border} w-fit px-1.5 py-0.5 bg-white`}>{renderStatusLabel(event.scheduled_type)}</div>
+                      <div className="mt-0.5 text-[12px] font-[400] text-[#5A687C]">{formatTimeHHMM(event.scheduled_time)}</div>
                     </div>
                   )
                 })}
