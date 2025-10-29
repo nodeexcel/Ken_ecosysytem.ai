@@ -341,8 +341,16 @@ export default function CreatePost({ onClose }) {
               {/* Removed this entire block for Platform Unique ID input */}
               {/* Existing account display and remove button */}
               <div className="flex flex-row items-center gap-[6px]  rounded-lg p-2 w-full mt-2">
-                <div className="w-[30px] h-[30px] bg-[#0277B5] rounded flex items-center justify-center">
-                  <span className="text-white text-2xl font-bold">in</span>
+               <div className="flex flex-row items-center gap-2 bg-[#F0EFFF] p-1 rounded-lg">
+                  <div className="w-6 h-6 rounded flex items-center justify-center">
+                    {platform === "instagram" ? (
+                      <img src={instagram} alt="Instagram" className="w-5 h-5" />
+                    ) : platform === "X" ? (
+                      <img src={twitter} alt="X / Twitter" className="w-5 h-5" />
+                    ) : (
+                      <img src={linkedin} alt="LinkedIn" className="w-5 h-5" />
+                    )}
+                  </div>
                 </div>
                 <div className="flex-1">
                   <span className="font-semibold text-[14px] leading-[17px] tracking-[0] text-black flex-1">
@@ -526,7 +534,7 @@ export default function CreatePost({ onClose }) {
             <div className="flex flex-col gap-[14px] w-full mb-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">{t("constance.post_preview")}</label>
-                <div className="relative w-full h-[44px]">
+                {/* <div className="relative w-full h-[44px]">
                   <SelectDropdown
                     name="platform-preview"
                     options={[
@@ -539,9 +547,8 @@ export default function CreatePost({ onClose }) {
                     className="w-full"
                   />
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                </div>
+                </div> */}
               </div>
-              {/* Removed Platform Unique ID input from here */}
             </div>
 
             {/* Preview Content */}
