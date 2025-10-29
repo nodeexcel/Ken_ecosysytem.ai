@@ -158,10 +158,26 @@ export default function CalendarPost({status=true, calenderData=[]}) {
   const calendarOptions = [{ label: `${t("emailings.month_view")}`, key: "month" }, { label: `${t("emailings.week_view")}`, key: "week" }, { label: `${t("emailings.day_view")}`, key: "day" }]
 
   // Local dummy data for development. Same keys as API: platform, scheduled_type, scheduled_date, scheduled_time
+  // Normalize incoming events (derive date/time from published_time when scheduled values are "None")
+  const normalizeEvents = (events) => {
+    if (!Array.isArray(events)) return []
+    return events.map((e) => {
+      let scheduled_date = e.scheduled_date
+      let scheduled_time = e.scheduled_time
+      if ((!scheduled_date || scheduled_date === "None" || scheduled_date === null) && e.published_time && e.published_time !== "None") {
+        const [datePart, timePartRaw] = String(e.published_time).split(" ")
+        const timePart = timePartRaw ? timePartRaw.split(".")[0] : ""
+        if (datePart) scheduled_date = datePart
+        if (timePart) scheduled_time = timePart
+      }
+      return { ...e, scheduled_date, scheduled_time }
+    })
+  }
+
   // Initialize events from props only
   useEffect(() => {
     if (Array.isArray(calenderData)) {
-      setNewEvents(calenderData)
+      setNewEvents(normalizeEvents(calenderData))
     } else {
       setNewEvents([])
     }
