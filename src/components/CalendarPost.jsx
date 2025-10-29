@@ -347,11 +347,11 @@ export default function CalendarPost({status=true, calenderData=[]}) {
   const renderStatusLabel = (scheduled_type) => {
     switch (scheduled_type) {
       case "schedule":
-        return "Scheduled"
+        return "schedule"
       case "draft":
         return "Draft"
       case "publish":
-        return "Published"
+        return "publish"
       default:
         return "Unknown"
     }
