@@ -102,7 +102,20 @@ function ContentCreation() {
     const transformApiMessages = (apiMessages) => {
         return apiMessages.map((msg) => {
             const isUser = !!msg.user;
-            const content = isUser ? msg.user : msg.agent;
+            let content = isUser ? msg.user : msg.agent;
+            let file_id = null;
+            let filename = null;
+
+            if (isUser && typeof content === "string") {
+                try {
+                    const parsed = JSON.parse(content);
+                    if (parsed && typeof parsed === "object") {
+                        if (parsed.message) content = parsed.message;
+                        if (parsed.file_id) file_id = parsed.file_id;
+                        if (parsed.filename) filename = parsed.filename;
+                    }
+                } catch (e) {}
+            }
 
             return {
                 id: uuidv4(),
@@ -110,7 +123,9 @@ function ContentCreation() {
                 content,
                 sender: isUser ? "User" : "Ecosystem.ai",
                 time: msg?.message_at ? formatTimeAgo(msg?.message_at) : `${t("seo.just_now")}`,
-                status: "Read"
+                status: "Read",
+                ...(file_id && { file_id }),
+                ...(filename && { filename }),
             };
         });
     };

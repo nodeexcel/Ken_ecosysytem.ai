@@ -706,6 +706,7 @@ export default function CallCampaign() {
                   errors={errors}
                 />
                 {errors.campaign_type && <p className="text-red-500 text-sm mt-1">{errors.campaign_type}</p>}
+                {/* <p className="text-sm text-blue-600">You can create a new in AI Brain</p> */}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -835,7 +836,8 @@ export default function CallCampaign() {
                   placeholder={t("select")}
                 />
                 {errors.target_lists && <p className="text-red-500 text-sm mt-1">{errors.target_lists}</p>}
-                <button className="text-[#7065F0] text-sm font-medium mt-1" onClick={()=>navigator('/dashboard/brain')}>+ {t("phone.create_contact_list")}</button>
+                {/* + Create New Contact List */}
+                {/* <button className="text-[#7065F0] text-sm font-medium mt-1" onClick={()=>navigator('/dashboard/brain')}>+ {t("phone.create_contact_list")}</button> */}
               </div>
 
               <div>

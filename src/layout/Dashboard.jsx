@@ -81,9 +81,9 @@ function Dashboard() {
             const response = await getProfile()
             if (response?.status === 200) {
                 console.log(response?.data)
-                if (!response?.data?.isProfileComplete) {
-                    navigate("settings")
-                }
+                // if (!response?.data?.isProfileComplete) {
+                //     navigate("settings")
+                // }
                 dispatch(getProfileData(response?.data))
                 if ((response?.data?.language == "null") || (response?.data?.language == null) || (response?.data?.language == "")) {
                     i18n.changeLanguage('en');

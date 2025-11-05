@@ -56,3 +56,13 @@ export const changeLanguage = async (payload) => {
         return error;
     }
 };
+
+export const getCurrentCredits = async () => {
+  try {
+    const response = await axiosInstance.get("/api/users/phone-agent-credits");
+    return response;
+  } catch (error) {
+    console.error(error);
+    return error;
+  }
+};

@@ -222,3 +222,62 @@ export const getCalenderScheduledContent = async () => {
         return error;
     }
 };
+
+export const uploadAttachment = async (formData, agentName) => {
+    try {
+        const query = agentName ? `?agent_name=${encodeURIComponent(agentName)}` : "";
+        const response = await agentInstance.post(`/kb-attachments${query}`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        });
+        return response;
+    } catch (error) {
+        console.error("Upload attachment error:", error);
+        throw error;
+    }
+};
+
+export const getContentDetails = async (contentId) => {
+  try {
+    const res = await agentInstance.get(`/content-details/${contentId}`);
+    return res.data;
+  } catch (err) {
+    console.error("content details err:", err);
+    throw err;
+  }
+};
+
+export const deleteContent = async (contentId) => {
+    try {
+        const response = await agentInstance.delete(`/delete-content/${contentId}`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+
+export const postContent = async (contentId) => {
+    try {
+        const response = await agentInstance.post(`/post-content/${contentId}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+export const editScheduledContent = async (contentId, payload) => {
+    try {
+        const response = await agentInstance.put(`/edit-content-scheduled/${contentId}`, payload, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        });
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};

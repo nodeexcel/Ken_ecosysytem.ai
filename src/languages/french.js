@@ -143,7 +143,7 @@ const frenchTranslation = {
     create_list: "Créer liste",
     contacts_selected: "Contacts sélectionnés",
     select: "Sélectionner",
-    upload_your_files: "Téléchargez vos fichiers",
+    upload_your_files: "Téléchargez vos fichiers CSV",
     before_uploading_files:
       "Avant de télécharger des fichiers, assurez-vous que votre fichier est prêt à être importé.",
     download_sample_file: "Télécharger fichier d'exemple",

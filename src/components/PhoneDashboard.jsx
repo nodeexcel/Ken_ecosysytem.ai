@@ -1,11 +1,17 @@
-import { Plus } from 'lucide-react'
+import { Plus, X } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from "react-i18next";
 import { getAgents } from '../api/callAgent';
+import { addCredit } from "../api/payment";
+import { getCurrentCredits } from '../api/profile';
 
 const PhoneDashboard = () => {
 
   const [autoRefill, setAutoRefill] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [amount, setAmount] = useState('');
+  const [selectedCard, setSelectedCard] = useState(null);
+  const [balance, setBalance] = useState(0);
   const [dashboardData, setDashboardData] = useState({
     agents: 0,
     campaigns: 0,
@@ -14,14 +20,14 @@ const PhoneDashboard = () => {
     loading: true,
     error: null
   });
-  const {t}=useTranslation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchAgents = async () => {
       try {
         setDashboardData(prev => ({ ...prev, loading: true }));
         const response = await getAgents();
-        console.log(response,"wsdfedfwedf");
+        console.log(response, "wsdfedfwedf");
         if (response.data && response.data.success) {
           setDashboardData({
             agents: response.data.success.agents,
@@ -42,11 +48,53 @@ const PhoneDashboard = () => {
 
     fetchAgents();
   }, []);
+
+  useEffect(() => {
+  const fetchCredits = async () => {
+    const res = await getCurrentCredits();
+    if (res?.data?.phoneCredits?.balance !== undefined) {
+      setBalance(res.data.phoneCredits.balance);
+    }
+  };
+  fetchCredits();
+}, []);
+
+  const handleTopUp = async () => {
+    const value = selectedCard || Number(amount || 0);
+    if (!value || Number.isNaN(value) || Number(value) <= 0) {
+      return;
+    }
+
+    try {
+      const resp = await addCredit(Number(value));
+      console.log('Top up response', resp);
+      if (resp?.status === 200 || resp?.status === 201) {
+        // If API returned a checkout session URL, open in new tab
+        const sessionUrl = resp?.data?.sessionUrl || resp?.data?.sessionurl || resp?.data?.url;
+        if (sessionUrl) {
+          window.open(sessionUrl, '_blank', 'noopener,noreferrer');
+        }
+        setShowModal(false);
+        setAmount('');
+        setSelectedCard(null);
+        // refresh dashboard data
+        const r = await getAgents();
+        if (r?.data?.success) {
+          setDashboardData((prev) => ({ ...prev, agents: r.data.success.agents, campaigns: r.data.success.campaigns, outbound_calls: r.data.success.outbound_calls, inbound_calls: r.data.success.inbound_calls }));
+        }
+      } else {
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+
   return (
 
     <div className="py-4 pr-2 flex flex-col gap-4 w-full h-screen overflow-auto ">
-      <h1 className="text-2xl font-bold mb-3 text-gray-800">{ t("phone.dashboard")}</h1>
-      
+      <h1 className="text-2xl font-bold mb-3 text-gray-800">{t("phone.dashboard")}</h1>
+
       {dashboardData.error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           {dashboardData.error}
@@ -59,15 +107,15 @@ const PhoneDashboard = () => {
 
           <div className="flex items-center justify-between bg-[#F1F1FF] px-5 py-4 rounded-t-lg">
             <h2 className="font-[400] text-[14px] text-[#1E1E1E]">{t("settings.tab_2_list.credit")}</h2>
-            <button className="bg-[#675FFF] cursor-pointer border border-[#5F58E8] text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center  gap-1">
+            <button className="bg-[#675FFF] cursor-pointer border border-[#5F58E8] text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center  gap-1" onClick={() => setShowModal(true)}>
               <Plus size={16} />
               {t("phone.add_credit")}
             </button>
           </div>
 
           <div className="p-6">
-            <h3 className="text-5xl font-bold mb-2">$0</h3>
-            <p className="text-black mb-6 font-[500]">{t("settings.tab_2_list.credit")} 0.20$/mnt</p>
+            <h3 className="text-5xl font-bold mb-2">€{balance}</h3>
+            <p className="text-black mb-6 font-[500]">{t("settings.tab_2_list.credit")} 0.20€/mnt</p>
 
             <div className="flex items-center justify-between">
               <span className="text-sm text-[#1E1E1E]">{t("phone.auto_refill_is")}</span>
@@ -181,6 +229,140 @@ const PhoneDashboard = () => {
           </div>
         </div>
       </div>
+      {showModal && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl max-h-[90vh] overflow-auto w-full max-w-[1000px] p-6 relative shadow-lg">
+            {/* Close button */}
+            <button
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 cursor-pointer"
+              onClick={() => setShowModal(false)}
+            >
+              <X size={20} />
+            </button>
+
+            <div className="mb-6">
+              <h2 className="text-[20px] font-[600] text-[#1E1E1E]">My Call credits</h2>
+              <p className="text-sm text-[#5A687C] mt-2">Top up your account to launch campaigns. Once your credits run out, they will automatically pause. Enabling auto-top-up ensure your campaigns continue uninterrupted.</p>
+            </div>
+
+            {/* Modal header */}
+
+
+            {/* Top-up card area */}
+            <div className="bg-white border border-[#E1E4EA]  rounded-2xl p-4 mb-6">
+              <div className="mb-6  border-gray-200 border-b">
+                <h2 className="text-md font-[600] text-[#1E1E1E]">Choose an amount</h2>
+                <p className="text-sm text-[#5A687C] mt-2">Price <span className="font-semibold text-black">0.20 </span>€/minute</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                {/* Option card */}
+                {[
+                  { label: '25 Minute Call', price: 5 },
+                  { label: '50 Minute Call', price: 10 },
+                  { label: '120 Minute Call', price: 24 },
+                  { label: '250 Minute Call', price: 50 },
+                ].map((opt, idx) => {
+                  const isSelected = selectedCard === opt.price;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        setSelectedCard(opt.price);
+                        setAmount(String(opt.price));
+                      }}
+                      className={`flex flex-col items-start gap-2 p-4 border cursor-pointer rounded-lg hover:shadow-sm transition ${isSelected ? 'border-[#675FFF] bg-[#F3F0FF]' : 'border-[#E1E4EA]'}`}
+                    >
+                      <div className="text-md text-[#5A687C]">{opt.label}</div>
+                      <div className="text-lg font-semibold">{opt.price} €</div>
+                    </button>
+                  )
+                })}
+              </div>
+
+              <div className='w-full'>
+                <hr className="text-gray-200" />
+                <div className='w-full flex justify-center items-center -mt-3'>
+                  <span className='text-md bg-white px-4 text-gray-400 font-light'>OR</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between border-[#E1E4EA] py-4">
+                <div className="flex items-center gap-3 w-full">
+                  <div className="relative">
+                    <input
+                      type="number"
+                      placeholder="Enter Amount"
+                      value={amount}
+                      max={10000} // sets the HTML input max limit
+                      onChange={(e) => {
+                        const value = Number(e.target.value);
+                        if (value <= 10000) {
+                          setAmount(e.target.value);
+                        } else {
+                          setAmount('10000'); // cap the value at 10000 if exceeded
+                        }
+                        setSelectedCard(null);
+                      }}
+                      className="w-60 px-4 py-2 pr-8 border border-gray-200 rounded-lg focus:outline-none focus:border-[#675FFF] 
+appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none 
+[&::-webkit-inner-spin-button]:m-0 [&::-webkit-outer-spin-button]:m-0"
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 text-sm">€</span>
+                  </div>
+                  <div className="text-lg text-[#000000] font-bold">
+                    {amount ? amount * 5 : '_ _'} <span className='text-md font-normal '>Call minutes</span>
+                  </div>
+                </div>
+              </div>
+              <button
+                className=" bg-[#675FFF] text-white px-6 py-2 rounded-lg cursor-pointer hover:bg-[#4a43c9]"
+                onClick={handleTopUp}
+              >Top Up Credit</button>
+            </div>
+
+            {/* Automatic Recharge */}
+            {/* <div className="bg-white border border-[#E1E4EA] rounded-2xl p-4">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="text-md font-[600] text-[#1E1E1E]">Automatic Recharge</h3>
+                  <p className="text-sm text-[#2b3138] mt-1">Automatically top up your balance when it drops below a certain threshold.</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-[#9AA6B2]">DISABLED</span>
+                  <label className={`w-12 h-6 rounded-full flex items-center px-1 ${autoRefill ? 'bg-indigo-500' : 'bg-gray-300'}`}>
+                    <div className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform ${autoRefill ? 'translate-x-6' : 'translate-x-0'}`} />
+                  </label>
+                </div>
+              </div>
+
+              <div className="border-t border-gray-200 pt-4">
+                <div className="mb-4">
+                  <label className="text-md font-medium text-[#1e1e1e]">Recharge threshold</label>
+                  <div className="mt-2 flex items-center gap-3">
+                    <p className='text-xs font-semibold'>When the balance fall below: </p>
+                    <input type="text" placeholder="" className="w-48 px-4 py-2 border rounded-lg focus:outline-none focus:border-[#675FFF]" />
+                    <span className="text-sm text-[#9AA6B2]">€</span>
+                  </div>
+                </div>
+
+                <div className="mb-4 border-t border-gray-200 ">
+                  <label className="text-md font-medium text-[#1e1e1e]">Top-up amount</label>
+                  <div className="mt-2 flex items-center gap-3 ">
+                    <p className='text-xs font-semibold'>Top up balance up to: </p>
+                    <input type="text" placeholder="" className="ml-11 w-48 px-4 py-2 border rounded-lg focus:outline-none focus:border-[#675FFF]" />
+                    <span className="text-sm text-[#9AA6B2]">€</span>
+                  </div>
+                </div>
+
+                <div className="flex justify-start">
+                  <button className="bg-[#675FFF] text-white py-2 px-14 rounded-lg">Save</button>
+                </div>
+              </div>
+            </div> */}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

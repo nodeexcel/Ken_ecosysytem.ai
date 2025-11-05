@@ -2,16 +2,17 @@ import { useState } from 'react';
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { setPassword } from '../api/auth';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { PasswordLock } from '../icons/icons';
 import header from '../assets/svg/ecosysteme.ai_logo.svg'
+import { useDispatch, useSelector } from "react-redux";
+import { loginSuccess } from "../store/authSlice";
 
 export default function SetPassword() {
     const [showPasswords, setShowPasswords] = useState({
         password: false,
         confirmPassword: false,
     });
-
+    const dispatch = useDispatch()
     const [formData, setFormData] = useState({
         password: '',
         confirmPassword: '',
@@ -75,9 +76,13 @@ export default function SetPassword() {
                 }
 
                 const response = await setPassword(payload)
+
                 console.log(response)
                 if (response?.status === 200) {
-                    navigate("/")
+                    dispatch(loginSuccess({ user: response?.data, token: response?.data?.accessToken }))
+                    localStorage.setItem("token", response?.data?.accessToken)
+                    localStorage.setItem("refreshToken", response?.data?.refreshToken)
+                    navigate("/dashboard")
                 } else {
                     setFormErrors((prev) => ({
                         ...prev,

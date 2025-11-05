@@ -11,17 +11,18 @@ import { t } from "i18next";
 import uk_flag from "../assets/images/uk_flag.png"
 import us_flag from "../assets/images/us_flag.png"
 import fr_flag from "../assets/images/fr_flag.png"
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 export default function PhoneNumbers() {
   const [rows, setRows] = useState([]);
-  
+
   // Use hardcoded countries data from CallAgent
   const countries = [
     { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
     { name: "United Kingdom", code: "GB", dial_code: "+44", flag: uk_flag },
     { name: "France", code: "FR", dial_code: "+33", flag: fr_flag },
   ];
-  
+
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState("outbound")
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
@@ -71,26 +72,28 @@ export default function PhoneNumbers() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const ValidateSubmit = () => {
+
+    function validatePhoneNumber(phoneNumber) {
+    try {
+      const parsed = parsePhoneNumberFromString(phoneNumber);
+      return parsed && parsed.isValid();
+    } catch (err) {
+      return false;
+    }
+  };
+
+  const validateSubmit = () => {
     const errors = {};
-    if (!phoneName) {
-      errors.phoneName = t("phone.phone_number_validation");
+    if (!validatePhoneNumber(selectedCountry.dial_code + number) )  {
+      errors.number = t("brain_ai.invalid_phone_no");
     }
-    if (!number) {
-      errors.number = t("phone.phone_number_failed");
-    } else if (!/^\+?[0-9\s]+$/.test(number)) {
-      errors.number = t("phone.phone_number_format_validation");
-    }
-    // else if (number.replace(/\D/g, "").length !== 10) {
-    //   errors.number = "Phone number must be exactly 10 digits";
-    // }
     setError(errors);
     return Object.keys(errors).length === 0;
   }
 
   const handleAddNumber = async (e) => {
     e.preventDefault();
-    if (!ValidateSubmit()) {
+    if (!validateSubmit()) {
       return;
     }
     setLoader(true);
@@ -152,7 +155,7 @@ export default function PhoneNumbers() {
   }
 
   useEffect(() => {
-    if (rows&&rows.length > 0) {
+    if (rows && rows.length > 0) {
       setLoading(false)
     }
   }, [rows])
@@ -351,10 +354,10 @@ export default function PhoneNumbers() {
                     </button>
                     {isOpen && (
                       <div className="absolute px-1 z-[9999] rounded-md shadow-lg border border-gray-200 max-h-[200px] overflow-auto top-6 w-full left-[-13px] bg-white mt-1 isolate transform-gpu will-change-transform">
-                        <input type="text" placeholder="Search"  className="w-full px-3 py-2 border-b border-gray-200 outline-none text-sm" onChange={searchHandle} />
-                        {countries.map((country,idx) => (
+                        <input type="text" placeholder="Search" className="w-full px-3 py-2 border-b border-gray-200 outline-none text-sm" onChange={searchHandle} />
+                        {countries.map((country, idx) => (
                           <div
-                            key={idx} 
+                            key={idx}
                             onClick={() => {
                               setSelectedCountry(country);
                               setIsOpen(false);
@@ -428,7 +431,7 @@ export default function PhoneNumbers() {
           </div>
         </div>
       )}
-{/* 
+      {/* 
       {
         otpModal && (
           <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
