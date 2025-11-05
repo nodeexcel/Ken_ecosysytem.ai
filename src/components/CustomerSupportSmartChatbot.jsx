@@ -154,7 +154,11 @@ function SmartChatbot() {
                                                 className={`text-[16px] text-[#1E1E1E] ${index !== filteredChatbotData?.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
                                             >
                                                 <td className="px-[14px] py-[14px] min-w-[200px] max-w-[32%] w-full font-[600] text-[#1E1E1E] whitespace-nowrap">{row.bot_name}</td>
-                                                <td className="py-[14px] px-[14px] min-w-[200px] max-w-[38%] w-full text-[#5A687C] whitespace-nowrap">{row.date ? DateFormat(row.date) : "11 Oct 2025, 10:30 AM"}</td>
+                                                <td className="py-[14px] px-[14px] min-w-[200px] max-w-[38%] w-full text-[#5A687C] whitespace-nowrap">{
+                                                    row.created_at && row.created_at !== "None"
+                                                        ? DateFormat(row.created_at.replace(' ', 'T'))
+                                                        : "--"
+                                                }</td>
                                                 <td className="py-[14px] px-[14px] min-w-[200px] max-w-[38%] w-full text-[#5A687C] whitespace-nowrap">{row.chats}</td>
                                                 <td ref={moreActionsRef} className="pr-[14px] relative">
                                                     <div className="flex items-center gap-2">

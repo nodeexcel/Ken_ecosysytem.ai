@@ -73,7 +73,7 @@ const ContactsPage = () => {
   const [contactIsEdit, setContactIsEdit] = useState("")
   const [selectedData, setSelectedData] = useState({})
   const [openUpward, setOpenUpward] = useState(false);
-  
+
 
   const countryRef = useRef()
   const moreActionsRef = useRef()
@@ -115,16 +115,16 @@ const ContactsPage = () => {
       const clickedElement = event.target;
       const isDropdownClick = clickedElement.closest('[data-dropdown]');
       const isTriggerClick = clickedElement.closest('button[onclick*="handleDropdownClick"]');
-      
+
       if (!isDropdownClick && !isTriggerClick) {
         setActiveDropdown(null);
       }
     };
-    
+
     if (activeDropdown !== null) {
       document.addEventListener('mousedown', handleClickOutside);
     }
-    
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     }
@@ -145,15 +145,15 @@ const ContactsPage = () => {
   //   }
   // }, [activeDropdown]);
 
-  
+
   function validatePhoneNumber(phoneNumber) {
-  try {
-    const parsed = parsePhoneNumberFromString(phoneNumber);
-    return parsed && parsed.isValid();
-  } catch (err) {
-    return false;
+    try {
+      const parsed = parsePhoneNumberFromString(phoneNumber);
+      return parsed && parsed.isValid();
+    } catch (err) {
+      return false;
+    }
   }
-}
 
 
   const validateSubmit = () => {
@@ -170,7 +170,7 @@ const ContactsPage = () => {
     }
     if (!addNewContact.phone) {
       errors.phone = `${t("brain_ai.phone_no_required")}`;
-    } else if (!validatePhoneNumber(selectedCountry.dial_code + addNewContact.phone) )  {
+    } else if (!validatePhoneNumber(selectedCountry.dial_code + addNewContact.phone)) {
       errors.phone = `${t("brain_ai.invalid_phone_no")}`;
     }
     if (!addNewContact.email) {
@@ -205,13 +205,13 @@ const ContactsPage = () => {
     console.log(addNewContact)
     setLoading(true)
     try {
-      const response = await newContactAdd({ 
-        ...addNewContact, 
+      const response = await newContactAdd({
+        ...addNewContact,
         firstName: addNewContact.firstName.trim(),
         lastName: addNewContact.lastName.trim(),
-        phone: selectedCountry.dial_code + " " + addNewContact.phone 
+        phone: selectedCountry.dial_code + " " + addNewContact.phone
       })
-      
+
       if (response?.status === 201) {
         toast.success(response?.data?.message || "Contact added successfully!");
         setError((prev) => ({ ...prev, success: response?.data?.message }))
@@ -229,10 +229,10 @@ const ContactsPage = () => {
         });
         setSelectedCountry(countryData[240])
         getAllContacts();
-          
-        
+
+
       }
-       else {
+      else {
         console.log(response)
         setError((prev) => ({ ...prev, error: response?.data?.message || `${t("brain_ai.network_connection_error")}` }))
       }
@@ -250,12 +250,12 @@ const ContactsPage = () => {
     }
     setLoading(true)
     try {
-      const response = await updateContact({ 
-        ...addNewContact, 
+      const response = await updateContact({
+        ...addNewContact,
         firstName: addNewContact.firstName.trim(),
         lastName: addNewContact.lastName.trim(),
-        phone: selectedCountry.dial_code + " " + addNewContact.phone, 
-        contactId: contactIsEdit 
+        phone: selectedCountry.dial_code + " " + addNewContact.phone,
+        contactId: contactIsEdit
       })
       if (response?.status === 200) {
         setError((prev) => ({ ...prev, success: response?.data?.message }))
@@ -293,8 +293,18 @@ const ContactsPage = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
-    setFileUploadError("")
+    setFileUploadError(""); // Clear previous errors
+
     if (file) {
+      // Simple CSV validation
+      const fileExtension = file.name.toLowerCase().slice(file.name.lastIndexOf('.'));
+
+      if (fileExtension !== '.csv') {
+        setFileUploadError("Only CSV files are allowed");
+        setSelectedFile(null);
+        return;
+      }
+
       setSelectedFile(file);
       console.log('Selected file:', file);
     }
@@ -311,10 +321,20 @@ const ContactsPage = () => {
 
   const handleDrop = (e) => {
     e.preventDefault();
-    setFileUploadError("")
+    setFileUploadError("");
     setDragActive(false);
+
     const file = e.dataTransfer.files?.[0];
     if (file) {
+      // Simple CSV validation
+      const fileExtension = file.name.toLowerCase().slice(file.name.lastIndexOf('.'));
+
+      if (fileExtension !== '.csv') {
+        setFileUploadError("Only CSV files are allowed");
+        setSelectedFile(null);
+        return;
+      }
+
       setSelectedFile(file);
       console.log('Dropped file:', file);
     }
@@ -615,29 +635,43 @@ const ContactsPage = () => {
 
 
   const handleUploadFile = async () => {
-    console.log(selectedFile)
+    console.log(selectedFile);
+
     if (selectedFile == null) {
-      setFileUploadError(`${t("brain_ai.file_required")}`)
-      return
+      setFileUploadError(`${t("brain_ai.file_required")}`);
+      return;
     }
-    setLoading(true)
+
+    // Simple CSV validation - just like your phone validation
+    const fileExtension = selectedFile.name.toLowerCase().slice(selectedFile.name.lastIndexOf('.'));
+
+    if (fileExtension !== '.csv') {
+      setFileUploadError("Only CSV files are allowed");
+      return;
+    }
+
+    setLoading(true);
     try {
       const form = new FormData();
       form.append("file", selectedFile);
-      const response = await uploadContacts(form)
+      const response = await uploadContacts(form);
+
       if (response?.status === 200) {
-        setOpenImport(false)
-        getAllContacts()
-        setSelectedFile(null)
+        setOpenImport(false);
+        getAllContacts();
+        setSelectedFile(null);
+        setFileUploadError(""); // Clear any errors on success
       } else {
-        console.log(response)
+        console.log(response);
+        setFileUploadError(response?.data?.message || `${t("brain_ai.upload_failed")}`);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
+      setFileUploadError(`${t("brain_ai.upload_error")}`);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleAddToContactsList = async () => {
     try {
@@ -651,23 +685,35 @@ const ContactsPage = () => {
   }
 
   const extractPhoneDetails = (phoneNumber) => {
-    const regex = /^(\+\d+)\s*(\d+)$/;
+    if (!phoneNumber) return { countryCode: "", number: "" };
+
+    // Handle format like "+1 202-555-0143"
+    const regex = /^(\+\d+)\s*(.+)$/;
     const match = phoneNumber.match(regex);
 
     if (match) {
-      const countryCode = match[1];
-      const number = match[2];
+      const countryCode = match[1]; // "+1"
+      const number = match[2]; // "202-555-0143"
       return { countryCode, number };
     }
-    return { countryCode: "", number: "" };
+
+    return { countryCode: "", number: phoneNumber || "" };
   };
 
 
   const renderPhoneNumber = (phone) => {
+    if (!phone) return "";
+
     const { countryCode, number } = extractPhoneDetails(phone);
-    // return `${countryCode}-${number.slice(0, 3)}-${number.slice(3, 6)}-${number.slice(6)}`
-    return `${countryCode + number}`
-  }
+
+    // If extraction worked, return formatted number
+    if (countryCode && number) {
+      return `${countryCode} ${number}`;
+    }
+
+    // Fallback: return the original phone number
+    return phone;
+  };
 
   const handleEditList = (list) => {
     console.log(list)
@@ -709,28 +755,39 @@ const ContactsPage = () => {
           </h1>
 
           <div className="flex gap-2.5 items-center">
-            {activeTab !== "lists" && <button className="flex items-center gap-2.5 cursor-pointer px-5 py-[7px] border-[1.5px] border-[#E1E4EA] rounded-[7px] bg-white hover:bg-[#F5F7FA] hover:border-[#CBD2E0]">
-              <Download color="#5A687C" />
-              <span className="font-[500] text-[16px] leading-6 text-[#5A687C] cursor-pointer">
-                {t("brain_ai.export")}
-              </span>
-            </button>}
+            {activeTab !== "lists" && (
+              <button className="flex items-center gap-2.5 cursor-pointer px-5 py-[7px] border-[1.5px] border-[#E1E4EA] rounded-[7px] bg-white hover:bg-[#F5F7FA] hover:border-[#CBD2E0]">
+                <Download color="#5A687C" />
+                <span className="font-[500] text-[16px] leading-6 text-[#5A687C] cursor-pointer">
+                  {t("brain_ai.export")}
+                </span>
+              </button>
+            )}
 
-            {activeTab !== "lists" && <button onClick={() => {
-              setOpenImport(true);
-              setActiveDropdown(null);
-            }} className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5F58E8] rounded-[7px] bg-white hover:bg-[#F4F3FF] hover:border-[#4E46D4]">
-              <Upload color="#675FFF" />
-              <span className="font-[500] text-[16px] leading-6 text-[#675FFF]">{t("brain_ai.import")}</span>
-            </button>}
+            {activeTab !== "lists" && (
+              <button
+                onClick={() => {
+                  setOpenImport(true);
+                  setActiveDropdown(null);
+                  setFileUploadError(""); // Clear any previous errors when opening modal
+                }}
+                className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5F58E8] rounded-[7px] bg-white hover:bg-[#F4F3FF] hover:border-[#4E46D4]"
+              >
+                <Upload color="#675FFF" />
+                <span className="font-[500] text-[16px] leading-6 text-[#675FFF]">{t("brain_ai.import")}</span>
+              </button>
+            )}
 
-            <button onClick={activeTab === "lists" ? () => {
-              setOpen(true);
-              setActiveDropdown(null);
-            } : () => {
-              setAddContactModal(true);
-              setActiveDropdown(null);
-            }} className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white hover:bg-[#5f58e8]">
+            <button
+              onClick={activeTab === "lists" ? () => {
+                setOpen(true);
+                setActiveDropdown(null);
+              } : () => {
+                setAddContactModal(true);
+                setActiveDropdown(null);
+              }}
+              className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white hover:bg-[#5f58e8]"
+            >
               <span className="font-medium text-base leading-6">
                 {activeTab === `${t("brain_ai.lists")}` ? `${t("brain_ai.create_list")}` : `${t("brain_ai.add_contact")}`}
               </span>
@@ -745,11 +802,10 @@ const ContactsPage = () => {
                 setActiveTab("all-contacts");
                 setActiveDropdown(null);
               }}
-              className={`inline-flex cursor-pointer items-center justify-center gap-1 p-2.5 border-b-2 transition-colors duration-200 ${
-                activeTab === "all-contacts"
-                  ? "border-[#675FFF] text-[#675FFF]"
-                  : "border-transparent text-[#5A687C] hover:text-[#675FFF] hover:border-[#D9D6FF]"
-              }`}
+              className={`inline-flex cursor-pointer items-center justify-center gap-1 p-2.5 border-b-2 transition-colors duration-200 ${activeTab === "all-contacts"
+                ? "border-[#675FFF] text-[#675FFF]"
+                : "border-transparent text-[#5A687C] hover:text-[#675FFF] hover:border-[#D9D6FF]"
+                }`}
             >
               {t("brain_ai.all_contacts")}
             </button>
@@ -758,11 +814,10 @@ const ContactsPage = () => {
                 setActiveTab("lists");
                 setActiveDropdown(null);
               }}
-              className={`inline-flex cursor-pointer items-center justify-center gap-1 p-2.5 border-b-2 transition-colors duration-200 ${
-                activeTab === "lists"
-                  ? "border-[#675FFF] text-[#675FFF]  "
-                  : "border-transparent text-[#5A687C] hover:text-[#675FFF] hover:border-[#D9D6FF]"
-              }`}
+              className={`inline-flex cursor-pointer items-center justify-center gap-1 p-2.5 border-b-2 transition-colors duration-200 ${activeTab === "lists"
+                ? "border-[#675FFF] text-[#675FFF]  "
+                : "border-transparent text-[#5A687C] hover:text-[#675FFF] hover:border-[#D9D6FF]"
+                }`}
             >
               {t("brain_ai.list")}
             </button>
@@ -1289,7 +1344,7 @@ const ContactsPage = () => {
             <p className="text-[16px] font-[400] text-[#5A687C]">{t("brain_ai.before_uploading_files")} <span onClick={handleDownload} className="text-[#675FFF] cursor-pointer">{t("brain_ai.download_sample_file")}</span> {t("brain_ai.or")} <span className="text-[#675FFF] cursor-pointer">{t("brain_ai.learn_more")}</span>.</p>
             <div className="flex flex-col gap-2">
               <div>
-                <label className="block text-sm font-medium mb-1">{t("brain_ai.upload_file_images_placeholder")}</label>
+                {/* <label className="block text-sm font-medium mb-1">{t("brain_ai.upload_file_images_placeholder")}</label> */}
                 <div className="mt-2">
                   <div
                     onClick={handleClick}
@@ -1311,7 +1366,7 @@ const ContactsPage = () => {
                       ref={fileInputRef}
                       onChange={handleFileChange}
                       className="hidden"
-                       accept=".csv" 
+                      accept=".csv"
                     />
                   </div>
 
@@ -1370,7 +1425,7 @@ const ContactsPage = () => {
 
       {addContactModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl w-[510px] max-h-[85vh] overflow-auto  p-6 relative shadow-lg">
+          <div className="bg-white rounded-2xl w-[510px] max-h-[85vh] overflow-auto p-6 relative shadow-lg">
             <button
               className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-700"
               onClick={() => {
@@ -1407,12 +1462,13 @@ const ContactsPage = () => {
                     value={addNewContact.firstName}
                     onChange={handleAddContactChange}
                     placeholder={t("brain_ai.first_name_placeholder")}
+                    maxLength={20}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#675FFF]"
                   />
-
-                  {error.firstName && (
-                    <p className="text-red-500 text-sm mt-1">{error.firstName}</p>
-                  )}
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>{error.firstName && <span className="text-red-500">{error.firstName}</span>}</span>
+                    <span>{addNewContact.firstName.length}/20</span>
+                  </div>
                 </div>
                 <div>
                   <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
@@ -1425,12 +1481,13 @@ const ContactsPage = () => {
                     placeholder={t("brain_ai.last_name_placeholder")}
                     value={addNewContact.lastName}
                     onChange={handleAddContactChange}
+                    maxLength={20}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#675FFF]"
                   />
-
-                  {error.lastName && (
-                    <p className="text-red-500 text-sm mt-1">{error.lastName}</p>
-                  )}
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>{error.lastName && <span className="text-red-500">{error.lastName}</span>}</span>
+                    <span>{addNewContact.lastName.length}/20</span>
+                  </div>
                 </div>
               </div>
 
@@ -1449,7 +1506,7 @@ const ContactsPage = () => {
                         {selectedCountry && <p className={`fi fi-${selectedCountry.flag} fis w-4 h-4 rounded-full`}></p>}
                         <p className="text-[#5A687C] font-[400] text-[16px]">{selectedCountry ? selectedCountry.dial_code : "+1"}</p>
                       </div>
-                      <FaChevronDown color="#5A687C" className={`w-[10px]  transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
+                      <FaChevronDown color="#5A687C" className={`w-[10px] transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
                       <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />
                     </button>
 
@@ -1481,19 +1538,13 @@ const ContactsPage = () => {
                     onChange={handleAddContactChange}
                     placeholder={t("brain_ai.number_placeholder")}
                     className="w-full outline-none"
-                  // onChange={(e) => {
-                  //   setNumber(e.target.value);
-                  //   setError((prev) => ({ ...prev, number: "" }));
-                  // }}
-                  // value={number}
                   />
-
-
                 </div>
                 {error.phone && (
                   <p className="text-red-500 text-sm mt-1">{error.phone}</p>
                 )}
               </div>
+
               <div>
                 <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
                   {t("settings.tab_1_list.email_address")}
@@ -1505,13 +1556,15 @@ const ContactsPage = () => {
                   value={addNewContact.email}
                   onChange={handleAddContactChange}
                   placeholder={t("settings.tab_3_list.email_placeholder")}
+                  maxLength={20}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#675FFF]"
                 />
-
-                {error.email && (
-                  <p className="text-red-500 text-sm mt-1">{error.email}</p>
-                )}
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <span>{error.email && <span className="text-red-500">{error.email}</span>}</span>
+                  <span>{addNewContact.email.length}/20</span>
+                </div>
               </div>
+
               <div>
                 <label className="text-[14px] text-[#1E1E1E] font-[500] block mb-1">
                   {t("brain_ai.company_name")}
@@ -1522,22 +1575,22 @@ const ContactsPage = () => {
                   value={addNewContact.companyName}
                   onChange={handleAddContactChange}
                   placeholder={t("brain_ai.company_name_placeholder")}
+                  maxLength={50}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#675FFF]"
                 />
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <span></span>
+                  <span>{addNewContact.companyName.length}/50</span>
+                </div>
               </div>
             </div>
+
             {error.success && (
               <p className="text-green-500 text-sm mt-1">{error.success}</p>
             )}
             {error.error && (
               <p className="text-red-500 text-sm mt-1">{error.error}</p>
             )}
-            {/*
-            {responseError && (
-              <div className="mt-4 text-red-500 text-sm">
-                {responseError}
-              </div>
-            )} */}
 
             {/* Footer */}
             <div className="flex gap-2 mt-4">
@@ -1561,15 +1614,21 @@ const ContactsPage = () => {
                 Cancel
               </button>
               <button
-                className={`w-full cursor-pointer text-[16px] text-white rounded-[8px] h-[38px] flex items-center justify-center gap-2 relative transition-all duration-200 ${
-                  loading
+                className={`w-full cursor-pointer text-[16px] text-white rounded-[8px] h-[38px] flex items-center justify-center gap-2 relative transition-all duration-200 ${loading
                     ? 'bg-[#5E54FF] opacity-70 cursor-not-allowed'
                     : 'bg-[#5E54FF] hover:bg-[#4c43e6] hover:shadow-md'
-                }`}
+                  }`}
                 disabled={loading}
                 onClick={contactIsEdit ? () => handleUpdateContactSubmit() : () => handleNewContactSubmit()}
               >
-                {loading ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : `${t("brain_ai.save")}`}
+                {loading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <p>{t("brain_ai.processing")}</p>
+                    <span className="loader" />
+                  </div>
+                ) : (
+                  `${t("brain_ai.save")}`
+                )}
               </button>
             </div>
           </div>

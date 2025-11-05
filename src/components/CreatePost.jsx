@@ -3,7 +3,7 @@ import inkartinkLogo from '../assets/svg/inkartink.svg';
 import { useTranslation } from "react-i18next";
 import DateTimePicker from "./DateTimePicker";
 import { useState, useRef, useEffect } from "react";
-import { publishContent, saveDraftContent, scheduleContent } from '../api/contentCreationAgent';
+import { publishContent, saveDraftContent, scheduleContent, editScheduledContent } from '../api/contentCreationAgent';
 import { getInstaAccounts, getLinkedInAccounts } from '../api/brainai';
 import { SelectDropdown } from "./Dropdown";
 import { Duplicate } from "../icons/icons";
@@ -11,7 +11,7 @@ import instagram from '../assets/svg/instagram.svg'
 import linkedin from '../assets/svg/linkedin.svg'
 import twitter from '../assets/svg/twitter.svg'
 
-export default function CreatePost({ onClose }) {
+export default function CreatePost({ onClose, editData }) {
   const { t } = useTranslation();
   const [showDateTimePicker, setShowDateTimePicker] = useState(false);
   // State for required fields
@@ -25,6 +25,7 @@ export default function CreatePost({ onClose }) {
   const fileInputRef = useRef();
   const [fileName, setFileName] = useState("");
   const [preview, setPreview] = useState(null);
+  const [previewMediaType, setPreviewMediaType] = useState(null); // 'image' | 'document' | 'video' | null
   // State for Instagram accounts
   const [accountsOptions, setAccountsOptions] = useState([]);
   const [accountsOptionsLoading, setAccountsOptionsLoading] = useState(false);
@@ -32,6 +33,23 @@ export default function CreatePost({ onClose }) {
   const textInputRef = useRef(); // Add ref for text input
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  // Prefill when editing existing content
+  useEffect(() => {
+    if (editData) {
+      setText(editData.text || "");
+      setPlatform(editData.platform || "");
+      setSelectedAccount(editData.platform_unique_id || "");
+      if (editData.document) {
+        const correctedUrl = editData.document?.includes("amazonaws.comcontent-document")
+          ? editData.document.replace("amazonaws.comcontent-document", "amazonaws.com/content-document")
+          : editData.document;
+        setPreview(correctedUrl);
+        setPreviewMediaType(editData.media_type || null);
+        const parts = editData.document.split('/');
+        setFileName(parts[parts.length - 1] || "");
+      }
+    }
+  }, [editData]);
 
   // Fetch Instagram accounts when platform is 'instagram'
   useEffect(() => {
@@ -91,6 +109,7 @@ export default function CreatePost({ onClose }) {
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreview(reader.result); // base64 string only
+      setPreviewMediaType(getMediaType(file));
       if (errors.document) setErrors(prev => ({ ...prev, document: undefined }));
     };
     reader.readAsDataURL(file);
@@ -134,11 +153,42 @@ export default function CreatePost({ onClose }) {
     if (!text) newErrors.text = `${t("constance.post_text") + " " + t("is_required")}`;
     if (!platform) newErrors.platform = `${t("constance.platform") + " " + t("is_required")}`;
     if (!selectedAccount) newErrors.selectedAccount = `${t("constance.account") + " " + t("is_required")}`;
-    if (platform === "instagram" && !document) newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
+    if (platform === "instagram" && !document && !(editData && editData.document)) newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
     try {
       setIsSaving((prev) => ({ ...prev, draft: true }));
+      // If editing an existing Draft/Scheduled item, call edit API only (no fall-through)
+      if (editData) {
+        const contentId = editData?.scheduled_content_id || editData?.content_id || editData?.id;
+        if (!contentId) {
+          setErrors({ general: 'Missing content ID for editing' });
+          setIsSaving((prev) => ({ ...prev, draft: false }));
+          return;
+        }
+        const payload = {
+          text,
+          document,
+          platform,
+          platform_unique_id: selectedAccount,
+          media_type: getMediaType(document),
+        };
+        const response = await editScheduledContent(contentId, payload);
+        if (response?.status === 200) {
+          setText("");
+          setDocument(null);
+          setFileName("");
+          setSelectedAccount("");
+          setPlatform("");
+          if (fileInputRef.current) fileInputRef.current.value = '';
+          setIsSaving((prev) => ({ ...prev, draft: false }));
+          if (typeof onClose === 'function') onClose('success');
+        } else {
+          setErrors({ general: response?.response?.data?.error || 'Failed to edit draft' });
+          setIsSaving((prev) => ({ ...prev, draft: false }));
+        }
+        return;
+      }
       const payload = {
         text,
         document,
@@ -170,7 +220,7 @@ export default function CreatePost({ onClose }) {
     if (!text) newErrors.text = `${t("constance.post_text") + " " + t("is_required")}`;
     if (!platform) newErrors.platform = `${t("constance.platform") + " " + t("is_required")}`;
     if (!selectedAccount) newErrors.selectedAccount = `${t("constance.account") + " " + t("is_required")}`;
-    if (platform === "instagram" && !document) newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
+    if (platform === "instagram" && !document && !(editData && editData.document)) newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
     try {
@@ -209,7 +259,7 @@ export default function CreatePost({ onClose }) {
     if (!text) newErrors.text = `${t("constance.post_text") + " " + t("is_required")}`;
     if (!platform) newErrors.platform = `${t("constance.platform") + " " + t("is_required")}`;
     if (!selectedAccount) newErrors.selectedAccount = `${t("constance.account") + " " + t("is_required")}`;
-    if (platform === "instagram" && !document) newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
+    if (platform === "instagram" && !document && !(editData && editData.document)) newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
     try {
@@ -226,6 +276,39 @@ export default function CreatePost({ onClose }) {
       scheduledDateObj.setSeconds(0);
       scheduledDateObj.setMilliseconds(0);
       const scheduledTimeUTC = scheduledDateObj.toISOString();
+      // If editing an existing Draft/Scheduled item, call edit API only (no fall-through)
+      if (editData) {
+        const contentId = editData?.scheduled_content_id || editData?.content_id || editData?.id;
+        if (!contentId) {
+          setErrors({ general: 'Missing content ID for editing' });
+          setIsSaving((prev) => ({ ...prev, schedule: false }));
+          return;
+        }
+        const payload = {
+          text,
+          document,
+          platform,
+          scheduled_date: scheduledDate,
+          scheduled_time: scheduledTime,
+          platform_unique_id: selectedAccount,
+          media_type: getMediaType(document),
+        };
+        const response = await editScheduledContent(contentId, payload);
+        if (response?.status === 200) {
+          setText("");
+          setDocument(null);
+          setFileName("");
+          setSelectedAccount("");
+          setPlatform("");
+          if (fileInputRef.current) fileInputRef.current.value = '';
+          setIsSaving((prev) => ({ ...prev, schedule: false }));
+          if (typeof onClose === 'function') onClose('success');
+        } else {
+          setErrors({ general: response?.response?.data?.error || 'Failed to edit schedule' });
+          setIsSaving((prev) => ({ ...prev, schedule: false }));
+        }
+        return;
+      }
       const payload = {
         text,
         document,
@@ -272,7 +355,7 @@ export default function CreatePost({ onClose }) {
     <div className="flex flex-col gap-8">
       {/* Header */}
       <div className="flex flex-row items-center justify-between h-[38px]">
-        <h1 className="text-2xl font-semibold text-gray-900">{t("constance.scheduler") + ' > ' + t("brain_ai.create")}</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">{t("constance.scheduler") + ' > ' + (editData ? t("edit") : t("brain_ai.create"))}</h1>
         <button className="p-2 hover:bg-gray-100 rounded-full" onClick={onClose}>
           <X className="w-5 h-5 text-gray-500" />
         </button>
@@ -517,9 +600,11 @@ export default function CreatePost({ onClose }) {
               <button className={`flex flex-row items-center justify-center gap-[10px] h-[38px] rounded-[7px] border-[1.5px] px-[20px] py-[7px] text-[#5A687C] bg-[#FFFFFF] font-medium ${isSaving?.draft ? 'cursor-not-allowed' : 'cursor-pointer'}`} onClick={handleSaveDraft} disabled={isSaving?.draft}>
                 {isSaving?.draft ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : t("draft")}
               </button>
-              <button disabled={isSaving?.publish} onClick={handlePublish} className={`flex flex-row items-center justify-center gap-[10px] min-w-[96px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#675FFF] bg-transparent font-medium ${isSaving?.publish ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
-                {isSaving?.publish ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : t("publish")}
-              </button>
+              {!editData && (
+                <button disabled={isSaving?.publish} onClick={handlePublish} className={`flex flex-row items-center justify-center gap-[10px] min-w-[96px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#675FFF] bg-transparent font-medium ${isSaving?.publish ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+                  {isSaving?.publish ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : t("publish")}
+                </button>
+              )}
               <button className="flex cursor-pointer flex-row items-center justify-center gap-[10px] min-w-[112px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#FFFFFF] bg-[#675FFF] font-medium" onClick={() => setShowDateTimePicker(true)}>
                 {t("schedule")}
               </button>
@@ -555,19 +640,40 @@ export default function CreatePost({ onClose }) {
             <div className="flex-1 flex justify-center">
               <div className="relative w-[260px] h-[234px] rounded-md overflow-hidden flex items-center justify-center bg-gray-50 border border-gray-200">
                 {preview ? (
-                  preview.startsWith("data:image") ? (
+                  previewMediaType === 'image' ? (
                     <img
                       src={preview}
-                      alt="Uploaded Preview"
+                      alt="Content preview"
                       className="absolute inset-0 w-full h-full object-contain"
                     />
-                  ) : preview.startsWith("data:application/pdf") ? (
+                  ) : previewMediaType === 'document' ? (
                     <embed
                       src={preview}
                       type="application/pdf"
                       className="absolute inset-0 w-full h-full object-contain"
                     />
-                  ) : null
+                  ) : previewMediaType === 'video' ? (
+                    <video
+                      src={preview}
+                      controls
+                      className="absolute inset-0 w-full h-full object-contain"
+                    />
+                  ) : (
+                    // Fallback for base64 checks if media type not set
+                    (preview.startsWith("data:image") ? (
+                      <img
+                        src={preview}
+                        alt="Content preview"
+                        className="absolute inset-0 w-full h-full object-contain"
+                      />
+                    ) : preview.startsWith("data:application/pdf") ? (
+                      <embed
+                        src={preview}
+                        type="application/pdf"
+                        className="absolute inset-0 w-full h-full object-contain"
+                      />
+                    ) : null)
+                  )
                 ) : (
                   <img
                     src={inkartinkLogo}

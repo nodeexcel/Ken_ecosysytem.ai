@@ -36,7 +36,7 @@ const PhonePage = () => {
     { label: t("phone.call_campaigns"), icon: <PhoneCampaign status={activeSidebarItem == "call-campaigns"} />, hoverIcon: <PhoneCampaign hover={true} />, path: "call-campaigns", header: "Tom" },
     { label: t("phone.outbound_calls"), icon: <OutboundCall status={activeSidebarItem == "outbound-calls"} />, hoverIcon: <OutboundCall hover={true} />, path: "outbound-calls", header: "Tom" },
     { label: t("phone.inbound_calls"), icon: <InboundCall status={activeSidebarItem == "inbound-calls"} />, hoverIcon: <InboundCall hover={true} />, path: "inbound-calls", header: "Rebecca" },
-    { label: t("phone.cold_calling"), icon: <HeadPhonesIcon status={activeSidebarItem == "cold_calling"} />, hoverIcon: <HeadPhonesIcon hover={true} />, path: "cold_calling", header: `Tom & Rebecca,${t("phone.phone")} ` },
+    // { label: t("phone.cold_calling"), icon: <HeadPhonesIcon status={activeSidebarItem == "cold_calling"} />, hoverIcon: <HeadPhonesIcon hover={true} />, path: "cold_calling", header: `Tom & Rebecca,${t("phone.phone")} ` },
   ];
 
   const activeTab = useSelector((state) => state.skills)

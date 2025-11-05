@@ -145,7 +145,7 @@ const SettingsPage = () => {
   const [inviteEmailLoading, setInviteEmailLoading] = useState(false)
   const [teamMembersDataMessage, setTeamMembersDataMessage] = useState("")
   const [teamMembersDataLoading, setTeamMembersDataLoading] = useState(true);
-  const [modalStatus, setModalStatus] = useState(false);
+  // const [modalStatus, setModalStatus] = useState(false);
   const [profileErrors, setProfileErrors] = useState({});
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [deleteModalStatus, setDeleteModalStatus] = useState(false)
@@ -516,11 +516,11 @@ const SettingsPage = () => {
   }
 
   const handleSelect = (value) => {
-    if (userDetails?.user?.isProfileComplete === false) {
-      setModalStatus(true)
-    } else {
+    // if (userDetails?.user?.isProfileComplete === false) {
+    //   setModalStatus(true)
+    // } else {
       setActiveSidebarItem(value)
-    }
+    // }
   }
 
   const handleChangeRole = (value) => {
@@ -1281,7 +1281,7 @@ const SettingsPage = () => {
           {renderMainContent()}
         </div>
       </div>
-      {modalStatus && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      {/* {modalStatus && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
         <div className="bg-white rounded-2xl w-full max-w-[514px] p-6 relative shadow-lg">
           <button
             className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-700"
@@ -1304,7 +1304,7 @@ const SettingsPage = () => {
             </button>
           </div>
         </div>
-      </div>}
+      </div>} */}
       {deleteModalStatus && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl w-full max-w-[514px] p-6 relative shadow-lg">

@@ -5,7 +5,7 @@ import { DeleteIcon, UploadIcon } from "../icons/icons"
 import { testAgentChat } from "../api/appointmentSetter"
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next"
-import { addAvatars, getAvatars, intregateWebsiteChat, testChatBotById, updateWebsiteChatById } from "../api/customerSupport"
+import { addAvatars, getAvatars, intregateWebsiteChat, intregateWebsiteChatById, testChatBotById, updateWebsiteChatById } from "../api/customerSupport"
 
 function CustomizeAgent({ customIntegartion, setCustomStatus, agentId, editDataId, websiteData }) {
     const [activeTab, setActiveTab] = useState("customize")
@@ -245,11 +245,25 @@ function CustomizeAgent({ customIntegartion, setCustomStatus, agentId, editDataI
         try {
             // setLoading(true)
             let response;
-            if (editDataId) {
-                console.log("Updating SmartBot...");
-                response = await updateWebsiteChatById(editDataId, payload);
+            const currentId = agentId || editDataId || "";
+            let checkExisting = null;
+            if (currentId) {
+                try {
+                    checkExisting = await intregateWebsiteChatById(currentId);
+                } catch (e) {
+                    checkExisting = null;
+                }
+            }
+
+            if (checkExisting && checkExisting.status === 200) {
+                console.log("Existing website config found. Updating...");
+                response = await updateWebsiteChatById(currentId, payload);
+            } else if (checkExisting && checkExisting.status === 404) {
+                console.log("No website config found (404). Creating...");
+                response = await intregateWebsiteChat(payload);
             } else {
-                console.log("Creating SmartBot...");
+                // Fallback: if no currentId or unexpected status, attempt create
+                console.log("Creating SmartBot website integration...");
                 response = await intregateWebsiteChat(payload);
             }
             console.log(response)

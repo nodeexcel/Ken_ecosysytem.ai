@@ -64,3 +64,15 @@ export const addCredits = async (payload) => {
         return error;
     }
 };
+
+
+export const addCredit= async (amount) => {
+    try {
+        const response = await axiosInstance.post('/api/payments/create-phone-session-credit', { amount });
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+

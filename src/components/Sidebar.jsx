@@ -38,7 +38,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
 
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedLang, setSelectedLang] = useState('en');
-    const [modalStatus, setModalStatus] = useState(false);
+    // const [modalStatus, setModalStatus] = useState(false);
     const [commissionStatus, setCommissionStatus] = useState(false);
     const noticationRef = useRef()
     const languageRef = useRef()
@@ -100,16 +100,16 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
 
 
     const handleSelect = (path, label) => {
-        if (userDetails?.isProfileComplete === false && path !== "settings") {
-            setModalStatus(true)
-        } else {
+        // if (userDetails?.isProfileComplete === false && path !== "settings") {
+        //     setModalStatus(true)
+        // } else {
             dispatch(getNavbarData(label))
             setShowDropdown(false)
             navigate(path)
             dispatch(discardSkillsData())
             if (isOpen) {
                 toggleSidebar()
-            }
+        //     }
         }
     }
 
@@ -123,16 +123,16 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
     }
 
     const handleHome = () => {
-        if (userDetails?.isProfileComplete === false) {
-            setModalStatus(true)
-        }
-        else {
+        // if (userDetails?.isProfileComplete === false) {
+        //     setModalStatus(true)
+        // }
+        // else {
             dispatch(getNavbarData("Home"))
             navigate("/dashboard")
             dispatch(discardSkillsData())
             if (isOpen) {
                 toggleSidebar()
-            }
+            // }
         }
     }
 
@@ -282,7 +282,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
             </aside >
 
 
-            {modalStatus && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+            {/* {modalStatus && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
                 <div className="bg-white rounded-2xl w-full max-w-[514px] p-6 relative shadow-lg">
                     <button
                         className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
@@ -306,7 +306,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                     </div>
                 </div>
             </div>
-            }
+            } */}
 
             {
                 commissionStatus && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">

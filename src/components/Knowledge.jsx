@@ -266,7 +266,7 @@ const Knowledge = () => {
                     {activeDropdown === i && (
                       <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[99999]">
                         <div className="py-1">
-                          <button
+                          {/* <button
                             className="block cursor-pointer w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
                             onClick={() => {
                               setActiveDropdown(null);
@@ -274,7 +274,7 @@ const Knowledge = () => {
                           >
                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
                           </button>
-                          <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                          <hr style={{ color: "#E6EAEE", marginTop: "5px" }} /> */}
                           <div className="py-1">
                             <button
                               className="block cursor-pointer w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
@@ -310,7 +310,9 @@ const Knowledge = () => {
                       <img src={letter} alt="letter" />
                     </div>
                     <div>
-                      <p className="text-[14px] font-[400] font-inter text-[#5A687C]">{e.data}</p>
+                      <p className="text-[14px] font-[400] font-inter text-[#5A687C] break-words whitespace-normal">
+                        {e.data}
+                      </p>
                     </div>
                   </div>
                   <div ref={moreActionsRef} className='bg-[#fff] relative rounded-lg'>
@@ -323,7 +325,7 @@ const Knowledge = () => {
                     {activeDropdown === i && (
                       <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                         <div className="py-1">
-                          <button
+                          {/* <button
                             className="block cursor-pointer w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
                             onClick={() => {
                               setActiveDropdown(null);
@@ -331,7 +333,7 @@ const Knowledge = () => {
                           >
                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
                           </button>
-                          <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                          <hr style={{ color: "#E6EAEE", marginTop: "5px" }} /> */}
                           <div className="py-1">
                             <button
                               className="block cursor-pointer w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
@@ -379,7 +381,7 @@ const Knowledge = () => {
                     {activeDropdown === i && (
                       <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                         <div className="py-1">
-                          <button
+                          {/* <button
                             className="block cursor-pointer w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
                             onClick={() => {
                               setActiveDropdown(null);
@@ -387,7 +389,7 @@ const Knowledge = () => {
                           >
                             <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
                           </button>
-                          <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                          <hr style={{ color: "#E6EAEE", marginTop: "5px" }} /> */}
                           <div className="py-1">
                             <button
                               className="block cursor-pointer w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
@@ -439,11 +441,10 @@ const Knowledge = () => {
             setActiveTab(e.key);
             setActiveDropdown(null);
           }}
-          className={`inline-flex cursor-pointer items-center justify-center gap-1 p-2.5 relative flex-[0_0_auto] border-b-2 transition-colors duration-200 ${
-            activeTab === e.key
+          className={`inline-flex cursor-pointer items-center justify-center gap-1 p-2.5 relative flex-[0_0_auto] border-b-2 transition-colors duration-200 ${activeTab === e.key
               ? "border-[#5E54FF] text-primary-color"
               : "border-[#e1e4ea] text-text-grey hover:text-[#5E54FF] hover:border-[#D9D6FF]"
-          } rounded-none`}
+            } rounded-none`}
         >
           <span className={`font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === e.key ? "text-[#5E54FF]"
             : "text-[#5A687C] "}`}>
@@ -546,7 +547,12 @@ const Knowledge = () => {
                     placeholder={t("brain_ai.detail_placeholder")}
                     rows={3}
                     className="w-full focus:outline-none resize-none"
+                    maxLength={1500}
                   />
+                </div>
+                {/* Character counter */}
+                <div className="w-full text-right text-xs text-gray-500 mt-1">
+                  {formData?.snippet?.length || 0} / 1500
                 </div>
                 {errors.snippet && <p className="text-red-500 mt-2">{errors.snippet}</p>}
               </div>

@@ -20,6 +20,7 @@ import {
   SpeakerIcon,
   ThreeDots,
 } from "../icons/icons"
+import PdfIcon from "../assets/svg/pdf.svg";
 import { useSelector } from "react-redux"
 import { formatTimeAgo } from "../utils/TimeFormat"
 import { useTranslation } from "react-i18next"
@@ -68,6 +69,8 @@ const AgentChatBox = ({ listedProps }) => {
   const chatRef = useRef()
   const moreActionsRef = useRef()
   const userDetails = useSelector((state) => state.profile)
+  const authState = useSelector((state) => state.auth)
+  const userToken = authState?.token || localStorage.getItem("token") || ""
   const { t } = useTranslation()
   const [likedMessages, setLikedMessages] = useState({})
   const [dislikedMessages, setDislikedMessages] = useState({})
@@ -134,6 +137,8 @@ const AgentChatBox = ({ listedProps }) => {
         sender: "User",
         time: formatTimeAgo(new Date()),
         status: "Read",
+        ...(msgObject?.file_id && { file_id: msgObject.file_id }),
+        ...(msgObject?.filename && { filename: msgObject.filename }),
       }
       setMessages((prev) => [...prev, agentMessage])
 
@@ -152,6 +157,10 @@ const AgentChatBox = ({ listedProps }) => {
         console.log("💬 Bot:", responseText)
         const parsedMessage = JSON.parse(responseText)
 
+        // extract possible file metadata from parsed message
+        const fileIdFromParsed = parsedMessage?.file_id || parsedMessage?.message?.file_id || parsedMessage?.message?.file?.file_id || parsedMessage?.attachment?.file_id || parsedMessage?.message?.attachment?.file_id || null;
+        const filenameFromParsed = parsedMessage?.filename || parsedMessage?.message?.filename || parsedMessage?.message?.file?.filename || parsedMessage?.attachment?.filename || parsedMessage?.message?.attachment?.filename || null;
+
         const userMessage = {
           id: uuidv4(),
           isUser: false,
@@ -159,6 +168,8 @@ const AgentChatBox = ({ listedProps }) => {
           sender: "Ecosystem.ai",
           time: formatTimeAgo(parsedMessage?.message_at),
           status: "Read",
+          ...(fileIdFromParsed && { file_id: fileIdFromParsed }),
+          ...(filenameFromParsed && { filename: filenameFromParsed }),
         }
 
         setMessages((prev) => prev.map((msg) => (msg.id === "typing" ? userMessage : msg)))
@@ -174,9 +185,10 @@ const AgentChatBox = ({ listedProps }) => {
     }
   }
 
-  const sendToSocket2 = () => {
+  const sendToSocket2 = (msgObject) => {
     console.log(WebSocket.OPEN, WebSocket.CONNECTING)
-    const messageToSend = input
+    const directValue = ({ message: input })
+    const messageToSend = msgObject ? JSON.stringify(msgObject) : JSON.stringify(directValue)
     if (!messageToSend) return
     try {
       console.log(socket2Ref)
@@ -200,10 +212,12 @@ const AgentChatBox = ({ listedProps }) => {
       const agentMessage = {
         id: uuidv4(),
         isUser: true,
-        content: messageToSend,
+        content: msgObject ? msgObject.message : directValue.message,
         sender: "User",
         time: formatTimeAgo(new Date()),
         status: "Read",
+        ...(msgObject?.file_id && { file_id: msgObject.file_id }),
+        ...(msgObject?.filename && { filename: msgObject.filename }),
       }
       setMessages((prev) => [...prev, agentMessage])
 
@@ -222,6 +236,10 @@ const AgentChatBox = ({ listedProps }) => {
         const parsedMessage = JSON.parse(responseText)
         console.log("💬 Bot:", parsedMessage)
 
+        // extract possible file metadata from parsed message
+        const fileIdFromParsed2 = parsedMessage?.file_id || parsedMessage?.message?.file_id || parsedMessage?.message?.file?.file_id || parsedMessage?.attachment?.file_id || parsedMessage?.message?.attachment?.file_id || null;
+        const filenameFromParsed2 = parsedMessage?.filename || parsedMessage?.message?.filename || parsedMessage?.message?.file?.filename || parsedMessage?.attachment?.filename || parsedMessage?.message?.attachment?.filename || null;
+
         const userMessage = {
           id: uuidv4(),
           isUser: false,
@@ -229,6 +247,8 @@ const AgentChatBox = ({ listedProps }) => {
           sender: "Ecosystem.ai",
           time: formatTimeAgo(parsedMessage?.message_at),
           status: "Read",
+          ...(fileIdFromParsed2 && { file_id: fileIdFromParsed2 }),
+          ...(filenameFromParsed2 && { filename: filenameFromParsed2 }),
         }
         setMessages((prev) => prev.map((msg) => (msg.id === "typing" ? userMessage : msg)))
 
@@ -240,13 +260,22 @@ const AgentChatBox = ({ listedProps }) => {
     }
   }
 
-  const handleSend = (e) => {
-    e.preventDefault()
+  const handleSend = (eOrFile) => {
+    // Support being called either as form submit event or with selectedFile object
+    if (eOrFile && typeof eOrFile.preventDefault === "function") {
+      eOrFile.preventDefault()
+    }
+    const selectedFile = eOrFile && !eOrFile.preventDefault ? eOrFile : undefined
     if (!input.trim()) return
+    const msgObject = {
+      message: input,
+      ...(selectedFile?.id && { file_id: selectedFile.id, filename: selectedFile.name }),
+      ...(agentName && { agent_name: agentName }),
+    }
     if (activeConversation) {
-      sendToSocket2()
+      sendToSocket2(msgObject)
     } else {
-      sendToSocket()
+      sendToSocket(msgObject)
     }
     setInput("")
   }
@@ -318,23 +347,26 @@ const AgentChatBox = ({ listedProps }) => {
     }
   }
 
-const handleSelectMessage = (value) => {
-  setInput(value);
+  const handleSelectMessage = (value) => {
+    setInput(value);
 
-  if (location.pathname === "/dashboard/hr" || location.pathname === "/dashboard/customer-support") {
-    const matchedSuggestion = suggestionsChat.find((item) => item.key === value);
-    const msgObject = {
-      message: value,
-      ...(matchedSuggestion?.agent_type && { agent_type: matchedSuggestion.agent_type }),
-    };
+    if (location.pathname === "/dashboard/hr" || location.pathname === "/dashboard/customer-support") {
+      const matchedSuggestion = suggestionsChat.find((item) => item.key === value);
+      const msgObject = {
+        message: value,
+        ...(matchedSuggestion?.agent_type && { agent_type: matchedSuggestion.agent_type }),
+      };
 
-    sendToSocket(msgObject);
-    setInput("");
-  }
-};
+      sendToSocket(msgObject);
+      setInput("");
+    }
+  };
 
   const parseMarkdown = (text) => {
-    return text
+    // ensure we always operate on a string to avoid type errors
+    const str = typeof text === "string" ? text : text == null ? "" : String(text);
+
+    return str
       .replace(/^## (.*$)/gim, "<h2>$1</h2>")
       .replace(/^### (.*$)/gim, "<h3><strong>$1</strong></h3>")
       .replace(/^#### (.*$)/gim, "<h4>$1</h4>")
@@ -343,10 +375,10 @@ const handleSelectMessage = (value) => {
   }
 
   const suggestionsChat = [
-  { label: staticSuggestions[0].label, icon: <BulbIcon />, key: staticSuggestions[0].key, agent_type: staticSuggestions[0].agent_type },
-  { label: staticSuggestions[1].label, icon: <EditIcon />, key: staticSuggestions[1].key, agent_type: staticSuggestions[1].agent_type },
-  { label: staticSuggestions[2].label, icon: <SearchChatIcon />, key: staticSuggestions[2].key, agent_type: staticSuggestions[2].agent_type },
-];
+    { label: staticSuggestions[0].label, icon: <BulbIcon />, key: staticSuggestions[0].key, agent_type: staticSuggestions[0].agent_type },
+    { label: staticSuggestions[1].label, icon: <EditIcon />, key: staticSuggestions[1].key, agent_type: staticSuggestions[1].agent_type },
+    { label: staticSuggestions[2].label, icon: <SearchChatIcon />, key: staticSuggestions[2].key, agent_type: staticSuggestions[2].agent_type },
+  ];
 
 
 
@@ -425,11 +457,10 @@ const handleSelectMessage = (value) => {
                   filteredChatList.map((conversation, index) => (
                     <div key={index} className="flex relative items-center">
                       <div
-                        className={`flex w-full justify-between group items-center gap-3 my-1 py-[6px] px-4 cursor-pointer ${
-                          activeConversation === conversation.chat_id
+                        className={`flex w-full justify-between group items-center gap-3 my-1 py-[6px] px-4 cursor-pointer ${activeConversation === conversation.chat_id
                             ? "bg-[#F0EFFF] text-[#1E1E1E] rounded-lg"
                             : "hover:bg-[#F0EFFF]  hover:rounded-lg "
-                        }`}
+                          }`}
                         onClick={() => {
                           handleSelectChat(conversation.chat_id)
                           setActiveDropdown(null)
@@ -551,17 +582,38 @@ const handleSelectMessage = (value) => {
                                 )}
 
                                 <div
-                                  className={`max-w-[70%] w-fit text-[12px] font-[400] p-3 ${
-                                    !message.isUser
+                                  className={`max-w-[70%] w-fit text-[12px] font-[400] p-3 ${!message.isUser
                                       ? "my-1 bg-[#F2F2F7] text-[#5A687C] rounded-b-[10px] rounded-r-[10px]"
                                       : "ml-auto my-1 bg-[#675FFF] text-[#fff] rounded-b-[10px] rounded-l-[10px]"
-                                  }`}
+                                    }`}
                                 >
                                   <p
                                     className="text-[16px] !whitespace-pre-wrap"
                                     dangerouslySetInnerHTML={{ __html: parseMarkdown(message.content) }}
                                   />
+
+                                  {/* Attachment chip */}
+                                  {(message.file_id || message.filename) && (
+                                    <div
+                                      className={`mt-3 flex items-center gap-2 px-3 py-2 rounded-xl shadow-sm border ${!message.isUser
+                                          ? "bg-white border-[#E2E8F0] text-[#374151]"
+                                          : "bg-[#41a7e2] border-transparent text-white"
+                                        }`}
+                                    >
+                                      <img
+                                        src={PdfIcon}
+                                        alt="file"
+                                        className={`w-5 h-5 ${message.isUser ? "opacity-90" : "opacity-80"}`}
+                                      />
+                                      <div className="flex-1 truncate">
+                                        <span className="text-sm font-medium truncate block">
+                                          {message.filename || message.file_name || "attachment"}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  )}
                                 </div>
+
                                 {message.id !== "typing" && !message.isUser && (
                                   <div className="my-1 flex items-center gap-1">
                                     <button
@@ -637,7 +689,8 @@ const handleSelectMessage = (value) => {
                     value={input}
                     onChange={setInput}
                     onSend={handleSend}
-                   
+                    userToken={userToken}
+                    agentName={agentName}
                     sendLabel={t("send")}
                     placeholder={t("type_message")}
                   />

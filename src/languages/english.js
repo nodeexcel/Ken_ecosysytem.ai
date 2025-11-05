@@ -146,7 +146,7 @@ const englishTranslation = {
     create_list: "Create List",
     contacts_selected: "Contacts Selected",
     select: "Select",
-    upload_your_files: "Upload your files",
+    upload_your_files: "Upload your CSV files",
     before_uploading_files:
       "Before uploading files. make sure your file is ready to import.",
     download_sample_file: "Download sample file",
