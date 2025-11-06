@@ -361,7 +361,6 @@ function CreationStudio() {
             );
 
             const response = await createContent(cleanedPayload)
-            console.log(response,"FFffffffhfhfhfhfhfhfh")
             if (response?.status === 200) {
                 console.log(response?.data)
                 setContentId(response?.data?.content_id)

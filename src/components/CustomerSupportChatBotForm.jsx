@@ -3,7 +3,7 @@ import { CheckIcon, FacebookIcon, RightArrowIcon, SlackIcon, UploadIcon, Website
 import { SelectDropdown } from "./Dropdown";
 import { useTranslation } from "react-i18next";
 import CustomizeAgent from "./CustomizeAgent";
-import { createSmartBot, intregateWebsiteChatById, intregrateWhatsapp, updateSmartbot } from "../api/customerSupport";
+import { createSmartBot, intregateWebsiteChatById, intregrateWhatsapp, updateSmartbot, getConnectedPlatform } from "../api/customerSupport";
 import { getWhatsappAccounts } from "../api/brainai";
 
 function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
@@ -21,6 +21,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
     const [agentId, setAgentId] = useState(null);
     const [smartBotData, setSmartBotData] = useState(null);
     const [whatsappData, setWhatsappData] = useState([])
+    const [connectedPlatforms, setConnectedPlatforms] = useState(null)
 
 
     const fileInputRef = useRef(null);
@@ -214,7 +215,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
         }
     }
 
-    const handleSelectSteps = (selectStep) => {
+    const handleSelectSteps = async (selectStep) => {
         if (!editData && selectStep === 4 && !statusSteps.step3) {
             return;
         }
@@ -231,6 +232,9 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
         // }
         else {
             setStep(selectStep)
+        }
+        if (selectStep === 4 && editDataId) {
+            await handleGetConnectedPlatforms();
         }
     }
 
@@ -312,6 +316,12 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
         }
     }, [editData]);
 
+    useEffect(() => {
+        if (step === 4 && editDataId) {
+            handleGetConnectedPlatforms();
+        }
+    }, [step, editDataId]);
+
     const handleGetWebsiteLink = async () => {
         if (editDataId) {
             try {
@@ -328,6 +338,33 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
             console.log("error")
         }
 
+    };
+
+    const handleGetConnectedPlatforms = async () => {
+        const id = editDataId;
+        if (!id) return null;
+        try {
+            const response = await getConnectedPlatform(id);
+            if (response?.status === 200) {
+                const platformsData = response?.data?.platforms || [];
+                setConnectedPlatforms({ platforms: platformsData });
+                return { platforms: platformsData };
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        return null;
+    };
+
+    // Helper function to get platform data by platform name
+    const getPlatformData = (platformName) => {
+        if (!connectedPlatforms?.platforms || !Array.isArray(connectedPlatforms.platforms)) {
+            return null;
+        }
+        return connectedPlatforms.platforms.find(
+            (platform) => platform?.integration_platform?.toLowerCase() === platformName.toLowerCase() ||
+                         platform?.platform_name?.toLowerCase() === platformName.toLowerCase()
+        );
     };
 
 
@@ -676,15 +713,65 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                     <div>{each.icon}</div>
                                     <h1 className="text-[#1E1E1E] text-[18px] font-[600]">{each.label}</h1>
                                     <p className="text-[#5A687C] text-[14px] font-[400]">{each.content}</p>
-                                    <button onClick={() => {
+                                    <button onClick={async () => {
                                         setCustomIntegartion(each)
-                                        // setCustomStatus(true)
                                         handleGetWebsiteLink()
-                                        // SetopenWhatsappModal(true)
+                                        
                                         if (each.label.toLowerCase().includes("whatsapp")) {
+                                            if (!connectedPlatforms && editDataId) {
+                                                await handleGetConnectedPlatforms();
+                                            }
+                                            
+                                            if (editDataId) {
+                                                const whatsappPlatform = getPlatformData("whatsapp");
+                                                if (whatsappPlatform) {
+                                                    const prefillId = whatsappPlatform?.platform_id || 
+                                                                     whatsappPlatform?.whatsapp_phone_id || 
+                                                                     whatsappPlatform?.platform?.id || 
+                                                                     whatsappPlatform?.whatsapp?.platform_id;
+                                                    if (prefillId) {
+                                                        SetWhatsappFormData((prev) => ({
+                                                            ...prev,
+                                                            platform_unique_id: prefillId
+                                                        }));
+                                                    }
+                                                }
+                                            }
                                             SetopenWhatsappModal(true);
                                         } else if (each.label.toLowerCase().includes("website")) {
+                                            if (!connectedPlatforms && editDataId) {
+                                                await handleGetConnectedPlatforms();
+                                            }
+                                            
+                                            if (editDataId) {
+                                                const websitePlatform = getPlatformData("website");
+                                                if (websitePlatform) {
+                                                    console.log("Website platform data:", websitePlatform);
+                                                }
+                                            }
                                             setCustomStatus(true);
+                                        } else if (each.label.toLowerCase().includes("messenger")) {
+                                            if (!connectedPlatforms && editDataId) {
+                                                await handleGetConnectedPlatforms();
+                                            }
+                                            
+                                            if (editDataId) {
+                                                const messengerPlatform = getPlatformData("messenger");
+                                                if (messengerPlatform) {
+                                                    console.log("Messenger platform data:", messengerPlatform);
+                                                }
+                                            }
+                                        } else if (each.label.toLowerCase().includes("slack")) {
+                                            if (!connectedPlatforms && editDataId) {
+                                                await handleGetConnectedPlatforms();
+                                            }
+                                            
+                                            if (editDataId) {
+                                                const slackPlatform = getPlatformData("slack");
+                                                if (slackPlatform) {
+                                                    console.log("Slack platform data:", slackPlatform);
+                                                }
+                                            }
                                         }
                                     }}
                                         disabled={!each.is_active}

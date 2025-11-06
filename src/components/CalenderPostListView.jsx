@@ -186,7 +186,7 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
             {loading ? (
               <tr><td colSpan="6" className="text-center py-4"><span className="loader" /></td></tr>
             ) : calenderData.length > 0 ? (
-              calenderData.map((item, index) => {
+              calenderData?.slice().reverse().map((item, index) => {
                 const isPublished = item.scheduled_type === "publish";
                 const isDraft = item.scheduled_type === "draft";
 
@@ -264,26 +264,26 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
                               <div className="flex items-center gap-2"><Preview /><span>Preview</span></div>
                             </button>
 
-                            {/* Only show Edit and Post Now for "schedule" type */}
-                            {item.scheduled_type?.toLowerCase() === "schedule" && (
+                            {["schedule", "draft"].includes(item.scheduled_type?.toLowerCase()) && (
                               <>
                                 <button
-  className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
-  onClick={(e) => {
-    e.stopPropagation();
-    setActiveDropdown(null);
-    setSelectedItem(item);
-    if (typeof onEdit === "function") {
-      onEdit(item.scheduled_content_id);
-    }
-  }}
->
-  <div className="flex items-center gap-2">
-    <Edit />
-    <span>{t("edit")}</span>
-  </div>
-</button>
+                                  className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveDropdown(null);
+                                    setSelectedItem(item);
+                                    if (typeof onEdit === "function") {
+                                      onEdit(item.scheduled_content_id);
+                                    }
+                                  }}
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <Edit />
+                                    <span>{t("edit")}</span>
+                                  </div>
+                                </button>
 
+                                {/* 🚀 Post Now */}
                                 <button
                                   className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500] cursor-pointer disabled:opacity-50"
                                   disabled={postNowLoading}
@@ -299,6 +299,7 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
                                 </button>
                               </>
                             )}
+
 
                             <hr className="my-2 border-[#E6EAEE]" />
 
