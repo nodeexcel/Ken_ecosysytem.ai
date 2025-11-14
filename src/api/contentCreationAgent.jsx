@@ -260,7 +260,7 @@ export const deleteContent = async (contentId) => {
 
 export const postContent = async (contentId) => {
     try {
-        const response = await agentInstance.post(`/post-content/${contentId}`);
+        const response = await agentInstance.post(`/publish-now/${contentId}`);
         return response.data;
     } catch (error) {
         console.error(error);

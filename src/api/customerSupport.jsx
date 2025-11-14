@@ -220,6 +220,16 @@ export const intregrateWhatsapp = async (agent_id, payload) => {
     }
 };
 
+export const getConnectedPlatform = async (agent_id) => {
+    try {
+        const response = await agentInstance.get(`/customer-support-connected-platforms/${agent_id}`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+
 
 
 

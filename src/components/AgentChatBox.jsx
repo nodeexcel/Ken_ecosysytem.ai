@@ -454,7 +454,7 @@ const AgentChatBox = ({ listedProps }) => {
                     <span className="loader" />{" "}
                   </div>
                 ) : filteredChatList?.length > 0 ? (
-                  filteredChatList.map((conversation, index) => (
+                  filteredChatList?.slice().reverse().map((conversation, index) => (
                     <div key={index} className="flex relative items-center">
                       <div
                         className={`flex w-full justify-between group items-center gap-3 my-1 py-[6px] px-4 cursor-pointer ${activeConversation === conversation.chat_id

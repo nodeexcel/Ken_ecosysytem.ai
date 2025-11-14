@@ -310,7 +310,7 @@ const Knowledge = () => {
                       <img src={letter} alt="letter" />
                     </div>
                     <div>
-                      <p className="text-[14px] font-[400] font-inter text-[#5A687C] break-words whitespace-normal">
+                      <p className="text-[14px] font-[400] font-inter text-[#5A687C] break-all whitespace-normal">
                         {e.data}
                       </p>
                     </div>
@@ -547,12 +547,12 @@ const Knowledge = () => {
                     placeholder={t("brain_ai.detail_placeholder")}
                     rows={3}
                     className="w-full focus:outline-none resize-none"
-                    maxLength={1500}
+                    maxLength={400}
                   />
                 </div>
                 {/* Character counter */}
                 <div className="w-full text-right text-xs text-gray-500 mt-1">
-                  {formData?.snippet?.length || 0} / 1500
+                  {formData?.snippet?.length || 0} / 400
                 </div>
                 {errors.snippet && <p className="text-red-500 mt-2">{errors.snippet}</p>}
               </div>

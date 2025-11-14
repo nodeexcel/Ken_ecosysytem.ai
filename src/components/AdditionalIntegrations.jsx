@@ -17,7 +17,7 @@ import { Link } from "react-router-dom";
 
 
 
-const AdditionalIntegration = ({ setInstagramData, instagramData, integartionData, setFirstRender, whatsappData, setWhatsappData, googleCalendarData, setGoogleCalendarData, linkedInData,setLinkedInData }) => {
+const AdditionalIntegration = ({ setInstagramData, instagramData, integartionData, setFirstRender, whatsappData, setWhatsappData, googleCalendarData, setGoogleCalendarData, linkedInData, setLinkedInData }) => {
     const [open, setOpen] = useState(false);
     const [createTemplateOpen, setCreateTemplateOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("insta");
@@ -44,68 +44,63 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
 
     const handleDeleteInsta = async (id) => {
         try {
-            const response = await deleteInstaAccount(id)
+            const response = await deleteInstaAccount(id);
+
             if (response?.status === 200) {
-                const filterData = instagramData.filter((e) => e.instagram_user_id !== id)
-                setInstagramData(filterData)
+                setInstagramData((prev) => prev.filter((acc) => acc.instagram_user_id !== id));
             } else if (response?.status === 400) {
-                if (response?.response?.data?.success) {
-                    setErrorMessage(response?.response?.data?.success)
-                }
+                const message = response?.response?.data?.success;
+                if (message) setErrorMessage(message);
             }
         } catch (error) {
-            console.log(error)
+            console.error(error);
         }
-    }
+    };
 
     const handleDeleteWhatsapp = async (id) => {
         try {
-            const response = await deleteWhatsappAccount(id)
+            const response = await deleteWhatsappAccount(id);
             if (response?.status === 200) {
-                const filterData = whatsappData.filter((e) => e.whatsapp_phone_id !== id)
-                setWhatsappData(filterData)
+                setWhatsappData((prev) => prev.filter((acc) => acc.whatsapp_phone_id !== id));
             } else if (response?.status === 400) {
-                if (response?.response?.data?.success) {
-                    setErrorMessage(response?.response?.data?.success)
-                }
+                const message = response?.response?.data?.success;
+                if (message) setErrorMessage(message);
             }
         } catch (error) {
-            console.log(error)
+            console.error(error);
         }
-    }
-
+    };
 
     const handleDeleteGoogleCalendar = async (id) => {
         try {
-            const response = await deleteGoogleCalendarAccount(id)
+            const response = await deleteGoogleCalendarAccount(id);
             if (response?.status === 200) {
-                const filterData = googleCalendarData.filter((e) => e.google_calendar_id !== id)
-                setGoogleCalendarData(filterData)
+                setGoogleCalendarData((prev) => prev.filter((acc) => acc.calendar_id !== id));
             } else if (response?.status === 400) {
-                if (response?.response?.data?.success) {
-                    setErrorMessage(response?.response?.data?.success)
-                }
+                const message = response?.response?.data?.success;
+                if (message) setErrorMessage(message);
             }
         } catch (error) {
-            console.log(error)
+            console.error(error);
         }
-    }
+    };
+
 
     const handleDeleteLinkedIn = async (id) => {
         try {
-            const response = await deleteLinkedInAccount(id)
+            const response = await deleteLinkedInAccount(id);
             if (response?.status === 200) {
-                const filterData = linkedInData.filter((e) => e.linkedin_id !== id)
-                setLinkedInData(filterData)
+                setLinkedInData((prev) => prev.filter((acc) => acc.linkedin_id !== id));
             } else if (response?.status === 400) {
-                if (response?.response?.data?.success) {
-                    setErrorMessage(response?.response?.data?.success)
-                }
+                const message = response?.response?.data?.success;
+                if (message) setErrorMessage(message);
             }
         } catch (error) {
-            console.log(error)
+            console.error(error);
         }
-    }
+    };
+
+
 
 
     const renderMainContent2 = () => {
@@ -406,11 +401,11 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                                             {t("brain_ai.integrations.log_in_with")} {integartionData.name} {t("brain_ai.integrations.your_permissions")}
                                         </p>
                                         <p className="text-[14px] text-[#5A687C]">
-                                        {t("by_continuing")}{" "}
-                                        <span className="text-[#5E54FF] underline cursor-pointer" onClick={() => renderPath("privacy")}>
-                                            {t("privacy_policy")}
-                                        </span>.
-    </p>
+                                            {t("by_continuing")}{" "}
+                                            <span className="text-[#5E54FF] underline cursor-pointer" onClick={() => renderPath("privacy")}>
+                                                {t("privacy_policy")}
+                                            </span>.
+                                        </p>
                                     </div>
                                     <div className="flex flex-col gap-5 w-full mt-4">
                                         <a href={integartionData.path} target="_blank">
