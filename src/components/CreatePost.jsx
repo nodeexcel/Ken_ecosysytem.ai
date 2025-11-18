@@ -1,4 +1,4 @@
-import { X, ChevronDown, Hash, Settings, Edit3, Camera, Link, Trash2, UploadIcon, Tag, CircleX, StarsIcon, Italic, Bold, Smile, SquarePen, Image, Share2 } from "lucide-react"
+import { X, ChevronDown, Hash, Settings, Edit3, Camera, Link, Trash2, UploadIcon, Tag, CircleX, StarsIcon, Italic, Bold, Smile, SquarePen, Image, Share2, Heart, MessageCircle, Send, Bookmark, MoreHorizontal } from "lucide-react"
 import inkartinkLogo from '../assets/svg/inkartink.svg';
 import { useTranslation } from "react-i18next";
 import DateTimePicker from "./DateTimePicker";
@@ -53,6 +53,9 @@ export default function CreatePost({ onClose, editData }) {
 
   // Fetch Instagram accounts when platform is 'instagram'
   useEffect(() => {
+    // Clear selected account when platform changes
+    setSelectedAccount("");
+    
     if (platform === "instagram" || platform === "linkedin") {
       setAccountsOptionsLoading(true);
       setAccountsError(null);
@@ -93,6 +96,23 @@ export default function CreatePost({ onClose, editData }) {
       }));
     }
     return [];
+  }
+
+  const getSelectedAccountLabel = () => {
+    const options = renderOptions();
+    const match = options.find(opt => opt.key === selectedAccount);
+    return match ? match.label : "";
+  }
+
+  const renderCaptionWithHashtags = (value) => {
+    if (!value) return null;
+    const parts = value.split(/(\#[\w\u00C0-\u024F\u1E00-\u1EFF]+)/g);
+    return parts.map((part, idx) => {
+      if (/^\#[\w\u00C0-\u024F\u1E00-\u1EFF]+$/.test(part)) {
+        return <span key={idx} className="text-[#3B82F6]">{part}</span>;
+      }
+      return <span key={idx}>{part}</span>;
+    });
   }
 
   // Handle file upload and convert to base64
@@ -356,7 +376,7 @@ export default function CreatePost({ onClose, editData }) {
       {/* Header */}
       <div className="flex flex-row items-center justify-between h-[38px]">
         <h1 className="text-2xl font-semibold text-gray-900">{t("constance.scheduler") + ' > ' + (editData ? t("edit") : t("brain_ai.create"))}</h1>
-        <button className="p-2 hover:bg-gray-100 rounded-full" onClick={onClose}>
+        <button className="p-2 hover:bg-gray-100 rounded-full cursor-pointer" onClick={onClose}>
           <X className="w-5 h-5 text-gray-500" />
         </button>
       </div>
@@ -427,11 +447,11 @@ export default function CreatePost({ onClose, editData }) {
                <div className="flex flex-row items-center gap-2 bg-[#F0EFFF] p-1 rounded-lg">
                   <div className="w-6 h-6 rounded flex items-center justify-center">
                     {platform === "instagram" ? (
-                      <img src={instagram} alt="Instagram" className="w-5 h-5" />
+                      <img src={instagram} alt="Instagram" className="w-6 h-6" />
                     ) : platform === "X" ? (
-                      <img src={twitter} alt="X / Twitter" className="w-5 h-5" />
+                      <img src={twitter} alt="X / Twitter" className="w-6 h-6" />
                     ) : (
-                      <img src={linkedin} alt="LinkedIn" className="w-5 h-5" />
+                      <img src={linkedin} alt="LinkedIn" className="w-6 h-6" />
                     )}
                   </div>
                 </div>
@@ -460,14 +480,14 @@ export default function CreatePost({ onClose, editData }) {
             {/* Post Header */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="flex flex-row items-center gap-2 bg-[#F0EFFF] p-2 rounded-lg">
+                <div className="flex flex-row items-center gap-2 bg-[#F0EFFF] p-1 rounded-lg">
                   <div className="w-8 h-8 rounded flex items-center justify-center">
                     {platform === "instagram" ? (
-                      <img src={instagram} alt="Instagram" className="w-7 h-7" />
+                      <img src={instagram} alt="Instagram" className="w-8 h-8" />
                     ) : platform === "X" ? (
-                      <img src={twitter} alt="X / Twitter" className="w-7 h-7" />
+                      <img src={twitter} alt="X / Twitter" className="w-8 h-8" />
                     ) : (
-                      <img src={linkedin} alt="LinkedIn" className="w-7 h-7" />
+                      <img src={linkedin} alt="LinkedIn" className="w-8 h-8" />
                     )}
                   </div>
                 </div>
@@ -637,8 +657,39 @@ export default function CreatePost({ onClose, editData }) {
             </div>
 
             {/* Preview Content */}
-            <div className="flex-1 flex justify-center">
-              <div className="relative w-[260px] h-[234px] rounded-md overflow-hidden flex items-center justify-center bg-gray-50 border border-gray-200">
+            <div className="flex-1 flex flex-col gap-3 overflow-y-auto">
+              {/* Header (Instagram-like) */}
+              {(text || getSelectedAccountLabel() || platform) && (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-[#F0EFFF] flex items-center justify-center">
+                    {platform === "instagram" ? (
+                      <img src={instagram} alt="Instagram" className="w-5 h-5" />
+                    ) : platform === "X" ? (
+                      <img src={twitter} alt="X / Twitter" className="w-5 h-5" />
+                    ) : platform === "linkedin" ? (
+                      <img src={linkedin} alt="LinkedIn" className="w-5 h-5" />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-gray-200" />
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="text-sm font-semibold text-gray-900 truncate max-w-[140px]">
+                      {getSelectedAccountLabel() || "user_name"}
+                    </div>
+                    
+                  </div>
+                </div>
+                <div className="flex items-center gap-1">
+                  <button className="px-1 py-0.5 text-[11px] uppercase tracking-wide rounded-[6px] border border-blue-600 text-blue-500">
+                    {t("follow") || "FOLLOW"}
+                  </button>
+                  <MoreHorizontal className="w-5 h-5 text-gray-500" />
+                </div>
+              </div>
+              )}
+              {/* Image/Media Preview */}
+              <div className="relative w-full h-[234px] rounded-md overflow-hidden flex items-center justify-center bg-gray-50 border border-gray-200 flex-shrink-0">
                 {preview ? (
                   previewMediaType === 'image' ? (
                     <img
@@ -682,6 +733,33 @@ export default function CreatePost({ onClose, editData }) {
                   />
                 )}
               </div>
+
+              {/* Action row (Instagram-like) */}
+              {(text || getSelectedAccountLabel()) && (
+                <div className="flex items-center justify-between mt-1">
+                  <div className="flex items-center gap-3">
+                    <Heart className="w-5 h-5 text-gray-700" />
+                    <MessageCircle className="w-5 h-5 text-gray-700" />
+                    <Send className="w-5 h-5 text-gray-700" />
+                  </div>
+                  <Bookmark className="w-5 h-5 text-gray-700" />
+                </div>
+              )}
+
+              {/* Likes */}
+              {(text || getSelectedAccountLabel()) && (
+                <div className="text-sm font-semibold text-gray-900">
+                  396 {t("likes") || "likes"}
+                </div>
+              )}
+
+              {/* Caption Preview */}
+              {(text || getSelectedAccountLabel()) && (
+                <div className="text-sm text-gray-800 whitespace-pre-wrap break-words">
+                  <span className="font-semibold mr-2">{getSelectedAccountLabel() || "user_name"}</span>
+                  {renderCaptionWithHashtags(text)}
+                </div>
+              )}
             </div>
 
           </div>

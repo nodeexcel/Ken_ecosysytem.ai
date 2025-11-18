@@ -236,24 +236,23 @@ function Hr() {
     return (
         <div className="h-full w-full relative">
             <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><BsThreeDots size={24} color='#1e1e1e' /></div>
-            <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
+            <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full mt-2">
                 {/* Sidebar */}
-                <div className="lg:flex hidden flex-col bg-white gap-8 border-r border-[#E1E4EA] min-w-[272px] h-full">
+                <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] rounded-2xl fixed h-[calc(100vh-86px)] mb-8 overflow-y-auto">
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
                             stopTranscription()
                             dispatch(discardSkillsData())
                         }}>
-                            <div className="flex gap-4 pl-3 items-center h-[57px]">
+                            {/* <div className="flex gap-4 pl-3 items-center h-[57px]"> */}
                                 {/* <LeftArrow /> */}
-                                <h1 className="text-[20px] font-[600]">{t("rima.hr_heading")}</h1>
-                            </div>
+                                {/* <h1 className="text-[20px] font-[600]">{t("rima.hr_heading")}</h1>
+                            </div> */}
                         </div>
-                        <hr className='text-[#E1E4EA]' />
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-3">
-                        <div className="bg-[#F7F7FF] border border-[#E9E8FF] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
+                        <div className="bg-[#ffffff] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
                             <div className="flex justify-center items-center">
                                 <img src={rimaImg} alt={"rima"} className="object-fit" />
                             </div>
@@ -265,7 +264,7 @@ function Hr() {
                         {sideMenuList.map((e, i) => <div
                             key={i}
                             onClick={() => setActiveSidebarItem(e.path)}
-                            className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                            className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                 }`}
                         >
                             {activeSidebarItem === `${e.path}` ? e.icon :
@@ -278,7 +277,7 @@ function Hr() {
                 </div>
 
                 {/* Main Content */}
-                <div className="w-full overflow-x-hidden pr-0 py-8 pl-3 lg:pr-4 lg:py-3">
+                <div className="w-full overflow-x-hidden pr-0 py-8 pl-3 lg:pl-[290px] lg:pr-4 lg:py-3">
                     {renderMainContent()}
                 </div>
             </div>

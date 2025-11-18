@@ -40,3 +40,13 @@ export const removeTeamMember = async (memberId) => {
         return error;
     }
 }
+
+export const updateTeamMember = async (payload) => {
+    try {
+        const response = await axiosInstance.put("/api/users/update-member-role", payload);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+}

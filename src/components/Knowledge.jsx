@@ -63,6 +63,10 @@ const Knowledge = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Don't close if clicking inside the dropdown menu
+      if (event.target.closest('[data-dropdown-menu]')) {
+        return;
+      }
       if (moreActionsRef.current && !moreActionsRef.current.contains(event.target)) {
         setActiveDropdown(null);
       }
@@ -304,7 +308,7 @@ const Knowledge = () => {
           <>
             {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.snippets?.length > 0 ? <div className="mt-3">
               <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
-                {knowledgeData?.snippets?.length > 0 && knowledgeData?.snippets.map((e, i) => <div key={e.id} className="bg-[#f7f8fc] p-4 rounded-xl flex justify-between items-center gap-2">
+                {knowledgeData?.snippets?.length > 0 && knowledgeData?.snippets.map((e, i) => <div key={e.id} className="bg-[#f7f8fc] p-4 rounded-xl flex justify-between items-start gap-2">
                   <div className="flex  items-center gap-2">
                     <div className="pt-1">
                       <img src={letter} alt="letter" />
@@ -323,7 +327,7 @@ const Knowledge = () => {
                       <ThreeDots />
                     </button>
                     {activeDropdown === i && (
-                      <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                      <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[99999]" data-dropdown-menu onClick={(event) => event.stopPropagation()}>
                         <div className="py-1">
                           {/* <button
                             className="block cursor-pointer w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
@@ -337,7 +341,8 @@ const Knowledge = () => {
                           <div className="py-1">
                             <button
                               className="block cursor-pointer w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
-                              onClick={() => {
+                              onClick={(event) => {
+                                event.stopPropagation();
                                 handleDelete(i, e.id)
                               }}
                             >

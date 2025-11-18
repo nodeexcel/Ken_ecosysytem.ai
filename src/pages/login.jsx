@@ -10,10 +10,11 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useDispatch, useSelector } from "react-redux";
 import { emailState, loginSuccess } from "../store/authSlice";
-import { X } from "lucide-react";
+import { ChevronDown, Globe, X } from "lucide-react";
 import { PasswordLock } from "../icons/icons";
-import header from '../assets/svg/ecosysteme.ai_logo.svg'
-import logo from '../assets/svg/logo.svg'
+import header from '../assets/svg/ecosysteme.ai_logo.png'
+import logo from '../assets/images/dashboard_logo.png'
+import Ecosystem from '../assets/svg/ecosysteme.ai_logo.png'
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -31,10 +32,14 @@ export default function Login() {
     const dispatch = useDispatch()
     const [open, setOpen] = useState(false);
     const [activeTabModal, setActiveTabModal] = useState("forgot-password")
+    const [selectedLanguage, setSelectedLanguage] = useState("ENG");
+    const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
 
     const otpRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
     const priceId = import.meta.env.VITE_REGISTER_PLAN_ID
     const navigate = useNavigate();
+    const languageMenuRef = useRef(null);
+    const languages = ["ENG", "FRA"];
 
     const togglePasswordVisibility = () => {
         setShowPassword(prev => !prev);
@@ -50,12 +55,20 @@ export default function Login() {
     }, [success])
 
     useEffect(() => {
-
         if (token && userDetails.loading) {
             navigate("/dashboard")
         }
-
     }, [token, userDetails.loading])
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (languageMenuRef.current && !languageMenuRef.current.contains(event.target)) {
+                setLanguageMenuOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     const renderPath = (path) => {
         if (path === "terms") {
@@ -65,38 +78,51 @@ export default function Login() {
         }
     }
 
-    const handleEmailSubmit = async (e) => {
+    const handleLoginSubmit = async (e) => {
         e.preventDefault();
-        setErrors({});
+        const validationErrors = {};
         if (!email) {
-            setErrors({ email: "Email is required" });
-            return;
+            validationErrors.email = "Email is required";
+        } else if (!validateEmail(email)) {
+            validationErrors.email = "Invalid email format";
         }
-        if (!validateEmail(email)) {
-            setErrors({ email: "Invalid email format" });
+
+        if (!password) {
+            validationErrors.password = "Password is required";
+        }
+
+        if (Object.keys(validationErrors).length) {
+            setErrors(validationErrors);
             return;
         }
 
         try {
+            setErrors({});
             setLoading(true);
-            const response = await getEmailVerify({ email });
+            const emailResponse = await getEmailVerify({ email });
 
-            console.log(response)
+            if (emailResponse?.data?.profilePresent) {
+                dispatch(emailState({ email }));
 
-            if (response?.data?.profilePresent) {
-                dispatch(emailState({ email: email }))
-                if (response?.data?.profileActivated) {
-                    setStep("password");
+                if (emailResponse?.data?.profileActivated) {
+                    const loginResponse = await login({ email, password });
+                    if (loginResponse?.status === 200) {
+                        dispatch(loginSuccess({ user: loginResponse?.data, token: loginResponse?.data?.accessToken }));
+                        localStorage.setItem("token", loginResponse?.data?.accessToken);
+                        localStorage.setItem("refreshToken", loginResponse?.data?.refreshToken);
+                        navigate("/dashboard");
+                    } else {
+                        setErrors({ password: loginResponse?.response?.data?.message || "Invalid credentials" });
+                    }
                 } else {
                     setStep("otp");
                 }
+            } else {
+                setErrors({ email: emailResponse?.response?.data?.message || "Unable to find account" });
             }
-            else {
-                setErrors({ email: response?.response?.data?.message })
-            }
-
         } catch (error) {
             console.log(error);
+            setErrors({ email: "Something went wrong. Please try again." });
         } finally {
             setLoading(false);
         }
@@ -142,44 +168,6 @@ export default function Login() {
         }
     };
 
-
-    const handlePasswordSubmit = async (e) => {
-        e.preventDefault();
-        setErrors({});
-        if (!password) {
-            setErrors({ password: "Password is required" });
-            return;
-        }
-
-        try {
-            setLoading(true)
-            const payload = {
-                email: email,
-                password: password
-            }
-
-            const response = await login(payload)
-
-            console.log(response)
-
-            if (response?.status === 200) {
-                dispatch(loginSuccess({ user: response?.data, token: response?.data?.accessToken }))
-                localStorage.setItem("token", response?.data?.accessToken)
-                localStorage.setItem("refreshToken", response?.data?.refreshToken)
-                navigate("/dashboard")
-            } else {
-                setErrors({ password: response?.response?.data?.message })
-            }
-
-        } catch (error) {
-            console.log(error)
-        } finally {
-            setLoading(false)
-        }
-
-        console.log("Submit Password:", password);
-        // handle login logic
-    };
 
     const handleOtpSubmit = async (e, value) => {
         e.preventDefault();
@@ -246,10 +234,17 @@ export default function Login() {
     }
 
     const handleResendOtp = async (e) => {
-        setResentLoading(true)
-        await handleEmailSubmit(e)
-        setSuccess({ otp: "Otp send successfully!" })
-        setResentLoading(false)
+        e.preventDefault();
+        if (!email) return;
+        setResentLoading(true);
+        try {
+            await getEmailVerify({ email });
+            setSuccess({ otp: "Otp sent successfully!" });
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setResentLoading(false);
+        }
     }
 
     const handleBackToSignIn = () => {
@@ -316,52 +311,84 @@ export default function Login() {
         }
     };
 
-    const renderEmailStep = () => (
-        <form onSubmit={handleEmailSubmit} className="space-y-2">
-            <h2 className="text-[28px] font-bold text-center text-[#292D32]">Welcome Back</h2>
-            <p className="text-center text-[16px] text-[#777F90] mb-4">Please enter your details below.</p>
-            <div>
-                <label className="block text-[16px] font-medium text-[#292D32] mb-1">Email</label>
-                <div className={`flex items-center focus-within:border-[#675FFF] border rounded-[8px] px-4 py-3 ${errors.email ? "border-red-500" : "border-gray-300"}`}>
-                    <LuUserRound className="text-gray-400 mr-2 text-xl" />
+    const renderLoginStep = () => (
+        <form onSubmit={handleLoginSubmit} className="space-y-3 sm:space-y-4 md:space-y-3 lg:space-y-4">
+            <div className="space-y-1 sm:space-y-1.5 md:space-y-1.5 lg:space-y-2">
+                <label className="text-xs sm:text-sm font-medium text-[#5A687C] ">Email Address</label>
+                <div className={`flex items-center bg-white border border-[#D6D6D6] rounded-md sm:rounded-xl px-3 sm:px-4 py-1.5 sm:py-1.5 md:py-2 shadow-sm ${errors.email ? "border-red-400" : "border-transparent"}`}>
+                    <LuUserRound className="text-[#9AA2B1] text-base sm:text-lg mr-1.5 sm:mr-2 flex-shrink-0" />
                     <input
                         type="email"
-                        placeholder="Enter Email"
+                        placeholder="yourname@gmail.com"
                         value={email}
                         onChange={(e) => {
-                            setEmail(e.target.value)
-                            setErrors({})
+                            setEmail(e.target.value);
+                            setErrors((prev) => ({ ...prev, email: undefined }));
                         }}
-                        className="w-full focus:outline-none"
+                        className="w-full text-sm sm:text-base text-[#1E1E1E] placeholder:text-[#B0B7C3] focus:outline-none"
                     />
                 </div>
-                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
+            </div>
+
+            <div className="space-y-1 sm:space-y-1.5 md:space-y-1.5 lg:space-y-2">
+                <label className="text-xs sm:text-sm font-medium text-[#5A687C]">Password</label>
+                <div className={`flex items-center bg-white border rounded-lg sm:rounded-xl px-3 sm:px-4 py-1.5 sm:py-1.5 md:py-2 shadow-sm ${errors.password ? "border-red-400" : "border-transparent"}`}>
+                    <PasswordLock className="text-[#9AA2B1] mr-1.5 sm:mr-2 flex-shrink-0" />
+                    <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        value={password}
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                            setErrors((prev) => ({ ...prev, password: undefined }));
+                        }}
+                        className="w-full text-sm sm:text-base text-[#1E1E1E] placeholder:text-[#B0B7C3] focus:outline-none"
+                    />
+                    <button type="button" onClick={togglePasswordVisibility} className="ml-1.5 sm:ml-2 text-[#9AA2B1] flex-shrink-0">
+                        {showPassword ? <AiOutlineEye className="text-base sm:text-lg" /> : <AiOutlineEyeInvisible className="text-base sm:text-lg" />}
+                    </button>
+                </div>
+                {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 text-xs sm:text-sm">
+                <label className="flex items-center gap-1.5 sm:gap-2 text-[#5A687C]">
+                    <input type="checkbox" className="rounded cursor-pointer border-[#C5CAD4] w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    Remember me
+                </label>
+                <button type="button" onClick={() => setOpen(true)} className="text-[#675FFF] font-semibold cursor-pointer text-xs sm:text-sm">
+                    Forgot Password
+                </button>
             </div>
 
             <button
                 type="submit"
                 disabled={loading}
-                className={`w-full ${loading ? "bg-[#675fff79]" : "bg-[#675FFF] cursor-pointer"} text-white my-4 py-[14px] rounded-[8px] font-semibold  transition`}
+                className="cursor-pointer w-full bg-[#675FFF] hover:bg-[#5A52F0] disabled:bg-[#675fff7d] text-white py-2 sm:py-2 md:py-2 lg:py-2 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base shadow-lg transition"
             >
-                {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Continue"}
+                {loading ? (
+                    <div className="flex items-center justify-center gap-2 ">
+                        <p>Processing...</p>
+                        <span className="loader" />
+                    </div>
+                ) : (
+                    "Continue"
+                )}
             </button>
         </form>
     );
 
     const renderOtpStep = () => (
-        <form onSubmit={(e) => handleOtpSubmit(e, otp.join(""))} className="space-y-3">
-            <h2 className="text-[28px] font-bold text-center text-[#292D32]">Welcome Back</h2>
-            <p className="text-center text-[16px] text-[#777F90] my-2">
-                Please enter your 4-digit code below.
-            </p>
-            <p className="text-center text-[16px] text-[#777F90]">
-                We send code on: <span className="font-[400] text-[#675FFF]">{email}</span>
-            </p>
-            <p className="text-center my-4 font-[500] text-[16px] text-[#292D32]">
-                Enter code
-            </p>
+        <form onSubmit={(e) => handleOtpSubmit(e, otp.join(""))} className="space-y-3 sm:space-y-4 md:space-y-3 lg:space-y-6">
+            <div className="text-center space-y-1 sm:space-y-1.5 md:space-y-1.5 lg:space-y-2">
+                <h2 className="text-xl sm:text-2xl font-semibold text-[#1E1E1E]">Enter verification code</h2>
+                <p className="text-[#7A849C] text-xs sm:text-sm">
+                    We sent a 4-digit code to <span className="text-[#675FFF] font-medium">{email}</span>
+                </p>
+            </div>
 
-            <div className="flex justify-center gap-4 my-4">
+            <div className="flex justify-center gap-2 sm:gap-3">
                 {otp.map((digit, index) => (
                     <input
                         key={index}
@@ -371,79 +398,33 @@ export default function Login() {
                         onChange={(e) => handleOtpChange(index, e.target.value)}
                         onKeyDown={(e) => handleOtpKeyDown(index, e)}
                         onPaste={(e) => handleOtpPaste(e)}
-                        className="w-12 h-12 text-center border border-gray-300 rounded-lg focus:outline-[#675FFF] text-lg"
+                        className="w-12 h-12 sm:w-14 sm:h-14 text-center text-base sm:text-lg font-semibold border border-[#E1E4EA] rounded-lg sm:rounded-xl focus:outline-none focus:border-[#675FFF]"
                     />
                 ))}
             </div>
-            {errors.otp && <p className="text-red-500 text-center text-sm mt-1">{errors.otp}</p>}
-            {success.otp && <p className="text-green-500 text-center text-sm mt-1">{success.otp}</p>}
+            {errors.otp && <p className="text-red-500 text-center text-xs sm:text-sm">{errors.otp}</p>}
+            {success.otp && <p className="text-green-500 text-center text-xs sm:text-sm">{success.otp}</p>}
 
-            <p className="text-center text-[16px] text-[#777F90] my-6">
-                Didn't receive code? <span className="font-[400] text-[#675FFF] cursor-pointer" onClick={handleResendOtp}>{resentLoading ? <span className="loader" /> : "Send Again"}</span>
+            <p className="text-center text-xs sm:text-sm text-[#7A849C]">
+                Didn't receive the code?{" "}
+                <span className="text-[#675FFF] font-semibold cursor-pointer" onClick={handleResendOtp}>
+                    {resentLoading ? <span className="loader inline-block" /> : "Send again"}
+                </span>
             </p>
 
             <button
                 type="submit"
                 disabled={loading && !resentLoading}
-                className={`w-full ${(loading && !resentLoading) ? "bg-[#675fff79]" : "bg-[#675FFF] cursor-pointer"} my-4 text-white py-[14px] rounded-[8px] font-semibold transition`}
+                className="w-full bg-[#675FFF] hover:bg-[#5A52F0] disabled:bg-[#675fff7d] text-white py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base shadow-lg transition"
             >
-                {(loading && !resentLoading) ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Login"}
-            </button>
-        </form>
-    );
-
-    const renderPasswordStep = () => (
-        <form onSubmit={handlePasswordSubmit} className="space-y-4">
-            <h2 className="text-[28px] font-bold text-center text-[#292D32]">Welcome Back</h2>
-            <p className="text-center text-[16px] text-[#777F90] mb-4">Please enter your details below.</p>
-            <div>
-                <label className="block text-[16px] font-medium text-[#292D32] mb-1">Password</label>
-                <div className={`flex items-center focus-within:border-[#675FFF] border rounded-[8px] px-4 py-3 ${errors.password ? "border-red-500" : "border-gray-300"}`}>
-                    <div className="pr-2">
-                        <PasswordLock />
+                {(loading && !resentLoading) ? (
+                    <div className="flex items-center justify-center gap-2">
+                        <p>Processing...</p>
+                        <span className="loader" />
                     </div>
-                    <input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Enter Password"
-                        value={password}
-                        onChange={(e) => {
-                            setPassword(e.target.value)
-                            setErrors({});
-                        }}
-                        className="w-full focus:outline-none"
-                    />
-                    <button
-                        type="button"
-                        onClick={togglePasswordVisibility}
-                        className="ml-2 focus:outline-none"
-                    >
-                        {showPassword ? (
-                            <AiOutlineEye className="text-gray-400 text-lg" />
-                        ) : (
-                            <AiOutlineEyeInvisible className="text-gray-400 text-lg" />
-                        )}
-                    </button>
-                </div>
-                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-                {success.password && <p className="text-green-500 text-sm mt-1">{success.password}</p>}
-            </div>
-
-            <div className="flex items-center justify-between text-sm text-gray-500">
-                <label className="flex items-center space-x-2">
-                    <input type="checkbox" className="rounded" />
-                    <span className="text-[#5A687C] text-[14px]">Remember me!</span>
-                </label>
-                <p onClick={() => setOpen(true)} className="text-[#675FFF] text-[14px] cursor-pointer font-semibold hover:underline">
-                    Forgot Password
-                </p>
-            </div>
-
-            <button
-                type="submit"
-                disabled={loading}
-                className={`w-full ${loading ? "bg-[#675fff79]" : "bg-[#675FFF] cursor-pointer"} text-white my-4 py-[14px] rounded-[8px] font-semibold transition`}
-            >
-                {loading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Login"}
+                ) : (
+                    "Continue"
+                )}
             </button>
         </form>
     );
@@ -452,73 +433,109 @@ export default function Login() {
 
 
     return (
-        <div className="flex flex-col overflow-auto items-center h-screen bg-[#F6F7F9] p-3">
-            <div className="flex items-center gap-2 py-[30px]">
-                <div>
-                    <img src={header} alt="logo" className="" />
+        <div className="min-h-screen w-full bg-[#F7F7F8] flex flex-col items-center px-3 sm:px-4 py-2 sm:py-3 md:py-2 lg:py-4 gap-2 sm:gap-3 md:gap-2 lg:gap-4 overflow-y-auto">
+            <div className="w-full flex items-center justify-between">
+                <img src={Ecosystem} alt="logo" className="h-10 sm:h-11 md:h-12 lg:h-14 w-auto" />
+                <div className="relative" ref={languageMenuRef}>
+                    <button
+                        type="button"
+                        onClick={() => setLanguageMenuOpen((prev) => !prev)}
+                        className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl border border-transparent hover:border-[#D6DAE3] text-[#5A687C] text-xs sm:text-sm font-semibold"
+                    >
+                        <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline">{selectedLanguage}</span>
+                        <ChevronDown className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform ${languageMenuOpen ? "rotate-180" : ""}`} />
+                    </button>
+                    {languageMenuOpen && (
+                        <div className="absolute right-0 mt-2 w-32 bg-white border border-[#E1E4EA] rounded-lg sm:rounded-xl shadow-lg z-10">
+                            {languages.map((lang) => (
+                                <button
+                                    key={lang}
+                                    type="button"
+                                    onClick={() => {
+                                        setSelectedLanguage(lang);
+                                        setLanguageMenuOpen(false);
+                                    }}
+                                    className={`w-full text-left px-4 py-2 text-xs sm:text-sm cursor-pointer hover:text-black ${
+                                        lang === selectedLanguage ? "text-[#675FFF] font-semibold" : "text-[#5A687C]"
+                                    }`}
+                                >
+                                    {lang}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
-            <div className="bg-white p-8 inter rounded-2xl border border-[#E1E4EA] mt-3 w-full max-w-[500px]">
-                {step === "email" && renderEmailStep()}
-                {step === "otp" && renderOtpStep()}
-                {step === "password" && renderPasswordStep()}
-
-                {step !== "otp" && (
-                    <>
-                        <div className="mt-2 mb-6 flex items-center gap-2 w-full">
-                            <hr className="text-[#E1E4EA] w-[50%]" />
-                            <div className="text-sm text-gray-500">OR</div>
-                            <hr className="text-[#E1E4EA] w-[50%]" />
+            <div className="bg-white/90 w-full max-w-[440px] max-h-[90vh] rounded-lg sm:rounded-xl shadow-2xl p-4 sm:p-5 md:p-6 lg:p-6 border border-white/60 relative overflow-hidden flex flex-col">
+                <div className="absolute inset-x-0 top-0 h-10 sm:h-40 bg-gradient-to-r from-[#E8FEFC] via-[#D4E5FC] to-[#E7E6FF] blur-2xl pointer-events-none" />
+                <div className="relative space-y-3 sm:space-y-4 md:space-y-3 lg:space-y-6 overflow-y-auto flex-1">
+                    <div className="text-center space-y-1.5 sm:space-y-2 md:space-y-2 lg:space-y-3">
+                        <div className="mx-auto h-9 w-8 sm:h-10 sm:w-9 md:h-11 md:w-10 flex items-center justify-center">
+                            <img src={logo} alt="logo" className="h-9 w-8 sm:h-10 sm:w-9 md:h-11 md:w-10" />
                         </div>
-                        {errors.google_auth && <p className="text-red-500 text-sm my-1 text-center">{errors.google_auth}</p>}
-                        <button onClick={() => loginGoogle()} className="w-full flex cursor-pointer items-center font-[600] text-[#5A687C] text-[14px] justify-center border border-gray-300 py-[14px] rounded-[8px] hover:bg-gray-100 transition">
-                            <FcGoogle className="mr-2 text-xl" /> Continue with Google
-                        </button>
-                    </>
-                )}
-                {step !== "otp" && (
-                    <p className="text-center mt-6 text-[#5A687C] text-[14px]">
-                        Don’t have an account?{" "}
-                        <span onClick={handleSignup} className="hover:underline text-[#675FFF] text-[14px] font-semibold cursor-pointer">
-                            Sign Up
-                        </span>
-                    </p>
-                )}
+                        <div>
+                            <h1 className="text-xl sm:text-2xl font-semibold text-[#1E1E1E]">Login to your account</h1>
+                            <p className="text-xs sm:text-sm text-[#7A849C]">Enter your email to login</p>
+                        </div>
+                    </div>
+
+                    {step === "otp" ? renderOtpStep() : renderLoginStep()}
+
+                    {step !== "otp" && (
+                        <>
+                            <div className="flex items-center">
+                                <hr className="flex-1 border-t border-[#E4E6EF]" />
+                                <span className="text-[10px] sm:text-xs uppercase tracking-widest text-[#B0B7C3]">OR</span>
+                                <hr className="flex-1 border-t border-[#E4E6EF]" />
+                            </div>
+                            {errors.google_auth && <p className="text-red-500 text-xs sm:text-sm text-center">{errors.google_auth}</p>}
+                            <button
+                                onClick={() => loginGoogle()}
+                                className="w-full flex items-center justify-center gap-2 sm:gap-3 cursor-pointer border border-[#E1E4EA] rounded-lg sm:rounded-xl py-2 text-xs sm:text-sm font-semibold text-[#1E1E1E] hover:bg-[#F8F8FB] transition"
+                            >
+                                <FcGoogle className="text-lg sm:text-xl" /> Continue with Google
+                            </button>
+                        </>
+                    )}
+
+                    {step !== "otp" && (
+                        <p className="text-center text-xs sm:text-sm text-[#5A687C]">
+                            Don't have an account?{" "}
+                            <span onClick={handleSignup} className="text-[#675FFF] font-semibold cursor-pointer hover:underline">
+                                Sign up
+                            </span>
+                        </p>
+                    )}
+                </div>
             </div>
 
-            <p className="text-center inter font-[400] py-6 text-[#5A687C] text-[12px]">
-                By signing in you agree to our{" "}
-                <span onClick={() => renderPath("terms")} className="underline text-[#675FFF] text-[12px] font-[600] cursor-pointer">
-                    Terms and Conditions
-                </span> & <span onClick={() => renderPath("privacy")} className="underline text-[#675FFF] text-[12px] font-[600] cursor-pointer">
-                    Privacy Policy
-                </span>
-            </p>
 
-            {open && <div className="inter fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
-                <div className="bg-white max-h-[600px] flex flex-col gap-4 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
+
+            {open && <div className="inter fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50 p-4">
+                <div className="bg-white max-h-[90vh] overflow-y-auto flex flex-col gap-3 sm:gap-4 w-full max-w-lg rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 relative">
                     <button
                         onClick={() => {
                             setOpen(false)
                             setActiveTabModal("forgot-password")
                         }}
-                        className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
+                        className="absolute cursor-pointer top-3 right-3 sm:top-4 sm:right-4 text-gray-500 hover:text-gray-800"
                     >
-                        <X className="w-5 h-5" />
+                        <X className="w-4 h-4 sm:w-5 sm:h-5" />
                     </button>
 
-                    {activeTabModal === "forgot-password" && <form onSubmit={handleForgot} className="space-y-4 mt-6">
+                    {activeTabModal === "forgot-password" && <form onSubmit={handleForgot} className="space-y-3 sm:space-y-4 mt-4 sm:mt-6">
                         <div className="flex justify-center">
-                            <img src={logo} alt="logo" className="" />
+                            <img src={logo} alt="logo" className="h-9 w-8 sm:h-11 sm:w-10" />
                         </div>
                         <div>
-                            <h2 className="text-[28px] font-[700] text-center text-[#292D32]">Forgot Password</h2>
-                            <p className="text-center text-[16px] text-[#5A687C] mb-4">Please enter your details below.</p>
+                            <h2 className="text-xl sm:text-2xl md:text-[28px] font-[700] text-center text-[#292D32]">Forgot Password</h2>
+                            <p className="text-center text-sm sm:text-base text-[#5A687C] mb-3 sm:mb-4">Please enter your details below.</p>
                         </div>
                         <div>
-                            <label className="block text-[16px] font-medium text-[#292D32] mb-1">Email</label>
-                            <div className={`flex items-center border focus-within:border-[#675FFF] rounded-[8px] px-4 py-3 ${errors.email ? "border-red-500" : "border-gray-300"}`}>
-                                <LuUserRound className="text-gray-400 mr-2 text-xl" />
+                            <label className="block text-sm sm:text-base font-medium text-[#292D32] mb-1">Email</label>
+                            <div className={`flex items-center border focus-within:border-[#675FFF] rounded-lg sm:rounded-[8px] px-3 sm:px-4 py-2 sm:py-3 ${errors.email ? "border-red-500" : "border-gray-300"}`}>
+                                <LuUserRound className="text-gray-400 mr-1.5 sm:mr-2 text-lg sm:text-xl flex-shrink-0" />
                                 <input
                                     type="email"
                                     placeholder="Enter Email"
@@ -527,33 +544,33 @@ export default function Login() {
                                         setEmail(e.target.value)
                                         setErrors({})
                                     }}
-                                    className="w-full focus:outline-none"
+                                    className="w-full text-sm sm:text-base focus:outline-none"
                                 />
                             </div>
-                            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                            {errors.email && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.email}</p>}
                         </div>
 
                         <button
                             type="submit"
                             disabled={forgotLoading}
-                            className={`w-full ${forgotLoading ? "bg-[#675fff79]" : "bg-[#675FFF] cursor-pointer"} text-white my-4 py-[14px] rounded-[8px] font-semibold  transition`}
+                            className={`w-full ${forgotLoading ? "bg-[#675fff79]" : "bg-[#675FFF] cursor-pointer"} text-white my-3 sm:my-4 py-2.5 sm:py-[14px] rounded-lg sm:rounded-[8px] font-semibold text-sm sm:text-base transition`}
                         >
                             {forgotLoading ? <div className="flex items-center justify-center gap-2"><p>Processing...</p><span className="loader" /></div> : "Continue"}
                         </button>
-                        <p className="text-[#5A687C] text-center font-[400] text-[14px]">Back to <span className="text-[#675FFF] font-[600] cursor-pointer"
+                        <p className="text-[#5A687C] text-center font-[400] text-xs sm:text-sm">Back to <span className="text-[#675FFF] font-[600] cursor-pointer"
                             onClick={handleBackToSignIn}>Sign In</span></p>
                     </form>}
-                    {activeTabModal === "verify-email" && <div div className="space-y-6 mt-6">
+                    {activeTabModal === "verify-email" && <div div className="space-y-4 sm:space-y-6 mt-4 sm:mt-6">
                         <div>
                             <div className="flex justify-center">
-                                <img src={logo} alt="logo" className="" />
+                                <img src={logo} alt="logo" className="h-9 w-8 sm:h-11 sm:w-10" />
                             </div>
-                            <h2 className="text-[28px] font-[700] text-center text-[#292D32]">Verify Email</h2>
+                            <h2 className="text-xl sm:text-2xl md:text-[28px] font-[700] text-center text-[#292D32]">Verify Email</h2>
                         </div>
-                        <div className="flex flex-col gap-4">
-                            <p className="text-[16px] font-[500] text-center text-[#292D32]">Please check your mail!</p>
-                            <p className="text-[16px] text-center font-[400] text-[#5A687C]">We send Reset Password Link on: <br /><span className="text-[#675FFF]">{email}</span></p>
-                            <p className="text-[#5A687C] text-center font-[400] text-[14px]">Didn't received link: <span disabled={forgotLoading} className="text-[#675FFF] cursor-pointer"
+                        <div className="flex flex-col gap-3 sm:gap-4">
+                            <p className="text-sm sm:text-base font-[500] text-center text-[#292D32]">Please check your mail!</p>
+                            <p className="text-sm sm:text-base text-center font-[400] text-[#5A687C]">We send Reset Password Link on: <br /><span className="text-[#675FFF]">{email}</span></p>
+                            <p className="text-[#5A687C] text-center font-[400] text-xs sm:text-sm">Didn't received link: <span disabled={forgotLoading} className="text-[#675FFF] cursor-pointer"
                                 onClick={handleForgot}>{forgotLoading ? <span className="loader" /> : 'Send Again'}</span></p>
                         </div>
                     </div>}
@@ -561,6 +578,19 @@ export default function Login() {
 
                 </div>
             </div>}
+
+            <div className="w-full px-3 sm:px-4 flex flex-col sm:flex-row items-center justify-between mt-auto pt-2 pb-4 gap-2 sm:gap-0 text-xs sm:text-sm text-[#5A687C]">
+                <span>© {new Date().getFullYear()} Ecosysteme.ai</span>
+                <p className="text-center inter font-[400] text-[#5A687C]">
+                    <span onClick={() => renderPath("terms")} className="underline text-[#675FFF] font-[600] cursor-pointer">
+                        Terms and Conditions
+                    </span>{" "}
+                    &{" "}
+                    <span onClick={() => renderPath("privacy")} className="underline text-[#675FFF] font-[600] cursor-pointer">
+                        Privacy Policy
+                    </span>
+                </p>
+            </div>
         </div >
     );
 }

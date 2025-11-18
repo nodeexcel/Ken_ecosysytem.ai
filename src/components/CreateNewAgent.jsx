@@ -821,7 +821,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
     return (
         <>
-            <div className="w-full py-4 pr-4 flex flex-col gap-4 ">
+            <div className="w-full py-4 pr-4 flex flex-col gap-4 overflow-auto ">
                 <div className="flex justify-between items-center">
                     <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">{t("appointment.create_new_agent")}</h1>
                     <div className='flex gap-2'>
@@ -1090,7 +1090,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 </div>
                                 {step !== 2 && <RightArrowIcon />}
                             </div>
-                            {step === 2 && <div className="flex flex-col gap-5">
+                            {step === 2 && <div className="flex flex-col gap-5 overflow-auto">
                                 <hr style={{ color: "#E1E4EA" }} />
 
                                 {/* Business Description and Offer */}

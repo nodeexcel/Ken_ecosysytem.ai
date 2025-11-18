@@ -79,7 +79,7 @@ const PhonePage = () => {
 
   const renderImg = () => {
     if (navbarDetails.label === "Rebecca") {
-      return <div className="bg-[#F7F7FF] border border-[#E9E8FF]  lg:w-[232px] w-full mb-5 flex gap-3 p-[12px] rounded-[9px]">
+      return <div className="bg-[#ffffff] lg:w-[232px] w-full mb-5 flex gap-3 p-[12px] rounded-[9px]">
         <div className="flex justify-center items-center">
           <img src={rebeccaImg} alt={"rebecca"} className="object-fit" />
         </div>
@@ -89,7 +89,7 @@ const PhonePage = () => {
         </div>
       </div>
     } else if (navbarDetails.label === "Tom") {
-      return <div className="bg-[#F7F7FF] border border-[#E9E8FF]  lg:w-[232px] w-full mb-5 flex gap-3 p-[12px] rounded-[9px]">
+      return <div className="bg-[#ffffff]  lg:w-[232px] w-full mb-5 flex gap-3 p-[12px] rounded-[9px]">
         <div className="flex justify-center items-center">
           <img src={tomImg} alt={"tome"} className="object-fit" />
         </div>
@@ -99,7 +99,7 @@ const PhonePage = () => {
         </div>
       </div>
     } else {
-      return <div className="bg-[#F7F7FF] border border-[#E9E8FF]  lg:w-[232px] w-full mb-5 flex gap-3 p-[12px] rounded-[9px]">
+      return <div className="bg-[#ffffff]  lg:w-[232px] w-full mb-5 flex gap-3 p-[12px] rounded-[9px]">
         <div className="flex justify-center items-center">
           <img src={rebeccaImg} alt={"rebecca"} className="object-fit" />
           <img src={tomImg} alt={"tome"} className="object-fit" />
@@ -117,18 +117,17 @@ const PhonePage = () => {
       <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><BsThreeDots size={24} color='#1e1e1e' /></div>
       <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
         {/* Sidebar */}
-        <div className="lg:flex hidden flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
+        <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] rounded-2xl fixed h-[calc(100vh-86px)] mt-2 mb-8 overflow-y-auto">
           <div className=''>
             <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
               navigate("/dashboard")
               dispatch(discardSkillsData())
             }}>
-              <div className="flex gap-4 pl-3 items-center h-[57px]">
+              {/* <div className="flex gap-4 pl-3 items-center h-[57px]"> */}
                 {/* <LeftArrow /> */}
-                <h1 className="text-[20px] font-[600]">{t("phone.phone")}</h1>
-              </div>
+                {/* <h1 className="text-[20px] font-[600]">{t("phone.phone")}</h1>
+              </div> */}
             </div>
-            <hr className='text-[#E1E4EA]' />
           </div>
           <div className="flex flex-col w-full items-start gap-2 relative px-3">
             {renderImg()}
@@ -139,8 +138,8 @@ const PhonePage = () => {
                   dispatch(getNavbarData(item.header))
                   setActiveSidebarItem(item.path)
                 }}
-                className={`flex items-center gap-2 px-3 py-2 rounded-md group cursor-pointer w-full ${activeSidebarItem === item.path
-                  ? "bg-[#F0EFFF] text-[#675FFF]"
+                className={`flex items-center gap-2 px-3 py-2 group cursor-pointer w-full rounded-2xl ${activeSidebarItem === item.path
+                  ? "bg-[#E9E8F9] text-[#675FFF]"
                   : "text-[#5A687C] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
                   }`}
               >
@@ -154,7 +153,9 @@ const PhonePage = () => {
         </div>
 
         {/* Main Content */}
-        <div className="w-full overflow-x-hidden pr-0 py-8 pl-3 lg:pl-0 lg:pr-4 lg:py-3">{renderMainContent()}</div>
+        <div className="w-full lg:ml-[280px] overflow-hidden pr-0 py-8 pl-3 lg:pl-0 lg:pr-4 lg:py-3">
+          {renderMainContent()}
+        </div>
       </div>
       {sidebarStatus &&
         <div className="lg:hidden fixed inset-0 bg-black/20 flex items-end z-50">

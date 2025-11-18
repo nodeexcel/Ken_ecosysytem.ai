@@ -197,13 +197,15 @@ const BrainAI = () => {
       <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
         {/* Sidebar */}
         {navbarDetails?.label !== "integrations" && (
-          <div className="lg:flex hidden flex-col bg-white gap-8 border-r border-[#E1E4EA] w-[272px] h-full">
+          <div className="lg:flex hidden flex-col bg-white gap-8 border border-[#D6D6D6]
+    min-w-[272px] h-[calc(100vh-86px)] mt-2 rounded-2xl fixed overflow-y-auto">
+
             <div className="">
               <div
                 className="flex justify-between items-center cursor-pointer w-fit"
                 onClick={() => navigate("/dashboard")}
               >
-                <div className="flex gap-4 pl-3 items-center h-[57px]">
+                <div className="flex gap-4 pl-4 items-center h-[57px]">
                   {/* <LeftArrow /> */}
                   <h1 className="text-[20px] font-[600]">Brain AI</h1>
                 </div>
@@ -220,7 +222,7 @@ const BrainAI = () => {
                   <button
                     key={i}
                     onClick={() => setActivePath(item.path)}
-                    className={`cursor-pointer group flex items-center justify-start gap-1.5 px-2 py-2 w-full h-auto rounded ${isActive ? "bg-[#F0EFFF] text-[#675FFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                    className={`cursor-pointer group flex items-center justify-start gap-1.5 px-2 py-2 w-full h-auto rounded-2xl ${isActive ? "bg-[#F0EFFF] text-[#675FFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                       }`}
                   >
                     {isActive ? Icon
@@ -240,7 +242,10 @@ const BrainAI = () => {
         <InstagramStatus />
 
         {/* Main Content */}
-        <div className={`w-full h-full overflow-x-hidden pr-0 py-8 ${!firstRender ? 'lg:pl-0' : 'lg:pr-4 pl-3 px-6'}  lg:py-3`}>{renderMainContent()}</div>
+        <div className="w-full lg:ml-[280px] overflow-hidden pr-0 py-8 pl-3 lg:pl-0 lg:pr-4 lg:py-3">
+  {renderMainContent()}
+</div>
+
       </div>
       {sidebarStatus && (
         <div className="lg:hidden fixed inset-0 bg-black/20 flex items-end z-50">

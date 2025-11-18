@@ -89,7 +89,7 @@ function Dashboard() {
                     i18n.changeLanguage('en');
                     localStorage.setItem("lan", 'en')
                 } else {
-                    const lang=response?.data?.language==='english'?'en':response?.data?.language==='french'?'fr':response?.data?.language
+                    const lang = response?.data?.language === 'english' ? 'en' : response?.data?.language === 'french' ? 'fr' : response?.data?.language
                     i18n.changeLanguage(lang);
                     localStorage.setItem("lan", lang)
                 }
@@ -113,21 +113,31 @@ function Dashboard() {
 
 
     return (
-        <div className='w-full flex relative'>
-            {!isSidebarOpen && <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-[250px]' : 'w-[0%]'} lg:w-[72px] h-screen relative z-50`}>
-                <Sidebar sidebarItems={SidebarItems} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-            </div>}
-            <div className='lg:w-[calc(100%-72px)] w-full' >
-                {/* <Navbar sidebarItems={SidebarItems} /> */}
-                <Outlet />
+        <div className='w-full flex flex-col h-screen'>
+            {/* Navbar */}
+            <div className='w-full'>
+                <Navbar sidebarItems={SidebarItems} />
             </div>
-            {isSidebarOpen &&
-                <div className="fixed inset-0 bg-black/20 flex flex-col z-50">
-                    <div className={`transition-all w-[250px] h-screen relative z-50`}>
+
+            {/* Content Area - Sidebar and Main Content Below Navbar */}
+            <div className='w-full flex relative flex-1 overflow-hidden'>
+                {!isSidebarOpen && (
+                    <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-[250px]' : 'w-[0%]'} lg:w-[72px] h-full relative z-50`}>
                         <Sidebar sidebarItems={SidebarItems} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
                     </div>
+                )}
+                <div className='lg:w-[calc(100%-72px)] w-full h-full overflow-auto'>
+                    <Outlet />
                 </div>
-            }
+                {isSidebarOpen && (
+                    <div className="fixed inset-0 bg-black/20 flex flex-col z-50">
+                        <div className="h-[60px]"></div>
+                        <div className={`transition-all w-[250px] h-[calc(100%-60px)] relative z-50`}>
+                            <Sidebar sidebarItems={SidebarItems} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

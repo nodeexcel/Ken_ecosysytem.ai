@@ -417,7 +417,7 @@ const AgentChatBox = ({ listedProps }) => {
   }
 
   return (
-    <div className="w-full py-4 h-screen pr-2 flex flex-col gap-3">
+    <div className="w-full h-[calc(100vh-90px)] pr-2 flex flex-col gap-3">
       <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{t("seo.chat")}</h1>
       <div className="h-full overflow-auto flex pb-2 flex-col">
         <div className="flex bg-white h-full rounded-2xl border-[#E1E4EA] border">
