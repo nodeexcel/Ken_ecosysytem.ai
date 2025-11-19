@@ -1,4 +1,4 @@
-import { X, ChevronDown, Hash, Settings, Edit3, Camera, Link, Trash2, UploadIcon, Tag, CircleX, StarsIcon, Italic, Bold, Smile, SquarePen, Image, Share2, Heart, MessageCircle, Send, Bookmark, MoreHorizontal } from "lucide-react"
+import { X, ChevronDown, Hash, Settings, Edit3, Camera, Link, Trash2, UploadIcon, Tag, CircleX, StarsIcon, SquarePen, Image, Share2, Heart, MessageCircle, Send, Bookmark, MoreHorizontal } from "lucide-react"
 import inkartinkLogo from '../assets/svg/inkartink.svg';
 import { useTranslation } from "react-i18next";
 import DateTimePicker from "./DateTimePicker";
@@ -10,6 +10,14 @@ import { Duplicate } from "../icons/icons";
 import instagram from '../assets/svg/instagram.svg'
 import linkedin from '../assets/svg/linkedin.svg'
 import twitter from '../assets/svg/twitter.svg'
+import ImageUpload from '../assets/svg/images 2, photos, pictures, shot.svg'
+import Bold from '../assets/svg/bold.svg'
+import Italic from '../assets/svg/italic.svg'
+import Underline from '../assets/svg/underline.svg'
+import StrikeThrough from '../assets/svg/strike through.svg'
+import Smile from '../assets/svg/smile, emoji.svg'
+import Dustbin from '../assets/svg/Frame 427320989.svg'
+import VideoClip from '../assets/svg/video clip, film, movie.svg'
 
 export default function CreatePost({ onClose, editData }) {
   const { t } = useTranslation();
@@ -22,6 +30,9 @@ export default function CreatePost({ onClose, editData }) {
   const [isSaving, setIsSaving] = useState({ draft: false, publish: false, schedule: false });
   const [errors, setErrors] = useState({});
   const [dragActive, setDragActive] = useState(false);
+  const [mediaList, setMediaList] = useState([]);
+  const videoRefs = useRef({});
+  const [videoStates, setVideoStates] = useState({});
   const fileInputRef = useRef();
   const [fileName, setFileName] = useState("");
   const [preview, setPreview] = useState(null);
@@ -33,6 +44,7 @@ export default function CreatePost({ onClose, editData }) {
   const textInputRef = useRef(); // Add ref for text input
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
   // Prefill when editing existing content
   useEffect(() => {
     if (editData) {
@@ -97,6 +109,33 @@ export default function CreatePost({ onClose, editData }) {
     }
     return [];
   }
+  
+  const openImagePicker = () => {
+  if (!fileInputRef.current) return;
+  fileInputRef.current.accept = "image/webp,image/jpeg,image/png";
+  fileInputRef.current.click();
+};
+
+const openVideoPicker = () => {
+  if (!fileInputRef.current) return;
+  fileInputRef.current.accept = "video/mp4";
+  fileInputRef.current.click();
+};
+
+const toggleVideoPlay = (index) => {
+  const video = videoRefs.current[index];
+  if (!video) return;
+
+  if (video.paused) {
+    video.play();
+    setVideoStates((prev) => ({ ...prev, [index]: true }));
+  } else {
+    video.pause();
+    setVideoStates((prev) => ({ ...prev, [index]: false }));
+  }
+};
+
+
 
   const getSelectedAccountLabel = () => {
     const options = renderOptions();
@@ -116,24 +155,98 @@ export default function CreatePost({ onClose, editData }) {
   }
 
   // Handle file upload and convert to base64
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    // Only allow webp/jpeg/png/pdf
-    if (!['image/webp', 'image/jpeg', 'image/png', 'application/pdf', 'video/mp4'].includes(file.type)) {
-      setErrors({ document: 'Only webp, jpeg, png images or pdf files are allowed.' });
+  // const handleFileChange = async (e) => {
+  //   const file = e.target.files[0];
+  //   if (!file) return;
+  //   // Only allow webp/jpeg/png/pdf
+  //   if (!['image/webp', 'image/jpeg', 'image/png', 'application/pdf', 'video/mp4'].includes(file.type)) {
+  //     setErrors({ document: 'Only webp, jpeg, png images or pdf files are allowed.' });
+  //     return;
+  //   }
+  //   setFileName(file.name);
+  //   setDocument(file);
+  //   const reader = new FileReader();
+  //   reader.onloadend = () => {
+  //     setPreview(reader.result); // base64 string only
+  //     setPreviewMediaType(getMediaType(file));
+  //     if (errors.document) setErrors(prev => ({ ...prev, document: undefined }));
+  //   };
+  //   reader.readAsDataURL(file);
+  // };
+  
+//   const handleFileChange = (e) => {
+//   const file = e.target.files?.[0];
+//   if (!file) return;
+
+//   const allowedTypes = [
+//     "image/webp",
+//     "image/jpeg",
+//     "image/png",
+//     "application/pdf",
+//     "video/mp4",
+//   ];
+
+//   if (!allowedTypes.includes(file.type)) {
+//     setErrors({
+//       document: "Only webp, jpeg, png, pdf, or mp4 files are allowed.",
+//     });
+//     return;
+//   }
+
+//   setFileName(file.name);
+//   setDocument(file);
+
+//   const reader = new FileReader();
+//   reader.onloadend = () => {
+//     setPreview(reader.result);
+//     setPreviewMediaType(getMediaType(file));
+//     if (errors.document) {
+//       setErrors((prev) => ({ ...prev, document: undefined }));
+//     }
+//   };
+//   reader.readAsDataURL(file);
+// };
+
+const handleFileChange = (e) => {
+  const files = Array.from(e.target.files || []);
+  if (!files.length) return;
+
+  const allowedTypes = [
+    "image/webp",
+    "image/jpeg",
+    "image/png",
+    "application/pdf",
+    "video/mp4",
+  ];
+
+  files.forEach((file) => {
+    if (!allowedTypes.includes(file.type)) {
+      setErrors({
+        document: "Only webp, jpeg, png, pdf, or mp4 files are allowed.",
+      });
       return;
     }
-    setFileName(file.name);
-    setDocument(file);
+
     const reader = new FileReader();
     reader.onloadend = () => {
-      setPreview(reader.result); // base64 string only
-      setPreviewMediaType(getMediaType(file));
-      if (errors.document) setErrors(prev => ({ ...prev, document: undefined }));
+      setMediaList((prev) => [
+        ...prev,
+        {
+          file,
+          preview: reader.result,
+          type: getMediaType(file),
+        }
+      ]);
     };
     reader.readAsDataURL(file);
-  };
+  });
+
+  if (errors.document) {
+    setErrors((prev) => ({ ...prev, document: undefined }));
+  }
+};
+
+
 
   // Drag and drop handlers
   const handleDragOver = (e) => {
@@ -374,18 +487,43 @@ export default function CreatePost({ onClose, editData }) {
   return (
     <div className="flex flex-col gap-8">
       {/* Header */}
-      <div className="flex flex-row items-center justify-between h-[38px]">
+      {/* <div className="flex flex-row items-center justify-between h-[38px]">
         <h1 className="text-2xl font-semibold text-gray-900">{t("constance.scheduler") + ' > ' + (editData ? t("edit") : t("brain_ai.create"))}</h1>
         <button className="p-2 hover:bg-gray-100 rounded-full cursor-pointer" onClick={onClose}>
           <X className="w-5 h-5 text-gray-500" />
         </button>
+      </div> */}
+      <div className="flex flex-row justify-between max-h-[32px] items-center">
+        <h1 className="font-medium text-xl md:text-2xl">{t("constance.create_scheduler")}</h1>
+        <div className="flex flex-row gap-2.5 h-full">
+          <button
+          onClick={onClose} 
+          className="min-w-16 rounded-[8px] px-[10px] py-[6px] gap-[10px] items-center text-center text-[13px] font-font-medium bg-[#FFFFFF] border-[0.5px] border-[#00000029] cursor-pointer">{t("constance.cancel")}</button>
+          <button
+            className={`min-w-16 rounded-[8px] px-[10px] py-[6px] gap-[10px] items-center text-center text-[13px] font-font-medium bg-[#FFFFFF] border-[0.5px] border-[#00000029] ${isSaving?.draft ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+            onClick={handleSaveDraft} disabled={isSaving?.draft}
+          >
+            {isSaving?.draft ? (
+              <div className="flex items-center justify-center gap-2">
+                <p>{t("processing")}</p>
+                <span className="loader" />
+              </div>
+            ) : (
+              t("emailings.save_as_draft")
+            )}
+          </button>
+
+          <button  className="min-w-16 rounded-[8px] px-[10px] py-[6px] gap-[10px] items-center text-center text-white text-[13px] text-wh font-font-medium bg-[#675FFF] border-[0.5px] border-[#00000029] cursor-pointer"
+          onClick={() => setShowDateTimePicker(true)}
+          >{t("schedule")}</button>
+        </div>
       </div>
 
       {/* Main Content with Horizontal Scroll for Small Screens */}
       <div className="w-full overflow-x-auto">
-        <div className="flex w-full min-w-[1000px] mx-auto rounded-[16px] border border-[#E1E4EA] bg-white">
+        <div className="flex w-full min-w-[1000px] mx-auto rounded-[12px] border-[0.5px] border-[#D6D6D6] bg-[#F7F7F8]">
           {/* Left Sidebar */}
-          <div className="w-[218px] h-[726px] bg-white border-r border-r-[#E1E4EA] border-t border-t-[#ffffff] border-b border-b-[#ffffff] border-l border-l-[#ffffff] rounded-l-[16px] flex flex-col relative p-4 min-h-[600px]">
+          <div className="w-[248px] bg-[#FFFFFF] border-r border-r-[#00000029]  flex flex-col relative px-4 pt-4 pb-6 gap-4">
             {/* <div> */}
             <div className="flex flex-col pt-3 w-[184px] max-h-[70px] gap-[6px] absolute top-[0px] left-[16px]">
               {/* Select Platform */}
@@ -464,21 +602,28 @@ export default function CreatePost({ onClose, editData }) {
                   <X className="w-4 h-4" />
                 </button>
               </div>
+              
+               <button className=" flex flex-inline h-8 text-[13px] text-[#0A0D14] text-center font-medium border-[0.5px] border-[#00000029] rounded-[8px] py-[6px] px-[10px] gap-[6px] justify-center items-center bg-white">
+                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M8.00008 4.6665V7.99984M8.00008 7.99984V11.3332M8.00008 7.99984H4.66675M8.00008 7.99984H11.3334" stroke="#0A0D14" strokeWidth="1.5" strokeLinecap="round"/>
+</svg>
+<span>{t("constance.add") + " " + t("constance.account")}</span>
+              </button>
               {/* </div> */}
             </div>
 
             {/* Add Account button with border styling - positioned to match Draft buttons exactly */}
-            <div className="absolute bottom-0 left-0 right-0 border-t border-[#E1E4EA] min-h-[88px] p-[25px] bg-white flex items-center">
+            {/* <div className="absolute bottom-0 left-0 right-0 border-t border-[#E1E4EA] min-h-[88px] p-[25px] bg-white flex items-center">
               <button className="w-full  text-sm text-[#5A687C] text-center font-medium border border-gray-200 rounded-md py-2 bg-white">
                 {t("constance.add") + " " + t("constance.account")}
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* Center Post Creation */}
-          <div className="flex flex-col gap-2 bg-white  border-[#E1E4EA] rounded-lg p-6 w-[calc(100%-494px)] h-[726px] relative">
+          <div className="flex w-full flex-col gap-[16px] bg-[#FFFFFF]  border-[#D6D6D6]  px-6 py-4 w-[calc(100%-494px)] h-[685px] border-b-[0.5px] relative">
             {/* Post Header */}
-            <div className="flex items-center justify-between mb-4">
+            {/* <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="flex flex-row items-center gap-2 bg-[#F0EFFF] p-1 rounded-lg">
                   <div className="w-8 h-8 rounded flex items-center justify-center">
@@ -505,12 +650,11 @@ export default function CreatePost({ onClose, editData }) {
                   </button>
                 </div>
               </div>
-            </div>
-
+            </div> */}
+            <h1 className="text-[16px] font-medium">Post Details</h1>
             {/* Action Buttons */}
-            <div className="flex flex-col w-full rounded-[10px] p-[10px] border border-[#E1E4EA] gap-[17px]">
-              {/* Post Title Input */}
-              <input
+            <div className="flex flex-col h-full p-[24px] w-full rounded-[10px] p-[10px] border border-[#00000029] gap-[16px] justify-between ">
+              {/* <input
                 type="text"
                 value={text}
                 onChange={e => {
@@ -522,10 +666,10 @@ export default function CreatePost({ onClose, editData }) {
                 style={{ fontWeight: 400, fontStyle: "normal", letterSpacing: 0 }}
                 ref={textInputRef}
               />
-              {errors.text && <div className="text-red-500 text-xs mb-2">{errors.text}</div>}
+              {errors.text && <div className="text-red-500 text-xs mb-2">{errors.text}</div>} */}
 
-              <div className="flex flex-row items-center justify-between w-full h-[27px] mb-4">
-                <div className="flex flex-row items-center w-[218px] h-[27px] gap-[6px]">
+              {/* <div className="flex flex-row items-center justify-between w-full h-[27px] mb-4"> */}
+              {/* <div className="flex flex-row items-center w-[218px] h-[27px] gap-[6px]">
                   <button
                     className="flex items-center gap-[4px] rounded-[4px] border border-[#E1E4EA] px-[10px] py-[6px] text-xs text-gray-600 hover:text-gray-800 bg-white"
                     style={{ width: "94px", height: "27px" }}
@@ -540,34 +684,141 @@ export default function CreatePost({ onClose, editData }) {
                     <StarsIcon className="w-3 h-3" />
                     {t("constance.ai_assistance")}
                   </button>
+                </div> */}
+              <div className="space-y-[20px]">
+                <div className="flex flex-row items-center gap-[16px] max-h-[16px]">
+                  <button className="flex items-center justify-center w-[16px]">
+                    <img src={Bold} />
+                  </button>
+                  <button className="flex items-center justify-center w-[16px]">
+                    <img src={Italic} />
+                  </button>
+                  <button className="flex items-center justify-center w-[16px]">
+                    <img src={Underline} />
+                  </button>
+                  <button className="flex items-center justify-center w-[16px]">
+                    <img src={StrikeThrough} />
+                  </button>
+                  <button className="flex items-center justify-center w-[16px]">
+                    <img src={Smile} />
+                  </button>
                 </div>
-                <div className="flex flex-row items-center gap-[6px]" style={{ width: "126px", height: "27px" }}>
-                  <button className="flex items-center justify-center w-[27px] h-[27px] rounded-[4px] border border-[#E1E4EA] bg-white">
-                    <span className="text-[#5A687C] font-inter font-semibold text-[12px]">9</span>
-                  </button>
-                  <button className="flex items-center justify-center w-[27px] h-[27px] rounded-[4px] border border-[#E1E4EA] bg-white">
-                    <span className="text-[#5A687C] font-inter font-semibold text-[12px]"><Bold /></span>
-                  </button>
-                  <button className="flex items-center justify-center w-[27px] h-[27px] rounded-[4px] border border-[#E1E4EA] bg-white">
-                    <span className="text-[#5A687C] font-inter font-semibold text-[12px]"><Italic /></span>
-                  </button>
-                  <button className="flex items-center justify-center w-[27px] h-[27px] rounded-[4px] border border-[#E1E4EA] bg-white">
-                    <span className="text-[#5A687C] font-inter font-semibold text-[12px]"><Smile /></span>
-                  </button>
-                </div>
-              </div>
+                {/* </div> */}
 
-              {/* Upload Section */}
-              <div className="mb-4 w-full">
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t("brain_ai.upload_file_images_placeholder")} (webp, jpeg, png, pdf, mp4) *</label>
-                <input
+                <textarea
+                  type="text"
+                  value={text}
+                  onChange={e => {
+                    setText(e.target.value);
+                    if (errors.text) setErrors(prev => ({ ...prev, text: undefined }));
+                  }}
+                  className={`w-full max-h-[176px] gap-[8px] px-1 mt-4 border-0 h-full scrollbar-none text-[14px] tracking-[-0.02em] ${errors.text ? 'border border-red-500' : 'border-0'}`}
+                  placeholder={t("constance.post_text")}
+                  ref={textInputRef}
+                />
+                {errors.text && <div className="text-red-500 text-xs mb-2">{errors.text}</div>}
+
+                {/* Uploaded Media Thumbnails */}
+                {mediaList.length > 0 && (
+                  <div className="w-full flex flex-wrap gap-4 mt-2">
+                    {mediaList.map((item, index) => (
+                      <div
+                        key={index}
+                        className="relative"
+                        style={{
+                          width: "160px",
+                          height: "100px",
+                          borderRadius: "4px",
+                          overflow: "hidden",
+                          position: "relative",
+                        }}
+                      >
+                        {/* IMAGE */}
+                        {item.type === "image" && (
+                          <img
+                            src={item.preview}
+                            alt="preview"
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+
+                        {/* VIDEO */}
+                        {item.type === "video" && (
+                          <div className="w-full h-full relative">
+                            <video
+                              src={item.preview}
+                              className="w-full h-full object-cover"
+                              muted
+                              loop
+                              ref={(el) => (videoRefs.current[index] = el)}
+                            />
+
+                            {/* Play / Pause Button */}
+                            <button
+                              onClick={() => toggleVideoPlay(index)}
+                              className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition rounded"
+                            >
+                              {videoStates[index] ? (
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                                  <rect x="6" y="5" width="4" height="14" />
+                                  <rect x="14" y="5" width="4" height="14" />
+                                </svg>
+                              ) : (
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                                  <path d="M8 5v14l11-7z" />
+                                </svg>
+                              )}
+                            </button>
+                          </div>
+
+                        )}
+
+                        {/* PDF */}
+                        {item.type === "document" && (
+                          <embed
+                            src={item.preview}
+                            type="application/pdf"
+                            className="w-full h-full object-contain bg-white"
+                          />
+                        )}
+
+                        {/* DELETE BUTTON */}
+                        <img
+                          src={Dustbin}
+                          alt="delete"
+                          className="absolute bottom-1 right-1 cursor-pointer p-1"
+                          onClick={() => {
+                            setMediaList((prev) => prev.filter((_, i) => i !== index));
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+
+                {/* Upload Section */}
+                <div className="mb-4 w-full">
+                  {/* <label className="block text-sm font-medium text-gray-700 mb-2">{t("brain_ai.upload_file_images_placeholder")} (webp, jpeg, png, pdf, mp4) *</label> */}
+                  {/* <input
                   type="file"
                   accept="image/webp,image/jpeg,image/png,application/pdf/,video/mp4"
                   onChange={handleFileChange}
                   className="mb-2 hidden"
                   ref={fileInputRef}
-                />
-                <div
+                /> */}
+                  <input
+                    type="file"
+                    accept="image/webp,image/jpeg,image/png,application/pdf,video/mp4"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    ref={fileInputRef}
+                  />
+
+
+
+
+                  {/* <div
                   className={`border-2 border-dashed ${dragActive ? 'border-[#335CFF80] bg-[#F5F7FF]' : errors.document ? 'border-red-500 bg-red-50' : 'border-[#335CFF80] bg-[#F5F7FF]'} rounded-lg p-6 text-center hover:border-[#335CFF80] cursor-pointer w-full`}
                   onClick={handleUploadAreaClick}
                   onDragOver={handleDragOver}
@@ -583,18 +834,48 @@ export default function CreatePost({ onClose, editData }) {
                 {fileName && (
                   <div className="text-xs text-gray-700 mt-2">{t("brain_ai.selected_file")} <span className="font-medium">{fileName}</span></div>
                 )}
-                {errors.document && <div className="text-red-500 text-xs mt-1">{errors.document}</div>}
-                <div className="flex items-start justify-start mt-3">
-                  <label className="flex items-center gap-2 text-sm text-gray-700">
-                    <input type="checkbox" className="rounded border-gray-300 w-[21px] h-[21px]" />
-                    <span className="text-[#5A687C] text-[14px] leading-[23.8px]">{t("constance.post_photos_pdf")}</span>
-                  </label>
+                {errors.document && <div className="text-red-500 text-xs mt-1">{errors.document}</div>} */}
+                </div></div>
+              <div className="flex items-start justify-between flex-row mb-1">
+                <label className="flex items-center gap-2 text-sm text-gray-700">
+                  <input
+                    type="checkbox"
+                    className={`rounded border-gray-300 w-[16px] h-[16px] ${isChecked ? 'bg-[#675FFF] text-[#FFFFFF]' : 'bg-white'}`}
+                    onClick={() => setIsChecked(!isChecked)}
+                  />
+                  <span className="text-[#0A0D14] text-[14px] leading-[23.8px]">
+                    {t("constance.post_photos_pdf")}
+                  </span>
+                </label>
+
+                <div className="flex flex-row gap-[20px] max-h-[32px]">
+                  <div className="flex flex-row gap-[20px] items-center justify-center ">
+                    <img
+                      src={VideoClip}
+                      alt="Upload Video"
+                      className="w-6 h-6 cursor-pointer"
+                      onClick={openVideoPicker}
+                    />
+
+                    <img
+                      src={ImageUpload}
+                      alt="Upload Image"
+                      className="w-6 h-6 cursor-pointer"
+                      onClick={openImagePicker}
+                    />
+
+                  </div>
+                  {!editData && (<button
+                    disabled={isSaving?.publish} onClick={handlePublish}
+                    className={`bg-[#675FFF] items-center justify-center py-[6px] px-[10px] gap-[6px] rounded-[8px] text-white text-[13px] font-medium ${isSaving?.publish ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+                    {isSaving?.publish ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : t("publish")}
+                  </button>)}
                 </div>
               </div>
             </div>
 
             {/* Bottom Toolbar */}
-            <div className="flex flex-row items-center" style={{ width: "140px", height: "20px", gap: "4px" }}>
+            {/* <div className="flex flex-row items-center" style={{ width: "140px", height: "20px", gap: "4px" }}>
               <button className="p-2 cursor-pointer rounded" onClick={handleEditClick}>
                 <SquarePen className="w-4 h-4" />
               </button>
@@ -613,10 +894,10 @@ export default function CreatePost({ onClose, editData }) {
               <button className="p-2 cursor-pointer rounded">
                 <StarsIcon className="w-4 h-4" />
               </button>
-            </div>
+            </div> */}
 
             {/* Action Buttons at the bottom */}
-            <div className="flex flex-row justify-center items-center gap-[9px] border-t border-[#E1E4EA] w-full min-h-[88px] absolute bottom-0 left-0 right-0 p-[25px] box-border bg-white">
+            {/* <div className="flex flex-row justify-center items-center gap-[9px] border-t border-[#E1E4EA] w-full min-h-[88px] absolute bottom-0 left-0 right-0 p-[25px] box-border bg-white">
               <button className={`flex flex-row items-center justify-center gap-[10px] h-[38px] rounded-[7px] border-[1.5px] px-[20px] py-[7px] text-[#5A687C] bg-[#FFFFFF] font-medium ${isSaving?.draft ? 'cursor-not-allowed' : 'cursor-pointer'}`} onClick={handleSaveDraft} disabled={isSaving?.draft}>
                 {isSaving?.draft ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : t("draft")}
               </button>
@@ -628,18 +909,18 @@ export default function CreatePost({ onClose, editData }) {
               <button className="flex cursor-pointer flex-row items-center justify-center gap-[10px] min-w-[112px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#FFFFFF] bg-[#675FFF] font-medium" onClick={() => setShowDateTimePicker(true)}>
                 {t("schedule")}
               </button>
-            </div>
+            </div> */}
             {successMessage && <div className="text-green-600 text-sm mt-2 text-center">{successMessage}</div>}
             {errorMessage && <div className="text-red-600 text-sm mt-2 text-center">{errorMessage}</div>}
             {errors.general && <div className="text-red-500 text-sm mt-2">{errors.general}</div>}
           </div>
 
           {/* Right Post Preview */}
-          <div className="w-[287px] h-[726px] bg-white border-l border-[#E1E4EA] rounded-tr-[16px] rounded-br-[16px] p-4 flex flex-col">
+          {/* <div className="w-[287px] h-[726px] bg-white border-l border-[#E1E4EA] rounded-tr-[16px] rounded-br-[16px] p-4 flex flex-col">
             <div className="flex flex-col gap-[14px] w-full mb-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">{t("constance.post_preview")}</label>
-                {/* <div className="relative w-full h-[44px]">
+                <div className="relative w-full h-[44px]">
                   <SelectDropdown
                     name="platform-preview"
                     options={[
@@ -652,13 +933,11 @@ export default function CreatePost({ onClose, editData }) {
                     className="w-full"
                   />
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                </div> */}
+                </div> 
               </div>
             </div>
 
-            {/* Preview Content */}
             <div className="flex-1 flex flex-col gap-3 overflow-y-auto">
-              {/* Header (Instagram-like) */}
               {(text || getSelectedAccountLabel() || platform) && (
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -688,7 +967,6 @@ export default function CreatePost({ onClose, editData }) {
                 </div>
               </div>
               )}
-              {/* Image/Media Preview */}
               <div className="relative w-full h-[234px] rounded-md overflow-hidden flex items-center justify-center bg-gray-50 border border-gray-200 flex-shrink-0">
                 {preview ? (
                   previewMediaType === 'image' ? (
@@ -710,7 +988,6 @@ export default function CreatePost({ onClose, editData }) {
                       className="absolute inset-0 w-full h-full object-contain"
                     />
                   ) : (
-                    // Fallback for base64 checks if media type not set
                     (preview.startsWith("data:image") ? (
                       <img
                         src={preview}
@@ -734,7 +1011,6 @@ export default function CreatePost({ onClose, editData }) {
                 )}
               </div>
 
-              {/* Action row (Instagram-like) */}
               {(text || getSelectedAccountLabel()) && (
                 <div className="flex items-center justify-between mt-1">
                   <div className="flex items-center gap-3">
@@ -746,14 +1022,12 @@ export default function CreatePost({ onClose, editData }) {
                 </div>
               )}
 
-              {/* Likes */}
               {(text || getSelectedAccountLabel()) && (
                 <div className="text-sm font-semibold text-gray-900">
                   396 {t("likes") || "likes"}
                 </div>
               )}
 
-              {/* Caption Preview */}
               {(text || getSelectedAccountLabel()) && (
                 <div className="text-sm text-gray-800 whitespace-pre-wrap break-words">
                   <span className="font-semibold mr-2">{getSelectedAccountLabel() || "user_name"}</span>
@@ -762,7 +1036,7 @@ export default function CreatePost({ onClose, editData }) {
               )}
             </div>
 
-          </div>
+          </div> */}
         </div>
       </div>
       {showDateTimePicker && (

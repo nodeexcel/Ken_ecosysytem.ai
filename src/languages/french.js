@@ -187,6 +187,7 @@ const frenchTranslation = {
     add_contact: "Ajouter contact",
     all_contacts: "Tous les contacts",
     list: "Liste",
+    create_schedule : "Créer un planificateur",
     example_placeholder:
       "par exemple, newsletter mensuelle, prospects de vente, etc.",
     first_name_placeholder: "Entrez le prénom",
@@ -715,6 +716,7 @@ const frenchTranslation = {
     update_chat_name: "Mettre à jour le nom du chat",
     name_placeholder: "Entrez le nom",
     no_chat_history: "Pas encore d’historique de discussion",
+    no_chat_history_detail : "Commençons par poser des questions à notre expert",
     optimizing:
       "Souhaitez-vous des conseils pour optimiser votre flux de trésorerie ?",
     optimizing_key:
@@ -881,9 +883,9 @@ const frenchTranslation = {
     october: "Octobre",
     november: "Novembre",
     december: "Décembre",
-    month_view: "Vue mensuelle",
-    week_view: "Vue hebdomadaire",
-    day_view: "Vue journalière",
+    month_view: "Mensuelle",
+    week_view: "Hebdomadaire",
+    day_view: "Journalière",
     calendar: "Calendrier",
     generate_new_email: "Générer un nouvel e-mail",
   },
@@ -982,6 +984,7 @@ const frenchTranslation = {
     income_efficiently_key:
       "Comment organiser efficacement mes dépenses et mes revenus.",
     content_creation: "Création de contenu",
+    create_scheduler: "Créer un planificateur",
     constance: "Constance",
     scheduler: "Planificateur",
     youtube_descrp: "Générez un script pour une vidéo YouTube.",
@@ -1025,7 +1028,11 @@ const frenchTranslation = {
     hastags: "Hashtags",
     ai_assistance: "Assistance IA",
     post_photos_pdf: "Publier des photos au format PDF",
-    post_preview: "Aperçu de la publication"
+    post_preview: "Aperçu de la publication",
+    scheduler_para:"Planifiez, organisez et gérez toutes vos publications programmées dans un calendrier visuel.",
+    calendar : "Calendrier",
+    list_view  : "Vue en liste",
+    cancel:"Annuler"
 
   },
   calina: {
@@ -1188,7 +1195,7 @@ const frenchTranslation = {
   scheduled: "Planifié",
   terminated: "Terminé",
   draft: "Brouillon",
-  publish: "Publier",
+  publish: "Publier maintenant",
   schedule: "Planifier",
   paused: "En pause",
   email_statistics: "Statistiques des e-mails",

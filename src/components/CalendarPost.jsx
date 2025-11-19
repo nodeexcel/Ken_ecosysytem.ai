@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { ChevronLeft, ChevronRight, X } from "lucide-react"
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, X } from "lucide-react"
 import successImg from "../assets/svg/success.svg"
 // removed API fallback; events now come exclusively from props
 import { SelectDropdown } from "./Dropdown"
@@ -16,6 +16,7 @@ export default function CalendarPost({status=true, calenderData=[]}) {
   const [currentView, setCurrentView] = useState("month");
   const [newEvents, setNewEvents] = useState([]);
   const [loading, setLoading] = useState(true)
+  const [showMonths , setShowMonths] = useState(false);
 
 
   // Week view state
@@ -362,10 +363,10 @@ export default function CalendarPost({status=true, calenderData=[]}) {
     const days = getMonthData(currentYear, currentMonth)
 
     return (
-      <div className="grid grid-cols-7 border-t border-[#E1E4EA]">
+      <div className="grid grid-cols-7 border-t border-[#E1E4EA] max-h-[654px] overflow-y-auto">
         {/* Header row with days of the week */}
         {daysOfWeek.map((day) => (
-          <div key={day} className="py-2 text-center border-r border-b border-[#E1E4EA] font-medium text-sm">
+          <div key={day} className="py-2 uppercase text-[12px] max-h-[36px] text-center  border-b border-r border-[#E1E4EA] font-medium text-[#868C98]">
             {day}
           </div>
         ))}
@@ -379,7 +380,7 @@ export default function CalendarPost({status=true, calenderData=[]}) {
           return (
             <div
               key={index}
-              className={`min-h-[100px] p-2 border-r border-b border-[#E1E4EA] relative ${!day.isCurrentMonth ? "bg-[#F0EFFF]" : ""}`}
+              className={`h-[103px] px-[10px] py-[6px] border-r border-b border-[#E1E4EA] relative ${!day.isCurrentMonth ? "bg-[#F0EFFF]" : ""}`}
               onClick={() => {
                 setCurrentDay(day.day)
                 setCurrentMonth(day.month)
@@ -564,26 +565,128 @@ export default function CalendarPost({status=true, calenderData=[]}) {
   const renderCalendarHeader = () => {
     if (currentView === "month") {
       return (
-        <div className="flex justify-between bg-[#F9FAFB] rounded-t-2xl items-center p-4">
-          <h2 className="text-lg font-medium">
+        <div className="flex justify-between bg-[#FFFFFF] max-h-[64px] items-center px-[24px] py-[16px] border-b-[0.5px] border-[#E2E4E9] gap-[24px]">
+          {/* <div className="flex flex-row space-x-1 items-center justify-center"><h2 className="text-[18px] font-medium">
             {monthNames[currentMonth]} {currentYear}
           </h2>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] py-[6px] bg-white rounded-lg">
-              <button
-                onClick={handlePrevMonth}
-                className="p-1 rounded-md cursor-pointer hover:bg-gray-100"
-                aria-label="Previous month"
+            {showMonths ? (
+              <ChevronUp
+                className="w-[20px] h-[20px]"
+                onClick={() => setShowMonths(false)}
+              />
+            ) : (
+              <ChevronDown
+                className="w-[20px] h-[20px]"
+                onClick={() => setShowMonths(true)}
+              />
+            )}
+          </div> */}
+          <div className="relative flex flex-row space-x-1 items-center justify-center">
+
+  {/* LABEL: Month + Year */}
+  <h2
+    className="text-[18px] font-medium cursor-pointer"
+  >
+    {monthNames[currentMonth]} {currentYear}
+  </h2>
+
+  {/* TOGGLE ICON */}
+  {showMonths ? (
+    <ChevronUp
+      className="w-[20px] h-[20px] cursor-pointer"
+      onClick={() => setShowMonths(false)}
+    />
+  ) : (
+    <ChevronDown
+      className="w-[20px] h-[20px] cursor-pointer"
+      onClick={() => setShowMonths(true)}
+    />
+  )}
+
+  {/* MONTHS DROPDOWN PANEL */}
+  {showMonths && (
+    <div className="absolute top-full mt-2 bg-white w-[180px] rounded-lg shadow-lg border border-gray-200 z-50">
+
+      {/* YEAR CONTROLS */}
+      <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100">
+        <button
+          onClick={() => setCurrentYear(currentYear - 1)}
+          className="p-1 hover:bg-gray-100 rounded"
+        >
+          <ChevronUp className="h-4 w-4 rotate-180 text-[#5A687C]" />
+        </button>
+
+        <span className="text-[14px] font-medium text-[#1E1E1E]">
+          {currentYear}
+        </span>
+
+        <button
+          onClick={() => setCurrentYear(currentYear + 1)}
+          className="p-1 hover:bg-gray-100 rounded"
+        >
+          <ChevronUp className="h-4 w-4 text-[#5A687C]" />
+        </button>
+      </div>
+
+      {/* MONTH LIST */}
+      <ul className="max-h-[240px] overflow-auto py-1 px-2 flex flex-col gap-1">
+        {monthNames.map((monthName, idx) => (
+          <li
+            key={idx}
+            className={`
+              cursor-pointer select-none px-3 py-2 rounded-lg text-[14px]
+              ${idx === currentMonth
+                ? "bg-[#F4F5F6] text-[#675FFF] font-medium"
+                : "text-[#5A687C] hover:bg-[#F4F5F6] hover:text-[#675FFF]"
+              }
+            `}
+            onClick={() => {
+              setCurrentMonth(idx)
+              setShowMonths(false)
+            }}
+          >
+            {monthName}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+
+</div>
+
+          <div className="flex items-center gap-2 max-h-[32px]">
+
+            {/* SEARCH BAR */}
+            <div className="flex items-center w-[177px] h-[32px] bg-white rounded-[8px] border-[0.5px] border-[#D6D6D6] px-[6px] py-[6px] pl-[8px]">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="shrink-0"
               >
-                <ChevronLeft className="h-5 w-5 text-[#5A687C]" />
-              </button>
-              <span className="mx-2 text-[#5A687C]">
-                {monthNames[currentMonth]} {currentYear}
-              </span>
-              <button onClick={handleNextMonth} className="p-1 rounded-md cursor-pointer hover:bg-gray-100" aria-label="Next month">
-                <ChevronRight className="h-5 w-5 text-[#5A687C]" />
-              </button>
+                <path
+                  d="M13.5 13.5L10.751 10.751M10.751 10.751C11.6257 9.87635 12.1667 8.66802 12.1667 7.33333C12.1667 4.66396 10.0027 2.5 7.33333 2.5C4.66396 2.5 2.5 4.66396 2.5 7.33333C2.5 10.0027 4.66396 12.1667 7.33333 12.1667C8.66802 12.1667 9.87635 11.6257 10.751 10.751Z"
+                  stroke="#5A687C"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+
+              <input
+                type="text"
+                placeholder="Search"
+                className="
+        ml-2 w-full bg-transparent outline-none
+        text-[13px] leading-[20px] font-[400]
+        text-[#5A687C]
+      "
+              />
             </div>
+
+            {/* DROPDOWN */}
             <SelectDropdown
               name="calendar"
               options={calendarOptions}
@@ -592,15 +695,18 @@ export default function CalendarPost({status=true, calenderData=[]}) {
                 setCurrentView(updated)
               }}
               placeholder={t("emailings.select")}
-              className="w-[147px]"
+               className="
+      min-w-[96px] 
+      text-[13px] text-center"
             />
           </div>
+
         </div>
       )
     } else if (currentView === "week") {
       return (
-        <div className="flex justify-between bg-[#F9FAFB] rounded-t-2xl items-center p-4">
-          <h2 className="text-lg font-medium">
+        <div className="flex justify-between bg-[#FFFFFF] max-h-[64px] items-center px-[24px] py-[16px] border-b-[0.5px] border-[#E2E4E9] gap-[24px]">
+          <h2 className="text-[18px] font-medium cursor-pointer">
             {monthNames[currentMonth]} {currentYear} ({t("emailings.mon")} {selectedWeekStart} - {t("emailings.sun")} {selectedWeekEnd})
           </h2>
           <div className="flex items-center gap-2">
@@ -616,23 +722,23 @@ export default function CalendarPost({status=true, calenderData=[]}) {
               </button>
             </div>
 
-            <SelectDropdown
+           <SelectDropdown
               name="calendar"
               options={calendarOptions}
               value={currentView}
-              onChange={(updated) => {
-                setCurrentView(updated)
-              }}
-              placeholder={t("emailings.select")}
-              className="w-[147px]"
+              onChange={(updated) => setCurrentView(updated)}
+              placeholder={t('emailings.select')}
+          className="
+      min-w-[96px] 
+      text-[13px] text-center"
             />
           </div>
         </div>
       )
     } else {
       return (
-        <div className="flex justify-between bg-[#F9FAFB] rounded-t-2xl items-center p-4">
-          <h2 className="text-lg font-medium">
+        <div className="flex justify-between bg-[#FFFFFF] max-h-[64px] items-center px-[24px] py-[16px] border-b-[0.5px] border-[#E2E4E9] gap-[24px]">
+          <h2 className="text-[18px] font-medium cursor-pointer">
             {currentDay} {monthNames[currentMonth]} {currentYear}
           </h2>
           <div className="flex items-center gap-2">
@@ -648,15 +754,15 @@ export default function CalendarPost({status=true, calenderData=[]}) {
               </button>
             </div>
 
-            <SelectDropdown
+             <SelectDropdown
               name="calendar"
               options={calendarOptions}
               value={currentView}
-              onChange={(updated) => {
-                setCurrentView(updated)
-              }}
-              placeholder={t("emailings.select")}
-              className="w-[147px]"
+              onChange={(updated) => setCurrentView(updated)}
+              placeholder={t('emailings.select')}
+              className="
+      min-w-[96px] 
+      text-[13px] text-center"
             />
           </div>
         </div>
@@ -667,14 +773,30 @@ export default function CalendarPost({status=true, calenderData=[]}) {
   if (loading) return <p className="h-screen flex justify-center items-center"><span className="loader" /></p>
 
   return (
-    <div className="gap-6 h-screen overflow-auto py-4 pr-2">
-      {status && <h1 className="font-semibold text-[#1e1e1e] mb-5 text-2xl leading-8">Scheduler</h1>}
-      <div className="w-full  mx-auto bg-white rounded-xl border border-[#E1E4EA]">
-        {renderCalendarHeader()}
-        {currentView === "month" && renderMonthView()}
-        {currentView === "week" && renderWeekView()}
-        {currentView === "day" && renderDayView()}
-      </div>
-    </div>
+    // <div className="max-h-[718px] h-full w-full rounded-[12px] border-[0.5px] border-[#D6D6D6] bg-[#F7F7F8] flex flex-col">
+    //   {/* {status && <h1 className="font-semibold text-[#1e1e1e] mb-5 text-2xl leading-8">Scheduler</h1>} */}
+    //   <div className="w-full max-h-[718px]">
+    //     {renderCalendarHeader()}
+    //     {currentView === "month" && renderMonthView()}
+    //     {currentView === "week" && renderWeekView()}
+    //     {currentView === "day" && renderDayView()}
+    //   </div>
+    // </div>
+    <div className="h-[718px] w-full rounded-[12px] border border-[#D6D6D6] bg-[#F7F7F8] flex flex-col overflow-hidden">
+
+  {/* FIXED HEADER */}
+  <div className="shrink-0">
+    {renderCalendarHeader()}
+  </div>
+
+  {/* SCROLLABLE CONTENT */}
+  <div className="flex-1 overflow-y-auto scrollbar-none">
+    {currentView === "month" && renderMonthView()}
+    {currentView === "week" && renderWeekView()}
+    {currentView === "day" && renderDayView()}
+  </div>
+
+</div>
+
   )
 }
