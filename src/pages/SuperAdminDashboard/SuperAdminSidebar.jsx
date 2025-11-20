@@ -15,7 +15,7 @@ import { changeLanguage } from '../../api/profile';
 import i18n from '../../i18n';
 import lifeTimeImg from "../../assets/svg/eco_systeme_lifetime_commission.svg"
 import { useTranslation } from "react-i18next";
-import textLogo from '../../assets/svg/ecosysteme.ai_logo.svg'
+import textLogo from '../../assets/images/ecosysteme.ai_logo.png'
 import { discardSkillsData } from '../../store/agentSkillsSlice';
 
 const SuperAdminSidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {

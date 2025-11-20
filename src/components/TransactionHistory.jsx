@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import creditCardIcon from '../assets/svg/credit.svg'; // Replace with actual paths
+import creditCardIcon from '../assets/svg/credit.svg';
 import { getTransactionsHistory } from '../api/payment';
 import { PiCoinsThin } from 'react-icons/pi';
 

@@ -12,9 +12,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { emailState, loginSuccess } from "../store/authSlice";
 import { ChevronDown, Globe, X } from "lucide-react";
 import { PasswordLock } from "../icons/icons";
-import header from '../assets/svg/ecosysteme.ai_logo.png'
 import logo from '../assets/images/dashboard_logo.png'
-import Ecosystem from '../assets/svg/ecosysteme.ai_logo.png'
+import Ecosystem from '../assets/images/ecosysteme.ai_logo.png'
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -433,7 +432,7 @@ export default function Login() {
 
 
     return (
-        <div className="min-h-screen w-full bg-[#F7F7F8] flex flex-col items-center px-3 sm:px-4 py-2 sm:py-3 md:py-2 lg:py-4 gap-2 sm:gap-3 md:gap-2 lg:gap-4 overflow-y-auto">
+        <div className="min-h-screen w-full flex flex-col items-center px-3 sm:px-4 py-2 sm:py-3 md:py-2 lg:py-4 gap-2 sm:gap-3 md:gap-2 lg:gap-4 overflow-y-auto">
             <div className="w-full flex items-center justify-between">
                 <img src={Ecosystem} alt="logo" className="h-10 sm:h-11 md:h-12 lg:h-14 w-auto" />
                 <div className="relative" ref={languageMenuRef}>
@@ -456,9 +455,8 @@ export default function Login() {
                                         setSelectedLanguage(lang);
                                         setLanguageMenuOpen(false);
                                     }}
-                                    className={`w-full text-left px-4 py-2 text-xs sm:text-sm cursor-pointer hover:text-black ${
-                                        lang === selectedLanguage ? "text-[#675FFF] font-semibold" : "text-[#5A687C]"
-                                    }`}
+                                    className={`w-full text-left px-4 py-2 text-xs sm:text-sm cursor-pointer hover:text-black ${lang === selectedLanguage ? "text-[#675FFF] font-semibold" : "text-[#5A687C]"
+                                        }`}
                                 >
                                     {lang}
                                 </button>
@@ -467,6 +465,8 @@ export default function Login() {
                     )}
                 </div>
             </div>
+
+            {/**OTP */}
             <div className="bg-white/90 w-full max-w-[440px] max-h-[90vh] rounded-lg sm:rounded-xl shadow-2xl p-4 sm:p-5 md:p-6 lg:p-6 border border-white/60 relative overflow-hidden flex flex-col">
                 <div className="absolute inset-x-0 top-0 h-10 sm:h-40 bg-gradient-to-r from-[#E8FEFC] via-[#D4E5FC] to-[#E7E6FF] blur-2xl pointer-events-none" />
                 <div className="relative space-y-3 sm:space-y-4 md:space-y-3 lg:space-y-6 overflow-y-auto flex-1">
@@ -513,7 +513,7 @@ export default function Login() {
 
 
             {open && <div className="inter fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50 p-4">
-                <div className="bg-white max-h-[90vh] overflow-y-auto flex flex-col gap-3 sm:gap-4 w-full max-w-lg rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 relative">
+                <div className="bg-white max-h-[90vh] w-[408px] overflow-y-auto flex flex-col gap-3 sm:gap-4 max-w-lg rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 relative">
                     <button
                         onClick={() => {
                             setOpen(false)
@@ -521,7 +521,7 @@ export default function Login() {
                         }}
                         className="absolute cursor-pointer top-3 right-3 sm:top-4 sm:right-4 text-gray-500 hover:text-gray-800"
                     >
-                        <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                        {/* <X className="w-4 h-4 sm:w-5 sm:h-5" /> */}
                     </button>
 
                     {activeTabModal === "forgot-password" && <form onSubmit={handleForgot} className="space-y-3 sm:space-y-4 mt-4 sm:mt-6">
@@ -560,20 +560,50 @@ export default function Login() {
                         <p className="text-[#5A687C] text-center font-[400] text-xs sm:text-sm">Back to <span className="text-[#675FFF] font-[600] cursor-pointer"
                             onClick={handleBackToSignIn}>Sign In</span></p>
                     </form>}
-                    {activeTabModal === "verify-email" && <div div className="space-y-4 sm:space-y-6 mt-4 sm:mt-6">
-                        <div>
-                            <div className="flex justify-center">
-                                <img src={logo} alt="logo" className="h-9 w-8 sm:h-11 sm:w-10" />
+                    {activeTabModal === "verify-email" && (
+                        <div className="relative ">
+                            <div className="absolute -top-10 inset-x-0 h-24  bg-gradient-to-br from-indigo-300 via-purple-200 to-white  blur-[30px] rounded-t-2xl z-0" />
+                            <div className="relative z-10 space-y-4 sm:space-y-6 mt-1 sm:mt-6 pt-4 sm:pt-2">
+                                <div className="flex justify-center">
+                                    <img src={logo} alt="logo" className="h-9 w-9 sm:h-12 sm:w-11" />
+                                </div>
+
+                                <h2 className="text-xl sm:text-2xl md:text-[28px] font-inter font-semibold text-center text-[#292D32]">
+                                    Verify Your Email
+                                </h2>
+
+                                <div className="flex flex-col px-8">
+                                    <p className="text-sm sm:text-base text-center font-[400] text-[#292D32]">
+                                        A confirmation link has been sent to
+                                        <span className="font-bold"> {email}. </span>
+                                        Click the link to complete verification.
+                                    </p>
+                                </div>
+
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        window.location.href = `mailto:${email}`;
+                                    }}
+                                    className="w-full bg-[#675FFF] hover:bg-[#5A52F0] text-white py-2.5 sm:py-[14px]  rounded-lg sm:rounded-[8px] font-semibold text-sm sm:text-base transition cursor-pointer" >
+                                    Open Email App
+                                </button>
+
+                                <p className="text-[#5A687C] text-center font-[400] text-xs sm:text-sm">
+                                    Didn't get the email?{" "}
+                                    <span
+                                        onClick={handleForgot}
+                                        disabled={forgotLoading}
+                                        className={`text-[#675FFF] cursor-pointer font-[600] ${forgotLoading ? 'opacity-50' : ''}`}
+                                    >
+                                        {forgotLoading ? <span className="loader" /> : 'Resend Link'}
+                                    </span>
+                                </p>
+
                             </div>
-                            <h2 className="text-xl sm:text-2xl md:text-[28px] font-[700] text-center text-[#292D32]">Verify Email</h2>
                         </div>
-                        <div className="flex flex-col gap-3 sm:gap-4">
-                            <p className="text-sm sm:text-base font-[500] text-center text-[#292D32]">Please check your mail!</p>
-                            <p className="text-sm sm:text-base text-center font-[400] text-[#5A687C]">We send Reset Password Link on: <br /><span className="text-[#675FFF]">{email}</span></p>
-                            <p className="text-[#5A687C] text-center font-[400] text-xs sm:text-sm">Didn't received link: <span disabled={forgotLoading} className="text-[#675FFF] cursor-pointer"
-                                onClick={handleForgot}>{forgotLoading ? <span className="loader" /> : 'Send Again'}</span></p>
-                        </div>
-                    </div>}
+
+                    )}
 
 
                 </div>

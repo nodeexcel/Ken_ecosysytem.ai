@@ -1,4 +1,4 @@
-import { CheckCircle2, CircleUserRound, CreditCardIcon, EllipsisVertical,Wallet, EyeIcon, EyeOffIcon, House, Pencil, SettingsIcon, Upload, UsersIcon, X, XCircle, UsersRound } from "lucide-react";
+import { CheckCircle2, CircleUserRound, CreditCardIcon, EllipsisVertical, Wallet, EyeIcon, EyeOffIcon, House, Pencil, SettingsIcon, Upload, UsersIcon, X, XCircle, UsersRound, Search, Plus, EllipsisIcon } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md';
 import profile_pic from '../../assets/images/profile.png';
@@ -73,7 +73,7 @@ const THEME_OPTIONS = [
   },
 ];
 
-const LANGUAGE_OPTIONS = ["English (US)", "English (UK)", "French", "Spanish"];
+const LANGUAGE_OPTIONS = ["English (US)", "French"];
 const TIMEZONE_OPTIONS = [
   "GMT +7 (Bangkok, Jakarta)",
   "GMT +5:30 (Delhi)",
@@ -92,6 +92,7 @@ const SettingsPage = () => {
 
   const [activeSidebarItem, setActiveSidebarItem] = useState("my-profile");
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [userToEdit, setUserToEdit] = useState(null);
   const [formData, setFormData] = useState({
@@ -149,8 +150,6 @@ const SettingsPage = () => {
     { key: "app", title: "Authenticator App", description: "Use an authenticator app to generate codes" },
   ]
 
-
-
   const token = useSelector((state) => state.auth.token);
 
   const [updateLoading, setUpdateLoading] = useState(false)
@@ -184,16 +183,19 @@ const SettingsPage = () => {
   useEffect(() => {
     const view = searchParams.get('view');
     const tab = searchParams.get('tab');
-    if (view === 'manage-plan' && activeSidebarItem === 'billing') {
+
+    // Only react to URL param changes, not activeSidebarItem changes
+    if (view === 'manage-plan') {
       setShowManagePlan(true);
-    } else if (view !== 'manage-plan') {
-      setShowManagePlan(false);
-    }
-    if (tab === 'billing' && !view) {
+      setActiveSidebarItem('billing');
+    } else if (tab === 'billing' && !view) {
       setActiveSidebarItem('billing');
       setShowManagePlan(false);
+    } else if (!view && !tab) {
+      // If no params, don't override the activeSidebarItem
+      setShowManagePlan(false);
     }
-  }, [searchParams, activeSidebarItem])
+  }, [searchParams])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -212,9 +214,9 @@ const SettingsPage = () => {
         const clickedElement = event.target;
         // Check if click is inside the dropdown menu
         const isDropdownClick = clickedElement.closest('[data-dropdown]');
-        // Check if click is on the three dots button or within the table cell containing the dropdown
-        const isTriggerClick = clickedElement.closest('td.bg-\\[\\#F7F7F8\\]') ||
-          clickedElement.closest('td[class*="bg-[#F7F7F8]"]');
+        // Check if click is on the three dots button (EllipsisIcon or its parent button)
+        const isTriggerClick = clickedElement.closest('button')?.querySelector('svg') ||
+          clickedElement.closest('button[class*="border"]');
 
         if (!isDropdownClick && !isTriggerClick) {
           setActiveDropdown(null);
@@ -260,6 +262,9 @@ const SettingsPage = () => {
   })
   const [editMemberErrors, setEditMemberErrors] = useState({})
   const [updateMemberLoading, setUpdateMemberLoading] = useState(false)
+  const [teamSearchQuery, setTeamSearchQuery] = useState("")
+  const [teamCurrentPage, setTeamCurrentPage] = useState(1)
+  const [teamRowsPerPage, setTeamRowsPerPage] = useState(5)
 
   const users = useSelector((state) => state.auth);
 
@@ -577,9 +582,18 @@ const SettingsPage = () => {
     }));
   };
 
-  const handleDropdownClick = (index) => {
-
-    setActiveDropdown(activeDropdown === index ? null : index);
+  const handleDropdownClick = (index, event) => {
+    if (activeDropdown === index) {
+      setActiveDropdown(null);
+    } else {
+      const button = event.currentTarget;
+      const rect = button.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY + 4,
+        right: window.innerWidth - rect.right + window.scrollX
+      });
+      setActiveDropdown(index);
+    }
   };
 
   const handleInvite = async () => {
@@ -700,12 +714,15 @@ const SettingsPage = () => {
   }
 
   const handleInviteTeam = () => {
-    if (userDetails?.user?.subscriptionType === "pro") {
-      setActiveSidebarItem("billing")
-      setShowPlanPopup(true)
-    } else {
-      setOpen(true)
-    }
+    // Reset form state when opening invite modal
+    setEmailInvite("");
+    setEmailInviteRole("");
+    setInviteErrors({});
+    setSuccess((prev) => ({ ...prev, emailInvite: "" }));
+
+    // Always open the invite modal
+    // The limit check will be handled in handleInvite function
+    setOpen(true);
   }
 
   const handleAddSeatsTeam = () => {
@@ -737,10 +754,10 @@ const SettingsPage = () => {
     // } else {
     // Reset Manage Plan view when switching sections
     setShowManagePlan(false);
-    
+
     // Update active sidebar item
     setActiveSidebarItem(value);
-    
+
     // Clear or update URL params based on selected section
     if (value === "billing") {
       // When clicking billing, show main Plan & Billing page (not Manage Plan)
@@ -754,12 +771,72 @@ const SettingsPage = () => {
 
   const handleChangeRole = (value) => {
     setRole(value);
+    setTeamCurrentPage(1); // Reset to first page when filter changes
     if (value !== "All") {
       const filterData = teamMembersData?.membersData?.filter((e) => e.role === value)
       setFilteredMembers(filterData)
     } else {
       setFilteredMembers(teamMembersData?.membersData)
     }
+  }
+
+  // Search and filter team members
+  const getFilteredAndSearchedMembers = () => {
+    let result = filteredMembers || [];
+
+    // Apply search filter
+    if (teamSearchQuery.trim()) {
+      const query = teamSearchQuery.toLowerCase();
+      result = result.filter((member) => {
+        const fullName = `${member.firstName || ''} ${member.lastName || ''}`.toLowerCase();
+        return (
+          fullName.includes(query) ||
+          member.email?.toLowerCase().includes(query) ||
+          member.role?.toLowerCase().includes(query)
+        );
+      });
+    }
+
+    return result;
+  }
+
+  // Pagination helpers
+  const getTeamPageNumbers = () => {
+    const totalPages = Math.ceil(getFilteredAndSearchedMembers().length / teamRowsPerPage);
+    const pages = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+      if (teamCurrentPage > 3) pages.push("...");
+      for (let i = Math.max(2, teamCurrentPage - 1); i <= Math.min(totalPages - 1, teamCurrentPage + 1); i++) {
+        pages.push(i);
+      }
+      if (teamCurrentPage < totalPages - 2) pages.push("...");
+      pages.push(totalPages);
+    }
+    return pages;
+  }
+
+  const getPaginatedTeamMembers = () => {
+    const filtered = getFilteredAndSearchedMembers();
+    const startIndex = (teamCurrentPage - 1) * teamRowsPerPage;
+    const endIndex = startIndex + teamRowsPerPage;
+    return filtered.slice(startIndex, endIndex);
+  }
+
+  // Generate avatar colors for agents
+  const getAvatarColor = (index) => {
+    const colors = [
+      'bg-[#EBEFFF] text-[#675FFF]',
+      'bg-[#EBF9EE] text-[#34C759]',
+      'bg-[#FFF4E6] text-[#FF9500]',
+      'bg-[#F3E8FF] text-[#9B59B6]',
+      'bg-[#FFE6E6] text-[#FF6B6B]'
+    ];
+    return colors[index % colors.length];
   }
 
   const handleSearch = (e) => {
@@ -924,7 +1001,7 @@ const SettingsPage = () => {
             <hr className="border border-gray-200 w-full px-4 mx-4" />
 
             {/* Profile Form */}
-            <div className="w-full  bg-[#F7F7F8] p-5">
+            <div className="w-full p-5">
               <div className="grid md:grid-cols-[40%_60%] gap-4 pb-2">
                 <div>
                   <h3 className="text-[#1E1E1E] text-[16px] font-[600]">
@@ -1092,7 +1169,7 @@ const SettingsPage = () => {
               </div>
               <hr className="border border-gray-200 w-full mx-2" />
               {/* Security */}
-              <div className="w-full bg-[#F6F6F7] p-5 mt-6">
+              <div className="w-full p-5 mt-6">
                 <div className="grid md:grid-cols-[40%_60%] gap-4">
                   <div>
                     <h3 className="text-[#1E1E1E] text-[16px] font-[600]">Security</h3>
@@ -1185,11 +1262,11 @@ const SettingsPage = () => {
               </button>
             </div> */}
           </div>
-          
 
-      
+
+
         </div>
-        
+
       );
     }
 
@@ -1207,192 +1284,433 @@ const SettingsPage = () => {
       }
       // Otherwise show the Plan & Billing section
       return (
-        <div className="flex py-3 pr-4 flex-col h-full w-full gap-6">
+        <div className="flex py-6 pr-4 flex-col h-full w-full gap-6">
           <Plan t={t} teamMembersData={teamMembersData} setActiveSidebarItem={setActiveSidebarItem} showPlanPopup={showPlanPopup} setShowPlanPopup={setShowPlanPopup} handleAddSeatsTeam={handleAddSeatsTeam} setShowManagePlan={setShowManagePlan} setSearchParams={setSearchParams} />
         </div>
       );
     }
 
     else if (activeSidebarItem === "team") {
+      const paginatedMembers = getPaginatedTeamMembers();
+      const totalTeamPages = Math.ceil(getFilteredAndSearchedMembers().length / teamRowsPerPage);
+      const avatarColors = [
+        'bg-[#EBEFFF] text-[#675FFF]',
+        'bg-[#EBF9EE] text-[#34C759]',
+        'bg-[#FFF4E6] text-[#FF9500]',
+        'bg-[#F3E8FF] text-[#9B59B6]',
+        'bg-[#FFE6E6] text-[#FF6B6B]'
+      ];
+
       return (
         <>
-          <div className="w-full py-4 flex flex-col gap-3 pr-4">
-            <div className="flex justify-between">
-              <h1 className="text-[#1E1E1E] font-semibold text-[20px] md:text-[24px]">{t("settings.tab_3")}</h1>
-              <button className="bg-[#5E54FF] cursor-pointer text-white rounded-md text-[14px] md:text-[16px] p-2" onClick={handleInviteTeam}>{t("settings.tab_3_list.invite_team_member")}</button>
+          <div className="w-full pr-4 flex flex-col h-full gap-6 px-6 py-6">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="flex flex-col gap-1">
+                <h1 className="text-md text-2xl font-[600] text-[#1E1E1E]">
+                  {t("settings.tab_3")}
+                </h1>
+                <p className="text-[14px] sm:text-[16px] text-[#5A687C] font-[400]">
+                  Manage access and collaboration across your workspace.
+                </p>
+              </div>
+              <button
+                className="flex items-center gap-2 bg-[#675FFF] hover:bg-[#5E54FF] text-white rounded-lg px-4 py-2 text-[14px] font-[500] transition-colors"
+                onClick={handleInviteTeam}
+              >
+                <Plus className="w-4 h-4" />
+                {t("settings.tab_3_list.invite_team_member")}
+              </button>
             </div>
-            <div className="flex justify-between">
-              <SelectDropdown
-                name="role"
-                options={roleOptions}
-                value={role}
-                onChange={(updated) => {
-                  handleChangeRole(updated)
-                }}
-                placeholder={t("brain_ai.select")}
-                className="w-[157px]"
-                extraName={t("settings.tab_3_list.role")}
-              />
-              <div onClick={() => renderTeamMembers(role)} className="flex items-center px-3 gap-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-[8px] py-[8px]">
-                <RefreshIcon />
-                <button className="text-[16px] cursor-pointer text-[#5A687C]">
+
+            {/* Filters and Search */}
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              {/* Filter Tabs */}
+              <div className="flex gap-2 bg-[#F2F2F7] p-0.5 rounded-lg border border-[#E6E6E7]">
+                {roleOptions.map((option) => (
+                  <button
+                    key={option.key}
+                    onClick={() => handleChangeRole(option.key)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${role === option.key
+                        ? "bg-white text-[#1E1E1E] shadow-sm"
+                        : "bg-transparent text-[#5A687C]"
+                      }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Search and Refresh */}
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <Search
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-black stroke-black w-4 h-4"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    value={teamSearchQuery}
+                    onChange={(e) => {
+                      setTeamSearchQuery(e.target.value);
+                      setTeamCurrentPage(1);
+                    }}
+                    className="pl-10 pr-4 py-2 border bg-white border-[#E1E4EA] rounded-lg text-[14px] text-black focus:outline-none focus:border-[#675FFF] w-full sm:w-[200px]"
+                  />
+                </div>
+                <button
+                  onClick={() => renderTeamMembers(role)}
+                  className="flex items-center gap-2 px-3 py-2 bg-white border border-[#E1E4EA] rounded-lg text-black text-sm font-semibold hover:bg-gray-50 transition-colors"
+                >
+                  <RefreshIcon />
                   {t("refresh")}
                 </button>
               </div>
             </div>
-            <div className="overflow-auto" style={{ overflow: activeDropdown !== null ? 'visible' : 'auto' }}>
-              <table className="min-w-full border-separate border-spacing-y-3" style={{ overflow: activeDropdown !== null ? 'visible' : 'auto' }}>
-                <thead className="bg-transparent">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]"> {t("settings.tab_3_list.name")}</th>
-                    <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]"> {t("settings.tab_3_list.email")}</th>
-                    <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]"> {t("settings.tab_3_list.role")}</th>
-                    <th className="px-6 py-3 text-left text-[16px] font-medium text-[#5A687C]"> {t("settings.tab_3_list.agents")}</th>
-                    {/* <th className="px-6 py-3"></th> */}
-                  </tr>
-                </thead>
-                <tbody className=" rounded-lg">
 
-                  {teamMembersDataLoading ? <tr className='h-34'><td></td><td></td><td><span className='loader' /></td></tr> : teamMembersDataMessage ? <tr className='h-34'><td></td><td></td><td>{teamMembersDataMessage}</td></tr> : <>{filteredMembers?.length > 0 ? filteredMembers?.map((user, index) => (
-                    <tr key={index} className="bg-white">
-                      <td className="px-6 py-4 whitespace-nowrap flex items-center gap-3 border-l-1 border-t-1 border-b-1 border-[#E1E4EA] rounded-l-lg">
-                        <div className="w-10 h-10 p-2 bg-[#EEFFFB] text-[#5E54FF] rounded-xl flex items-center justify-center font-[600] text-[16px]">
-                          {user.firstName !== null ? user.firstName[0] : user.email[0]}{""}{user.lastName !== null && user.lastName[0]}
-                        </div>
-                        <span className="font-[600] text-[16px] text-[#1E1E1E]">{user.firstName !== null && user.firstName}{" "}{user.lastName !== null && user.lastName}</span>
-                      </td>
-                      <td className="px-6 py-4 text-[16px] font-[400] text-[#5A687C] border-t-1 border-b-1 border-[#E1E4EA]">{user.email}</td>
-                      <td className="px-6 py-4 text-[16px] font-[400] text-[#5A687C] border-t-1 border-b-1 border-[#E1E4EA]">{user.role}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700 border-r-1 border-t-1 border-b-1 rounded-r-lg border-[#E1E4EA]">
-                        {/* <select
-                          className="w-full bg-white  rounded-md px-2 py-1"
-                          value={user.assigned[0]}
-                          onChange={(e) => {
-                            // Handle agent selection change
-                            console.log('Selected agent:', e.target.value);
-                          }}
-                        >
-                          {user.assigned.map((agent, idx) => (
-                            <option key={idx} value={agent}>
-                              {agent}
-                            </option>
-                          ))}
-                        </select> */}
-                      </td>
-                      {user?.role.toLowerCase() !== 'admin' && (
-                        <td className="text-center bg-[#F7F7F8] relative" style={{ overflow: 'visible' }}>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDropdownClick(index);
-                              setUserToEdit(user);
-                              console.log(user);
-                            }}
-                            className="text-gray-500 cursor-pointer hover:text-gray-700"
-                          >
-                            <EllipsisVertical />
-                          </button>
-                          {activeDropdown === index && (
-                            <div ref={dropdownRef} data-dropdown className="absolute right-0 top-full mt-1 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[9999]">
-                              <div className="py-1">
-                                <button
-                                  className="block group w-full cursor-pointer text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setUserToEdit(user);
-                                    setEditMemberFormData({
-                                      email: user.email,
-                                      role: user.role
-                                    });
-                                    setEditMemberErrors({});
-                                    setEditTeamMemberModal(true);
-                                    setActiveDropdown(null);
-                                  }}
-                                >
-                                  <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span> {t("edit")}</span> </div>
-                                </button>
-                                <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                                <div className="py-2">
+            {/* Table */}
+            <div className="bg-white rounded-xl border border-[#D6D6D6] overflow-hidden">
+              <div className="overflow-x-auto overflow-y-visible">
+                <table className="min-w-full border-separate border-spacing-0">
+                  <thead className="bg-[#F7F7F8]">
+                    <tr>
+                      <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">{t("settings.tab_3_list.name")}</th>
+                      <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">{t("settings.tab_3_list.email")}</th>
+                      <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">{t("settings.tab_3_list.role")}</th>
+                      <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">{t("settings.tab_3_list.agents")}</th>
+                      <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
+                    {teamMembersDataLoading ? (
+                      <tr>
+                        <td colSpan={5} className="px-6 py-8 text-center">
+                          <span className="loader" />
+                        </td>
+                      </tr>
+                    ) : teamMembersDataMessage ? (
+                      <tr>
+                        <td colSpan={5} className="px-6 py-8 text-center text-[#5A687C]">
+                          {teamMembersDataMessage}
+                        </td>
+                      </tr>
+                    ) : paginatedMembers.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="px-6 py-8 text-center text-[#5A687C]">
+                          {t("no_data")}
+                        </td>
+                      </tr>
+                    ) : (
+                      paginatedMembers.map((user, index) => {
+                        const userInitials = `${user.firstName?.[0] || user.email[0]}${user.lastName?.[0] || ''}`.toUpperCase();
+                        const colorIndex = index % avatarColors.length;
+                        const userAvatarColor = avatarColors[colorIndex];
+
+                        return (
+                          <tr key={index} className="text-left">
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-3">
+                                <div className={`flex justify-center items-center rounded-full h-[40px] w-[40px] text-[16px] font-[600] ${userAvatarColor}`}>
+                                  {userInitials}
+                                </div>
+                                <span className="text-[16px] font-[600] text-[#1E1E1E]">
+                                  {user.firstName || ''} {user.lastName || ''}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-[16px] font-[400] text-[#1E1E1E]">
+                              {user.email}
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[14px] font-[500] text-[#5A687C] bg-[#EFF0F2] border border-[#E0E2E5]">
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#5A687C]"></span>
+                                {user.role}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-2">
+                                {[0, 1, 2].map((agentIndex) => (
+                                  <div
+                                    key={agentIndex}
+                                    className={`flex justify-center items-center rounded-full h-[32px] w-[32px] text-[12px] font-[600] ${getAvatarColor(agentIndex)}`}
+                                  >
+                                    {String.fromCharCode(65 + agentIndex)}
+                                  </div>
+                                ))}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 relative">
+                              {user?.role?.toLowerCase() !== 'admin' && (
+                                <>
                                   <button
-                                    className="block w-full cursor-pointer text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      setIsDeleteOpen(true);
-                                      setActiveDropdown(null);
+                                      handleDropdownClick(index, e);
+                                      setUserToEdit(user);
                                     }}
+                                    className="text-black shadow-sm hover:text-gray-700 cursor-pointer border border-[#D6D6D6] rounded-lg p-2"
                                   >
-                                    <div className="flex items-center gap-2">{<Delete />} <span> {t("delete")}</span> </div>
+                                    <EllipsisIcon className="w-4 h-4" />
                                   </button>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </td>
-                      )}
-                    </tr>
-                  )) : <tr className='h-34'><td></td><td></td><td>{t("no_data")}</td></tr>}</>}
-                </tbody>
-              </table>
-            </div>
+                                </>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
 
+              {/* Dropdown rendered outside table */}
+              {activeDropdown !== null && paginatedMembers[activeDropdown] && (() => {
+                const selectedUser = paginatedMembers[activeDropdown];
+                return (
+                  <div
+                    ref={dropdownRef}
+                    data-dropdown
+                    className="fixed px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[9999]"
+                    style={{
+                      top: `${dropdownPosition.top}px`,
+                      right: `${dropdownPosition.right}px`
+                    }}
+                  >
+                    <div className="py-1">
+                      <button
+                        className="block group w-full cursor-pointer text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setUserToEdit(selectedUser);
+                          setEditMemberFormData({
+                            email: selectedUser.email,
+                            role: selectedUser.role
+                          });
+                          setEditMemberErrors({});
+                          setEditTeamMemberModal(true);
+                          setActiveDropdown(null);
+                        }}
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className='group-hover:hidden'><Edit /></div>
+                          <div className='hidden group-hover:block'><Edit status={true} /></div>
+                          <span>{t("edit")}</span>
+                        </div>
+                      </button>
+                      <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                      <div className="py-2">
+                        <button
+                          className="block w-full cursor-pointer text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsDeleteOpen(true);
+                            setActiveDropdown(null);
+                          }}
+                        >
+                          <div className="flex items-center gap-2">
+                            {<Delete />}
+                            <span>{t("delete")}</span>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Pagination */}
+              {getFilteredAndSearchedMembers().length > 0 && (
+                <div className="flex items-center justify-between bg-[#F7F7F8] px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setTeamCurrentPage((prev) => Math.max(1, prev - 1))}
+                      disabled={teamCurrentPage === 1}
+                      className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      ‹ Prev
+                    </button>
+                    {getTeamPageNumbers().map((page, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => typeof page === "number" && setTeamCurrentPage(page)}
+                        disabled={page === "..."}
+                        className={`rounded-lg px-3 py-1 text-sm cursor-pointer ${page === teamCurrentPage
+                            ? "bg-[#675FFF] text-white"
+                            : page === "..."
+                              ? "text-[#000000] cursor-default"
+                              : "border border-[#D6D6D6] text-[#000000] bg-white hover:bg-gray-50"
+                          }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => setTeamCurrentPage((prev) => Math.min(totalTeamPages, prev + 1))}
+                      disabled={teamCurrentPage === totalTeamPages}
+                      className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Next ›
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-sm text-[#5A687C]">
+                    <button
+                      onClick={() => {
+                        setTeamRowsPerPage(5);
+                        setTeamCurrentPage(1);
+                      }}
+                      className={`border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] cursor-pointer ${teamRowsPerPage === 5 ? "bg-white" : "bg-transparent hover:bg-white"
+                        }`}
+                    >
+                      5 rows
+                    </button>
+                    <button
+                      onClick={() => {
+                        setTeamRowsPerPage(10);
+                        setTeamCurrentPage(1);
+                      }}
+                      className={`border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] cursor-pointer ${teamRowsPerPage === 10 ? "bg-white" : "bg-transparent hover:bg-white"
+                        }`}
+                    >
+                      10
+                    </button>
+                    <button
+                      onClick={() => {
+                        setTeamRowsPerPage(20);
+                        setTeamCurrentPage(1);
+                      }}
+                      className={`border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] cursor-pointer ${teamRowsPerPage === 20 ? "bg-white" : "bg-transparent hover:bg-white"
+                        }`}
+                    >
+                      20
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {open && (
-            <div className="fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
-              <div className="bg-white max-h-[364px] flex flex-col gap-3 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
-                <button
-                  onClick={() => {
-                    setInviteErrors({})
-                    setOpen(false)
-                  }}
-                  className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-
-                <h2 className="text-[#1E1E1E] font-semibold text-[20px] mb-2">{t("settings.tab_3_list.invite_team_member")}</h2>
-
-                <div>
-                  <label className="block text-[14px] font-medium text-[#292D32] mb-1"> {t("settings.tab_3_list.email_address")}</label>
-                  <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] rounded-[8px] px-4 py-2">
-                    <input
-                      type="email"
-                      placeholder={t("settings.tab_3_list.email_placeholder")}
-                      value={emailInvite}
-                      onChange={(e) => {
-                        setEmailInvite(e.target.value)
-                        setInviteErrors({})
-                      }}
-                      className="w-full focus:outline-none"
-                    />
-                  </div>
-                  {inviteErrors.email && <p className="text-sm text-red-500 mt-1">{inviteErrors.email}</p>}
-                  <label className="block my-2 text-[14px] font-medium text-[#292D32]">{t("settings.tab_3_list.invite_as")}</label>
-                  < SelectDropdown
-                    name="role_options"
-                    options={roleEmailOptions}
-                    value={emailInviteRole}
-                    onChange={(updated) => {
-                      setEmailInviteRole(updated)
+            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+              <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl relative">
+                {/* Header */}
+                <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-[#E1E4EA]">
+                  <h2 className="text-[#1E1E1E] font-semibold text-xl leading-6">
+                    {t("settings.tab_3_list.invite_team_member")}
+                  </h2>
+                  <button
+                    onClick={() => {
+                      setInviteErrors({})
+                      setOpen(false)
                     }}
-                    placeholder={t("brain_ai.select")}
-                    className=""
-                  />
+                    className="cursor-pointer p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                    aria-label="Close"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
 
-                {inviteErrors.limit && <p className="text-sm text-red-500 mt-1">{inviteErrors.limit}</p>}
-                {inviteErrors.inviteError && <p className="text-sm text-red-500 mt-1">{inviteErrors.inviteError}</p>}
-                {success.emailInvite && <p className="text-sm text-green-500 mt-1">{success.emailInvite}</p>}
+                {/* Content */}
+                <div className="px-6 pb-6 pt-4">
+                  {/* Email and Invite As - Side by Side */}
+                  <div className="flex gap-4 mb-4">
+                    {/* Email Input */}
+                    <div className="w-[70%] space-y-1.5">
+                      <label className="block text-sm font-medium text-[#868C98]">
+                        {t("settings.tab_3_list.email_address")}
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="email"
+                          placeholder={t("settings.tab_3_list.email_placeholder")}
+                          value={emailInvite}
+                          onChange={(e) => {
+                            setEmailInvite(e.target.value)
+                            setInviteErrors({})
+                          }}
+                          className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#675FFF]/20 transition-all ${inviteErrors.email
+                              ? "border-red-300 focus:border-red-500"
+                              : "border-[#E1E4EA] focus:border-[#675FFF]"
+                            }`}
+                        />
+                      </div>
+                      {inviteErrors.email && (
+                        <p className="text-xs text-red-500 mt-1">{inviteErrors.email}</p>
+                      )}
+                      {/* Add New Member Link */}
+                      <button
+                        onClick={() => {
+                          setEmailInvite("")
+                          setEmailInviteRole("")
+                          setInviteErrors({})
+                        }}
+                        className="flex items-center gap-1 cursor-pointer text-[#675FFF] text-sm font-medium mt-6 hover:text-[#5E54FF] transition-colors"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Add New Member
+                      </button>
+                    </div>
 
-                <div className="flex gap-2 mt-3">
-                  <button onClick={() => {
-                    setOpen(false)
-                    setInviteErrors({})
-                  }} className="w-full text-[16px] cursor-pointer  text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
-                    {t("settings.tab_3_list.close")}
+                    {/* Role Dropdown */}
+                    <div className="w-[30%] space-y-1.5">
+                      <label className="block text-sm font-medium text-[#868C98]">
+                        {t("settings.tab_3_list.invite_as")}
+                      </label>
+                      <SelectDropdown
+                        name="role_options"
+                        options={roleEmailOptions}
+                        value={emailInviteRole}
+                        onChange={(updated) => {
+                          setEmailInviteRole(updated)
+                        }}
+                        placeholder={t("brain_ai.select")}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Error/Success Messages */}
+                  <div className="space-y-1 mb-4">
+                    {inviteErrors.limit && (
+                      <p className="text-xs text-red-500">{inviteErrors.limit}</p>
+                    )}
+                    {inviteErrors.inviteError && (
+                      <p className="text-xs text-red-500">{inviteErrors.inviteError}</p>
+                    )}
+                    {success.emailInvite && (
+                      <p className="text-xs text-green-600">{success.emailInvite}</p>
+                    )}
+                  </div>
+
+                  {/* Footer Actions */}
+
+                </div>
+                <div className="flex gap-3 justify-end px-6 pb-4 pt-4 border-t border-[#E1E4EA]">
+                  <button
+                    onClick={() => {
+                      setOpen(false)
+                      setInviteErrors({})
+                    }}
+                    className="px-4 py-2.5 text-base font-medium text-[#5A687C] cursor-pointer bg-white border border-[#E1E4EA] rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    {t("settings.tab_1_list.cancel")}
                   </button>
-                  <button onClick={handleInvite} className={`w-full cursor-pointer  text-[16px] text-white rounded-[8px] ${inviteEmailLoading ? "bg-[#5f54ff98]" : " bg-[#5E54FF]"} h-[38px]`}>
-                    {inviteEmailLoading ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : `${t("settings.tab_3_list.invite")}`}
+                  <button
+                    onClick={handleInvite}
+                    disabled={inviteEmailLoading}
+                    className={`px-4 py-2.5 text-base cursor-pointer font-medium text-white rounded-lg transition-all ${inviteEmailLoading
+                        ? "bg-[#5f54ff98] cursor-not-allowed"
+                        : "bg-[#5E54FF] hover:bg-[#4d44e6] active:scale-[0.98]"
+                      }`}
+                  >
+                    {inviteEmailLoading ? (
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="loader" />
+                        <span>{t("processing")}</span>
+                      </div>
+                    ) : (
+                      t("settings.tab_3_list.invite")
+                    )}
                   </button>
                 </div>
               </div>
@@ -1407,9 +1725,9 @@ const SettingsPage = () => {
     }
 
     return (
-      <div className="flex flex-col gap-6 w-full px-4 py-4">
-        <div className="bg-[#F7F7F8] overflow-hidden">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 px-6 py-6 border-b border-[#d1d3db]">
+      <div className="flex flex-col gap-6 w-full px-3 py-2">
+        <div className="overflow-hidden">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 px-6 py-6 ">
             <div className="space-y-2">
               <h2 className="text-2xl font-semibold text-[#1E1E1E]">General Settings</h2>
               <p className="text-md text-[#5A687C] max-w-2xl">
@@ -1430,176 +1748,197 @@ const SettingsPage = () => {
               <button
                 type="button"
                 onClick={handleSaveGeneralSettings}
-               className={`px-2.5 py-1.5 rounded-lg text-white text-[14px] sm:text-[16px] font-[500] cursor-pointer transition-colors whitespace-nowrap ${updateLoading ? "bg-[#5f54ff87] cursor-not-allowed" : "bg-[#675FFF] hover:bg-[#5E54FF]"}`}
+                className={`px-2.5 py-1.5 rounded-lg text-white text-[14px] sm:text-[16px] font-[500] cursor-pointer transition-colors whitespace-nowrap ${updateLoading ? "bg-[#5f54ff87] cursor-not-allowed" : "bg-[#675FFF] hover:bg-[#5E54FF]"}`}
               >
                 Save Changes
               </button>
             </div>
           </div>
 
-          <div className="px-6 py-6 space-y-8">
-            <section className="flex flex-col gap-4">
-              <div className="flex flex-col lg:flex-row lg:justify-between gap-6 border-b border-[#d1d3db] pb-2">
-                <div className="min-w-[260px] max-w-sm">
-                  <h3 className="text-lg font-semibold text-[#1E1E1E]">Theme & Appearance</h3>
-                  <p className="text-sm text-[#7A8298]">Choose between light, dark, or system themes</p>
-                </div>
-                <div className="flex flex-wrap gap-4 lg:gap-6">
-                  {THEME_OPTIONS.map((option) => {
-                    const selected = generalSettings.theme === option.key
-                    return (
-                      <div key={option.key} className="flex flex-col items-center gap-3 w-[150px] sm:w-[170px]">
-                        <button
-                          type="button"
-                          onClick={() => handleGeneralSettingChange("theme", option.key)}
-                          className={`w-full transition-all ${
-                            selected ? "border-[#675FFF] shadow-[0_10px_30px_rgba(79,70,229,0.15)]" : ""
-                          }`}
-                        >
-                          <div
-                            className={`w-full h-24 rounded-lg border ${selected ? "border-[#C7CCF7]" : "border-[#E4E6EF]"} relative overflow-hidden`}
-                          >
-                            <img
-                              src={
-                                option.key === "light"
-                                  ? LightTheme
-                                  : option.key === "dark"
-                                    ? DarkTheme
-                                    : SystemTheme
-                              }
-                              alt={option.label}
-                              className="w-full h-full object-cover rounded-md"
-                            />
-                          </div>
-                        </button>
-                        <span className={`text-sm font-semibold ${selected ? "text-[#1E1E1E]" : "text-[#6C7489]"}`}>
-                          {option.label}
-                        </span>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            </section>
+          <hr className="border border-gray-200 w-full mx-4"></hr>
 
-            <section className="flex flex-col gap-6">
-              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 border-b border-[#d1d3db]">
-                <div className="min-w-[240px] max-w-sm">
-                  <h3 className="text-lg font-semibold text-[#1E1E1E]">Account Preferences</h3>
-                  <p className="text-sm text-[#7A8298]">
-                    Customize how Ecosystem.ai behaves to match your working style.
-                  </p>
+          <div className="px-6 py-6 space-y-8">
+
+            <div className="w-full">
+              <section className="flex flex-col gap-4">
+                <div className="w-full flex flex-col lg:flex-row lg:justify-between gap-6 border-b border-[#d1d3db] pb-2">
+                  <div className="min-w-[260px] max-w-sm">
+                    <h3 className="text-lg font-semibold text-[#1E1E1E]">Theme & Appearance</h3>
+                    <p className="text-sm text-[#7A8298]">Choose between light, dark, or system themes</p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-4 lg:gap-6">
+                    {THEME_OPTIONS.map((option) => {
+                      const selected = generalSettings.theme === option.key
+                      return (
+                        <div key={option.key} className="flex flex-col items-center gap-3 w-[150px] sm:w-[170px]">
+                          <button
+                            type="button"
+                            onClick={() => handleGeneralSettingChange("theme", option.key)}
+                            className={`w-full transition-all ${selected ? "border-[#675FFF] shadow-[0_10px_30px_rgba(79,70,229,0.15)]" : ""
+                              }`}
+                          >
+                            <div
+                              className={`w-full h-24 rounded-lg border ${selected ? "border-[#C7CCF7]" : "border-[#E4E6EF]"} relative overflow-hidden`}
+                            >
+                              <img
+                                src={
+                                  option.key === "light"
+                                    ? LightTheme
+                                    : option.key === "dark"
+                                      ? DarkTheme
+                                      : SystemTheme
+                                }
+                                alt={option.label}
+                                className="w-full h-full object-cover rounded-md"
+                              />
+                            </div>
+                          </button>
+
+                          <span className={`text-sm font-semibold ${selected ? "text-[#1E1E1E]" : "text-[#6C7489]"}`}>
+                            {option.label}
+                          </span>
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <div className=" p-4">
-                    <div className="flex flex-col gap-4">
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-sm font-medium text-[#7A8298]">Language</label>
-                        <div className="relative">
-                          <select
-                            value={generalSettings.language}
-                            onChange={(e) => handleGeneralSettingChange("language", e.target.value)}
-                            className="w-full appearance-none rounded-xl border border-[#E1E4EA] bg-white px-4 py-2 text-sm text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none"
-                          >
-                            {LANGUAGE_OPTIONS.map((lang) => (
-                              <option key={lang} value={lang}>{lang}</option>
-                            ))}
-                          </select>
-                          <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9EA8BC] pointer-events-none" />
+              </section>
+            </div>
+
+            {/* ---------------- ACCOUNT PREFERENCES ---------------- */}
+            <div className="w-full">
+              <section className="flex flex-col gap-6">
+                <div className="w-full flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 border-b border-[#d1d3db] pb-2">
+                  <div className="min-w-[240px] max-w-sm">
+                    <h3 className="text-lg font-semibold text-[#1E1E1E]">Account Preferences</h3>
+                    <p className="text-sm text-[#7A8298]">
+                      Customize how Ecosystem.ai behaves to match your working style.
+                    </p>
+                  </div>
+
+                  <div className="flex-1">
+                    <div className="p-4">
+                      <div className="flex flex-col gap-4">
+
+                        {/* Language */}
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-medium text-[#7A8298]">Language</label>
+                          <div className="relative">
+                            <select
+                              value={generalSettings.language}
+                              onChange={(e) => handleGeneralSettingChange("language", e.target.value)}
+                              className="w-full appearance-none rounded-xl border border-[#E1E4EA] bg-white px-4 py-2 text-sm text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none"
+                            >
+                              {LANGUAGE_OPTIONS.map((lang) => (
+                                <option key={lang} value={lang}>{lang}</option>
+                              ))}
+                            </select>
+                            <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9EA8BC] pointer-events-none" />
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-sm font-medium text-[#7A8298]">Timezone</label>
-                        <div className="relative">
-                          <select
-                            value={generalSettings.timezone}
-                            onChange={(e) => handleGeneralSettingChange("timezone", e.target.value)}
-                            className="w-full appearance-none rounded-xl border border-[#E1E4EA] bg-white px-4 py-2 text-sm text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none"
-                          >
-                            {TIMEZONE_OPTIONS.map((zone) => (
-                              <option key={zone} value={zone}>{zone}</option>
-                            ))}
-                          </select>
-                          <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9EA8BC] pointer-events-none" />
+
+                        {/* Timezone */}
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-medium text-[#7A8298]">Timezone</label>
+                          <div className="relative">
+                            <select
+                              value={generalSettings.timezone}
+                              onChange={(e) => handleGeneralSettingChange("timezone", e.target.value)}
+                              className="w-full appearance-none rounded-xl border border-[#E1E4EA] bg-white px-4 py-2 text-sm text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none"
+                            >
+                              {TIMEZONE_OPTIONS.map((zone) => (
+                                <option key={zone} value={zone}>{zone}</option>
+                              ))}
+                            </select>
+                            <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9EA8BC] pointer-events-none" />
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-sm font-medium text-[#7A8298]">Date Format</label>
-                        <div className="relative">
-                          <select
-                            value={generalSettings.dateFormat}
-                            onChange={(e) => handleGeneralSettingChange("dateFormat", e.target.value)}
-                            className="w-full appearance-none rounded-xl border border-[#E1E4EA] bg-white px-4 py-2 text-sm text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none"
-                          >
-                            {DATE_FORMAT_OPTIONS.map((format) => (
-                              <option key={format} value={format}>{format}</option>
-                            ))}
-                          </select>
-                          <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9EA8BC] pointer-events-none" />
+
+                        {/* Date Format */}
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-medium text-[#7A8298]">Date Format</label>
+                          <div className="relative">
+                            <select
+                              value={generalSettings.dateFormat}
+                              onChange={(e) => handleGeneralSettingChange("dateFormat", e.target.value)}
+                              className="w-full appearance-none rounded-xl border border-[#E1E4EA] bg-white px-4 py-2 text-sm text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none"
+                            >
+                              {DATE_FORMAT_OPTIONS.map((format) => (
+                                <option key={format} value={format}>{format}</option>
+                              ))}
+                            </select>
+                            <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9EA8BC] pointer-events-none" />
+                          </div>
                         </div>
+
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </section>
+              </section>
+            </div>
 
-            <section className="flex flex-col gap-4">
-              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-                <div className="min-w-[240px] max-w-sm">
-                  <h3 className="text-lg font-semibold text-[#1E1E1E]">Notifications & Alerts</h3>
-                  <p className="text-sm text-[#7A8298]">
-                    Control how you receive important updates and insights from Ecosystem.ai.
-                  </p>
-                </div>
-                <div className="flex-1 flex flex-col gap-1">
-                  {[
-                    {
-                      key: "pushEnabled",
-                      title: "Push Notifications",
-                      description: "Get real-time updates and alerts directly on your device",
-                    },
-                    {
-                      key: "emailEnabled",
-                      title: "Email notification",
-                      description: "Receive notifications via email",
-                    },
-                  ].map((item) => {
-                    const enabled = generalSettings[item.key]
-                    return (
-                      <div
-                        key={item.key}
-                        className="flex items-center justify-between p-5"
-                      >
-                        <div>
-                          <p className="text-sm font-semibold text-[#1E1E1E]">{item.title}</p>
-                          <p className="text-sm text-[#7A8298]">{item.description}</p>
+            {/* ---------------- NOTIFICATIONS & ALERTS ---------------- */}
+            <div className="w-full">
+              <section className="flex flex-col gap-4">
+                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+                  <div className="min-w-[240px] max-w-sm">
+                    <h3 className="text-lg font-semibold text-[#1E1E1E]">Notifications & Alerts</h3>
+                    <p className="text-sm text-[#7A8298]">
+                      Control how you receive important updates and insights from Ecosystem.ai.
+                    </p>
+                  </div>
+
+                  <div className="flex-1 flex flex-col gap-1">
+                    {[
+                      {
+                        key: "pushEnabled",
+                        title: "Push Notifications",
+                        description: "Get real-time updates and alerts directly on your device",
+                      },
+                      {
+                        key: "emailEnabled",
+                        title: "Email notification",
+                        description: "Receive notifications via email",
+                      },
+                    ].map((item) => {
+                      const enabled = generalSettings[item.key]
+                      return (
+                        <div
+                          key={item.key}
+                          className="flex items-center justify-between p-5"
+                        >
+                          <div>
+                            <p className="text-sm font-semibold text-[#1E1E1E]">{item.title}</p>
+                            <p className="text-sm text-[#7A8298]">{item.description}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-semibold text-[#675FFF]">
+                              {enabled ? "On" : "Off"}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleGeneralSettingChange(item.key, !enabled)}
+                              className={`inline-flex h-5 w-10 items-center rounded-full transition-colors ${enabled ? "bg-[#675FFF]" : "bg-[#D7DBE6]"
+                                }`}
+                            >
+                              <span
+                                className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${enabled ? "translate-x-5" : "translate-x-1"
+                                  }`}
+                              />
+                            </button>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-semibold text-[#675FFF]">
-                            {enabled ? "On" : "Off"}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleGeneralSettingChange(item.key, !enabled)}
-                            className={`inline-flex h-5 w-10 items-center rounded-full transition-colors ${
-                              enabled ? "bg-[#675FFF]" : "bg-[#D7DBE6]"
-                            }`}
-                          >
-                            <span
-                              className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
-                                enabled ? "translate-x-5" : "translate-x-1"
-                              }`}
-                            />
-                          </button>
-                        </div>
-                      </div>
-                    )
-                  })}
+                      )
+                    })}
+                  </div>
                 </div>
-              </div>
-            </section>
+              </section>
+            </div>
+
           </div>
+
         </div>
       </div>
     );
@@ -1637,7 +1976,7 @@ const SettingsPage = () => {
               className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "my-profile" ? "bg-[#F0EFFF]" : "hover:bg-[#F9F8FF]"
                 }`}
             >
-              {activeSidebarItem === "my-profile" ? <CircleUserRound className="text-[#675FFF]"/> : <div className="flex items-center gap-2"><div className='group-hover:hidden'><CircleUserRound className="text-gray-500"/></div> <div className='hidden group-hover:block'><CircleUserRound /></div></div>}
+              {activeSidebarItem === "my-profile" ? <CircleUserRound className="text-[#675FFF]" /> : <div className="flex items-center gap-2"><div className='group-hover:hidden'><CircleUserRound className="text-gray-500" /></div> <div className='hidden group-hover:block'><CircleUserRound /></div></div>}
               <span className={`font-[400] text-[16px] ${activeSidebarItem === "my-profile" ? "text-black" : "text-blackgroup-hover:text-[#1E1E1E]"}`}>
                 My Profile
               </span>
@@ -1648,7 +1987,8 @@ const SettingsPage = () => {
               className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "general" ? "bg-[#F0EFFF]" : "hover:bg-[#F9F8FF]"
                 }`}
             >
-              {activeSidebarItem === "general" ? <House className="text-[#675FFF]" status={activeSidebarItem === "general"} /> : <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<House className="text-gray-500" status={activeSidebarItem === "general"} />}</div> <div className='hidden group-hover:block'>{<House hover={true} />}</div></div>}
+              {activeSidebarItem === "general" ? <House className="text-[#675FFF]" status={activeSidebarItem === "general"} /> : 
+              <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<House className="text-gray-500" status={activeSidebarItem === "general"} />}</div> <div className='hidden group-hover:block'>{<House hover={true} />}</div></div>}
               <span className={`font-[400] text-[16px] ${activeSidebarItem === "general" ? "text-black" : "text-black group-hover:text-[#1E1E1E]"}`}>
                 {t("settings.tab_1")}
               </span>
@@ -1660,7 +2000,7 @@ const SettingsPage = () => {
                 }`}
             >
               {activeSidebarItem === "billing" ? <Wallet className="text-[#675FFF]" status={activeSidebarItem === "billing"} /> :
-                <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<Wallet className="text-gray-500" status={activeSidebarItem === "billing"} />}</div> <div className='hidden group-hover:block'>{<Wallet className="text-gray-500" hover={true} />}</div></div>}
+                <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<Wallet className="text-gray-500" status={activeSidebarItem === "billing"} />}</div> <div className='hidden group-hover:block'>{<Wallet hover={true} />}</div></div>}
               <span className={`font-[400] text-[16px] ${activeSidebarItem === "billing" ? "text-black" : "text-black group-hover:text-[#1E1E1E]"}`}>
                 {t("settings.tab_2")}
               </span>
@@ -1863,134 +2203,133 @@ const SettingsPage = () => {
         </div>
       )}
 
-  {showPasswordModal && (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl w-full max-w-md p-6 relative shadow-xl">
-        <button
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-          onClick={() => setShowPasswordModal(false)}
-        >
-          <X className="w-5 h-5" />
-        </button>
-        <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-1">Change Password</h2>
-        <p className="text-sm text-[#5A687C] mb-4">Create a strong password to secure your account.</p>
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 relative shadow-xl">
+            <button
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowPasswordModal(false)}
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="text-[20px] font-[600] text-[#1E1E1E] mb-1">Change Password</h2>
+            <p className="text-sm text-[#5A687C] mb-4">Create a strong password to secure your account.</p>
 
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-[#1E1E1E]">Current Password</label>
-            <div className="relative">
-              <input
-                type={showPasswords.currentPassword ? "text" : "password"}
-                name="currentPassword"
-                value={formData.currentPassword}
-                onChange={handlePasswordChange}
-                className="w-full pr-10 pl-3 py-2.5 bg-white rounded-lg border border-[#E1E4EA] focus:border-[#675FFF] focus:outline-none"
-                placeholder="Enter current password"
-              />
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium text-[#1E1E1E]">Current Password</label>
+                <div className="relative">
+                  <input
+                    type={showPasswords.currentPassword ? "text" : "password"}
+                    name="currentPassword"
+                    value={formData.currentPassword}
+                    onChange={handlePasswordChange}
+                    className="w-full pr-10 pl-3 py-2.5 bg-white rounded-lg border border-[#E1E4EA] focus:border-[#675FFF] focus:outline-none"
+                    placeholder="Enter current password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => togglePasswordVisibility("currentPassword")}
+                    className="absolute top-1/2 -translate-y-1/2 right-3 text-gray-400"
+                  >
+                    {showPasswords.currentPassword ? <EyeIcon className="w-5 h-5" /> : <EyeOffIcon className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium text-[#1E1E1E]">Create New Passowrd</label>
+                <div className="relative">
+                  <input
+                    type={showPasswords.confirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handlePasswordChange}
+                    className="w-full pr-10 pl-3 py-2.5 bg-white rounded-lg border border-[#E1E4EA] focus:border-[#675FFF] focus:outline-none"
+                    placeholder="Create new password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => togglePasswordVisibility("confirmPassword")}
+                    className="absolute top-1/2 -translate-y-1/2 right-3 text-gray-400"
+                  >
+                    {showPasswords.confirmPassword ? <EyeIcon className="w-5 h-5" /> : <EyeOffIcon className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium text-[#1E1E1E]">Confirm Password</label>
+                <div className="relative">
+                  <input
+                    type={showPasswords.newPassword ? "text" : "password"}
+                    name="newPassword"
+                    value={formData.newPassword}
+                    onChange={handlePasswordChange}
+                    className="w-full pr-10 pl-3 py-2.5 bg-white rounded-lg border border-[#E1E4EA] focus:border-[#675FFF] focus:outline-none"
+                    placeholder="Confirm password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => togglePasswordVisibility("newPassword")}
+                    className="absolute top-1/2 -translate-y-1/2 right-3 text-gray-400"
+                  >
+                    {showPasswords.newPassword ? <EyeIcon className="w-5 h-5" /> : <EyeOffIcon className="w-5 h-5" />}
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-1 mt-2">
+                  {[0, 1, 2].map((index) => (
+                    <span
+                      key={index}
+                      className={`h-1 flex-1 rounded-full ${passwordStrength.score > index ? "bg-[#675FFF]" : "bg-[#E1E4EA]"}`}
+                    />
+                  ))}
+                </div>
+                <p className="text-sm text-[#5A687C]">Moderate password. Must contain at least:</p>
+                <div className="flex flex-col gap-1 text-sm">
+                  {[
+                    { key: "uppercase", label: "At least 1 uppercase" },
+                    { key: "number", label: "At least 1 number" },
+                    { key: "length", label: "At least 8 characters" },
+                  ].map((item) => (
+                    <span key={item.key} className="flex items-center gap-2">
+                      {passwordStrength.requirements[item.key] ? (
+                        <CheckCircle2 className="w-4 h-4 text-[#34C759]" />
+                      ) : (
+                        <XCircle className="w-4 h-4 text-[#C5CAD4]" />
+                      )}
+                      <span className={passwordStrength.requirements[item.key] ? "text-[#1E1E1E]" : "text-[#5A687C]"}>
+                        {item.label}
+                      </span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {errors.newError && <p className="text-sm text-red-500 mt-2">{errors.newError}</p>}
+
+            <div className="flex justify-end gap-3 mt-6">
               <button
                 type="button"
-                onClick={() => togglePasswordVisibility("currentPassword")}
-                className="absolute top-1/2 -translate-y-1/2 right-3 text-gray-400"
+                onClick={() => setShowPasswordModal(false)}
+                className="px-4 py-2 rounded-lg border border-[#E1E4EA] text-[#1E1E1E] font-[500] hover:bg-[#F9F8FF]"
               >
-                {showPasswords.currentPassword ? <EyeIcon className="w-5 h-5" /> : <EyeOffIcon className="w-5 h-5" />}
+                Cancel
               </button>
-            </div>
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-[#1E1E1E]">Create New Passowrd</label>
-            <div className="relative">
-              <input
-                type={showPasswords.confirmPassword ? "text" : "password"}
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handlePasswordChange}
-                className="w-full pr-10 pl-3 py-2.5 bg-white rounded-lg border border-[#E1E4EA] focus:border-[#675FFF] focus:outline-none"
-                placeholder="Create new password"
-              />
               <button
                 type="button"
-                onClick={() => togglePasswordVisibility("confirmPassword")}
-                className="absolute top-1/2 -translate-y-1/2 right-3 text-gray-400"
+                onClick={handleChangePassword}
+                disabled={updatePasswordLoading}
+                className={`px-4 py-2 rounded-lg text-white font-[500] ${updatePasswordLoading ? "bg-[#5f54ff87] cursor-not-allowed" : "bg-[#675FFF] hover:bg-[#5E54FF]"
+                  }`}
               >
-                {showPasswords.confirmPassword ? <EyeIcon className="w-5 h-5" /> : <EyeOffIcon className="w-5 h-5" />}
+                {updatePasswordLoading ? "Saving..." : "Save Changes"}
               </button>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-[#1E1E1E]">Confirm Password</label>
-            <div className="relative">
-              <input
-                type={showPasswords.newPassword ? "text" : "password"}
-                name="newPassword"
-                value={formData.newPassword}
-                onChange={handlePasswordChange}
-                className="w-full pr-10 pl-3 py-2.5 bg-white rounded-lg border border-[#E1E4EA] focus:border-[#675FFF] focus:outline-none"
-                placeholder="Confirm password"
-              />
-              <button
-                type="button"
-                onClick={() => togglePasswordVisibility("newPassword")}
-                className="absolute top-1/2 -translate-y-1/2 right-3 text-gray-400"
-              >
-                {showPasswords.newPassword ? <EyeIcon className="w-5 h-5" /> : <EyeOffIcon className="w-5 h-5" />}
-              </button>
-            </div>
-
-            <div className="flex items-center gap-1 mt-2">
-              {[0, 1, 2].map((index) => (
-                <span
-                  key={index}
-                  className={`h-1 flex-1 rounded-full ${passwordStrength.score > index ? "bg-[#675FFF]" : "bg-[#E1E4EA]"}`}
-                />
-              ))}
-            </div>
-            <p className="text-sm text-[#5A687C]">Moderate password. Must contain at least:</p>
-            <div className="flex flex-col gap-1 text-sm">
-              {[
-                { key: "uppercase", label: "At least 1 uppercase" },
-                { key: "number", label: "At least 1 number" },
-                { key: "length", label: "At least 8 characters" },
-              ].map((item) => (
-                <span key={item.key} className="flex items-center gap-2">
-                  {passwordStrength.requirements[item.key] ? (
-                    <CheckCircle2 className="w-4 h-4 text-[#34C759]" />
-                  ) : (
-                    <XCircle className="w-4 h-4 text-[#C5CAD4]" />
-                  )}
-                  <span className={passwordStrength.requirements[item.key] ? "text-[#1E1E1E]" : "text-[#5A687C]"}>
-                    {item.label}
-                  </span>
-                </span>
-              ))}
             </div>
           </div>
         </div>
-
-        {errors.newError && <p className="text-sm text-red-500 mt-2">{errors.newError}</p>}
-
-        <div className="flex justify-end gap-3 mt-6">
-          <button
-            type="button"
-            onClick={() => setShowPasswordModal(false)}
-            className="px-4 py-2 rounded-lg border border-[#E1E4EA] text-[#1E1E1E] font-[500] hover:bg-[#F9F8FF]"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={handleChangePassword}
-            disabled={updatePasswordLoading}
-            className={`px-4 py-2 rounded-lg text-white font-[500] ${
-              updatePasswordLoading ? "bg-[#5f54ff87] cursor-not-allowed" : "bg-[#675FFF] hover:bg-[#5E54FF]"
-            }`}
-          >
-            {updatePasswordLoading ? "Saving..." : "Save Changes"}
-          </button>
-        </div>
-      </div>
-    </div>
-  )}
+      )}
 
       {isDeleteOpen && (
         <div className="fixed inset-0 flex items-center justify-center backdrop-blur-[1px] bg-opacity-50 z-50">

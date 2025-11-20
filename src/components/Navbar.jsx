@@ -9,6 +9,7 @@ import { logout } from '../api/auth';
 import { SearchIcon } from '../icons/icons';
 import logo from '../assets/images/dashboard_logo.png'
 import person from '../assets/images/person.svg'
+import Ecosystem from '../assets/images/ecosysteme.ai_logo.png'
 
 function Navbar({ sidebarItems }) {
     const location = useLocation()
@@ -132,17 +133,16 @@ function Navbar({ sidebarItems }) {
         <div className='bg-white border-b border-[#D6D6D6]'>
             <div className='flex justify-between items-center px-6 py-3'>
                 {/* Left Side: Logo, Brand, Version, Breadcrumbs */}
-                <div className='flex items-center gap-3'>
+                <div className='flex items-center gap-2'>
                     <div
                         onClick={handleLogoClick}
                         className="flex items-center gap-2 cursor-pointer transition"
                     >
                         <img
-                            src={logo}
+                            src={Ecosystem}
                             alt="Ecosysteme.ai"
-                            className="w-6 h-6"
+                            className="w-full h-12"
                         />
-                        <span className="text-[#1E1E1E] font-semibold text-base">Ecosysteme.ai</span>
                     </div>
 
                     <span className="bg-[#EFF0F2] border border-[#E7E9EC] text-[#5A687C] text-xs px-2 py-0.5 rounded-full font-medium tracking-wide">

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import logo from '../assets/svg/ecosysteme.ai_logo.svg'
+import logo from '../assets/images/ecosysteme.ai_logo.png'
 
 const staticData = {
     header: "Terms and Conditions",

@@ -674,7 +674,7 @@ const frenchTranslation = {
       accept_discount: "Accepter la remise et rester",
       no_i_cancel: "Non, je veux quand même annuler",
       confirm_cancel: "Confirmer l’annulation",
-      i_changed_my_mind: "J’ai changé d’avis — je reste",
+      i_changed_my_mind: "J’ai changé d’avis",
       include: "inclure"
     },
     tab_3_list: {

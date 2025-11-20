@@ -15,14 +15,16 @@ import fr_flag from "../assets/images/fr_flag.png"
 import Notification from '../pages/Dashboard/Notification';
 import { X } from 'lucide-react';
 import { getNavbarData } from '../store/navbarSlice';
-import { GiftIcon, SidebarBrainIcon, SidebarFourBoxIcon, SidebarHelpCenterIcon, SidebarNotificationIcon, SidebarSettingIcon, SkillsIcon } from '../icons/icons';
+import { GiftIcon, SidebarBrainIcon, SidebarHelpCenterIcon, SidebarNotificationIcon, SidebarSettingIcon, SkillsIcon } from '../icons/icons';
 import logo from '../assets/svg/dashboard_logo.svg'
 import { changeLanguage } from '../api/profile';
 import i18n from '../i18n';
 import lifeTimeImg from "../assets/svg/eco_systeme_lifetime_commission.svg"
 import { useTranslation } from "react-i18next";
-import textLogo from '../assets/svg/ecosysteme.ai_logo.svg'
+import textLogo from '../assets/images/ecosysteme.ai_logo.png'
 import { discardSkillsData } from '../store/agentSkillsSlice';
+import FourBox from '../assets/svg/Home Grid.svg';
+import Brain from '../assets/svg/Brain.svg'
 
 const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
   const navigate = useNavigate()
@@ -188,10 +190,19 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
               <div className="flex items-center">
                 <div className="flex items-center gap-2">
                   <div className="group-hover:hidden">
-                    <SidebarFourBoxIcon status={renderColor(0)} />
+                    <img 
+                      src={FourBox} 
+                      alt="Home" 
+                      className={`w-6 h-6 ${renderColor(0) ? 'opacity-100' : 'opacity-90'}`}
+                      style={{ filter: renderColor(0) ? 'none' : 'brightness(0.8)' }}
+                    />
                   </div>
                   <div className="hidden group-hover:block">
-                    <SidebarFourBoxIcon status={true} />
+                    <img 
+                      src={FourBox} 
+                      alt="Home" 
+                      className="w-6 h-6 opacity-100"
+                    />
                   </div>
                 </div>
                 {isOpen && (
@@ -212,17 +223,26 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
 
             {/* Brain AI */}
             <div
-              className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'
+              className={`text-xl flex group hover:cursor-pointer my-1 relative ${!isOpen && 'justify-center'
                 } py-3`}
               onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}
             >
               <div className="flex items-center">
                 <div className="flex items-center gap-2">
                   <div className="group-hover:hidden">
-                    <SidebarBrainIcon status={renderColor(1)} />
+                    <img 
+                      src={Brain} 
+                      alt="Home" 
+                      className={`w-5 h-5 ${renderColor(0) ? 'opacity-100' : 'opacity-90'}`}
+                      style={{ filter: renderColor(0) ? 'none' : 'brightness(0.8)' }}
+                    />
                   </div>
                   <div className="hidden group-hover:block">
-                    <SidebarBrainIcon status={true} />
+                    <img 
+                      src={Brain} 
+                      alt="Home" 
+                      className="w-5 h-5 opacity-100"
+                    />
                   </div>
                 </div>
                 {isOpen && (

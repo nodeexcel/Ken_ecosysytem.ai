@@ -3,7 +3,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { resetPassword } from '../api/auth';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PasswordLock } from '../icons/icons';
-import header from '../assets/svg/ecosysteme.ai_logo.svg'
+import header from '../assets/images/ecosysteme.ai_logo.png'
 
 export default function ResetPassword() {
     const [showPasswords, setShowPasswords] = useState({

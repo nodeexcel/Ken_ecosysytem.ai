@@ -1,4 +1,4 @@
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown, X, Info } from "lucide-react";
 import { useEffect, useState } from "react";
 import { addCredits, updateSubscriptionPaymentStatus } from "../api/payment";
 import { useSelector } from "react-redux";
@@ -111,7 +111,7 @@ const CreditPopup = ({ t, onClose, onOpen, userDetails, navigate }) => {
           </div> */}
             {staticCredits.map((each) => (
               <div key={each.value} className="my-3 cursor-pointer" onClick={() => setSelectedCredit(each)}>
-                <div className={`flex justify-between items-center px-4 py-3 rounded-lg ${selectedCredit.value === each.value ? 'bg-[#675FFF]' : 'bg-[#F2F2F7]'}`}>
+                <div className={`flex justify-between items-center px-4 py-3 rounded-2xl ${selectedCredit.value === each.value ? 'bg-[#675FFF]' : 'bg-[#F2F2F7]'}`}>
                   <div className={`${selectedCredit.value === each.value ? 'text-[#fff]' : 'text-[#1E1E1E]'} flex items-center gap-2 text-[17px] font-[600]`}>
                     <h2>{each.label}  {t("settings.tab_2_list.credits")} = </h2>
                     <h2>{each.value}</h2>
@@ -134,7 +134,7 @@ const CreditPopup = ({ t, onClose, onOpen, userDetails, navigate }) => {
               {t("settings.tab_2_list.upgrade_plan")}
             </button>
           </div>
-
+          
           <div className="flex gap-4">
             <button
               onClick={onClose}
@@ -165,7 +165,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
       {
         id: import.meta.env.VITE_YEARLY_PRO_PLAN,
         name: `${t("Standard")}`,
-        key: "pro", 
+        key: "pro",
         svg: <ProPlanIcon />,
         price: "€931",
         period: `/ ${t("settings.tab_2_list.year")}`,
@@ -333,7 +333,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
         return false
       }
     } else {
-      if (userDetails?.subscriptionDurationType === "monthly"){
+      if (userDetails?.subscriptionDurationType === "monthly") {
         return false
       }
       return true
@@ -436,7 +436,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
             <div
               key={index}
               onClick={index >= planIndex ? () => handleSelectPlan(plan.key) : undefined}
-              className={`border ${((userDetails?.subscriptionDurationType === activeTab) && (index == planIndex)) ? "border-[#675FFF]" : "border-[#E1E4EA]"} rounded-xl p-4`}
+              className={`border ${((userDetails?.subscriptionDurationType === activeTab) && (index == planIndex)) ? "border-[#675FFF]" : "border-[#E1E4EA]"} rounded-xl px-4 py-2`}
             >
               <div className="flex justify-between mb-4">
                 <div className="flex flex-col gap-2">
@@ -493,130 +493,204 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
   );
 };
 
-const CancelSubscriptionPopup = ({ t, onClose }) => {
+export const CancelSubscriptionPopup = ({ t, onClose }) => {
   const [initialTab, setInitailTab] = useState(true)
   const [selectedData, setSelectedData] = useState()
   const options = [{ label: `${t("settings.tab_2_list.too_expensive")}`, key: "too_expensive" }, { label: `${t("settings.tab_2_list.not_enough_value")}`, key: "not_enough_value" }, { label: `${t("settings.tab_2_list.other")}`, key: "other" }]
   const [otherIssue, setOtherIssue] = useState("")
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      {initialTab ? <div className="bg-white rounded-xl p-4 sm:p-8 max-w-[590px] max-h-[90%] overflow-auto relative">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <span className="text-[20px] text-[#1E1E1E] font-[600] ">{t("settings.tab_2_list.cancel_subscription")}</span>
-          </div>
-          <button
-            onClick={onClose}
-            className="text-gray-500 cursor-pointer absolute right-2 top-2 hover:text-gray-700"
-          >
-            <X />
-          </button>
-        </div>
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
 
-        <div className="mb-6 flex flex-col items-center gap-3">
-          <div className="relative w-[170px] h-[87px]">
-            <OfferIcon />
-            <div className="absolute top-0 right-15 h-[83px] border-l border-dashed border-[#857FFF] ">
-            </div>
-            <div className="absolute top-0 left-0 w-full h-full flex items-center justify-between px-4 text-white font-sans">
-              <p className="text-[#FBF665] text-[44.44px] font-[700]">50%</p>
-              <p className="text-white  font-[700] text-[40.26px] rotate-180 [writing-mode:vertical-rl]">off</p>
-            </div>
-          </div>
-          <h3 className="text-[17px] font-[600] ">{t("settings.tab_2_list.were_sorry")} </h3>
-          <h2 className="text-[14px] text-center text-[#5A687C] font-[400]">{t("settings.tab_2_list.final_chance")}  <span className="text-[#675FFF]">{t("settings.tab_2_list.life_time")}  50% {t("settings.tab_2_list.discount")} </span>{t("settings.tab_2_list.one_time_deal")} </h2>
-        </div>
+      {initialTab ? (
+        <div className="bg-white rounded-2xl shadow-xl w-[420px] p-6 max-h-[90%] overflow-y-auto relative">
+          <div className="border-b border-gray-200">
+            <div className="flex items-center justify-between mb-4 border-b border-[#E2E4E9] pb-4">
+              <h2 className="text-[16px] font-semibold text-[#1E1E1E]">
+                {t("settings.tab_2_list.cancel_subscription")}
+              </h2>
 
-        <div className="flex flex-col gap-3">
-          <h2 className="text-[18px] text-[#1E1E1E] font-[600] ">{t("settings.tab_2_list.price_impact")} </h2>
-          <div className="border border-[#E1E4EA] rounded-lg p-2 flex flex-col gap-2">
-            <div className="flex justify-between items-center">
-              <div>
-                <img src='/src/assets/svg/house.svg' alt="" className="w-8 h-8 object-contain" />
+              <button
+                onClick={onClose}
+                className="text-[#6C7489] hover:text-[#1E1E1E] mr-2 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex flex-col items-center text-center gap-3 mb-6">
+              <div className="relative inline-flex">
+                {/* Outer soft-radius glow */}
+                <div className="absolute inset-0 rounded-full bg-[#675FFF]/15 blur-3xl"></div>
+
+                {/* Inner pill */}
+                <div className="relative px-7 py-3 rounded-full bg-white text-[#675FFF] text-[22px] font-semibold
+    shadow-[0_8px_35px_rgba(103,95,255,0.18)] border border-[#E8E5FF]">
+                  30% OFF
+                </div>
               </div>
-              <p className="rounded-lg text-[#34C759] bg-[#EBF9EE] p-2">50% {t("settings.tab_2_list.off")} </p>
+
+
+
+              <h3 className="text-[18px] font-semibold text-[#1E1E1E]">
+                {t("settings.tab_2_list.were_sorry")}
+              </h3>
+
+              <p className="text-[14px] text-[#5A687C] leading-relaxed">
+                Before you cancel, we're offering a special<br></br>
+                <span className="font-semibold text-black"> 30% lifetime discount </span>
+                to stay with Ecosystem.ai.
+              </p>
             </div>
-            <div className="flex flex-col gap-2">
-              <h2 className="text-[#675FFF] font-[600] text-[18px]">{t("settings.tab_2_list.starter")} </h2>
-              <p className="text-[#1E1E1E] font-[600] text-[16px]">€97 → €48.50/{t("settings.tab_2_list.month")} </p>
-              <p className="text-[#5A687C] font-[400] text-[14px]">{t("settings.tab_2_list.saving")}  €48.50/{t("settings.tab_2_list.month")}  indefinitely</p>
+
+            {/* Plan Card */}
+            <div className="border border-[#E1E4EA] rounded-xl p-4 shadow-sm mb-4">
+
+              <div className="flex items-center gap-2 mb-1 justify-between">
+                <h2 className="text-[#1E1E1E] font-[600] text-[18px]">
+                  Standard
+                </h2>
+                <span className="bg-[#E8E7FF] text-[#675FFF] text-[11px] font-semibold px-2 py-1 rounded-full">
+                  30% Off
+                </span>
+              </div>
+
+              {/* Price Row */}
+              <div className="flex items-center gap-2">
+                <span className="text-[#1E1E1E] font-[700] text-[26px] leading-none">
+                  €48.50
+                </span>
+
+                <span className="text-[#8891A5] text-[15px] line-through relative">
+                  €97
+                </span>
+
+                <span className="text-[#5A687C] text-[14px]">/ month</span>
+              </div>
+
+              <p className="text-[#5A687C] text-[13px] mt-1">
+                Saving €48.50/month indefinitely
+              </p>
             </div>
-
+            <p className="text-[#8891A5] text-[12px] text-center">
+              Offer expires in 48 hours.
+            </p>
           </div>
-        </div>
 
-        <div className="flex gap-4 mt-5">
-          <button className="flex-1 cursor-pointer py-2 px-4 bg-[#675FFF] text-white rounded-lg">
-            {t("settings.tab_2_list.accept_discount")}
-          </button>
-          <button
-            onClick={() => setInitailTab(false)}
-            className="flex-1 py-2 px-4 cursor-pointer border border-[#FF3B30] rounded-lg text-[#FF3B30]"
-          >
-            {t("settings.tab_2_list.no_i_cancel")}
-          </button>
-        </div>
-      </div> : <div className="bg-white rounded-xl p-4 sm:p-8 max-w-[590px] max-h-[90%] overflow-auto relative">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <span className="text-[20px] text-[#1E1E1E] font-[600] ">{t("settings.tab_2_list.cancel_subscription")}</span>
-          </div>
-          <button
-            onClick={onClose}
-            className="text-gray-500 cursor-pointer absolute right-2 top-2 hover:text-gray-700"
-          >
-            <X />
-          </button>
-        </div>
 
-        <div className="mb-6 flex flex-col items-center gap-3">
-          <div className="relative w-[170px] h-[87px]">
-            <OfferIcon />
-            <div className="absolute top-0 right-15 h-[83px] border-l border-dashed border-[#857FFF] ">
-            </div>
-            <div className="absolute top-0 left-0 w-full h-full flex items-center justify-between px-4 text-white font-sans">
-              <p className="text-[#FBF665] text-[44.44px] font-[700]">50%</p>
-              <p className="text-white  font-[700] text-[40.26px] rotate-180 [writing-mode:vertical-rl]">off</p>
+          <div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setInitailTab(false)}
+                className="flex-1 py-2.5 text-sm font-semibold border cursor-pointer border-[#E1E4EA] text-[#1E1E1E] rounded-lg hover:bg-gray-50"
+              >
+                No, I still want to cancel
+              </button>
+
+              <button className="flex-1 py-2.5 text-sm font-semibold cursor-pointer bg-[#675FFF] text-white rounded-lg hover:bg-[#5E54FF]">
+                Accept Discount & Stay
+              </button>
             </div>
           </div>
 
-          <h3 className="text-[17px] font-[600] ">{t("settings.tab_2_list.were_sorry")} </h3>
-          <h2 className="text-[14px] text-center text-[#5A687C] font-[400]">{t("settings.tab_2_list.yours_credits_will")}</h2>
-        </div>
 
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col gap-2">
-            <label className="text-[14px] font-[500] mb-1">{t("settings.tab_2_list.why_are_you_cancelling")}</label>
-            <SelectDropdown
-              name="cancel_plan"
-              options={options}
-              value={selectedData}
-              onChange={(updated) => {
-                setSelectedData(updated)
-              }}
-              placeholder={t("select")}
-              className=""
-            />
-          </div>
-          {selectedData === "other" && <div>
-            <label className="text-[14px] font-[500]">{t("settings.tab_2_list.reason")}</label>
-            <textarea className="mt-1 w-full rounded-lg resize-none border border-[#E1E4EA] p-2 text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none" placeholder={t("settings.tab_2_list.reason_placeholder")} rows={3} value={otherIssue} onChange={(e) => setOtherIssue(e.target.value)} />
-          </div>}
         </div>
+      ) : (
+        <div className="bg-white rounded-xl shadow-xl w-[368px] p-6 max-h-[90%] relative">
+  <div className="flex items-center justify-between mb-6 border-b border-[#E2E4E9]">
+    <h2 className="text-[20px] font-[600] text-[#1E1E1E]">
+      {t("settings.tab_2_list.cancel_subscription")}
+    </h2>
 
-        <div className="flex gap-4 mt-5">
-          <button
-            onClick={onClose}
-            className="flex-1 cursor-pointer p-2 text-center bg-[#FF3B30] rounded-lg text-[#fff]"
-          >
-            {t("settings.tab_2_list.confirm_cancel")}
-          </button>
-          <button onClick={onClose} className="flex-1 cursor-pointer w-full text-center p-2 bg-trasparent border border-[#5A687C] text-[#5A687C] rounded-lg">
-            {t("settings.tab_2_list.i_changed_my_mind")}
-          </button>
-        </div>
-      </div>}
+    <button
+      onClick={onClose}
+      className="text-[#6C7489] hover:text-[#1E1E1E] cursor-pointer mr-2"
+    >
+      <X className="w-5 h-5" />
+    </button>
+  </div>
+
+  {/* Information Icon and Heading */}
+  <div className="flex flex-col items-center gap-4 mb-6">
+    <div className="w-12 h-12 rounded-full bg-[#F7F7F8] flex items-center justify-center">
+      <Info className="w-6 h-6 text-[#5A687C]" />
     </div>
+
+    <h3 className="text-[20px] font-[600] text-[#1E1E1E]">
+      Final Confirmation
+    </h3>
+
+    <p className="text-[14px] text-center text-[#5A687C] font-[400]">
+      We appreciate your feedback. Please share your reason for canceling.
+    </p>
+  </div>
+
+  {/* Reason Form */}
+  <div className="flex flex-col gap-4 mb-4">
+    
+    {/* Reason Dropdown */}
+    <div className="flex flex-col gap-2">
+      <label className="text-[14px] font-[500] text-[#5A687C]">
+        {t("settings.tab_2_list.why_are_you_cancelling")}
+      </label>
+
+      <SelectDropdown
+        name="cancel_plan"
+        options={options}
+        value={selectedData}
+        onChange={(updated) => setSelectedData(updated)}
+        placeholder={t("select")}
+      />
+    </div>
+
+    {/* Reason Textarea (Always Visible as Requested) */}
+    <div className="flex flex-col gap-2">
+      <label className="text-[14px] font-[500] text-[#5A687C]">
+        Reason
+      </label>
+
+      <textarea
+        className="w-full rounded-lg resize-none border border-[#E1E4EA] p-3 text-[14px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none"
+        placeholder="Enter your reasons"
+        rows={3}
+        value={otherIssue}
+        onChange={(e) => setOtherIssue(e.target.value)}
+      />
+    </div>
+  </div>
+
+  {/* Warning Text */}
+  <p className="text-xs text-[#5A687C] font-[400] mb-6 items-center">
+    Your credits will be revoked immediately, even before the end of your billing period. You're always welcome back.
+  </p>
+
+  {/* Buttons */}
+  <div className="flex gap-4">
+  {/* Left Button */}
+  <button
+    onClick={onClose}
+    className="flex-1 h-[38px] flex items-center justify-center border border-[#E1E1E1] 
+               bg-white text-[#1E1E1E] rounded-lg hover:bg-gray-50 
+               text-[13px] font-medium whitespace-nowrap"
+  >
+    {t("settings.tab_2_list.i_changed_my_mind")}
+  </button>
+
+  {/* Right Button */}
+  <button
+    onClick={onClose}
+    className="flex-1 h-[38px] flex items-center justify-center 
+               bg-[#675FFF] text-white rounded-lg hover:bg-[#5E54FF] 
+               text-[13px] font-medium whitespace-nowrap"
+  >
+    {t("settings.tab_2_list.confirm_cancel")}
+  </button>
+</div>
+
+</div>
+
+      )}
+
+    </div>
+
   )
 }
 
@@ -733,7 +807,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
     <div className="py-2 pr-4 w-full h-full p-8">
       {/* Header */}
       <div className="flex flex-col gap-2 mb-6">
-        <h1 className="text-[24px] sm:text-[28px] font-[600] text-[#1E1E1E]">
+        <h1 className="text-md md:text-2xl font-[600] text-[#1E1E1E]">
           Plan & Billing
         </h1>
         <p className="text-[14px] sm:text-[16px] text-[#5A687C] font-[400]">
@@ -762,7 +836,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
             </h2>
             {userDetails?.subscriptionEndDate && (
               <p className="text-[14px] font-[400] text-[#5A687C]">
-                Auto renew on {formatRenewalDate(userDetails.subscriptionEndDate)}
+                Auto renew on <span className="text-black font-semibold">{formatRenewalDate(userDetails.subscriptionEndDate)}</span> 
               </p>
             )}
           </div>
@@ -775,14 +849,14 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
                 navigate("/dashboard/manage-plan");
               }
             }}
-            className="w-full px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] text-[14px] font-[500] hover:bg-[#F9F8FF] transition-colors"
+            className="w-full px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] cursor-pointer text-md font-semibold shadow-sm hover:bg-[#F9F8FF] transition-colors"
           >
             Manage Plan
           </button>
         </div>
 
         {/* Payment Method Card */}
-        <div className="bg-white p-4 sm:p-6 rounded-xl border border-[#E1E4EA]">
+        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-[#E1E4EA] ">
           <div className="mb-4">
             <h3 className="text-[14px] font-[500] text-[#5A687C] mb-3">Payment method</h3>
             <h2 className="text-[20px] sm:text-[24px] font-[600] text-[#1E1E1E] mb-2">
@@ -793,15 +867,14 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
             </p>
           </div>
           <button
-            onClick={() => setActiveSidebarItem("transaction-history")}
-            className="w-full px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] text-[14px] font-[500] hover:bg-[#F9F8FF] transition-colors"
+            className="w-full px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] cursor-pointer text-md font-semibold shadow-sm hover:bg-[#F9F8FF] transition-colors"
           >
             Change Method
           </button>
         </div>
 
         {/* Member Seats Card */}
-        <div className="bg-white p-4 sm:p-6 rounded-xl border border-[#E1E4EA]">
+        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-[#E1E4EA] font-semibold shadow-sm">
           <div className="mb-4">
             <h3 className="text-[14px] font-[500] text-[#5A687C] mb-3">Member Seats</h3>
             <h2 className="text-[20px] sm:text-[24px] font-[600] text-[#1E1E1E] mb-1">
@@ -811,16 +884,16 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
           </div>
           <button
             onClick={handleAddSeatsTeam}
-            className="w-full px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] text-[14px] font-[500] hover:bg-[#F9F8FF] transition-colors"
+            className="w-full px-4 py-2 bg-white border border-[#E1E4EA] font-semibold shadow-sm cursor-pointer rounded-lg text-[#1E1E1E] text-md hover:bg-[#F9F8FF] transition-colors"
           >
             + Add New Seats
           </button>
         </div>
 
         {/* Credit Usage Card */}
-        <div className="bg-white p-4 sm:p-6 rounded-xl border border-[#E1E4EA]">
+        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-[#E1E4EA] font-semibold shadow-sm">
           <div className="mb-4">
-            <h3 className="text-[14px] font-[500] text-[#5A687C] mb-3">Credit Usage</h3>
+            <h3 className="text-[14px] font-[500] text-[#5A687C] mb-4">Credit Usage</h3>
             <div className="flex items-baseline justify-between mb-3">
               <h2 className="text-[20px] sm:text-[24px] font-[600] text-[#1E1E1E]">
                 {usedCredits.toLocaleString()}
@@ -839,15 +912,17 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
           </div>
           <button
             onClick={() => setShowCreditPopup(true)}
-            className="w-full px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] text-[14px] font-[500] hover:bg-[#F9F8FF] transition-colors"
+            className="w-full px-4 py-2 bg-white border font-semibold shadow-sm border-[#E1E4EA] cursor-pointer rounded-lg text-[#1E1E1E] text-md hover:bg-[#F9F8FF] transition-colors"
           >
             + Add Credits
           </button>
         </div>
       </div>
 
+      <hr className="border-b border-gray-200 w-full"></hr>
+
       {/* Credit Usage Section */}
-      <div className="bg-white rounded-xl border border-[#E1E4EA] p-4 sm:p-6">
+      <div className="mt-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <h2 className="text-[20px] sm:text-[24px] font-[600] text-[#1E1E1E]">
             Credit Usage
@@ -861,7 +936,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
                 setRoleSelect(updated)
               }}
               placeholder="By User"
-              className="w-[155px]"
+              className="w-[155px] rounded-2xl"
             />
             <SelectDropdown
               name="past_month"
@@ -883,14 +958,15 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
         </div>
 
         {/* Table */}
-        <div className="border border-[#D6D6D6] rounded-2xl overflow-hidden">
+        
+          <div className="border border-[#D6D6D6] rounded-2xl overflow-hidden">
           <table className="min-w-full border-separate border-spacing-0">
             <thead className="bg-[#F7F7F8]">
               <tr className="text-[#5A687C]">
-                <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("settings.tab_2_list.item")}</th>
-                <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("settings.tab_2_list.credit")}</th>
-                <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("settings.tab_2_list.used_by")}</th>
-                <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("settings.tab_2_list.date_time")}</th>
+                <th className="w-1/4 px-6 text-start py-3 text-[16px] font-[400]">{t("settings.tab_2_list.item")}</th>
+                <th className="w-1/4 px-6 text-start py-3 text-[16px] font-[400]">{t("settings.tab_2_list.credit")}</th>
+                <th className="w-1/4 px-6 text-start py-3 text-[16px] font-[400]">{t("settings.tab_2_list.used_by")}</th>
+                <th className="w-1/4 px-6 text-start py-3 text-[16px] font-[400]">{t("settings.tab_2_list.date_time")}</th>
               </tr>
             </thead>
 
@@ -913,7 +989,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
                   ];
                   const colorIndex = index % avatarColors.length;
                   const userInitials = row.usedBy ? row.usedBy.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U';
-                  
+
                   return (
                     <tr key={index} className="text-left">
                       <td className="px-6 py-4 text-[16px] text-[#1E1E1E] font-[400]">
@@ -963,11 +1039,10 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    className={`rounded-lg px-3 py-1 text-sm cursor-pointer ${
-                      currentPage === page
-                        ? 'bg-[#675FFF] text-white'
-                        : 'border border-[#D6D6D6] text-[#000000] hover:bg-white'
-                    }`}
+                    className={`rounded-lg px-3 py-1 text-sm cursor-pointer ${currentPage === page
+                      ? 'bg-[#675FFF] text-white'
+                      : 'border border-[#D6D6D6] text-[#000000] hover:bg-white'
+                      }`}
                   >
                     {page}
                   </button>
@@ -989,9 +1064,8 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
                   setRowsPerPage(5);
                   setCurrentPage(1);
                 }}
-                className={`border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] cursor-pointer ${
-                  rowsPerPage === 5 ? 'bg-white' : 'hover:bg-white'
-                }`}
+                className={`border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] cursor-pointer ${rowsPerPage === 5 ? 'bg-white' : 'hover:bg-white'
+                  }`}
               >
                 5 rows
               </button>
@@ -1000,9 +1074,8 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
                   setRowsPerPage(10);
                   setCurrentPage(1);
                 }}
-                className={`border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] cursor-pointer ${
-                  rowsPerPage === 10 ? 'bg-white' : 'hover:bg-white'
-                }`}
+                className={`border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] cursor-pointer ${rowsPerPage === 10 ? 'bg-white' : 'hover:bg-white'
+                  }`}
               >
                 10
               </button>
@@ -1011,15 +1084,15 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
                   setRowsPerPage(20);
                   setCurrentPage(1);
                 }}
-                className={`border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] cursor-pointer ${
-                  rowsPerPage === 20 ? 'bg-white' : 'hover:bg-white'
-                }`}
+                className={`border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] cursor-pointer ${rowsPerPage === 20 ? 'bg-white' : 'hover:bg-white'
+                  }`}
               >
                 20
               </button>
             </div>
           </div>
-        </div>
+          </div>
+        
       </div>
     </div>
   );

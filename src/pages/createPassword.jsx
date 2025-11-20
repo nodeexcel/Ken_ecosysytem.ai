@@ -3,7 +3,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { setPassword } from '../api/auth';
 import { useNavigate } from 'react-router-dom';
 import { PasswordLock } from '../icons/icons';
-import header from '../assets/svg/ecosysteme.ai_logo.svg'
+import header from '../assets/images/ecosysteme.ai_logo.png'
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../store/authSlice";
 
