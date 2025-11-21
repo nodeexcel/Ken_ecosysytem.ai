@@ -2,6 +2,8 @@ const frenchTranslation = {
   hello: "Bonjour",
   coo: "Assistante de Direction",
   content_creation: "Création de Contenu",
+  content : "Contenu",
+  Social_Accounts:"Comptes sociaux",
   phone_outreach: "Téléphone",
   phone_outreach_new: "Prospection Téléphonique",
   appointment_setter: "Prise de Rendez-vous",
@@ -27,6 +29,8 @@ const frenchTranslation = {
   tone_placeholder: "Sélectionner un ton",
   purpose: "Objectif",
   purpose_placeholder: "Ex. Rédiger une publication humoristique",
+  next:"Suivante",
+  prev:"Précédente",
   chat_options: {
     professional: "Professionnel",
     casual: "Décontracté",
@@ -158,6 +162,9 @@ const frenchTranslation = {
     first_name: "Prénom",
     last_name: "Nom de famille",
     search: "Recherche",
+    search_here : "Recherche ici",
+    rows:"lignes",
+    post_details:"Détails de l'article",
     add_to_list: "Ajouter à une liste",
     no_contact_listed: "Aucun contact répertorié",
     showing: "Affichage",
@@ -296,7 +303,6 @@ const frenchTranslation = {
     ok: "OK",
     no_user_found: "Aucun utilisateur trouvé",
     search: "Rechercher",
-
     create_new_agent: "Créer un nouvel agent",
     identify: "Identité",
     agent_name: "Nom de l’agent",
@@ -1032,7 +1038,9 @@ const frenchTranslation = {
     scheduler_para:"Planifiez, organisez et gérez toutes vos publications programmées dans un calendrier visuel.",
     calendar : "Calendrier",
     list_view  : "Vue en liste",
-    cancel:"Annuler"
+    cancel:"Annuler",
+    schedule_post : "Programmer la publication",
+    schedule_now : "Planifiez maintenant"
 
   },
   calina: {
@@ -1050,6 +1058,7 @@ const frenchTranslation = {
     transfer_optional: "Transfert",
     optional: "(Optionnel)",
     end_the_conversation: "Quand l’IA doit-elle mettre fin à la conversation ?",
+    post_now: "Publier maintenant",
     main_condition: "Sélectionnez la condition principale qui déclenche un transfert :",
     friendly: "Amical",
     professional: "Professionnel",
@@ -1195,7 +1204,8 @@ const frenchTranslation = {
   scheduled: "Planifié",
   terminated: "Terminé",
   draft: "Brouillon",
-  publish: "Publier maintenant",
+  publish: "Publier",
+  publish_now: "Publier maintenant",
   schedule: "Planifier",
   paused: "En pause",
   email_statistics: "Statistiques des e-mails",

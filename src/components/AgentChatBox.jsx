@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { X } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import { GoDotFill } from "react-icons/go"
 import { v4 as uuidv4 } from "uuid"
 import {
@@ -7,7 +7,6 @@ import {
   Delete,
   DislikeIcon,
   Duplicate,
-  Edit,
   EditIcon,
   EmojiIcon,
   ImageChatIcon,
@@ -18,7 +17,6 @@ import {
   SearchIcon,
   SendIcon,
   SpeakerIcon,
-  ThreeDots,
 } from "../icons/icons"
 import PdfIcon from "../assets/svg/pdf.svg";
 import { useSelector } from "react-redux"
@@ -26,6 +24,9 @@ import { formatTimeAgo } from "../utils/TimeFormat"
 import { useTranslation } from "react-i18next"
 import ChatInput from "./ChatInput"
 import { useLocation } from "react-router-dom"
+import Edit from "../assets/svg/edit-01.svg"
+import chat from "../assets/svg/bubble 2, message.svg"
+import ThreeDots from "../assets/svg/Icon.svg"
 
 const AgentChatBox = ({ listedProps }) => {
   const {
@@ -76,6 +77,7 @@ const AgentChatBox = ({ listedProps }) => {
   const [dislikedMessages, setDislikedMessages] = useState({})
   const [searchQuery, setSearchQuery] = useState("")
   const location = useLocation();
+  const [showModal , setShowModal] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -422,33 +424,59 @@ const AgentChatBox = ({ listedProps }) => {
       <div className="h-full overflow-auto flex pb-2 flex-col">
         <div className="flex bg-white h-full rounded-2xl border-[#E1E4EA] border">
           {/* Sidebar */}
-          <div className="w-[240px] bg-[#FFFFFF] h-full flex flex-col gap-2 rounded-l-2xl border-[#E1E4EA] border-r">
-            <div className="px-4 py-2">
-              <div className="relative flex-1">
-                <div className="absolute left-3 top-[25%]">
-                  <SearchIcon />
-                </div>
-                <input
+          <div className={`${showModal ? "w-[67px]" : "w-[257px]"}  px-4 pt-4 pb-6 bg-[#FFFFFF] h-full flex flex-col gap-2 rounded-l-2xl border-[#00000029] border-r-[0.5px]`}>
+            <div className={`max-h-[32px] flex ${showModal ? "flex-col mt-4" :"flex-row"} justify-center gap-[16px]`}>
+              <button 
+              onClick={() => setShowModal(!showModal)}
+              className="w-[32px] h-full rounded-[8px] py-[6px] justify-center align-center gap-[6px] px-[6px] border-[0.5px] border-[#00000029]">
+                <Menu className="w-[16px] h-[16px]" />
+              </button>
+              <div
+                className={`
+    relative flex flex-row items-center
+    ${showModal ? "w-[32px]" : "w-[177px]"} h-[32px]
+    bg-white rounded-[8px]
+    border border-[#00000029]
+    px-[8px] pr-[6px] py-[6px]
+                `}
+                onClick={() => setShowModal(false)}
+              >
+                <SearchIcon className="text-[#5A687C] w-4 h-4"/>
+
+            { !showModal &&   <input
                   type="text"
                   placeholder={t("seo.search_chat_placeholder")}
                   value={searchQuery}
                   onChange={handleSearchChange}
-                  className="w-full text-[#5A687C] pl-9 pr-3 py-[6px] text-sm border border-[#E1E4EA] bg-white focus:outline-none focus:border-[#675FFF] rounded-md"
+                  className="
+      ml-2 w-full bg-transparent outline-none
+      text-[#5A687C] text-[13px] placeholder:text-[#5A687C] leading-none"
                 />
+                }
               </div>
             </div>
 
+              <button
+                className={`flex py-[6px] ${showModal ? "w-[32px] mt-8 px-[6px]" : "w-[225px] px-[10px] "} h-8 rounded-[8px] gap-[6px] border-[0.5px] border-[#00000029] justify-center align-center flex-row text-[13px]`}
+                onClick={handleSelectNewChat}>
+                  <img src={Edit}  className="w-[16px] h-[16px]" chat={true} />{!showModal && <span>{t("seo.new_chat")}</span>}
+              </button>
+
+            <hr className={`mx-auto w-full  ${showModal ? "max-w-[32px]" : "max-w-[225px]"} border-[#E2E4E9] border-[0.5px]`}/>
+
+
+        {!showModal  && 
             <div className="w-[240px] h-full max-h-[90%] overflow-y-auto">
-              <div className="flex px-4 pb-4">
+              {/* <div className="flex px-4 pb-4">
                 <button
                   onClick={handleSelectNewChat}
-                  className="text-[#1E1E1E] font-[400] px-1 cursor-pointer py-[6px] w-full text-[14px] flex items-center gap-2 hover:bg-[#F0EFFF] hover:rounded-lg"
+                  className="text-[#0A0D14] font-[500] px-[10px] border-[0.5px] border-[#00000029] rounded-[8px] cursor-pointer py-[6px] w-full text-[13px] flex  justify-center gap-[6px]"
                 >
                   <Edit chat={true} /> <span>{t("seo.new_chat")}</span>
                 </button>
-              </div>
-              <hr style={{ color: "#E1E4EA" }} />
-              <div ref={moreActionsRef} className="px-4 py-3">
+              </div> */}
+              {/* <hr style={{ color: "#E1E4EA" }} /> */}
+              {/* <div ref={moreActionsRef} className="px-4 py-3">
                 {loadingChatsList ? (
                   <div className="flex justify-center p-4 items-center w-full">
                     <span className="loader" />{" "}
@@ -458,8 +486,8 @@ const AgentChatBox = ({ listedProps }) => {
                     <div key={index} className="flex relative items-center">
                       <div
                         className={`flex w-full justify-between group items-center gap-3 my-1 py-[6px] px-4 cursor-pointer ${activeConversation === conversation.chat_id
-                            ? "bg-[#F0EFFF] text-[#1E1E1E] rounded-lg"
-                            : "hover:bg-[#F0EFFF]  hover:rounded-lg "
+                          ? "bg-[#F0EFFF] text-[#1E1E1E] rounded-lg"
+                          : "hover:bg-[#F0EFFF]  hover:rounded-lg "
                           }`}
                         onClick={() => {
                           handleSelectChat(conversation.chat_id)
@@ -472,18 +500,75 @@ const AgentChatBox = ({ listedProps }) => {
                           {conversation.name === null ? `${t("account_chat")}` : conversation.name}
                         </p>
                       </div>
-                      <div className="absolute right-2">
+                    </div>
+                  ))
+                ) : searchQuery ? (
+                  <p className="text-[#5A687C] font-[400] text-[12px] text-center pt-8">{t("tara.no_chat_history")}</p>
+                ) : (
+                  <p className="text-[#5A687C] font-[400] text-[12px] text-center pt-8">{t("tara.no_chat_history")}</p>
+                )}
+              </div> */}
+              
+              <div ref={moreActionsRef} className="px-1 py-3">
+
+  {loadingChatsList ? (
+    <div className="flex justify-center p-4 items-center w-full">
+      <span className="loader" />
+    </div>
+  ) : filteredChatList?.length > 0 ? (
+
+    filteredChatList
+      ?.slice()
+      .reverse()
+      .map((conversation, index) => (
+        
+        <div
+          key={index}
+          className={`flex items-center justify-between
+                     w-[225px] h-[32px]
+                     px-3 py-2
+                     gap-2
+                     cursor-pointer mb-2
+                     ${activeConversation === conversation.chat_id
+                          ? "bg-[#F0EFFF] text-[#1E1E1E] rounded-full"
+                          : "hover:bg-[#F0EFFF]  hover:rounded-full "
+                          }
+                        `}
+          onClick={() => {
+            handleSelectChat(conversation.chat_id);
+            setActiveDropdown(null);
+          }}
+        >
+          {/* Chat icon + text */}
+          <div className="flex items-center gap-2 min-w-0">
+            <img
+              src={chat}
+              alt="chat"
+              className="w-4 h-4"
+            />
+
+            <p
+              className="truncate text-[12px] 
+                         font-medium leading-[140%]
+                         tracking-[-0.02em] text-[#1E1E1E]"
+            >
+              {conversation.name === null
+                ? t("account_chat")
+                : conversation.name}
+            </p>
+          </div>
+
+          {/* Three dots */}
                         <button
                           onClick={() => handleDropdownClick(index)}
-                          className={`py-1 px-1 cursor-pointer relative hover:bg-[#fff] hover:rounded-sm ${activeConversation === conversation.chat_id && "bg-[#fff] rounded-sm"}`}
-                        >
-                          <ThreeDots />
+                    className="p-1 rounded">
+            <img src={ThreeDots} alt="menu" className="w-4 h-4" />
                         </button>
                         {activeDropdown === index && (
-                          <div className="absolute right-0 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[99999]">
-                            <div className="py-1">
+                          <div className="relative top-full right-0 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 z-[99999]">
+                            <div>
                               <button
-                                className="flex w-full group text-left cursor-pointer px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500]"
+                                className="flex w-full group text-left cursor-pointer px-1 py-2 text-[13px] justify-center text-[#5A687C] font-[500]"
                                 onClick={() => {
                                   setEditData(conversation)
                                   setName(conversation?.name !== null ? conversation?.name : "Accounting Chat")
@@ -492,18 +577,18 @@ const AgentChatBox = ({ listedProps }) => {
                               >
                                 <div className="flex items-center gap-2">
                                   <div className="group-hover:hidden">
-                                    <Edit />
+                                    <img src={Edit} className="w-[16px] h-[16px]" />
                                   </div>{" "}
                                   <div className="hidden group-hover:block">
-                                    <Edit status={true} />
+            <img src={Edit}  className="w-[16px] h-[16px]" status={true} />
                                   </div>{" "}
                                   <span>{t("rename")}</span>{" "}
                                 </div>
                               </button>
                               <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                              <div className="py-2">
-                                <button
-                                  className="flex w-full cursor-pointer text-left px-4 hover:rounded-lg py-2 text-sm text-red-600 hover:bg-[#F4F5F6] font-[500]"
+      <button
+        className="flex w-full cursor-pointer text-left px-1 py-2 
+                   text-[13px] justify-center  text-red-600 font-[500]"
                                   onClick={async () => {
                                     await handleDelete(conversation.chat_id)
                                     setActiveDropdown(null)
@@ -513,12 +598,11 @@ const AgentChatBox = ({ listedProps }) => {
                                     {<Delete />} <span>{t("delete")}</span>{" "}
                                   </div>
                                 </button>
-                              </div>
                             </div>
                           </div>
                         )}
                       </div>
-                    </div>
+
                   ))
                 ) : searchQuery ? (
                   <p className="text-[#5A687C] font-[400] text-[12px] text-center pt-8">{t("tara.no_chat_history")}</p>
@@ -527,6 +611,7 @@ const AgentChatBox = ({ listedProps }) => {
                 )}
               </div>
             </div>
+            }
           </div>
           {/* Main Content */}
           {openChat ? (

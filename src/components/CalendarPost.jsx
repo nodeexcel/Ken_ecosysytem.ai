@@ -4,6 +4,7 @@ import successImg from "../assets/svg/success.svg"
 // removed API fallback; events now come exclusively from props
 import { SelectDropdown } from "./Dropdown"
 import { useTranslation } from "react-i18next";
+import Search from "../assets/svg/search, magnifying glass.svg"
 
 export default function CalendarPost({status=true, calenderData=[]}) {
   // Get current date information
@@ -586,7 +587,8 @@ export default function CalendarPost({status=true, calenderData=[]}) {
   {/* LABEL: Month + Year */}
   <h2
     className="text-[18px] font-medium cursor-pointer"
-  >
+    onClick={() => setShowMonths(!showMonths)}
+   >
     {monthNames[currentMonth]} {currentYear}
   </h2>
 
@@ -656,36 +658,7 @@ export default function CalendarPost({status=true, calenderData=[]}) {
 
           <div className="flex items-center gap-2 max-h-[32px]">
 
-            {/* SEARCH BAR */}
-            <div className="flex items-center w-[177px] h-[32px] bg-white rounded-[8px] border-[0.5px] border-[#D6D6D6] px-[6px] py-[6px] pl-[8px]">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="shrink-0"
-              >
-                <path
-                  d="M13.5 13.5L10.751 10.751M10.751 10.751C11.6257 9.87635 12.1667 8.66802 12.1667 7.33333C12.1667 4.66396 10.0027 2.5 7.33333 2.5C4.66396 2.5 2.5 4.66396 2.5 7.33333C2.5 10.0027 4.66396 12.1667 7.33333 12.1667C8.66802 12.1667 9.87635 11.6257 10.751 10.751Z"
-                  stroke="#5A687C"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-
-              <input
-                type="text"
-                placeholder="Search"
-                className="
-        ml-2 w-full bg-transparent outline-none
-        text-[13px] leading-[20px] font-[400]
-        text-[#5A687C]
-      "
-              />
-            </div>
-
+          <SearchBar/>
             {/* DROPDOWN */}
             <SelectDropdown
               name="calendar"
@@ -697,7 +670,7 @@ export default function CalendarPost({status=true, calenderData=[]}) {
               placeholder={t("emailings.select")}
                className="
       min-w-[96px] 
-      text-[13px] text-center"
+      text-[13px]  px-[6px] py-[6px] text-center"
             />
           </div>
 
@@ -710,7 +683,7 @@ export default function CalendarPost({status=true, calenderData=[]}) {
             {monthNames[currentMonth]} {currentYear} ({t("emailings.mon")} {selectedWeekStart} - {t("emailings.sun")} {selectedWeekEnd})
           </h2>
           <div className="flex items-center gap-2">
-            <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] py-[6px] bg-white rounded-lg">
+            {/* <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] py-[6px] bg-white rounded-lg">
               <button onClick={handlePrevWeek} className="p-1 cursor-pointer rounded-md hover:bg-gray-100" aria-label="Previous week">
                 <ChevronLeft className="h-5 w-5 text-[#5A687C]" />
               </button>
@@ -720,8 +693,8 @@ export default function CalendarPost({status=true, calenderData=[]}) {
               <button onClick={handleNextWeek} className="p-1 cursor-pointer rounded-md hover:bg-gray-100" aria-label="Next week">
                 <ChevronRight className="h-5 w-5 text-[#5A687C]" />
               </button>
-            </div>
-
+            </div> */}
+           <SearchBar/>
            <SelectDropdown
               name="calendar"
               options={calendarOptions}
@@ -742,7 +715,7 @@ export default function CalendarPost({status=true, calenderData=[]}) {
             {currentDay} {monthNames[currentMonth]} {currentYear}
           </h2>
           <div className="flex items-center gap-2">
-            <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] py-[6px] bg-white rounded-lg">
+            {/* <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] py-[6px] bg-white rounded-lg">
               <button onClick={handlePrevDay} className="p-1 cursor-pointer rounded-md hover:bg-gray-100" aria-label="Previous day">
                 <ChevronLeft className="h-5 w-5 text-[#5A687C]" />
               </button>
@@ -752,8 +725,8 @@ export default function CalendarPost({status=true, calenderData=[]}) {
               <button onClick={handleNextDay} className="p-1 cursor-pointer rounded-md hover:bg-gray-100" aria-label="Next day">
                 <ChevronRight className="h-5 w-5 text-[#5A687C]" />
               </button>
-            </div>
-
+            </div> */}
+            <SearchBar/>
              <SelectDropdown
               name="calendar"
               options={calendarOptions}
@@ -798,5 +771,24 @@ export default function CalendarPost({status=true, calenderData=[]}) {
 
 </div>
 
+  )
+}
+
+
+const SearchBar = () => {
+    const { t } = useTranslation();
+  return (
+      <div className="flex items-center w-[177px]  bg-white rounded-[8px] border-[0.5px] border-[#D6D6D6] px-[6px] py-[7px]">
+             <img src = {Search} alt="Search"/>
+              <input
+                type="text"
+                placeholder= {t("brain_ai.search")}
+                className="
+        ml-2 w-full bg-transparent outline-none
+        text-[13px] leading-[20px] font-[400]
+        text-[#5A687C]
+      "
+              />
+            </div>
   )
 }

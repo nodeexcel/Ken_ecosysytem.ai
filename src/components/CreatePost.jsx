@@ -493,8 +493,8 @@ const handleFileChange = (e) => {
           <X className="w-5 h-5 text-gray-500" />
         </button>
       </div> */}
-      <div className="flex flex-row justify-between max-h-[32px] items-center">
-        <h1 className="font-medium text-xl md:text-2xl">{t("constance.create_scheduler")}</h1>
+      <div className="flex  flex-col md:flex-row justify-between max-h-[32px] items-center">
+        <h1 className="font-medium text-[16px] md:text-[24px]">{t("constance.create_scheduler")}</h1>
         <div className="flex flex-row gap-2.5 h-full">
           <button
           onClick={onClose} 
@@ -521,11 +521,11 @@ const handleFileChange = (e) => {
 
       {/* Main Content with Horizontal Scroll for Small Screens */}
       <div className="w-full overflow-x-auto">
-        <div className="flex w-full min-w-[1000px] mx-auto rounded-[12px] border-[0.5px] border-[#D6D6D6] bg-[#F7F7F8]">
+        <div className="flex flex-col lg:flex-row w-full mx-auto border-[0.5px] rounded-[12px] border-[#D6D6D6] bg-[#F7F7F8] min-w-0 overflow-hidden"> {/* Added overflow-hidden */}
           {/* Left Sidebar */}
-          <div className="w-[248px] bg-[#FFFFFF] border-r border-r-[#00000029]  flex flex-col relative px-4 pt-4 pb-6 gap-4">
+          <div className="w-full lg:w-[248px] bg-[#FFFFFF] border-b lg:border-b-0 lg:border border-[#00000029] flex flex-col relative px-4 pt-4 pb-6 gap-4 rounded-tl-[12px] rounded-tr-[12px] lg:rounded-tr-none lg:rounded-bl-[12px]">
             {/* <div> */}
-            <div className="flex flex-col pt-3 w-[184px] max-h-[70px] gap-[6px] absolute top-[0px] left-[16px]">
+            <div className="flex flex-col pt-3 w-full lg:w-[184px] max-h-auto lg:max-h-[70px] gap-[6px] relative lg:absolute top-[0px] left-0 lg:left-[16px]">
               {/* Select Platform */}
               <div className="mb-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">{t("select") + " " + t("constance.platform")}</label>
@@ -621,7 +621,7 @@ const handleFileChange = (e) => {
           </div>
 
           {/* Center Post Creation */}
-          <div className="flex w-full flex-col gap-[16px] bg-[#FFFFFF]  border-[#D6D6D6]  px-6 py-4 w-[calc(100%-494px)] h-[685px] border-b-[0.5px] relative">
+          <div className="flex w-full flex-col gap-[16px] bg-[#FFFFFF] border-[#D6D6D6] px-4 lg:px-6 py-4 h-auto lg:h-[685px] border-b-[0.5px] relative rounded-bl-[12px] rounded-br-[12px] lg:rounded-bl-none lg:rounded-tr-[12px] lg:rounded-br-[12px]">
             {/* Post Header */}
             {/* <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -651,9 +651,9 @@ const handleFileChange = (e) => {
                 </div>
               </div>
             </div> */}
-            <h1 className="text-[16px] font-medium">Post Details</h1>
+            <h1 className="text-[16px] font-medium">{t("brain_ai.post_details")}</h1>
             {/* Action Buttons */}
-            <div className="flex flex-col h-full p-[24px] w-full rounded-[10px] p-[10px] border border-[#00000029] gap-[16px] justify-between ">
+            <div className="flex flex-col h-full p-4 lg:p-[24px] w-full rounded-[10px] border border-[#00000029] gap-[16px] justify-between">
               {/* <input
                 type="text"
                 value={text}
@@ -686,7 +686,7 @@ const handleFileChange = (e) => {
                   </button>
                 </div> */}
               <div className="space-y-[20px]">
-                <div className="flex flex-row items-center gap-[16px] max-h-[16px]">
+                <div className="flex flex-row items-center gap-3 lg:gap-[16px] max-h-[16px]">
                   <button className="flex items-center justify-center w-[16px]">
                     <img src={Bold} />
                   </button>
@@ -720,14 +720,14 @@ const handleFileChange = (e) => {
 
                 {/* Uploaded Media Thumbnails */}
                 {mediaList.length > 0 && (
-                  <div className="w-full flex flex-wrap gap-4 mt-2">
+                  <div className="w-full flex flex-wrap gap-2 lg:gap-4 mt-2">
                     {mediaList.map((item, index) => (
                       <div
                         key={index}
                         className="relative"
                         style={{
-                          width: "160px",
-                          height: "100px",
+                          width: "120px lg:160px",
+                          height: "80px lg:100px",
                           borderRadius: "4px",
                           overflow: "hidden",
                           position: "relative",
@@ -759,12 +759,12 @@ const handleFileChange = (e) => {
                               className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition rounded"
                             >
                               {videoStates[index] ? (
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                                <svg width="24 lg:32" height="24 lg:32" viewBox="0 0 24 24" fill="white">
                                   <rect x="6" y="5" width="4" height="14" />
                                   <rect x="14" y="5" width="4" height="14" />
                                 </svg>
                               ) : (
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                                <svg width="24 lg:32" height="24 lg:32" viewBox="0 0 24 24" fill="white">
                                   <path d="M8 5v14l11-7z" />
                                 </svg>
                               )}
@@ -836,7 +836,7 @@ const handleFileChange = (e) => {
                 )}
                 {errors.document && <div className="text-red-500 text-xs mt-1">{errors.document}</div>} */}
                 </div></div>
-              <div className="flex items-start justify-between flex-row mb-1">
+              <div className="flex flex-col sm:flex-row items-start justify-between gap-3 mb-1">
                 <label className="flex items-center gap-2 text-sm text-gray-700">
                   <input
                     type="checkbox"
@@ -848,8 +848,8 @@ const handleFileChange = (e) => {
                   </span>
                 </label>
 
-                <div className="flex flex-row gap-[20px] max-h-[32px]">
-                  <div className="flex flex-row gap-[20px] items-center justify-center ">
+                <div className="flex flex-row gap-4 lg:gap-[20px] max-h-[32px]">
+                  <div className="flex flex-row gap-4 lg:gap-[20px] items-center justify-center">
                     <img
                       src={VideoClip}
                       alt="Upload Video"
@@ -868,7 +868,7 @@ const handleFileChange = (e) => {
                   {!editData && (<button
                     disabled={isSaving?.publish} onClick={handlePublish}
                     className={`bg-[#675FFF] items-center justify-center py-[6px] px-[10px] gap-[6px] rounded-[8px] text-white text-[13px] font-medium ${isSaving?.publish ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
-                    {isSaving?.publish ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : t("publish")}
+                    {isSaving?.publish ? <div className="flex items-center justify-center gap-2"><p className="text-[12px] lg:text-[13px]">{t("processing")}{t("processing")}</p><span className="loader" /></div> : t("publish_now")}
                   </button>)}
                 </div>
               </div>

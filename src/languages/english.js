@@ -4,6 +4,8 @@ const englishTranslation = {
   hello: "Hello",
   coo: "Executive Assistant",
   content_creation: "Content Creation",
+  content : "Content",
+  Social_Accounts:"Social Accounts",
   phone_outreach: "Phone Outreach",
   phone_outreach_new: "Phone Outreach",
   appointment_setter: "Appointment Setter",
@@ -29,6 +31,8 @@ const englishTranslation = {
   tone_placeholder: "Select tone",
   purpose: "Purpose",
   purpose_placeholder: "Ex. Make a funny post",
+  next:"Next",
+  prev:"Prev",
 
   chat_options: {
     professional: "Professional",
@@ -162,6 +166,9 @@ const englishTranslation = {
     first_name: "First Name",
     last_name: "Last Name",
     search: "Search",
+    search_here : "Search here",
+    rows : "rows",
+    post_details : "Post Details",
     add_to_list: "Add to a list",
     no_contact_listed: "No Contacts Listed",
     showing: "Showing",
@@ -1022,7 +1029,9 @@ const englishTranslation = {
     scheduler_para:"Plan, organize, and manage all your scheduled posts in a visual calendar.",
     calendar : "Calender",
     list_view  : "List View",
-    cancel : "cancel"
+    cancel : "cancel",
+    schedule_post : "Schedule Post",
+    schedule_now : "Schedule Now"
 
   },
   calina: {
@@ -1049,6 +1058,7 @@ const englishTranslation = {
     direct: "Direct",
     empathic: "Emphatic",
     all: "All",
+    post_now : "Post Now",
     user_requested: "The user requests to be contacted",
     request_after_x_attempt: "The AI doesn't understand the request after X attempts",
     detect_keyword: `The AI detects a keyword (e.g., "help," "human")`,
@@ -1185,7 +1195,8 @@ const englishTranslation = {
   scheduled: "Scheduled",
   terminated: "Terminated",
   draft: "Draft",
-  publish: "Publish Now",
+  publish : "Publish",
+  publish_now: "Publish Now",
   schedule: "Schedule",
   paused: "Paused",
   email_statistics: "Email Statistics",
