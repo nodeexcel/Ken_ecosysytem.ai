@@ -153,7 +153,7 @@ function AgentsSeth() {
                             </thead>
 
                             <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
-                                {loading ? <tr className='h-34'><td ></td><td ></td><td ><span className='loader' /></td><td></td><td></td></tr> : message ? <tr className='h-34'><td></td><td></td><td>{message}</td></tr> : <>{campaignData.map((item, index) => {
+                                {loading ? <tr className='h-34'><td ></td><td ></td><td ><td ></td><td ></td><span className='loader' /></td><td></td><td></td></tr> : message ? <tr className='h-34'><td></td><td></td><td>{message}</td></tr> : <>{campaignData.map((item, index) => {
                                     return (
                                         <tr key={index} className="text-center">
                                             <td className="px-4 py-4 text-[16px] text-[#1E1E1E] font-semibold  ">

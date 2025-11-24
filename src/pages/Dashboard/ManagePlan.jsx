@@ -450,11 +450,11 @@ const ManagePlan = ({ onClose }) => {
 
   return (
     <div className="w-full h-full overflow-y-auto">
-      <div className="w-full max-w-full p-6">
+      <div className="w-full max-w-full px-6 py-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 relative">
           <div className="flex flex-col gap-1">
-            <h1 className="text-[24px] sm:text-[28px] font-[600] text-[#1E1E1E]">
+            <h1 className="text-[24px] sm:text-2xl font-[600] text-[#1E1E1E]">
               Manage Plan
             </h1>
             <p className="text-[14px] sm:text-[16px] text-[#5A687C] font-[400]">
@@ -521,7 +521,7 @@ const ManagePlan = ({ onClose }) => {
               >
                 {/* Current Plan Badge */}
                 {isCurrentPlan && (
-                  <div className="absolute top-4 right-4 bg-[#675FFF] text-white text-xs font-[600] px-2 py-1 rounded-2xl">
+                  <div className="absolute top-4 right-4 bg-[#E1E0F8] text-[#675FFF] text-xs font-[600] px-2 py-1 rounded-2xl">
                     Current Plan
                   </div>
                 )}
@@ -534,14 +534,14 @@ const ManagePlan = ({ onClose }) => {
                 )}
 
                 {/* Upper section with fixed height */}
-                <div className="flex flex-col min-h-[200px]">
+                <div className="flex flex-col min-h-[210px]">
                   <div className="mb-4">
                     <h3 className="font-[600] text-[#1E1E1E] text-[20px] mb-1">{plan.name}</h3>
                     <p className="text-[#5A687C] text-[14px] font-[400]">{plan.description}</p>
                   </div>
 
                   <div className="mb-4">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 ">
                       <span className="text-3xl font-[600] text-[#1E1E1E] leading-none">
                         {plan.price}
                       </span>
@@ -625,169 +625,6 @@ const ManagePlan = ({ onClose }) => {
         {showCancelPopup && (
           <CancelSubscriptionPopup t={t} onClose={() => setShowCancelPopup(false)} />
         )}
-
-        <div className="mt-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-            <h2 className="text-[20px] sm:text-[24px] font-[600] text-[#1E1E1E]">Billing History</h2>
-            <div className="relative w-full sm:w-auto">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search Invoices"
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="w-full sm:w-[300px] pl-10 pr-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[14px] focus:outline-none focus:border-[#675FFF]"
-              />
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl border border-[#D6D6D6] overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full border-separate border-spacing-0">
-                <thead className="bg-[#F7F7F8]">
-                  <tr>
-                    <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Invoice ID</th>
-                    <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Plan</th>
-                    <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Billing Period</th>
-                    <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Amount</th>
-                    <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Status</th>
-                    <th className="px-12 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-xl [&>tr:first-child>td:last-child]:rounded-tr-xl [&>tr:last-child>td:first-child]:rounded-bl-xl [&>tr:last-child>td:last-child]:rounded-br-xl">
-                  {loadingTransactions ? (
-                    <tr>
-                      <td colSpan={6} className="px-6 py-8 text-center">
-                        <span className="loader" />
-                      </td>
-                    </tr>
-                  ) : paginatedTransactions.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="px-6 py-8 text-center text-[#5A687C]">
-                        No invoices found
-                      </td>
-                    </tr>
-                  ) : (
-                    paginatedTransactions.map((transaction, index) => {
-                      const originalIndex = transactions.indexOf(transaction);
-                      const isLastRow = index === paginatedTransactions.length - 1;
-                      return (
-                        <tr key={index} className={`border-b border-[#D6D6D6] ${isLastRow ? 'last:border-b-0' : ''}`}>
-                          <td className={`px-6 py-4 text-[14px] text-[#1E1E1E] font-[400] ${index === 0 ? 'border-t-0' : ''} ${isLastRow ? 'border-b-0' : ''}`}>
-                            {generateInvoiceId(originalIndex, transaction.transactionDate)}
-                          </td>
-                          <td className={`px-6 py-4 text-[14px] text-[#1E1E1E] font-[400] capitalize ${index === 0 ? 'border-t-0' : ''} ${isLastRow ? 'border-b-0' : ''}`}>
-                            {transaction.subscriptionType || "N/A"}
-                          </td>
-                          <td className={`px-6 py-4 text-[14px] text-[#1E1E1E] font-[400] ${index === 0 ? 'border-t-0' : ''} ${isLastRow ? 'border-b-0' : ''}`}>
-                            {formatBillingPeriod(transaction.transactionDate)}
-                          </td>
-                          <td className={`px-6 py-4 text-[14px] text-[#1E1E1E] font-[400] ${index === 0 ? 'border-t-0' : ''} ${isLastRow ? 'border-b-0' : ''}`}>
-                            €{transaction.amountPaid?.toFixed(2) || "0.00"}
-                          </td>
-                          <td className={`px-6 py-4 ${index === 0 ? 'border-t-0' : ''} ${isLastRow ? 'border-b-0' : ''}`}>
-                            <span
-                              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[14px] font-[500] ${transaction.status?.toLowerCase() === "paid"
-                                  ? "text-[#34C759] bg-[#EBF9EE]"
-                                  : "text-[#5A687C] bg-[#EFF0F2]"
-                                }`}
-                            >
-                              <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
-                              {transaction.status ? transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1) : "N/A"}
-                            </span>
-                          </td>
-                          <td
-                            className={`px-6 py-4 ${index === 0 ? "border-t-0" : ""} ${isLastRow ? "border-b-0" : ""
-                              }`}
-                          >
-                            {transaction.receiptUrl ? (
-                              <a
-                                href={transaction.receiptUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className=" inline-flex items-center gap-2  bg-white  border border-[#E5E7EB] px-2 py-2  rounded-lg   text-[#1E1E1E]  text-[14px] font-[500] shadow-[0px_2px_6px_rgba(0,0,0,0.06)] hover:shadow-[0px_3px_8px_rgba(0,0,0,0.10)] transition "
-                              >
-                                <Download className="w-4 h-4" />
-                                Download
-                              </a>
-                            ) : (
-                              <span className="text-[#5A687C] flex items-center mr-12 justify-center text-[14px]">N/A</span>
-                            )}
-                          </td>
-
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination */}
-            {filteredTransactions.length > 0 && (
-              <div className="flex items-center justify-between bg-[#F7F7F8] px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                    disabled={currentPage === 1}
-                    className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    ‹ Prev
-                  </button>
-                  {getPageNumbers().map((page, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => typeof page === "number" && setCurrentPage(page)}
-                      disabled={page === "..."}
-                      className={`rounded-lg px-3 py-1 text-sm cursor-pointer ${page === currentPage
-                          ? "bg-[#675FFF] text-white"
-                          : page === "..."
-                            ? "text-[#000000] cursor-default"
-                            : "border border-[#D6D6D6] text-[#000000] bg-white hover:bg-gray-50"
-                        }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                  <button
-                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                    disabled={currentPage === totalPages}
-                    className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Next ›
-                  </button>
-                </div>
-
-                <div className="flex items-center gap-2 text-sm text-[#5A687C]">
-                  <button
-                    onClick={() => setRowsPerPage(5)}
-                    className={`border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] cursor-pointer ${rowsPerPage === 5 ? "bg-white" : "bg-transparent hover:bg-white"
-                      }`}
-                  >
-                    5 rows
-                  </button>
-                  <button
-                    onClick={() => setRowsPerPage(10)}
-                    className={`border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] cursor-pointer ${rowsPerPage === 10 ? "bg-white" : "bg-transparent hover:bg-white"
-                      }`}
-                  >
-                    10
-                  </button>
-                  <button
-                    onClick={() => setRowsPerPage(20)}
-                    className={`border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] cursor-pointer ${rowsPerPage === 20 ? "bg-white" : "bg-transparent hover:bg-white"
-                      }`}
-                  >
-                    20
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
     </div>
   );

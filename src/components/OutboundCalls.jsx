@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { MoreHorizontal, X } from "lucide-react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
+import { MoreHorizontal, X, Search } from "lucide-react";
 import { BritishFlag, Delete, Notes, Phone, TestCall, ThreeDots } from "../icons/icons";
 import DatePicker from "react-datepicker";
 import { LuCalendarDays } from "react-icons/lu";
@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { FaChevronDown } from "react-icons/fa";
 import { outboundCall } from "../api/callAgent";
+import { format } from "date-fns";
 
 // Mock data for fallback
 // const mockAgents = [
@@ -94,9 +95,9 @@ export default function OutBoundCalls() {
 
     // Add filter state
     const [filters, setFilters] = useState({
-        campaign: "",
-        recipient: ""
+        campaign: ""
     });
+    const [searchQuery, setSearchQuery] = useState("");
 
     // Define campaign options
     const campaignOptions = [
@@ -191,14 +192,82 @@ export default function OutBoundCalls() {
         setActiveDropdown(activeDropdown === index ? null : index);
     };
 
-    
+    // Filter agents based on search query and filters
+    const filteredAgents = useMemo(() => {
+        return agents.filter((agent) => {
+            // Search filter - search by name or phone number
+            if (searchQuery) {
+                const query = searchQuery.toLowerCase();
+                const matchesSearch = 
+                    agent.agent_name?.toLowerCase().includes(query) ||
+                    agent.recipient_no?.toLowerCase().includes(query) ||
+                    agent.campaign_name?.toLowerCase().includes(query);
+                if (!matchesSearch) return false;
+            }
+            
+            // Campaign filter
+            if (filters.campaign) {
+                const campaignOption = campaignOptions.find(opt => opt.key === filters.campaign);
+                if (campaignOption) {
+                    // Match by label (campaign name)
+                    if (agent.campaign_name?.toLowerCase() !== campaignOption.label.toLowerCase()) {
+                        return false;
+                    }
+                } else {
+                    // If no option found, try direct match
+                    if (agent.campaign_name?.toLowerCase() !== filters.campaign.toLowerCase()) {
+                        return false;
+                    }
+                }
+            }
+            
+            // Date range filter
+            if (startDate && endDate) {
+                const agentDate = new Date(agent.date);
+                if (isNaN(agentDate.getTime())) {
+                    // If date is invalid, try parsing different formats
+                    const dateStr = agent.date;
+                    if (dateStr && dateStr.includes('/')) {
+                        const [day, month, year] = dateStr.split('/').map(Number);
+                        if (day && month && year) {
+                            const parsedDate = new Date(year, month - 1, day);
+                            if (parsedDate < startDate || parsedDate > endDate) {
+                                return false;
+                            }
+                        }
+                    }
+                } else {
+                    if (agentDate < startDate || agentDate > endDate) {
+                        return false;
+                    }
+                }
+            }
+            
+            return true;
+        });
+    }, [agents, searchQuery, filters.campaign, startDate, endDate]);
+
+    // Format date range for display
+    const dateRangeDisplay = useMemo(() => {
+        if (startDate && endDate) {
+            const startFormatted = format(startDate, 'd MMM');
+            const endFormatted = format(endDate, 'd MMM');
+            return `${startFormatted} - ${endFormatted}`;
+        } else if (startDate) {
+            return `${format(startDate, 'd MMM')} - ...`;
+        }
+        return "Select date range";
+    }, [startDate, endDate]);
 
     return (
-        <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
-            {/* Header */}
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold text-black">{t("phone.outbound_calls")}</h1>
-                <button
+        <div className="py-6 px-6 h-screen overflow-auto flex flex-col gap-4 w-full">
+                {/* Header */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
+            <div className="flex flex-col gap-1">
+              <h1 className="text-xl md:text-2xl font-semibold text-[#1E1E1E]">{t("phone.outbound_calls")}</h1>
+              <p className="text-sm md:text-base text-[#5A687C] font-[400]">Track all outbound call activities across your campaigns.</p>
+            </div>
+            <button
                     className="bg-[#7065F0] text-white font-medium px-5 py-2 rounded-lg shadow"
                     onClick={() => setShowModal(true)}
                 >
@@ -208,161 +277,202 @@ export default function OutBoundCalls() {
                 </button>
             </div>
 
-            {/* Filters */}
-            <div className='flex flex-wrap gap-2'>
-                <div className="relative">
-                    <DatePicker
-                        selected={startDate}
-                        onChange={(date) => setStartDate(date)}
-                        customInput={
-                            <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px]  focus:border-[#675FFF] focus:outline-none">
-                                {
-                                    t("phone.start_date")
-                                }
-                                <LuCalendarDays className="text-[16px]" />
-                            </button>
-                        }
-                    />
-                </div>
-                <div className="relative">
-                    <DatePicker
-                        selected={endDate}
-                        onChange={(date) => setEndDate(date)}
-                        customInput={
-                            <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px]  focus:border-[#675FFF] focus:outline-none">
-                               {
-                                t("phone.end_date")
-                               }
-                                <LuCalendarDays className="text-[16px]" />
-                            </button>
-                        }
-                    />
-                </div>
-                <div className="w-48">
-                    <SelectDropdown
-                        name="campaign"
-                        options={campaignOptions}
-                        placeholder={t("emailings.campaign")}
-                        value={filters.campaign}
-                        onChange={(value) => setFilters({ ...filters, campaign: value })}
-                    />
-                </div>
-                <div>
+            {/* Search and Filters */}
+            <div className="flex flex-col sm:flex-row gap-3 mb-3 justify-between">
+                {/* Search Bar */}
+                <div className="relative flex-1 min-w-0 max-w-[270px]">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
                     <input
-                        value={filters.recipient}
-                        onChange={(e) => setFilters({ ...filters, recipient: e.target.value })}
-                        placeholder={t("phone.receipient")}
-                        className="bg-white border text-[#5A687C] max-w-[152px] text-[16px] font-[400] w-fit border-[#E1E4EA] px-4 py-2 rounded-lg focus:border-[#675FFF] focus:outline-none"
+                        type="text"
+                        placeholder="Search name or phone number"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border border-[#E1E4EA] bg-white rounded-lg focus:outline-none focus:border-[#675FFF] text-sm"
                     />
+                </div>
+
+                {/* Filters */}
+                <div className="flex flex-wrap sm:flex-nowrap gap-3 flex-shrink-0">
+                    <div className="relative">
+                        <DatePicker
+                            selected={startDate}
+                            startDate={startDate}
+                            endDate={endDate}
+                            selectsRange
+                            onChange={(dates) => {
+                                const [start, end] = dates;
+                                if (start) setStartDate(start);
+                                if (end) setEndDate(end);
+                                // Reset if both are null
+                                if (!start && !end) {
+                                    setStartDate(new Date());
+                                    setEndDate(new Date());
+                                }
+                            }}
+                            dateFormat="d MMM"
+                            customInput={
+                                <button className="flex items-center gap-2 px-4 py-[6px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px] focus:border-[#675FFF] focus:outline-none">
+                                    {dateRangeDisplay}
+                                    <LuCalendarDays className="text-[16px]" />
+                                </button>
+                            }
+                        />
+                    </div>
+                    <div className="w-48 text-[13px] font-[500]">
+                        <SelectDropdown
+                            name="campaign"
+                            options={campaignOptions}
+                            placeholder={t("emailings.campaign")}
+                            value={filters.campaign}
+                            onChange={(value) => setFilters({ ...filters, campaign: value })}
+                        />
+                    </div>
                 </div>
             </div>
             {/* Table */}
             <div className="overflow-auto w-full">
-                <table className="w-full">
-                    <thead> 
-                        <tr className="text-left text-[#5a687c] text-[16px]">
-                            <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("emailings.campaign_name")}</th>
-                            <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("appointment.agent_name")}</th>
-                            <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("brain_ai.date")}</th>
-                            <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.language")}</th>
-                            <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.voice")}</th>
-                            <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.receipient_no")}</th>
-                            <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.status")}</th>
-                            <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] table-cell-wrap">{t("phone.duration")}</th>
-                            <th className="p-[14px] w-full font-[400] table-cell-wrap">{t("phone.actions")}</th>
-                        </tr>
-                    </thead>
-                    <tbody className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
-                        {loading ? (
-                            <tr>
-                                <td colSpan="9" className="text-center py-8">
-                                    <span className="loader" />
-                                </td>
-                            </tr>
-                        ) : error ? (
-                            <tr>
-                                <td colSpan="9" className="text-center py-8">
-                                    <div className="flex flex-col items-center justify-center text-center">
-                                        <p className="text-red-500 mb-2">{error}</p>
-                                        <button 
-                                            onClick={fetchOutboundCalls}
-                                            className="px-4 py-2 bg-[#7065F0] text-white rounded-lg hover:bg-[#5A52E5]"
-                                        >
-                                            Retry
-                                        </button>
+              <div className="border border-[#D6D6D6] rounded-2xl overflow-hidden">
+                <table className="min-w-full border-separate border-spacing-0">
+                  <thead className="bg-[#F7F7F8]">
+                    <tr className="text-[#5A687C]">
+                      <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("emailings.campaign_name")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("appointment.agent_name")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("brain_ai.date")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.language")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.voice")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.receipient_no")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.status")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.duration")}</th>
+                      <th className="px-6 text-center py-3 text-[16px] font-[400]">{t("phone.actions")}</th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
+                    {loading ? (
+                      <tr>
+                        <td colSpan="9" className="text-center py-8">
+                          <span className="loader" />
+                        </td>
+                      </tr>
+                    ) : error ? (
+                      <tr>
+                        <td colSpan="9" className="text-center py-8">
+                          <div className="flex flex-col items-center justify-center text-center">
+                            <p className="text-red-500 mb-2">{error}</p>
+                            <button 
+                              onClick={fetchOutboundCalls}
+                              className="px-4 py-2 bg-[#7065F0] text-white rounded-lg hover:bg-[#5A52E5] cursor-pointer"
+                            >
+                              Retry
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : Array.isArray(filteredAgents) && filteredAgents.length !== 0 ? (
+                      filteredAgents.map((agent, index) => (
+                        <tr key={agent.id} className="text-[16px] text-[#1E1E1E]">
+                          <td className="px-4 py-4 text-[16px] font-[600] text-[#1E1E1E] text-start">{agent.campaign_name}</td>
+                          <td className="px-4 py-4 text-[16px] text-start">
+                            <div className="flex flex-col text-[16px] text-[#1E1E1E] font-[400]">
+                              {agent.agent_name}
+                              <span className="text-[#5A687C]">{agent.choosen}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.date}</td>
+                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.language}</td>
+                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.voice}</td>
+                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.recipient_no}</td>
+                          <td className="px-4 py-4 text-start">
+                            <span className={`inline-block ${agent.status.toLowerCase() === "replied" ? "text-[#34C759]" : "text-[#FF3B30]"} text-[16px] font-[400] px-3 py-1 rounded-full`}>
+                              {agent.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.duration}</td>
+                          <td className="px-4 py-4 text-center">
+                            <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative cursor-pointer">
+                              <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
+                              {activeDropdown === index && (
+                                <div className="absolute right-0 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                                  <div className="py-1">
+                                    <button
+                                      className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6] cursor-pointer"
+                                      onClick={() => {
+                                        // Handle edit action
+                                        setActiveDropdown(null);
+                                      }}
+                                    >
+                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Phone /></div> <div className='hidden group-hover:block'><Phone active={true} /></div> <span>{t("phone.listen_call")}</span> </div>
+                                    </button>
+                                    <button
+                                      className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6] cursor-pointer"
+                                      onClick={() => {
+                                        // Handle delete action
+                                        setActiveDropdown(null);
+                                      }}
+                                    >
+                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>{t("phone.notes")}</span> </div>
+                                    </button>
+                                    <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                                    <div className='py-2'>
+                                      <button
+                                        className="block w-full text-left hover:rounded-lg px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6] cursor-pointer"
+                                        onClick={() => {
+                                          // Handle delete action
+                                          setActiveDropdown(null);
+                                        }}
+                                      >
+                                        <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">{t("delete")}</span> </div>
+                                      </button>
                                     </div>
-                                </td>
-                            </tr>
-                        ) : Array.isArray(agents) && agents.length !== 0 ? (
-                            agents.map((agent, index) => (
-                                        <tr
-                                            key={agent.id}
-                                            className={`${index !== agents.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
-                                        >
-                                            <td className="p-[14px] min-w-[200px] max-w-[17%] w-full  font-[600] text-[#1E1E1E] text-[16px]">{agent.campaign_name}</td>
-                                            <td className="py-[14px] pl-[18px] pr-[14px] min-w-[200px] max-w-[17%] w-full "><div className="flex flex-col text-[16px] text-[#1E1E1E] font-[400] table-cell-wrap">{agent.agent_name}<span className="text-[#5A687C]">{agent.choosen}</span></div></td>
-                      <td className="p-[14px] min-w-[200px] max-w-[17%] w-full  text-[#5A687C] table-cell-wrap">{agent.date}</td>
-                                            <td className="p-[14px] min-w-[200px] max-w-[17%] w-full  text-[#5A687C]">{agent.language}</td>
-                                            <td className="py-[14px] pl-[5px] pr-[14px] min-w-[200px] max-w-[17%] w-full  text-[#5A687C] table-cell-wrap">{agent.voice}</td>
-                                            <td className="py-[14px] pl-[5px] pr-[14px] min-w-[200px] max-w-[17%] w-full  text-[#5A687C]">{agent.recipient_no}</td>
-                                            <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[17%] w-full table-cell-wrap">
-                                                <span className={`inline-block ${agent.status.toLowerCase() === "replied" ? "text-[#34C759]" : "text-[#FF3B30]"} text-[16px] font-[400] px-3 py-1 rounded-full`}>
-                                                    {agent.status}
-                                                </span>
-                                            </td>
-                                            <td className="p-[14px] min-w-[200px] max-w-[17%] w-full  text-[#5A687C]">{agent.duration}</td>
-                                            <td className="p-[14px] w-full ">
-                                                <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
-                                                    <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
-                                                </button>
-                                                {activeDropdown === index && (
-                                                    <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
-                                                        <div className="py-1">
-                                                            <button
-                                                                className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
-                                                                onClick={() => {
-                                                                    // Handle edit action
-                                                                    setActiveDropdown(null);
-                                                                }}
-                                                            >
-                                                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><Phone /></div> <div className='hidden group-hover:block'><Phone active={true} /></div> <span>{t("phone.listen_call")}</span> </div>
-                                                            </button>
-                                                            <button
-                                                                className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
-                                                                onClick={() => {
-                                                                    // Handle delete action
-                                                                    setActiveDropdown(null);
-                                                                }}
-                                                            >
-                                                                <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>{t("phone.notes")}</span> </div>
-                                                            </button>
-                                                            <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                                                            <div className='py-2'>
-                                                                <button
-                                                                    className="block w-full text-left hover:rounded-lg px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
-                                                                    onClick={() => {
-                                                                        // Handle delete action
-                                                                        setActiveDropdown(null);
-                                                                    }}
-                                                                >
-                                                                    <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">{t("delete")}</span> </div>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))
-                        ) : (
-                            <tr>
-                                <td colSpan="9" className="text-center py-8 text-[#1E1E1E]">
-                                    {t("phone.no_outbound_calls")}
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
+                                  </div>
+                                </div>
+                              )}
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="9" className="text-center py-8 text-[#1E1E1E]">
+                          {t("phone.no_outbound_calls")}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
                 </table>
+
+                <div className="flex items-center justify-between bg-[#F7F7F8] px-4 py-3">
+                  {/* pagination + row controls */}
+                  <div className="flex items-center gap-2">
+                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
+                      ‹ Prev
+                    </button>
+                    <button className="bg-[#675FFF] text-white rounded-lg px-3 py-1 text-sm cursor-pointer">
+                      1
+                    </button>
+                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                      2
+                    </button>
+                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                      3
+                    </button>
+                    <span className="text-[#000000] text-sm">…</span>
+                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                      10
+                    </button>
+                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
+                      Next ›
+                    </button>
+                  </div>
+
+                  {/* Right side – rows per page */}
+                  <div className="flex items-center gap-2 text-sm text-[#5A687C]">
+                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 rows</button>
+                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">10</button>
+                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">20</button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Modal */}

@@ -1,9 +1,11 @@
-import { Plus, X } from 'lucide-react'
+import { Plus, X, ChevronDown, RefreshCw } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from "react-i18next";
-import { getAgents } from '../api/callAgent';
+import { getAgents, getCallAgent, getPhoneCampaign, outboundCall, inboundCall } from '../api/callAgent';
 import { addCredit } from "../api/payment";
 import { getCurrentCredits } from '../api/profile';
+import { SelectDropdown } from './Dropdown';
+import PhoneIcon from '../assets/svg/Phone.svg'
 
 const PhoneDashboard = () => {
 
@@ -12,52 +14,155 @@ const PhoneDashboard = () => {
   const [amount, setAmount] = useState('');
   const [selectedCard, setSelectedCard] = useState(null);
   const [balance, setBalance] = useState(0);
+  const [timePeriod, setTimePeriod] = useState('This Month');
   const [dashboardData, setDashboardData] = useState({
     agents: 0,
     campaigns: 0,
     outbound_calls: 0,
     inbound_calls: 0,
+    average_call_duration: '00:00:00',
+    call_duration_trend: null,
+    agents_online: 0,
+    agents_pending: 0,
+    campaigns_outbound: 0,
+    campaigns_inbound: 0,
+    connection_rate: 0,
+    response_rate: 0,
     loading: true,
     error: null
   });
   const { t } = useTranslation();
 
+  const timePeriodOptions = [
+    { label: 'This Month', key: 'This Month' },
+    { label: 'Last Month', key: 'Last Month' },
+    { label: 'Last 3 Months', key: 'Last 3 Months' },
+    { label: 'Last 6 Months', key: 'Last 6 Months' },
+    { label: 'This Year', key: 'This Year' }
+  ];
+
+  // Helper function to format duration from seconds to HH:MM:SS
+  const formatDuration = (seconds) => {
+    if (!seconds || isNaN(seconds)) return '00:00:00';
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  };
+
+  // Helper function to calculate average call duration
+  const calculateAverageDuration = (calls) => {
+    if (!calls || !Array.isArray(calls) || calls.length === 0) return 0;
+    const totalDuration = calls.reduce((sum, call) => {
+      const duration = call.duration || 0;
+      return sum + duration;
+    }, 0);
+    return Math.floor(totalDuration / calls.length);
+  };
+
   useEffect(() => {
-    const fetchAgents = async () => {
+    const fetchAllData = async () => {
       try {
         setDashboardData(prev => ({ ...prev, loading: true }));
+
+        // Fetch main dashboard data
         const response = await getAgents();
-        console.log(response, "wsdfedfwedf");
-        if (response.data && response.data.success) {
-          setDashboardData({
-            agents: response.data.success.agents,
-            campaigns: response.data.success.campaigns,
-            outbound_calls: response.data.success.outbound_calls,
-            inbound_calls: response.data.success.inbound_calls,
-            loading: false,
-            error: null
-          });
-        } else {
-          setDashboardData(prev => ({ ...prev, loading: false }));
+        const mainData = response.data?.success || {};
+
+        // Fetch agent details for online/pending status
+        let agentsOnline = 0;
+        let agentsPending = 0;
+        try {
+          const agentsResponse = await getCallAgent();
+          if (agentsResponse?.data?.agents_info) {
+            const agents = Array.isArray(agentsResponse.data.agents_info)
+              ? agentsResponse.data.agents_info
+              : [];
+            agentsOnline = agents.filter(agent => agent.status === 'active' || agent.status === 'online').length;
+            agentsPending = agents.filter(agent => agent.status === 'pending' || agent.status === 'inactive').length;
+          }
+        } catch (err) {
+          console.error('Error fetching agent details:', err);
         }
+
+        // Fetch campaign details for outbound/inbound breakdown
+        let campaignsOutbound = 0;
+        let campaignsInbound = 0;
+        try {
+          const campaignsResponse = await getPhoneCampaign();
+          if (campaignsResponse?.data?.campaigns) {
+            const campaigns = Array.isArray(campaignsResponse.data.campaigns)
+              ? campaignsResponse.data.campaigns
+              : [];
+            campaignsOutbound = campaigns.filter(campaign => campaign.type === 'outbound' || campaign.campaign_type === 'outbound').length;
+            campaignsInbound = campaigns.filter(campaign => campaign.type === 'inbound' || campaign.campaign_type === 'inbound').length;
+          }
+        } catch (err) {
+          console.error('Error fetching campaign details:', err);
+        }
+
+        // Fetch outbound calls for connection rate and average duration
+        let averageDuration = 0;
+        let connectionRate = 0;
+        try {
+          const outboundResponse = await outboundCall();
+          const outboundCalls = outboundResponse?.data?.success || [];
+          if (Array.isArray(outboundCalls) && outboundCalls.length > 0) {
+            averageDuration = calculateAverageDuration(outboundCalls);
+            const connectedCalls = outboundCalls.filter(call => call.status === 'connected' || call.status === 'completed').length;
+            connectionRate = outboundCalls.length > 0 ? Math.round((connectedCalls / outboundCalls.length) * 100) : 0;
+          }
+        } catch (err) {
+          console.error('Error fetching outbound calls:', err);
+        }
+
+        // Fetch inbound calls for response rate
+        let responseRate = 0;
+        try {
+          const inboundResponse = await inboundCall();
+          const inboundCalls = inboundResponse?.data?.success || [];
+          if (Array.isArray(inboundCalls) && inboundCalls.length > 0) {
+            const respondedCalls = inboundCalls.filter(call => call.status === 'answered' || call.status === 'completed').length;
+            responseRate = inboundCalls.length > 0 ? Math.round((respondedCalls / inboundCalls.length) * 100) : 0;
+          }
+        } catch (err) {
+          console.error('Error fetching inbound calls:', err);
+        }
+
+        setDashboardData({
+          agents: mainData.agents || 0,
+          campaigns: mainData.campaigns || 0,
+          outbound_calls: mainData.outbound_calls || 0,
+          inbound_calls: mainData.inbound_calls || 0,
+          average_call_duration: formatDuration(averageDuration),
+          call_duration_trend: null, // This would need historical data to calculate
+          agents_online: agentsOnline,
+          agents_pending: agentsPending,
+          campaigns_outbound: campaignsOutbound,
+          campaigns_inbound: campaignsInbound,
+          connection_rate: connectionRate,
+          response_rate: responseRate,
+          loading: false,
+          error: null
+        });
       } catch (err) {
-        setDashboardData(prev => ({ ...prev, loading: false }));
-        console.error('Error fetching agents:', err);
+        setDashboardData(prev => ({ ...prev, loading: false, error: err.message }));
+        console.error('Error fetching dashboard data:', err);
       }
     };
 
-    fetchAgents();
+    fetchAllData();
   }, []);
 
   useEffect(() => {
-  const fetchCredits = async () => {
-    const res = await getCurrentCredits();
-    if (res?.data?.phoneCredits?.balance !== undefined) {
-      setBalance(res.data.phoneCredits.balance);
-    }
-  };
-  fetchCredits();
-}, []);
+    const fetchCredits = async () => {
+      const res = await getCurrentCredits();
+      if (res?.data?.phoneCredits?.balance !== undefined) {
+        setBalance(res.data.phoneCredits.balance);
+      }
+    };
+    fetchCredits();
+  }, []);
 
   const handleTopUp = async () => {
     const value = selectedCard || Number(amount || 0);
@@ -82,6 +187,11 @@ const PhoneDashboard = () => {
         if (r?.data?.success) {
           setDashboardData((prev) => ({ ...prev, agents: r.data.success.agents, campaigns: r.data.success.campaigns, outbound_calls: r.data.success.outbound_calls, inbound_calls: r.data.success.inbound_calls }));
         }
+        // Refresh credits
+        const creditsRes = await getCurrentCredits();
+        if (creditsRes?.data?.phoneCredits?.balance !== undefined) {
+          setBalance(creditsRes.data.phoneCredits.balance);
+        }
       } else {
       }
     } catch (err) {
@@ -89,11 +199,128 @@ const PhoneDashboard = () => {
     }
   }
 
+  const handleRefresh = async () => {
+    try {
+      setDashboardData(prev => ({ ...prev, loading: true }));
+
+      // Fetch main dashboard data
+      const response = await getAgents();
+      const mainData = response.data?.success || {};
+
+      // Fetch agent details
+      let agentsOnline = 0;
+      let agentsPending = 0;
+      try {
+        const agentsResponse = await getCallAgent();
+        if (agentsResponse?.data?.agents_info) {
+          const agents = Array.isArray(agentsResponse.data.agents_info)
+            ? agentsResponse.data.agents_info
+            : [];
+          agentsOnline = agents.filter(agent => agent.status === 'active' || agent.status === 'online').length;
+          agentsPending = agents.filter(agent => agent.status === 'pending' || agent.status === 'inactive').length;
+        }
+      } catch (err) {
+        console.error('Error fetching agent details:', err);
+      }
+
+      // Fetch campaign details
+      let campaignsOutbound = 0;
+      let campaignsInbound = 0;
+      try {
+        const campaignsResponse = await getPhoneCampaign();
+        if (campaignsResponse?.data?.campaigns) {
+          const campaigns = Array.isArray(campaignsResponse.data.campaigns)
+            ? campaignsResponse.data.campaigns
+            : [];
+          campaignsOutbound = campaigns.filter(campaign => campaign.type === 'outbound' || campaign.campaign_type === 'outbound').length;
+          campaignsInbound = campaigns.filter(campaign => campaign.type === 'inbound' || campaign.campaign_type === 'inbound').length;
+        }
+      } catch (err) {
+        console.error('Error fetching campaign details:', err);
+      }
+
+      // Fetch outbound calls
+      let averageDuration = 0;
+      let connectionRate = 0;
+      try {
+        const outboundResponse = await outboundCall();
+        const outboundCalls = outboundResponse?.data?.success || [];
+        if (Array.isArray(outboundCalls) && outboundCalls.length > 0) {
+          averageDuration = calculateAverageDuration(outboundCalls);
+          const connectedCalls = outboundCalls.filter(call => call.status === 'connected' || call.status === 'completed').length;
+          connectionRate = outboundCalls.length > 0 ? Math.round((connectedCalls / outboundCalls.length) * 100) : 0;
+        }
+      } catch (err) {
+        console.error('Error fetching outbound calls:', err);
+      }
+
+      // Fetch inbound calls
+      let responseRate = 0;
+      try {
+        const inboundResponse = await inboundCall();
+        const inboundCalls = inboundResponse?.data?.success || [];
+        if (Array.isArray(inboundCalls) && inboundCalls.length > 0) {
+          const respondedCalls = inboundCalls.filter(call => call.status === 'answered' || call.status === 'completed').length;
+          responseRate = inboundCalls.length > 0 ? Math.round((respondedCalls / inboundCalls.length) * 100) : 0;
+        }
+      } catch (err) {
+        console.error('Error fetching inbound calls:', err);
+      }
+
+      setDashboardData({
+        agents: mainData.agents || 0,
+        campaigns: mainData.campaigns || 0,
+        outbound_calls: mainData.outbound_calls || 0,
+        inbound_calls: mainData.inbound_calls || 0,
+        average_call_duration: formatDuration(averageDuration),
+        call_duration_trend: null,
+        agents_online: agentsOnline,
+        agents_pending: agentsPending,
+        campaigns_outbound: campaignsOutbound,
+        campaigns_inbound: campaignsInbound,
+        connection_rate: connectionRate,
+        response_rate: responseRate,
+        loading: false,
+        error: null
+      });
+
+      const creditsRes = await getCurrentCredits();
+      if (creditsRes?.data?.phoneCredits?.balance !== undefined) {
+        setBalance(creditsRes.data.phoneCredits.balance);
+      }
+    } catch (err) {
+      console.error('Error refreshing data:', err);
+      setDashboardData(prev => ({ ...prev, loading: false }));
+    }
+  }
+
 
   return (
-
-    <div className="py-4 pr-2 flex flex-col gap-4 w-full h-screen overflow-auto ">
-      <h1 className="text-2xl font-bold mb-3 text-gray-800">{t("phone.dashboard")}</h1>
+    <div className="py-6 px-6 flex flex-col gap-6 w-full h-screen overflow-auto">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Overview</h1>
+          <p className="text-md text-[#5A687C] mt-2">Monitor your call activity, credits, and agent performance.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <SelectDropdown
+            name="time_period"
+            options={timePeriodOptions}
+            value={timePeriod}
+            onChange={(updated) => setTimePeriod(updated)}
+            placeholder="This Month"
+            className="w-[140px] text-[14px] font-500"
+          />
+          <button
+            onClick={handleRefresh}
+            className="flex items-center gap-2 px-4 py-2 text-[14px] bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] text-sm font-medium hover:bg-gray-50 cursor-pointer"
+          >
+            <RefreshCw size={16} />
+            Refresh
+          </button>
+        </div>
+      </div>
 
       {dashboardData.error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -101,161 +328,155 @@ const PhoneDashboard = () => {
         </div>
       )}
 
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Credit Panel */}
-        <div className="w-full lg:w-[360px] h-[410px] rounded-lg border border-[#E1E4EA] bg-white  flex flex-col justify-between">
-
-          <div className="flex items-center justify-between bg-[#F1F1FF] px-5 py-4 rounded-t-lg">
-            <h2 className="font-[400] text-[14px] text-[#1E1E1E]">{t("settings.tab_2_list.credit")}</h2>
-            <button className="bg-[#675FFF] cursor-pointer border border-[#5F58E8] text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center  gap-1" onClick={() => setShowModal(true)}>
+      {/* Top Row - Credit Summary and Average Call Duration */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        {/* Credit Summary Card */}
+        <div className="rounded-xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between relative">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-[500] text-[#5A687C]">Credit Summary</h2>
+            <div className="flex items-center gap-2">
+              <span className="text-[14px] font-[500] text-[#5A687C]">Auto Refill</span>
+              <button
+                onClick={() => setAutoRefill(!autoRefill)}
+                className={`w-12 h-6 cursor-pointer rounded-full flex items-center px-1 transition-colors duration-300 ${autoRefill ? "bg-[#675FFF]" : "bg-gray-300"
+                  }`}
+              >
+                <div
+                  className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${autoRefill ? "translate-x-6" : "translate-x-0"
+                    }`}
+                ></div>
+              </button>
+            </div>
+          </div>
+          <div className="flex items-center justify-between mt-4">
+            <div>
+              <h3 className="text-4xl font-bold text-[#1E1E1E] mb-2">€{balance.toFixed(2)}</h3>
+              <p className="text-sm text-[#5A687C]">Credit rate <span className="font-semibold text-black">0.20 € / min </span></p>
+            </div>
+            <button
+              className="bg-[#675FFF] text-white px-5 py-2.5 rounded-lg text-sm font-medium flex items-center justify-center gap-2 cursor-pointer hover:bg-[#5E54FF] transition"
+              onClick={() => setShowModal(true)}
+            >
               <Plus size={16} />
-              {t("phone.add_credit")}
+              Add Credit
             </button>
           </div>
-
-          <div className="p-6">
-            <h3 className="text-5xl font-bold mb-2">€{balance}</h3>
-            <p className="text-black mb-6 font-[500]">{t("settings.tab_2_list.credit")} 0.20€/mnt</p>
-
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-[#1E1E1E]">{t("phone.auto_refill_is")}</span>
-              <div className="flex items-center gap-2">
-                <span className={`text-xs px-2 py-1 rounded-full ${autoRefill ? "bg-green-100 text-green-600" : "bg-gray-200 text-gray-500"
-                  }`}>
-                  {autoRefill ? t("phone.active") : t("phone.inactive")}
-                </span>
-                <button
-                  onClick={() => setAutoRefill(!autoRefill)}
-                  className={`w-10 h-6 cursor-pointer rounded-full flex items-center px-1 transition-colors duration-300 ${autoRefill ? "bg-indigo-500" : "bg-gray-300"
-                    }`}
-                >
-                  <div
-                    className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${autoRefill ? "translate-x-4" : "translate-x-0"
-                      }`}
-                  ></div>
-                </button>
-              </div>
-            </div>
-          </div>
-
-
         </div>
 
-        {/* Stat Cards */}
-        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-          {/* Agents */}
-          <div className="rounded-lg border border-[#E1E4EA] bg-white p-4 flex  flex-col gap-1">
-            <div className="flex w-10 h-10  justify-center border boarder-2 border-[#E1E4EA] rounded-[10px] p-2">
-              <svg width="17" height="22" viewBox="0 0 17 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12.078 5C12.078 5.99456 11.6829 6.94839 10.9796 7.65165C10.2764 8.35491 9.32254 8.75 8.32798 8.75C7.33342 8.75 6.37959 8.35491 5.67633 7.65165C4.97307 6.94839 4.57798 5.99456 4.57798 5C4.57798 4.00544 4.97307 3.05161 5.67633 2.34835C6.37959 1.64509 7.33342 1.25 8.32798 1.25C9.32254 1.25 10.2764 1.64509 10.9796 2.34835C11.6829 3.05161 12.078 4.00544 12.078 5ZM0.828979 19.118C0.861114 17.1504 1.66532 15.2742 3.06816 13.894C4.471 12.5139 6.36007 11.7405 8.32798 11.7405C10.2959 11.7405 12.185 12.5139 13.5878 13.894C14.9906 15.2742 15.7948 17.1504 15.827 19.118C13.4744 20.1968 10.9161 20.7535 8.32798 20.75C5.65198 20.75 3.11198 20.166 0.828979 19.118Z" stroke="#675FFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-            <h3 className="text-2xl font-bold">
+        {/* Average Call Duration Card */}
+        <div className="rounded-xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between">
+          <div>
+            <h2 className="text-[14px] font-[500] text-[#5A687C] mb-4">Average Call Duration</h2>
+            <h3 className="text-4xl font-bold mb-2 text-[#1E1E1E]">
+              {dashboardData.loading ? '...' : dashboardData.average_call_duration}
+            </h3>
+            <p className="text-sm text-[#5A687C]">
+              {dashboardData.call_duration_trend
+                ? `${dashboardData.call_duration_trend > 0 ? '+' : ''}${dashboardData.call_duration_trend}% ${dashboardData.call_duration_trend > 0 ? 'longer' : 'shorter'} calls this week`
+                : dashboardData.loading ? 'Loading...' : 'No trend data available'}
+            </p>
+          </div>
+          <button className="bg-white border border-[#E1E4EA] text-[#1E1E1E] text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer mt-4 self-end">
+            See more
+          </button>
+        </div>
+      </div>
+
+      {/* Bottom Row - Other Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        {/* Agent Overview Card */}
+        <div className="rounded-xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between">
+          <div>
+            <h2 className="text-[14px] font-[500] text-[#5A687C] mb-4">Agent Overview</h2>
+            <h3 className="text-4xl font-bold mb-2 text-[#1E1E1E]">
               {dashboardData.loading ? '...' : dashboardData.agents}
             </h3>
-            <p className="text-[#1E1E1E]">{t("phone.agent")}</p>
             <p className="text-sm text-[#5A687C]">
-              {dashboardData.loading ? 'Loading...' : dashboardData.agents === 1 ? t("phone.one_agent_active") : `${dashboardData.agents} agents active`}
+              {dashboardData.loading ? 'Loading...' : `${dashboardData.agents_online} online${dashboardData.agents_pending > 0 ? ` · ${dashboardData.agents_pending} pending invitation` : ''}`}
             </p>
           </div>
+          <button className="bg-white border border-[#E1E4EA] w-full mt-3 text-[#1E1E1E] text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer w-fit">
+            See more
+          </button>
+        </div>
 
-          {/* Campaigns */}
-          <div className="rounded-lg border border-[#E1E4EA] bg-white p-4 flex  flex-col gap-1">
-            <div className="flex w-10 h-10 items-center justify-center border boarder-2 border-[#E1E4EA] rounded-[10px] p-2">
-              <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M11.168 15.84C10.48 15.78 9.782 15.75 9.078 15.75H8.328C7.13453 15.75 5.98994 15.2759 5.14602 14.432C4.30211 13.5881 3.828 12.4435 3.828 11.25C3.828 10.0565 4.30211 8.91193 5.14602 8.06802C5.98994 7.22411 7.13453 6.75 8.328 6.75H9.078C9.782 6.75 10.48 6.72 11.168 6.66M11.168 15.84C11.421 16.802 11.752 17.732 12.153 18.623C12.4 19.173 12.213 19.833 11.69 20.134L11.033 20.514C10.482 20.832 9.773 20.631 9.506 20.053C8.87229 18.682 8.38946 17.2463 8.066 15.771M11.168 15.84C10.775 14.3417 10.5767 12.799 10.578 11.25C10.578 9.664 10.783 8.126 11.168 6.66M11.168 15.84C14.2495 16.1041 17.2502 16.9651 20.003 18.375M11.168 6.66C14.2495 6.39592 17.2503 5.53493 20.003 4.125M20.003 18.375C19.885 18.755 19.758 19.129 19.623 19.5M20.003 18.375C20.547 16.6216 20.8872 14.8113 21.017 12.98M20.003 4.125C19.8857 3.74689 19.759 3.37177 19.623 3M20.003 4.125C20.547 5.87844 20.8872 7.6887 21.017 9.52M21.017 9.52C21.512 9.933 21.828 10.555 21.828 11.25C21.828 11.945 21.512 12.567 21.017 12.98M21.017 9.52C21.0991 10.6719 21.0991 11.8281 21.017 12.98" stroke="#3D4BEB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-
-            </div>
-
-
-            <h3 className="text-2xl font-bold">
+        {/* Campaigns Card */}
+        <div className="rounded-xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between">
+          <div>
+            <h2 className="text-[14px] font-[500] text-[#5A687C] mb-4">Campaigns</h2>
+            <h3 className="text-4xl font-bold mb-2 text-[#1E1E1E]">
               {dashboardData.loading ? '...' : dashboardData.campaigns}
             </h3>
-            <p className="text-[#1E1E1E]">{t("emailings.campaigns")}</p>
             <p className="text-sm text-[#5A687C]">
-              {dashboardData.loading ? 'Loading...' : dashboardData.campaigns === 0 ? t("phone.dont_have_call") : `${dashboardData.campaigns} campaigns active`}
+              {dashboardData.loading ? 'Loading...' : `${dashboardData.campaigns_outbound} outbound${dashboardData.campaigns_inbound > 0 ? ` · ${dashboardData.campaigns_inbound} inbound` : ''}`}
             </p>
           </div>
+          <button className="bg-white border border-[#E1E4EA] w-full mt-3 text-[#1E1E1E] text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer w-fit">
+            See more
+          </button>
+        </div>
 
-          {/* Called Clients */}
-          <div className="rounded-lg border border-[#E1E4EA] bg-white p-4 flex  flex-col gap-1">
-
-
-            <div className="flex w-10 h-10  justify-center border boarder-2 border-[#E1E4EA] rounded-[10px] p-2">
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1.578 5.75C1.578 14.034 8.294 20.75 16.578 20.75H18.828C19.4247 20.75 19.997 20.5129 20.419 20.091C20.8409 19.669 21.078 19.0967 21.078 18.5V17.128C21.078 16.612 20.727 16.162 20.226 16.037L15.803 14.931C15.363 14.821 14.901 14.986 14.63 15.348L13.66 16.641C13.378 17.017 12.891 17.183 12.45 17.021C10.8129 16.4191 9.32616 15.4686 8.09278 14.2352C6.85941 13.0018 5.90888 11.5151 5.307 9.878C5.145 9.437 5.311 8.95 5.687 8.668L6.98 7.698C7.343 7.427 7.507 6.964 7.397 6.525L6.291 2.102C6.23014 1.85869 6.08972 1.6427 5.89206 1.48834C5.69439 1.33397 5.45081 1.25008 5.2 1.25H3.828C3.23127 1.25 2.65897 1.48705 2.23701 1.90901C1.81506 2.33097 1.578 2.90326 1.578 3.5V5.75Z" stroke="#F60C9D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-            <h3 className="text-2xl font-bold">
+        {/* Called Clients Card */}
+        <div className="rounded-xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between">
+          <div>
+            <h2 className="text-[14px] font-[500] text-[#5A687C] mb-4">Called Clients</h2>
+            <h3 className="text-4xl font-bold mb-2 text-[#1E1E1E]">
               {dashboardData.loading ? '...' : dashboardData.outbound_calls}
             </h3>
-            <p className="text-[#1E1E1E]">{t("phone.called_clients")}</p>
             <p className="text-sm text-[#5A687C]">
-              {dashboardData.loading ? 'Loading...' : dashboardData.outbound_calls === 0 ? t("phone.dont_have_call") : `${dashboardData.outbound_calls} calls made`}
+              {dashboardData.loading ? 'Loading...' : `Average connection rate: ${dashboardData.connection_rate}%`}
             </p>
           </div>
+          <button className="bg-white border border-[#E1E4EA] text-[#1E1E1E] w-full mt-3 text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer w-fit">
+            See more
+          </button>
+        </div>
 
-          {/* Average Call Duration */}
-          <div className="rounded-lg border border-[#E1E4EA] bg-white p-4 flex  flex-col gap-1">
-            <div className="flex w-10 h-10  justify-center border boarder-2 border-[#E1E4EA] rounded-[10px] p-2">
-              <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12.828 6V12H17.328M21.828 12C21.828 13.1819 21.5952 14.3522 21.1429 15.4442C20.6906 16.5361 20.0277 17.5282 19.192 18.364C18.3562 19.1997 17.3641 19.8626 16.2722 20.3149C15.1802 20.7672 14.0099 21 12.828 21C11.6461 21 10.4758 20.7672 9.38385 20.3149C8.29192 19.8626 7.29977 19.1997 6.46404 18.364C5.62831 17.5282 4.96538 16.5361 4.51309 15.4442C4.06079 14.3522 3.828 13.1819 3.828 12C3.828 9.61305 4.77621 7.32387 6.46404 5.63604C8.15187 3.94821 10.4411 3 12.828 3C15.215 3 17.5041 3.94821 19.192 5.63604C20.8798 7.32387 21.828 9.61305 21.828 12Z" stroke="#109972" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-
-            </div>
-            <h3 className="text-2xl font-bold">00:00:00</h3>
-            <p className="text-[#1E1E1E]">{t("phone.average_call_duration")}</p>
-            <p className="text-sm text-[#5A687C]">{t("phone.dont_have_call")}</p>
-          </div>
-
-          {/* call recive */}
-
-          <div className="rounded-lg border border-[#E1E4EA] bg-white p-4 flex  flex-col gap-1">
-            <div className="flex w-10 h-10  justify-center border boarder-2 border-[#E1E4EA] rounded-[10px] p-2">
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13.25 8.75V4.25M13.25 8.75H17.75M13.25 8.75L19.25 2.75M16.25 20.75C7.966 20.75 1.25 14.034 1.25 5.75V3.5C1.25 2.90326 1.48705 2.33097 1.90901 1.90901C2.33097 1.48705 2.90326 1.25 3.5 1.25H4.872C5.388 1.25 5.838 1.601 5.963 2.102L7.069 6.525C7.179 6.965 7.015 7.427 6.652 7.698L5.359 8.668C5.17393 8.80198 5.037 8.99207 4.96854 9.21005C4.90009 9.42803 4.90375 9.66227 4.979 9.878C5.58087 11.5151 6.53141 13.0018 7.76478 14.2352C8.99815 15.4686 10.4849 16.4191 12.122 17.021C12.563 17.183 13.05 17.017 13.332 16.641L14.302 15.348C14.4348 15.1708 14.6169 15.0366 14.8256 14.9625C15.0342 14.8883 15.2601 14.8773 15.475 14.931L19.898 16.037C20.398 16.162 20.75 16.612 20.75 17.128V18.5C20.75 19.0967 20.5129 19.669 20.091 20.091C19.669 20.5129 19.0967 20.75 18.5 20.75H16.25Z" stroke="#30B0C7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-
-
-            </div>
-            <h3 className="text-2xl font-bold">
+        {/* Calls Received Card */}
+        <div className="rounded-xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between">
+          <div>
+            <h2 className="text-[14px] font-[500] text-[#5A687C] mb-4">Calls Received</h2>
+            <h3 className="text-4xl font-bold mb-2 text-[#1E1E1E]">
               {dashboardData.loading ? '...' : dashboardData.inbound_calls}
             </h3>
-            <p className="text-[#1E1E1E]">{t("phone.call_recieved")}</p>
             <p className="text-sm text-[#5A687C]">
-              {dashboardData.loading ? 'Loading...' : dashboardData.inbound_calls === 0 ? t("phone.dont_have_call") : `${dashboardData.inbound_calls} calls received`}
+              {dashboardData.loading ? 'Loading...' : `Response rate: ${dashboardData.response_rate}%`}
             </p>
           </div>
+          <button className="bg-white border border-[#E1E4EA] text-[#1E1E1E] w-full mt-3 text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer w-fit">
+            See more
+          </button>
         </div>
       </div>
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
-          <div className="bg-white rounded-2xl max-h-[90vh] overflow-auto w-full max-w-[1000px] p-6 relative shadow-lg">
-            {/* Close button */}
-            <button
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 cursor-pointer"
-              onClick={() => setShowModal(false)}
-            >
-              <X size={20} />
-            </button>
-
-            <div className="mb-6">
-              <h2 className="text-[20px] font-[600] text-[#1E1E1E]">My Call credits</h2>
-              <p className="text-sm text-[#5A687C] mt-2">Top up your account to launch campaigns. Once your credits run out, they will automatically pause. Enabling auto-top-up ensure your campaigns continue uninterrupted.</p>
+          <div className="bg-white rounded-2xl max-h-[90vh] overflow-auto w-full max-w-[806px] p-6 relative shadow-lg">
+            {/* Header with Close button */}
+            <div className="mb-6 flex items-start justify-between">
+              <div>
+                <h2 className="text-[20px] font-[600] text-[#1E1E1E]">My Call Credits</h2>
+                <p className="text-sm text-[#5A687C] mt-2">Top up your account to keep calls and campaigns running smoothly.</p>
+              </div>
+              <button
+                className="text-gray-500 hover:text-gray-800 cursor-pointer"
+                onClick={() => setShowModal(false)}
+              >
+                <X size={20} />
+              </button>
             </div>
 
-            {/* Modal header */}
+            <hr className="text-gray-200 border-border-gray-100 my-2"></hr>
 
-
-            {/* Top-up card area */}
-            <div className="bg-white border border-[#E1E4EA]  rounded-2xl p-4 mb-6">
-              <div className="mb-6  border-gray-200 border-b">
+            {/* Choose an amount section */}
+            <div className="p-1 mb-2">
+              <div className="flex items-start justify-between mb-2">
                 <h2 className="text-md font-[600] text-[#1E1E1E]">Choose an amount</h2>
-                <p className="text-sm text-[#5A687C] mt-2">Price <span className="font-semibold text-black">0.20 </span>€/minute</p>
+                <p className="text-sm text-[#5A687C]">Price <span className="font-[500] text-black">€0.20/minute</span></p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                {/* Option card */}
+
+              {/* Predefined options */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
                 {[
                   { label: '25 Minute Call', price: 5 },
                   { label: '50 Minute Call', price: 10 },
@@ -271,95 +492,70 @@ const PhoneDashboard = () => {
                         setSelectedCard(opt.price);
                         setAmount(String(opt.price));
                       }}
-                      className={`flex flex-col items-start gap-2 p-4 border cursor-pointer rounded-lg hover:shadow-sm transition ${isSelected ? 'border-[#675FFF] bg-[#F3F0FF]' : 'border-[#E1E4EA]'}`}
+                      className={`flex items-center gap-3 p-2 border cursor-pointer rounded-lg hover:shadow-sm transition ${isSelected ? 'border-[#675FFF] bg-[#F3F0FF]' : 'border-[#E1E4EA]'}`}
                     >
-                      <div className="text-md text-[#5A687C]">{opt.label}</div>
-                      <div className="text-lg font-semibold">{opt.price} €</div>
+                      <div className={`flex items-center justify-center w-10 h-10 rounded-lg border ${isSelected ? 'border-[#EAEAEA] bg-white' : 'border-[#d4d9e3] bg-white'}`}>
+                        <img src={PhoneIcon} alt="Phone" className="w-5 h-5" />
+                      </div>
+                      <div className="flex items-center justify-between flex-1 px-4">
+                        <div className="text-md text-[#5A687C]">{opt.label}</div>
+                        <div className="text-lg font-semibold text-[#1E1E1E]">€{opt.price}</div>
+                      </div>
                     </button>
                   )
                 })}
               </div>
 
-              <div className='w-full'>
+              {/* OR separator */}
+              <div className='w-full my-5'>
                 <hr className="text-gray-200" />
                 <div className='w-full flex justify-center items-center -mt-3'>
-                  <span className='text-md bg-white px-4 text-gray-400 font-light'>OR</span>
+                  <span className='text-sm bg-white px-4 text-gray-400 font-light'>OR</span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between border-[#E1E4EA] py-4">
-                <div className="flex items-center gap-3 w-full">
+              {/* Custom amount input */}
+              <div className="grid grid-cols-2 gap-6 items-start max-h-[88px]">
+                <div className="max-h-[88px] overflow-hidden">
                   <div className="relative">
                     <input
                       type="number"
                       placeholder="Enter Amount"
                       value={amount}
-                      max={10000} // sets the HTML input max limit
+                      max={10000}
                       onChange={(e) => {
                         const value = Number(e.target.value);
                         if (value <= 10000) {
                           setAmount(e.target.value);
                         } else {
-                          setAmount('10000'); // cap the value at 10000 if exceeded
+                          setAmount("10000");
                         }
                         setSelectedCard(null);
                       }}
-                      className="w-60 px-4 py-2 pr-8 border border-gray-200 rounded-lg focus:outline-none focus:border-[#675FFF] 
-appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none 
-[&::-webkit-inner-spin-button]:m-0 [&::-webkit-outer-spin-button]:m-0"
+                      className="w-full px-4 py-2.5 pr-8 border border-[#E1E4EA] rounded-lg focus:outline-none focus:border-[#675FFF] 
+        appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 text-sm">€</span>
                   </div>
-                  <div className="text-lg text-[#000000] font-bold">
-                    {amount ? amount * 5 : '_ _'} <span className='text-md font-normal '>Call minutes</span>
-                  </div>
+
+                  <button
+                    className="w-full mt-1 bg-[#675FFF] text-white px-6 py-1.5 rounded-lg cursor-pointer hover:bg-[#5E54FF] transition font-medium"
+                    onClick={handleTopUp}
+                  >
+                    Top Up Credit
+                  </button>
+                </div>
+
+                <div className="bg-[#F7F7F8] border border-[#E1E4EA] rounded-lg px-4 py-3 max-h-[88px] overflow-hidden">
+                  <p className="text-sm text-[#5A687C] mb-1">Calculated call minutes</p>
+                  <p className="text-3xl font-bold text-[#1E1E1E]">
+                    {amount ? Math.round(Number(amount) / 0.2) : "0"}{" "}
+                    <span className="text-lg font-normal">min</span>
+                  </p>
                 </div>
               </div>
-              <button
-                className=" bg-[#675FFF] text-white px-6 py-2 rounded-lg cursor-pointer hover:bg-[#4a43c9]"
-                onClick={handleTopUp}
-              >Top Up Credit</button>
+
             </div>
-
-            {/* Automatic Recharge */}
-            {/* <div className="bg-white border border-[#E1E4EA] rounded-2xl p-4">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-md font-[600] text-[#1E1E1E]">Automatic Recharge</h3>
-                  <p className="text-sm text-[#2b3138] mt-1">Automatically top up your balance when it drops below a certain threshold.</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-[#9AA6B2]">DISABLED</span>
-                  <label className={`w-12 h-6 rounded-full flex items-center px-1 ${autoRefill ? 'bg-indigo-500' : 'bg-gray-300'}`}>
-                    <div className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform ${autoRefill ? 'translate-x-6' : 'translate-x-0'}`} />
-                  </label>
-                </div>
-              </div>
-
-              <div className="border-t border-gray-200 pt-4">
-                <div className="mb-4">
-                  <label className="text-md font-medium text-[#1e1e1e]">Recharge threshold</label>
-                  <div className="mt-2 flex items-center gap-3">
-                    <p className='text-xs font-semibold'>When the balance fall below: </p>
-                    <input type="text" placeholder="" className="w-48 px-4 py-2 border rounded-lg focus:outline-none focus:border-[#675FFF]" />
-                    <span className="text-sm text-[#9AA6B2]">€</span>
-                  </div>
-                </div>
-
-                <div className="mb-4 border-t border-gray-200 ">
-                  <label className="text-md font-medium text-[#1e1e1e]">Top-up amount</label>
-                  <div className="mt-2 flex items-center gap-3 ">
-                    <p className='text-xs font-semibold'>Top up balance up to: </p>
-                    <input type="text" placeholder="" className="ml-11 w-48 px-4 py-2 border rounded-lg focus:outline-none focus:border-[#675FFF]" />
-                    <span className="text-sm text-[#9AA6B2]">€</span>
-                  </div>
-                </div>
-
-                <div className="flex justify-start">
-                  <button className="bg-[#675FFF] text-white py-2 px-14 rounded-lg">Save</button>
-                </div>
-              </div>
-            </div> */}
           </div>
         </div>
       )}

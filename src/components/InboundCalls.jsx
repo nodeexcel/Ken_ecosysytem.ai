@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import { MoreHorizontal, X } from "lucide-react";
+import { MoreHorizontal, X, Search } from "lucide-react";
 import { BritishFlag, Delete, Notes, Phone, TestCall, ThreeDots } from "../icons/icons";
 import DatePicker from "react-datepicker";
 import { LuCalendarDays } from "react-icons/lu";
+import { SelectDropdown } from "./Dropdown";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { inboundCall } from "../api/callAgent";
@@ -25,10 +26,23 @@ export default function InBoundCalls() {
     const [startDate, setStartDate] = useState(new Date())
     const [endDate, setEndDate] = useState(new Date())
     const [activeDropdown, setActiveDropdown] = useState(null);
-    const [recipient, setRecipient] = useState("");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filters, setFilters] = useState({
+        campaign: ""
+    });
     const [loading, setLoading] = useState(true);
     const [agents, setAgents] = useState([]);
     const [error, setError] = useState(null);
+
+    // Define campaign options (extract unique campaigns from agents)
+    const campaignOptions = useMemo(() => {
+        if (!Array.isArray(agents)) return [];
+        const uniqueCampaigns = [...new Set(agents.map(agent => agent.campaign_name).filter(Boolean))];
+        return uniqueCampaigns.map(campaign => ({
+            key: campaign.toLowerCase().replace(/\s+/g, '-'),
+            label: campaign
+        }));
+    }, [agents]);
 
     // Fetch inbound calls data on component mount
     useEffect(() => {
@@ -72,7 +86,7 @@ export default function InBoundCalls() {
         setActiveDropdown(activeDropdown === index ? null : index);
     };
 
-    // Filter agents based on date range and recipient search
+    // Filter agents based on search query, date range, and campaign
     const filteredAgents = useMemo(() => {
         // Ensure agents is an array before filtering
         if (!Array.isArray(agents)) {
@@ -85,44 +99,94 @@ export default function InBoundCalls() {
                 return false;
             }
             
-            // Filter by date range
-            let dateInRange = true;
-            if (agent.date && typeof agent.date === 'string') {
-                const agentDateParts = agent.date.split('-');
-                if (agentDateParts.length === 3) {
-                    // Convert DD-MM-YYYY to Date object
-                    const agentDate = new Date(agentDateParts[2], agentDateParts[1] - 1, agentDateParts[0]);
-                    
-                    const start = startDate ? new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()) : null;
-                    const end = endDate ? new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 23, 59, 59, 999) : null;
-                    
-                    if (start && end) {
-                        dateInRange = agentDate >= start && agentDate <= end;
-                    } else if (start) {
-                        dateInRange = agentDate >= start;
-                    } else if (end) {
-                        dateInRange = agentDate <= end;
+            // Search filter - search by name or phone number
+            if (searchQuery) {
+                const query = searchQuery.toLowerCase();
+                const matchesSearch = 
+                    agent.agent_name?.toLowerCase().includes(query) ||
+                    agent.caller_no?.toLowerCase().includes(query) ||
+                    agent.campaign_name?.toLowerCase().includes(query);
+                if (!matchesSearch) return false;
+            }
+            
+            // Campaign filter
+            if (filters.campaign) {
+                const campaignOption = campaignOptions.find(opt => opt.key === filters.campaign);
+                if (campaignOption) {
+                    // Match by label (campaign name)
+                    if (agent.campaign_name?.toLowerCase() !== campaignOption.label.toLowerCase()) {
+                        return false;
+                    }
+                } else {
+                    // If no option found, try direct match
+                    if (agent.campaign_name?.toLowerCase() !== filters.campaign.toLowerCase()) {
+                        return false;
                     }
                 }
             }
             
-            // Filter by recipient search
-            const recipientMatch = !recipient || 
-                (agent.caller_no && agent.caller_no.toLowerCase().includes(recipient.toLowerCase())) ||
-                (agent.agent_name && agent.agent_name.toLowerCase().includes(recipient.toLowerCase())) ||
-                (agent.voice && agent.voice.toLowerCase().includes(recipient.toLowerCase())) ||
-                (agent.language && agent.language.toLowerCase().includes(recipient.toLowerCase()));
+            // Filter by date range
+            let dateInRange = true;
+            if (startDate && endDate && agent.date) {
+                let agentDate;
+                if (typeof agent.date === 'string') {
+                    // Try different date formats
+                    if (agent.date.includes('-')) {
+                        const agentDateParts = agent.date.split('-');
+                        if (agentDateParts.length === 3) {
+                            // Convert DD-MM-YYYY to Date object
+                            agentDate = new Date(agentDateParts[2], agentDateParts[1] - 1, agentDateParts[0]);
+                        } else {
+                            agentDate = new Date(agent.date);
+                        }
+                    } else if (agent.date.includes('/')) {
+                        const agentDateParts = agent.date.split('/');
+                        if (agentDateParts.length === 3) {
+                            agentDate = new Date(agentDateParts[2], agentDateParts[1] - 1, agentDateParts[0]);
+                        } else {
+                            agentDate = new Date(agent.date);
+                        }
+                    } else {
+                        agentDate = new Date(agent.date);
+                    }
+                } else {
+                    agentDate = new Date(agent.date);
+                }
+                
+                if (!isNaN(agentDate.getTime())) {
+                    const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+                    const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 23, 59, 59, 999);
+                    dateInRange = agentDate >= start && agentDate <= end;
+                } else {
+                    dateInRange = false;
+                }
+            }
             
-            return dateInRange && recipientMatch;
+            return dateInRange;
         });
-    }, [agents, startDate, endDate, recipient]);
+    }, [agents, searchQuery, filters.campaign, startDate, endDate, campaignOptions]);
+
+    // Format date range for display
+    const dateRangeDisplay = useMemo(() => {
+        if (startDate && endDate) {
+            const startFormatted = format(startDate, 'd MMM');
+            const endFormatted = format(endDate, 'd MMM');
+            return `${startFormatted} - ${endFormatted}`;
+        } else if (startDate) {
+            return `${format(startDate, 'd MMM')} - ...`;
+        }
+        return "Select date range";
+    }, [startDate, endDate]);
 
     return (
-        <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
+        <div className="py-6 px-6 h-screen overflow-auto flex flex-col gap-4 w-full">
             {/* Header */}
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold text-black">{t("phone.inbound_calls")}</h1>
-                {/* <button
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
+            <div className="flex flex-col gap-1">
+              <h1 className="text-xl md:text-2xl font-semibold text-[#1E1E1E]">{t("phone.outbound_calls")}</h1>
+              <p className="text-sm md:text-base text-[#5A687C] font-[400]">Monitor all inbound calls received through your campaigns</p>
+            </div>
+            {/* <button
                     className="bg-[#7065F0] text-white font-medium px-5 py-2 rounded-lg shadow"
                     onClick={() => setShowModal(true)}
                 >
@@ -130,147 +194,196 @@ export default function InBoundCalls() {
                 </button> */}
             </div>
 
-            {/* Filters */}
-            <div className='flex flex-wrap gap-2'>
-                <div className="relative">
-                    <DatePicker
-                        selected={startDate}
-                        onChange={(date) => setStartDate(date)}
-                        dateFormat="dd/MM/yyyy"
-                        placeholderText={t("phone.start_date")}
-                        customInput={
-                            <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px] focus:border-[#675FFF] focus:outline-none">
-                                {startDate ? format(startDate, 'dd/MM/yyyy') : t("phone.start_date")}
-                                <LuCalendarDays className="text-[16px]" />
-                            </button>
-                        }
-                    />
-                </div>
-                <div className="relative">
-                    <DatePicker
-                        selected={endDate}
-                        onChange={(date) => setEndDate(date)}
-                        dateFormat="dd/MM/yyyy"
-                        minDate={startDate}
-                        placeholderText={t("phone.end_date")}
-                        customInput={
-                            <button className="flex items-center gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px] focus:border-[#675FFF] focus:outline-none">
-                                {endDate ? format(endDate, 'dd/MM/yyyy') : t("phone.end_date")}
-                                <LuCalendarDays className="text-[16px]" />
-                            </button>
-                        }
-                    />
-                </div>
-                <div>
+            {/* Search and Filters */}
+            <div className="flex flex-col sm:flex-row gap-3 mb-3 justify-between">
+                {/* Search Bar */}
+                <div className="relative flex-1 min-w-0 max-w-[270px]">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
                     <input
-                        value={recipient}
-                        onChange={(e) => setRecipient(e.target.value)}
-                        placeholder={t("phone.receipient")}
-                        className="bg-white border text-[#5A687C] max-w-[152px] text-[16px] font-[400] w-fit border-[#E1E4EA] px-4 py-2 rounded-lg focus:border-[#675FFF] focus:outline-none"
+                        type="text"
+                        placeholder="Search name or phone number"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border border-[#E1E4EA] bg-white rounded-lg focus:outline-none focus:border-[#675FFF] text-sm"
                     />
+                </div>
+
+                {/* Filters */}
+                <div className="flex flex-wrap sm:flex-nowrap gap-3 flex-shrink-0">
+                    <div className="relative">
+                        <DatePicker
+                            selected={startDate}
+                            startDate={startDate}
+                            endDate={endDate}
+                            selectsRange
+                            onChange={(dates) => {
+                                const [start, end] = dates;
+                                if (start) setStartDate(start);
+                                if (end) setEndDate(end);
+                                // Reset if both are null
+                                if (!start && !end) {
+                                    setStartDate(new Date());
+                                    setEndDate(new Date());
+                                }
+                            }}
+                            dateFormat="d MMM"
+                            customInput={
+                                <button className="flex items-center gap-2 px-4 py-[6px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px] focus:border-[#675FFF] focus:outline-none">
+                                    {dateRangeDisplay}
+                                    <LuCalendarDays className="text-[16px]" />
+                                </button>
+                            }
+                        />
+                    </div>
+                    <div className="w-48 text-[13px] font-[500]">
+                        <SelectDropdown
+                            name="campaign"
+                            options={campaignOptions}
+                            placeholder={t("emailings.campaign")}
+                            value={filters.campaign}
+                            onChange={(value) => setFilters({ ...filters, campaign: value })}
+                        />
+                    </div>
                 </div>
             </div>
             {/* Table */}
             <div className="overflow-auto w-full">
-                <table className="w-full">
-                    <div className="px-5 w-full">
-                        <thead>
-                            <tr className="text-left text-[#5a687c] text-[16px]">
-                              <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("emailings.campaign_name")}</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("appointment.agent_name")}</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("brain_ai.date")}</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.language")}</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.voice")}</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.receipient_no")}</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.status")}</th>
-                                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.duration")}</th>
-                                <th className="p-[14px] w-full font-[400] whitespace-nowrap">{t("phone.actions")}</th>
-                            </tr>
-                        </thead>
-                    </div>
-                    <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
-                        {loading ? (
-                            <div className="flex justify-center items-center h-34">
-                                <span className="loader" />
-                            </div>
-                        ) : error ? (
-                            <div className="flex flex-col justify-center items-center h-34 text-center">
-                                <p className="text-[#FF3B30] text-[16px] mb-2">{error}</p>
-                                <button 
-                                    onClick={() => window.location.reload()} 
-                                    className="text-[#675FFF] text-[14px] hover:underline"
-                                >
-                                    Try Again
-                                </button>
-                            </div>
-                        ) : filteredAgents.length !== 0 ? (
-                            <tbody className="w-full">
-                                {filteredAgents.map((agent, index) => (
-                                    <tr
-                                        key={agent.id}
-                                        className={`text-[16px] ${index !== filteredAgents.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
-                                    >
-                                        <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#1E1E1E] font-[600]">{agent.agent_name}</td>
-                                        <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.date}</td>
-                                        <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.language}</td>
-                                        <td className="py-[14px] pl-[10px] pr-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.voice}</td>
-                                        <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.caller_no}</td>
-                                        <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[17%] w-full">
-                                            <span className={`inline-block ${agent.status !== "Replied" ? "text-[#34C759]" : "text-[#FF3B30]"} text-[16px] font-[400] px-3 py-1 rounded-full`}>
-                                                {agent.status}
-                                            </span>
-                                        </td>
-                                        <td className="p-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{agent.duration}</td>
-                                        <td className="p-[14px]  w-full">
-                                            <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
-                                                <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
-                                            </button>
-                                            {activeDropdown === index && (
-                                                <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
-                                                    <div className="py-1">
-                                                        <button
-                                                            className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
-                                                            onClick={() => {
-                                                                // Handle edit action
-                                                                setActiveDropdown(null);
-                                                            }}
-                                                        >
-                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Phone /></div> <div className='hidden group-hover:block'><Phone active={true} /></div> <span>Listen the call</span> </div>
-                                                        </button>
-                                                        <button
-                                                            className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6]"
-                                                            onClick={() => {
-                                                                // Handle delete action
-                                                                setActiveDropdown(null);
-                                                            }}
-                                                        >
-                                                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>Notes</span> </div>
-                                                        </button>
-                                                        <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                                                        <div className='py-2'>
-                                                            <button
-                                                                className="block w-full text-left hover:rounded-lg px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6]"
-                                                                onClick={() => {
-                                                                    // Handle delete action
-                                                                    setActiveDropdown(null);
-                                                                }}
-                                                            >
-                                                                <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">Delete</span> </div>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        ) : (
-                            <p className="flex justify-center items-center h-34 text-[#1E1E1E]">No Inbound Calls Listed</p>
-                        )}
-                    </div>
+              <div className="border border-[#D6D6D6] rounded-2xl overflow-hidden">
+                <table className="min-w-full border-separate border-spacing-0">
+                  <thead className="bg-[#F7F7F8]">
+                    <tr className="text-[#5A687C]">
+                      <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("emailings.campaign_name")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("appointment.agent_name")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("brain_ai.date")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.language")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.voice")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.receipient_no")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.status")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.duration")}</th>
+                      <th className="px-6 text-center py-3 text-[16px] font-[400]">{t("phone.actions")}</th>
+                    </tr>
+                  </thead>
 
+                  <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
+                    {loading ? (
+                      <tr>
+                        <td colSpan="9" className="text-center py-8">
+                          <span className="loader" />
+                        </td>
+                      </tr>
+                    ) : error ? (
+                      <tr>
+                        <td colSpan="9" className="text-center py-8">
+                          <div className="flex flex-col justify-center items-center text-center">
+                            <p className="text-[#FF3B30] text-[16px] mb-2">{error}</p>
+                            <button 
+                              onClick={() => window.location.reload()} 
+                              className="text-[#675FFF] text-[14px] hover:underline cursor-pointer"
+                            >
+                              Try Again
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : filteredAgents.length !== 0 ? (
+                      filteredAgents.map((agent, index) => (
+                        <tr key={agent.id} className="text-[16px] text-[#1E1E1E]">
+                          <td className="px-4 py-4 text-[16px] text-[#1E1E1E] font-[600] text-start">{agent.agent_name}</td>
+                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.date}</td>
+                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.language}</td>
+                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.voice}</td>
+                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.caller_no}</td>
+                          <td className="px-4 py-4 text-start">
+                            <span className={`inline-block ${agent.status !== "Replied" ? "text-[#34C759]" : "text-[#FF3B30]"} text-[16px] font-[400] px-3 py-1 rounded-full`}>
+                              {agent.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.duration}</td>
+                          <td className="px-4 py-4 text-center">
+                            <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative cursor-pointer">
+                              <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
+                              {activeDropdown === index && (
+                                <div className="absolute right-0 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                                  <div className="py-1">
+                                    <button
+                                      className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6] cursor-pointer"
+                                      onClick={() => {
+                                        // Handle edit action
+                                        setActiveDropdown(null);
+                                      }}
+                                    >
+                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Phone /></div> <div className='hidden group-hover:block'><Phone active={true} /></div> <span>Listen the call</span> </div>
+                                    </button>
+                                    <button
+                                      className="block group w-full hover:rounded-lg text-left px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] font-[500] hover:bg-[#F4F5F6] cursor-pointer"
+                                      onClick={() => {
+                                        // Handle delete action
+                                        setActiveDropdown(null);
+                                      }}
+                                    >
+                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Notes /></div> <div className='hidden group-hover:block'><Notes status={true} /></div> <span>Notes</span> </div>
+                                    </button>
+                                    <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                                    <div className='py-2'>
+                                      <button
+                                        className="block w-full text-left hover:rounded-lg px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6] cursor-pointer"
+                                        onClick={() => {
+                                          // Handle delete action
+                                          setActiveDropdown(null);
+                                        }}
+                                      >
+                                        <div className="flex items-center gap-2">{<Delete />} <span className="font-[500]">Delete</span> </div>
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="9" className="text-center py-8 text-[#1E1E1E]">
+                          No Inbound Calls Listed
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
                 </table>
+
+                <div className="flex items-center justify-between bg-[#F7F7F8] px-4 py-3">
+                  {/* pagination + row controls */}
+                  <div className="flex items-center gap-2">
+                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
+                      ‹ Prev
+                    </button>
+                    <button className="bg-[#675FFF] text-white rounded-lg px-3 py-1 text-sm cursor-pointer">
+                      1
+                    </button>
+                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                      2
+                    </button>
+                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                      3
+                    </button>
+                    <span className="text-[#000000] text-sm">…</span>
+                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                      10
+                    </button>
+                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
+                      Next ›
+                    </button>
+                  </div>
+
+                  {/* Right side – rows per page */}
+                  <div className="flex items-center gap-2 text-sm text-[#5A687C]">
+                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 rows</button>
+                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">10</button>
+                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">20</button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Modal */}

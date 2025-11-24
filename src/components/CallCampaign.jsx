@@ -1,6 +1,6 @@
 // Full-featured modal with pixel-perfect layout, click-outside-to-close, and toggle logic.
 import React, { useState, useRef, useEffect } from "react";
-import { ChevronDown, MoreHorizontal, X } from "lucide-react";
+import { ChevronDown, MoreHorizontal, X, Search, Plus } from "lucide-react";
 import { BritishFlag, Delete, Duplicate, Edit, Notes, TestCall, ThreeDots } from "../icons/icons";
 import { useDispatch } from "react-redux";
 import { getNavbarData } from "../store/navbarSlice";
@@ -89,6 +89,7 @@ export default function CallCampaign() {
     language: "",
     voice: ""
   });
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Define options for filters
   const countryOptions = [
@@ -486,110 +487,156 @@ export default function CallCampaign() {
   return (
     <div>
       {!showModal ?
-        <div className="py-4 pr-2 flex flex-col gap-4 w-full h-screen overflow-auto">
+        <div className="py-6 px-6 flex flex-col gap-4 w-full h-screen overflow-auto">
           {/* Header */}
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-semibold text-black">{t("phone.call_campaigns")}</h1>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
+            <div className="flex flex-col gap-1">
+              <h1 className="text-xl md:text-2xl font-semibold text-[#1E1E1E]">{t("phone.call_campaigns")}</h1>
+              <p className="text-sm md:text-base text-[#5A687C] font-[400]">Manage and track your outbound and inbound calling campaigns.</p>
+            </div>
             <button
-              className="bg-[#7065F0] text-white font-medium px-5 py-2 rounded-lg shadow cursor-pointer"
+              className="bg-[#675FFF] cursor-pointer text-white font-medium px-4 py-2.5 rounded-lg shadow-sm hover:bg-[#5E54FF] transition-colors flex items-center gap-2 w-fit"
               onClick={() => {
                 dispatch(getNavbarData("Tom, Phone"))
                 setShowModal(true)
                 setSecondModel(false)
               }}
             >
-              {
-                t("emailings.new_campaign")
-              }
+              <Plus className="w-4 h-4" />
+              {t("phone.add_new_campaign") || "Add New Campaign"}
             </button>
           </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap gap-4 mb-3">
-            <div className="w-48">
-              <SelectDropdown
-                name="country"
-                options={countryOptions}
-                placeholder={t("phone.country")}
-                value={filters.country}
-                onChange={(value) => setFilters({ ...filters, country: value })}
+          {/* Search and Filters */}
+          <div className="flex flex-col sm:flex-row gap-3 mb-3 justify-between">
+            {/* Search Bar */}
+            <div className="relative flex-1 min-w-0 max-w-[270px] rounded-lg ">
+              <Search className="absolute left-3 top-1/2 transform  -translate-y-1/2 text-[#5A687C] w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search name or phone number"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-[#E1E4EA] rounded-lg bg-white focus:outline-none focus:border-[#675FFF] text-sm"
               />
             </div>
 
-            <div className="w-48">
-              <SelectDropdown
-                name="language"
-                options={languageOptions}
-                placeholder={t("phone.language")}
-                value={filters.language}
-                onChange={(value) => setFilters({ ...filters, language: value })}
-              />
-            </div>
+            {/* Filters */}
+            <div className="flex flex-wrap sm:flex-nowrap gap-3 flex-shrink-0">
+              <div className="w-full sm:w-[140px] text-[13px] font-[500]">
+                <SelectDropdown
+                  name="country"
+                  options={countryOptions}
+                  placeholder={t("phone.country")}
+                  value={filters.country}
+                  onChange={(value) => setFilters({ ...filters, country: value })}
+                />
+              </div>
 
-            <div className="w-48">
-              <SelectDropdown
-                name="voice"
-                options={voiceOptions}
-                placeholder={t("phone.voice")}
-                value={filters.voice}
-                onChange={(value) => setFilters({ ...filters, voice: value })}
-              />
+              <div className="w-full sm:w-[140px] text-[13px] font-[500]">
+                <SelectDropdown
+                  name="language"
+                  options={languageOptions}
+                  placeholder={t("phone.language")}
+                  value={filters.language}
+                  onChange={(value) => setFilters({ ...filters, language: value })}
+                />
+              </div>
+
+              <div className="w-full sm:w-[100px] text-[13px] font-[500]">
+                <SelectDropdown
+                  name="voice"
+                  options={voiceOptions}
+                  placeholder={t("phone.voice")}
+                  value={filters.voice}
+                  onChange={(value) => setFilters({ ...filters, voice: value })}
+                />
+              </div>
             </div>
           </div>
 
           {/* Table */}
           <div className="overflow-auto w-full">
-            <table className="w-full">
-              <div className="px-5 w-full">
-                <thead>
-                  <tr className="text-left text-[#5a687c] text-[16px]">
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("emailings.campaign_name")}</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("appointment.agent_name")}</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.creation_date")}</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.language")}</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.total_call")}</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.status")}</th>
-                    <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.active")}</th>
+            <div className="border border-[#D6D6D6] rounded-2xl overflow-hidden">
+              <table className="min-w-full border-separate border-spacing-0">
+                <thead className="bg-[#F7F7F8]">
+                  <tr className="text-[#5A687C]">
+                    <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("emailings.campaign_name")}</th>
+                    <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("appointment.agent_name")}</th>
+                    <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.creation_date")}</th>
+                    <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.language")}</th>
+                    <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.total_call")}</th>
+                    <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.status")}</th>
+                    <th className="px-6 text-center py-3 text-[16px] font-[400]">{t("phone.active")}</th>
                   </tr>
                 </thead>
-              </div>
-              <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
-                {loading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
-                  campaigns.length !== 0 ? <tbody className="w-full">
-                    {campaigns.map((agent, index) => (
-                      <tr
-                        key={agent.id}
-                        className={`${index !== campaigns.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
-                      >
-                        <td className="p-[14px] min-w-[200px] max-w-[17%] w-full font-medium text-[#1E1E1E]">{agent.campaign_name}</td>
-                        <td className="py-[14px] pl-[25px] pr-[14px] min-w-[200px] max-w-[17%] w-full">{agent.agent_name}</td>
-                        <td className="p-[14px] min-w-[200px] max-w-[17%] w-full whitespace-nowrap">{DateFormat(agent.creation_date)}</td>
-                        <td className="p-[14px] min-w-[200px] max-w-[17%] w-full">{agent.language}</td>
-                        <td className="py-[14px] pl-[35px] pr-[14px] min-w-[200px] max-w-[17%] w-full">{agent.total_calls}</td>
-                        <td className="py-[14px] pl-[5px] pr-[14px] min-w-[200px] max-w-[17%] w-full">
+
+                <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
+                  {loading ? (
+                    <tr className="h-34">
+                      <td></td>
+                      <td></td>
+                      <td className="text-center"><span className="loader" /></td>
+                      <td ></td>
+                      <td></td>
+                      <td></td>
+                      <td ></td>
+                    </tr>
+                  ) : (() => {
+                    // Filter campaigns based on search query and filters
+                    const filteredCampaigns = campaigns.filter((campaign) => {
+                      // Search filter
+                      if (searchQuery) {
+                        const query = searchQuery.toLowerCase();
+                        const matchesSearch = 
+                          campaign.campaign_name?.toLowerCase().includes(query) ||
+                          campaign.agent_name?.toLowerCase().includes(query) ||
+                          campaign.phone_number?.toLowerCase().includes(query);
+                        if (!matchesSearch) return false;
+                      }
+                      
+                      // Language filter
+                      if (filters.language && campaign.language?.toLowerCase() !== filters.language.toLowerCase()) {
+                        return false;
+                      }
+                      
+                      // Voice filter (if campaign has voice field)
+                      if (filters.voice && campaign.voice?.toLowerCase() !== filters.voice.toLowerCase()) {
+                        return false;
+                      }
+                      
+                      return true;
+                    });
+                    
+                    return filteredCampaigns.length !== 0 ? (
+                      filteredCampaigns.map((agent, index) => (
+                      <tr key={agent.id} className="text-[16px] text-[#1E1E1E]">
+                        <td className="px-4 py-4 text-[16px] text-[#1E1E1E] font-medium text-start">{agent.campaign_name}</td>
+                        <td className="px-4 py-4 text-[16px] text-start">{agent.agent_name}</td>
+                        <td className="px-4 py-4 text-[16px] text-start whitespace-nowrap">{DateFormat(agent.creation_date)}</td>
+                        <td className="px-4 py-4 text-[16px] text-start">{agent.language}</td>
+                        <td className="px-4 py-4 text-[16px] text-start">{agent.total_calls}</td>
+                        <td className="px-4 py-4 text-start">
                           <span className={`inline-block border ${renderColor(agent.status)} text-sm font-medium px-3 py-1 rounded-full`}>
                             {agent.status}
                           </span>
                         </td>
-                        <td className="p-[14px] min-w-[200px] max-w-[17%] w-full whitespace-nowrap">
-                          <div className='flex items-center gap-2'>
+                        <td className="px-4 py-4 text-center whitespace-nowrap">
+                          <div className='flex items-center justify-center gap-2'>
                             <button className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg cursor-pointer' onClick={() => setShowReport(true)}>
-                             {t("emailings.view_report")}
+                              {t("emailings.view_report")}
                             </button>
                             <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative">
                               <div className='bg-[#F4F5F6] p-2 rounded-lg cursor-pointer'><ThreeDots /></div>
                               {activeDropdown === index && (
-                                <div className="absolute right-0 px-2  w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                                <div className="absolute right-0 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                                   <div className="py-1">
                                     <button
                                       className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500] cursor-pointer"
                                       onClick={() => {
                                         // Handle edit action
                                         setEditData(agent.id)
-
                                         handleGetPhoneCampaignDetail(agent.id);
-
-
                                       }}
                                     >
                                       <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
@@ -598,7 +645,6 @@ export default function CallCampaign() {
                                       className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500] cursor-pointer"
                                       onClick={() => {
                                         // Handle delete action
-
                                         handleDuplicate(agent.id);
                                       }}
                                     >
@@ -612,7 +658,6 @@ export default function CallCampaign() {
                                           // Handle delete action
                                           setActiveDropdown(null);
                                           setDeleteRow(agent.id);
-
                                         }}
                                       >
                                         <div className="flex items-center gap-2 cursor-pointer">{<Delete />} <span>{t("delete")}</span> </div>
@@ -623,14 +668,52 @@ export default function CallCampaign() {
                               )}
                             </button>
                           </div>
-
                         </td>
                       </tr>
-                    ))}
-                  </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">{t("phone.no_call_listed")}</p>}
-              </div>
+                      ))
+                    ) : (
+                      <tr className="h-34">
+                        <td colSpan="7" className="text-center text-[#1E1E1E]">
+                          {t("phone.no_call_listed")}
+                        </td>
+                      </tr>
+                    );
+                  })()}
+                </tbody>
+              </table>
 
-            </table>
+              <div className="flex items-center justify-between bg-[#F7F7F8] px-4 py-3">
+                {/* pagination + row controls */}
+                <div className="flex items-center gap-2">
+                  <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
+                    ‹ Prev
+                  </button>
+                  <button className="bg-[#675FFF] text-white rounded-lg px-3 py-1 text-sm cursor-pointer">
+                    1
+                  </button>
+                  <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                    2
+                  </button>
+                  <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                    3
+                  </button>
+                  <span className="text-[#000000] text-sm">…</span>
+                  <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                    10
+                  </button>
+                  <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
+                    Next ›
+                  </button>
+                </div>
+
+                {/* Right side – rows per page */}
+                <div className="flex items-center gap-2 text-sm text-[#5A687C]">
+                  <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 rows</button>
+                  <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">10</button>
+                  <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">20</button>
+                </div>
+              </div>
+            </div>
           </div>
           {viewReportModel && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl w-full max-w-[678px] p-6 relative shadow-lg">

@@ -1,10 +1,10 @@
-import { ChevronDown, X, Info } from "lucide-react";
+import { ChevronDown, X, Info, Search, Download } from "lucide-react";
 import { useEffect, useState } from "react";
-import { addCredits, updateSubscriptionPaymentStatus } from "../api/payment";
+import { addCredits, updateSubscriptionPaymentStatus, getTransactionsHistory } from "../api/payment";
 import { useSelector } from "react-redux";
 import { loadStripe } from "@stripe/stripe-js";
 import { useNavigate } from "react-router-dom";
-import { AddIcon, BusinessPlanIcon, CheckedCircle, CreditsIcon, CustomPlanIcon, EditPlanIcon, EmptyCircle, MembersIcon, OfferIcon, PaymentsIcon, PaymentsViewIcon, ProPlanIcon, RefreshIcon, TeamPlanIcon } from "../icons/icons";
+import { AddIcon, BusinessPlanIcon, CheckedCircle, CreditsIcon, CustomPlanIcon, EditPlanIcon, EmptyCircle, MembersIcon, OfferIcon, PaymentsIcon, PaymentsViewIcon, ProPlanIcon, TeamPlanIcon } from "../icons/icons";
 import { SelectDropdown } from "./Dropdown";
 import { DateFormat } from "../utils/TimeFormat";
 
@@ -725,83 +725,95 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
   const navigate = useNavigate();
   const [showCreditPopup, setShowCreditPopup] = useState(false);
   const [cancelPopup, setCancelPopup] = useState(false);
-  const [roleSelect, setRoleSelect] = useState("All");
-  const [pastMonths, setPastMonths] = useState(6);
   const userDetails = useSelector((state) => state.profile.user);
-  const [creditUsageData, setCreditUsageData] = useState([]);
+  const token = useSelector((state) => state.auth.token);
+  const [transactions, setTransactions] = useState([]);
+  const [loadingTransactions, setLoadingTransactions] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // const creditUsageData = [
-  //   {
-  //     item: "AI Agents - LLM and Tool Cost",
-  //     credit: "500.000",
-  //     usedBy: "Sami",
-  //     dateTime: "27/03/2025 03:30 PM",
-  //   },
-  //   {
-  //     item: "AI Agents - LLM and Tool Cost",
-  //     credit: "500.000",
-  //     usedBy: "Jeson",
-  //     dateTime: "27/03/2025 03:30 PM",
-  //   },
-  //   {
-  //     item: "AI Agents - LLM and Tool Cost",
-  //     credit: "500.000",
-  //     usedBy: "Marcus",
-  //     dateTime: "27/03/2025 03:30 PM",
-  //   },
-  //   {
-  //     item: "AI Agents - LLM and Tool Cost",
-  //     credit: "500.000",
-  //     usedBy: "Robert",
-  //     dateTime: "27/03/2025 03:30 PM",
-  //   },
-  //   {
-  //     item: "AI Agents - LLM and Tool Cost",
-  //     credit: "500.000",
-  //     usedBy: "Robert",
-  //     dateTime: "27/03/2025 03:30 PM",
-  //   },
-  // ];
-  const role = useSelector((state) => state.profile.user.role)
+  // Fetch transactions history
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      setLoadingTransactions(true);
+      try {
+        const response = await getTransactionsHistory();
+        if (response?.status === 200) {
+          setTransactions(response?.data?.data || []);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoadingTransactions(false);
+      }
+    };
+    if (token) {
+      fetchTransactions();
+    }
+  }, [token]);
 
-  const roleOptions = [{ label: `${t("settings.tab_3_list.all")}`, key: "All" }, { label: `${t("settings.tab_3_list.admin")}`, key: "Admin" }, { label: `${t("settings.tab_3_list.member")}`, key: "Member" }, { label: `${t("settings.tab_3_list.guest")}`, key: "Guest" }]
-  const pastMonthOptions = [{ label: `${t("settings.tab_2_list.past_6_months")}`, key: 6 }, { label: `${t("settings.tab_2_list.past_3_months")}`, key: 3 }, { label: `${t("settings.tab_2_list.past_2_months")}`, key: 2 }]
+  // Format date to "MMM YYYY" (e.g., "Oct 2025")
+  const formatBillingPeriod = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    return `${months[date.getMonth()]} ${date.getFullYear()}`;
+  };
 
-  // Calculate credit usage percentage
-  // If credits represents available credits, calculate used credits
-  // Otherwise, treat it as used credits
-  const creditLimit = teamMembersData?.creditLimit || 1000; // Default limit, can be made dynamic
-  const availableCredits = teamMembersData?.credits || 0;
-  // For display: if we have a limit, show used credits (limit - available), otherwise show available
-  const usedCredits = creditLimit > 0 ? Math.max(0, creditLimit - availableCredits) : availableCredits;
-  const creditUsage = creditLimit > 0 ? Math.min((usedCredits / creditLimit) * 100, 100) : 0;
+  // Generate invoice ID (e.g., "NV-2025-004")
+  const generateInvoiceId = (index, dateString) => {
+    if (!dateString) return `NV-${new Date().getFullYear()}-${String(index + 1).padStart(3, "0")}`;
+    const year = new Date(dateString).getFullYear();
+    return `NV-${year}-${String(index + 1).padStart(3, "0")}`;
+  };
+
+  // Filter transactions based on search query
+  const filteredTransactions = transactions.filter((transaction) => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      generateInvoiceId(transactions.indexOf(transaction), transaction.transactionDate).toLowerCase().includes(query) ||
+      transaction.subscriptionType?.toLowerCase().includes(query) ||
+      formatBillingPeriod(transaction.transactionDate).toLowerCase().includes(query) ||
+      transaction.amountPaid?.toString().includes(query)
+    );
+  });
 
   // Pagination calculations
-  const totalPages = Math.ceil((creditUsageData?.length || 0) / rowsPerPage);
+  const totalPages = Math.ceil(filteredTransactions.length / rowsPerPage);
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
-  const paginatedData = creditUsageData?.slice(startIndex, endIndex) || [];
+  const paginatedTransactions = filteredTransactions.slice(startIndex, endIndex);
 
   // Generate page numbers for pagination
   const getPageNumbers = () => {
     const pages = [];
-    if (totalPages <= 7) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      pages.push(1);
-      if (currentPage > 3) pages.push('...');
-      for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
-        pages.push(i);
-      }
-      if (currentPage < totalPages - 2) pages.push('...');
-      pages.push(totalPages);
+
+    // Case 1: total pages <= 5 → show all
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+      return pages;
     }
+
+    // Case 2: current page is at the start (pages 1-3) → show 1, 2, 3, ..., totalPages
+    if (currentPage <= 3) {
+      pages.push(1, 2, 3, "...", totalPages);
+      return pages;
+    }
+
+    // Case 3: current page is near the end (last 3 pages)
+    if (currentPage >= totalPages - 2) {
+      pages.push(1, "...", totalPages - 2, totalPages - 1, totalPages);
+      return pages;
+    }
+
+    // Case 4: current page is in the middle
+    pages.push(1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages);
+
     return pages;
   };
+
 
   return (
     <div className="py-2 pr-4 w-full h-full p-8">
@@ -825,17 +837,17 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
         <CancelSubscriptionPopup t={t} onClose={() => setCancelPopup(false)} />
       )}
 
-      {/* Cards Container - 4 Cards Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+      {/* Cards Container - 3 Cards Layout */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 mb-6 sm:mb-8 [&>div]:min-w-0">
         {/* Current Plan Card */}
-        <div className="bg-white p-4 sm:p-6 rounded-xl border border-[#E1E4EA]">
-          <div className="mb-4">
-            <h3 className="text-[14px] font-[500] text-[#5A687C] mb-3">Current plan</h3>
-            <h2 className="text-[20px] sm:text-[24px] font-[600] text-[#1E1E1E] mb-2">
+        <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-xl border border-[#E1E4EA] min-w-0 overflow-hidden flex flex-col">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-xs sm:text-sm font-[500] text-[#5A687C] mb-2 sm:mb-3">Current plan</h3>
+            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-2xl font-[600] text-[#1E1E1E] mb-2 break-words">
               {getPlanDisplayName(userDetails?.subscriptionType)}
             </h2>
             {userDetails?.subscriptionEndDate && (
-              <p className="text-[14px] font-[400] text-[#5A687C]">
+              <p className="text-xs sm:text-sm font-[400] text-[#5A687C] break-words">
                 Auto renew on <span className="text-black font-semibold">{formatRenewalDate(userDetails.subscriptionEndDate)}</span> 
               </p>
             )}
@@ -849,49 +861,49 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
                 navigate("/dashboard/manage-plan");
               }
             }}
-            className="w-full px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] cursor-pointer text-md font-semibold shadow-sm hover:bg-[#F9F8FF] transition-colors"
+            className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] cursor-pointer text-sm sm:text-base font-semibold shadow-sm hover:bg-[#F9F8FF] transition-colors overflow-hidden text-ellipsis mt-4 sm:mt-5"
           >
             Manage Plan
           </button>
         </div>
 
         {/* Payment Method Card */}
-        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-[#E1E4EA] ">
-          <div className="mb-4">
-            <h3 className="text-[14px] font-[500] text-[#5A687C] mb-3">Payment method</h3>
-            <h2 className="text-[20px] sm:text-[24px] font-[600] text-[#1E1E1E] mb-2">
+        <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-xl border border-[#E1E4EA] min-w-0 overflow-hidden flex flex-col">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-xs sm:text-sm font-[500] text-[#5A687C] mb-2 sm:mb-3">Payment method</h3>
+            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-2xl font-[600] text-[#1E1E1E] mb-2 break-words">
               Visa
             </h2>
-            <p className="text-[14px] font-[400] text-[#5A687C]">
+            <p className="text-xs sm:text-sm font-[400] text-[#5A687C] break-words">
               **** 2131 • 12/25
             </p>
           </div>
           <button
-            className="w-full px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] cursor-pointer text-md font-semibold shadow-sm hover:bg-[#F9F8FF] transition-colors"
+            className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] cursor-pointer text-sm sm:text-base font-semibold shadow-sm hover:bg-[#F9F8FF] transition-colors overflow-hidden text-ellipsis mt-4 sm:mt-5"
           >
             Change Method
           </button>
         </div>
 
         {/* Member Seats Card */}
-        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-[#E1E4EA] font-semibold shadow-sm">
-          <div className="mb-4">
-            <h3 className="text-[14px] font-[500] text-[#5A687C] mb-3">Member Seats</h3>
-            <h2 className="text-[20px] sm:text-[24px] font-[600] text-[#1E1E1E] mb-1">
+        <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-xl border border-[#E1E4EA] font-semibold shadow-sm min-w-0 overflow-hidden flex flex-col">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-xs sm:text-sm font-[500] text-[#5A687C] mb-2 sm:mb-3">Member Seats</h3>
+            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-2xl font-[600] text-[#1E1E1E] mb-1 break-words">
               {teamMembersData?.teamMembers || 0} / {teamMembersData?.teamSize || 0}
             </h2>
-            <p className="text-[14px] font-[400] text-[#5A687C]">Total Users</p>
+            <p className="text-xs sm:text-sm font-[400] text-[#5A687C] break-words">Total Users</p>
           </div>
           <button
             onClick={handleAddSeatsTeam}
-            className="w-full px-4 py-2 bg-white border border-[#E1E4EA] font-semibold shadow-sm cursor-pointer rounded-lg text-[#1E1E1E] text-md hover:bg-[#F9F8FF] transition-colors"
+            className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-white border border-[#E1E4EA] font-semibold shadow-sm cursor-pointer rounded-lg text-[#1E1E1E] text-sm sm:text-base hover:bg-[#F9F8FF] transition-colors overflow-hidden text-ellipsis mt-4 sm:mt-5"
           >
             + Add New Seats
           </button>
         </div>
 
         {/* Credit Usage Card */}
-        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-[#E1E4EA] font-semibold shadow-sm">
+        {/* <div className="bg-white p-4 sm:p-6 rounded-2xl border border-[#E1E4EA] font-semibold shadow-sm">
           <div className="mb-4">
             <h3 className="text-[14px] font-[500] text-[#5A687C] mb-4">Credit Usage</h3>
             <div className="flex items-baseline justify-between mb-3">
@@ -902,7 +914,6 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
                 Limit {creditLimit.toLocaleString()}
               </p>
             </div>
-            {/* Progress Bar */}
             <div className="w-full h-2 bg-[#E1E4EA] rounded-full overflow-hidden">
               <div
                 className="h-full bg-[#675FFF] transition-all duration-300"
@@ -916,183 +927,191 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
           >
             + Add Credits
           </button>
-        </div>
+        </div> */}
       </div>
 
       <hr className="border-b border-gray-200 w-full"></hr>
 
-      {/* Credit Usage Section */}
-      <div className="mt-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <h2 className="text-[20px] sm:text-[24px] font-[600] text-[#1E1E1E]">
-            Credit Usage
-          </h2>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
-            <SelectDropdown
-              name="role_select"
-              options={roleOptions}
-              value={roleSelect}
-              onChange={(updated) => {
-                setRoleSelect(updated)
+      {/* Billing History Section */}
+      <div className="mt-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+          <h2 className="text-[20px] sm:text-[24px] font-[600] text-[#1E1E1E]">Billing History</h2>
+          <div className="relative w-full sm:w-auto">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
+            <input
+              type="text"
+              placeholder="Search Invoices"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
               }}
-              placeholder="By User"
-              className="w-[155px] rounded-2xl"
+              className="w-full sm:w-[300px] pl-10 pr-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[14px] focus:outline-none focus:border-[#675FFF]"
             />
-            <SelectDropdown
-              name="past_month"
-              options={pastMonthOptions}
-              value={pastMonths}
-              onChange={(updated) => {
-                setPastMonths(updated)
-              }}
-              placeholder="Last 6 Month"
-              className="w-[160px]"
-            />
-            <div className="flex items-center px-3 gap-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-[8px] py-[8px]">
-              <RefreshIcon />
-              <button className="text-[16px] cursor-pointer text-[#5A687C]">
-                {t("refresh")}
-              </button>
-            </div>
           </div>
         </div>
 
-        {/* Table */}
-        
-          <div className="border border-[#D6D6D6] rounded-2xl overflow-hidden">
-          <table className="min-w-full border-separate border-spacing-0">
-            <thead className="bg-[#F7F7F8]">
-              <tr className="text-[#5A687C]">
-                <th className="w-1/4 px-6 text-start py-3 text-[16px] font-[400]">{t("settings.tab_2_list.item")}</th>
-                <th className="w-1/4 px-6 text-start py-3 text-[16px] font-[400]">{t("settings.tab_2_list.credit")}</th>
-                <th className="w-1/4 px-6 text-start py-3 text-[16px] font-[400]">{t("settings.tab_2_list.used_by")}</th>
-                <th className="w-1/4 px-6 text-start py-3 text-[16px] font-[400]">{t("settings.tab_2_list.date_time")}</th>
-              </tr>
-            </thead>
-
-            <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
-              {paginatedData?.length === 0 ? (
-                <tr className="h-34">
-                  <td colSpan="4" className="text-center py-8 text-[#5A687C]">
-                    {t("no_data")}
-                  </td>
+        <div className="bg-white rounded-xl border border-[#D6D6D6] overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full border-separate border-spacing-0">
+              <thead className="bg-[#F7F7F8]">
+                <tr>
+                  <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Invoice ID</th>
+                  <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Plan</th>
+                  <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Billing Period</th>
+                  <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Amount</th>
+                  <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Status</th>
+                  <th className="px-12 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Action</th>
                 </tr>
-              ) : (
-                paginatedData.map((row, index) => {
-                  // Generate avatar color based on user name
-                  const avatarColors = [
-                    'bg-[#EBEFFF] text-[#675FFF]',
-                    'bg-[#EBF9EE] text-[#34C759]',
-                    'bg-[#FFF4E6] text-[#FF9500]',
-                    'bg-[#F3E8FF] text-[#9B59B6]',
-                    'bg-[#FFE6E6] text-[#FF6B6B]'
-                  ];
-                  const colorIndex = index % avatarColors.length;
-                  const userInitials = row.usedBy ? row.usedBy.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U';
+              </thead>
+              <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-xl [&>tr:first-child>td:last-child]:rounded-tr-xl [&>tr:last-child>td:first-child]:rounded-bl-xl [&>tr:last-child>td:last-child]:rounded-br-xl">
+                {loadingTransactions ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-8 text-center">
+                      <span className="loader" />
+                    </td>
+                  </tr>
+                ) : paginatedTransactions.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-8 text-center text-[#5A687C]">
+                      No invoices found
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedTransactions.map((transaction, index) => {
+                    const originalIndex = transactions.indexOf(transaction);
+                    const isLastRow = index === paginatedTransactions.length - 1;
+                    return (
+                      <tr key={index} className={`border-b border-[#D6D6D6] ${isLastRow ? 'last:border-b-0' : ''}`}>
+                        <td className={`px-6 py-4 text-[14px] text-[#1E1E1E] font-[400] ${index === 0 ? 'border-t-0' : ''} ${isLastRow ? 'border-b-0' : ''}`}>
+                          {generateInvoiceId(originalIndex, transaction.transactionDate)}
+                        </td>
+                        <td className={`px-6 py-4 text-[14px] text-[#1E1E1E] font-[400] capitalize ${index === 0 ? 'border-t-0' : ''} ${isLastRow ? 'border-b-0' : ''}`}>
+                          {transaction.subscriptionType || "N/A"}
+                        </td>
+                        <td className={`px-6 py-4 text-[14px] text-[#1E1E1E] font-[400] ${index === 0 ? 'border-t-0' : ''} ${isLastRow ? 'border-b-0' : ''}`}>
+                          {formatBillingPeriod(transaction.transactionDate)}
+                        </td>
+                        <td className={`px-6 py-4 text-[14px] text-[#1E1E1E] font-[400] ${index === 0 ? 'border-t-0' : ''} ${isLastRow ? 'border-b-0' : ''}`}>
+                          €{transaction.amountPaid?.toFixed(2) || "0.00"}
+                        </td>
+                        <td className={`px-6 py-4 ${index === 0 ? 'border-t-0' : ''} ${isLastRow ? 'border-b-0' : ''}`}>
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[14px] font-[500] ${transaction.status?.toLowerCase() === "paid"
+                                ? "text-[#34C759] bg-[#EBF9EE]"
+                                : "text-[#5A687C] bg-[#EFF0F2]"
+                              }`}
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
+                            {transaction.status ? transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1) : "N/A"}
+                          </span>
+                        </td>
+                        <td
+                          className={`px-6 py-4 ${index === 0 ? "border-t-0" : ""} ${isLastRow ? "border-b-0" : ""
+                            }`}
+                        >
+                          {transaction.receiptUrl ? (
+                            <a
+                              href={transaction.receiptUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className=" inline-flex items-center gap-2  bg-white  border border-[#E5E7EB] px-2 py-2  rounded-lg   text-[#1E1E1E]  text-[14px] font-[500] shadow-[0px_2px_6px_rgba(0,0,0,0.06)] hover:shadow-[0px_3px_8px_rgba(0,0,0,0.10)] transition "
+                            >
+                              <Download className="w-4 h-4" />
+                              Download
+                            </a>
+                          ) : (
+                            <span className="text-[#5A687C] flex items-center mr-12 justify-center text-[14px]">N/A</span>
+                          )}
+                        </td>
 
-                  return (
-                    <tr key={index} className="text-left">
-                      <td className="px-6 py-4 text-[16px] text-[#1E1E1E] font-[400]">
-                        <div className="flex items-center gap-3">
-                          <div className="px-3 py-3 bg-[#335BFB1A] rounded-2xl">
-                            <img src="/src/assets/svg/coins.svg" alt="" className="w-5 h-5" />
-                          </div>
-                          {row.item || "AI Agents — LLM and Tool Cost"}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-[16px] text-[#1E1E1E] font-[400]">
-                        {row.credit ? row.credit.toLocaleString() : "500,000"}
-                      </td>
-                      <td className="px-6 py-4 text-[16px] text-[#1E1E1E] font-[400]">
-                        <div className="flex items-center gap-2">
-                          <div className={`flex justify-center items-center rounded-[12px] h-[40px] w-[40px] text-[16px] font-[600] ${avatarColors[colorIndex]}`}>
-                            {userInitials}
-                          </div>
-                          {row.usedBy || "User"}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-[16px] text-[#1E1E1E] font-[400]">
-                        {row.dateTime || "27/03/2025 03:30 PM"}
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
 
           {/* Pagination */}
-          <div className="flex items-center justify-between bg-[#F7F7F8] px-4 py-3">
-            {/* Pagination controls */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                disabled={currentPage === 1}
-                className={`border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer hover:bg-gray-50 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                ‹ Prev
-              </button>
-              {getPageNumbers().map((page, idx) => (
-                page === '...' ? (
-                  <span key={`ellipsis-${idx}`} className="text-[#000000] text-sm">…</span>
-                ) : (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`rounded-lg px-3 py-1 text-sm cursor-pointer ${currentPage === page
-                      ? 'bg-[#675FFF] text-white'
-                      : 'border border-[#D6D6D6] text-[#000000] hover:bg-white'
-                      }`}
-                  >
-                    {page}
-                  </button>
-                )
-              ))}
-              <button
-                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                disabled={currentPage === totalPages}
-                className={`border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer hover:bg-gray-50 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                Next ›
-              </button>
-            </div>
+          {/* Pagination */}
+{filteredTransactions.length > 0 && (
+  <div className="flex flex-col sm:flex-row items-center justify-between bg-[#F7F7F8] px-6 py-3 gap-4">
+    {/* Page Navigation Buttons */}
+    <div className="flex items-center gap-2">
+      <button
+        onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+        disabled={currentPage === 1}
+        className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+      >
+        ‹ Prev
+      </button>
+      
+      {getPageNumbers().map((page, idx) => (
+        <button
+          key={idx}
+          onClick={() => typeof page === "number" && setCurrentPage(page)}
+          disabled={page === "..."}
+          className={`rounded-lg px-3 py-1 text-sm min-w-[36px] ${
+            page === currentPage
+              ? "bg-[#675FFF] text-white"
+              : page === "..."
+                ? "text-[#000000] cursor-default"
+                : "border border-[#D6D6D6] text-[#000000] bg-white hover:bg-gray-50 cursor-pointer"
+          }`}
+        >
+          {page}
+        </button>
+      ))}
+      
+      <button
+        onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+        disabled={currentPage === totalPages}
+        className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+      >
+        Next ›
+      </button>
+    </div>
 
-            {/* Rows per page */}
-            <div className="flex items-center gap-2 text-sm text-[#5A687C]">
-              <button
-                onClick={() => {
-                  setRowsPerPage(5);
-                  setCurrentPage(1);
-                }}
-                className={`border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] cursor-pointer ${rowsPerPage === 5 ? 'bg-white' : 'hover:bg-white'
-                  }`}
-              >
-                5 rows
-              </button>
-              <button
-                onClick={() => {
-                  setRowsPerPage(10);
-                  setCurrentPage(1);
-                }}
-                className={`border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] cursor-pointer ${rowsPerPage === 10 ? 'bg-white' : 'hover:bg-white'
-                  }`}
-              >
-                10
-              </button>
-              <button
-                onClick={() => {
-                  setRowsPerPage(20);
-                  setCurrentPage(1);
-                }}
-                className={`border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] cursor-pointer ${rowsPerPage === 20 ? 'bg-white' : 'hover:bg-white'
-                  }`}
-              >
-                20
-              </button>
-            </div>
-          </div>
-          </div>
-        
+    {/* Rows per page selector */}
+    <div className="flex items-center gap-2 text-sm text-[#5A687C]">
+      <span>Rows per page:</span>
+      <div className="flex gap-1">
+        <button
+          onClick={() => setRowsPerPage(5)}
+          className={`border rounded-lg px-3 py-1 text-sm cursor-pointer ${
+            rowsPerPage === 5 
+              ? "bg-white border-[#D6D6D6] text-[#000000]" 
+              : "bg-transparent border-[#D6D6D6] text-[#5A687C] hover:bg-white"
+          }`}
+        >
+          5 rows
+        </button>
+        <button
+          onClick={() => setRowsPerPage(10)}
+          className={`border rounded-lg px-3 py-1 text-sm cursor-pointer ${
+            rowsPerPage === 10 
+              ? "bg-white border-[#D6D6D6] text-[#000000]" 
+              : "bg-transparent border-[#D6D6D6] text-[#5A687C] hover:bg-white"
+          }`}
+        >
+          10
+        </button>
+        <button
+          onClick={() => setRowsPerPage(20)}
+          className={`border rounded-lg px-3 py-1 text-sm cursor-pointer ${
+            rowsPerPage === 20 
+              ? "bg-white border-[#D6D6D6] text-[#000000]" 
+              : "bg-transparent border-[#D6D6D6] text-[#5A687C] hover:bg-white"
+          }`}
+        >
+          20
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+        </div>
       </div>
     </div>
   );

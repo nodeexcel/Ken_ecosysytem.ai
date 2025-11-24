@@ -115,6 +115,8 @@ const SettingsPage = () => {
     country: "",
   });
 
+  const [fullNameInput, setFullNameInput] = useState("");
+
   const [errors, setErrors] = useState({
     currentPassword: '',
     newPassword: '',
@@ -156,6 +158,35 @@ const SettingsPage = () => {
 
   const userDetails = useSelector((state) => state.profile)
 
+  // Helper function to calculate time since password was last changed
+  const getPasswordLastChanged = (passwordUpdatedAt) => {
+    if (!passwordUpdatedAt) {
+      return "Never";
+    }
+
+    const now = new Date();
+    const passwordDate = new Date(passwordUpdatedAt);
+    const diffTime = Math.abs(now - passwordDate);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const diffMonths = Math.floor(diffDays / 30);
+    const diffYears = Math.floor(diffDays / 365);
+
+    if (diffYears > 0) {
+      return `${diffYears} ${diffYears === 1 ? 'year' : 'years'} ago`;
+    } else if (diffMonths > 0) {
+      return `${diffMonths} ${diffMonths === 1 ? 'month' : 'months'} ago`;
+    } else if (diffDays > 0) {
+      return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ago`;
+    } else {
+      const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+      if (diffHours > 0) {
+        return `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'} ago`;
+      } else {
+        const diffMinutes = Math.floor(diffTime / (1000 * 60));
+        return diffMinutes > 0 ? `${diffMinutes} ${diffMinutes === 1 ? 'minute' : 'minutes'} ago` : 'Just now';
+      }
+    }
+  };
 
   useEffect(() => {
     if (token && !userDetails.loading) {
@@ -178,6 +209,17 @@ const SettingsPage = () => {
     }
 
   }, [token, !userDetails.loading])
+
+  // Sync fullNameInput when profileFormData is loaded from user details
+  useEffect(() => {
+    if (profileFormData.firstName || profileFormData.lastName) {
+      const constructedName = `${profileFormData.firstName || ""}${profileFormData.lastName ? ` ${profileFormData.lastName}` : ""}`;
+      // Only update if fullNameInput is empty or doesn't start with the current firstName (initial load scenario)
+      if (!fullNameInput || (profileFormData.firstName && !fullNameInput.startsWith(profileFormData.firstName))) {
+        setFullNameInput(constructedName);
+      }
+    }
+  }, [profileFormData.firstName, profileFormData.lastName])
 
   // Check URL params for manage-plan view
   useEffect(() => {
@@ -333,18 +375,6 @@ const SettingsPage = () => {
       newErrors.company = "Company must be at most 50 characters.";
     }
 
-    if (profileFormData.city === null || profileFormData.city === "") {
-      newErrors.city = `${t("settings.tab_1_list.city_required")}`;
-    } else if (profileFormData.city.length > 50) {
-      newErrors.city = "City must be at most 50 characters.";
-    }
-
-    if (profileFormData.country === null || profileFormData.country === "") {
-      newErrors.country = `${t("settings.tab_1_list.country_required")}`;
-    } else if (profileFormData.country.length > 50) {
-      newErrors.country = "Country must be at most 50 characters.";
-    }
-
     if (profileFormData.image === null && !profileFormData.imageFile) newErrors.imageFile = `${t("settings.tab_1_list.profile_image_required")}`;
 
     return newErrors;
@@ -423,6 +453,7 @@ const SettingsPage = () => {
   };
 
   const handleFullNameChange = (value) => {
+    setFullNameInput(value);
     const parts = value.split(" ").filter(Boolean);
     const firstName = parts[0] || "";
     const lastName = parts.slice(1).join(" ");
@@ -881,6 +912,7 @@ const SettingsPage = () => {
                   if (userDetails?.user) {
                     if (userDetails?.user.phoneNumber === null) {
                       setProfileFormData(userDetails?.user);
+                      setFullNameInput(`${userDetails?.user?.firstName || ""}${userDetails?.user?.lastName ? ` ${userDetails?.user?.lastName}` : ""}`);
                     } else {
                       const formatPhoneNumber = extractPhoneDetails(userDetails?.user.phoneNumber);
                       const formatedData = { ...userDetails?.user, phoneNumber: formatPhoneNumber.number };
@@ -892,6 +924,7 @@ const SettingsPage = () => {
                         setSelectedCountry(filterCountryCode[0]);
                       }
                       setProfileFormData(formatedData);
+                      setFullNameInput(`${userDetails?.user?.firstName || ""}${userDetails?.user?.lastName ? ` ${userDetails?.user?.lastName}` : ""}`);
                     }
                   }
                   setProfileErrors({});
@@ -1019,7 +1052,7 @@ const SettingsPage = () => {
                     </label>
                     <input
                       type="text"
-                      value={`${profileFormData.firstName || ""}${profileFormData.lastName ? ` ${profileFormData.lastName}` : ""}`}
+                      value={fullNameInput}
                       placeholder="Robert Johnson"
                       onChange={(e) => handleFullNameChange(e.target.value)}
                       className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${(profileErrors.firstName || profileErrors.lastName) ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none`}
@@ -1181,7 +1214,11 @@ const SettingsPage = () => {
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <p className="text-[14px] text-[#1E1E1E] font-[500]">Your Password</p>
-                        <p className="text-sm text-[#5A687C]">Last changed password: _ days ago</p>
+                        <p className="text-sm text-[#5A687C]">
+                          Last changed password: {userDetails?.user?.passwordUpdatedAt 
+                            ? getPasswordLastChanged(userDetails.user.passwordUpdatedAt)
+                            : 'Never'}
+                        </p>
                       </div>
                       <button
                         type="button"

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Trash2, PhoneOutgoing, Plus, X, Info } from "lucide-react";
+import { Trash2, PhoneOutgoing, Plus, X, Info, Search } from "lucide-react";
 import { InboundCall, OutboundCall } from "../icons/icons";
 import { FaChevronDown } from "react-icons/fa";
 import { addPhoneNumber, getPhoneNumber, updatePhoneNumberStatus, deletePhoneNumber } from "../api/callAgent"
@@ -13,15 +13,82 @@ import us_flag from "../assets/images/us_flag.png"
 import fr_flag from "../assets/images/fr_flag.png"
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 
+// Import flag-icons CSS
+import "flag-icons/css/flag-icons.min.css";
+
 export default function PhoneNumbers() {
   const [rows, setRows] = useState([]);
 
   // Use hardcoded countries data from CallAgent
   const countries = [
-    { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
-    { name: "United Kingdom", code: "GB", dial_code: "+44", flag: uk_flag },
-    { name: "France", code: "FR", dial_code: "+33", flag: fr_flag },
+    { name: "United States", code: "US", dial_code: "+1", flag: us_flag, flagCode: "us" },
+    { name: "United Kingdom", code: "GB", dial_code: "+44", flag: uk_flag, flagCode: "gb" },
+    { name: "France", code: "FR", dial_code: "+33", flag: fr_flag, flagCode: "fr" },
   ];
+
+  // Helper function to get country flag code from country name
+  const getCountryFlagCode = (countryName) => {
+    if (!countryName) return "us"; // default
+    
+    const country = countries.find(
+      (c) => c.name.toLowerCase() === countryName.toLowerCase()
+    );
+    
+    if (country) return country.flagCode;
+    
+    // Fallback: try to extract country code from common country names
+    const countryNameMap = {
+      "united states": "us",
+      "usa": "us",
+      "united kingdom": "gb",
+      "uk": "gb",
+      "france": "fr",
+      "germany": "de",
+      "spain": "es",
+      "italy": "it",
+      "canada": "ca",
+      "australia": "au",
+      "japan": "jp",
+      "china": "cn",
+      "india": "in",
+      "brazil": "br",
+      "mexico": "mx",
+      "netherlands": "nl",
+      "belgium": "be",
+      "switzerland": "ch",
+      "austria": "at",
+      "sweden": "se",
+      "norway": "no",
+      "denmark": "dk",
+      "poland": "pl",
+      "portugal": "pt",
+      "greece": "gr",
+      "turkey": "tr",
+      "russia": "ru",
+      "south korea": "kr",
+      "singapore": "sg",
+      "thailand": "th",
+      "indonesia": "id",
+      "philippines": "ph",
+      "vietnam": "vn",
+      "malaysia": "my",
+      "new zealand": "nz",
+      "south africa": "za",
+      "egypt": "eg",
+      "saudi arabia": "sa",
+      "uae": "ae",
+      "israel": "il",
+      "argentina": "ar",
+      "chile": "cl",
+      "colombia": "co",
+      "peru": "pe",
+      "venezuela": "ve",
+      "morocco": "ma",
+    };
+    
+    const normalizedName = countryName.toLowerCase().trim();
+    return countryNameMap[normalizedName] || "us";
+  };
 
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState("outbound")
@@ -35,6 +102,8 @@ export default function PhoneNumbers() {
   const [deleteRow, setDeleteRow] = useState(null);
   const [loading, setLoading] = useState(true)
   const [otpModal, setOtpModal] = useState(false)
+  const [filterStatus, setFilterStatus] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const countryRef = useRef()
 
   const tabs = [
@@ -184,91 +253,201 @@ export default function PhoneNumbers() {
     return `${filterCode[0]?.dial_code}${phone}`
   }
 
+  // Filter and search logic
+  const filteredRows = rows.filter((row) => {
+    // Filter by status
+    let statusMatch = true;
+    if (filterStatus === "Active") {
+      statusMatch = row.status === true;
+    } else if (filterStatus === "Pending") {
+      statusMatch = row.status === false && row.pending === true;
+    } else if (filterStatus === "Inactive") {
+      statusMatch = row.status === false && !row.pending;
+    }
+
+    // Filter by search query
+    const searchMatch = searchQuery === "" || 
+      row.phone_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      row.country?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (row.name && row.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    return statusMatch && searchMatch;
+  });
+
+  const filterTabs = [
+    { label: "All", value: "All" },
+    { label: "Active", value: "Active" },
+    { label: "Pending", value: "Pending" },
+    { label: "Inactive", value: "Inactive" },
+  ];
+
   return (
-    <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
+    <div className="py-6 px-6 h-screen overflow-auto flex flex-col gap-4 w-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{t("phone.phone_numbers")} </h1>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+        <div>
+          <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">{t("phone.phone_numbers")}</h1>
+          <p className="text-[#5A687C] text-sm md:text-base mt-1">
+            Manage and monitor active business numbers across your organization.
+          </p>
+        </div>
         <button
           onClick={() => setShowModal(true)}
-          className="bg-[#675FFF] border cursor-pointer border-[#5F58E8] text-white font-medium rounded-lg px-5 py-2 flex items-center gap-2"
+          className="bg-[#675FFF] cursor-pointer whitespace-nowrap text-white rounded-xl text-sm md:text-base px-3 py-2 mt-3 md:mt-0 flex items-center gap-2"
         >
-          {
-            t("phone.new_phone_number")
-          }
+          <Plus size={20} />
+          {t("phone.new_phone_number")}
         </button>
       </div>
 
+      {/* Filter and Search */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+        {/* Filter Tabs */}
+        <div className="flex items-center gap-1 bg-[#F3F4F6] border border-[#D6D6D6] rounded-lg p-0.5 ">
+          {filterTabs.map((tab) => (
+            <button
+              key={tab.value}
+              onClick={() => setFilterStatus(tab.value)}
+              className={`px-4 py-1.5 text-sm font-medium rounded-lg transition cursor-pointer ${
+                filterStatus === tab.value
+                  ? "bg-white text-[#1E1E1E] font-semibold border border-[#D6D6D6] "
+                  : "text-[#5A687C] hover:text-[#1E1E1E]"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Search Bar */}
+        <div className="relative flex-1 md:flex-initial md:w-auto md:max-w-md bg-white rounded-xl">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
+          <input
+            type="text"
+            placeholder="Search name or phone number"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-8 pr-8 py-2 border whitespace-nowrap border-[#E1E4EA] rounded-lg focus:outline-none focus:border-[#675FFF] text-sm"
+          />
+        </div>
+      </div>
+
       {/* Table */}
-      <div className="overflow-auto w-full">
-        <table className="w-full">
-          <div className="px-5 w-full">
-            <thead>
-              <tr className="text-left text-[#5A687C] text-[16px]">
-                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.phone_numbers")}</th>
-                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.country")}</th>
-                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.status")}</th>
-                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.total_call")}</th>
-                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.direction")}</th>
-                <th className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] whitespace-nowrap">{t("phone.creation_date")}</th>
-                <th className="p-[14px] w-full font-[400] whitespace-nowrap">{t("phone.actions")}</th>
+      <div className="overflow-x-auto w-full -mx-4 sm:mx-0">
+        <div className="border border-[#D6D6D6] rounded-2xl overflow-hidden min-w-[800px]">
+          <table className="min-w-full border-separate border-spacing-0">
+            <thead className="bg-[#F7F7F8]">
+              <tr className="text-[#5A687C]">
+                <th className="px-3 sm:px-4 md:px-6 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.phone_numbers")}</th>
+                <th className="px-2 sm:px-3 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.country")}</th>
+                <th className="px-2 sm:px-3 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.status")}</th>
+                <th className="px-2 sm:px-3 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.total_call")}</th>
+                <th className="px-2 sm:px-3 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.direction")}</th>
+                <th className="px-2 sm:px-3 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.creation_date")}</th>
+                <th className="px-3 sm:px-4 md:px-6 text-center py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.actions")}</th>
               </tr>
             </thead>
-          </div>
-          <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
-            {loading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
-              rows.length !== 0 ?
-                <tbody className="w-full">
-                  {rows.map((row, index) =>
-                    <tr
-                      key={row.id}
-                      className={`text-[16px] text-[#1E1E1E] ${index !== rows?.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
-                    >
-                      <td className="p-[14px] min-w-[200px] max-w-[17%] w-full font-[400] text-[#1E1E1E]">{row.phone_number}</td>
-                      <td className="py-[14px] pl-[24px] pr-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C] table-cell-wrap">{row.country}</td>
-                      <td className="p-[14px] min-w-[200px] max-w-[17%] w-full">
-                        <div className="flex w-[120px] justify-between items-center">
-                          <span
-                            className={`text-[14px] font-[500] px-2.5 py-0.5 rounded-full border-[1.5px] ${row.status
-                              ? "border-[#34C759] text-[#34C759] bg-[#EBF9EE]"
-                              : "text-[#FF9500] border-[#FF9500] bg-[#FFF4E6]"
-                              }`}
-                          >
-                            {row.status ? t("phone.active") : t("phone.inactive")}
-                          </span>
-                          {/* <ToggleSwitch
-                            checked={row.status}
-                            onChange={() => toggleActive(index, row.id)}
-                          /> */}
-                        </div>
-                      </td>
-                      <td className="py-[14px] pl-[30px] pr-[14px] min-w-[200px] max-w-[17%] w-full text-[#5A687C]">{row.total_calls}</td>
-                      <td className="py-[14px] pl-[14px] pr-[14px] min-w-[186px] max-w-[17%] w-full">
-                        {row.direction === "inbound" ? <InboundCall active={true} /> : <OutboundCall active={true} />}
-                      </td>
-                      <td className="min-w-[210px] max-w-[17%] w-full text-[#5A687C] table-cell-wrap">
-                        {DateFormat(row.creation_date)}
-                      </td>
 
-                      <td className="p-[14px] pr-[30px] w-full">
-                        <button
-                          onClick={() => setDeleteRow(row.id)}
-                          className="text-[#FF3B30] cursor-pointer hover:text-[#ff3a30b7]"
+            <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
+              {loading ? (
+                <tr className="h-34">
+                  <td colSpan="7" className="text-center py-8"><span className="loader" /></td>
+                </tr>
+              ) : filteredRows.length !== 0 ? (
+                filteredRows.map((row, index) => (
+                  <tr key={row.id} className="text-sm sm:text-base md:text-[16px] text-[#1E1E1E]">
+                    <td className="px-3 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm md:text-[16px] text-[#1E1E1E] font-[400] text-start break-words">{row.phone_number}</td>
+                    <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm md:text-[16px] text-[#5A687C] font-[400] text-start whitespace-nowrap">
+                      <div className="flex items-center gap-2 rounded-full">
+                        <span className={`fi fi-${getCountryFlagCode(row.country)} fis w-4 h-4 md:w-7 sm:h-7 rounded-full px-2`}></span>
+                        <span>{row.country}</span>
+                      </div>
+                    </td>
+                    <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm md:text-[16px]">
+                      <div className="flex items-center">
+                        <span
+                          className={`text-[10px] sm:text-xs md:text-[14px] font-[500] px-2 sm:px-3 py-1 rounded-full border whitespace-nowrap ${
+                            row.status === true
+                              ? "border-[#34C759] text-[#34C759] bg-[#EBF9EE]"
+                              : row.status === false && row.pending === true
+                              ? "border-[#FF9500] text-[#FF9500] bg-[#FFF4E6]"
+                              : "border-[#FF3B30] text-[#FF3B30] bg-[#FFEBEE]"
+                            } inline-flex items-center justify-center`}
                         >
-                          <Trash2 size={18} />
-                        </button>
-                      </td>
-                    </tr>
-                  )}
-                </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">{t("phone.no_phonenumber_listed")}</p>}
+                          {row.status === true 
+                            ? "Active" 
+                            : row.status === false && row.pending === true
+                            ? "Pending"
+                            : "Inactive"}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm md:text-[16px] text-[#5A687C] font-[400] text-start whitespace-nowrap">{row.total_calls}</td>
+                    <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm md:text-[16px] text-start">
+                      {row.direction === "inbound" ? <InboundCall active={true} /> : <OutboundCall active={true} />}
+                    </td>
+                    <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm md:text-[16px] text-[#5A687C] font-[400] text-start whitespace-nowrap">
+                      {DateFormat(row.creation_date)}
+                    </td>
+                    <td className="px-3 sm:px-4 py-3 sm:py-4 text-center">
+                      <button
+                        onClick={() => setDeleteRow(row.id)}
+                        className="text-[#FF3B30] cursor-pointer hover:text-[#ff3a30b7]"
+                      >
+                        <Trash2 size={16} className="sm:w-[18px] sm:h-[18px]" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr className="h-34">
+                  <td colSpan="7" className="text-center text-xs sm:text-sm md:text-[16px] text-[#1E1E1E] py-8 px-4">
+                    {t("phone.no_phonenumber_listed")}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+
+          <div className="flex flex-col sm:flex-row items-center justify-between bg-[#F7F7F8] px-3 sm:px-4 py-3 gap-3 sm:gap-4">
+            {/* pagination + row controls */}
+            <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto w-full sm:w-auto justify-center sm:justify-start">
+              <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm bg-white cursor-pointer whitespace-nowrap hover:bg-gray-50">
+                ‹ Prev
+              </button>
+              <button className="bg-[#675FFF] text-white rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm cursor-pointer min-w-[36px]">
+                1
+              </button>
+              <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm hover:bg-white cursor-pointer min-w-[36px]">
+                2
+              </button>
+              <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm hover:bg-white cursor-pointer min-w-[36px]">
+                3
+              </button>
+              <span className="text-[#000000] text-xs sm:text-sm px-1">…</span>
+              <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm hover:bg-white cursor-pointer min-w-[36px]">
+                10
+              </button>
+              <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm bg-white cursor-pointer whitespace-nowrap hover:bg-gray-50">
+                Next ›
+              </button>
+            </div>
+
+            {/* Right side – rows per page */}
+            <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-[#5A687C]">
+              <span className="hidden sm:inline">Rows per page:</span>
+              <button className="border border-[#D6D6D6] rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm text-[#000000] bg-white cursor-pointer whitespace-nowrap">5<span className="hidden sm:inline"> rows</span></button>
+              <button className="border border-[#D6D6D6] rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm text-[#000000] hover:bg-white cursor-pointer whitespace-nowrap">10</button>
+              <button className="border border-[#D6D6D6] rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm text-[#000000] hover:bg-white cursor-pointer whitespace-nowrap">20</button>
+            </div>
           </div>
-        </table>
+        </div>
       </div>
 
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl w-[610px] max-h-[85vh] overflow-auto p-6 relative shadow-lg">
+          <div className="bg-white rounded-2xl max-w-[460px] max-h-[85vh] overflow-auto p-6 relative shadow-lg">
             <button
               className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-700"
               onClick={() => {
@@ -279,26 +458,22 @@ export default function PhoneNumbers() {
               <X size={20} />
             </button>
 
-            <h2 className="text-xl font-semibold text-gray-800 mb-1">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
               {
                 t("phone.add_new_number")
               }
             </h2>
-            <p className="text-gray-500 text-sm mb-4">
-              {
-                t("phone.enter_new_phone_number")
-              }
-            </p>
+            <hr className="border border-gray-200 w-full"></hr>
 
             {/* Tabs */}
             <div className="flex border bg-[#F3F4F6] border-[#E1E4EA] rounded-lg overflow-hidden my-4">
               {tabs.map((tab) => (
-                <div key={tab.key} className="w-full p-1" onClick={() => setActiveTab(tab.key)}>
+                <div key={tab.key} className="w-full p-0.5 " onClick={() => setActiveTab(tab.key)}>
                   <button
 
-                    className={`w-full py-1.5 cursor-pointer text-sm font-medium transition ${activeTab === tab.key
-                      ? "bg-white text-[#1E1E1E] rounded-lg"
-                      : "text-[#5A687C]"
+                    className={`w-full py-1.5 cursor-pointer text-sm font-medium transition  ${activeTab === tab.key
+                      ? "bg-white text-[#1E1E1E] rounded-lg border border-gray-200"
+                      : "text-[#5A687C] "
                       }`}
 
                   >
@@ -387,11 +562,15 @@ export default function PhoneNumbers() {
                 )}
               </div>
 
-              <div className="bg-[#FFF4E6] text-[#5A687C] text-sm rounded-lg px-4 py-3 flex items-center gap-2">
+              <div className={`text-sm rounded-lg px-4 py-3 flex items-center gap-2 ${
+                activeTab === 'outbound' 
+                  ? 'bg-[#F7F7FF] text-[#675FFF]' 
+                  : 'bg-[#FEF8F4] text-[#F17B2B]'
+              }`}>
                 <svg width="21" height="22" viewBox="0 0 21 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M9.84375 10.3438L9.87963 10.3262C9.99183 10.2702 10.1177 10.2475 10.2425 10.2608C10.3672 10.2741 10.4855 10.3228 10.5833 10.4012C10.6812 10.4797 10.7545 10.5845 10.7947 10.7034C10.8348 10.8222 10.84 10.95 10.8098 11.0717L10.1902 13.5533C10.1598 13.675 10.1648 13.803 10.2049 13.922C10.2449 14.0409 10.3182 14.146 10.4161 14.2245C10.514 14.3031 10.6324 14.3519 10.7572 14.3652C10.8821 14.3785 11.0081 14.3558 11.1204 14.2996L11.1562 14.2812M18.375 11C18.375 12.0342 18.1713 13.0582 17.7756 14.0136C17.3798 14.9691 16.7997 15.8372 16.0685 16.5685C15.3372 17.2997 14.4691 17.8798 13.5136 18.2756C12.5582 18.6713 11.5342 18.875 10.5 18.875C9.46584 18.875 8.44181 18.6713 7.48637 18.2756C6.53093 17.8798 5.6628 17.2997 4.93153 16.5685C4.20027 15.8372 3.6202 14.9691 3.22445 14.0136C2.82869 13.0582 2.625 12.0342 2.625 11C2.625 8.91142 3.45469 6.90838 4.93153 5.43153C6.40838 3.95469 8.41142 3.125 10.5 3.125C12.5886 3.125 14.5916 3.95469 16.0685 5.43153C17.5453 6.90838 18.375 8.91142 18.375 11ZM10.5 7.71875H10.507V7.72575H10.5V7.71875Z" stroke="#FF9500" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M9.84375 10.3438L9.87963 10.3262C9.99183 10.2702 10.1177 10.2475 10.2425 10.2608C10.3672 10.2741 10.4855 10.3228 10.5833 10.4012C10.6812 10.4797 10.7545 10.5845 10.7947 10.7034C10.8348 10.8222 10.84 10.95 10.8098 11.0717L10.1902 13.5533C10.1598 13.675 10.1648 13.803 10.2049 13.922C10.2449 14.0409 10.3182 14.146 10.4161 14.2245C10.514 14.3031 10.6324 14.3519 10.7572 14.3652C10.8821 14.3785 11.0081 14.3558 11.1204 14.2996L11.1562 14.2812M18.375 11C18.375 12.0342 18.1713 13.0582 17.7756 14.0136C17.3798 14.9691 16.7997 15.8372 16.0685 16.5685C15.3372 17.2997 14.4691 17.8798 13.5136 18.2756C12.5582 18.6713 11.5342 18.875 10.5 18.875C9.46584 18.875 8.44181 18.6713 7.48637 18.2756C6.53093 17.8798 5.6628 17.2997 4.93153 16.5685C4.20027 15.8372 3.6202 14.9691 3.22445 14.0136C2.82869 13.0582 2.625 12.0342 2.625 11C2.625 8.91142 3.45469 6.90838 4.93153 5.43153C6.40838 3.95469 8.41142 3.125 10.5 3.125C12.5886 3.125 14.5916 3.95469 16.0685 5.43153C17.5453 6.90838 18.375 8.91142 18.375 11ZM10.5 7.71875H10.507V7.72575H10.5V7.71875Z" stroke={activeTab === 'outbound' ? '#675FFF' : '#F17B2B'} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
-                {activeTab === 'outbound' ? t("phone.active_outbound_msg") : t("phone.inactive_outbound_msg")}
+                {activeTab === 'outbound' ? t("phone.active_outbound_msg") : "Message text here @sami"}
               </div>
             </div>
 
@@ -469,7 +648,7 @@ export default function PhoneNumbers() {
       {
         deleteRow && (
           <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl w-[400px] p-6 relative shadow-lg">
+            <div className="bg-white rounded-2xl w-[460px] p-6 relative shadow-lg">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">{t("phone.delete_phone_number")}</h2>
               <p className="text-gray-500 mb-4">{t("phone.delete_phone_number_msg")}</p>
               <div className="flex gap-2">

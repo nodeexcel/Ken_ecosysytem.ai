@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import { ChevronDown, Info, MoreHorizontal, X } from "lucide-react";
-import { ThreeDots } from "../icons/icons";
+import { ChevronDown, Info, MoreHorizontal, X, Search, Plus, Ellipsis } from "lucide-react";
+import { ThreeDots, Edit, Delete, DocIcon } from "../icons/icons";
 // import { AlertIcon, ThreeDots } from "../icons/icons"; // Commented out - no longer needed with single phone number selection
 // import { FaChevronDown } from "react-icons/fa"; // Commented out - using ChevronDown from lucide-react instead
 
@@ -32,11 +32,14 @@ export default function CallAgentsPage() {
   // const [inboundLimitStatus, setInboundLimitStatus] = useState(false) // Commented out - no longer needed with single phone number selection
   const [showPhoneNumberList, setShowPhoneNumberList] = useState(false)
   const [openUpward, setOpenUpward] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
   const { t } = useTranslation();
 
 
   const buttonRef = useRef(null);
-  const phoneNumberRef = useRef()
+  const phoneNumberRef = useRef();
+  const dropdownRef = useRef(null);
 
   // Add filter state
   const [filters, setFilters] = useState({
@@ -44,6 +47,7 @@ export default function CallAgentsPage() {
     language: "",
     voice: ""
   });
+  const [searchQuery, setSearchQuery] = useState("");
 
   const countryOptions = [
     { key: "US", label: "United States" },
@@ -95,6 +99,43 @@ export default function CallAgentsPage() {
       }
     }
   }, [showPhoneNumberList]);
+
+  const handleDropdownClick = (index, event) => {
+    if (activeDropdown === index) {
+      setActiveDropdown(null);
+    } else {
+      const button = event.currentTarget;
+      const rect = button.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY + 4,
+        right: window.innerWidth - rect.right + window.scrollX
+      });
+      setActiveDropdown(index);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (activeDropdown !== null) {
+        const clickedElement = event.target;
+        const isDropdownClick = clickedElement.closest('[data-dropdown]');
+        const isTriggerClick = clickedElement.closest('button')?.querySelector('svg') ||
+          clickedElement.closest('button[class*="rounded-lg"]');
+
+        if (!isDropdownClick && !isTriggerClick) {
+          setActiveDropdown(null);
+        }
+      }
+    };
+
+    if (activeDropdown !== null) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [activeDropdown]);
 
   {/* Changed from array to string - now handles single phone number selection instead of multiple */}
   const CustomSelector = ({ options, setShowSelector, value = "", onChange, ref }) => {
@@ -230,107 +271,278 @@ export default function CallAgentsPage() {
   }, []);
 
   return (
-    <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
+    <div className="py-6 px-6 h-screen overflow-auto flex flex-col gap-4 w-full">
       {/* Header */}
-      <div className="flex justify-between items-center mb-3">
-        <h1 className="text-2xl font-semibold text-black">{t("phone.call_agents")}</h1>
-        <button className="bg-[#7065F0] cursor-pointer text-white font-medium px-5 py-2 rounded-lg shadow" onClick={() => setShowModal(true)}>
-          {
-            t("phone.new_agent")
-          }
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-xl md:text-2xl font-semibold text-[#1E1E1E]">{t("phone.call_agents")}</h1>
+          <p className="text-sm md:text-base text-[#5A687C] font-[400]">Manage your AI and human call agents</p>
+        </div>
+        <button 
+          className="bg-[#675FFF] cursor-pointer text-white font-medium px-4 py-2.5 rounded-lg shadow-sm hover:bg-[#5E54FF] transition-colors flex items-center gap-2 w-fit"
+          onClick={() => setShowModal(true)}
+        >
+          <Plus className="w-4 h-4" />
+          { "Add a Call Agent"}
         </button>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-4 mb-3">
-        <div className="w-48">
-          <SelectDropdown
-            name="country"
-            options={countryOptions}
-            placeholder={t("phone.country")}
-            value={filters.country}
-            onChange={(value) => setFilters({ ...filters, country: value })}
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-3 justify-between">
+        {/* Search Bar */}
+        <div className="relative flex-1 min-w-0 max-w-[270px]">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
+          <input
+            type="text"
+            placeholder="Search name or phone number"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border border-[#E1E4EA] bg-white rounded-lg focus:outline-none focus:border-[#675FFF] text-sm"
           />
         </div>
 
-        <div className="w-48">
-          <SelectDropdown
-            name="language"
-            options={languageOptions}
-            placeholder={t("phone.language")}
-            value={filters.language}
-            onChange={(value) => setFilters({ ...filters, language: value })}
-          />
-        </div>
+        {/* Filters */}
+        <div className="flex flex-wrap sm:flex-nowrap gap-3 flex-shrink-0">
+          <div className="w-full sm:w-[140px] text-[13px] font-[500]">
+            <SelectDropdown
+              name="country"
+              options={countryOptions}
+              placeholder={t("phone.country")}
+              value={filters.country}
+              onChange={(value) => setFilters({ ...filters, country: value })}
+            />
+          </div>
 
-        <div className="w-48">
-          <SelectDropdown
-            name="voice"
-            options={voiceOptions}
-            placeholder={t("phone.voice")}
-            value={filters.voice}
-            onChange={(value) => setFilters({ ...filters, voice: value })}
-          />
+          <div className="w-full sm:w-[140px] text-[13px] font-[500]">
+            <SelectDropdown
+              name="language"
+              options={languageOptions}
+              placeholder={t("phone.language")}
+              value={filters.language}
+              onChange={(value) => setFilters({ ...filters, language: value })}
+            />
+          </div>
+
+          <div className="w-full sm:w-[100px] text-[13px] font-[500]">
+            <SelectDropdown
+              name="voice"
+              options={voiceOptions}
+              placeholder={t("phone.voice")}
+              value={filters.voice}
+              onChange={(value) => setFilters({ ...filters, voice: value })}
+            />
+          </div>
         </div>
       </div>
 
       {/* Table */}
       <div className="overflow-auto w-full">
-        <table className="w-full">
-          <div className="px-5 w-full">
-            <thead>
-              <tr className="text-left text-[#5A687C] text-[16px]">
-                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">{t("appointment.agent_name")}</th>
-                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">{t("phone.language")}</th>
-                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">{t("phone.voice")}</th>
-                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">{t("brain_ai.phone_no")}</th>
-                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">{t("phone.status")}</th>
-                <th className="p-[14px] min-w-[200px] max-w-[20%] w-full font-[400] whitespace-nowrap">{t("phone.actions")}</th>
+        <div className="border border-[#D6D6D6] rounded-2xl overflow-hidden">
+          <table className="min-w-full border-separate border-spacing-0">
+            <thead className="bg-[#F7F7F8]">
+              <tr className="text-[#5A687C]">
+                <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("appointment.agent_name")}</th>
+                <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.language")}</th>
+                <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.voice")}</th>
+                <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("brain_ai.phone_no")}</th>
+                <th className="px-3 text-center py-3 text-[16px] font-[400]">{t("phone.status")}</th>
+                <th className="px-6 text-center py-3 text-[16px] font-[400]">{t("phone.actions")}</th>
               </tr>
             </thead>
-          </div>
-          <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
-            {loading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
-              agents.length !== 0 ?
-                <tbody className="w-full">
-                  {agents.map((agent, index) => (
-                    <tr
-                      key={agent.id}
-                      className={`${index !== agents.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
+
+            <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
+              {loading ? (
+                <tr className="h-34">
+                  <td></td>
+                  <td></td>
+                  <td className="text-center"><span className="loader" /></td>
+                  <td></td>
+                  <td></td>
+                  <td ></td>
+                </tr>
+              ) : (() => {
+                // Filter agents based on search query and filters
+                const filteredAgents = agents.filter((agent) => {
+                  // Search filter
+                  if (searchQuery) {
+                    const query = searchQuery.toLowerCase();
+                    const matchesSearch = 
+                      agent.agent_name?.toLowerCase().includes(query) ||
+                      agent.phone_numbers?.toLowerCase().includes(query);
+                    if (!matchesSearch) return false;
+                  }
+                  
+                  // Language filter
+                  if (filters.language && agent.language?.toLowerCase() !== filters.language.toLowerCase()) {
+                    return false;
+                  }
+                  
+                  // Voice filter
+                  if (filters.voice && agent.voice?.toLowerCase() !== filters.voice.toLowerCase()) {
+                    return false;
+                  }
+                  
+                  return true;
+                });
+                
+                return filteredAgents.length !== 0 ? (
+                  filteredAgents.map((agent, index) => (
+                  <tr key={agent.id} className="text-[16px] text-[#1E1E1E]">
+                    <td className="px-4 py-4 text-[16px] text-[#1E1E1E] font-medium text-start">{agent.agent_name}</td>
+                    <td className="px-4 py-4 text-[16px] text-start">{agent.language.charAt(0).toLocaleUpperCase() + agent.language.substring(1, agent.language.length)}</td>
+                    <td className="px-4 py-4 text-[16px] text-start">{agent.voice}</td>
+                    <td className="px-4 py-4 text-[16px] text-start">{agent.phone_numbers}</td>
+                    <td className="px-4 py-4 text-center">
+                      <div className="flex items-center justify-center">
+                        <ToggleSwitch
+                          checked={agent.status}
+                          onChange={() => toggleActive(agent.id)}
+                          className="cursor-pointer"
+                        />
+                      </div>
+                    </td>
+                    <td className="px-4 py-4 text-center whitespace-nowrap relative">
+                      <div className='flex items-center justify-center gap-2'>
+                        <button 
+                          onClick={(e) => handleDropdownClick(index, e)} 
+                          className="p-2 rounded-lg cursor-pointer relative"
+                        >
+                          <div className='bg-white border border-[#D6D6D6] shadow-sm p-1.5 rounded-xl'><Ellipsis /></div>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  ))
+                ) : (
+                  <tr className="h-34">
+                    <td colSpan="6" className="text-center text-[#1E1E1E]">
+                      {t("phone.no_call_agents")}
+                    </td>
+                  </tr>
+                );
+              })()}
+            </tbody>
+          </table>
+
+          {activeDropdown !== null && (() => {
+            const filteredAgents = agents.filter((agent) => {
+              if (searchQuery) {
+                const query = searchQuery.toLowerCase();
+                const matchesSearch = 
+                  agent.agent_name?.toLowerCase().includes(query) ||
+                  agent.phone_numbers?.toLowerCase().includes(query);
+                if (!matchesSearch) return false;
+              }
+              
+              if (filters.language && agent.language?.toLowerCase() !== filters.language.toLowerCase()) {
+                return false;
+              }
+              
+              if (filters.voice && agent.voice?.toLowerCase() !== filters.voice.toLowerCase()) {
+                return false;
+              }
+              return true;
+            });
+            
+            if (!filteredAgents[activeDropdown]) return null;
+            
+            const selectedAgent = filteredAgents[activeDropdown];
+            return (
+              <div
+                ref={dropdownRef}
+                data-dropdown
+                className="fixed w-36 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[9999]"
+                style={{
+                  top: `${dropdownPosition.top}px`,
+                  right: `${dropdownPosition.right}px`
+                }}
+              >
+                <div className="py-1">
+                  <button
+                    className="block group w-full cursor-pointer text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Handle View Report action
+                      setActiveDropdown(null);
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className='group-hover:hidden'><DocIcon /></div>
+                      <div className='hidden group-hover:block'><DocIcon status={true} /></div>
+                      <span>{t("emailings.view_report")}</span>
+                    </div>
+                  </button>
+                  <button
+                    className="block group w-full cursor-pointer text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Handle Edit action
+                      setActiveDropdown(null);
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className='group-hover:hidden'><Edit /></div>
+                      <div className='hidden group-hover:block'><Edit status={true} /></div>
+                      <span>{t("edit")}</span>
+                    </div>
+                  </button>
+                  <div className="">
+                    <button
+                      className="block w-full cursor-pointer text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle Delete action
+                        setActiveDropdown(null);
+                      }}
                     >
-                      <td className="p-[14px] min-w-[200px] max-w-[20%] w-full font-medium text-gray-900">{agent.agent_name}</td>
-                      <td className="py-[14px] pl-[20px] pr-[14px] min-w-[200px] max-w-[20%] w-full">{agent.language.charAt(0).toLocaleUpperCase() + agent.language.substring(1, agent.language.length)}</td>
-                      <td className="p-[14px] min-w-[200px] max-w-[20%] w-full">{agent.voice}</td>
-                      <td className="p-[14px] min-w-[200px] max-w-[20%] w-full">{agent.phone_numbers}</td>
-                      <td className="p-[14px] min-w-[200px] max-w-[20%] w-full">
-                        <div className="flex items-center gap-3 ">
-                          <ToggleSwitch
-                            checked={agent.status}
-                            onChange={() => toggleActive(agent.id)}
-                            className="cursor-pointer"
-                          />
-                        </div>
-                      </td>
-                      <td className="p-[14px] min-w-[200px] max-w-[20%] w-full whitespace-nowrap">
-                        <div className='flex items-center gap-2'>
-                          <button className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg'>
-                            {t("emailings.view_report")}
-                          </button>
-                          <button className="p-2 rounded-lg">
-                            <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">{t("phone.no_call_agents")}</p>}
+                      <div className="flex items-center gap-2">
+                        <Delete />
+                        <span>{t("delete")}</span>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+          <div className="flex items-center justify-between bg-[#F7F7F8] px-4 py-3">
+            {/* pagination + row controls */}
+            <div className="flex items-center gap-2">
+              <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
+                ‹ Prev
+              </button>
+              <button className="bg-[#675FFF] text-white rounded-lg px-3 py-1 text-sm cursor-pointer">
+                1
+              </button>
+              <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                2
+              </button>
+              <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                3
+              </button>
+              <span className="text-[#000000] text-sm">…</span>
+              <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                10
+              </button>
+              <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
+                Next ›
+              </button>
+            </div>
+
+            {/* Right side – rows per page */}
+            <div className="flex items-center gap-2 text-sm text-[#5A687C]">
+              <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 rows</button>
+              <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">10</button>
+              <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">20</button>
+            </div>
           </div>
-        </table>
+        </div>
       </div>
 
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl max-h-[85vh] overflow-auto w-full max-w-[610px] p-6 relative shadow-lg">
+          <div className="bg-white rounded-2xl max-h-[80vh] overflow-auto w-full max-w-[400px] p-6 relative shadow-lg">
             <button
               className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-700"
               onClick={() => {

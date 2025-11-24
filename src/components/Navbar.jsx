@@ -18,6 +18,12 @@ function Navbar({ sidebarItems }) {
     const [showUserMenu, setShowUserMenu] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
     const userMenuRef = useRef(null)
+    
+    // Add theme state to track current theme for React re-renders
+    const [theme, setTheme] = useState(() => {
+        const html = document.documentElement;
+        return html.getAttribute("data-theme") || "light";
+    })
 
     const navbarDetails = useSelector((state) => state.navbar)
     const userDetails = useSelector((state) => state.profile.user)
@@ -61,6 +67,18 @@ function Navbar({ sidebarItems }) {
         dispatch(discardSkillsData())
         navigate("/dashboard")
     }
+
+    const toggleTheme = () => {
+        const html = document.documentElement;
+        const isDark = html.getAttribute("data-theme") === "dark";
+        const newTheme = isDark ? "light" : "dark";
+
+        console.log(isDark);
+
+        html.setAttribute("data-theme", newTheme);
+        setTheme(newTheme); // Update React state to trigger re-render
+    };
+
 
     // breadcrumbs (dynamic)
     const buildBreadcrumbs = () => {
@@ -130,7 +148,7 @@ function Navbar({ sidebarItems }) {
     const breadcrumbs = buildBreadcrumbs()
 
     return (
-        <div className='bg-white border-b border-[#D6D6D6]'>
+        <div className='bg-white dark:bg-black dark:text-white border-b border-[#D6D6D6]'>
             <div className='flex justify-between items-center px-6 py-3'>
                 {/* Left Side: Logo, Brand, Version, Breadcrumbs */}
                 <div className='flex items-center gap-2'>
@@ -154,11 +172,11 @@ function Navbar({ sidebarItems }) {
                     <div className="flex items-center gap-1 text-sm text-[#5A687C]">
                         {breadcrumbs.map((crumb, index) => (
                             <React.Fragment key={index}>
-                                <span className={index === breadcrumbs.length - 1 ? 'text-[#1E1E1E] font-medium' : ''}>
+                                <span className={index === breadcrumbs.length - 1 ? 'text-[#1E1E1E] dark:text-white font-medium' : ''}>
                                     {crumb}
                                 </span>
                                 {index < breadcrumbs.length - 1 && (
-                                    <span className="mx-1 text-[#5A687C]">›</span>
+                                    <span className="mx-1 text-[#5A687C] dark:text-white">›</span>
                                 )}
                             </React.Fragment>
                         ))}
@@ -195,6 +213,10 @@ function Navbar({ sidebarItems }) {
                                 className="w-full h-full object-cover"
                             />
                         </button>
+
+                        {/* <button className="p-3 bg-red-600" onClick={toggleTheme}>
+                            Toggle Theme
+                        </button> */}
 
                         {showUserMenu && (
                             <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-[#E1E4EA] z-50">
