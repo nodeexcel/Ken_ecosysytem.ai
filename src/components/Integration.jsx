@@ -12,11 +12,11 @@ import active_campaign from '../assets/svg/activecampaign.svg'
 import hubspot from '../assets/svg/hubspot.svg'
 import mailchimp from '../assets/svg/mailchimp.svg'
 import click_funnels from '../assets/svg/click-funnels.svg'
+import tiktok from '../assets/svg/tiktok.svg'
 import AdditionalIntegration from './AdditionalIntegrations';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNavbarData } from '../store/navbarSlice'
-import { getGoogleCalendarAccounts, getInstaAccounts, getLinkedInAccounts, getWhatsappAccounts } from '../api/brainai';
-// Define the integrations data
+import { getGoogleCalendarAccounts, getInstaAccounts, getLinkedInAccounts, getWhatsappAccounts, getTikTokAccounts } from '../api/brainai';
 
 
 const Integration = ({ firstRender, setFirstRender }) => {
@@ -25,9 +25,17 @@ const Integration = ({ firstRender, setFirstRender }) => {
   const [whatsappData, setWhatsappData] = useState([])
   const [googleCalendarData, setGoogleCalendarData] = useState([])
   const [linkedInData, setLinkedInData] = useState([])
+  const [tikTokData, setTikTokData] = useState([])
   const dispatch = useDispatch();
   const userDetails = useSelector((state) => state.profile.user)
-  const [loading, setLoading] = useState({ instagram: true, whatsapp: true, google_calendar: true, linkedin: true })
+  const [loading, setLoading] = useState({
+  instagram: true,
+  whatsapp: true,
+  google_calendar: true,
+  linkedin: true,
+  tiktok: true,
+})
+
 
   const handleInstagram = async () => {
     try {
@@ -95,6 +103,28 @@ const Integration = ({ firstRender, setFirstRender }) => {
     }
   }
 
+  const handleTikTok = async () => {
+    try {
+
+      const response = await getTikTokAccounts();
+      if (response?.status === 200) {
+        console.log(response?.data?.tiktok_account_info)
+        setTikTokData(response?.data?.tiktok_account_info);
+        if (response?.data?.tiktok_account_info?.length === 0) {
+          setLoading((prev) => ({
+            ...prev, tiktok: false
+          }))
+        }
+      }
+
+    } catch (error) {
+      console.log(error)
+      setLoading((prev) => ({
+        ...prev, tiktok: false
+      }))
+    }
+  }
+
 
   const handleGoogleCalender = async () => {
     try {
@@ -128,13 +158,19 @@ const Integration = ({ firstRender, setFirstRender }) => {
         ...prev, whatsapp: false
       }))
     }
-  }, [instagramData, whatsappData])
+    if (tikTokData?.length > 0) {
+  setLoading((prev) => ({
+    ...prev, tiktok: false
+  }))
+}
+  }, [instagramData, whatsappData, tikTokData])
 
   useEffect(() => {
     handleInstagram()
     handleWhatsapp()
     handleGoogleCalender()
     handleLinkedIn()
+    handleTikTok()
   }, [])
 
   const integrations = [
@@ -202,6 +238,12 @@ const Integration = ({ firstRender, setFirstRender }) => {
       name: "Clickfunnels",
       connectedAccounts: 0,
     },
+    {
+      icon: tiktok,
+      name: "TikTok",
+      connectedAccounts: tikTokData?.length,
+      path:  import.meta.env.VITE_TIK_TOK_URL + `&state=${userDetails.id}`,
+    },
   ];
 
   const handleClick = (data) => {
@@ -256,7 +298,20 @@ const Integration = ({ firstRender, setFirstRender }) => {
             </div>
           ))}
         </div>
-      </> : <AdditionalIntegration setInstagramData={setInstagramData} instagramData={instagramData} integartionData={integartionData} setFirstRender={setFirstRender} whatsappData={whatsappData} setWhatsappData={setWhatsappData} googleCalendarData={googleCalendarData} setGoogleCalendarData={setGoogleCalendarData} linkedInData={linkedInData} setLinkedInData={setLinkedInData}/>}
+      </> : <AdditionalIntegration
+        setInstagramData={setInstagramData}
+        instagramData={instagramData}
+        integartionData={integartionData}
+        setFirstRender={setFirstRender}
+        whatsappData={whatsappData}
+        setWhatsappData={setWhatsappData}
+        googleCalendarData={googleCalendarData}
+        setGoogleCalendarData={setGoogleCalendarData}
+        linkedInData={linkedInData}
+        setLinkedInData={setLinkedInData}
+        tikTokData={tikTokData}
+        setTikTokData={setTikTokData}
+      />}
     </div>
   )
 }
