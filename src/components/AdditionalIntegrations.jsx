@@ -11,13 +11,13 @@ import { useDispatch } from "react-redux";
 import { getNavbarData } from "../store/navbarSlice";
 import { LeftArrow } from "../icons/icons";
 import Integration from "./Integration";
-import { deleteGoogleCalendarAccount, deleteInstaAccount, deleteLinkedInAccount, deleteWhatsappAccount } from "../api/brainai";
+import { deleteGoogleCalendarAccount, deleteInstaAccount, deleteLinkedInAccount, deleteWhatsappAccount, deleteTikTokAccount } from "../api/brainai";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 
 
-const AdditionalIntegration = ({ setInstagramData, instagramData, integartionData, setFirstRender, whatsappData, setWhatsappData, googleCalendarData, setGoogleCalendarData, linkedInData, setLinkedInData }) => {
+const AdditionalIntegration = ({ setInstagramData, instagramData, integartionData, setFirstRender, whatsappData, setWhatsappData, googleCalendarData, setGoogleCalendarData, linkedInData, setLinkedInData, tikTokData, setTikTokData }) => {
     const [open, setOpen] = useState(false);
     const [createTemplateOpen, setCreateTemplateOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("insta");
@@ -99,6 +99,24 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
             console.error(error);
         }
     };
+
+    const handleDeleteTikTok = async (id) => {
+        try {
+            const response = await deleteTikTokAccount(id);
+
+            if (response?.status === 200) {
+                setTikTokData((prev) =>
+                    prev.filter((acc) => acc.tiktok_id !== id)  // Correct key
+                );
+            } else if (response?.status === 400) {
+                const message = response?.response?.data?.success;
+                if (message) setErrorMessage(message);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
 
 
 
@@ -203,6 +221,18 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                         handleDelete={handleDeleteLinkedIn}
                     />
                 )
+            case "TikTok":
+                return (
+                    <RenderAccountData
+                        accountsData={tikTokData}
+                        label={"name"}
+                        id={"tiktok_id"}
+                        specialCharacter={"@"}
+                        handleDelete={handleDeleteTikTok}
+                    />
+                );
+
+
         }
     }
 
@@ -225,6 +255,8 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                 return googleCalendarData?.length
             case "LinkedIn":
                 return linkedInData?.length
+            case "TikTok":
+                return tikTokData?.length
             default:
                 return integartionData.connectedAccounts
         }

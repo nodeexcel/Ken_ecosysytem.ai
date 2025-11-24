@@ -263,3 +263,24 @@ export const removeContactFromList = async (payload) => {
         return error;
     }
 }
+
+export const getTikTokAccounts = async () => {
+    try {
+        const response = await agentInstance.get(`/get-tiktok-accounts`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+}
+
+
+export const deleteTikTokAccount = async (id) => {
+    try {
+        const response = await agentInstance.delete(`/delete-tiktok-account/${id}`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+}
