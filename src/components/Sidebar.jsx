@@ -162,7 +162,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
         {isOpen ? <IoClose size={24} /> : <RxHamburgerMenu size={24} color='#1e1e1e' />}
       </button>
       <aside className={`bg-[#F7F7F8] ${isOpen && 'rounded-r-[8px] px-8 pt-3'} pl-2 overflow-auto w-full  h-full transition-all duration-300 ${isOpen ? 'w-[120px]' : 'w-0 overflow-auto'}  flex flex-col justify-between`}>
-        <div className="flex flex-col bg-white h-full justify-between py-3 my-2 rounded-l-2xl px-2 border border-[#D6D6D6]">
+        <div className="flex flex-col bg-white h-full justify-between py-3 my-2 rounded-2xl px-2 border border-[#D6D6D6]">
           {/* Top Section */}
           <div className="flex flex-col">
             {/* Logo */}
