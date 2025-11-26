@@ -231,10 +231,10 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
   };
 
   return (
-    <div className="w-full p-4 flex flex-col gap-4 overflow-auto h-screen">
-      <div className="justify-between max-h-[32px] flex flex-row">
-        <div className="w-[240px] h-[32px] rounded-[8px] border-[0.5px] bg-white border-[#00000029] 
-                flex flex-row items-center gap-[6px] px-[8px]">
+    <div className="w-full p-4 flex flex-col scrollbar-hide gap-4 overflow-auto h-screen">
+      <div className="flex flex-col sm:flex-row justify-between gap-3 w-full flex-wrap">
+        <div className="w-full sm:w-[240px] h-[32px] rounded-[8px] border-[0.5px] bg-white border-[#00000029] 
+                  flex flex-row items-center gap-[6px] px-[8px]">
 
           <img src={Search} className="w-[14px] h-[14px]" alt="search" />
 
@@ -245,7 +245,7 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
           />
         </div>
 
-        <div className="flex flex-row gap-[10px] h-[32px] w-full max-w-[245px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[10px] h-[32px] w-full sm:w-auto">
 
           {/* Date Range Filter */}
           <div
@@ -253,7 +253,7 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
                px-[10px] py-[6px] gap-[6px] 
                border-[0.5px] border-[#00000029] rounded-[8px]
                text-[13px] font-medium 
-               h-full w-full flex-1 bg-white"
+               h-full w-full bg-white"
           >
             <span className="truncate">1 Aug - 31 Aug</span>
             <ChevronDown className="shrink-0 w-[13px]" />
@@ -265,7 +265,7 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
                px-[10px] py-[6px] gap-[6px] 
                border-[0.5px] border-[#00000029] rounded-[8px]
                text-[13px] font-medium 
-               h-full w-full flex-1 bg-white"
+               h-full w-full bg-white"
           >
             <span className="truncate">Campaign</span>
             <ChevronDown className="w-[13px]" />
@@ -274,9 +274,11 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
         </div>
 
       </div>
-      <div className="overflow-y-auto h-[calc(100vh-180px)]">
+      <div className="overflow-auto h-[calc(100vh-180px)]">
         <div className="border border-[#D6D6D6] rounded-2xl overflow-hidden">
-          <table className="min-w-full border-separate border-spacing-0">
+         {/* horizontal scroll wrapper for small screens */}
+         <div className="w-full overflow-x-auto">
+          <table className="min-w-[900px] w-full table-auto border-separate border-spacing-0">
             <thead className="bg-[#F7F7F8]">
               <tr className="text-[#868C98]">
                 <th className="px-6 text-start py-3 text-[13px] font-medium">{t("constance.date")} {t("constance.time")}</th>
@@ -286,7 +288,6 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
                 <th className="px-6 text-center py-3 text-[13px] font-medium">{t("phone.actions")}</th>
               </tr>
             </thead>
-
             <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#E1E4EA]">
               {loading ? (
                 <tr className='h-34'>
@@ -333,12 +334,12 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
                   return (
                     <tr key={item.scheduled_content_id} className="text-center">
                       {/* ✅ Date */}
-                      <td className="px-4 py-4 text-[14px] text-[#1E1E1E] font-medium text-start">
+                      <td className="px-4 py-4 text-[14px] text-[#1E1E1E] font-medium text-start whitespace-normal break-words">
                         {formatDisplayDateTime(displayDate, displayTime)}
                       </td>
 
                       {/* ✅ Platform */}
-                      <td className="px-4 py-4 text-[14px] text-[#1E1E1E] font-medium text-start">
+                      <td className="px-4 py-4 text-[14px] text-[#1E1E1E] font-medium text-start whitespace-normal break-words">
                         {(() => {
                           const { icon, name } = getPlatformDetails(item.platform);
                           return (
@@ -357,7 +358,7 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
                       </td>
 
                       {/* ✅ Content */}
-                      <td className="px-4 py-4 text-[14px] text-[#1E1E1E] font-medium text-start">
+                      <td className="px-4 py-4 text-[14px] text-[#1E1E1E] font-medium text-start max-w-[360px] whitespace-normal break-words">
                         {item?.content || ''}
                       </td>
 
@@ -389,7 +390,8 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
                               ref={dropdownRef} // move ref here, only wraps the actual dropdown
                               className={`absolute right-0 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 z-10 ${dropdownDirection === "up" ? "bottom-full mb-2" : "mt-2"
                                 }`}
-                              onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
+                              onClick={(e) => e.stopPropagation()}
+                              style={{ minWidth: 180 }} // ensure dropdown has consistent width
                             >
                               <div className="py-1">
                                 {/* Always show Preview */}
@@ -471,8 +473,8 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
               )}
             </tbody>
           </table>
-
-          <div className="flex items-center justify-between max-h-[36px] bg-[#F7F7F8] px-1 py-[2px]">
+        </div>
+         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0 bg-[#F7F7F8] px-1 py-[2px]">
             {/* pagination + row controls */}
             <div className="flex items-center gap-2 ml-2">
               <button className="border-[0.5px] border-[#00000029] text-[#000000]  h-[28px] w-fit rounded-[8px] px-2 py-1 text-[13px] bg-white cursor-pointer">
@@ -510,7 +512,7 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
       {/* Delete Confirmation Modal */}
       {deleteModalStatus && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-[460px] p-8 relative shadow-xl">
+          <div className="bg-white rounded-2xl w-full max-w-[460px] p-6 sm:p-8 relative shadow-xl mx-4">
 
             <button
               className="absolute top-5 right-5 cursor-pointer text-gray-500 hover:text-gray-700"
@@ -564,7 +566,7 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
       {/* Preview Modal */}
       {previewModalStatus && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl w-full max-w-4xl p-6 relative shadow-lg max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl w-full max-w-4xl p-4 sm:p-6 relative shadow-lg max-h-[90vh] overflow-y-auto mx-4">
             <button
               className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-700"
               onClick={closeModals}

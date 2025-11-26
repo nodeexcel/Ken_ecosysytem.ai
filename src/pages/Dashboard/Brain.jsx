@@ -198,7 +198,7 @@ const BrainAI = () => {
         {/* Sidebar */}
         {navbarDetails?.label !== "integrations" && (
           <div className="lg:flex hidden flex-col bg-white gap-8 border border-[#D6D6D6]
-    min-w-[272px] h-[calc(100vh-86px)] mt-2 rounded-2xl fixed overflow-y-auto">
+    min-w-[272px] h-[calc(100vh-86px)] mt-2 rounded-r-2xl fixed overflow-y-auto">
 
             <div className="">
               <div

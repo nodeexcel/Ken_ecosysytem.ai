@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, X } from "lucide-react"
 import successImg from "../assets/svg/success.svg"
 // removed API fallback; events now come exclusively from props
-import { SelectDropdown } from "./Dropdown"
 import { useTranslation } from "react-i18next";
 import Search from "../assets/svg/search, magnifying glass.svg"
 
@@ -445,40 +444,60 @@ export default function CalendarPost({status=true, calenderData=[]}) {
     const weekDays = getWeekDays()
 
     return (
-      <div className="grid grid-cols-8 border-t border-[#E1E4EA]">
-        {/* Time column */}
-        <div className="border-r border-[#E1E4EA]">
-          <div className="h-10 border-b border-[#E1E4EA]" />
-          {hours.map((hour, index) => (
-            <div
-              key={hour}
-              className={`h-34 ${hours.length !== index + 1 && "border-b"} border-[#E1E4EA] flex items-start justify-end pr-2 pt-1`}
-            >
-              <span className="text-xs text-[#5A687C] font-[600]">{hour}</span>
-            </div>
-          ))}
+     <div className="w-full overflow-x-auto">
+  <div
+    className="
+      grid border-t border-[#E1E4EA] min-w-[900px]
+      grid-cols-[60px_repeat(7,1fr)]
+      sm:min-w-full
+      sm:grid-cols-8
+    "
+  >
+    {/* Time column */}
+    <div className="border-r border-[#E1E4EA] sticky left-0 bg-white z-20">
+      <div className="h-10 border-b border-[#E1E4EA]" />
+      {hours.map((hour, index) => (
+        <div
+          key={hour}
+          className={`h-34 ${hours.length !== index + 1 && "border-b"} 
+            border-[#E1E4EA] flex items-start justify-end pr-2 pt-1
+          `}
+        >
+          <span className="text-xs text-[#5A687C] font-[600] whitespace-nowrap">
+            {hour}
+          </span>
         </div>
+      ))}
+    </div>
 
-        {/* Days columns */}
-        {weekDays.map((day, index) => {
-          const isToday =
-            day.day === today.getDate() && day.month === today.getMonth() && day.year === today.getFullYear()
-          const dayName = daysOfWeek[index]
+    {/* Day Columns */}
+    {weekDays.map((day, index) => {
+      const isToday =
+        day.day === today.getDate() &&
+        day.month === today.getMonth() &&
+        day.year === today.getFullYear();
 
-          return (
-            <div key={index} className={`${weekDays.length !== index + 1 && "border-r"} border-[#E1E4EA]`}>
-              {/* Day header */}
-              <div className="h-10 border-b border-[#E1E4EA] flex flex-col items-center justify-center">
-                <div className="text-sm flex items-center gap-1 font-medium">
-                  {dayName}{" "}
-                  {!isToday?<span className={`${isToday ? "w-6 h-6 rounded-full bg-[#675FFF] p-1 text-white" : ""}`}>
-                    {day.day}
-                  </span>:
-                  <div className="w-6 h-6 rounded-full bg-[#675FFF] flex items-center justify-center">
-                    <span className="text-white">{day.day}</span>
-                  </div>}
+      const dayName = daysOfWeek[index];
+
+      return (
+        <div
+          key={index}
+          className={`${weekDays.length !== index + 1 && "border-r"} border-[#E1E4EA] min-w-[120px] sm:min-w-0`}
+        >
+          {/* Day Header */}
+          <div className="h-10 border-b border-[#E1E4EA] flex flex-col items-center justify-center">
+            <div className="text-[12px] flex items-center gap-1 font-medium whitespace-nowrap">
+              {dayName}
+
+              {!isToday ? (
+                <span>{day.day}</span>
+              ) : (
+                <div className="w-6 h-6 rounded-full bg-[#675FFF] flex items-center justify-center">
+                  <span className="text-white">{day.day}</span>
                 </div>
-              </div>
+              )}
+            </div>
+          </div>
 
               {/* Hour cells */}
               {hours.map((hour, hourIndex) => {
@@ -487,7 +506,7 @@ export default function CalendarPost({status=true, calenderData=[]}) {
                 return (
                   <div
                     key={`${day.day}-${hour}`}
-                    className={`h-34 ${hours.length !== hourIndex + 1 && "border-b"} border-[#E1E4EA] relative`}
+                className={`relative h-34 ${hours.length !== hourIndex + 1 && "border-b"} border-[#E1E4EA]`}
                   >
                     {/* 30-minute line */}
                     <div className="absolute left-0 right-0 top-1/2 border-t border-gray-200 border-dashed"></div>
@@ -499,7 +518,7 @@ export default function CalendarPost({status=true, calenderData=[]}) {
                       return (
                         <div
                           key={eventIndex}
-                          className={`${statusStyles.bg} p-2 rounded cursor-pointer absolute left-1 right-1 z-10`}
+                          className={`absolute left-1 right-1 z-10 p-2 rounded cursor-pointer ${statusStyles.bg}`}
                           style={{ top: `${topPosition}%` }}
                         >
                           <div className="text-[14px] font-[700] text-[#1E1E1E]">{event.platform}</div>
@@ -514,6 +533,7 @@ export default function CalendarPost({status=true, calenderData=[]}) {
             </div>
           )
         })}
+      </div>
       </div>
     )
   }
@@ -564,9 +584,10 @@ export default function CalendarPost({status=true, calenderData=[]}) {
   }
 
   const renderCalendarHeader = () => {
+    const BaseContainer = "w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 bg-white px-4 sm:px-6 lg:px-8 py-3 sm:py-4 border-b border-[#E2E4E9]"
     if (currentView === "month") {
       return (
-        <div className="flex justify-between bg-[#FFFFFF] max-h-[64px] items-center px-[24px] py-[16px] border-b-[0.5px] border-[#E2E4E9] gap-[24px]">
+        <div className={BaseContainer}>
           {/* <div className="flex flex-row space-x-1 items-center justify-center"><h2 className="text-[18px] font-medium">
             {monthNames[currentMonth]} {currentYear}
           </h2>
@@ -678,7 +699,7 @@ export default function CalendarPost({status=true, calenderData=[]}) {
       )
     } else if (currentView === "week") {
       return (
-        <div className="flex justify-between bg-[#FFFFFF] max-h-[64px] items-center px-[24px] py-[16px] border-b-[0.5px] border-[#E2E4E9] gap-[24px]">
+        <div className={BaseContainer}>
           <h2 className="text-[18px] font-medium cursor-pointer">
             {monthNames[currentMonth]} {currentYear} ({t("emailings.mon")} {selectedWeekStart} - {t("emailings.sun")} {selectedWeekEnd})
           </h2>
@@ -710,7 +731,7 @@ export default function CalendarPost({status=true, calenderData=[]}) {
       )
     } else {
       return (
-        <div className="flex justify-between bg-[#FFFFFF] max-h-[64px] items-center px-[24px] py-[16px] border-b-[0.5px] border-[#E2E4E9] gap-[24px]">
+        <div className={BaseContainer}>
           <h2 className="text-[18px] font-medium cursor-pointer">
             {currentDay} {monthNames[currentMonth]} {currentYear}
           </h2>
@@ -777,9 +798,44 @@ export default function CalendarPost({status=true, calenderData=[]}) {
 
 const SearchBar = () => {
     const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect screen size (less than sm: <640px)
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
+
+  const toggleSearch = () => {
+    if (isMobile) setOpen(!open); // only toggle on mobile
+  };
+
   return (
-      <div className="flex items-center w-[177px]  bg-white rounded-[8px] border-[0.5px] border-[#D6D6D6] px-[6px] py-[7px]">
-             <img src = {Search} alt="Search"/>
+    <div
+      className={`
+        flex items-center bg-white rounded-[8px]
+        border-[0.5px] border-[#D6D6D6]
+        px-2 py-2
+        transition-all duration-200
+        ${isMobile ? (open ? "w-[177px]" : "w-fit") : "w-[177px]"}
+      `}
+    >
+      {/* Icon always visible */}
+      <img
+        src={Search}
+        alt="Search"
+        onClick={toggleSearch}
+        className={`${isMobile ? "cursor-pointer" : "cursor-default"}`}
+      />
+
+      {/* Input */}
+      {(open || !isMobile) && (
               <input
                 type="text"
                 placeholder= {t("brain_ai.search")}
@@ -789,6 +845,67 @@ const SearchBar = () => {
         text-[#5A687C]
       "
               />
-            </div>
+        )}
+    </div>
   )
 }
+
+const SelectDropdown = ({ name, options, placeholder = 'Select', value, onChange, className = '', errors, disabled, extraName, hideArrow = false }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
+    const buttonRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleSelect = (optionKey) => {
+        onChange(optionKey);
+        setIsOpen(false);
+    };
+
+    // Fix: allow 0 as a valid value
+    const optionLabel = (value !== undefined && value !== null&& value!=="") ? options.find((e) => e.key === value) : null;
+
+    return (
+        <div ref={dropdownRef} className={`relative ${className}`}>
+            <button
+                ref={buttonRef}
+                type="button"
+                disabled={disabled}
+                onClick={() => setIsOpen(!isOpen)}
+                className={`flex justify-between items-center w-full border ${(errors?.[name] || errors?.calendar_choosed) ? 'border-red-500' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 bg-white text-left hover:cursor-pointer focus:outline-none focus:border-[#675FFF]`}
+            >
+                <span className={`block truncate ${!optionLabel ? 'text-[#5A687C]' : `${name == "lead_status" ? 'text-[#675FFF]' : 'text-[#1E1E1E]'}`}`}>
+                    {extraName ? `${extraName}: ${optionLabel?.label}` : (optionLabel?.label || placeholder)}
+                </span>
+                {!hideArrow && (
+                  <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
+                )}
+            </button>
+            {isOpen && (
+                <div
+                    className="absolute z-10 w-full rounded-md bg-white shadow-lg border border-gray-200 max-h-60 overflow-auto mt-1"
+                >
+                    <ul className="py-1 px-2 flex flex-col gap-1 my-1">
+                        {options?.length > 0 && options.map((option) => (
+                            <li
+                                key={option.key}
+                                className={`cursor-pointer font-[400] select-none relative px-4 py-2 hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF] ${value === option.key ? 'text-[#675FFF] bg-[#F4F5F6] rounded-lg' : 'text-[#5A687C]'}`}
+                                onClick={() => handleSelect(option.key)}
+                            >
+                                {option.label}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
+};

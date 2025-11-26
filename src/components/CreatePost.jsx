@@ -521,9 +521,9 @@ const handleFileChange = (e) => {
 
       {/* Main Content with Horizontal Scroll for Small Screens */}
       <div className="w-full overflow-x-auto">
-        <div className="flex flex-col lg:flex-row w-full mx-auto border-[0.5px] rounded-[12px] border-[#D6D6D6] bg-[#F7F7F8] min-w-0 overflow-hidden"> {/* Added overflow-hidden */}
+        <div className="flex flex-row w-full mx-auto border-[0.5px] rounded-[12px] border-[#D6D6D6] bg-[#F7F7F8] min-w-0 overflow-hidden"> {/* Added overflow-hidden */}
           {/* Left Sidebar */}
-          <div className="w-full lg:w-[248px] bg-[#FFFFFF] border-b lg:border-b-0 lg:border border-[#00000029] flex flex-col relative px-4 pt-4 pb-6 gap-4 rounded-tl-[12px] rounded-tr-[12px] lg:rounded-tr-none lg:rounded-bl-[12px]">
+          <div className="w-[248px] bg-[#FFFFFF] border-b lg:border-b-0 lg:border border-[#00000029] flex flex-col relative px-4 pt-4 pb-6 gap-4 rounded-l-[12px]">
             {/* <div> */}
             <div className="flex flex-col pt-3 w-full lg:w-[184px] max-h-auto lg:max-h-[70px] gap-[6px] relative lg:absolute top-[0px] left-0 lg:left-[16px]">
               {/* Select Platform */}
@@ -621,7 +621,7 @@ const handleFileChange = (e) => {
           </div>
 
           {/* Center Post Creation */}
-          <div className="flex w-full flex-col gap-[16px] bg-[#FFFFFF] border-[#D6D6D6] px-4 lg:px-6 py-4 h-auto lg:h-[685px] border-b-[0.5px] relative rounded-bl-[12px] rounded-br-[12px] lg:rounded-bl-none lg:rounded-tr-[12px] lg:rounded-br-[12px]">
+          <div className="flex w-full flex-col gap-[16px] bg-[#FFFFFF] border-[#D6D6D6] px-4 lg:px-6 py-4 h-auto lg:h-[685px] border-b-[0.5px] relative rounded-r-[12px]">
             {/* Post Header */}
             {/* <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -712,7 +712,7 @@ const handleFileChange = (e) => {
                     setText(e.target.value);
                     if (errors.text) setErrors(prev => ({ ...prev, text: undefined }));
                   }}
-                  className={`w-full max-h-[176px] gap-[8px] px-1 mt-4 border-0 h-full scrollbar-none text-[14px] tracking-[-0.02em] ${errors.text ? 'border border-red-500' : 'border-0'}`}
+                  className={`w-full resize-none max-h-[176px] gap-[8px] px-1 mt-4 border-0 h-full scrollbar-none text-[14px] tracking-[-0.02em] ${errors.text ? 'border border-red-500' : 'border-0'}`}
                   placeholder={t("constance.post_text")}
                   ref={textInputRef}
                 />

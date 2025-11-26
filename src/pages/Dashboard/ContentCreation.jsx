@@ -258,7 +258,7 @@ function ContentCreation() {
             <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><BsThreeDots size={24} color='#1e1e1e' /></div>
             <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full mt-2">
                 {/* Sidebar */}
-                <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] rounded-2xl fixed h-[calc(100vh-86px)] mb-8 overflow-y-auto">
+                <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] rounded-r-2xl fixed h-[calc(100vh-86px)] mb-8 overflow-y-auto">
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
@@ -297,7 +297,7 @@ function ContentCreation() {
                 </div>
 
                 {/* Main Content */}
-                <div className="w-full overflow-x-hidden pr-0 py-8 pl-3 lg:pl-[290px] lg:pr-4 lg:py-3">
+                <div className="w-full overflow-x-hidden  scrollbar-hide pr-0 py-8 pl-3 lg:pl-[290px] lg:pr-4 lg:py-3">
                     {renderMainContent()}
                 </div>
             </div>

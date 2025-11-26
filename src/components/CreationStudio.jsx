@@ -4,8 +4,11 @@ import { useTranslation } from "react-i18next";
 import { contentGenerationStatus, createContent } from "../api/contentCreationAgent";
 import constanceImg from '../assets/svg/constance_logo.svg'
 import Slider from "react-slick";
-import { Calendar as CalendarIcon, Clock } from "lucide-react";
+import { ArrowDown, Calendar as CalendarIcon, ChevronDown, Clock, Cross, Dot, EllipsisVertical, Eye, Plus, Trash2, X } from "lucide-react";
 import { useRef } from "react";
+import { set } from "date-fns";
+import DemoImage from "../assets/images/image 36.png"
+import { t } from "i18next";
 
 function TimeSelector12({ value, onChange, onClose }) {
     // value: "hh:mm AM/PM"
@@ -258,16 +261,378 @@ function DateSelector({ value, onChange, onClose }) {
     );
 }
 
+// function CreationStudio() {
+//     const [formData, setFormData] = useState({ text: "", post_type: "", language: "", media_type: "", video_duration: "", author: "", created_at: new Date() })
+//     const [errors, setErrors] = useState({})
+//     const [loading, setLoading] = useState(false)
+//     const { t } = useTranslation();
+//     const [generateContent, setGenerateContent] = useState({})
+//     const [loadingSteps, setLoadingSteps] = useState(0)
+//     const [contentId, setContentId] = useState("")
+//     const [showTimeDropdown, setShowTimeDropdown] = useState(false);
+//     const [showDateDropdown, setShowDateDropdown] = useState(false);
+
+//     const settings = {
+//         dots: true,
+//         infinite: true,
+//         speed: 2500,
+//         slidesToShow: 1,
+//         slidesToScroll: 1,
+//         arrows: false,
+//         autoplay: true,
+//         autoplaySpeed: 0,
+//         cssEase: "linear",
+//         pauseOnHover: false,
+//     };
+
+//     useEffect(() => {
+//         let interval;
+//         if (contentId) {
+//             setLoadingSteps(0);
+//             interval = setInterval(async () => {
+//                 const response = await getContentData()
+//                 console.log(response)
+//                 if (response?.status === "in_progress") {
+//                     setLoadingSteps(prev => {
+//                         if (prev >= 100) {
+//                             clearInterval(interval);
+//                             return 100;
+//                         }
+//                         return prev + 1;
+//                     });
+//                 } else {
+//                     setGenerateContent(response)
+//                     setLoadingSteps(100);
+//                     clearInterval(interval);
+//                 }
+//             }, 2000);
+//         }
+//         return () => clearInterval(interval);
+//     }, [contentId]);
+
+//     const postTypeOptions = [{ label: `${t("constance.generic")}`, key: "generic" }, { label: `${t("constance.meme")}`, key: "meme" }, { label: `${t("constance.quoted")}`, key: "quotes" }]
+//     const mediaTypeOptions = [{ label: `${t("constance.single_image")}`, key: "single_image" }, { label: `${t("constance.carousel")}`, key: "carousel" }, { label: `${t("constance.video")}`, key: "video" }, { label: `${t("constance.reel")}`, key: "reel" }]
+//     const languageOptions = [{ label: `${t("constance.eng")}`, key: "english" }, { label: `${t("constance.fr")}`, key: "french" }]
+//     const VideoOptions = [{ label: `${t("constance.video_type_first")}`, key: "short" }, { label: `${t("constance.video_type_second")}`, key: "long" }]
+//     // Removed videoDurationOptions as we're changing to free text input
+
+
+//     const validateForm = () => {
+//         const newErrors = {};
+//         if (!formData.text.trim()) newErrors.text = `${t("constance.text") + " " + t("is_required")}`;
+//         if (formData.text && formData.text.length < 30) newErrors.text = t("constance.text_min");
+//         if (!formData.post_type) newErrors.post_type = `${t("constance.post_type") + " " + t("is_required")}`;
+//         if (!formData.language) newErrors.language = `${t("constance.lang") + " " + t("is_required")}`;
+//         if (!formData.media_type) newErrors.media_type = `${t("constance.media_type") + " " + t("is_required")}`;
+//         if (formData.media_type === "video") {
+//             if (!formData.video_duration) newErrors.video_duration = `${t("constance.video_duration") + " " + t("is_required")}`;
+//         }
+//         if (formData.post_type === "quotes") {
+//             if (!formData.author) newErrors.author = `${t("constance.author") + " " + t("is_required")}`;
+//         }
+//         setErrors(newErrors);
+//         return Object.keys(newErrors).length === 0;
+//     };
+
+//     const handleChange = (e) => {
+//         const { name, value } = e.target;
+//         setFormData((prev) => ({ ...prev, [name]: value }))
+//         setErrors((prev) => ({ ...prev, [name]: '' }))
+//     }
+
+//     const getContentData = async () => {
+//         try {
+//             const response = await contentGenerationStatus(contentId)
+//             if (response?.status === 200) {
+//                 return response?.data
+//             }
+
+//         } catch (error) {
+//             console.log(error)
+//         }
+//     }
+
+//     const handleSubmit = async () => {
+//         if (!validateForm()) {
+//             return
+//         }
+//         setLoading(true)
+//         try {
+//             // Remove empty keys from formData
+//             const cleanedPayload = Object.fromEntries(
+//                 Object.entries(formData).filter(([_, value]) => value !== "" && value !== undefined && value !== null)
+//             );
+
+//             const response = await createContent(cleanedPayload)
+//             if (response?.status === 200) {
+//                 console.log(response?.data)
+//                 setContentId(response?.data?.content_id)
+//             }
+//         } catch (error) {
+//             console.log(error)
+//         } finally {
+//             setLoading(false)
+//         }
+//     }
+
+//     const handleCancel = () => {
+//         setFormData({ text: "", post_type: "", language: "", media_type: "", video_duration: "", author: "", created_at: new Date() });
+//         setErrors({});
+//     };
+
+//     return (
+//         <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-1 w-full">
+//             <p className="text-[#5A687C] text-[14px] font-[400]">{t("constance.content_creation")} {">"} {t("brain_ai.add_new")}</p>
+//             <h1 className="text-[#1E1E1E] font-[600] text-[24px]">{t("constance.add_creation_studio")}</h1>
+//             {!contentId ? <div className="h-full flex flex-col gap-4 w-full py-3">
+//                 <div className="flex flex-col gap-1.5 w-full">
+//                     <label className="text-sm font-medium text-[#1e1e1e]">
+//                         {t("constance.text")}(prompt)
+//                     </label>
+//                     <textarea
+//                         name='text'
+//                         onChange={handleChange}
+//                         value={formData?.text}
+//                         rows={4}
+//                         className={`w-full bg-white p-2 rounded-lg border  ${errors.text ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
+//                         placeholder={t("constance.text_placeholder")}
+//                     />
+//                     {errors.text && <p className="text-red-500 text-sm mt-1">{errors.text}</p>}
+//                 </div>
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+//                     <div className="flex flex-col gap-1.5 flex-1">
+//                         <label className="text-sm font-medium text-[#1e1e1e]">
+//                             {t("constance.post_type")}
+//                         </label>
+//                         <SelectDropdown
+//                             name="post_type"
+//                             options={postTypeOptions}
+//                             value={formData?.post_type}
+//                             onChange={(updated) => {
+//                                 setFormData((prev) => ({
+//                                     ...prev, post_type: updated
+//                                 }))
+//                                 setErrors((prev) => ({
+//                                     ...prev, post_type: ""
+//                                 }))
+//                             }}
+//                             placeholder={t("select")}
+//                             className=""
+//                             errors={errors}
+//                         />
+//                         {errors.post_type && <p className="text-red-500 text-sm mt-1">{errors.post_type}</p>}
+//                     </div>
+//                     <div className="flex flex-col gap-1.5 flex-1">
+//                         <label className="text-sm font-medium text-[#1e1e1e]">
+//                             {t("constance.lang")}
+//                         </label>
+//                         <SelectDropdown
+//                             name="language"
+//                             options={languageOptions}
+//                             value={formData?.language}
+//                             onChange={(updated) => {
+//                                 setFormData((prev) => ({
+//                                     ...prev, language: updated
+//                                 }))
+//                                 setErrors((prev) => ({
+//                                     ...prev, language: ""
+//                                 }))
+//                             }}
+//                             placeholder={t("select")}
+//                             className=""
+//                             errors={errors}
+//                         />
+//                         {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
+//                     </div>
+//                     <div className="flex flex-col gap-1.5 flex-1">
+//                         <label className="text-sm font-medium text-[#1e1e1e]">
+//                             {t("constance.media_type")}
+//                         </label>
+//                         <SelectDropdown
+//                             name="media_type"
+//                             options={mediaTypeOptions}
+//                             value={formData?.media_type}
+//                             onChange={(updated) => {
+//                                 setFormData((prev) => ({
+//                                     ...prev, media_type: updated
+//                                 }))
+//                                 setErrors((prev) => ({
+//                                     ...prev, media_type: ""
+//                                 }))
+//                             }}
+//                             placeholder={t("select")}
+//                             className=""
+//                             errors={errors}
+//                         />
+//                         {errors.media_type && <p className="text-red-500 text-sm mt-1">{errors.media_type}</p>}
+//                     </div>
+//                     {formData.media_type === "video" && <div className="flex flex-col gap-1.5 w-full">
+//                         <label className="text-sm font-medium text-[#1e1e1e]">
+//                             {t("constance.video_duration")}
+//                         </label>
+//                         <SelectDropdown
+//                             name="video_duration"
+//                             options={VideoOptions}
+//                             value={formData?.video_duration}
+//                             onChange={(updated) => {
+//                                 setFormData((prev) => ({
+//                                     ...prev, video_duration: updated
+//                                 }))
+//                                 setErrors((prev) => ({
+//                                     ...prev, video_duration: ""
+//                                 }))
+//                             }}
+//                             placeholder={t("select")}
+//                             className=""
+//                             errors={errors}
+//                         />
+//                         {errors.video_duration && <p className="text-red-500 text-sm mt-1">{errors.video_duration}</p>}
+//                     </div>}
+//                     {/* Date Field */}
+//                     <div className="flex flex-col gap-1.5 flex-1">
+//                         <label className="text-sm font-medium text-[#1e1e1e]">
+//                             {t("constance.date")}
+//                         </label>
+//                         <div className="relative">
+//                             <input
+//                                 type="text"
+//                                 name="date"
+//                                 value={formData?.date || ""}
+//                                 readOnly
+//                                 onClick={() => setShowDateDropdown(true)}
+//                                 className="w-full bg-white p-2 rounded-lg border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] pr-10 cursor-pointer"
+//                                 placeholder="dd/mm/yyyy"
+//                             />
+//                             <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5A687C] pointer-events-none" size={20} />
+//                             {showDateDropdown && (
+//                                 <div className="absolute left-0 top-full mt-2 w-full z-50">
+//                                     <DateSelector
+//                                         value={formData?.date || ""}
+//                                         onChange={(val) => setFormData((prev) => ({ ...prev, date: val }))}
+//                                         onClose={() => setShowDateDropdown(false)}
+//                                     />
+//                                 </div>
+//                             )}
+//                         </div>
+//                     </div>
+//                     {/* Time Field */}
+//                     <div className="flex flex-col gap-1.5 flex-1">
+//                         <label className="text-sm font-medium text-[#1e1e1e]">
+//                               {t("constance.time")}
+//                         </label>
+//                         <div className="relative">
+//                             <input
+//                                 type="text"
+//                                 name="time"
+//                                 value={formData?.time || ""}
+//                                 readOnly
+//                                 onClick={() => setShowTimeDropdown(true)}
+//                                 className="w-full bg-white p-2 rounded-lg border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] pr-10 cursor-pointer"
+//                                 placeholder="hh:mm "
+//                             />
+//                             <Clock className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5A687C] pointer-events-none" size={20} />
+//                             {showTimeDropdown && (
+//                                 <div className="absolute left-0 top-full mt-2 w-full z-50">
+//                                     <TimeSelector12
+//                                         value={formData?.time || ""}
+//                                         onChange={(val) => setFormData((prev) => ({ ...prev, time: val }))}
+//                                         onClose={() => setShowTimeDropdown(false)}
+//                                     />
+//                                 </div>
+//                             )}
+//                         </div>
+//                     </div>
+//                 </div>
+//                 {formData.post_type === "quotes" && <div className="flex flex-col gap-1.5 w-full">
+//                     <label className="text-sm font-medium text-[#1e1e1e]">
+//                         {t("constance.author")}
+//                     </label>
+//                     <input
+//                         type="text"
+//                         name='author'
+//                         value={formData?.author}
+//                         onChange={handleChange}
+//                         className={`w-full bg-white p-2 rounded-lg border ${errors.author ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
+//                         placeholder={t("constance.author_placeholder")}
+//                     />
+//                     {errors.author && <p className="text-red-500 text-sm mt-1">{errors.author}</p>}
+//                 </div>}
+//                 <div className="flex items-center gap-2">
+//                     <button onClick={handleSubmit} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{loading ? (
+//                         <div className="flex items-center justify-center gap-2">
+//                             <p>{t("processing")}</p>
+//                             <span className="loader" />
+//                         </div>
+//                     ) : (
+//                         t("brain_ai.create")
+//                     )}</button>
+//                     <button onClick={handleCancel} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
+//                 </div>
+//             </div>
+//                 : loadingSteps !== 100 ? <div className="border border-[#E1E4EA] bg-white p-[24px] justify-center items-center rounded-[10px] flex flex-col h-full">
+//                     <div className="flex flex-col gap-3 items-center">
+//                         <div className="flex items-center gap-2">
+//                             <div className="flex justify-center items-center">
+//                                 <img src={constanceImg} alt={"constance"} className="object-fit" />
+//                             </div>
+//                             <p className="text-[#1E1E1E] text-[16px] font-[600]">{t("constance.loading_content")}</p>
+//                         </div>
+//                         <div className="w-[500px] h-[14px] rounded-[40px] bg-[#D7D4FF]">
+//                             <div style={{ width: `${loadingSteps}%` }} className={`${loadingSteps === 100 ? 'rounded-[40px]' : 'rounded-l-[40px]'}  h-[14px] leading-none bg-[#675FFF]`} ></div>
+//                         </div>
+//                         <p className="text-[#5A687C] text-[14px] font-[400]">{loadingSteps}% Completed </p>
+//                     </div>
+//                 </div> : <div className="border border-[#E1E4EA] bg-white p-[24px] rounded-[10px] gap-[20px] flex flex-col">
+//                     <div className="flex items-center gap-2">
+//                         <div className="flex justify-center items-center">
+//                             <img src={constanceImg} alt={"constance"} className="object-fit" />
+//                         </div>
+//                         <p className="text-[#5A687C] text-[12px] font-[600]">{t("constance.processed")}</p>
+//                     </div>
+//                     {generateContent?.caption ? <>
+//                         <div className="flex items-center justify-between">
+//                             <p className="text-[#1E1E1E] text-[16px] font-[600]">{generateContent?.caption}</p>
+//                         </div>
+//                         <div className="flex">
+//                             {generateContent?.media_type === "single_image" && <img src={generateContent?.media_urls[0]?.url} alt={"article"} className="object-fit" />}
+//                             {generateContent?.media_type === "video" && <video
+//                                 src={generateContent?.media_urls[0]?.url}
+//                                 className="object-fit"
+//                                 controls
+//                                 autoPlay
+//                                 muted
+//                             >
+//                             </video>}
+//                             {generateContent?.media_type === "carousel" && <div className="max-w-3xl mx-auto px-4">
+//                                 <Slider {...settings}>
+//                                     {generateContent?.media_urls?.map((media, index) => (
+//                                         <div key={index} className="!mx-1">
+//                                             <img
+//                                                 src={media.url}
+//                                                 className="w-full rounded-lg object-cover max-h-[300px] mx-auto"
+//                                                 autoPlay
+//                                             />
+//                                         </div>
+//                                     ))}
+//                                 </Slider>
+//                             </div>}
+//                         </div>
+//                     </> : <p>Failed to Load</p>}
+
+//                 </div>}
+//         </div>
+//     )
+// }
+
+// export default CreationStudio
+
 function CreationStudio() {
-    const [formData, setFormData] = useState({ text: "", post_type: "", language: "", media_type: "", video_duration: "", author: "", created_at: new Date() })
-    const [errors, setErrors] = useState({})
-    const [loading, setLoading] = useState(false)
+    const [showModal, setShowModal] = useState(false);
+    const [generateContent, setGenerateContent] = useState({});
+    const [loadingSteps, setLoadingSteps] = useState(0);
+    const [contentId, setContentId] = useState("");
+
     const { t } = useTranslation();
-    const [generateContent, setGenerateContent] = useState({})
-    const [loadingSteps, setLoadingSteps] = useState(0)
-    const [contentId, setContentId] = useState("")
-    const [showTimeDropdown, setShowTimeDropdown] = useState(false);
-    const [showDateDropdown, setShowDateDropdown] = useState(false);
 
     const settings = {
         dots: true,
@@ -307,6 +672,259 @@ function CreationStudio() {
         return () => clearInterval(interval);
     }, [contentId]);
 
+    const handleShowModal = () => {
+        setShowModal(true);
+    };
+
+    const getContentData = async () => {
+        try {
+            const response = await contentGenerationStatus(contentId);
+            if (response?.status === 200) return response?.data;
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    return (
+        <div className="h-screen overflow-auto scrollbar-hide flex flex-col gap-[36px] w-full py-4 px-2 md:px-4">
+
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-[10px]">
+                <div className="flex flex-col gap-[10px]">
+                    <h1 className="text-[22px] md:text-[24px] text-[#1E1E1E] font-medium">
+                        {t("constance.creation_studio")}
+                    </h1>
+                    <p className="text-[#5A687C] text-[14px] md:text-[16px] font-[400] leading-snug md:leading-normal">
+                        {t("constance.creation_studio_para")}
+                    </p>
+                </div>
+
+                <button
+                    onClick={handleShowModal}
+                    className="
+                        w-full md:w-fit
+                        bg-[#675FFF] 
+                        rounded-[8px]
+                        flex flex-row items-center justify-center
+                        px-[12px] md:px-[10px]
+                        py-[8px] md:py-[6px]
+                        gap-[6px]
+                        text-white
+                        text-[14px] md:text-[13px]
+                        whitespace-nowrap
+                        cursor-pointer
+                    "
+                >
+                    <Plus className="w-[16px] h-[16px]" />
+                    <span>{t("constance.add_creation_studio")}</span>
+                </button>
+            </div>
+
+            {/* Recent Creations */}
+            <div className="flex flex-col scrollbar-hide gap-[16px] h-[calc(100vh-90px)]">
+                <h1 className="text-[18px] md:text-[20px] font-medium text-[#0A0D14]">
+                    {t("constance.recent_creation")}
+                </h1>
+
+                {/* Grid */}
+                 <div className="
+                    grid 
+                    grid-cols-1 
+                    sm:grid-cols-2 
+                    lg:grid-cols-3 
+                    gap-3 md:gap-4
+                    auto-rows-min
+                ">
+                    <CreationCard />
+                    <CreationCard />
+                    <CreationCard />
+                    <CreationCard />
+                    <CreationCard />
+                    <CreationCard />
+                </div>
+
+                {/* Modal Overlay */}
+                {showModal && (
+                    <div className="
+                        fixed inset-0 
+                        flex items-center justify-center
+                        bg-black/40 backdrop-blur-sm
+                        z-50
+                        px-4
+                    ">
+                        {/* CASE 1: SHOW FORM */}
+                        {!contentId && Object.keys(generateContent).length === 0 && (
+                            <CreationModal
+                                onClose={() => setShowModal(false)}
+                                setContentId={setContentId}
+                            />
+                        )}
+
+                        {/* CASE 2: LOADING */}
+                        {contentId && loadingSteps !== 100 && Object.keys(generateContent).length === 0 && (
+                            <div className="border border-[#E1E4EA] bg-white p-[24px] justify-center items-center rounded-[10px] flex flex-col h-full max-w-[500px]">
+
+                                <div className="flex flex-col gap-3 items-center">
+                                    <div className="flex items-center gap-2">
+                                        <img src={constanceImg} alt="constance" />
+                                        <p className="text-[#1E1E1E] text-[16px] font-[600]">
+                                            {t("constance.loading_content")}
+                                        </p>
+                                    </div>
+
+                                    <div className="w-[500px] h-[14px] rounded-[40px] bg-[#D7D4FF]">
+                                        <div
+                                            style={{ width: `${loadingSteps}%` }}
+                                            className={`${loadingSteps === 100 ? "rounded-[40px]" : "rounded-l-[40px]"} h-[14px] bg-[#675FFF]`}
+                                        ></div>
+                                    </div>
+
+                                    <p className="text-[#5A687C] text-[14px]">
+                                        {loadingSteps}% Completed
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* CASE 3: RESULT */}
+                        {Object.keys(generateContent).length !== 0 && (
+                            <div className="border border-[#E1E4EA] bg-white p-[24px] rounded-[10px] gap-[20px] flex flex-col max-w-[600px]">
+
+                                <div className="flex items-center gap-2">
+                                    <img src={constanceImg} alt="constance" />
+                                    <p className="text-[#5A687C] text-[12px] font-[600]">
+                                        {t("constance.processed")}
+                                    </p>
+                                </div>
+
+                                {generateContent?.caption ? (
+                                    <>
+                                        <p className="text-[#1E1E1E] text-[16px] font-[600]">
+                                            {generateContent?.caption}
+                                        </p>
+
+                                        <div className="flex">
+                                            {generateContent.media_type === "single_image" && (
+                                                <img src={generateContent.media_urls[0].url} className="object-fit" />
+                                            )}
+
+                                            {generateContent.media_type === "video" && (
+                                                <video
+                                                    src={generateContent.media_urls[0].url}
+                                                    className="object-fit"
+                                                    controls
+                                                    autoPlay
+                                                    muted
+                                                />
+                                            )}
+
+                                            {generateContent.media_type === "carousel" && (
+                                                <div className="max-w-3xl mx-auto px-4">
+                                                    <Slider {...settings}>
+                                                        {generateContent.media_urls.map((media, index) => (
+                                                            <div key={index} className="!mx-1">
+                                                                <img src={media.url} className="w-full rounded-lg object-cover max-h-[300px] mx-auto" />
+                                                            </div>
+                                                        ))}
+                                                    </Slider>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </>
+                                ) : (
+                                    <p>Failed to Load</p>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+
+
+export default CreationStudio;
+
+
+const CreationCard = () => {
+  const [openMenu, setOpenMenu] = useState(false);
+  const menuRef = useRef(null);
+
+  // Close on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setOpenMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="flex flex-col rounded-[16px] w-full h-auto border-[0.5px] p-[10px] border-[#00000029] bg-white relative overflow-hidden">
+      <div className="w-full h-[207.5px] bg-gray-100 rounded-md overflow-hidden">
+        <img src={DemoImage} alt="demo" className="w-full h-full object-cover" />
+      </div>
+
+      <div className="flex flex-col p-[14px]">
+        <h1 className="font-medium text-[18px] text-[#0A0D14] break-words">Summer Promo Video</h1>
+
+        <div className="justify-between flex flex-row max-h-[32px] text-[#5A687C] text-[16px] mt-2 items-center">
+          <p className="flex flex-row items-center gap-1">
+            <span>Reels</span><Dot/><span>Video</span>
+          </p>
+
+          {/* Menu Trigger */}
+          <button
+            onClick={() => setOpenMenu(!openMenu)}
+            className="
+              w-8 h-8 flex items-center justify-center 
+              rounded-[8px] bg-white 
+              border border-[#00000029] cursor-pointer
+            "
+          >
+            <EllipsisVertical className="w-4 h-4 text-[#5A687C]" />
+          </button>
+
+          {/* Dropdown Menu */}
+          {openMenu && (
+            <div
+              ref={menuRef}
+              className="
+                absolute right-4 top-[60%]
+                w-[140px] 
+                bg-white border border-gray-200
+                rounded-[10px] shadow-lg z-50
+                flex flex-col overflow-hidden
+              "
+            >
+              <button className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-sm text-[#0A0D14] cursor-pointer">
+                <Eye size={16} /> View
+              </button>
+
+              <button className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-sm text-red-600 cursor-pointer">
+                <Trash2 size={16} /> Delete
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+function CreationModal({ onClose }) {
+    const [formData, setFormData] = useState({ text: "", post_type: "", language: "", media_type: "", video_duration: "", author: "", created_at: new Date() })
+    const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false)
+    const [showTimeDropdown, setShowTimeDropdown] = useState(false);
+    const { t } = useTranslation();
+    const [showDateDropdown, setShowDateDropdown] = useState(false);
+
     const postTypeOptions = [{ label: `${t("constance.generic")}`, key: "generic" }, { label: `${t("constance.meme")}`, key: "meme" }, { label: `${t("constance.quoted")}`, key: "quotes" }]
     const mediaTypeOptions = [{ label: `${t("constance.single_image")}`, key: "single_image" }, { label: `${t("constance.carousel")}`, key: "carousel" }, { label: `${t("constance.video")}`, key: "video" }, { label: `${t("constance.reel")}`, key: "reel" }]
     const languageOptions = [{ label: `${t("constance.eng")}`, key: "english" }, { label: `${t("constance.fr")}`, key: "french" }]
@@ -337,18 +955,6 @@ function CreationStudio() {
         setErrors((prev) => ({ ...prev, [name]: '' }))
     }
 
-    const getContentData = async () => {
-        try {
-            const response = await contentGenerationStatus(contentId)
-            if (response?.status === 200) {
-                return response?.data
-            }
-
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
     const handleSubmit = async () => {
         if (!validateForm()) {
             return
@@ -375,32 +981,31 @@ function CreationStudio() {
     const handleCancel = () => {
         setFormData({ text: "", post_type: "", language: "", media_type: "", video_duration: "", author: "", created_at: new Date() });
         setErrors({});
+        onClose();
     };
 
     return (
-        <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-1 w-full">
-            <p className="text-[#5A687C] text-[14px] font-[400]">{t("constance.content_creation")} {">"} {t("brain_ai.add_new")}</p>
-            <h1 className="text-[#1E1E1E] font-[600] text-[24px]">{t("constance.add_creation_studio")}</h1>
-            {!contentId ? <div className="h-full flex flex-col gap-4 w-full py-3">
-                <div className="flex flex-col gap-1.5 w-full">
-                    <label className="text-sm font-medium text-[#1e1e1e]">
-                        {t("constance.text")}(prompt)
-                    </label>
+
+        <div className="justify-center align-center flex flex-col w-full max-w-[596px] max-h-[600px] gap-[10px] rounded-[12px] bg-[#FFFFFF] border border-[#00000029] overflow-hidden">
+            <div className="flex flex-row justify-between border-b-[0.5px] border-[#E2E4E9] py-4 px-6 max-h-[56px] items-center">
+                <p className="text-[24px] font-medium text-[#0A0D14]">{t("constance.add_creation_studio")}</p>
+                <X onClick={onClose} className="w-6 h-6 text-[#868C98]" />
+            </div>
+            <div className="flex-1 overflow-y-auto gap-6 py-4 px-6 bg-[#FFFFFF] flex flex-col">
+                <div className="gap-[2px] h-[126px] w-full flex flex-col">
+                    <p className="text-[12px] text-[#868C98]">{t("constance.text")}(prompt)</p>
                     <textarea
                         name='text'
                         onChange={handleChange}
                         value={formData?.text}
                         rows={4}
-                        className={`w-full bg-white p-2 rounded-lg border  ${errors.text ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
+                        className="px-[10px] resize-none py-[6px] gap-[10px] rounded-[8px] border-[0.5px] border-[#00000029] text-[13px] text-[#111319] h-[103px]"
                         placeholder={t("constance.text_placeholder")}
                     />
-                    {errors.text && <p className="text-red-500 text-sm mt-1">{errors.text}</p>}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                    <div className="flex flex-col gap-1.5 flex-1">
-                        <label className="text-sm font-medium text-[#1e1e1e]">
-                            {t("constance.post_type")}
-                        </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
+                    <div className="max-h-[57px] gap-[2px] flex flex-col">
+                        <Label data={t("constance.post_type")} />
                         <SelectDropdown
                             name="post_type"
                             options={postTypeOptions}
@@ -414,15 +1019,13 @@ function CreationStudio() {
                                 }))
                             }}
                             placeholder={t("select")}
-                            className=""
+                            className="h-[34px] rounded-[8px] text-[13px] text-[#111319]"
                             errors={errors}
                         />
-                        {errors.post_type && <p className="text-red-500 text-sm mt-1">{errors.post_type}</p>}
+                        {errors.post_type && <p className="text-red-500 text-[13px]">{errors.post_type}</p>}
                     </div>
-                    <div className="flex flex-col gap-1.5 flex-1">
-                        <label className="text-sm font-medium text-[#1e1e1e]">
-                            {t("constance.lang")}
-                        </label>
+                    <div className="max-h-[57px] gap-[2px] flex flex-col">
+                        <Label data={t("constance.lang")} />
                         <SelectDropdown
                             name="language"
                             options={languageOptions}
@@ -436,15 +1039,13 @@ function CreationStudio() {
                                 }))
                             }}
                             placeholder={t("select")}
-                            className=""
+                            className="h-[34px] rounded-[8px] text-[13px] text-[#111319]"
                             errors={errors}
                         />
-                        {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
+                        {errors.language && <p className="text-red-500 text-[13px]">{errors.post_type}</p>}
                     </div>
-                    <div className="flex flex-col gap-1.5 flex-1">
-                        <label className="text-sm font-medium text-[#1e1e1e]">
-                            {t("constance.media_type")}
-                        </label>
+                    <div className="max-h-[57px] gap-[2px] flex flex-col">
+                        <Label data={t("constance.media_type")} />
                         <SelectDropdown
                             name="media_type"
                             options={mediaTypeOptions}
@@ -458,38 +1059,21 @@ function CreationStudio() {
                                 }))
                             }}
                             placeholder={t("select")}
-                            className=""
+                            className="h-[34px] rounded-[8px] text-[13px] text-[#111319]"
                             errors={errors}
                         />
-                        {errors.media_type && <p className="text-red-500 text-sm mt-1">{errors.media_type}</p>}
+                        {errors.media_type && <p className="text-red-500 text-[13px]">{errors.post_type}</p>}
                     </div>
-                    {formData.media_type === "video" && <div className="flex flex-col gap-1.5 w-full">
-                        <label className="text-sm font-medium text-[#1e1e1e]">
-                            {t("constance.video_duration")}
-                        </label>
-                        <SelectDropdown
-                            name="video_duration"
-                            options={VideoOptions}
-                            value={formData?.video_duration}
-                            onChange={(updated) => {
-                                setFormData((prev) => ({
-                                    ...prev, video_duration: updated
-                                }))
-                                setErrors((prev) => ({
-                                    ...prev, video_duration: ""
-                                }))
-                            }}
-                            placeholder={t("select")}
-                            className=""
-                            errors={errors}
+                    <div className="max-h-[57px] gap-[2px] flex flex-col">
+                        <Label data="Total Media" />
+                        <input
+                            className="w-full h-[34px] rounded-[8px] border-[0.5px] gap-[10px] py-4 px-2 border-[#00000029]"
                         />
-                        {errors.video_duration && <p className="text-red-500 text-sm mt-1">{errors.video_duration}</p>}
-                    </div>}
-                    {/* Date Field */}
-                    <div className="flex flex-col gap-1.5 flex-1">
-                        <label className="text-sm font-medium text-[#1e1e1e]">
-                            {t("constance.date")}
-                        </label>
+
+
+                    </div>
+                    <div className="max-h-[57px] gap-[2px] flex flex-col">
+                        <Label data={t("constance.date")} />
                         <div className="relative">
                             <input
                                 type="text"
@@ -500,23 +1084,27 @@ function CreationStudio() {
                                 className="w-full bg-white p-2 rounded-lg border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] pr-10 cursor-pointer"
                                 placeholder="dd/mm/yyyy"
                             />
-                            <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5A687C] pointer-events-none" size={20} />
+                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5A687C] pointer-events-none" size={20} />
                             {showDateDropdown && (
-                                <div className="absolute left-0 top-full mt-2 w-full z-50">
-                                    <DateSelector
-                                        value={formData?.date || ""}
-                                        onChange={(val) => setFormData((prev) => ({ ...prev, date: val }))}
-                                        onClose={() => setShowDateDropdown(false)}
-                                    />
+                                <div className="
+      absolute inset-0 
+      flex items-center justify-center 
+      z-50 bg-black/20 backdrop-blur-[1px]
+  ">
+                                    <div className="relative">
+                                        <DateSelector
+                                            value={formData?.date || ""}
+                                            onChange={(val) => setFormData((prev) => ({ ...prev, date: val }))}
+                                            onClose={() => setShowDateDropdown(false)}
+                                        />
+                                    </div>
                                 </div>
                             )}
                         </div>
+
                     </div>
-                    {/* Time Field */}
-                    <div className="flex flex-col gap-1.5 flex-1">
-                        <label className="text-sm font-medium text-[#1e1e1e]">
-                              {t("constance.time")}
-                        </label>
+                    <div className="max-h-[57px] gap-[2px] flex flex-col">
+                        <Label data={t("constance.time")} />
                         <div className="relative">
                             <input
                                 type="text"
@@ -527,7 +1115,6 @@ function CreationStudio() {
                                 className="w-full bg-white p-2 rounded-lg border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] pr-10 cursor-pointer"
                                 placeholder="hh:mm "
                             />
-                            <Clock className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5A687C] pointer-events-none" size={20} />
                             {showTimeDropdown && (
                                 <div className="absolute left-0 top-full mt-2 w-full z-50">
                                     <TimeSelector12
@@ -540,85 +1127,30 @@ function CreationStudio() {
                         </div>
                     </div>
                 </div>
-                {formData.post_type === "quotes" && <div className="flex flex-col gap-1.5 w-full">
-                    <label className="text-sm font-medium text-[#1e1e1e]">
-                        {t("constance.author")}
-                    </label>
-                    <input
-                        type="text"
-                        name='author'
-                        value={formData?.author}
-                        onChange={handleChange}
-                        className={`w-full bg-white p-2 rounded-lg border ${errors.author ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                        placeholder={t("constance.author_placeholder")}
-                    />
-                    {errors.author && <p className="text-red-500 text-sm mt-1">{errors.author}</p>}
-                </div>}
-                <div className="flex items-center gap-2">
-                    <button onClick={handleSubmit} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{loading ? (
+            </div>
+            <div className="max-h-[64px] border-t-[0.5px] border-[#E2E4E9] px-6 py-4 flex justify-end">
+                <div className="flex flex-row gap-4 h-8">
+                    <button onClick={handleCancel}
+                        className="w-fit h-full border-[0.5px]  border-[#00000029] rounded-[8px] px-[10px] py-[6px] gap-[6px] text-[13px] font-[500] text-[#0A0D14]">{t("cancel")}</button>
+                    <button
+                        onClick={handleSubmit}
+                        className="w-fit h-full border-[0.5px] border-[#00000029]  rounded-[8px] px-[10px] py-[6px] gap-[6px] bg-[#675FFF] text-[13px] font-[500] text-[#FFFFFF]">
+                        {loading ? (
                         <div className="flex items-center justify-center gap-2">
                             <p>{t("processing")}</p>
                             <span className="loader" />
                         </div>
                     ) : (
-                        t("brain_ai.create")
+                        t("brain_ai.add_creation")
                     )}</button>
-                    <button onClick={handleCancel} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
                 </div>
             </div>
-                : loadingSteps !== 100 ? <div className="border border-[#E1E4EA] bg-white p-[24px] justify-center items-center rounded-[10px] flex flex-col h-full">
-                    <div className="flex flex-col gap-3 items-center">
-                        <div className="flex items-center gap-2">
-                            <div className="flex justify-center items-center">
-                                <img src={constanceImg} alt={"constance"} className="object-fit" />
-                            </div>
-                            <p className="text-[#1E1E1E] text-[16px] font-[600]">{t("constance.loading_content")}</p>
-                        </div>
-                        <div className="w-[500px] h-[14px] rounded-[40px] bg-[#D7D4FF]">
-                            <div style={{ width: `${loadingSteps}%` }} className={`${loadingSteps === 100 ? 'rounded-[40px]' : 'rounded-l-[40px]'}  h-[14px] leading-none bg-[#675FFF]`} ></div>
-                        </div>
-                        <p className="text-[#5A687C] text-[14px] font-[400]">{loadingSteps}% Completed </p>
-                    </div>
-                </div> : <div className="border border-[#E1E4EA] bg-white p-[24px] rounded-[10px] gap-[20px] flex flex-col">
-                    <div className="flex items-center gap-2">
-                        <div className="flex justify-center items-center">
-                            <img src={constanceImg} alt={"constance"} className="object-fit" />
-                        </div>
-                        <p className="text-[#5A687C] text-[12px] font-[600]">{t("constance.processed")}</p>
-                    </div>
-                    {generateContent?.caption ? <>
-                        <div className="flex items-center justify-between">
-                            <p className="text-[#1E1E1E] text-[16px] font-[600]">{generateContent?.caption}</p>
-                        </div>
-                        <div className="flex">
-                            {generateContent?.media_type === "single_image" && <img src={generateContent?.media_urls[0]?.url} alt={"article"} className="object-fit" />}
-                            {generateContent?.media_type === "video" && <video
-                                src={generateContent?.media_urls[0]?.url}
-                                className="object-fit"
-                                controls
-                                autoPlay
-                                muted
-                            >
-                            </video>}
-                            {generateContent?.media_type === "carousel" && <div className="max-w-3xl mx-auto px-4">
-                                <Slider {...settings}>
-                                    {generateContent?.media_urls?.map((media, index) => (
-                                        <div key={index} className="!mx-1">
-                                            <img
-                                                src={media.url}
-                                                className="w-full rounded-lg object-cover max-h-[300px] mx-auto"
-                                                autoPlay
-                                            />
-                                        </div>
-                                    ))}
-                                </Slider>
-                            </div>}
-                        </div>
-                    </> : <p>Failed to Load</p>}
-
-                </div>}
         </div>
     )
 }
 
-export default CreationStudio
+const Label = ({ data }) => {
+    return (
+        <label className="text-[12px] text-[#868C98] font-[400]"> {data}</label>
+    )
+}

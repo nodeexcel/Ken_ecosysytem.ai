@@ -109,13 +109,15 @@ body {
   }
 }
 
-.scrollbar-hide {
+@utility scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+
 
 .checkbox-container {
   display: block;

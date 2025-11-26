@@ -428,7 +428,7 @@ const AgentChatBox = ({ listedProps }) => {
             <div className={`max-h-[32px] flex ${showModal ? "flex-col mt-4" :"flex-row"} justify-center gap-[16px]`}>
               <button 
               onClick={() => setShowModal(!showModal)}
-              className="w-[32px] h-full rounded-[8px] py-[6px] justify-center align-center gap-[6px] px-[6px] border-[0.5px] border-[#00000029]">
+              className="w-[32px] h-full rounded-[8px] py-[6px] justify-center align-center gap-[6px] px-[6px] border-[0.5px] border-[#00000029] cursor-pointer">
                 <Menu className="w-[16px] h-[16px]" />
               </button>
               <div
@@ -441,7 +441,7 @@ const AgentChatBox = ({ listedProps }) => {
                 `}
                 onClick={() => setShowModal(false)}
               >
-                <SearchIcon className="text-[#5A687C] w-4 h-4"/>
+                <SearchIcon className="text-[#5A687C] w-4 h-4 "/>
 
             { !showModal &&   <input
                   type="text"
@@ -457,7 +457,7 @@ const AgentChatBox = ({ listedProps }) => {
             </div>
 
               <button
-                className={`flex py-[6px] ${showModal ? "w-[32px] mt-8 px-[6px]" : "w-[225px] px-[10px] "} h-8 rounded-[8px] gap-[6px] border-[0.5px] border-[#00000029] justify-center align-center flex-row text-[13px]`}
+                className={`flex py-[6px] ${showModal ? "w-[32px] mt-8 px-[6px]" : "w-[225px] px-[10px] "} h-8 rounded-[8px] gap-[6px] border-[0.5px] border-[#00000029] justify-center align-center flex-row text-[13px] cursor-pointer`}
                 onClick={handleSelectNewChat}>
                   <img src={Edit}  className="w-[16px] h-[16px]" chat={true} />{!showModal && <span>{t("seo.new_chat")}</span>}
               </button>
