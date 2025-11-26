@@ -1,7 +1,8 @@
 // Full-featured modal with pixel-perfect layout, click-outside-to-close, and toggle logic.
 import React, { useState, useRef, useEffect } from "react";
-import { ChevronDown, MoreHorizontal, X, Search, Plus } from "lucide-react";
-import { BritishFlag, Delete, Duplicate, Edit, Notes, TestCall, ThreeDots } from "../icons/icons";
+import { createPortal } from "react-dom";
+import { ChevronDown, MoreHorizontal, X, Search, Plus, Ellipsis, CheckCircle, Check } from "lucide-react";
+import { BritishFlag, Delete, DocIcon, Duplicate, Edit, Notes, TestCall, ThreeDots } from "../icons/icons";
 import { useDispatch } from "react-redux";
 import { getNavbarData } from "../store/navbarSlice";
 import uk_flag from "../assets/images/uk_flag.png"
@@ -44,23 +45,23 @@ const countries = [
 export default function CallCampaign() {
 
   const staticData = [
-  {
-    label: "Total calls",
-    value: "0"
-  },
-  {
-    label: "Unsuccessful calls",
-    value: "0"
-  },
-  {
-    label: "Average call duration",
-    value: "0"
-  },
-  {
-    label: "Total call time",
-    value: "00:00:00"
-  }
-]
+    {
+      label: "Total calls",
+      value: "0"
+    },
+    {
+      label: "Unsuccessful calls",
+      value: "0"
+    },
+    {
+      label: "Average call duration",
+      value: "0"
+    },
+    {
+      label: "Total call time",
+      value: "00:00:00"
+    }
+  ]
   const [showModal, setShowModal] = useState(false);
   const [secondModel, setSecondModel] = useState(false);
   const [toggleTom, setToggleTom] = useState(true);
@@ -68,9 +69,11 @@ export default function CallCampaign() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [viewReportModel, setViewReportModel] = useState(false);
   const [editData, setEditData] = useState();
-  // const [selectedCountry, setSelectedCountry] = useState(countries[0]);
-  // const [isOpen, setIsOpen] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+  const [isCountryOpen, setIsCountryOpen] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const [dropdownAgent, setDropdownAgent] = useState(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const dispatch = useDispatch()
   const [agents, setAgent] = useState([]);
   const [phoneNumbers, setPhoneNumbers] = useState([]);
@@ -80,8 +83,8 @@ export default function CallCampaign() {
   const [showListTargetSelector, setShowListTargetSelector] = useState(false);
   const [apiMessage, setApiMessage] = useState({ type: '', message: '' });
   const targetListRef = useRef()
-  const {t}=useTranslation();
-  const navigator=useNavigate()
+  const { t } = useTranslation();
+  const navigator = useNavigate()
 
   // Add filter state
   const [filters, setFilters] = useState({
@@ -108,12 +111,12 @@ export default function CallCampaign() {
   const voiceOptions = [
     // { key: "", label: "Voice" },
     { key: "male", label: `${t("male")}` },
-    { key: "female", label: `${t("female")}`},
+    { key: "female", label: `${t("female")}` },
     { key: "neutral", label: `${t("neutral")}` }
   ];
 
   const tagsOptions = [{ label: `${t("interested")}`, key: "interested" }, { label: `${t("not_interested")}`, key: "not_interested" },
-  { label: `${t("messaging")}`, key: "messaging" }, { label: `${t("appointment.no_answer")}`, key: "no_answer" }, { label: `${t("recall_request")}`, key: "recall_requested" }
+  { label: `${t("Voicemail")}`, key: "voicemail" }, { label: `${t("appointment.no_answer")}`, key: "no_answer" }, { label: `${t("recall_request")}`, key: "recall_ask" }
   ]
 
   const [campaign, setCampaign] = useState(
@@ -123,11 +126,11 @@ export default function CallCampaign() {
       language: "",
       voice: "",
       choose_calendar: "",
-      max_call_time: 10,
+      max_call_time: "",
       tag: "",
       target_lists: "",
-      agent: 0,
-      country: "USA",
+      agent: "",
+      country: "",
       phone_number: "",
       catch_phrase: "",
       call_script: "",
@@ -163,7 +166,7 @@ export default function CallCampaign() {
     const newErrors = {};
 
     if (!campaign.campaign_name.trim()) newErrors.campaign_name = t("phone.campaign_name_required");
-    if (!campaign.campaign_type.trim()) newErrors.campaign_type =t("phone.campaign_type_required");
+    if (!campaign.campaign_type.trim()) newErrors.campaign_type = t("phone.campaign_type_required");
     if (!campaign.language) newErrors.language = "Language is required.";
     if (!campaign.voice) newErrors.voice = "Voice selection is required.";
     if (!campaign.choose_calendar) newErrors.choose_calendar = "Calendar selection is required.";
@@ -174,9 +177,9 @@ export default function CallCampaign() {
     // if (!campaign.country) newErrors.country = "Country is required.";
     if (!campaign.phone_number) newErrors.phone_number = t("phone.phone_number_validation");
     if (!campaign.catch_phrase.trim()) newErrors.catch_phrase = t("phone.catch_phase");
-    if (!campaign.call_script.trim()) newErrors.call_script =t("phone.call_script_validation");
+    if (!campaign.call_script.trim()) newErrors.call_script = t("phone.call_script_validation");
     if (campaign.catch_phrase.trim().length < 20) newErrors.catch_phrase = t("phone.min_20_char_required_validation");
-    if (campaign.call_script.trim().length < 50) newErrors.call_script =t("phone.max_50_char_required_validation");
+    if (campaign.call_script.trim().length < 50) newErrors.call_script = t("phone.max_50_char_required_validation");
 
     setErrors(newErrors);
 
@@ -261,11 +264,11 @@ export default function CallCampaign() {
       language: "",
       voice: "",
       choose_calendar: "",
-      max_call_time: 10,
+      max_call_time: "",
       tag: '',
       target_lists: "",
-      agent: 0,
-      country: "USA",
+      agent: "",
+      country: "",
       phone_number: "",
       catch_phrase: "",
       call_script: "",
@@ -314,9 +317,9 @@ export default function CallCampaign() {
         console.log("Submitting campaign data:", campaignData);
         const response = await createPhoneCampaign(campaignData);
         console.log("API Response:", response);
-        
+
         if (response && response.status === 201) {
-          console.log("Campaign created successfully:", response.data)  
+          console.log("Campaign created successfully:", response.data)
           setApiMessage({ type: 'success', message: 'Campaign created successfully!' });
           setTimeout(() => {
             setShowModal(false);
@@ -326,7 +329,7 @@ export default function CallCampaign() {
           }, 1500);
         } else {
           console.error("Failed to create campaign:", response);
-          
+
         }
       } catch (error) {
         console.error("Error creating campaign:", error);
@@ -371,7 +374,9 @@ export default function CallCampaign() {
       if (response.status === 200) {
         console.log("Campaign details:", response.data);
         setShowModal(false);
-        getPhoneCampaign();
+        setEditData();
+        resetForm();
+        handleGetPhoneCampaign();
       } else {
         console.error("Failed to fetch campaign details:", response);
       }
@@ -417,6 +422,8 @@ export default function CallCampaign() {
     function handleClickOutside(event) {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
         setShowModal(false);
+        setEditData();
+        resetForm();
       }
     }
     if (showModal) document.addEventListener("mousedown", handleClickOutside);
@@ -425,7 +432,20 @@ export default function CallCampaign() {
     handleGetPhoneCampaign();
     handleGetListsContacts();
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [showModal]);
+
+  // Close country dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutsideCountry(event) {
+      if (isCountryOpen && !event.target.closest('.country-selector')) {
+        setIsCountryOpen(false);
+      }
+    }
+    if (isCountryOpen) {
+      document.addEventListener("mousedown", handleClickOutsideCountry);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutsideCountry);
+  }, [isCountryOpen]);
 
 
   const CustomSelector = ({ options, setShowSelector, value = [], onChange, ref }) => {
@@ -480,8 +500,33 @@ export default function CallCampaign() {
 
 
 
-  const handleDropdownClick = (index) => {
-    setActiveDropdown(activeDropdown === index ? null : index);
+  const closeDropdown = () => {
+    setActiveDropdown(null);
+    setDropdownAgent(null);
+  };
+
+  const handleDropdownClick = (index, agent, event) => {
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (activeDropdown === index) {
+      closeDropdown();
+      return;
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const dropdownWidth = 192; // matches w-48
+    const horizontalPadding = 16;
+    const verticalGap = 8;
+
+    const preferredLeft = rect.right - dropdownWidth;
+    const maxLeft = window.innerWidth - dropdownWidth - horizontalPadding;
+    const left = Math.max(horizontalPadding, Math.min(preferredLeft, maxLeft)) + window.scrollX;
+    const top = rect.bottom + verticalGap + window.scrollY;
+
+    setDropdownPosition({ top, left });
+    setDropdownAgent(agent);
+    setActiveDropdown(index);
   };
 
   return (
@@ -588,88 +633,47 @@ export default function CallCampaign() {
                       // Search filter
                       if (searchQuery) {
                         const query = searchQuery.toLowerCase();
-                        const matchesSearch = 
+                        const matchesSearch =
                           campaign.campaign_name?.toLowerCase().includes(query) ||
                           campaign.agent_name?.toLowerCase().includes(query) ||
                           campaign.phone_number?.toLowerCase().includes(query);
                         if (!matchesSearch) return false;
                       }
-                      
+
                       // Language filter
                       if (filters.language && campaign.language?.toLowerCase() !== filters.language.toLowerCase()) {
                         return false;
                       }
-                      
+
                       // Voice filter (if campaign has voice field)
                       if (filters.voice && campaign.voice?.toLowerCase() !== filters.voice.toLowerCase()) {
                         return false;
                       }
-                      
+
                       return true;
                     });
-                    
+
                     return filteredCampaigns.length !== 0 ? (
                       filteredCampaigns.map((agent, index) => (
-                      <tr key={agent.id} className="text-[16px] text-[#1E1E1E]">
-                        <td className="px-4 py-4 text-[16px] text-[#1E1E1E] font-medium text-start">{agent.campaign_name}</td>
-                        <td className="px-4 py-4 text-[16px] text-start">{agent.agent_name}</td>
-                        <td className="px-4 py-4 text-[16px] text-start whitespace-nowrap">{DateFormat(agent.creation_date)}</td>
-                        <td className="px-4 py-4 text-[16px] text-start">{agent.language}</td>
-                        <td className="px-4 py-4 text-[16px] text-start">{agent.total_calls}</td>
-                        <td className="px-4 py-4 text-start">
-                          <span className={`inline-block border ${renderColor(agent.status)} text-sm font-medium px-3 py-1 rounded-full`}>
-                            {agent.status}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4 text-center whitespace-nowrap">
-                          <div className='flex items-center justify-center gap-2'>
-                            <button className='text-[#5A687C] px-2 py-1 border-2 text-[16px] font-[500] border-[#E1E4EA] rounded-lg cursor-pointer' onClick={() => setShowReport(true)}>
-                              {t("emailings.view_report")}
-                            </button>
-                            <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative">
-                              <div className='bg-[#F4F5F6] p-2 rounded-lg cursor-pointer'><ThreeDots /></div>
-                              {activeDropdown === index && (
-                                <div className="absolute right-0 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
-                                  <div className="py-1">
-                                    <button
-                                      className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500] cursor-pointer"
-                                      onClick={() => {
-                                        // Handle edit action
-                                        setEditData(agent.id)
-                                        handleGetPhoneCampaignDetail(agent.id);
-                                      }}
-                                    >
-                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
-                                    </button>
-                                    <button
-                                      className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500] cursor-pointer"
-                                      onClick={() => {
-                                        // Handle delete action
-                                        handleDuplicate(agent.id);
-                                      }}
-                                    >
-                                      <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>{t("appointment.duplicate")}</span> </div>
-                                    </button>
-                                    <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                                    <div className="py-2">
-                                      <button
-                                        className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6] hover:rounded-lg font-[500]"
-                                        onClick={() => {
-                                          // Handle delete action
-                                          setActiveDropdown(null);
-                                          setDeleteRow(agent.id);
-                                        }}
-                                      >
-                                        <div className="flex items-center gap-2 cursor-pointer">{<Delete />} <span>{t("delete")}</span> </div>
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
+                        <tr key={agent.id} className="text-[16px] text-[#1E1E1E]">
+                          <td className="px-4 py-4 text-[16px] text-[#1E1E1E] font-medium text-start">{agent.campaign_name}</td>
+                          <td className="px-4 py-4 text-[16px] text-start">{agent.agent_name}</td>
+                          <td className="px-4 py-4 text-[16px] text-start whitespace-nowrap">{DateFormat(agent.creation_date)}</td>
+                          <td className="px-4 py-4 text-[16px] text-start">{agent.language}</td>
+                          <td className="px-4 py-4 text-[16px] text-start">{agent.total_calls}</td>
+                          <td className="px-4 py-4 text-start">
+                            <span className={`inline-block border ${renderColor(agent.status)} text-sm font-medium px-3 py-1 rounded-full`}>
+                              {agent.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-4 text-center whitespace-nowrap">
+                            <div className='flex items-center justify-center'>
+                              <button onClick={(e) => handleDropdownClick(index, agent, e)} className="p-2 rounded-lg relative">
+                                <div className='bg-white cursor-pointer border border-[#D6D6D6] shadow-sm p-1.5 rounded-xl'><Ellipsis /></div>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
                       ))
                     ) : (
                       <tr className="h-34">
@@ -715,6 +719,63 @@ export default function CallCampaign() {
               </div>
             </div>
           </div>
+          {typeof document !== "undefined" && activeDropdown !== null && dropdownAgent && createPortal(
+            <div className="fixed inset-0 z-[9998]" onClick={closeDropdown}>
+              <div
+                className="absolute px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5"
+                style={{ top: dropdownPosition.top, left: dropdownPosition.left }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="py-1">
+                  <button
+                    className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500] cursor-pointer"
+                    onClick={() => {
+                      closeDropdown();
+                      setShowReport(true);
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className='group-hover:hidden'><DocIcon /></div>
+                      <div className='hidden group-hover:block'><DocIcon status={true} /></div>
+                      <span>{t("emailings.view_report")}</span>
+                    </div>
+                  </button>
+                  <button
+                    className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500] cursor-pointer"
+                    onClick={() => {
+                      setEditData(dropdownAgent.id);
+                      handleGetPhoneCampaignDetail(dropdownAgent.id);
+                      closeDropdown();
+                    }}
+                  >
+                    <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
+                  </button>
+                  <button
+                    className="block w-full text-left px-4 group py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500] cursor-pointer"
+                    onClick={() => {
+                      handleDuplicate(dropdownAgent.id);
+                      closeDropdown();
+                    }}
+                  >
+                    <div className="flex items-center gap-2"><div className='group-hover:hidden'><Duplicate /></div> <div className='hidden group-hover:block'><Duplicate status={true} /></div> <span>{t("appointment.duplicate")}</span> </div>
+                  </button>
+                  <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
+                  <div className="py-2">
+                    <button
+                      className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6] hover:rounded-lg font-[500]"
+                      onClick={() => {
+                        closeDropdown();
+                        setDeleteRow(dropdownAgent.id);
+                      }}
+                    >
+                      <div className="flex items-center gap-2 cursor-pointer">{<Delete />} <span>{t("delete")}</span> </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>,
+            document.body
+          )}
           {viewReportModel && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl w-full max-w-[678px] p-6 relative shadow-lg">
               <button
@@ -748,351 +809,401 @@ export default function CallCampaign() {
               </div>
             </div>
           </div>}
-        </div> :
-        <div className="py-4 pr-2 flex flex-col gap-4 w-full h-screen overflow-auto">
-          {/* Header */}
-          <div className="flex flex-col gap-2">
-            <h1 onClick={() => {
+        </div> : null}
+      {showModal && (
+        <div 
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 overflow-y-auto py-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
               setShowModal(false)
               setEditData()
               resetForm()
-            }} className="text-[14px] font-[400] text-[#5A687C] hover:text-[#5a687cdb] cursor-pointer">{`${t("phone.call_campaigns")} > ${editData ? `${campaign.campaign_name}` : 'New Campaign'}`}</h1>
-            <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{editData ? t("phone.edit_campaign"): t('phone.add_campaign')} </h1>
-          </div>
-          <div className="w-full"
+            }
+          }}
+        >
+          <div 
+            ref={modalRef}
+            className="bg-white rounded-2xl w-full max-w-[754px] px-6 relative shadow-lg my-auto max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div className="space-y-4">
-              <div>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("emailings.campaign_name")}</label>
-                <input
-                  type="text"
-                  placeholder={t("phone.enter_campaign_name")}
-                  className={`w-full px-4 py-2 bg-white border rounded-lg ${errors.campaign_name ? 'border-red-500' : 'border-[#E1E4EA]'}  focus:outline-none focus:border-[#675FFF]`}
-
-                  name="campaign_name"
-                  value={campaign.campaign_name}
-                  onChange={handleCampaignForm}
-                />
-                {errors.campaign_name && <p className="text-red-500 text-sm mt-1">{errors.campaign_name}</p>}
-              </div>
-              <div>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.campaign_type")}</label>
-                <SelectDropdown
-                  name="campaign_type"
-                  options={[
-                    { key: "outbound", label: t("phone.outbound_call") },
-                    { key: "inbound", label: t("phone.inbound_call") }
-                  ]}
-                  placeholder={t("select")}
-                  value={campaign.campaign_type}
-                  onChange={(value) => handleCampaignForm({ target: { name: 'campaign_type', value } })}
-                  errors={errors}
-                />
-                {errors.campaign_type && <p className="text-red-500 text-sm mt-1">{errors.campaign_type}</p>}
-                {/* <p className="text-sm text-blue-600">You can create a new in AI Brain</p> */}
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Language</label>
-                  <SelectDropdown
-                    name="language"
-                    options={[
-                      { key: "English", label: "English" },
-                      { key: "French", label: "French" }
-                    ]}
-                    placeholder="Select"
-                    value={campaign.language}
-                    onChange={(value) => handleCampaignForm({ target: { name: 'language', value } })}
-                    errors={errors}
-                  />
-                  {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
-                </div>
-                <div>
-                  <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Voice</label>
-                  <SelectDropdown
-                    name="voice"
-                    options={[
-                      { key: "English", label: "English" },
-                      { key: "French", label: "French" }
-                    ]}
-                    placeholder="Select"
-                    value={campaign.voice}
-                    onChange={(value) => handleCampaignForm({ target: { name: 'voice', value } })}
-                    errors={errors}
-                  />
-                  {errors.voice && <p className="text-red-500 text-sm mt-1">{errors.voice}</p>}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Choose Calendar</label>
-                  <SelectDropdown
-                    name="choose_calendar"
-                    options={[
-                      { key: "Google Calendar", label: "Google Calendar" },
-                      { key: "Outlook Calendar", label: "Outlook Calendar" }
-                    ]}
-                    placeholder="Select"
-                    value={campaign.choose_calendar}
-                    onChange={(value) => handleCampaignForm({ target: { name: 'choose_calendar', value } })}
-                    errors={errors}
-                  />
-                  {errors.choose_calendar && <p className="text-red-500 text-sm mt-1">{errors.choose_calendar}</p>}
-                </div>
-                <div>
-                  <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Maximum Call Time in Minutes</label>
-                  <SelectDropdown
-                    name="max_call_time"
-                    options={[
-                      { key: "30", label: "30" },
-                      { key: "40", label: "40" },
-                      { key: "60", label: "60" }
-                    ]}
-                    placeholder="Select"
-                    value={campaign.max_call_time.toString()}
-                    onChange={(value) => handleCampaignForm({ target: { name: 'max_call_time', value: parseInt(value) } })}
-                    errors={errors}
-                  />
-                  {errors.max_call_time && <p className="text-red-500 text-sm mt-1">{errors.max_call_time}</p>}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.max_call_time")}</label>
-                <input
-                  type="text"
-                  name='max_call_time'
-                  value={campaign.max_call_time}
-                  onChange={(e) => {
-                    const { name, value } = e.target;
-                    if (value === '' || /^\d+$/.test(value)) {
-                      setCampaign((prev) => ({
-                        ...prev,
-                        [name]: value === '' ? '' : parseInt(value, 10)
-                      }));
-                      setErrors((prev) => ({ ...prev, [name]: '' }))
-                    }
+            <div className="py-4 pr-2 flex flex-col gap-4 w-full">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{editData ? t("phone.edit_campaign") : t('phone.add_campaign')} </h1>
+                <button
+                  className="cursor-pointer text-gray-500 hover:text-gray-700 z-10"
+                  onClick={() => {
+                    setShowModal(false)
+                    setEditData()
+                    resetForm()
                   }}
-                  className={`w-full bg-white p-2 rounded-lg border ${errors.max_call_time ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
-                  placeholder={t("phone.enter_number")}
-                />
-                {errors.max_call_time && <p className="text-red-500 text-sm mt-1">{errors.max_call_time}</p>}
+                >
+                  <X size={20} />
+                </button>
               </div>
-              <div>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.select_your_tag")}</label>
-                <div className="flex justify-between items-center px-3">
-                  {tagsOptions.map((e) => (
-                    <div key={e.key} className="flex items-center cursor-pointer" onClick={() => {
-                      setCampaign((prev) => ({ ...prev, tag: e.key }))
-                      setErrors((prev) => ({ ...prev, tag: "" }))
-                    }}>
-                      <label className="checkbox-container !pl-7">
-                        <input
-                          name="tag"
-                          type="checkbox"
-                          checked={campaign.tag == e.key}
-                        />
-                        <span className="checkmark"></span>
-                      </label>
-                      <span className="pt-[5px]">{e.label}</span>
+              <hr className="border-[#E1E4EA]" />
+              <div className="w-full">
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Campaign Name - Top Left */}
+                    <div>
+                      <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("emailings.campaign_name")}</label>
+                      <input
+                        type="text"
+                        placeholder={t("phone.enter_campaign_name")}
+                        className={`w-full px-4 py-2 bg-white border rounded-lg ${errors.campaign_name ? 'border-red-500' : 'border-[#E1E4EA]'} focus:outline-none focus:border-[#675FFF]`}
+                        name="campaign_name"
+                        value={campaign.campaign_name || ''}
+                        onChange={handleCampaignForm}
+                      />
+                      {errors.campaign_name && <p className="text-red-500 text-sm mt-1">{errors.campaign_name}</p>}
                     </div>
-                  ))}
-                </div>
-                {errors.tag && <p className="text-red-500 text-sm mt-1">{errors.tag}</p>}
-              </div>
-              <div>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.target_contact_lists")}</label>
-                <SelectDropdown
-                  name="target_lists"
-                  options={contactLists?.length > 0 && contactLists}
-                  value={campaign.target_lists}
-                  onChange={(updated) => {
-                    setCampaign((prev) => ({
-                      ...prev,
-                      target_lists: updated,
-                    }))
-                    setErrors((prev) => ({ ...prev, target_lists: "" }))
-                  }}
-                  errors={errors}
-                  placeholder={t("select")}
-                />
-                {errors.target_lists && <p className="text-red-500 text-sm mt-1">{errors.target_lists}</p>}
-                {/* + Create New Contact List */}
-                {/* <button className="text-[#7065F0] text-sm font-medium mt-1" onClick={()=>navigator('/dashboard/brain')}>+ {t("phone.create_contact_list")}</button> */}
-              </div>
 
-              <div>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.choose_an_agent")}</label>
-                <SelectDropdown
-                  name="agent"
-                  options={agents.map(agent => ({ key: agent.id.toString(), label: agent.agent_name }))}
-                  placeholder={t("select")}
-                  value={campaign.agent.toString()}
-                  onChange={(value) => handleCampaignForm({ target: { name: 'agent', value: parseInt(value) } })}
-                  errors={errors}
-                />
-                {errors.agent && <p className="text-red-500 text-sm mt-1">{errors.agent}</p>}
-              </div>
+                    {/* Campaign Type - Top Right */}
+                    <div>
+                      <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.campaign_type")}</label>
+                      <SelectDropdown
+                        name="campaign_type"
+                        options={[
+                          { key: "outbound", label: t("phone.outbound_call") },
+                          { key: "inbound", label: t("phone.inbound_call") }
+                        ]}
+                        placeholder="Select Campaign Type"
+                        value={campaign.campaign_type || ''}
+                        onChange={(value) => handleCampaignForm({ target: { name: 'campaign_type', value } })}
+                        errors={errors}
+                      />
+                      {errors.campaign_type && <p className="text-red-500 text-sm mt-1">{errors.campaign_type}</p>}
+                    </div>
 
-              <div>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.phone_number")}</label>
-                <SelectDropdown
-                  name="phone_number"
-                  options={phoneNumbers.map(phone => ({ key: phone.phone_number, label: phone.phone_number }))}
-                  placeholder={t("select")}
-                  value={campaign.phone_number}
-                  onChange={(value) => handleCampaignForm({ target: { name: 'phone_number', value } })}
-                  errors={errors}
-                />
-                {errors.phone_number && <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>}
-              </div>
+                    {/* Maximum Call Time in Minutes - Bottom Left */}
+                    <div>
+                      <label className="block text-[14px] font-[500] text-[#868C98] mb-1">Maximum Call Time in Minutes</label>
+                      <input
+                        type="number"
+                        name="max_call_time"
+                        value={campaign.max_call_time || ''}
+                        onChange={(e) => {
+                          const { name, value } = e.target;
+                          if (value === '' || /^\d+$/.test(value)) {
+                            setCampaign((prev) => ({
+                              ...prev,
+                              [name]: value === '' ? '' : parseInt(value, 10)
+                            }));
+                            setErrors((prev) => ({ ...prev, [name]: '' }))
+                          }
+                        }}
+                        placeholder="Enter number"
+                        className={`w-full px-4 py-2 bg-white border rounded-lg ${errors.max_call_time ? 'border-red-500' : 'border-[#E1E4EA]'} focus:outline-none focus:border-[#675FFF] appearance-none [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                      />
+                      {errors.max_call_time && <p className="text-red-500 text-sm mt-1">{errors.max_call_time}</p>}
+                    </div>
 
-              {/* <div>
-                <label className="text-[14px] font-[500] text-[#1E1E1E] block mb-1">
-                  Phone Number
-                </label>
-                <div className="flex group items-center focus-within:border-[#675FFF] gap-2 border border-[#E1E4EA] rounded-lg px-4 py-2">
-                  <div className="relative">
-                    <button
-                      onClick={() => setIsOpen(!isOpen)}
-                      className="w-fit flex hover:cursor-pointer border-none justify-between gap-2 items-center border pl-1 py-1 text-left"
-                    >
-                      <img src={selectedCountry?.flag} alt={selectedCountry?.name} width={16} />
-                      <FaChevronDown color="#5A687C" className={`w-[10px] transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
-                      <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)" }} />
-                    </button>
-                    {isOpen && (
-                      <div className="absolute px-1 z-10 rounded-md shadow-lg border border-gray-200 max-h-30 overflow-auto top-6 w-full left-[-13px] bg-white mt-1">
-                        {countries.map((country) => (
-                          <div
-                            key={country.code}
-                            onClick={() => {
-                              setSelectedCountry(country);
-                              setIsOpen(false);
-                            }}
-                            className={`flex justify-center hover:bg-[#F4F5F6] hover:rounded-lg pr-1 my-1 py-2 ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6] rounded-lg'} cursor-pointer flex items-center`}
-                          >
-                            <img src={country.flag} alt={country.name} width={16} />
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    {/* Choose Calendar - Bottom Right */}
+                    <div>
+                      <label className="block text-[14px] font-[500] text-[#868C98] mb-1">Choose Calendar</label>
+                      <SelectDropdown
+                        name="choose_calendar"
+                        options={[
+                          { key: "Google Calendar", label: "Google Calendar" },
+                          { key: "Outlook Calendar", label: "Outlook Calendar" }
+                        ]}
+                        placeholder="Select"
+                        value={campaign.choose_calendar || ''}
+                        onChange={(value) => handleCampaignForm({ target: { name: 'choose_calendar', value } })}
+                        errors={errors}
+                      />
+                      {errors.choose_calendar && <p className="text-red-500 text-sm mt-1">{errors.choose_calendar}</p>}
+                    </div>
                   </div>
-                  <select
-                    name="phone_number"
-                    value={campaign.phone_number}
-                    onChange={handleCampaignForm}
-                    className="w-full outline-none bg-transparent text-[#5A687ChandleEditCampaigAre you sure you want to delete this call campaign?] px-2"
-                  >
-                    <option value="" className="text-gray-500">Select</option>
-                    {phoneNumbers.map((phone) => (
-                      <option key={phone.phone_number} value={phone.phone_number} className="text-[#5A687C]">
-                        {phone.phone_number}
-                      </option>
-                    ))}
-                  </select>
+
+                  {/* Commented out fields */}
+                  {/* <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Language</label>
+                      <SelectDropdown
+                        name="language"
+                        options={[
+                          { key: "English", label: "English" },
+                          { key: "French", label: "French" }
+                        ]}
+                        placeholder="Select"
+                        value={campaign.language}
+                        onChange={(value) => handleCampaignForm({ target: { name: 'language', value } })}
+                        errors={errors}
+                      />
+                      {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
+                    </div>
+                    <div>
+                      <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">Voice</label>
+                      <SelectDropdown
+                        name="voice"
+                        options={[
+                          { key: "English", label: "English" },
+                          { key: "French", label: "French" }
+                        ]}
+                        placeholder="Select"
+                        value={campaign.voice}
+                        onChange={(value) => handleCampaignForm({ target: { name: 'voice', value } })}
+                        errors={errors}
+                      />
+                      {errors.voice && <p className="text-red-500 text-sm mt-1">{errors.voice}</p>}
+                    </div>
+                  </div> */}
+
+                  {/* <div>
+                    <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.max_call_time")}</label>
+                    <input
+                      type="text"
+                      name='max_call_time'
+                      value={campaign.max_call_time}
+                      onChange={(e) => {
+                        const { name, value } = e.target;
+                        if (value === '' || /^\d+$/.test(value)) {
+                          setCampaign((prev) => ({
+                            ...prev,
+                            [name]: value === '' ? '' : parseInt(value, 10)
+                          }));
+                          setErrors((prev) => ({ ...prev, [name]: '' }))
+                        }
+                      }}
+                      className={`w-full bg-white p-2 rounded-lg border ${errors.max_call_time ? 'border-red-500' : 'border-[#e1e4ea]'} focus:outline-none focus:border-[#675FFF]`}
+                      placeholder={t("phone.enter_number")}
+                    />
+                    {errors.max_call_time && <p className="text-red-500 text-sm mt-1">{errors.max_call_time}</p>}
+                  </div> */}
+
+                  {/* Select Your Tags */}
+                  <div>
+                    <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.select_your_tag")}</label>
+                    <div className="flex flex-wrap gap-2">
+                      {tagsOptions.map((e) => {
+                        const isSelected = campaign.tag === e.key;
+                        return (
+                          <button
+                            key={e.key}
+                            type="button"
+                            onClick={() => {
+                              setCampaign((prev) => ({ ...prev, tag: e.key }))
+                              setErrors((prev) => ({ ...prev, tag: "" }))
+                            }}
+                            className={`flex items-center cursor-pointer gap-2 px-2 py-2 rounded-lg border transition-all ${
+                              isSelected
+                                ? 'bg-white border-[#675FFF] text-[#1E1E1E]'
+                                : 'bg-white border-[#E1E4EA] text-[#1E1E1E] hover:border-[#675FFF]'
+                            }`}
+                          >
+                            {isSelected ? (
+                              <div className="w-[18px] h-[18px] bg-[#675FFF] rounded-sm flex items-center justify-center flex-shrink-0">
+                                <Check size={14} className="text-white" strokeWidth={3} />
+                              </div>
+                            ) : (
+                              <div className="w-[18px] h-[18px] border-2 border-[#D6D6D6] rounded-sm flex-shrink-0"></div>
+                            )}
+                            <span className={`text-[14px] ${isSelected ? 'font-[600]' : 'font-[400]'}`}>{e.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {errors.tag && <p className="text-red-500 text-sm mt-1">{errors.tag}</p>}
+                    <button 
+                      className="flex items-center cursor-pointer gap-1 text-[#675FFF] text-sm font-medium mt-3 hover:text-[#483ed1] transition-colors"
+                      onClick={() => navigator('/dashboard/brain')}
+                    >
+                      <Plus size={16} />
+                      <span>{t("phone.create_contact_list")}</span>
+                    </button>
+                  </div>
+
+                  {/* Commented out Target Contact Lists */}
+                  {/* <div>
+                    <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.target_contact_lists")}</label>
+                    <SelectDropdown
+                      name="target_lists"
+                      options={contactLists?.length > 0 && contactLists}
+                      value={campaign.target_lists}
+                      onChange={(updated) => {
+                        setCampaign((prev) => ({
+                          ...prev,
+                          target_lists: updated,
+                        }))
+                        setErrors((prev) => ({ ...prev, target_lists: "" }))
+                      }}
+                      errors={errors}
+                      placeholder={t("select")}
+                    />
+                    {errors.target_lists && <p className="text-red-500 text-sm mt-1">{errors.target_lists}</p>}
+                  </div> */}
+
+                  {/* Choose an agent and Number linked to the campaign - Top Row */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Choose an agent - Left */}
+                    <div>
+                      <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.choose_an_agent")}</label>
+                      <SelectDropdown
+                        name="agent"
+                        options={agents.map(agent => ({ key: agent.id.toString(), label: agent.agent_name }))}
+                        placeholder="Select Agent"
+                        value={campaign.agent ? campaign.agent.toString() : ''}
+                        onChange={(value) => handleCampaignForm({ target: { name: 'agent', value: value ? parseInt(value) : '' } })}
+                        errors={errors}
+                      />
+                      {errors.agent && <p className="text-red-500 text-sm mt-1">{errors.agent}</p>}
+                    </div>
+
+                    {/* Number linked to the campaign - Right */}
+                    <div>
+                      <label className="block text-[14px] font-[500] text-[#868C98] mb-1">Number linked to the campaign</label>
+                      <div className="flex group items-center focus-within:border-[#675FFF] gap-2 border border-[#E1E4EA] rounded-lg px-4 py-2.5">
+                        <div className="relative country-selector">
+                          <button
+                            type="button"
+                            onClick={() => setIsCountryOpen(!isCountryOpen)}
+                            className="w-fit flex hover:cursor-pointer border-none justify-between gap-2 items-center"
+                          >
+                            <img src={selectedCountry?.flag} alt={selectedCountry?.name} width={20} />
+                            <span className="text-[14px] text-[#1E1E1E]">{selectedCountry?.dial_code}</span>
+                            <FaChevronDown color="#5A687C" className={`w-[10px] transition-transform duration-200 ${isCountryOpen ? 'transform rotate-180' : ''}`} />
+                            <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)", margin: "0 8px" }} />
+                          </button>
+                          {isCountryOpen && (
+                            <div className="absolute z-10 rounded-md shadow-lg border border-gray-200 max-h-40 overflow-auto top-8 left-0 bg-white mt-1 min-w-[120px]">
+                              {countries.map((country) => (
+                                <div
+                                  key={country.code}
+                                  onClick={() => {
+                                    setSelectedCountry(country);
+                                    setIsCountryOpen(false);
+                                  }}
+                                  className={`flex items-center gap-2 px-3 py-2 hover:bg-[#F4F5F6] cursor-pointer ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6]'}`}
+                                >
+                                  <img src={country.flag} alt={country.name} width={16} />
+                                  <span className="text-[14px] text-[#1E1E1E]">{country.dial_code}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        <input
+                          type="tel"
+                          name="phone_number"
+                          value={campaign.phone_number || ''}
+                          onChange={handleCampaignForm}
+                          placeholder="(555) 000-0000"
+                          className="w-full outline-none bg-transparent text-[#1E1E1E] text-[14px]"
+                        />
+                      </div>
+                      {errors.phone_number && <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>}
+                    </div>
+                  </div>
+
+                  {/* Tom Engages Conversation Toggle - Bottom Left */}
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setToggleTom(!toggleTom)}
+                      className={`w-11 h-6 cursor-pointer rounded-full relative transition-colors duration-300 ${toggleTom ? "bg-[#675FFF]" : "bg-gray-300"
+                        }`}
+                    >
+                      <span
+                        className={`block w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${toggleTom ? "translate-x-5" : "translate-x-0.5"
+                          }`}
+                      ></span>
+                    </button>
+                    <span className="text-[14px] font-[500] text-[#1E1E1E]">
+                      {t("phone.tom_engages_conversation")}
+                    </span>
+                  </div>
+
+                  {/* Your Catch Phrase */}
+                  <div>
+                    <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.your_catch_phrase")}</label>
+                    <textarea
+                      placeholder="Enter your catch phrase"
+                      className={`w-full px-4 py-3 border rounded-lg resize-none ${errors.catch_phrase ? 'border-red-500' : 'border-[#E1E4EA]'} focus:outline-none focus:border-[#675FFF]`}
+                      rows={4}
+                      value={campaign.catch_phrase}
+                      onChange={handleCampaignForm}
+                      name="catch_phrase"
+                    />
+                    {errors.catch_phrase && <p className="text-red-500 text-sm mt-1">{errors.catch_phrase}</p>}
+                  </div>
+
+                  {/* Your Call Script */}
+                  <div>
+                    <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.call_script")}</label>
+                    <textarea
+                      placeholder="Enter your call script"
+                      className={`w-full px-4 py-3 border rounded-lg resize-none ${errors.call_script ? 'border-red-500' : 'border-[#E1E4EA]'} focus:outline-none focus:border-[#675FFF]`}
+                      rows={4}
+                      value={campaign.call_script}
+                      onChange={handleCampaignForm}
+                      name="call_script"
+                    />
+                    {errors.call_script && <p className="text-red-500 text-sm mt-1">{errors.call_script}</p>}
+                  </div>
+
+                  {/* Action Buttons */}
+                  {editData ? (
+                    <div className="flex justify-end gap-4 mt-6 pt-4 border-t border-[#E1E4EA]">
+                      <button 
+                        onClick={() => {
+                          setShowModal(false)
+                          setEditData()
+                          resetForm()
+                        }} 
+                        className="px-6 py-2 cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px] hover:bg-gray-50 transition-colors"
+                      >
+                        {t("phone.cancel")}
+                      </button>
+                      <button 
+                        className="px-6 py-2 cursor-pointer text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px] hover:bg-[#5a4aff] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={handleEditCampaign} 
+                        disabled={loader}
+                      >
+                        {t("phone.save_campaign")}
+                      </button>
+                    </div>
+                  ) :
+                <div>
+                  {/* API Message Display */}
+                  {apiMessage.message && (
+                    <div className={`mt-4 p-3 rounded-lg ${apiMessage.type === 'success'
+                      ? 'bg-green-100 text-green-800 border border-green-200'
+                      : 'bg-red-100 text-red-800 border border-red-200'
+                      }`}>
+                      {apiMessage.message}
+                    </div>
+                  )}
+
+                  <div className="flex gap-4 mt-6">
+                    <button onClick={() => {
+                      setSecondModel(true)
+                      // setShowModal(false)
+                    }} className="w-[195px] text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                      {t("phone.test_call")}
+                    </button>
+
+
+                    <button
+                      className="w-[195px] text-[16px] cursor-pointer text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
+                      disabled={loader}
+                      onClick={handleSubmit}
+                    >
+
+                      <p>  {t("phone.launch_call")}</p>
+                      {loader && <span className="loader text-[#5E54FF]"></span>}
+
+
+                    </button>
+
+                  </div>
+                </div>}
                 </div>
-                {errors.phone_number && <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>}
-              </div> */}
-
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-[14px] font-[500] text-[#1E1E1E]">
-                  {
-                    t("phone.tom_engages_conversation")
-                  }
-                </span>
-                <button
-                  onClick={() => setToggleTom(!toggleTom)}
-                  className={`w-11 h-6 cursor-pointer rounded-full relative transition-colors duration-300 ${toggleTom ? "bg-[#7065F0]" : "bg-gray-300"
-                    }`}
-                >
-                  <span
-                    className={`block w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${toggleTom ? "translate-x-5" : "translate-x-0.5"
-                      }`}
-                  ></span>
-                </button>
               </div>
-
-              <div>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.your_catch_phrase")}</label>
-                <textarea
-                  placeholder={t("phone.catch_phrase_placeholder")}
-                  className={`w-full px-4 py-2 border rounded-lg resize-none  ${errors.catch_phrase ? 'border-red-500' : 'border-[#E1E4EA]'}  focus:outline-none focus:border-[#675FFF]`}
-                  rows={4}
-                  value={campaign.catch_phrase}
-                  onChange={handleCampaignForm}
-                  name="catch_phrase"
-                />
-                {errors.catch_phrase && <p className="text-red-500 text-sm mt-1">{errors.catch_phrase}</p>}
-              </div>
-              <div>
-                <label className="block text-[14px] font-[500] text-[#1E1E1E] mb-1">{t("phone.call_script")}</label>
-                <textarea
-                  placeholder={t("phone.placeholder_call_script")}
-                  className={`w-full px-4 py-2 border rounded-lg resize-none  ${errors.call_script ? 'border-red-500' : 'border-[#E1E4EA]'}  focus:outline-none focus:border-[#675FFF]`}
-                  rows={4}
-                  value={campaign.call_script}
-                  onChange={handleCampaignForm}
-                  name="call_script"
-                />
-                {errors.call_script && <p className="text-red-500 text-sm mt-1">{errors.call_script}</p>}
-              </div>
-
-              {editData ? <div className="flex gap-4 mt-6">
-                <button className="w-[195px] cursor-pointer text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
-                  onClick={handleEditCampaign} disabled={loader}
-                >
-                  {t("phone.save_campaign")}
-                </button>
-                <button onClick={() => {
-                  setShowModal(false)
-                  setEditData()
-                  resetForm()
-                }} className="w-[195px] cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
-                  {t("phone.cancel")}
-                </button>
-              </div> : 
-              <div>
-                {/* API Message Display */}
-                {apiMessage.message && (
-                <div className={`mt-4 p-3 rounded-lg ${
-                  apiMessage.type === 'success' 
-                    ? 'bg-green-100 text-green-800 border border-green-200' 
-                    : 'bg-red-100 text-red-800 border border-red-200'
-                }`}>
-                  {apiMessage.message}
-                </div>
-              )}
-
-              <div className="flex gap-4 mt-6">
-                <button onClick={() => {
-                  setSecondModel(true)
-                  // setShowModal(false)
-                }} className="w-[195px] text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
-                  {t("phone.test_call")}
-                </button>
-
-
-                <button
-                  className="w-[195px] text-[16px] cursor-pointer text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
-                  disabled={loader}
-                  onClick={handleSubmit}
-                >
-
-                  <p>  {t("phone.launch_call")}</p>
-                  {loader && <span className="loader text-[#5E54FF]"></span>}
-
-
-                </button>
-
-              </div>
-              </div>}
             </div>
           </div>
-
-        </div>}
+        </div>
+      )}
       {secondModel && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
         <div className="bg-white rounded-2xl w-full max-w-[514px] p-6 relative shadow-lg">
           <button
@@ -1108,7 +1219,7 @@ export default function CallCampaign() {
             {t("phone.test_call")}
           </h2>
           <p className="text-gray-500 text-sm mb-4">
-           {t("phone.test_call_with")}<span className="text-[#5E54FF]">Tom</span>
+            {t("phone.test_call_with")}<span className="text-[#5E54FF]">Tom</span>
           </p>
           <div className="flex flex-col my-5 justify-center items-center gap-3">
             <div><TestCall /></div>
@@ -1119,11 +1230,11 @@ export default function CallCampaign() {
               onClick={() => setSecondModel(false)}
               className="w-full cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
             >
-             {t("phone.not_received_a_call")}
+              {t("phone.not_received_a_call")}
             </button>
             <button
               className="w-full cursor-pointer text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
-              onClick={ ()=> setSecondModel(false)}
+              onClick={() => setSecondModel(false)}
             >
               {t("phone.finish_test")}
             </button>
@@ -1133,38 +1244,48 @@ export default function CallCampaign() {
 
       {
         showReport && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div class="bg-white rounded-xl shadow-lg p-6 w-[500px]">
-            <div class="flex justify-between items-start mb-4">
-              <div>
-                <h4 className="text-md font-semibold text-gray-800">{t("emailing.campaign_name")} :  Inbound.4d74997e-2c17-4024-98c4-5fbca9d4f5d1</h4>
+          <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-[914px] min-h-[21vh]">
 
+            <div class="flex justify-between items-center mb-4">
+              <h4 class="text-2xl font-500">
+                {t("emailings.campaign_name")}
+              </h4>
 
-
-              </div>
-              <button class="text-gray-400 hover:text-gray-600 text-xl relative -top-4 -right-4 cursor-pointer" onClick={() => setShowReport(false)}><X /></button>
+              <button
+                class="text-gray-400 hover:text-gray-600 text-xl cursor-pointer"
+                onClick={() => setShowReport(false)}
+              >
+                <X />
+              </button>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 mb-8">
-              <div class=" rounded-lg border border-gray-200 ">
-                <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">{t("phone.total_call")}</p>
-                <p class="text-xl font-semibold text-gray-900 m-2">0</p>
+
+            <hr class="border-gray-200 mb-4" />
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-2">
+              <div class="rounded-lg border border-[#D6D6D6] px-2 py-2">
+                <p class=" text-md p-2 text-[#5A687C] rounded-t-lg">{t("phone.total_call")}</p>
+                <p class="text-2xl font-semibold text-gray-900 m-2">0</p>
               </div>
 
-              <div class=" rounded-lg border border-gray-200 ">
-                <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">{t("phone.unsuccessful_call")}</p>
-                <p class="text-xl font-semibold text-gray-900 m-2">0</p>
-              </div>
-              <div class=" rounded-lg border border-gray-200 ">
-                <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">{t("phone.average_call")}</p>
-                <p class="text-xl font-semibold text-gray-900 m-2">0</p>
+              <div class="rounded-lg border border-[#D6D6D6] px-2 py-2">
+                <p class=" text-md p-2 text-[#5A687C] rounded-t-lg">{t("phone.unsuccessful_call")}</p>
+                <p class="text-2xl font-semibold text-gray-900 m-2">0</p>
               </div>
 
-              <div class=" rounded-lg border border-gray-200 ">
-                <p class=" text-xs p-2 bg-[#F1F1FF] rounded-t-lg">{t("phone.total_call_time")}</p>
-                <p class="text-xl font-semibold text-gray-900 m-2">00:00:00</p>
+              <div class="rounded-lg border border-[#D6D6D6] px-2 py-2">
+                <p class=" text-md p-2 text-[#5A687C] rounded-t-lg">{t("phone.average_call")}</p>
+                <p class="text-2xl font-semibold text-gray-900 m-2">0</p>
               </div>
+
+              <div class="rounded-lg border border-[#D6D6D6] px-2 py-2">
+                <p class=" text-md p-2 text-[#5A687C] rounded-t-lg">{t("phone.total_call_time")}</p>
+                <p class="text-2xl font-semibold text-gray-900 m-2">00:00:00</p>
+              </div>
+
             </div>
           </div>
+
         </div>
 
       }
@@ -1172,7 +1293,7 @@ export default function CallCampaign() {
 
       {
         deleteRow && (
-         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999]">
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999]">
             <div className="bg-white rounded-2xl w-[400px] p-6 relative shadow-lg">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">{t("phone.delete_call_campaign")}</h2>
               <p className="text-gray-500 mb-4">{t("phone.delete_call_campaign_msg")}</p>

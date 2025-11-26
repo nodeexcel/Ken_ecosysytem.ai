@@ -1203,7 +1203,7 @@ const englishTranslation = {
   interested: "Interested",
   not_interested: "Not Interested",
   messaging: "Messaging",
-  recall_request: "Recall Requested",
+  recall_request: "Recall asked",
   male: "Male",
   female: "Female",
   neutral: "Neutral",

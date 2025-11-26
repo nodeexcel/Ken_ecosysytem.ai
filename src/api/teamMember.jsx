@@ -50,3 +50,13 @@ export const updateTeamMember = async (payload) => {
         return error;
     }
 }
+
+export const updateGeneralSettings = async (payload) => {
+    try {
+        const response = await axiosInstance.post("/api/users/update-general-settings", payload);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+}

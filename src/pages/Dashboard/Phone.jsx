@@ -39,6 +39,14 @@ const PhonePage = () => {
     // { label: t("phone.cold_calling"), icon: <HeadPhonesIcon status={activeSidebarItem == "cold_calling"} />, hoverIcon: <HeadPhonesIcon hover={true} />, path: "cold_calling", header: `Tom & Rebecca,${t("phone.phone")} ` },
   ];
 
+  const handleSectionRedirect = (sectionKey) => {
+    const target = sideMenuList.find((item) => item.path === sectionKey);
+    if (target) {
+      dispatch(getNavbarData(target.header));
+      setActiveSidebarItem(target.path);
+    }
+  };
+
   const activeTab = useSelector((state) => state.skills)
 
   useEffect(() => {
@@ -65,7 +73,7 @@ const PhonePage = () => {
       case "cold_calling":
         return <ColdCallingScriptPhone />;
       default:
-        return <PhoneDashboard />;
+        return <PhoneDashboard onNavigateSection={handleSectionRedirect} />;
     }
   };
 
@@ -85,16 +93,16 @@ const PhonePage = () => {
         </div>
         <div className="flex flex-col">
           <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Rebecca</h1>
-          <p className="text-[#5A687C] text-[14px] font-[400]">{t("phone.receptionist")}</p>
+          <p className="text-[#5A687C] text-[14px] font-[400]">{t("phone.phone_outreach")}</p>
         </div>
       </div>
     } else if (navbarDetails.label === "Tom") {
       return <div className="bg-[#ffffff]  lg:w-[232px] w-full mb-5 flex gap-3 p-[12px] rounded-[9px]">
         <div className="flex justify-center items-center">
-          <img src={tomImg} alt={"tome"} className="object-fit" />
+          <img src={rebeccaImg} alt={"rebecca"} className="object-fit" />
         </div>
         <div className="flex flex-col">
-          <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Tom</h1>
+          <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Rebecca</h1>
           <p className="text-[#5A687C] text-[14px] font-[400]">{t("phone.phone_outreach")}</p>
         </div>
       </div>
@@ -102,11 +110,10 @@ const PhonePage = () => {
       return <div className="bg-[#ffffff]  lg:w-[232px] w-full mb-5 flex gap-3 p-[12px] rounded-[9px]">
         <div className="flex justify-center items-center">
           <img src={rebeccaImg} alt={"rebecca"} className="object-fit" />
-          <img src={tomImg} alt={"tome"} className="object-fit" />
         </div>
         <div className="flex flex-col">
-          <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Tom & Rebecca</h1>
-          <p className="text-[#5A687C] text-[14px] font-[400]">{t("phone.phone")}</p>
+          <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Rebecca</h1>
+          <p className="text-[#5A687C] text-[14px] font-[400]">{t("phone.phone_outreach")}</p>
         </div>
       </div>
     }
@@ -117,7 +124,7 @@ const PhonePage = () => {
       <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><BsThreeDots size={24} color='#1e1e1e' /></div>
       <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
         {/* Sidebar */}
-        <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] rounded-2xl fixed h-[calc(100vh-86px)] mt-2 mb-8 overflow-y-auto">
+        <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-89px)] mt-2 mb-8 overflow-y-auto">
           <div className=''>
             <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
               navigate("/dashboard")

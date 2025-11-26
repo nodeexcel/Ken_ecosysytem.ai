@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteProfile, getProfile, updateProfile } from "../../api/profile";
 import { updatePassword } from "../../api/auth";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getTeamMembers, removeTeamMember, sendInviteEmail, updateTeamMember } from "../../api/teamMember";
+import { getTeamMembers, removeTeamMember, sendInviteEmail, updateTeamMember, updateGeneralSettings } from "../../api/teamMember";
 import TransactionHistory from "../../components/TransactionHistory";
 import { Delete, Edit, LeftArrow, PasswordLock, PlanIcon, ProfileEditIcon, RefreshIcon, Settings, SuccessIcon, TeamMemberIcon, ThreeDots } from "../../icons/icons";
 import { discardData } from "../../store/profileSlice";
@@ -75,10 +75,16 @@ const THEME_OPTIONS = [
 
 const LANGUAGE_OPTIONS = ["English (US)", "French"];
 const TIMEZONE_OPTIONS = [
-  "GMT +7 (Bangkok, Jakarta)",
-  "GMT +5:30 (Delhi)",
-  "GMT +1 (Berlin, Paris)",
-  "GMT -5 (New York)",
+  "GMT +1 (Paris, Berlin, Rome, Madrid)",
+  "GMT +0 (London, Lisbon)",
+  "GMT -5 (New York, Toronto)",
+  "GMT -8 (Los Angeles, Vancouver)",
+  "GMT +5:30 (Delhi, Mumbai)",
+  "GMT +7 (Bangkok, Jakarta, Hanoi)",
+  "GMT +8 (Singapore, Beijing, Kuala Lumpur)",
+  "GMT +9 (Tokyo, Seoul)",
+  "GMT +3 (Riyadh, Moscow)",
+  "GMT +10 (Sydney, Melbourne)",
 ];
 const DATE_FORMAT_OPTIONS = ["DD/MM/YYYY", "MM/DD/YYYY", "YYYY/MM/DD"];
 
@@ -188,6 +194,24 @@ const SettingsPage = () => {
     }
   };
 
+  // Function to apply theme to the app
+  const applyTheme = (theme) => {
+    const html = document.documentElement;
+    
+    if (theme === "system") {
+      // Detect system preference
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      html.setAttribute("data-theme", prefersDark ? "dark" : "light");
+    } else {
+      html.setAttribute("data-theme", theme);
+    }
+  };
+
+  // Function to get system theme preference
+  const getSystemTheme = () => {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  };
+
   useEffect(() => {
     if (token && !userDetails.loading) {
       if (userDetails?.user.phoneNumber === null) {
@@ -210,23 +234,20 @@ const SettingsPage = () => {
 
   }, [token, !userDetails.loading])
 
-  // Sync fullNameInput when profileFormData is loaded from user details
+
   useEffect(() => {
     if (profileFormData.firstName || profileFormData.lastName) {
       const constructedName = `${profileFormData.firstName || ""}${profileFormData.lastName ? ` ${profileFormData.lastName}` : ""}`;
-      // Only update if fullNameInput is empty or doesn't start with the current firstName (initial load scenario)
       if (!fullNameInput || (profileFormData.firstName && !fullNameInput.startsWith(profileFormData.firstName))) {
         setFullNameInput(constructedName);
       }
     }
   }, [profileFormData.firstName, profileFormData.lastName])
 
-  // Check URL params for manage-plan view
   useEffect(() => {
     const view = searchParams.get('view');
     const tab = searchParams.get('tab');
 
-    // Only react to URL param changes, not activeSidebarItem changes
     if (view === 'manage-plan') {
       setShowManagePlan(true);
       setActiveSidebarItem('billing');
@@ -234,10 +255,41 @@ const SettingsPage = () => {
       setActiveSidebarItem('billing');
       setShowManagePlan(false);
     } else if (!view && !tab) {
-      // If no params, don't override the activeSidebarItem
       setShowManagePlan(false);
     }
   }, [searchParams])
+
+  // Apply theme on mount and handle system preference changes
+  useEffect(() => {
+    // Apply initial theme
+    applyTheme(generalSettings.theme);
+
+    // If theme is "system", listen for system preference changes
+    if (generalSettings.theme === "system") {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      
+      const handleSystemThemeChange = (e) => {
+        const html = document.documentElement;
+        html.setAttribute("data-theme", e.matches ? "dark" : "light");
+      };
+
+      // Add listener for system preference changes
+      if (mediaQuery.addEventListener) {
+        mediaQuery.addEventListener("change", handleSystemThemeChange);
+      } else {
+        // Fallback for older browsers
+        mediaQuery.addListener(handleSystemThemeChange);
+      }
+
+      return () => {
+        if (mediaQuery.removeEventListener) {
+          mediaQuery.removeEventListener("change", handleSystemThemeChange);
+        } else {
+          mediaQuery.removeListener(handleSystemThemeChange);
+        }
+      };
+    }
+  }, [generalSettings.theme]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -251,12 +303,9 @@ const SettingsPage = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Check if click is outside any dropdown
       if (activeDropdown !== null) {
         const clickedElement = event.target;
-        // Check if click is inside the dropdown menu
         const isDropdownClick = clickedElement.closest('[data-dropdown]');
-        // Check if click is on the three dots button (EllipsisIcon or its parent button)
         const isTriggerClick = clickedElement.closest('button')?.querySelector('svg') ||
           clickedElement.closest('button[class*="border"]');
 
@@ -385,15 +434,51 @@ const SettingsPage = () => {
       ...prev,
       [key]: value,
     }))
+    
+    // Apply theme immediately when user selects a theme (for preview)
+    if (key === "theme") {
+      applyTheme(value);
+    }
   }
 
   const handleResetGeneralSettings = () => {
     setGeneralSettings({ ...GENERAL_DEFAULT_SETTINGS })
     setSuccess((prev) => ({ ...prev, general: "Changes discarded." }))
+    // Reset theme to default
+    applyTheme(GENERAL_DEFAULT_SETTINGS.theme);
   }
 
-  const handleSaveGeneralSettings = () => {
-    setSuccess((prev) => ({ ...prev, general: "General settings saved." }))
+  const handleSaveGeneralSettings = async () => {
+    setUpdateLoading(true);
+    try {
+      // Map language to language code
+      const languageMap = {
+        "English (US)": "en",
+        "French": "fr"
+      };
+      
+      const payload = {
+        theme: generalSettings.theme,
+        dateFormat: generalSettings.dateFormat,
+        timeFormat: generalSettings.timezone, // Using timezone as timeFormat
+        language: languageMap[generalSettings.language] || "en"
+      };
+
+      const response = await updateGeneralSettings(payload);
+      
+      if (response?.status === 200 || response?.status === 201) {
+        // Apply the theme after successful save
+        applyTheme(generalSettings.theme);
+        setSuccess((prev) => ({ ...prev, general: response?.data?.message || "General settings saved." }));
+      } else {
+        setSuccess((prev) => ({ ...prev, general: "Failed to save settings. Please try again." }));
+      }
+    } catch (error) {
+      console.error("Error saving general settings:", error);
+      setSuccess((prev) => ({ ...prev, general: error?.response?.data?.message || "Failed to save settings. Please try again." }));
+    } finally {
+      setUpdateLoading(false);
+    }
   }
 
   const renderTeamMembers = async (currentRole = role) => {
@@ -896,10 +981,10 @@ const SettingsPage = () => {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center sm:justify-between w-full mb-4 gap-4 px-4 py-6">
             <div className="flex flex-col gap-2">
-              <h1 className="text-[#1e1e1e] text-[22px]  font-[600] leading-tight">
+              <h1 className="text-[#1e1e1e] dark:text-white text-[22px]  font-[600] leading-tight">
                 My Profile Settings
               </h1>
-              <p className="text-[#5A687C] text-[14px] sm:text-[16px] font-[400]">
+              <p className="text-[#5A687C] dark:text-gray-400 text-[14px] sm:text-[16px] font-[400]">
                 Update your personal details, control your preferences, and keep your account secure.
               </p>
             </div>
@@ -931,7 +1016,7 @@ const SettingsPage = () => {
                   setErrorMessage({});
                   setSuccess({});
                 }}
-                className="px-2.5 py-1.5 bg-white border border-[#E1E4EA] rounded-lg text-[#000000] text-[14px] sm:text-[16px] font-[500] cursor-pointer hover:bg-[#F9F8FF] transition-colors whitespace-nowrap"
+                className="px-2.5 py-1.5 bg-white dark:bg-[#2D3151] border border-[#E1E4EA] dark:border-[#2D3151] rounded-lg text-[#000000] dark:text-gray-300 text-[14px] sm:text-[16px] font-[500] cursor-pointer hover:bg-[#F9F8FF] dark:hover:bg-[#1E2A4A] transition-colors whitespace-nowrap"
               >
                 Discard
               </button>
@@ -1011,10 +1096,14 @@ const SettingsPage = () => {
                         Delete
                       </button>
                     </div>
-                    <div className="w-full items-start"><p className="text-xs text-[#5A687C] mt-2 ">
-                      Recommended 400×400px, Max 5MB
-                    </p>
+
+                    <div className="w-full flex justify-center">
+                      <p className="text-xs text-[#5A687C] mt-1 text-center w-full">
+                        Recommended 400×400px, Max 5MB
+                      </p>
                     </div>
+
+
                     {/* Text directly under buttons */}
 
                   </div>
@@ -1215,7 +1304,7 @@ const SettingsPage = () => {
                       <div>
                         <p className="text-[14px] text-[#1E1E1E] font-[500]">Your Password</p>
                         <p className="text-sm text-[#5A687C]">
-                          Last changed password: {userDetails?.user?.passwordUpdatedAt 
+                          Last changed password: {userDetails?.user?.passwordUpdatedAt
                             ? getPasswordLastChanged(userDetails.user.passwordUpdatedAt)
                             : 'Never'}
                         </p>
@@ -1369,8 +1458,8 @@ const SettingsPage = () => {
                     key={option.key}
                     onClick={() => handleChangeRole(option.key)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${role === option.key
-                        ? "bg-white text-[#1E1E1E] shadow-sm"
-                        : "bg-transparent text-[#5A687C]"
+                      ? "bg-white text-[#1E1E1E] shadow-sm"
+                      : "bg-transparent text-[#5A687C]"
                       }`}
                   >
                     {option.label}
@@ -1572,10 +1661,10 @@ const SettingsPage = () => {
                         onClick={() => typeof page === "number" && setTeamCurrentPage(page)}
                         disabled={page === "..."}
                         className={`rounded-lg px-3 py-1 text-sm cursor-pointer ${page === teamCurrentPage
-                            ? "bg-[#675FFF] text-white"
-                            : page === "..."
-                              ? "text-[#000000] cursor-default"
-                              : "border border-[#D6D6D6] text-[#000000] bg-white hover:bg-gray-50"
+                          ? "bg-[#675FFF] text-white"
+                          : page === "..."
+                            ? "text-[#000000] cursor-default"
+                            : "border border-[#D6D6D6] text-[#000000] bg-white hover:bg-gray-50"
                           }`}
                       >
                         {page}
@@ -1666,8 +1755,8 @@ const SettingsPage = () => {
                             setInviteErrors({})
                           }}
                           className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#675FFF]/20 transition-all ${inviteErrors.email
-                              ? "border-red-300 focus:border-red-500"
-                              : "border-[#E1E4EA] focus:border-[#675FFF]"
+                            ? "border-red-300 focus:border-red-500"
+                            : "border-[#E1E4EA] focus:border-[#675FFF]"
                             }`}
                         />
                       </div>
@@ -1736,8 +1825,8 @@ const SettingsPage = () => {
                     onClick={handleInvite}
                     disabled={inviteEmailLoading}
                     className={`px-4 py-2.5 text-base cursor-pointer font-medium text-white rounded-lg transition-all ${inviteEmailLoading
-                        ? "bg-[#5f54ff98] cursor-not-allowed"
-                        : "bg-[#5E54FF] hover:bg-[#4d44e6] active:scale-[0.98]"
+                      ? "bg-[#5f54ff98] cursor-not-allowed"
+                      : "bg-[#5E54FF] hover:bg-[#4d44e6] active:scale-[0.98]"
                       }`}
                   >
                     {inviteEmailLoading ? (
@@ -1766,19 +1855,19 @@ const SettingsPage = () => {
         <div className="overflow-hidden">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 px-6 py-6 ">
             <div className="space-y-2">
-              <h2 className="text-2xl font-semibold text-[#1E1E1E]">General Settings</h2>
-              <p className="text-md text-[#5A687C] max-w-2xl">
+              <h2 className="text-2xl font-semibold text-[#1E1E1E] dark:text-white">General Settings</h2>
+              <p className="text-md text-[#5A687C] dark:text-gray-400 max-w-2xl">
                 Adjust your workspace preferences, default behaviors, and system display options.
               </p>
               {success.general && (
-                <p className="text-sm text-green-600">{success.general}</p>
+                <p className="text-sm text-green-600 dark:text-green-400">{success.general}</p>
               )}
             </div>
             <div className="flex items-center gap-3">
               <button
                 type="button"
                 onClick={handleResetGeneralSettings}
-                className="px-2.5 py-1.5 bg-white border border-[#E1E4EA] rounded-lg text-[#000000] text-[14px] sm:text-[16px] font-[500] cursor-pointer hover:bg-[#F9F8FF] transition-colors whitespace-nowrap"
+                className="px-2.5 py-1.5 bg-white dark:bg-[#2D3151] border border-[#E1E4EA] dark:border-[#2D3151] rounded-lg text-[#000000] dark:text-gray-300 text-[14px] sm:text-[16px] font-[500] cursor-pointer hover:bg-[#F9F8FF] dark:hover:bg-[#1E2A4A] transition-colors whitespace-nowrap"
               >
                 Discard
               </button>
@@ -1792,16 +1881,16 @@ const SettingsPage = () => {
             </div>
           </div>
 
-          <hr className="border border-gray-200 w-full mx-4"></hr>
+          <hr className="border border-gray-200 dark:border-[#2D3151] w-full mx-4"></hr>
 
           <div className="px-6 py-6 space-y-8">
 
             <div className="w-full">
               <section className="flex flex-col gap-4">
-                <div className="w-full flex flex-col lg:flex-row lg:justify-between gap-6 border-b border-[#d1d3db] pb-2">
+                <div className="w-full flex flex-col lg:flex-row lg:justify-between gap-6 border-b border-[#d1d3db] dark:border-[#2D3151] pb-2">
                   <div className="min-w-[260px] max-w-sm">
-                    <h3 className="text-lg font-semibold text-[#1E1E1E]">Theme & Appearance</h3>
-                    <p className="text-sm text-[#7A8298]">Choose between light, dark, or system themes</p>
+                    <h3 className="text-lg font-semibold text-[#1E1E1E] dark:text-white">Theme & Appearance</h3>
+                    <p className="text-sm text-[#7A8298] dark:text-gray-400">Choose between light, dark, or system themes</p>
                   </div>
 
                   <div className="flex flex-wrap gap-4 lg:gap-6">
@@ -1812,11 +1901,14 @@ const SettingsPage = () => {
                           <button
                             type="button"
                             onClick={() => handleGeneralSettingChange("theme", option.key)}
-                            className={`w-full transition-all ${selected ? "border-[#675FFF] shadow-[0_10px_30px_rgba(79,70,229,0.15)]" : ""
+                            className={`w-full transition-all duration-300 ${selected ? "border-[#675FFF] shadow-[0_10px_30px_rgba(79,70,229,0.15)]" : ""
                               }`}
                           >
                             <div
-                              className={`w-full h-24 rounded-lg border ${selected ? "border-[#C7CCF7]" : "border-[#E4E6EF]"} relative overflow-hidden`}
+                              className={`w-full h-24 rounded-lg border transition-all duration-300 scale-105 ${selected 
+                                ? "border-[#C7CCF7] dark:border-[#675FFF]" 
+                                : "border-[#E4E6EF] dark:border-[#2D3151] hover:border-[#C7CCF7] dark:hover:border-[#675FFF] hover:shadow-lg hover:shadow-[#675FFF]/20 dark:hover:shadow-[#675FFF]/30"
+                              } relative overflow-hidden transform hover:scale-110 cursor-pointer`}
                             >
                               <img
                                 src={
@@ -1827,12 +1919,12 @@ const SettingsPage = () => {
                                       : SystemTheme
                                 }
                                 alt={option.label}
-                                className="w-full h-full object-cover rounded-md"
+                                className="w-full h-full object-cover rounded-md transition-transform duration-300 hover:scale-110"
                               />
                             </div>
                           </button>
 
-                          <span className={`text-sm font-semibold ${selected ? "text-[#1E1E1E]" : "text-[#6C7489]"}`}>
+                          <span className={`text-sm font-semibold transition-colors duration-300 ${selected ? "text-[#1E1E1E] dark:text-white" : "text-[#6C7489] dark:text-gray-400"}`}>
                             {option.label}
                           </span>
                         </div>
@@ -1846,10 +1938,10 @@ const SettingsPage = () => {
             {/* ---------------- ACCOUNT PREFERENCES ---------------- */}
             <div className="w-full">
               <section className="flex flex-col gap-6">
-                <div className="w-full flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 border-b border-[#d1d3db] pb-2">
+                <div className="w-full flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 border-b border-[#d1d3db] dark:border-[#2D3151] pb-2">
                   <div className="min-w-[240px] max-w-sm">
-                    <h3 className="text-lg font-semibold text-[#1E1E1E]">Account Preferences</h3>
-                    <p className="text-sm text-[#7A8298]">
+                    <h3 className="text-lg font-semibold text-[#1E1E1E] dark:text-white">Account Preferences</h3>
+                    <p className="text-sm text-[#7A8298] dark:text-gray-400">
                       Customize how Ecosystem.ai behaves to match your working style.
                     </p>
                   </div>
@@ -1860,12 +1952,12 @@ const SettingsPage = () => {
 
                         {/* Language */}
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-sm font-medium text-[#7A8298]">Language</label>
+                          <label className="text-sm font-medium text-[#7A8298] dark:text-gray-400">Language</label>
                           <div className="relative">
                             <select
                               value={generalSettings.language}
                               onChange={(e) => handleGeneralSettingChange("language", e.target.value)}
-                              className="w-full appearance-none rounded-xl border border-[#E1E4EA] bg-white px-4 py-2 text-sm text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none"
+                              className="w-full appearance-none rounded-xl border border-[#E1E4EA] dark:border-[#2D3151] bg-white dark:bg-[#2D3151] px-4 py-2 text-sm text-[#1E1E1E] dark:text-white focus:border-[#675FFF] focus:outline-none"
                             >
                               {LANGUAGE_OPTIONS.map((lang) => (
                                 <option key={lang} value={lang}>{lang}</option>
@@ -1877,12 +1969,12 @@ const SettingsPage = () => {
 
                         {/* Timezone */}
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-sm font-medium text-[#7A8298]">Timezone</label>
+                          <label className="text-sm font-medium text-[#7A8298] dark:text-gray-400">Timezone</label>
                           <div className="relative">
                             <select
                               value={generalSettings.timezone}
                               onChange={(e) => handleGeneralSettingChange("timezone", e.target.value)}
-                              className="w-full appearance-none rounded-xl border border-[#E1E4EA] bg-white px-4 py-2 text-sm text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none"
+                              className="w-full appearance-none rounded-xl border border-[#E1E4EA] dark:border-[#2D3151] bg-white dark:bg-[#2D3151] px-4 py-2 text-sm text-[#1E1E1E] dark:text-white focus:border-[#675FFF] focus:outline-none"
                             >
                               {TIMEZONE_OPTIONS.map((zone) => (
                                 <option key={zone} value={zone}>{zone}</option>
@@ -1894,12 +1986,12 @@ const SettingsPage = () => {
 
                         {/* Date Format */}
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-sm font-medium text-[#7A8298]">Date Format</label>
+                          <label className="text-sm font-medium text-[#7A8298] dark:text-gray-400">Date Format</label>
                           <div className="relative">
                             <select
                               value={generalSettings.dateFormat}
                               onChange={(e) => handleGeneralSettingChange("dateFormat", e.target.value)}
-                              className="w-full appearance-none rounded-xl border border-[#E1E4EA] bg-white px-4 py-2 text-sm text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none"
+                              className="w-full appearance-none rounded-xl border border-[#E1E4EA] dark:border-[#2D3151] bg-white dark:bg-[#2D3151] px-4 py-2 text-sm text-[#1E1E1E] dark:text-white focus:border-[#675FFF] focus:outline-none"
                             >
                               {DATE_FORMAT_OPTIONS.map((format) => (
                                 <option key={format} value={format}>{format}</option>
@@ -1921,8 +2013,8 @@ const SettingsPage = () => {
               <section className="flex flex-col gap-4">
                 <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
                   <div className="min-w-[240px] max-w-sm">
-                    <h3 className="text-lg font-semibold text-[#1E1E1E]">Notifications & Alerts</h3>
-                    <p className="text-sm text-[#7A8298]">
+                    <h3 className="text-lg font-semibold text-[#1E1E1E] dark:text-white">Notifications & Alerts</h3>
+                    <p className="text-sm text-[#7A8298] dark:text-gray-400">
                       Control how you receive important updates and insights from Ecosystem.ai.
                     </p>
                   </div>
@@ -1947,8 +2039,8 @@ const SettingsPage = () => {
                           className="flex items-center justify-between p-5"
                         >
                           <div>
-                            <p className="text-sm font-semibold text-[#1E1E1E]">{item.title}</p>
-                            <p className="text-sm text-[#7A8298]">{item.description}</p>
+                            <p className="text-sm font-semibold text-[#1E1E1E] dark:text-white">{item.title}</p>
+                            <p className="text-sm text-[#7A8298] dark:text-gray-400">{item.description}</p>
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-xs font-semibold text-[#675FFF]">
@@ -1993,64 +2085,64 @@ const SettingsPage = () => {
         </div>
         <hr className='text-[#E1E4EA]' />
       </div> */}
-      <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><BsThreeDots size={24} color='#1e1e1e' /></div>
+      <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><BsThreeDots size={24} className="text-[#1e1e1e] dark:text-white" /></div>
       <div className="flex flex-col md:flex-row items-start lg:gap-8 relative w-full">
         {/* Sidebar Navigation */}
-        <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] rounded-2xl fixed h-[calc(100vh-86px)] mt-2 mb-8 overflow-y-auto">
+        <div className="lg:flex hidden flex-col bg-white dark:bg-[#1A1C23] gap-4 border border-[#D6D6D6] dark:border-[#2D3151] min-w-[272px] rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-89px)] mt-2 mb-8 overflow-y-auto">
           <div className=''>
             <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
               {/* <MdOutlineKeyboardArrowLeft size={25} /> */}
               <div className="flex gap-4 pl-4 items-center h-[57px]">
                 {/* <LeftArrow /> */}
-                <h1 className="text-[20px] font-[600]">{t("settings.label")}</h1>
+                <h1 className="text-[20px] font-[600] dark:text-white">{t("settings.label")}</h1>
               </div>
             </div>
-            <hr className='text-[#E1E4EA]' />
+            <hr className='text-[#E1E4EA] dark:border-[#2D3151]' />
           </div>
           <div className="flex inter flex-col w-full px-3 items-start gap-2 relative">
             <div
               onClick={() => handleSelect("my-profile")}
-              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "my-profile" ? "bg-[#F0EFFF]" : "hover:bg-[#F9F8FF]"
+              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "my-profile" ? "bg-[#F0EFFF] dark:bg-[#2D1F5F]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                 }`}
             >
-              {activeSidebarItem === "my-profile" ? <CircleUserRound className="text-[#675FFF]" /> : <div className="flex items-center gap-2"><div className='group-hover:hidden'><CircleUserRound className="text-gray-500" /></div> <div className='hidden group-hover:block'><CircleUserRound /></div></div>}
-              <span className={`font-[400] text-[16px] ${activeSidebarItem === "my-profile" ? "text-black" : "text-blackgroup-hover:text-[#1E1E1E]"}`}>
+              {activeSidebarItem === "my-profile" ? <CircleUserRound className="text-[#675FFF]" /> : <div className="flex items-center gap-2"><div className='group-hover:hidden'><CircleUserRound className="text-gray-500 dark:text-gray-400" /></div> <div className='hidden group-hover:block'><CircleUserRound className="dark:text-white" /></div></div>}
+              <span className={`font-[400] text-[16px] ${activeSidebarItem === "my-profile" ? "text-black dark:text-white" : "text-black dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
                 My Profile
               </span>
             </div>
 
             <div
               onClick={() => handleSelect("general")}
-              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "general" ? "bg-[#F0EFFF]" : "hover:bg-[#F9F8FF]"
+              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "general" ? "bg-[#F0EFFF] dark:bg-[#2D1F5F]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                 }`}
             >
-              {activeSidebarItem === "general" ? <House className="text-[#675FFF]" status={activeSidebarItem === "general"} /> : 
-              <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<House className="text-gray-500" status={activeSidebarItem === "general"} />}</div> <div className='hidden group-hover:block'>{<House hover={true} />}</div></div>}
-              <span className={`font-[400] text-[16px] ${activeSidebarItem === "general" ? "text-black" : "text-black group-hover:text-[#1E1E1E]"}`}>
+              {activeSidebarItem === "general" ? <House className="text-[#675FFF]" status={activeSidebarItem === "general"} /> :
+                <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<House className="text-gray-500 dark:text-gray-400" status={activeSidebarItem === "general"} />}</div> <div className='hidden group-hover:block'>{<House hover={true} className="dark:text-white" />}</div></div>}
+              <span className={`font-[400] text-[16px] ${activeSidebarItem === "general" ? "text-black dark:text-white" : "text-black dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
                 {t("settings.tab_1")}
               </span>
             </div>
 
             <div
               onClick={() => handleSelect("billing")}
-              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#EDF3FF]" : "hover:bg-[#F9F8FF]"
+              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#EDF3FF] dark:bg-[#1E2A4A]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                 }`}
             >
               {activeSidebarItem === "billing" ? <Wallet className="text-[#675FFF]" status={activeSidebarItem === "billing"} /> :
-                <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<Wallet className="text-gray-500" status={activeSidebarItem === "billing"} />}</div> <div className='hidden group-hover:block'>{<Wallet hover={true} />}</div></div>}
-              <span className={`font-[400] text-[16px] ${activeSidebarItem === "billing" ? "text-black" : "text-black group-hover:text-[#1E1E1E]"}`}>
+                <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<Wallet className="text-gray-500 dark:text-gray-400" status={activeSidebarItem === "billing"} />}</div> <div className='hidden group-hover:block'>{<Wallet hover={true} className="dark:text-white" />}</div></div>}
+              <span className={`font-[400] text-[16px] ${activeSidebarItem === "billing" ? "text-black dark:text-white" : "text-black dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
                 {t("settings.tab_2")}
               </span>
             </div>
 
             <div
               onClick={() => handleSelect("team")}
-              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "team" ? "bg-[#EDF3FF]" : "hover:bg-[#F9F8FF]"
+              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "team" ? "bg-[#EDF3FF] dark:bg-[#1E2A4A]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                 }`}
             >
               {activeSidebarItem === "team" ? <UsersRound className="text-[#675FFF]" status={activeSidebarItem === "team"} /> :
-                <div className="flex items-center gap-2"><div className='group-hover:hidden'><UsersRound className="text-gray-500" status={activeSidebarItem === "team"} /></div> <div className='hidden group-hover:block'><UsersRound hover={true} /></div></div>}
-              <span className={`font-[400] text-[16px] ${activeSidebarItem === "team" ? "text-black" : "text-black group-hover:text-[#1E1E1E]"}`}>
+                <div className="flex items-center gap-2"><div className='group-hover:hidden'><UsersRound className="text-gray-500 dark:text-gray-400" status={activeSidebarItem === "team"} /></div> <div className='hidden group-hover:block'><UsersRound hover={true} className="dark:text-white" /></div></div>}
+              <span className={`font-[400] text-[16px] ${activeSidebarItem === "team" ? "text-black dark:text-white" : "text-black dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
                 {t("settings.tab_3")}
               </span>
             </div>
@@ -2088,9 +2180,9 @@ const SettingsPage = () => {
       </div>} */}
       {deleteModalStatus && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl w-full max-w-[514px] p-6 relative shadow-lg">
+          <div className="bg-white dark:bg-[#1A1C23] rounded-2xl w-full max-w-[514px] p-6 relative shadow-lg">
             <button
-              className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-700"
+              className="absolute cursor-pointer top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
               onClick={() => {
                 setDeleteModalStatus(false)
               }}
@@ -2099,7 +2191,7 @@ const SettingsPage = () => {
             </button>
 
             <div className="flex flex-col justify-around h-[150px] text-center">
-              <h2 className="text-[20px] font-semibold text-[#1E1E1E] mb-4">
+              <h2 className="text-[20px] font-semibold text-[#1E1E1E] dark:text-white mb-4">
                 {t("settings.tab_1_list.delete_header")}
               </h2>
               <div className="flex gap-4 mt-2 w-full">
@@ -2110,7 +2202,7 @@ const SettingsPage = () => {
                   {t("settings.tab_1_list.confirm_delete")}
                 </button>
                 <button
-                  className="w-full cursor-pointer bg-white text-[#5A687C] border-[1.5px] border-[#E1E4EA] font-[500] test-[16px] px-5 py-2 rounded-lg"
+                  className="w-full cursor-pointer bg-white dark:bg-[#2D3151] text-[#5A687C] dark:text-gray-300 border-[1.5px] border-[#E1E4EA] dark:border-[#2D3151] font-[500] test-[16px] px-5 py-2 rounded-lg"
                   onClick={() => setDeleteModalStatus(false)}
                 >
                   {t("settings.tab_1_list.cancel")}
@@ -2122,9 +2214,9 @@ const SettingsPage = () => {
       )}
       {sidebarStatus &&
         <div className="lg:hidden fixed inset-0 bg-black/20 flex items-end z-50">
-          <div className="flex flex-col relative bg-white gap-8 w-full max-h-[80%] overflow-auto py-8 rounded-t-[20px]">
+          <div className="flex flex-col relative bg-white dark:bg-[#1A1C23] gap-8 w-full max-h-[80%] overflow-auto py-8 rounded-t-[20px]">
             <button
-              className="absolute top-4 cursor-pointer right-4 text-[#1e1e1e]"
+              className="absolute top-4 cursor-pointer right-4 text-[#1e1e1e] dark:text-white"
               onClick={() => {
                 setSideBarStatus(false)
               }}
@@ -2136,10 +2228,10 @@ const SettingsPage = () => {
                 {/* <MdOutlineKeyboardArrowLeft size={25} /> */}
                 <div className="flex gap-4 pl-3 items-center h-[57px]">
                   {/* <LeftArrow /> */}
-                  <h1 className="text-[20px] font-[600]">{t("settings.label")}</h1>
+                  <h1 className="text-[20px] font-[600] dark:text-white">{t("settings.label")}</h1>
                 </div>
               </div>
-              <hr className='text-[#E1E4EA]' />
+              <hr className='text-[#E1E4EA] dark:border-[#2D3151]' />
             </div>
             <div className="flex inter flex-col w-full px-5 items-start gap-2 relative">
               <div
@@ -2147,11 +2239,11 @@ const SettingsPage = () => {
                   handleSelect("my-profile")
                   setSideBarStatus(false)
                 }}
-                className={`flex group justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "my-profile" ? "bg-[#F0EFFF]" : "hover:bg-[#F9F8FF]"
+                className={`flex group justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "my-profile" ? "bg-[#F0EFFF] dark:bg-[#2D1F5F]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                   }`}
               >
                 {activeSidebarItem === "my-profile" ? <ProfileEditIcon /> : <div className="flex items-center gap-2"><div className='group-hover:hidden'><ProfileEditIcon /></div> <div className='hidden group-hover:block'><ProfileEditIcon /></div></div>}
-                <span className={`font-[400] text-[16px] ${activeSidebarItem === "my-profile" ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                <span className={`font-[400] text-[16px] ${activeSidebarItem === "my-profile" ? "text-[#675FFF] dark:text-[#675FFF]" : "text-[#5A687C] dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
                   My Profile
                 </span>
               </div>
@@ -2161,11 +2253,11 @@ const SettingsPage = () => {
                   handleSelect("general")
                   setSideBarStatus(false)
                 }}
-                className={`flex group justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#F0EFFF]" : "hover:bg-[#F9F8FF]"
+                className={`flex group justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#F0EFFF] dark:bg-[#2D1F5F]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                   }`}
               >
                 {activeSidebarItem === "general" ? <Settings status={activeSidebarItem === "general"} /> : <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<Settings status={activeSidebarItem === "general"} />}</div> <div className='hidden group-hover:block'>{<Settings hover={true} />}</div></div>}
-                <span className={`font-[400] text-[16px] ${activeSidebarItem === "general" ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                <span className={`font-[400] text-[16px] ${activeSidebarItem === "general" ? "text-[#675FFF] dark:text-[#675FFF]" : "text-[#5A687C] dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
                   {t("settings.tab_1")}
                 </span>
               </div>
@@ -2175,12 +2267,12 @@ const SettingsPage = () => {
                   handleSelect("billing")
                   setSideBarStatus(false)
                 }}
-                className={`flex group justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#EDF3FF]" : "hover:bg-[#F9F8FF]"
+                className={`flex group justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#EDF3FF] dark:bg-[#1E2A4A]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                   }`}
               >
                 {activeSidebarItem === "billing" ? <PlanIcon status={activeSidebarItem === "billing"} /> :
                   <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<PlanIcon status={activeSidebarItem === "billing"} />}</div> <div className='hidden group-hover:block'>{<PlanIcon hover={true} />}</div></div>}
-                <span className={`font-[400] text-[16px] ${activeSidebarItem === "billing" ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                <span className={`font-[400] text-[16px] ${activeSidebarItem === "billing" ? "text-[#675FFF] dark:text-[#675FFF]" : "text-[#5A687C] dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
                   {t("settings.tab_2")}
                 </span>
               </div>
@@ -2190,12 +2282,12 @@ const SettingsPage = () => {
                   handleSelect("team")
                   setSideBarStatus(false)
                 }}
-                className={`flex group justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "team" ? "bg-[#EDF3FF]" : "hover:bg-[#F9F8FF]"
+                className={`flex group justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "team" ? "bg-[#EDF3FF] dark:bg-[#1E2A4A]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                   }`}
               >
                 {activeSidebarItem === "team" ? <TeamMemberIcon status={activeSidebarItem === "team"} /> :
                   <div className="flex items-center gap-2"><div className='group-hover:hidden'><TeamMemberIcon status={activeSidebarItem === "team"} /></div> <div className='hidden group-hover:block'><TeamMemberIcon hover={true} /></div></div>}
-                <span className={`font-[400] text-[16px] ${activeSidebarItem === "team" ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                <span className={`font-[400] text-[16px] ${activeSidebarItem === "team" ? "text-[#675FFF] dark:text-[#675FFF]" : "text-[#5A687C] dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
                   {t("settings.tab_3")}
                 </span>
               </div>
@@ -2205,9 +2297,9 @@ const SettingsPage = () => {
       }
       {successModalStatus && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl w-full max-w-[457px] p-6 relative shadow-lg">
+          <div className="bg-white dark:bg-[#1A1C23] rounded-2xl w-full max-w-[457px] p-6 relative shadow-lg">
             <button
-              className="absolute top-4 cursor-pointer  right-4 text-gray-500 hover:text-gray-700"
+              className="absolute top-4 cursor-pointer  right-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
               onClick={() => {
                 setSuccessModalStatus('')
               }}

@@ -49,12 +49,12 @@ const Agents = () => {
       image: constanceImg
     },
     {
-      name: "Tom & Rebecca",
+      name: "Rebecca",
       role: `${t("phone_outreach")}`,
       gradient: "bg-[#DBE5FF]",
       path: "/dashboard/phone",
-      label: "Tom & Rebecca, Phone",
-      image: tomImg
+      label: "Rebecca, Phone",
+      image: rebeccaImg
     },
     {
       name: "Seth",
@@ -78,7 +78,7 @@ const Agents = () => {
       gradient: "bg-[#DBE5FF]",
       path: "/dashboard/phone",
       label: "Rebecca",
-      image: rebeccaImg
+      image: tomImg
     },
     {
       name: "Emile",
@@ -183,6 +183,7 @@ const Agents = () => {
             const isDisabled =
               employee.name === "Emile" ||
               employee.name === "Tara" ||
+              employee.name === "Rima" ||
               employee.name === "Sandro";
 
             return (

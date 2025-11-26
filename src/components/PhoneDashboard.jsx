@@ -7,7 +7,7 @@ import { getCurrentCredits } from '../api/profile';
 import { SelectDropdown } from './Dropdown';
 import PhoneIcon from '../assets/svg/Phone.svg'
 
-const PhoneDashboard = () => {
+const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
 
   const [autoRefill, setAutoRefill] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -15,6 +15,10 @@ const PhoneDashboard = () => {
   const [selectedCard, setSelectedCard] = useState(null);
   const [balance, setBalance] = useState(0);
   const [timePeriod, setTimePeriod] = useState('This Month');
+  const [automaticRechargeEnabled, setAutomaticRechargeEnabled] = useState(false);
+  const [rechargeThreshold, setRechargeThreshold] = useState('');
+  const [topUpAmount, setTopUpAmount] = useState('');
+  const [isRechargeExpanded, setIsRechargeExpanded] = useState(true);
   const [dashboardData, setDashboardData] = useState({
     agents: 0,
     campaigns: 0,
@@ -32,6 +36,11 @@ const PhoneDashboard = () => {
     error: null
   });
   const { t } = useTranslation();
+  const handleNavigateSection = (sectionKey) => {
+    if (typeof onNavigateSection === "function") {
+      onNavigateSection(sectionKey);
+    }
+  };
 
   const timePeriodOptions = [
     { label: 'This Month', key: 'This Month' },
@@ -376,9 +385,7 @@ const PhoneDashboard = () => {
                 : dashboardData.loading ? 'Loading...' : 'No trend data available'}
             </p>
           </div>
-          <button className="bg-white border border-[#E1E4EA] text-[#1E1E1E] text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer mt-4 self-end">
-            See more
-          </button>
+
         </div>
       </div>
 
@@ -396,7 +403,10 @@ const PhoneDashboard = () => {
               {dashboardData.loading ? 'Loading...' : `${dashboardData.agents_online} online${dashboardData.agents_pending > 0 ? ` · ${dashboardData.agents_pending} pending invitation` : ''}`}
             </p>
           </div>
-          <button className="bg-white border border-[#E1E4EA] w-full mt-3 text-[#1E1E1E] text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer w-fit">
+          <button
+            className="bg-white border border-[#E1E4EA] w-full mt-3 text-[#1E1E1E] text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer w-fit"
+            onClick={() => handleNavigateSection("call-agents")}
+          >
             See more
           </button>
         </div>
@@ -412,7 +422,10 @@ const PhoneDashboard = () => {
               {dashboardData.loading ? 'Loading...' : `${dashboardData.campaigns_outbound} outbound${dashboardData.campaigns_inbound > 0 ? ` · ${dashboardData.campaigns_inbound} inbound` : ''}`}
             </p>
           </div>
-          <button className="bg-white border border-[#E1E4EA] w-full mt-3 text-[#1E1E1E] text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer w-fit">
+          <button
+            className="bg-white border border-[#E1E4EA] w-full mt-3 text-[#1E1E1E] text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer w-fit"
+            onClick={() => handleNavigateSection("call-campaigns")}
+          >
             See more
           </button>
         </div>
@@ -428,7 +441,10 @@ const PhoneDashboard = () => {
               {dashboardData.loading ? 'Loading...' : `Average connection rate: ${dashboardData.connection_rate}%`}
             </p>
           </div>
-          <button className="bg-white border border-[#E1E4EA] text-[#1E1E1E] w-full mt-3 text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer w-fit">
+          <button
+            className="bg-white border border-[#E1E4EA] text-[#1E1E1E] w-full mt-3 text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer w-fit"
+            onClick={() => handleNavigateSection("outbound-calls")}
+          >
             See more
           </button>
         </div>
@@ -444,14 +460,17 @@ const PhoneDashboard = () => {
               {dashboardData.loading ? 'Loading...' : `Response rate: ${dashboardData.response_rate}%`}
             </p>
           </div>
-          <button className="bg-white border border-[#E1E4EA] text-[#1E1E1E] w-full mt-3 text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer w-fit">
+          <button
+            className="bg-white border border-[#E1E4EA] text-[#1E1E1E] w-full mt-3 text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer w-fit"
+            onClick={() => handleNavigateSection("inbound-calls")}
+          >
             See more
           </button>
         </div>
       </div>
       {showModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
-          <div className="bg-white rounded-2xl max-h-[90vh] overflow-auto w-full max-w-[806px] p-6 relative shadow-lg">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4 ">
+          <div className="bg-white rounded-2xl max-h-[92vh] overflow-auto w-full max-w-[806px] p-6 relative shadow-lg">
             {/* Header with Close button */}
             <div className="mb-6 flex items-start justify-between">
               <div>
@@ -554,7 +573,133 @@ const PhoneDashboard = () => {
                   </p>
                 </div>
               </div>
+              <hr className="border border-[#E1E4EA] mt-2"></hr>
+            </div>
 
+            {/* Automatic Recharge Section */}
+            <div className="py-6 px-4 border border-[#E1E4EA] rounded-xl">
+              <div className=''>
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <h2 className="text-md font-[600] text-[#1E1E1E] mb-2">Automatic Recharge</h2>
+                    <p className="text-sm text-[#5A687C]">
+                      Automatically refill your balance when it drops below your chosen threshold.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 ml-4 flex-shrink-0">
+                    <span className={`text-sm font-medium ${automaticRechargeEnabled ? 'text-[#675FFF]' : 'text-[#5A687C]'}`}>
+                      {automaticRechargeEnabled ? 'On' : 'Off'}
+                    </span>
+                    <button
+                      onClick={() => {
+                        setAutomaticRechargeEnabled(!automaticRechargeEnabled);
+                        if (!automaticRechargeEnabled) {
+                          setIsRechargeExpanded(true);
+                        }
+                      }}
+                      className={`w-12 h-6 cursor-pointer rounded-full flex items-center px-1 transition-colors duration-300 ${automaticRechargeEnabled ? "bg-[#675FFF]" : "bg-gray-300"
+                        }`}
+                    >
+                      <div
+                        className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${automaticRechargeEnabled ? "translate-x-6" : "translate-x-0"
+                          }`}
+                      ></div>
+                    </button>
+                    <button
+                      onClick={() => setIsRechargeExpanded(!isRechargeExpanded)}
+                      className="text-[#5A687C] hover:text-[#1E1E1E] transition-colors"
+                    >
+                      <ChevronDown
+                        size={20}
+                        className={`transition-transform duration-200 cursor-pointer ${isRechargeExpanded ? 'rotate-180' : ''}`}
+                      />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Expandable Content */}
+              {isRechargeExpanded && (
+                <div className="space-y-4 mt-4">
+                  <hr className="border border-[#E1E4EA]"></hr>
+                  {/* Recharge Threshold */}
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="w-1/2">
+                      <label className="block text-sm font-semibold text-[#1E1E1E] mb-1">
+                        Recharge Threshold
+                      </label>
+                      <p className="text-xs text-[#5A687C]">When balance falls below</p>
+                    </div>
+
+                    {/* Right — 50% width */}
+                    <div className="relative w-1/2">
+                      <input
+                        type="number"
+                        placeholder="Enter threshold"
+                        value={rechargeThreshold}
+                        max={10000}
+                        onChange={(e) => {
+                          const value = Number(e.target.value);
+                          if (value <= 10000) {
+                            setRechargeThreshold(e.target.value);
+                          } else {
+                            setRechargeThreshold("10000");
+                          }
+                        }}
+                        className="w-full px-4 py-2.5 pr-8 border border-[#D6D6D6] rounded-lg focus:outline-none focus:border-[#675FFF] appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 text-sm">€</span>
+                    </div>
+                  </div>
+
+                  {/* Top-up Amount */}
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="w-1/2">
+                      <label className="block text-sm font-semibold text-[#1E1E1E] mb-1">
+                        Top-up Amount
+                      </label>
+                      <p className="text-xs text-[#5A687C]">
+                        Add balance up to
+                      </p>
+                    </div>
+                    <div className="relative w-1/2">
+                      <input
+                        type="number"
+                        placeholder="Enter amount"
+                        value={topUpAmount}
+                        max={10000}
+                        onChange={(e) => {
+                          const value = Number(e.target.value);
+                          if (value <= 10000) {
+                            setTopUpAmount(e.target.value);
+                          } else {
+                            setTopUpAmount("10000");
+                          }
+                        }}
+                        className="w-full text-bold font-md px-4 py-2.5 pr-8 border border-[#D6D6D6] rounded-lg focus:outline-none focus:border-[#675FFF] 
+                          appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 text-sm md:text-md font-[500]">€</span>
+                </div>
+              </div>
+
+                  {/* Save Button */}
+                  <button
+                    className="w-full mt-4 bg-[#675FFF] text-white px-6 py-2.5 rounded-lg cursor-pointer hover:bg-[#5E54FF] transition font-medium"
+                    onClick={() => {
+                      // Handle save logic here
+                      console.log('Saving automatic recharge settings:', {
+                        enabled: automaticRechargeEnabled,
+                        threshold: rechargeThreshold,
+                        topUpAmount: topUpAmount
+                      });
+                      // You can add API call here to save the settings
+                    }}
+                  >
+                    Save
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

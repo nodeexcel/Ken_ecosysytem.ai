@@ -195,7 +195,7 @@ function Navbar({ sidebarItems }) {
                             placeholder="Search everything"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-9 pr-14 py-2 text-sm border border-[#E1E4EA] rounded-xl bg-white focus:outline-none focus:border-[#9f9ea5] text-[#1E1E1E] placeholder:text-[#9CA3AF]"
+                            className="w-full pl-9 pr-14 py-2 text-sm border border-[#E1E4EA] rounded-lg bg-white focus:outline-none focus:border-[#9f9ea5] text-[#1E1E1E] placeholder:text-[#9CA3AF]"
                         />
                         <div className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-[#F5F5F5] text-[#5A687C] text-xs px-2 py-[2px] rounded border border-[#E1E4EA] font-medium pointer-events-none">
                             ⌘ S

@@ -29,13 +29,13 @@ export default function PhoneNumbers() {
   // Helper function to get country flag code from country name
   const getCountryFlagCode = (countryName) => {
     if (!countryName) return "us"; // default
-    
+
     const country = countries.find(
       (c) => c.name.toLowerCase() === countryName.toLowerCase()
     );
-    
+
     if (country) return country.flagCode;
-    
+
     // Fallback: try to extract country code from common country names
     const countryNameMap = {
       "united states": "us",
@@ -85,7 +85,7 @@ export default function PhoneNumbers() {
       "venezuela": "ve",
       "morocco": "ma",
     };
-    
+
     const normalizedName = countryName.toLowerCase().trim();
     return countryNameMap[normalizedName] || "us";
   };
@@ -142,7 +142,7 @@ export default function PhoneNumbers() {
   }, []);
 
 
-    function validatePhoneNumber(phoneNumber) {
+  function validatePhoneNumber(phoneNumber) {
     try {
       const parsed = parsePhoneNumberFromString(phoneNumber);
       return parsed && parsed.isValid();
@@ -153,7 +153,7 @@ export default function PhoneNumbers() {
 
   const validateSubmit = () => {
     const errors = {};
-    if (!validatePhoneNumber(selectedCountry.dial_code + number) )  {
+    if (!validatePhoneNumber(selectedCountry.dial_code + number)) {
       errors.number = t("brain_ai.invalid_phone_no");
     }
     setError(errors);
@@ -266,7 +266,7 @@ export default function PhoneNumbers() {
     }
 
     // Filter by search query
-    const searchMatch = searchQuery === "" || 
+    const searchMatch = searchQuery === "" ||
       row.phone_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       row.country?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (row.name && row.name.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -282,7 +282,8 @@ export default function PhoneNumbers() {
   ];
 
   return (
-    <div className="py-6 px-6 h-screen overflow-auto flex flex-col gap-4 w-full">
+
+    <div className="py-6 px-6 min-h-[calc(100vh-80px)] overflow-y-auto flex flex-col gap-4 w-full">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
         <div>
@@ -308,11 +309,10 @@ export default function PhoneNumbers() {
             <button
               key={tab.value}
               onClick={() => setFilterStatus(tab.value)}
-              className={`px-4 py-1.5 text-sm font-medium rounded-lg transition cursor-pointer ${
-                filterStatus === tab.value
-                  ? "bg-white text-[#1E1E1E] font-semibold border border-[#D6D6D6] "
-                  : "text-[#5A687C] hover:text-[#1E1E1E]"
-              }`}
+              className={`px-4 py-1.5 text-sm font-medium rounded-lg transition cursor-pointer ${filterStatus === tab.value
+                ? "bg-white text-[#1E1E1E] font-semibold border border-[#D6D6D6] "
+                : "text-[#5A687C] hover:text-[#1E1E1E]"
+                }`}
             >
               {tab.label}
             </button>
@@ -333,115 +333,154 @@ export default function PhoneNumbers() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto w-full -mx-4 sm:mx-0">
-        <div className="border border-[#D6D6D6] rounded-2xl overflow-hidden min-w-[800px]">
+      <div className="rounded-2xl border border-[#D6D6D6] overflow-auto mb-2">
+        <div className="overflow-x-auto">
           <table className="min-w-full border-separate border-spacing-0">
             <thead className="bg-[#F7F7F8]">
               <tr className="text-[#5A687C]">
                 <th className="px-3 sm:px-4 md:px-6 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.phone_numbers")}</th>
-                <th className="px-2 sm:px-3 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.country")}</th>
-                <th className="px-2 sm:px-3 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.status")}</th>
-                <th className="px-2 sm:px-3 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.total_call")}</th>
-                <th className="px-2 sm:px-3 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.direction")}</th>
-                <th className="px-2 sm:px-3 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.creation_date")}</th>
-                <th className="px-3 sm:px-4 md:px-6 text-center py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.actions")}</th>
+                <th className="px-2 sm:px-3 md:px-6 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.country")}</th>
+                <th className="px-2 sm:px-3 md:px-6 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.status")}</th>
+                <th className="px-2 sm:px-3 md:px-6 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.total_call")}</th>
+                <th className="px-2 sm:px-3 md:px-6 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.direction")}</th>
+                <th className="px-2 sm:px-3 md:px-6 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.creation_date")}</th>
+                <th className="px-3 sm:px-4 md:px-12 text-center py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.actions")}</th>
               </tr>
             </thead>
 
             <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
               {loading ? (
-                <tr className="h-34">
-                  <td colSpan="7" className="text-center py-8"><span className="loader" /></td>
+                <tr>
+                  <td colSpan="7" className="px-6 py-8 text-center">
+                    <span className="loader" />
+                  </td>
                 </tr>
               ) : filteredRows.length !== 0 ? (
-                filteredRows.map((row, index) => (
-                  <tr key={row.id} className="text-sm sm:text-base md:text-[16px] text-[#1E1E1E]">
-                    <td className="px-3 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm md:text-[16px] text-[#1E1E1E] font-[400] text-start break-words">{row.phone_number}</td>
-                    <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm md:text-[16px] text-[#5A687C] font-[400] text-start whitespace-nowrap">
-                      <div className="flex items-center gap-2 rounded-full">
-                        <span className={`fi fi-${getCountryFlagCode(row.country)} fis w-4 h-4 md:w-7 sm:h-7 rounded-full px-2`}></span>
-                        <span>{row.country}</span>
-                      </div>
-                    </td>
-                    <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm md:text-[16px]">
-                      <div className="flex items-center">
-                        <span
-                          className={`text-[10px] sm:text-xs md:text-[14px] font-[500] px-2 sm:px-3 py-1 rounded-full border whitespace-nowrap ${
-                            row.status === true
+                filteredRows.map((row, index) => {
+                  return (
+                    <tr key={row.id} className="text-sm sm:text-base md:text-[16px] text-[#1E1E1E]">
+                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-[#1E1E1E] font-[400] text-start break-words">
+                        {row.phone_number}
+                      </td>
+                      <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-[#5A687C] font-[400] text-start whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-5 overflow-hidden flex">
+                            <span
+                              className={`fi-${getCountryFlagCode(row.country)} w-full h-full rounded-4xl overflow-hidden`}
+                            ></span>
+                          </div>
+                          <div>
+                            <span>{row.country}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px]">
+                        <div className="flex items-center">
+                          <span
+                            className={`text-[10px] sm:text-xs md:text-[14px] font-[500] px-2 sm:px-3 py-1 rounded-full border whitespace-nowrap ${row.status === true
                               ? "border-[#34C759] text-[#34C759] bg-[#EBF9EE]"
                               : row.status === false && row.pending === true
-                              ? "border-[#FF9500] text-[#FF9500] bg-[#FFF4E6]"
-                              : "border-[#FF3B30] text-[#FF3B30] bg-[#FFEBEE]"
-                            } inline-flex items-center justify-center`}
+                                ? "border-[#FF9500] text-[#FF9500] bg-[#FFF4E6]"
+                                : "border-[#FF3B30] text-[#FF3B30] bg-[#FFEBEE]"
+                              } inline-flex items-center justify-center`}
+                          >
+                            {row.status === true
+                              ? "Active"
+                              : row.status === false && row.pending === true
+                                ? "Pending"
+                                : "Inactive"}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-[#5A687C] font-[400] text-start whitespace-nowrap">
+                        {row.total_calls}
+                      </td>
+                      <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-start">
+                        {row.direction === "inbound" ? <InboundCall active={true} /> : <OutboundCall active={true} />}
+                      </td>
+                      <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-[#5A687C] font-[400] text-start whitespace-nowrap">
+                        {DateFormat(row.creation_date)}
+                      </td>
+                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-4 text-center">
+                        <button
+                          onClick={() => setDeleteRow(row.id)}
+                          className="text-[#FF3B30] cursor-pointer hover:text-[#ff3a30b7]"
                         >
-                          {row.status === true 
-                            ? "Active" 
-                            : row.status === false && row.pending === true
-                            ? "Pending"
-                            : "Inactive"}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm md:text-[16px] text-[#5A687C] font-[400] text-start whitespace-nowrap">{row.total_calls}</td>
-                    <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm md:text-[16px] text-start">
-                      {row.direction === "inbound" ? <InboundCall active={true} /> : <OutboundCall active={true} />}
-                    </td>
-                    <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm md:text-[16px] text-[#5A687C] font-[400] text-start whitespace-nowrap">
-                      {DateFormat(row.creation_date)}
-                    </td>
-                    <td className="px-3 sm:px-4 py-3 sm:py-4 text-center">
-                      <button
-                        onClick={() => setDeleteRow(row.id)}
-                        className="text-[#FF3B30] cursor-pointer hover:text-[#ff3a30b7]"
-                      >
-                        <Trash2 size={16} className="sm:w-[18px] sm:h-[18px]" />
-                      </button>
-                    </td>
-                  </tr>
-                ))
+                          <Trash2 size={16} className="sm:w-[18px] sm:h-[18px]" />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
               ) : (
-                <tr className="h-34">
-                  <td colSpan="7" className="text-center text-xs sm:text-sm md:text-[16px] text-[#1E1E1E] py-8 px-4">
+                <tr>
+                  <td colSpan="7" className="px-6 py-8 text-center text-xs sm:text-sm md:text-[16px] text-[#5A687C]">
                     {t("phone.no_phonenumber_listed")}
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
-
-          <div className="flex flex-col sm:flex-row items-center justify-between bg-[#F7F7F8] px-3 sm:px-4 py-3 gap-3 sm:gap-4">
-            {/* pagination + row controls */}
-            <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto w-full sm:w-auto justify-center sm:justify-start">
-              <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm bg-white cursor-pointer whitespace-nowrap hover:bg-gray-50">
-                ‹ Prev
-              </button>
-              <button className="bg-[#675FFF] text-white rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm cursor-pointer min-w-[36px]">
-                1
-              </button>
-              <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm hover:bg-white cursor-pointer min-w-[36px]">
-                2
-              </button>
-              <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm hover:bg-white cursor-pointer min-w-[36px]">
-                3
-              </button>
-              <span className="text-[#000000] text-xs sm:text-sm px-1">…</span>
-              <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm hover:bg-white cursor-pointer min-w-[36px]">
-                10
-              </button>
-              <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm bg-white cursor-pointer whitespace-nowrap hover:bg-gray-50">
-                Next ›
-              </button>
-            </div>
-
-            {/* Right side – rows per page */}
-            <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-[#5A687C]">
-              <span className="hidden sm:inline">Rows per page:</span>
-              <button className="border border-[#D6D6D6] rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm text-[#000000] bg-white cursor-pointer whitespace-nowrap">5<span className="hidden sm:inline"> rows</span></button>
-              <button className="border border-[#D6D6D6] rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm text-[#000000] hover:bg-white cursor-pointer whitespace-nowrap">10</button>
-              <button className="border border-[#D6D6D6] rounded-lg px-2 sm:px-3 py-1 text-xs sm:text-sm text-[#000000] hover:bg-white cursor-pointer whitespace-nowrap">20</button>
-            </div>
-          </div>
         </div>
+
+        {/* Pagination */}
+        {filteredRows.length > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between bg-[#F7F7F8] px-4 sm:px-6 py-3 gap-4 sm:gap-0">
+
+  {/* Page Navigation Buttons */}
+  <div className="flex items-center gap-1 md:gap-2 w-full sm:w-auto overflow-x-auto scrollbar-hide py-1">
+    
+    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-2 py-1 text-xs sm:text-sm bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors whitespace-nowrap">
+      ‹ Prev
+    </button>
+
+    <button className="bg-[#675FFF] text-white rounded-lg px-2 py-1 text-xs sm:text-sm cursor-pointer min-w-[32px] sm:min-w-[36px] hover:bg-[#5E54FF] transition-colors whitespace-nowrap">
+      1
+    </button>
+
+    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-2 py-1 text-xs sm:text-sm cursor-pointer min-w-[32px] sm:min-w-[36px] hover:bg-gray-50 transition-colors whitespace-nowrap">
+      2
+    </button>
+
+    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-2 py-1 text-xs sm:text-sm cursor-pointer min-w-[32px] sm:min-w-[36px] hover:bg-gray-50 transition-colors whitespace-nowrap">
+      3
+    </button>
+
+    <span className="text-[#000000] text-xs sm:text-sm px-1 whitespace-nowrap">…</span>
+
+    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-2 py-1 text-xs sm:text-sm cursor-pointer min-w-[32px] sm:min-w-[36px] hover:bg-gray-50 transition-colors whitespace-nowrap">
+      10
+    </button>
+
+    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-2 py-1 text-xs sm:text-sm bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors whitespace-nowrap">
+      Next ›
+    </button>
+  </div>
+
+  {/* Rows per page */}
+  <div className="flex items-center gap-2 text-xs sm:text-sm text-[#5A687C] w-full sm:w-auto justify-center sm:justify-end">
+
+    <span>Rows per page:</span>
+
+    <div className="flex gap-1">
+      <button className="border rounded-lg px-2 py-1 text-xs sm:text-sm cursor-pointer bg-white border-[#D6D6D6] text-[#000000] hover:bg-gray-50 transition-colors whitespace-nowrap">
+        5 rows
+      </button>
+
+      <button className="border rounded-lg px-2 py-1 text-xs sm:text-sm cursor-pointer bg-transparent border-[#D6D6D6] text-[#5A687C] hover:bg-white transition-colors whitespace-nowrap">
+        10
+      </button>
+
+      <button className="border rounded-lg px-2 py-1 text-xs sm:text-sm cursor-pointer bg-transparent border-[#D6D6D6] text-[#5A687C] hover:bg-white transition-colors whitespace-nowrap">
+        20
+      </button>
+    </div>
+  </div>
+
+</div>
+
+
+        )}
       </div>
 
       {/* Modal */}
@@ -562,11 +601,10 @@ export default function PhoneNumbers() {
                 )}
               </div>
 
-              <div className={`text-sm rounded-lg px-4 py-3 flex items-center gap-2 ${
-                activeTab === 'outbound' 
-                  ? 'bg-[#F7F7FF] text-[#675FFF]' 
-                  : 'bg-[#FEF8F4] text-[#F17B2B]'
-              }`}>
+              <div className={`text-sm rounded-lg px-4 py-3 flex items-center gap-2 ${activeTab === 'outbound'
+                ? 'bg-[#F7F7FF] text-[#675FFF]'
+                : 'bg-[#FEF8F4] text-[#F17B2B]'
+                }`}>
                 <svg width="21" height="22" viewBox="0 0 21 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M9.84375 10.3438L9.87963 10.3262C9.99183 10.2702 10.1177 10.2475 10.2425 10.2608C10.3672 10.2741 10.4855 10.3228 10.5833 10.4012C10.6812 10.4797 10.7545 10.5845 10.7947 10.7034C10.8348 10.8222 10.84 10.95 10.8098 11.0717L10.1902 13.5533C10.1598 13.675 10.1648 13.803 10.2049 13.922C10.2449 14.0409 10.3182 14.146 10.4161 14.2245C10.514 14.3031 10.6324 14.3519 10.7572 14.3652C10.8821 14.3785 11.0081 14.3558 11.1204 14.2996L11.1562 14.2812M18.375 11C18.375 12.0342 18.1713 13.0582 17.7756 14.0136C17.3798 14.9691 16.7997 15.8372 16.0685 16.5685C15.3372 17.2997 14.4691 17.8798 13.5136 18.2756C12.5582 18.6713 11.5342 18.875 10.5 18.875C9.46584 18.875 8.44181 18.6713 7.48637 18.2756C6.53093 17.8798 5.6628 17.2997 4.93153 16.5685C4.20027 15.8372 3.6202 14.9691 3.22445 14.0136C2.82869 13.0582 2.625 12.0342 2.625 11C2.625 8.91142 3.45469 6.90838 4.93153 5.43153C6.40838 3.95469 8.41142 3.125 10.5 3.125C12.5886 3.125 14.5916 3.95469 16.0685 5.43153C17.5453 6.90838 18.375 8.91142 18.375 11ZM10.5 7.71875H10.507V7.72575H10.5V7.71875Z" stroke={activeTab === 'outbound' ? '#675FFF' : '#F17B2B'} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
