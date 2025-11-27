@@ -302,7 +302,7 @@ export default function PhoneNumbers() {
       </div>
 
       {/* Filter and Search */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         {/* Filter Tabs */}
         <div className="flex items-center gap-1 bg-[#F3F4F6] border border-[#D6D6D6] rounded-lg p-0.5 ">
           {filterTabs.map((tab) => (
@@ -459,8 +459,6 @@ export default function PhoneNumbers() {
 
   {/* Rows per page */}
   <div className="flex items-center gap-2 text-xs sm:text-sm text-[#5A687C] w-full sm:w-auto justify-center sm:justify-end">
-
-    <span>Rows per page:</span>
 
     <div className="flex gap-1">
       <button className="border rounded-lg px-2 py-1 text-xs sm:text-sm cursor-pointer bg-white border-[#D6D6D6] text-[#000000] hover:bg-gray-50 transition-colors whitespace-nowrap">

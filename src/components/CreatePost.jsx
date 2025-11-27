@@ -4,12 +4,12 @@ import { useTranslation } from "react-i18next";
 import DateTimePicker from "./DateTimePicker";
 import { useState, useRef, useEffect } from "react";
 import { publishContent, saveDraftContent, scheduleContent, editScheduledContent } from '../api/contentCreationAgent';
-import { getInstaAccounts, getLinkedInAccounts } from '../api/brainai';
+import { getInstaAccounts, getLinkedInAccounts, getTikTokAccounts } from '../api/brainai';
 import { SelectDropdown } from "./Dropdown";
 import { Duplicate } from "../icons/icons";
 import instagram from '../assets/svg/instagram.svg'
 import linkedin from '../assets/svg/linkedin.svg'
-import twitter from '../assets/svg/twitter.svg'
+import twitter from '../assets/svg/tiktok.svg'
 
 export default function CreatePost({ onClose, editData }) {
   const { t } = useTranslation();
@@ -51,21 +51,33 @@ export default function CreatePost({ onClose, editData }) {
     }
   }, [editData]);
 
-  // Fetch Instagram accounts when platform is 'instagram'
+  // Fetch accounts when platform is selected
   useEffect(() => {
     // Clear selected account when platform changes
     setSelectedAccount("");
     
-    if (platform === "instagram" || platform === "linkedin") {
+    if (platform === "instagram" || platform === "linkedin" || platform === "X") {
       setAccountsOptionsLoading(true);
       setAccountsError(null);
       const fetchAccounts = async () => {
         try {
-          const accounts = platform === "instagram" ? await getInstaAccounts() : await getLinkedInAccounts()
-          const accountsData = platform === "instagram" ? accounts?.data?.insta_account_info : accounts?.data?.linkedin_account_info;
+          let accounts;
+          let accountsData;
+          
+          if (platform === "instagram") {
+            accounts = await getInstaAccounts();
+            accountsData = accounts?.data?.insta_account_info;
+          } else if (platform === "linkedin") {
+            accounts = await getLinkedInAccounts();
+            accountsData = accounts?.data?.linkedin_account_info;
+          } else if (platform === "X") {
+            accounts = await getTikTokAccounts();
+            accountsData = accounts?.data?.tiktok_account_info;
+          }
+          
           setAccountsOptions(accountsData);
         } catch (err) {
-          setAccountsError("Failed to fetch Instagram accounts");
+          setAccountsError("Failed to fetch accounts");
         } finally {
           setAccountsOptionsLoading(false);
         }
@@ -90,10 +102,22 @@ export default function CreatePost({ onClose, editData }) {
       return [{ key: '', label: 'Loading...' }];
     }
     if (accountsOptions?.length > 0) {
-      return accountsOptions.map(acc => ({
-        key: platform === "instagram" ? acc.instagram_user_id : acc.linkedin_id,
-        label: platform === "instagram" ? acc.username : acc.name
-      }));
+      return accountsOptions.map(acc => {
+        let key, label;
+        
+        if (platform === "instagram") {
+          key = acc.instagram_user_id;
+          label = acc.username;
+        } else if (platform === "linkedin") {
+          key = acc.linkedin_id;
+          label = acc.name;
+        } else if (platform === "X") {
+          key = acc.tiktok_id;
+          label = acc.name;
+        }
+        
+        return { key, label };
+      });
     }
     return [];
   }
@@ -167,13 +191,25 @@ export default function CreatePost({ onClose, editData }) {
     return '';
   };
 
+  const normalizePlatform = (platform) => {
+    if (!platform) return platform;
+    const platformMap = {
+      "X": "tiktok",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn"
+    };
+    return platformMap[platform] || platform;
+  };
+
   // Handle Draft button click
   const handleSaveDraft = async () => {
     let newErrors = {};
     if (!text) newErrors.text = `${t("constance.post_text") + " " + t("is_required")}`;
     if (!platform) newErrors.platform = `${t("constance.platform") + " " + t("is_required")}`;
     if (!selectedAccount) newErrors.selectedAccount = `${t("constance.account") + " " + t("is_required")}`;
-    if (platform === "instagram" && !document && !(editData && editData.document)) newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
+    if ((platform === "instagram" || platform === "X") && !document && !(editData && editData.document)) {
+      newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
+    }
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
     try {
@@ -189,7 +225,7 @@ export default function CreatePost({ onClose, editData }) {
         const payload = {
           text,
           document,
-          platform,
+          platform: normalizePlatform(platform),
           platform_unique_id: selectedAccount,
           media_type: getMediaType(document),
         };
@@ -212,7 +248,7 @@ export default function CreatePost({ onClose, editData }) {
       const payload = {
         text,
         document,
-        platform,
+        platform: normalizePlatform(platform), // Normalize platform name for API
         platform_unique_id: selectedAccount,
         media_type: getMediaType(document),
       };
@@ -240,7 +276,9 @@ export default function CreatePost({ onClose, editData }) {
     if (!text) newErrors.text = `${t("constance.post_text") + " " + t("is_required")}`;
     if (!platform) newErrors.platform = `${t("constance.platform") + " " + t("is_required")}`;
     if (!selectedAccount) newErrors.selectedAccount = `${t("constance.account") + " " + t("is_required")}`;
-    if (platform === "instagram" && !document && !(editData && editData.document)) newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
+    if ((platform === "instagram" || platform === "X") && !document && !(editData && editData.document)) {
+      newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
+    }
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
     try {
@@ -249,7 +287,7 @@ export default function CreatePost({ onClose, editData }) {
       const payload = {
         text,
         document,
-        platform,
+        platform: normalizePlatform(platform), // Normalize platform name for API
         platform_unique_id: selectedAccount,
         media_type: getMediaType(document),
       };
@@ -279,7 +317,9 @@ export default function CreatePost({ onClose, editData }) {
     if (!text) newErrors.text = `${t("constance.post_text") + " " + t("is_required")}`;
     if (!platform) newErrors.platform = `${t("constance.platform") + " " + t("is_required")}`;
     if (!selectedAccount) newErrors.selectedAccount = `${t("constance.account") + " " + t("is_required")}`;
-    if (platform === "instagram" && !document && !(editData && editData.document)) newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
+    if ((platform === "instagram" || platform === "X") && !document && !(editData && editData.document)) {
+      newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
+    }
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
     try {
@@ -307,7 +347,7 @@ export default function CreatePost({ onClose, editData }) {
         const payload = {
           text,
           document,
-          platform,
+          platform: normalizePlatform(platform), // Normalize platform name for API
           scheduled_date: scheduledDate,
           scheduled_time: scheduledTime,
           platform_unique_id: selectedAccount,
@@ -332,7 +372,7 @@ export default function CreatePost({ onClose, editData }) {
       const payload = {
         text,
         document,
-        platform,
+        platform: normalizePlatform(platform), // Normalize platform name for API
         scheduled_date: scheduledDate,
         scheduled_time: scheduledTime,
         platform_unique_id: selectedAccount,
@@ -396,7 +436,7 @@ export default function CreatePost({ onClose, editData }) {
                     name="platform"
                     options={[
                       { key: "linkedin", label: "Linkedin" },
-                      { key: "X", label: "Twitter" },
+                      { key: "X", label: "TikTok" },
                       { key: "instagram", label: "Instagram" },
                     ]}
                     value={platform}

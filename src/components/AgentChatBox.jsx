@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
-import { X } from "lucide-react"
+import { X, Plus } from "lucide-react"
 import { GoDotFill } from "react-icons/go"
+import { RxHamburgerMenu } from 'react-icons/rx'
 import { v4 as uuidv4 } from "uuid"
 import {
   BulbIcon,
@@ -26,6 +27,10 @@ import { formatTimeAgo } from "../utils/TimeFormat"
 import { useTranslation } from "react-i18next"
 import ChatInput from "./ChatInput"
 import { useLocation } from "react-router-dom"
+import { getContentCreationChats } from "../api/contentCreationAgent"
+import ChatIdeaSvg from '../assets/svg/ChatBulb.svg'
+import ChatFile from '../assets/svg/ChatFile.svg'
+import ChatSearch from '../assets/svg/ChatSearch.svg'
 
 const AgentChatBox = ({ listedProps }) => {
   const {
@@ -97,6 +102,15 @@ const AgentChatBox = ({ listedProps }) => {
     setSearchQuery(e.target.value)
   }
 
+  const handleHistoryClick = async () => {
+    try {
+      const response = await getContentCreationChats();
+      console.log("Content creation chats:", response);
+    } catch (error) {
+      console.error("Error fetching content creation chats:", error);
+    }
+  }
+
   const filteredChatList = chatList?.filter((conversation) => {
     const searchTerm = searchQuery.toLowerCase()
     const conversationName = (conversation.name || t("account_chat")).toLowerCase()
@@ -106,7 +120,7 @@ const AgentChatBox = ({ listedProps }) => {
   const sendToSocket = (msgObject) => {
     console.log(WebSocket.OPEN, WebSocket.CONNECTING)
     // const messageToSend = input
-    const directValue = ({message:input})
+    const directValue = ({ message: input })
     const messageToSend = msgObject ? JSON.stringify(msgObject) : JSON.stringify(directValue)
     if (!messageToSend) return
 
@@ -161,12 +175,14 @@ const AgentChatBox = ({ listedProps }) => {
         const fileIdFromParsed = parsedMessage?.file_id || parsedMessage?.message?.file_id || parsedMessage?.message?.file?.file_id || parsedMessage?.attachment?.file_id || parsedMessage?.message?.attachment?.file_id || null;
         const filenameFromParsed = parsedMessage?.filename || parsedMessage?.message?.filename || parsedMessage?.message?.file?.filename || parsedMessage?.attachment?.filename || parsedMessage?.message?.attachment?.filename || null;
 
+        const messageTimestamp = parsedMessage?.message_at ? new Date(parsedMessage.message_at) : new Date();
         const userMessage = {
           id: uuidv4(),
           isUser: false,
           content: parsedMessage?.agent,
           sender: "Ecosystem.ai",
-          time: formatTimeAgo(parsedMessage?.message_at),
+          time: formatTimeAgo(messageTimestamp),
+          timestamp: messageTimestamp, // Store original timestamp
           status: "Read",
           ...(fileIdFromParsed && { file_id: fileIdFromParsed }),
           ...(filenameFromParsed && { filename: filenameFromParsed }),
@@ -240,12 +256,14 @@ const AgentChatBox = ({ listedProps }) => {
         const fileIdFromParsed2 = parsedMessage?.file_id || parsedMessage?.message?.file_id || parsedMessage?.message?.file?.file_id || parsedMessage?.attachment?.file_id || parsedMessage?.message?.attachment?.file_id || null;
         const filenameFromParsed2 = parsedMessage?.filename || parsedMessage?.message?.filename || parsedMessage?.message?.file?.filename || parsedMessage?.attachment?.filename || parsedMessage?.message?.attachment?.filename || null;
 
+        const messageTimestamp = parsedMessage?.message_at ? new Date(parsedMessage.message_at) : new Date();
         const userMessage = {
           id: uuidv4(),
           isUser: false,
           content: parsedMessage?.agent ?? parsedMessage?.error,
           sender: "Ecosystem.ai",
-          time: formatTimeAgo(parsedMessage?.message_at),
+          time: formatTimeAgo(messageTimestamp),
+          timestamp: messageTimestamp, // Store original timestamp
           status: "Read",
           ...(fileIdFromParsed2 && { file_id: fileIdFromParsed2 }),
           ...(filenameFromParsed2 && { filename: filenameFromParsed2 }),
@@ -374,10 +392,50 @@ const AgentChatBox = ({ listedProps }) => {
       .replace(/\*(.*?)\*/g, "<em>$1</em>")
   }
 
+  const formatMessageTime = (timeStr) => {
+    if (!timeStr) return "";
+    
+    // If it contains "at", extract the time part (e.g., "Today at 4:32 PM" -> "4:32 PM")
+    if (timeStr.includes("at")) {
+      return timeStr.split("at")[1]?.trim() || timeStr;
+    }
+    
+    // For "just now" or "X mins ago", show current time
+    if (timeStr.toLowerCase().includes("just now") || timeStr.includes("min")) {
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      return `${hours}:${minutes} ${ampm}`;
+    }
+    
+    return timeStr;
+  }
+
   const suggestionsChat = [
-    { label: staticSuggestions[0].label, icon: <BulbIcon />, key: staticSuggestions[0].key, agent_type: staticSuggestions[0].agent_type },
-    { label: staticSuggestions[1].label, icon: <EditIcon />, key: staticSuggestions[1].key, agent_type: staticSuggestions[1].agent_type },
-    { label: staticSuggestions[2].label, icon: <SearchChatIcon />, key: staticSuggestions[2].key, agent_type: staticSuggestions[2].agent_type },
+    {
+      label: staticSuggestions[0].label,
+      icon: ChatIdeaSvg,
+      iconBg: "bg-[#2D9F75]",
+      key: staticSuggestions[0].key,
+      agent_type: staticSuggestions[0].agent_type
+    },
+    {
+      label: staticSuggestions[1].label,
+      icon: ChatFile,
+      iconBg: "bg-[#4D6FFB]",
+      key: staticSuggestions[1].key,
+      agent_type: staticSuggestions[1].agent_type
+    },
+    {
+      label: staticSuggestions[2].label,
+      icon: ChatSearch,
+      iconBg: "bg-[#37BAE9]",
+      key: staticSuggestions[2].key,
+      agent_type: staticSuggestions[2].agent_type
+    },
   ];
 
 
@@ -417,117 +475,28 @@ const AgentChatBox = ({ listedProps }) => {
   }
 
   return (
-    <div className="w-full h-[calc(100vh-90px)] pr-2 flex flex-col gap-3">
-      <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{t("seo.chat")}</h1>
+    <div className="w-full h-[calc(100vh-90px)] px-6 py-6 flex flex-col gap-3">
+      <div className="flex items-center justify-between px-6">
+        <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{t("seo.chat")}</h1>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleSelectNewChat}
+            className="flex items-center gap-2 cursor-pointer bg-[#675FFF] text-white px-4 py-2 rounded-lg font-[500] text-sm hover:bg-[#5a4fe6] transition-colors"
+          >
+            <Plus size={16} />
+            <span>{t("seo.new_chat")}</span>
+          </button>
+          <button
+            onClick={handleHistoryClick}
+            className="flex items-center gap-2 cursor-pointer bg-white text-[#1E1E1E] border border-[#E1E4EA] px-4 py-2 rounded-lg font-[500] text-sm hover:bg-[#F4F5F6] transition-colors"
+          >
+            <RxHamburgerMenu size={16} />
+            <span>{t("History") || "History"}</span>
+          </button>
+        </div>
+      </div>
       <div className="h-full overflow-auto flex pb-2 flex-col">
-        <div className="flex bg-white h-full rounded-2xl border-[#E1E4EA] border">
-          {/* Sidebar */}
-          <div className="w-[240px] bg-[#FFFFFF] h-full flex flex-col gap-2 rounded-l-2xl border-[#E1E4EA] border-r">
-            <div className="px-4 py-2">
-              <div className="relative flex-1">
-                <div className="absolute left-3 top-[25%]">
-                  <SearchIcon />
-                </div>
-                <input
-                  type="text"
-                  placeholder={t("seo.search_chat_placeholder")}
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  className="w-full text-[#5A687C] pl-9 pr-3 py-[6px] text-sm border border-[#E1E4EA] bg-white focus:outline-none focus:border-[#675FFF] rounded-md"
-                />
-              </div>
-            </div>
-
-            <div className="w-[240px] h-full max-h-[90%] overflow-y-auto">
-              <div className="flex px-4 pb-4">
-                <button
-                  onClick={handleSelectNewChat}
-                  className="text-[#1E1E1E] font-[400] px-1 cursor-pointer py-[6px] w-full text-[14px] flex items-center gap-2 hover:bg-[#F0EFFF] hover:rounded-lg"
-                >
-                  <Edit chat={true} /> <span>{t("seo.new_chat")}</span>
-                </button>
-              </div>
-              <hr style={{ color: "#E1E4EA" }} />
-              <div ref={moreActionsRef} className="px-4 py-3">
-                {loadingChatsList ? (
-                  <div className="flex justify-center p-4 items-center w-full">
-                    <span className="loader" />{" "}
-                  </div>
-                ) : filteredChatList?.length > 0 ? (
-                  filteredChatList?.slice().reverse().map((conversation, index) => (
-                    <div key={index} className="flex relative items-center">
-                      <div
-                        className={`flex w-full justify-between group items-center gap-3 my-1 py-[6px] px-4 cursor-pointer ${activeConversation === conversation.chat_id
-                            ? "bg-[#F0EFFF] text-[#1E1E1E] rounded-lg"
-                            : "hover:bg-[#F0EFFF]  hover:rounded-lg "
-                          }`}
-                        onClick={() => {
-                          handleSelectChat(conversation.chat_id)
-                          setActiveDropdown(null)
-                        }}
-                      >
-                        <p
-                          className={`text-[14px] truncate font-[400] group-hover:text-[#1E1E1E] ${activeConversation === conversation.chat_id ? "text-[#1E1E1E]" : "text-[#5A687C]"}`}
-                        >
-                          {conversation.name === null ? `${t("account_chat")}` : conversation.name}
-                        </p>
-                      </div>
-                      <div className="absolute right-2">
-                        <button
-                          onClick={() => handleDropdownClick(index)}
-                          className={`py-1 px-1 cursor-pointer relative hover:bg-[#fff] hover:rounded-sm ${activeConversation === conversation.chat_id && "bg-[#fff] rounded-sm"}`}
-                        >
-                          <ThreeDots />
-                        </button>
-                        {activeDropdown === index && (
-                          <div className="absolute right-0 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[99999]">
-                            <div className="py-1">
-                              <button
-                                className="flex w-full group text-left cursor-pointer px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] hover:rounded-lg font-[500]"
-                                onClick={() => {
-                                  setEditData(conversation)
-                                  setName(conversation?.name !== null ? conversation?.name : "Accounting Chat")
-                                  setActiveDropdown(null)
-                                }}
-                              >
-                                <div className="flex items-center gap-2">
-                                  <div className="group-hover:hidden">
-                                    <Edit />
-                                  </div>{" "}
-                                  <div className="hidden group-hover:block">
-                                    <Edit status={true} />
-                                  </div>{" "}
-                                  <span>{t("rename")}</span>{" "}
-                                </div>
-                              </button>
-                              <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                              <div className="py-2">
-                                <button
-                                  className="flex w-full cursor-pointer text-left px-4 hover:rounded-lg py-2 text-sm text-red-600 hover:bg-[#F4F5F6] font-[500]"
-                                  onClick={async () => {
-                                    await handleDelete(conversation.chat_id)
-                                    setActiveDropdown(null)
-                                  }}
-                                >
-                                  <div className="flex items-center gap-2">
-                                    {<Delete />} <span>{t("delete")}</span>{" "}
-                                  </div>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))
-                ) : searchQuery ? (
-                  <p className="text-[#5A687C] font-[400] text-[12px] text-center pt-8">{t("tara.no_chat_history")}</p>
-                ) : (
-                  <p className="text-[#5A687C] font-[400] text-[12px] text-center pt-8">{t("tara.no_chat_history")}</p>
-                )}
-              </div>
-            </div>
-          </div>
+        <div className="h-full rounded-2xl">
           {/* Main Content */}
           {openChat ? (
             loadingChats ? (
@@ -535,9 +504,9 @@ const AgentChatBox = ({ listedProps }) => {
                 <span className="loader" />{" "}
               </div>
             ) : (
-              <div className="flex-1 h-full max-w-[80%] mx-auto flex justify-between flex-col pt-2">
+              <div className="flex-1 h-full max-w-5xl mx-auto flex justify-between flex-col pt-4">
                 {/* Messages */}
-                <div ref={chatRef} className="flex-1 p-4 overflow-y-auto">
+                <div ref={chatRef} className="flex-1 p-4 overflow-y-auto scrollbar-hide">
                   <div className="space-y-6">
                     {messages?.length > 0 ? (
                       messages.map((message) => (
@@ -549,44 +518,23 @@ const AgentChatBox = ({ listedProps }) => {
                               </div>
                             ) : (
                               <>
-                                {!message.isUser && (
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <div>
+                                <div className={`flex items-start gap-2 ${message.isUser ? "justify-end" : ""}`}>
+                                  {!message.isUser && (
+                                    <div className="flex-shrink-0">
                                       <img
                                         src={agentLogo || "/placeholder.svg"}
                                         alt={agentName}
-                                        className="object-fit"
+                                        className="w-8 h-8 object-fit rounded-full"
                                       />
                                     </div>
-                                    <p className="text-[12px] font-[600] text-[#5A687C]">{agentName}</p>
-                                    <span className="text-[12px] text-[#5A687C] flex items-center gap-1">
-                                      <GoDotFill color="#E1E4EA" className="flex-shrink-0" />
-                                      {message.time}
-                                    </span>
-                                  </div>
-                                )}
+                                  )}
 
-                                {message.isUser && (
-                                  <div className="flex items-center gap-1 mt-1 ml-auto">
-                                    <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] text-[#675FFF] font-[600]">
-                                      {userDetails?.user?.firstName[0]}
-                                    </div>
-                                    <div className="text-[12px] font-[600] text-[#5A687C]">
-                                      {userDetails?.user?.firstName}
-                                    </div>
-                                    <span className="text-[12px] text-[#5A687C] flex items-center gap-1">
-                                      <GoDotFill color="#E1E4EA" />
-                                      {message.time}
-                                    </span>
-                                  </div>
-                                )}
-
-                                <div
-                                  className={`max-w-[70%] w-fit text-[12px] font-[400] p-3 ${!message.isUser
-                                      ? "my-1 bg-[#F2F2F7] text-[#5A687C] rounded-b-[10px] rounded-r-[10px]"
-                                      : "ml-auto my-1 bg-[#675FFF] text-[#fff] rounded-b-[10px] rounded-l-[10px]"
-                                    }`}
-                                >
+                                  <div
+                                    className={`max-w-[70%] w-fit text-[12px] font-[400] p-3 relative ${!message.isUser
+                                      ? "my-1 bg-[#FFFFFF] text-[#5A687C] rounded-b-[10px] rounded-r-[10px]"
+                                      : "my-1 bg-[#675FFF] text-[#fff] rounded-b-[10px] rounded-l-[10px]"
+                                      }`}
+                                  >
                                   <p
                                     className="text-[16px] !whitespace-pre-wrap"
                                     dangerouslySetInnerHTML={{ __html: parseMarkdown(message.content) }}
@@ -596,8 +544,8 @@ const AgentChatBox = ({ listedProps }) => {
                                   {(message.file_id || message.filename) && (
                                     <div
                                       className={`mt-3 flex items-center gap-2 px-3 py-2 rounded-xl shadow-sm border ${!message.isUser
-                                          ? "bg-white border-[#E2E8F0] text-[#374151]"
-                                          : "bg-[#41a7e2] border-transparent text-white"
+                                        ? "bg-white border-[#E2E8F0] text-[#374151]"
+                                        : "bg-[#41a7e2] border-transparent text-white"
                                         }`}
                                     >
                                       <img
@@ -612,42 +560,51 @@ const AgentChatBox = ({ listedProps }) => {
                                       </div>
                                     </div>
                                   )}
+                                  </div>
+
+                                  {message.isUser && (
+                                    <div className="flex-shrink-0">
+                                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-[11px] text-[#675FFF] font-[600]">
+                                        {userDetails?.user?.firstName[0]}
+                                      </div>
+                                    </div>
+                                  )}
                                 </div>
 
                                 {message.id !== "typing" && !message.isUser && (
-                                  <div className="my-1 flex items-center gap-1">
+                                  <div className="my-1 flex items-center ml-10 ">
                                     <button
                                       title="Copy message"
                                       onClick={() => handleCopyMessage(message.content)}
-                                      className="hover:bg-gray-200 p-1 rounded"
+                                      className="hover:bg-gray-200 p-1 rounded cursor-pointer"
                                     >
                                       <Duplicate />
                                     </button>
                                     <button
                                       title="Like"
                                       onClick={() => handleLikeMessage(message.id)}
-                                      className={`hover:bg-gray-200 p-1 rounded ${likedMessages[message.id] ? "text-green-600" : ""}`}
+                                      className={`hover:bg-gray-200 p-1 cursor-pointer rounded ${likedMessages[message.id] ? "text-green-600" : ""}`}
                                     >
                                       <LikeIcon />
                                     </button>
                                     <button
                                       title="Dislike"
                                       onClick={() => handleDislikeMessage(message.id)}
-                                      className={`hover:bg-gray-200 p-1 rounded ${dislikedMessages[message.id] ? "text-red-600" : ""}`}
+                                      className={`hover:bg-gray-200 p-1 cursor-pointer rounded ${dislikedMessages[message.id] ? "text-red-600" : ""}`}
                                     >
                                       <DislikeIcon />
                                     </button>
                                     <button
                                       title="Speak"
                                       onClick={() => handleSpeakMessage(message.content)}
-                                      className="hover:bg-gray-200 p-1 rounded"
+                                      className="hover:bg-gray-200 p-1 rounded cursor-pointer"
                                     >
                                       <SpeakerIcon />
                                     </button>
                                     <button
                                       title="Resend"
                                       onClick={() => handleResendMessage(message.content)}
-                                      className="hover:bg-gray-200 p-1 rounded"
+                                      className="hover:bg-gray-200 p-1 rounded cursor-pointer"
                                     >
                                       <SendIcon />
                                     </button>
@@ -659,22 +616,47 @@ const AgentChatBox = ({ listedProps }) => {
                         </div>
                       ))
                     ) : (
-                      <div className="flex flex-col gap-6 p-5">
-                        <div className="text-[#000000] text-[24px] font-[400]">
-                          <h1>
-                            {t("tara.hey")} <span style={{ color: nameColor }}>{agentName}</span>
-                          </h1>
-                          <h1>{t("tara.help_you")}</h1>
+                      <div className="flex flex-col items-center justify-center h-full gap-8 px-4">
+                        {/* Agent Avatar */}
+                        <div className="flex justify-center">
+                          <div className="relative flex items-center justify-center">
+                            <div className="absolute w-20 h-20 rounded-full bg-white -z-10"></div>
+                            <div className="w-18 h-18 rounded-full bg-[#FFE4C5] flex items-center justify-center overflow-hidden">
+                              <img
+                                src={agentLogo || "/placeholder.svg"}
+                                alt={agentName}
+                                className="w-16 h-16 object-contain rounded-full scale-120"
+                              />
+                            </div>
+                          </div>
                         </div>
-                        <div className="w-full flex flex-wrap gap-2">
-                          {suggestionsChat.map((e) => (
+
+
+                        {/* Welcome Text */}
+                        <div className="flex flex-col items-center gap-3 text-center">
+                          <h1 className="text-[#1E1E1E] text-[28px] font-[600]">
+                            {t("tara.how_can_i_help") || "How can I help you today?"}
+                          </h1>
+                          <p className="text-[#5A687C] text-[16px] font-[400] max-w-2xl">
+                            {t("tara.start_typing") || "Start typing your question or choose a suggested topic below."}
+                          </p>
+                        </div>
+
+                        {/* Suggestions */}
+                        <div className="w-full max-w-5xl flex flex-wrap justify-center gap-4">
+                          {suggestionsChat.map((e, index) => (
                             <div
                               key={e.key}
                               onClick={() => handleSelectMessage(e.key)}
-                              className="border cursor-pointer w-full md:w-[45%] lg:w-[32%] flex items-center gap-[12px] border-[#E1E4EA] p-[14px] rounded-[7px]"
+                              className="cursor-pointer w-full sm:w-[calc(50%-8px)] lg:w-[calc(33.333%-11px)] bg-white rounded-xl shadow-sm hover:shadow-md transition-all px-6 py-4 flex flex-col gap-4"
                             >
-                              <div>{e.icon}</div>
-                              <p className="text-[#000000] font-[400] text-[14px]">{e.label}</p>
+                              {/* Icon with colored square background */}
+                              <div className={`${e.iconBg} w-8 h-8 rounded-xl flex items-center justify-center`}>
+                                <img src={e.icon} alt="" className="w-5 h-5 object-contain" />
+                              </div>
+
+                              {/* Question text */}
+                              <p className="text-[#1E1E1E] font-[400] text-[14px] leading-relaxed">{e.label}</p>
                             </div>
                           ))}
                         </div>

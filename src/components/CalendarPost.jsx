@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react"
-import { ChevronLeft, ChevronRight, X } from "lucide-react"
+import { useEffect, useState, useRef } from "react"
+import { ChevronLeft, ChevronRight, X, Search, ChevronDown } from "lucide-react"
 import successImg from "../assets/svg/success.svg"
 // removed API fallback; events now come exclusively from props
 import { SelectDropdown } from "./Dropdown"
 import { useTranslation } from "react-i18next";
 
-export default function CalendarPost({status=true, calenderData=[]}) {
+export default function CalendarPost({ status = true, calenderData = [] }) {
   // Get current date information
   const today = new Date()
   const { t } = useTranslation();
@@ -16,11 +16,27 @@ export default function CalendarPost({status=true, calenderData=[]}) {
   const [currentView, setCurrentView] = useState("month");
   const [newEvents, setNewEvents] = useState([]);
   const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [showDateDropdown, setShowDateDropdown] = useState(false)
 
 
   // Week view state
   const [selectedWeekStart, setSelectedWeekStart] = useState(0)
   const [selectedWeekEnd, setSelectedWeekEnd] = useState(0);
+  const dateDropdownRef = useRef(null);
+
+  // Handle click outside to close date dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dateDropdownRef.current && !dateDropdownRef.current.contains(event.target)) {
+        setShowDateDropdown(false);
+      }
+    };
+    if (showDateDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showDateDropdown]);
 
   useEffect(() => {
     if (newEvents.length > 0) {
@@ -155,7 +171,16 @@ export default function CalendarPost({status=true, calenderData=[]}) {
     "11PM",
   ]
 
-  const calendarOptions = [{ label: `${t("emailings.month_view")}`, key: "month" }, { label: `${t("emailings.week_view")}`, key: "week" }, { label: `${t("emailings.day_view")}`, key: "day" }]
+  const calendarOptions = [
+    { label: "Monthly", key: "month" },
+    { label: "Weekly", key: "week" },
+    { label: "Daily", key: "day" }
+  ]
+
+  // Get current month/year display text
+  const getCurrentDateText = () => {
+    return `${monthNames[currentMonth]} ${currentYear}`
+  }
 
   // Local dummy data for development. Same keys as API: platform, scheduled_type, scheduled_date, scheduled_time
   // Normalize incoming events (derive date/time from published_time when scheduled values are "None")
@@ -331,7 +356,7 @@ export default function CalendarPost({status=true, calenderData=[]}) {
         }
       case "publish":
         return {
-          bg: "bg-[#E1F7E3]",
+          bg: "bg-[]",
           border: "border-[#34C759]",
           text: "text-[#34C759]",
         }
@@ -365,7 +390,7 @@ export default function CalendarPost({status=true, calenderData=[]}) {
       <div className="grid grid-cols-7 border-t border-[#E1E4EA]">
         {/* Header row with days of the week */}
         {daysOfWeek.map((day) => (
-          <div key={day} className="py-2 text-center border-r border-b border-[#E1E4EA] font-medium text-sm">
+          <div key={day} className="py-2 text-center border-r border-b border-[#E1E4EA] font-medium text-sm text-[#868C98]">
             {day}
           </div>
         ))}
@@ -404,9 +429,9 @@ export default function CalendarPost({status=true, calenderData=[]}) {
                 {dayEvents.map((event, eventIndex) => {
                   const statusStyles = getStatusStyles(event.scheduled_type)
                   return (
-                    <div key={eventIndex} className={`text-xs ${statusStyles.bg} flex flex-col items-start gap-0 p-2 mb-1 rounded`}>
-                      <div className="text-[12px] font-[700] text-[#1E1E1E]">{event.platform}</div>
-                      <div className={`mt-0.5 text-[11px] font-[600] ${statusStyles.text} rounded-full border ${statusStyles.border} px-1 bg-white`}>
+                    <div key={eventIndex} className={`text-xs ${statusStyles.bg} flex flex-col items-start p-2 mb-1 rounded gap-1`}>
+                      <div className="text-sm font-[700] text-[#1E1E1E] w-auto border border-transparent border-xl bg-black/10 rounded-sm  px-3">{event.platform}</div>
+                      <div className={`mt-0.5 w-70% text-sm font-[600] ${statusStyles.text} rounded-full border ${statusStyles.border} px-3  bg-[#EBFAEF]`}>
                         {renderStatusLabel(event.scheduled_type)}
                       </div>
                       <div className="mt-0.5 text-[#5A687C] text-[12px] font-[600]">{formatTimeHHMM(event.scheduled_time)}</div>
@@ -469,12 +494,12 @@ export default function CalendarPost({status=true, calenderData=[]}) {
               <div className="h-10 border-b border-[#E1E4EA] flex flex-col items-center justify-center">
                 <div className="text-sm flex items-center gap-1 font-medium">
                   {dayName}{" "}
-                  {!isToday?<span className={`${isToday ? "w-6 h-6 rounded-full bg-[#675FFF] p-1 text-white" : ""}`}>
+                  {!isToday ? <span className={`${isToday ? "w-6 h-6 rounded-full bg-[#675FFF] p-1 text-white" : ""}`}>
                     {day.day}
-                  </span>:
-                  <div className="w-6 h-6 rounded-full bg-[#675FFF] flex items-center justify-center">
-                    <span className="text-white">{day.day}</span>
-                  </div>}
+                  </span> :
+                    <div className="w-6 h-6 rounded-full bg-[#675FFF] flex items-center justify-center">
+                      <span className="text-white">{day.day}</span>
+                    </div>}
                 </div>
               </div>
 
@@ -562,106 +587,121 @@ export default function CalendarPost({status=true, calenderData=[]}) {
   }
 
   const renderCalendarHeader = () => {
-    if (currentView === "month") {
-      return (
-        <div className="flex justify-between bg-[#F9FAFB] rounded-t-2xl items-center p-4">
-          <h2 className="text-lg font-medium">
-            {monthNames[currentMonth]} {currentYear}
-          </h2>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] py-[6px] bg-white rounded-lg">
-              <button
-                onClick={handlePrevMonth}
-                className="p-1 rounded-md cursor-pointer hover:bg-gray-100"
-                aria-label="Previous month"
-              >
-                <ChevronLeft className="h-5 w-5 text-[#5A687C]" />
-              </button>
-              <span className="mx-2 text-[#5A687C]">
-                {monthNames[currentMonth]} {currentYear}
-              </span>
-              <button onClick={handleNextMonth} className="p-1 rounded-md cursor-pointer hover:bg-gray-100" aria-label="Next month">
-                <ChevronRight className="h-5 w-5 text-[#5A687C]" />
-              </button>
-            </div>
-            <SelectDropdown
-              name="calendar"
-              options={calendarOptions}
-              value={currentView}
-              onChange={(updated) => {
-                setCurrentView(updated)
-              }}
-              placeholder={t("emailings.select")}
-              className="w-[147px]"
-            />
+    return (
+      <div className="flex justify-between items-center p-4 border-b border-gray-200">
+        {/* Left Side - Date Selector */}
+        <div className="relative" ref={dateDropdownRef}>
+          <div className="flex items-center justify-center  p-2 border border-transparent rounded-md hover:border-gray-300 cursor-pointer transition-all">
+            <button
+              onClick={() => setShowDateDropdown(!showDateDropdown)}
+              className="flex items-center gap-2 text-[#1E1E1E] cursor-pointer font-medium text-base hover:text-gray-700 transition-colors"
+            >
+              <span>{getCurrentDateText()}</span>
+              <ChevronDown className="w-4 h-4 text-gray-500" />
+            </button>
           </div>
-        </div>
-      )
-    } else if (currentView === "week") {
-      return (
-        <div className="flex justify-between bg-[#F9FAFB] rounded-t-2xl items-center p-4">
-          <h2 className="text-lg font-medium">
-            {monthNames[currentMonth]} {currentYear} ({t("emailings.mon")} {selectedWeekStart} - {t("emailings.sun")} {selectedWeekEnd})
-          </h2>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] py-[6px] bg-white rounded-lg">
-              <button onClick={handlePrevWeek} className="p-1 cursor-pointer rounded-md hover:bg-gray-100" aria-label="Previous week">
-                <ChevronLeft className="h-5 w-5 text-[#5A687C]" />
-              </button>
-              <span className="mx-2 text-[#5A687C]">
-                {t("emailings.mon")} {selectedWeekStart} - {t("emailings.sun")} {selectedWeekEnd}
-              </span>
-              <button onClick={handleNextWeek} className="p-1 cursor-pointer rounded-md hover:bg-gray-100" aria-label="Next week">
-                <ChevronRight className="h-5 w-5 text-[#5A687C]" />
-              </button>
-            </div>
 
-            <SelectDropdown
-              name="calendar"
-              options={calendarOptions}
-              value={currentView}
-              onChange={(updated) => {
-                setCurrentView(updated)
-              }}
-              placeholder={t("emailings.select")}
-              className="w-[147px]"
-            />
-          </div>
-        </div>
-      )
-    } else {
-      return (
-        <div className="flex justify-between bg-[#F9FAFB] rounded-t-2xl items-center p-4">
-          <h2 className="text-lg font-medium">
-            {currentDay} {monthNames[currentMonth]} {currentYear}
-          </h2>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] py-[6px] bg-white rounded-lg">
-              <button onClick={handlePrevDay} className="p-1 cursor-pointer rounded-md hover:bg-gray-100" aria-label="Previous day">
-                <ChevronLeft className="h-5 w-5 text-[#5A687C]" />
-              </button>
-              <span className="mx-2 text-[#5A687C]">
-                {currentDay} {monthNames[currentMonth]} {currentYear}
-              </span>
-              <button onClick={handleNextDay} className="p-1 cursor-pointer rounded-md hover:bg-gray-100" aria-label="Next day">
-                <ChevronRight className="h-5 w-5 text-[#5A687C]" />
-              </button>
-            </div>
 
-            <SelectDropdown
-              name="calendar"
-              options={calendarOptions}
-              value={currentView}
-              onChange={(updated) => {
-                setCurrentView(updated)
-              }}
-              placeholder={t("emailings.select")}
-              className="w-[147px]"
+
+
+          {/* Date Dropdown - Month/Year Picker */}
+          {showDateDropdown && (
+            <div className="absolute left-0 top-full mt-2 bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-50 min-w-[280px]">
+              <div className="flex items-center justify-between mb-4">
+                <button
+                  onClick={() => {
+                    if (currentMonth === 0) {
+                      setCurrentMonth(11)
+                      setCurrentYear(currentYear - 1)
+                    } else {
+                      setCurrentMonth(currentMonth - 1)
+                    }
+                  }}
+                  className="p-1 hover:bg-gray-100 rounded"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <span className="font-semibold">{getCurrentDateText()}</span>
+                <button
+                  onClick={() => {
+                    if (currentMonth === 11) {
+                      setCurrentMonth(0)
+                      setCurrentYear(currentYear + 1)
+                    } else {
+                      setCurrentMonth(currentMonth + 1)
+                    }
+                  }}
+                  className="p-1 hover:bg-gray-100 rounded"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Month Grid */}
+              <div className="grid grid-cols-3 gap-2">
+                {monthNames.map((month, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setCurrentMonth(index)
+                      setShowDateDropdown(false)
+                    }}
+                    className={`p-2 rounded text-sm hover:bg-gray-100 ${currentMonth === index ? "bg-[#675FFF] text-white" : "text-gray-700"
+                      }`}
+                  >
+                    {month.substring(0, 3)}
+                  </button>
+                ))}
+              </div>
+
+              {/* Year Selector */}
+              <div className="mt-4 flex items-center justify-between">
+                <button
+                  onClick={() => setCurrentYear(currentYear - 1)}
+                  className="p-1 hover:bg-gray-100 rounded"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <span className="font-medium">{currentYear}</span>
+                <button
+                  onClick={() => setCurrentYear(currentYear + 1)}
+                  className="p-1 hover:bg-gray-100 rounded"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Right Side - Search and View Dropdown */}
+        <div className="flex items-center gap-3">
+          {/* Search Input */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:border-[#675FFF] text-[#1E1E1E] placeholder:text-gray-400 w-[200px]"
             />
           </div>
+
+          {/* View Dropdown */}
+          <SelectDropdown
+            name="view"
+            options={calendarOptions}
+            value={currentView}
+            onChange={(updated) => {
+              setCurrentView(updated)
+            }}
+            placeholder="Monthly"
+            className="w-[120px]"
+          />
         </div>
-      )
-    }
+      </div>
+    )
   }
 
   if (loading) return <p className="h-screen flex justify-center items-center"><span className="loader" /></p>

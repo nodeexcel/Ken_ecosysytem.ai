@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import EmojiPicker from "emoji-picker-react";
 import { EmojiIcon, ImageChatIcon, MicChatIcon, PaperClipChatIcon } from "../icons/icons";
+import { ArrowUp, Loader2, PlugIcon, PlusIcon, Image, FileText, Camera } from "lucide-react";
 import useWebSpeechAPI from "../hooks/useWebSpeechAPI";
 import PdfIcon from "../assets/svg/pdf.svg";
 import { uploadAttachment } from "../api/contentCreationAgent";
@@ -15,7 +16,9 @@ const ChatInput = ({
   agentName,
 }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showPlusDropdown, setShowPlusDropdown] = useState(false);
   const pickerRef = useRef(null);
+  const plusDropdownRef = useRef(null);
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
@@ -50,6 +53,9 @@ const ChatInput = ({
     const handleClickOutside = (event) => {
       if (pickerRef.current && !pickerRef.current.contains(event.target)) {
         setShowEmojiPicker(false);
+      }
+      if (plusDropdownRef.current && !plusDropdownRef.current.contains(event.target)) {
+        setShowPlusDropdown(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -89,7 +95,7 @@ const ChatInput = ({
       event.target.value = "";
       return;
     }
-    
+
     console.log("File selected, starting upload...", { fileName: file.name, agentName });
     setUploading(true);
     setSelectedFile({ name: file.name, type: file.type });
@@ -101,17 +107,17 @@ const ChatInput = ({
     if (effectiveToken) {
       formData.append("user_token", effectiveToken);
     }
-    
+
     try {
       console.log("Calling uploadAttachment API...", { agentName, hasToken: !!effectiveToken });
       const response = await uploadAttachment(formData, agentName);
       console.log("Upload response:", response);
-      
+
       // Check if response is actually an error object
       if (response && response.isAxiosError) {
         throw response;
       }
-      
+
       const data = response?.data;
       const returnedFileId = data?.message?.file_id || data?.file_id || null;
       const returnedFileName = data?.message?.filename || data?.filename || file.name;
@@ -133,6 +139,23 @@ const ChatInput = ({
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
+    setShowPlusDropdown(false);
+  };
+
+  const handlePlusClick = () => {
+    setShowPlusDropdown(!showPlusDropdown);
+  };
+
+  const handleAddPhotoOrVideo = () => {
+    // TODO: Implement photo/video upload functionality
+    console.log("Add Photo or Video clicked");
+    setShowPlusDropdown(false);
+  };
+
+  const handleTakePhoto = () => {
+    // TODO: Implement camera functionality
+    console.log("Take a Photo clicked");
+    setShowPlusDropdown(false);
   };
 
   return (
@@ -171,7 +194,7 @@ const ChatInput = ({
                 <div className="text-sm font-medium text-gray-900 truncate" title={selectedFile.name}>
                   {selectedFile.name}
                 </div>
-                
+
               </div>
 
               {/* Remove button */}
@@ -232,7 +255,7 @@ const ChatInput = ({
 
 
         {/* Input */}
-        <div className="flex items-center w-full border-b border-gray-200 pb-2">
+        <div className="flex items-center w-full">
           <input
             ref={inputRef}
             type="text"
@@ -247,19 +270,57 @@ const ChatInput = ({
         {/* Bottom row icons */}
         <div className="flex w-full justify-between px-2 pt-2">
           <div className="flex items-center space-x-2">
+            <div className="relative" ref={plusDropdownRef}>
+              <div 
+                className="p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] rounded-xl px-3 border border-gray-300"
+                onClick={handlePlusClick}
+              >
+                <PlusIcon size={18} />
+              </div>
+              
+              {/* Dropdown Menu */}
+              {showPlusDropdown && (
+                <div className="absolute bottom-full left-0 mb-2 bg-gray-50 rounded-xl shadow-md border border-gray-300 py-1 min-w-[220px] z-50">
+                  <button
+                    type="button"
+                    onClick={handleAddPhotoOrVideo}
+                    className="w-full flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] transition-colors text-left"
+                  >
+                    <Image className="w-5 h-5 text-gray-800" />
+                    <span className="text-sm font-normal text-gray-800">Add Photo or Video</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleFileClick}
+                    className="w-full flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] transition-colors text-left"
+                  >
+                    <FileText className="w-5 h-5 text-gray-800" />
+                    <span className="text-sm font-normal text-gray-800">Add Files</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleTakePhoto}
+                    className="w-full flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] transition-colors text-left"
+                  >
+                    <Camera className="w-5 h-5 text-gray-800" />
+                    <span className="text-sm font-normal text-gray-800">Take a Photo</span>
+                  </button>
+                </div>
+              )}
+            </div>
             <div
-              className="p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px]"
+              className="p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] rounded-xl px-3 border border-gray-300"
               onClick={() => setShowEmojiPicker((prev) => !prev)}
             >
               <EmojiIcon />
             </div>
-            <div className="p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px]">
+            {/* <div className="p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] rounded-xl px-3 border border-gray-300">
               <ImageChatIcon />
-            </div>
+            </div> */}
 
             {/* File Upload */}
-            <div
-              className="p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px]"
+            {/* <div
+              className="p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] rounded-xl px-3 border border-gray-300"
               onClick={handleFileClick}
               title="Attach file"
             >
@@ -268,13 +329,13 @@ const ChatInput = ({
               ) : (
                 <PaperClipChatIcon />
               )}
-            </div>
+            </div> */}
 
             {/* Mic */}
             <div
-              className={`relative p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] ${
-                isListening ? "text-red-500" : ""
-              } ${!isSupported ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`relative p-[10px] cursor-pointer hover:bg-[#F2F2F7] rounded-xl px-3 border border-gray-300
+    ${isListening ? "text-red-500" : ""} 
+    ${!isSupported ? "opacity-50 cursor-not-allowed" : ""}`}
               onClick={isSupported ? toggleListening : undefined}
               title={
                 !isSupported
@@ -286,17 +347,23 @@ const ChatInput = ({
             >
               <MicChatIcon />
             </div>
+
           </div>
 
           {/* Send button */}
           <button
             disabled={!value}
             type="submit"
-            className={`${value ? "bg-indigo-500 cursor-pointer" : "bg-gray-400 cursor-not-allowed"
-              } text-white px-4 py-2 rounded-md transition`}
+            className={`${value ? "bg-[#EDEDED] cursor-pointer" : "bg-[#EDEDED] cursor-not-allowed"
+              } text-white px-2 py-1 rounded-xl transition flex items-center justify-center hover:bg-gray-300`}
           >
-            {uploading ? "Uploading..." : sendLabel}
+            {uploading ? (
+              <Loader2 className="w-6 h-6 animate-spin" />
+            ) : (
+              <ArrowUp className={`w-6 h-6 ${value ? "text-black" : "text-gray-400"}`} />
+            )}
           </button>
+
         </div>
       </form>
     </div>

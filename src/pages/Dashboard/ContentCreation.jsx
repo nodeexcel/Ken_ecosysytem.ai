@@ -14,7 +14,9 @@ import YoutubeScriptContent from '../../components/YoutubeScriptContent'
 import LinkedInNukeContent from '../../components/LinkedInNukeContent'
 import XPostContent from '../../components/XPostContent'
 import { BsThreeDots } from 'react-icons/bs'
-import { X } from 'lucide-react'
+import { X, Plus, MoreVertical, Edit, Trash2 } from 'lucide-react'
+import dummy1 from '../../assets/images/dummy1.png'
+import dummy2 from '../../assets/images/dummy2.png'
 import chatInstance from '../../api/chatInstance'
 import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
@@ -22,6 +24,8 @@ import ContentCreationCalender from '../../components/ContentCreationCalender'
 
 function ContentCreation() {
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
+    const [showCreationStudioModal, setShowCreationStudioModal] = useState(false)
+    const [activeDropdown, setActiveDropdown] = useState(null)
     const [activeConversation, setActiveConversation] = useState()
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
@@ -43,7 +47,20 @@ function ContentCreation() {
 
     const navigate = useNavigate()
     const { t } = useTranslation();
-    const dispatch=useDispatch()
+    const dispatch = useDispatch()
+
+    // Handle click outside to close dropdown
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (activeDropdown && !event.target.closest('.dropdown-container')) {
+                setActiveDropdown(null);
+            }
+        };
+        if (activeDropdown) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [activeDropdown]);
 
     const sideMenuList = [
         { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
@@ -114,7 +131,7 @@ function ContentCreation() {
                         if (parsed.file_id) file_id = parsed.file_id;
                         if (parsed.filename) filename = parsed.filename;
                     }
-                } catch (e) {}
+                } catch (e) { }
             }
 
             return {
@@ -238,7 +255,114 @@ function ContentCreation() {
     const renderMainContent = () => {
         switch (activeSidebarItem) {
             case "creation_studio":
-                return <CreationStudio />
+                return (
+                    <div className="px-6 py-6 w-full h-full flex flex-col gap-6">
+                        {/* Header Section */}
+                        <div className="flex items-start justify-between w-full">
+                            <div className="flex flex-col gap-2">
+                                <h1 className="text-[#1E1E1E] text-[28px] font-[600]">
+                                    {t("constance.creation_studio") || "Creation Studio"}
+                                </h1>
+                                <p className="text-[#5A687C] text-[16px] font-[400]">
+                                    {"Create, manage, and schedule content effortlessly using AI-powered creativity."}
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => setShowCreationStudioModal(true)}
+                                className="flex items-center gap-2 bg-[#675FFF] cursor-pointer text-white px-5 py-2 rounded-lg font-[500] text-sm hover:bg-[#5a4fe6] transition-colors whitespace-nowrap"
+                            >
+                                <Plus size={18} />
+                                <span>{t("constance.add_creation_studio") || "Add Creation Studio"}</span>
+                            </button>
+                        </div>
+
+                        {/* Recent Creations Section */}
+                        <div className="flex flex-col gap-4 w-full">
+                            <h2 className="text-[#1E1E1E] text-[20px] font-[600]">Recent Creations</h2>
+
+                            {/* Grid of Creation Cards */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                                {[1, 2, 3, 4, 5, 6].map((item, index) => {
+                                    const isEven = index % 2 === 0;
+                                    const cardImage = isEven ? dummy1 : dummy2;
+                                    const dropdownId = `dropdown-${index}`;
+
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+                                        >
+                                            {/* Thumbnail Image with rounded top corners */}
+                                            <div className="w-full min-h-[100px] overflow-hidden bg-gray-100 rounded-2xl">
+                                                <img
+                                                    src={cardImage}
+                                                    alt="Creation thumbnail"
+                                                    className="w-full h-full object-cover rounded-2xl p-2 bg-white"
+                                                />
+                                            </div>
+
+
+                                            {/* Card Content - White background */}
+                                            <div className="bg-white p-4 rounded-b-xl relative">
+                                                <div className="flex items-start justify-between gap-3">
+                                                    <div className="flex-1 min-w-0 ">
+                                                        <h3 className="text-[#1E1E1E] text-lg font-[500] mb-1.5 leading-tight py-2">
+                                                            Summer Promo Video
+                                                        </h3>
+                                                        <p className="text-[#5A687C] text-[14px] font-[400]">
+                                                            Reels • Video
+                                                        </p>
+                                                    </div>
+
+                                                    {/* Three Dots Menu - Bottom Right */}
+                                                    <div className="relative dropdown-container flex-shrink-0 border border-gray-200 rounded-xl">
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
+                                                            }}
+                                                            className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+                                                        >
+                                                            <MoreVertical className="w-5 h-5 text-gray-500" />
+                                                        </button>
+
+                                                        {/* Dropdown Menu */}
+                                                        {activeDropdown === dropdownId && (
+                                                            <div className="absolute right-0 bottom-full mb-2 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[120px] z-50">
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        console.log("Edit clicked for item", index);
+                                                                        setActiveDropdown(null);
+                                                                    }}
+                                                                    className="w-full flex items-center gap-2 px-4 py-2 hover:bg-[#F2F2F7] transition-colors text-left"
+                                                                >
+                                                                    <Edit className="w-4 h-4 text-gray-700" />
+                                                                    <span className="text-sm text-gray-700">Edit</span>
+                                                                </button>
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        console.log("Delete clicked for item", index);
+                                                                        setActiveDropdown(null);
+                                                                    }}
+                                                                    className="w-full flex items-center gap-2 px-4 py-2 hover:bg-[#F2F2F7] transition-colors text-left"
+                                                                >
+                                                                    <Trash2 className="w-4 h-4 text-red-600" />
+                                                                    <span className="text-sm text-red-600">Delete</span>
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                )
             case "calender":
                 return <ContentCreationCalender />
             case "youtube":
@@ -266,21 +390,32 @@ function ContentCreation() {
                             dispatch(discardSkillsData())
                         }}>
                             {/* <div className="flex gap-4 pl-3 items-center h-[57px]"> */}
-                                {/* <LeftArrow /> */}
-                                {/* <h1 className="text-[20px] font-[600]">{t("constance.content_creation")}</h1>
+                            {/* <LeftArrow /> */}
+                            {/* <h1 className="text-[20px] font-[600]">{t("constance.content_creation")}</h1>
                             </div> */}
                         </div>
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-3">
                         <div className="bg-[#ffffff] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
                             <div className="flex justify-center items-center">
-                                <img src={constanceImg} alt={"constance"} className="object-fit" />
+                                <div className="w-10 h-10 rounded-full bg-[#FFE4C5] flex items-center justify-center">
+                                    <img
+                                        src={constanceImg}
+                                        alt="constance"
+                                        className="w-8 h-8 object-contain scale-115"
+                                    />
+                                </div>
                             </div>
                             <div className="flex flex-col">
-                                <h1 className="text-[#1E1E1E] text-[16px] font-[600]">{t("constance.constance")}</h1>
-                                <p className="text-[#5A687C] text-[14px] font-[400]">{t("constance.content_creation")}</p>
+                                <h1 className="text-[#1E1E1E] text-[16px] font-[600]">
+                                    {t("constance.constance")}
+                                </h1>
+                                <p className="text-[#5A687C] text-[14px] font-[400]">
+                                    {t("constance.content_creation")}
+                                </p>
                             </div>
                         </div>
+
                         {sideMenuList.map((e, i) => <div
                             key={i}
                             onClick={() => setActiveSidebarItem(e.path)}
@@ -301,6 +436,11 @@ function ContentCreation() {
                     {renderMainContent()}
                 </div>
             </div>
+
+            {/* Creation Studio Modal */}
+            {showCreationStudioModal && (
+                <CreationStudio onClose={() => setShowCreationStudioModal(false)} />
+            )}
             {sidebarStatus &&
                 <div className="lg:hidden fixed inset-0 bg-black/20 flex items-end z-50">
                     <div className="flex relative flex-col bg-white gap-8 rounded-t-[20px] w-full max-h-[80%] overflow-auto py-8">

@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react"
-import { X } from "lucide-react" // Removed ChevronLeft, ChevronRight
+import { X, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react"
 import { UtcFormat } from "../utils/TimeFormat"
 import { useTranslation } from "react-i18next";
 
@@ -144,16 +144,19 @@ function TimeSelector24({ value, onChange, onClose }) {
 }
 
 export default function DateTimePicker({ onClose, onSchedule, isSaving }) {
-  const [currentMonth, setCurrentMonth] = useState(new Date(2025, 6, 1)) // Initialize to July 2025
-  const [selectedDate, setSelectedDate] = useState(new Date(2025, 6, 12)) // Initialize to July 12, 2025
-  const [time, setTime] = useState("15 : 25")
+  const [currentMonth, setCurrentMonth] = useState(new Date(2025, 7, 1)) // Initialize to August 2025
+  const [selectedDate, setSelectedDate] = useState(new Date(2025, 7, 11)) // Initialize to August 11, 2025
+  const [time, setTime] = useState("16:30")
   const [showYearPicker, setShowYearPicker] = useState(false)
   const [showTimeDropdown, setShowTimeDropdown] = useState(false)
+  const [showDateDropdown, setShowDateDropdown] = useState(false)
   const today = useMemo(() => new Date(), []) // Actual current date for 'Today' highlight
   const { t } = useTranslation()
 
   const yearPickerRef = useRef(null)
   const currentYearRef = useRef(null)
+  const dateDropdownRef = useRef(null)
+  const timeDropdownRef = useRef(null)
 
   const daysOfWeek = [t("emailings.mon"), t("emailings.tue"), t("emailings.wed"), t("emailings.thu"), t("emailings.fri"), t("emailings.sat"), t("emailings.sun")]
 
@@ -283,150 +286,275 @@ export default function DateTimePicker({ onClose, onSchedule, isSaving }) {
     return date.toLocaleString("en-US", { month: "short" });
   }
 
+  // Format date for input field: "11/08/2025"
+  function formatDateInput(date) {
+    if (!date || isNaN(date.getTime())) {
+      return "";
+    }
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+  // Format time for input field: "16:30"
+  function formatTimeInput(timeStr) {
+    if (!timeStr) return "16:30";
+    return timeStr.replace(/\s/g, ""); // Remove spaces
+  }
+
+  // Navigate to previous month
+  const goToPreviousMonth = () => {
+    setCurrentMonth((prev) => {
+      const newDate = new Date(prev.getFullYear(), prev.getMonth() - 1, 1);
+      return newDate;
+    });
+  };
+
+  // Navigate to next month
+  const goToNextMonth = () => {
+    setCurrentMonth((prev) => {
+      const newDate = new Date(prev.getFullYear(), prev.getMonth() + 1, 1);
+      return newDate;
+    });
+  };
+
+  // Handle click outside to close dropdowns
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dateDropdownRef.current && !dateDropdownRef.current.contains(event.target)) {
+        setShowDateDropdown(false);
+      }
+      if (timeDropdownRef.current && !timeDropdownRef.current.contains(event.target)) {
+        setShowTimeDropdown(false);
+      }
+    };
+    if (showDateDropdown || showTimeDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showDateDropdown, showTimeDropdown]);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <div className="relative w-full max-w-md overflow-auto max-h-[85vh] rounded-xl bg-white p-6 shadow-lg">
-        <button className="absolute cursor-pointer right-4 top-4 text-gray-400 hover:text-gray-600" aria-label="Close" onClick={onClose}>
-          <X className="h-5 w-5" />
-        </button>
-
-        <div className="mb-6 space-y-1">
-          <div
-            className="relative text-lg font-semibold text-gray-500 cursor-pointer hover:text-gray-700 min-w-[60px] w-[60px] text-center"
-            onClick={() => setShowYearPicker(!showYearPicker)}
+      <div className="relative w-full max-w-md overflow-auto max-h-[85vh] rounded-xl bg-white shadow-lg">
+        {/* Header */}
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between z-10 rounded-t-xl">
+          <h1 className="text-[#1E1E1E] font-[600] text-xl">Schedule Post</h1>
+          <button 
+            className="cursor-pointer text-gray-400 hover:text-gray-600 transition-colors" 
+            aria-label="Close" 
+            onClick={onClose}
           >
-            {currentMonth.getFullYear()}
-            {showYearPicker && (
-              <div
-                ref={yearPickerRef}
-                className="absolute left-0 top-full z-10 mt-2 h-48 w-24 overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg"
-              >
-                {years.map((year) => (
-                  <div
-                    key={year}
-                    ref={year === currentMonth.getFullYear() ? currentYearRef : null}
-                    className={`cursor-pointer px-4 py-2 text-center hover:bg-gray-100
-                      ${year === currentMonth.getFullYear() ? "bg-v0-purple text-white font-semibold" : ""}
-                    `}
-                    onClick={(e) => {
-                      e.stopPropagation() // Prevent closing the picker immediately
-                      handleYearClick(year)
-                    }}
-                  >
-                    {year}
+            <X className="h-5 w-5 text-[#868C98]" />
+          </button>
+        </div>
+      
+        
+        {/* Date and Time Inputs */}
+        <div className="px-8 py-2 border-b border-gray-200">
+          <div className="grid grid-cols-2 gap-4">
+            {/* Date Input */}
+            <div className="relative" ref={dateDropdownRef}>
+              <label className="block text-sm font-medium text-[#808591] mb-1">Date</label>
+              <input
+                type="text"
+                value={formatDateInput(selectedDate)}
+                readOnly
+                onClick={() => setShowDateDropdown(!showDateDropdown)}
+                className="w-full rounded-lg border border-[#E1E4EA] px-4 py-2 text-sm text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none focus:ring-1 focus:ring-[#675FFF] cursor-pointer bg-white"
+              />
+              <ChevronDown className="absolute right-3 top-9 w-4 h-4 text-gray-400 pointer-events-none" />
+              
+              {/* Date Calendar Dropdown */}
+              {showDateDropdown && (
+                <div className="absolute left-0 top-full mt-2 bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-50 w-[320px]">
+                  {/* Month Navigation */}
+                  <div className="flex items-center bg-[#F6F8FA] justify-between mb-4 ">
+                    <button
+                      onClick={goToPreviousMonth}
+                      className="p-1 hover:bg-gray-100 rounded"
+                      aria-label="Previous month"
+                    >
+                      <ChevronLeft className="h-4 w-4 text-gray-600" />
+                    </button>
+                    <span className="text-base font-semibold text-gray-800">
+                      {getMonthName(currentMonth.getMonth())}, {currentMonth.getFullYear()}
+                    </span>
+                    <button
+                      onClick={goToNextMonth}
+                      className="p-1 hover:bg-gray-100 rounded"
+                      aria-label="Next month"
+                    >
+                      <ChevronRight className="h-4 w-4 text-gray-600" />
+                    </button>
                   </div>
-                ))}
-              </div>
-            )}
+
+                  {/* Days of Week Header */}
+                  <div className="grid grid-cols-7 gap-1 mb-2">
+                    {daysOfWeek.map((day) => (
+                      <div key={day} className="text-center text-xs font-medium text-gray-500 py-1">
+                        {day}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Calendar Grid */}
+                  <div className="grid grid-cols-7 gap-1">
+                    {calendarDays.map((dayInfo, index) => {
+                      const isToday = isSameDay(dayInfo.date, today)
+                      const isSelected = isSameDay(dayInfo.date, selectedDate)
+                      // Mock event indicator - you can replace this with actual event data
+                      const hasEvent = dayInfo.date.getDate() === 6 || dayInfo.date.getDate() === 23
+
+                      return (
+                        <div
+                          key={index}
+                          className={`h-9 w-9 cursor-pointer rounded-md transition-colors flex flex-col items-center justify-center relative
+                            ${dayInfo.isOtherMonth ? "text-gray-400" : "text-gray-800"}
+                            ${isSelected ? "bg-[#675FFF] text-white" : ""}
+                            ${!isSelected && !dayInfo.isOtherMonth ? "hover:bg-gray-100" : ""}
+                          `}
+                          onClick={() => {
+                            handleDateClick(dayInfo.date)
+                            setShowDateDropdown(false)
+                          }}
+                        >
+                          <span className={`text-sm ${isSelected ? "text-white font-semibold" : ""}`}>
+                            {dayInfo.date.getDate()}
+                          </span>
+                          {/* Event indicator dot */}
+                          {hasEvent && !dayInfo.isOtherMonth && !isSelected && (
+                            <div className="absolute bottom-1 w-1 h-1 rounded-full bg-[#675FFF]"></div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Time Input */}
+            <div className="relative" ref={timeDropdownRef}>
+              <label className="block text-sm font-medium text-[#808591] mb-1">Time</label>
+              <input
+                type="text"
+                value={formatTimeInput(time)}
+                readOnly
+                onClick={() => setShowTimeDropdown(true)}
+                className="w-full rounded-lg border border-[#E1E4EA] px-4 py-2 text-sm text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none focus:ring-1 focus:ring-[#675FFF] cursor-pointer bg-white"
+              />
+              {showTimeDropdown && (
+                <div className="absolute left-0 top-full mt-2 w-full z-50">
+                  <TimeSelector24
+                    value={time}
+                    onChange={(val) => setTime(val)}
+                    onClose={() => setShowTimeDropdown(false)}
+                  />
+                </div>
+              )}
+            </div>
           </div>
-          <div className="text-3xl font-bold">{formatDate(selectedDate)}</div>
         </div>
 
-        {/* Removed month navigation buttons */}
-        {/* <div className="mb-4 flex items-center justify-between">
-          <button
-            onClick={goToPreviousMonth}
-            className="rounded-full p-2 text-gray-600 hover:bg-gray-100"
-            aria-label="Previous month"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <div className="text-xl font-semibold text-gray-800">
-            {getMonthName(currentMonth.getMonth())} {currentMonth.getFullYear()}
+        {/* Content */}
+        <div className="px-6 py-4">
+          {/* Month Navigation Header */}
+          <div className="flex items-center bg-[#F6F8FA] rounded-lg justify-between mb-4">
+            <button
+              onClick={goToPreviousMonth}
+              className="p-1.5 rounded-lg m-2 hover:bg-gray-300 cursor-pointer transition-colors bg-white"
+              aria-label="Previous month"
+            >
+              <ChevronLeft className="h-4 w-4 text-gray-600" />
+            </button>
+            <div className="text-base font-semibold text-gray-800">
+              {getMonthName(currentMonth.getMonth())}, {currentMonth.getFullYear()}
+            </div>
+            <button
+              onClick={goToNextMonth}
+              className="p-1.5 m-2 rounded-lg bg-white cursor-pointer hover:bg-gray-300 transition-colors"
+              aria-label="Next month"
+            >
+              <ChevronRight className="h-4 w-4 text-gray-600" />
+            </button>
           </div>
-          <button
-            onClick={goToNextMonth}
-            className="rounded-full p-2 text-gray-600 hover:bg-gray-100"
-            aria-label="Next month"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-        </div> */}
 
-        <div className="mb-2">
-          <div className="grid grid-cols-7 text-center text-sm font-medium bg-[#E1E4EA99] text-gray-500  border-gray-200 rounded-md overflow-hidden">
-            {daysOfWeek.map((day) => (
-              <div key={day} className="py-2">
-                {day}
-              </div>
-            ))}
+          {/* Days of Week Header */}
+          <div className="mb-2">
+            <div className="grid grid-cols-7 text-center text-sm font-medium text-gray-600">
+              {daysOfWeek.map((day) => (
+                <div key={day} className="py-2">
+                  {day}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className="grid grid-cols-7 gap-2 text-center text-base">
-          {calendarDays.map((dayInfo, index) => {
-            const isToday = isSameDay(dayInfo.date, today)
-            const isSelected = isSameDay(dayInfo.date, selectedDate)
-            const isFirstDayOfMonth = dayInfo.date.getDate() === 1
-            const monthLabel = isFirstDayOfMonth ? getMonthName(dayInfo.date.getMonth()) : ""
+          {/* Calendar Grid */}
+          <div className="grid grid-cols-7 gap-1 text-center">
+            {calendarDays.map((dayInfo, index) => {
+              const isToday = isSameDay(dayInfo.date, today)
+              const isSelected = isSameDay(dayInfo.date, selectedDate)
+              // Mock event indicator - you can replace this with actual event data
+              const hasEvent = dayInfo.date.getDate() === 6 || dayInfo.date.getDate() === 23
 
-            return (
-              <div
-                key={index}
-                className={`h-10 w-10 cursor-pointer rounded-lg transition-colors
-                ${dayInfo.isOtherMonth ? "text-gray-400" : "text-gray-800"}
-                ${isToday ? "bg-v0-purple text-white font-semibold" : ""}
-                ${isSelected && !isToday ? "bg-[#675FFF] text-white" : ""}
-                ${!isToday && !isSelected && !dayInfo.isOtherMonth ? "hover:bg-gray-100" : ""}
-                ${monthLabel || isToday ? "flex flex-col items-center justify-center" : "flex items-center justify-center"}
-              `}
-                onClick={() => handleDateClick(dayInfo.date)}
-              >
-                {(monthLabel || isToday) && (
-                  <span className="text-[10px] font-medium leading-none">{isToday ? "Today" : monthLabel}</span>
-                )}
-                <span className={`${monthLabel || isToday ? "mt-0.5" : ""}`}>{dayInfo.date.getDate()}</span>
-              </div>
-            )
-          })}
-        </div>
-
-        <div className="mt-6 space-y-4">
-          <div className="text-base font-medium text-gray-700">{t("constance.time")}</div>
-          {/* Time Input with Dropdown Selector */}
-          <div className="relative w-full">
-            <input
-              type="text"
-              value={time}
-              readOnly
-              className="w-full rounded-md border border-gray-300 px-4 py-2 text-lg focus:border-v0-purple focus:outline-none focus:ring-1 focus:ring-v0-purple cursor-pointer bg-white"
-              aria-label="Time input"
-              onClick={() => setShowTimeDropdown(true)}
-            />
-            {showTimeDropdown && (
-              <div className="absolute left-0 bottom-full mb-2 w-full z-50">
-                <TimeSelector24
-                  value={time}
-                  onChange={(val) => setTime(val)}
-                  onClose={() => setShowTimeDropdown(false)}
-                />
-              </div>
-            )}
+              return (
+                <div
+                  key={index}
+                  className={`h-9 w-9 cursor-pointer rounded-md transition-colors flex items-center justify-center relative
+                    ${dayInfo.isOtherMonth ? "text-gray-400" : "text-gray-800"}
+                    ${isSelected ? "bg-[#675FFF] text-white font-semibold" : ""}
+                    ${!isSelected && !dayInfo.isOtherMonth ? "hover:bg-gray-100" : ""}
+                  `}
+                  onClick={() => handleDateClick(dayInfo.date)}
+                >
+                  <span className={`text-sm ${isSelected ? "text-white font-semibold" : ""}`}>
+                    {dayInfo.date.getDate()}
+                  </span>
+                  {/* Event indicator dot */}
+                  {hasEvent && !dayInfo.isOtherMonth && !isSelected && (
+                    <div className="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-[#675FFF]"></div>
+                  )}
+                </div>
+              )
+            })}
           </div>
-          <div className="text-sm text-gray-500">{t("predefined_time_slot")}</div>
-        </div>
 
-        <div className="mt-8 flex justify-center gap-[16px] ">
-          <button className="rounded-md cursor-pointer border border-gray-300 px-5 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200
-          w-[225px]" onClick={onClose}>
-            {t("cancel")}
-          </button>
-          <button
-            className={`w-[225px] ${isSaving ? 'cursor-not-allowed' : 'cursor-pointer'} bg-[#675FFF] rounded-md  px-5 py-2 text-base font-medium text-white border border-[#675FFF] hover:bg-v0-purple/90 focus:outline-none focus:ring-2 focus:ring-v0-purple`}
-            onClick={() => {
-              const dateUTC = UtcFormat(selectedDate);
-              // Parse time string and format as HH:mm in UTC
-              const [hourStr, minuteStr] = time.split(":").map((s) => s.trim());
-              const hours = String(parseInt(hourStr, 10)).padStart(2, '0');
-              const minutes = String(parseInt(minuteStr, 10)).padStart(2, '0');
-              const timeUTC = `${hourStr}:${minuteStr}`;
-              if (onSchedule) onSchedule(dateUTC, timeUTC);
-              if (onClose) onClose();
-            }}
-            disabled={isSaving}
-          >
-            {isSaving ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : t("schedule")}
-          </button>
+
+          {/* Footer with Buttons */}
+          <div className="sticky bottom-0 bg-white border-t border-gray-200 px-2 py-4 flex items-center justify-end gap-3 z-10 rounded-b-xl">
+            <button 
+              className="px-5 py-2.5 rounded-lg cursor-pointer bg-white border border-gray-300 text-[#1E1E1E] font-[500] text-sm hover:bg-gray-50 transition-colors shadow-sm"
+              onClick={onClose}
+            >
+              {t("cancel")}
+            </button>
+            <button
+              className={`px-5 py-2.5 rounded-lg ${isSaving ? 'cursor-not-allowed' : 'cursor-pointer'} bg-[#675FFF] text-white font-[500] text-sm hover:bg-[#5a4fe6] transition-colors shadow-sm`}
+              onClick={() => {
+                const dateUTC = UtcFormat(selectedDate);
+                // Parse time string and format as HH:mm in UTC
+                const [hourStr, minuteStr] = time.split(":").map((s) => s.trim());
+                const hours = String(parseInt(hourStr, 10)).padStart(2, '0');
+                const minutes = String(parseInt(minuteStr, 10)).padStart(2, '0');
+                const timeUTC = `${hourStr}:${minuteStr}`;
+                if (onSchedule) onSchedule(dateUTC, timeUTC);
+                if (onClose) onClose();
+              }}
+              disabled={isSaving}
+            >
+              {isSaving ? (
+                <div className="flex items-center justify-center gap-2">
+                  <p>{t("brain_ai.processing")}</p>
+                  <span className="loader" />
+                </div>
+              ) : (
+                "Schedule Now"
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>

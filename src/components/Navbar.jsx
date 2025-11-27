@@ -90,7 +90,7 @@ function Navbar({ sidebarItems }) {
         const routeMap = {
             'dashboard': 'AI Agents',
             'appointment-setter': 'Seth',
-            'phone': 'Tom & Rebecca',
+            'phone': 'Rebecca',
             'campaigns': 'Emile',
             'coo': 'Tara',
             'content-creation': 'Constance',
@@ -110,7 +110,7 @@ function Navbar({ sidebarItems }) {
 
         const agentNameMap = {
             'appointment-setter': 'Seth',
-            'phone': 'Tom & Rebecca',
+            'phone': 'Rebecca',
             'campaigns': 'Emile',
             'coo': 'Tara',
             'content-creation': 'Constance'

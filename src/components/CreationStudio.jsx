@@ -4,8 +4,9 @@ import { useTranslation } from "react-i18next";
 import { contentGenerationStatus, createContent } from "../api/contentCreationAgent";
 import constanceImg from '../assets/svg/constance_logo.svg'
 import Slider from "react-slick";
-import { Calendar as CalendarIcon, Clock } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, X, Plus } from "lucide-react";
 import { useRef } from "react";
+
 
 function TimeSelector12({ value, onChange, onClose }) {
     // value: "hh:mm AM/PM"
@@ -258,7 +259,7 @@ function DateSelector({ value, onChange, onClose }) {
     );
 }
 
-function CreationStudio() {
+function CreationStudio({ onClose }) {
     const [formData, setFormData] = useState({ text: "", post_type: "", language: "", media_type: "", video_duration: "", author: "", created_at: new Date() })
     const [errors, setErrors] = useState({})
     const [loading, setLoading] = useState(false)
@@ -377,13 +378,42 @@ function CreationStudio() {
         setErrors({});
     };
 
+    const modalRef = useRef(null);
+
+    // Handle click outside to close modal
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                if (onClose) {
+                    onClose();
+                }
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [onClose]);
+
     return (
-        <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-1 w-full">
-            <p className="text-[#5A687C] text-[14px] font-[400]">{t("constance.content_creation")} {">"} {t("brain_ai.add_new")}</p>
-            <h1 className="text-[#1E1E1E] font-[600] text-[24px]">{t("constance.add_creation_studio")}</h1>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+            <div ref={modalRef} className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-auto shadow-lg relative">
+                {/* Modal Header */}
+                <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10 ">
+                    <h1 className="text-[#1E1E1E] font-[600] text-[24px]">{t("constance.add_creation_studio")}</h1>
+                    {onClose && (
+                        <button
+                            onClick={onClose}
+                            className="text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
+                        >
+                            <X size={24} />
+                        </button>
+                    )}
+                </div>
+                
+                {/* Modal Content */}
+                <div className="px-6 py-2">
             {!contentId ? <div className="h-full flex flex-col gap-4 w-full py-3">
                 <div className="flex flex-col gap-1.5 w-full">
-                    <label className="text-sm font-medium text-[#1e1e1e]">
+                    <label className="text-sm font-medium text-[#808591]">
                         {t("constance.text")}(prompt)
                     </label>
                     <textarea
@@ -398,7 +428,7 @@ function CreationStudio() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                     <div className="flex flex-col gap-1.5 flex-1">
-                        <label className="text-sm font-medium text-[#1e1e1e]">
+                        <label className="text-sm font-medium text-[#808591]">
                             {t("constance.post_type")}
                         </label>
                         <SelectDropdown
@@ -420,7 +450,7 @@ function CreationStudio() {
                         {errors.post_type && <p className="text-red-500 text-sm mt-1">{errors.post_type}</p>}
                     </div>
                     <div className="flex flex-col gap-1.5 flex-1">
-                        <label className="text-sm font-medium text-[#1e1e1e]">
+                        <label className="text-sm font-medium text-[#808591]">
                             {t("constance.lang")}
                         </label>
                         <SelectDropdown
@@ -442,7 +472,7 @@ function CreationStudio() {
                         {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
                     </div>
                     <div className="flex flex-col gap-1.5 flex-1">
-                        <label className="text-sm font-medium text-[#1e1e1e]">
+                        <label className="text-sm font-medium text-[#808591]">
                             {t("constance.media_type")}
                         </label>
                         <SelectDropdown
@@ -464,7 +494,7 @@ function CreationStudio() {
                         {errors.media_type && <p className="text-red-500 text-sm mt-1">{errors.media_type}</p>}
                     </div>
                     {formData.media_type === "video" && <div className="flex flex-col gap-1.5 w-full">
-                        <label className="text-sm font-medium text-[#1e1e1e]">
+                        <label className="text-sm font-medium text-[#808591]">
                             {t("constance.video_duration")}
                         </label>
                         <SelectDropdown
@@ -487,7 +517,7 @@ function CreationStudio() {
                     </div>}
                     {/* Date Field */}
                     <div className="flex flex-col gap-1.5 flex-1">
-                        <label className="text-sm font-medium text-[#1e1e1e]">
+                        <label className="text-sm font-medium text-[#808591]">
                             {t("constance.date")}
                         </label>
                         <div className="relative">
@@ -514,7 +544,7 @@ function CreationStudio() {
                     </div>
                     {/* Time Field */}
                     <div className="flex flex-col gap-1.5 flex-1">
-                        <label className="text-sm font-medium text-[#1e1e1e]">
+                        <label className="text-sm font-medium text-[#808591]">
                               {t("constance.time")}
                         </label>
                         <div className="relative">
@@ -554,17 +584,6 @@ function CreationStudio() {
                     />
                     {errors.author && <p className="text-red-500 text-sm mt-1">{errors.author}</p>}
                 </div>}
-                <div className="flex items-center gap-2">
-                    <button onClick={handleSubmit} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{loading ? (
-                        <div className="flex items-center justify-center gap-2">
-                            <p>{t("processing")}</p>
-                            <span className="loader" />
-                        </div>
-                    ) : (
-                        t("brain_ai.create")
-                    )}</button>
-                    <button onClick={handleCancel} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
-                </div>
             </div>
                 : loadingSteps !== 100 ? <div className="border border-[#E1E4EA] bg-white p-[24px] justify-center items-center rounded-[10px] flex flex-col h-full">
                     <div className="flex flex-col gap-3 items-center">
@@ -617,6 +636,33 @@ function CreationStudio() {
                     </> : <p>Failed to Load</p>}
 
                 </div>}
+                </div>
+                
+                {/* Modal Footer with Buttons - Full Width Border */}
+                {!contentId && (
+                    <div className="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4 flex items-center justify-end gap-3 z-10">
+                        <button 
+                            onClick={handleCancel} 
+                            className="px-5 rounded-lg cursor-pointer py-2.5 text-center bg-white border border-gray-300 text-[#1E1E1E] font-[500] text-sm hover:bg-gray-50 transition-colors shadow-sm"
+                        >
+                            {t("cancel")}
+                        </button>
+                        <button 
+                            onClick={handleSubmit} 
+                            className="px-5 rounded-lg cursor-pointer py-2.5 text-center bg-[#675FFF] text-white font-[500] text-sm hover:bg-[#5a4fe6] transition-colors shadow-sm"
+                        >
+                            {loading ? (
+                                <div className="flex items-center justify-center gap-2">
+                                    <p>{t("processing")}</p>
+                                    <span className="loader" />
+                                </div>
+                            ) : (
+                                "Add Creation"
+                            )}
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

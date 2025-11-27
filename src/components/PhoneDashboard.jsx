@@ -404,7 +404,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
             </p>
           </div>
           <button
-            className="bg-white border border-[#E1E4EA] w-full mt-3 text-[#1E1E1E] text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer w-fit"
+            className="bg-white border border-[#E1E4EA] w-full mt-3 text-[#1E1E1E] text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => handleNavigateSection("call-agents")}
           >
             See more
@@ -423,7 +423,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
             </p>
           </div>
           <button
-            className="bg-white border border-[#E1E4EA] w-full mt-3 text-[#1E1E1E] text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer w-fit"
+            className="bg-white border border-[#E1E4EA] w-full mt-3 text-[#1E1E1E] text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => handleNavigateSection("call-campaigns")}
           >
             See more
@@ -442,7 +442,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
             </p>
           </div>
           <button
-            className="bg-white border border-[#E1E4EA] text-[#1E1E1E] w-full mt-3 text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer w-fit"
+            className="bg-white border border-[#E1E4EA] text-[#1E1E1E] w-full mt-3 text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => handleNavigateSection("outbound-calls")}
           >
             See more
@@ -461,7 +461,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
             </p>
           </div>
           <button
-            className="bg-white border border-[#E1E4EA] text-[#1E1E1E] w-full mt-3 text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer w-fit"
+            className="bg-white border border-[#E1E4EA] text-[#1E1E1E] w-full mt-3 text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => handleNavigateSection("inbound-calls")}
           >
             See more

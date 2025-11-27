@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { PostNow, Preview, ThreeDots, Delete, Edit } from "../icons/icons";
 import { getContentDetails, deleteContent, postContent } from "../api/contentCreationAgent";
-import { Cross, X } from "lucide-react";
+import { Cross, X, Search, ChevronDown, MoreVertical } from "lucide-react";
 import InstagramIcon from "../assets/svg/instagram.svg";
 import TwitterIcon from "../assets/svg/twitter.svg";
 import LinkedinIcon from "../assets/svg/linkedin_hr.svg";
+import { SelectDropdown } from "./Dropdown";
+import { BsThreeDots, BsThreeDotsVertical } from "react-icons/bs";
 
 function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
   const { t } = useTranslation();
@@ -22,6 +24,9 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
   const [error, setError] = useState(null);
   const [dropdownDirection, setDropdownDirection] = useState('down');
   const [postNowLoading, setPostNowLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [dateRange, setDateRange] = useState("1 Aug - 31 Aug");
+  const [campaignFilter, setCampaignFilter] = useState("Campaign");
   const dropdownRef = useRef(null);
 
   const handleDropdownClick = (index, event) => {
@@ -152,13 +157,24 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
     }
   };
 
-  // Pagination logic
-  const totalPages = Math.ceil(calenderData.length / rowsPerPage);
-  const startIdx = (currentPage - 1) * rowsPerPage;
-  const currentData = calenderData.slice(startIdx, startIdx + rowsPerPage);
+  // Filter data based on search query
+  const filteredData = calenderData.filter((item) => {
+    const searchLower = searchQuery.toLowerCase();
+    const contentText = item.text || "";
+    const platform = item.platform || "";
+    return (
+      contentText.toLowerCase().includes(searchLower) ||
+      platform.toLowerCase().includes(searchLower)
+    );
+  });
 
-  const handleRowsPerPageChange = (e) => {
-    setRowsPerPage(Number(e.target.value));
+  // Pagination logic
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+  const startIdx = (currentPage - 1) * rowsPerPage;
+  const currentData = filteredData.slice(startIdx, startIdx + rowsPerPage);
+
+  const handleRowsPerPageChange = (rows) => {
+    setRowsPerPage(Number(rows));
     setCurrentPage(1);
   };
 
@@ -168,171 +184,408 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
     }
   };
 
+  // Format date and time
+  const formatDateTime = (item) => {
+    let dateStr = "--";
+    let timeStr = "--";
+
+    if (item.scheduled_type === "publish" && item.published_time) {
+      const [datePart, timePart] = item.published_time.split(" ");
+      dateStr = datePart;
+      timeStr = timePart?.split(".")[0] || "--";
+    } else {
+      dateStr = item.scheduled_date && item.scheduled_date !== "None" ? item.scheduled_date : "--";
+      timeStr = item.scheduled_time && item.scheduled_time !== "None" ? item.scheduled_time : "--";
+    }
+
+    // Format date: "27 Mar 2025"
+    if (dateStr !== "--") {
+      try {
+        // Handle different date formats
+        let date;
+        if (dateStr.includes("-")) {
+          // Format: "2025-03-27" or "2025-03-27T..."
+          date = new Date(dateStr);
+        } else if (dateStr.includes("/")) {
+          // Format: "27/03/2025"
+          const parts = dateStr.split("/");
+          date = new Date(parts[2], parts[1] - 1, parts[0]);
+        } else {
+          date = new Date(dateStr);
+        }
+        
+        if (!isNaN(date.getTime())) {
+          const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+          const day = date.getDate();
+          const month = months[date.getMonth()];
+          const year = date.getFullYear();
+          dateStr = `${day} ${month} ${year}`;
+        }
+      } catch (e) {
+        // Keep original format if parsing fails
+      }
+    }
+
+    // Format time: "15:30"
+    if (timeStr !== "--" && timeStr.includes(":")) {
+      const parts = timeStr.split(":");
+      const hours = parts[0]?.padStart(2, "0") || "00";
+      const minutes = parts[1]?.padStart(2, "0") || "00";
+      timeStr = `${hours}:${minutes}`;
+    }
+
+    return { dateStr, timeStr };
+  };
+
+  // Get content text (truncate if too long)
+  const getContentText = (item) => {
+    // Try different possible field names for content text
+    const text = item.text || item.content || item.content_text || item.post_text || "";
+    if (!text) {
+      return "No content available";
+    }
+    return text.length > 60 ? text.substring(0, 60) + "..." : text;
+  };
+
+  // Date range options
+  const dateRangeOptions = [
+    { label: "1 Aug - 31 Aug", key: "1 Aug - 31 Aug" },
+    { label: "1 Sep - 30 Sep", key: "1 Sep - 30 Sep" },
+    { label: "1 Oct - 31 Oct", key: "1 Oct - 31 Oct" },
+  ];
+
+  // Campaign options
+  const campaignOptions = [
+    { label: "Campaign", key: "Campaign" },
+    { label: "All Campaigns", key: "All Campaigns" },
+  ];
+
   return (
     <div className="w-full p-4 flex flex-col gap-4 overflow-auto h-screen">
-      <div className="overflow-auto w-full">
-        <table className="w-full">
-          <thead>
-            <tr className="text-left text-[#5A687C] text-[16px]">
-              <th className="p-[14px]">Date</th>
-              <th className="p-[14px]">Time</th>
-              <th className="p-[14px]">Social Accounts</th>
-              <th className="p-[14px]">{t("phone.status")}</th>
-              <th className="p-[14px]">{t("phone.actions")}</th>
-            </tr>
-          </thead>
+      {/* Search and Filters */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        {/* Search Bar */}
+        <div className="relative flex-1 md:flex-initial md:w-auto md:max-w-md bg-white rounded-xl">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
+          <input
+            type="text"
+            placeholder="Search here"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-8 pr-8 py-2 border whitespace-nowrap border-[#E1E4EA] rounded-lg focus:outline-none focus:border-[#675FFF] text-sm"
+          />
+        </div>
 
-          <tbody className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
-            {loading ? (
-              <tr><td colSpan="6" className="text-center py-4"><span className="loader" /></td></tr>
-            ) : calenderData.length > 0 ? (
-              calenderData?.slice().reverse().map((item, index) => {
-                const isPublished = item.scheduled_type === "publish";
-                const isDraft = item.scheduled_type === "draft";
+        {/* Date Range and Campaign Dropdowns */}
+        <div className="flex items-center gap-3">
+          <SelectDropdown
+            name="dateRange"
+            options={dateRangeOptions}
+            value={dateRange}
+            onChange={(val) => setDateRange(val)}
+            placeholder="1 Aug - 31 Aug"
+            className="w-[160px]"
+          />
+          <SelectDropdown
+            name="campaign"
+            options={campaignOptions}
+            value={campaignFilter}
+            onChange={(val) => setCampaignFilter(val)}
+            placeholder="Campaign"
+            className="w-[140px]"
+          />
+        </div>
+      </div>
 
-                // ✅ Date & Time Logic
-                let displayDate = "--";
-                let displayTime = "--";
+      {/* Table */}
+      <div className="rounded-2xl border border-[#D6D6D6] overflow-auto mb-2">
+        <div className="overflow-x-auto">
+          <table className="min-w-full border-separate border-spacing-0">
+            <thead className="bg-[#F7F7F8]">
+              <tr className="text-[#5A687C]">
+                <th className="px-3 sm:px-4 md:px-6 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">Date time</th>
+                <th className="px-2 sm:px-3 md:px-6 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">Social Accounts</th>
+                <th className="px-2 sm:px-3 md:px-6 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">Content</th>
+                <th className="px-2 sm:px-3 md:px-6 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">Status</th>
+                <th className="px-3 sm:px-4 md:px-12 text-center py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">Action</th>
+              </tr>
+            </thead>
 
-                if (isPublished && item.published_time) {
-                  const [datePart, timePart] = item.published_time.split(" ");
-                  displayDate = datePart;
-                  displayTime = timePart?.split(".")[0] || "--";
-                } else {
-                  displayDate = item.scheduled_date !== "None" ? item.scheduled_date : "--";
-                  displayTime = item.scheduled_time !== "None" ? item.scheduled_time : "--";
-                }
+            <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
+              {loading ? (
+                <tr>
+                  <td colSpan="5" className="px-6 py-8 text-center">
+                    <span className="loader" />
+                  </td>
+                </tr>
+              ) : filteredData.length > 0 ? (
+                currentData.map((item, index) => {
+                  const isScheduled = item.scheduled_type?.toLowerCase() === "schedule" || item.scheduled_type?.toLowerCase() === "scheduled";
+                  const isDraft = item.scheduled_type?.toLowerCase() === "draft";
+                  const { dateStr, timeStr } = formatDateTime(item);
+                  const platformDetails = getPlatformDetails(item.platform);
 
-                // ✅ Status Badge Color
-                const statusClass =
-                  isPublished
-                    ? "text-[#675FFF] bg-[#EDEAFF] border border-[#675FFF]"
-                    : "text-[#00B871] bg-[#E8FFF3] border border-[#00B871]";
+                  return (
+                    <tr key={item.scheduled_content_id} className="text-sm sm:text-base md:text-[16px] text-[#1E1E1E]">
+                      {/* Date time */}
+                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-[#1E1E1E] font-[400] text-start">
+                        <span className="text-[#1E1E1E]">
+                          {dateStr !== "--" && timeStr !== "--" ? `${dateStr} · ${timeStr}` : "--"}
+                        </span>
+                      </td>
 
-                return (
-                  <tr key={item.scheduled_content_id} className={`${index !== calenderData.length - 1 ? "border-b border-[#E1E4EA]" : ""}`}>
-
-                    {/* ✅ Date */}
-                    <td className="p-[14px] font-medium text-gray-900">
-                      {displayDate}
-                    </td>
-
-                    {/* ✅ Time */}
-                    <td className="p-[14px]">
-                      {displayTime}
-                    </td>
-
-                    {/* ✅ Platform */}
-                    <td className="p-[14px] capitalize">
-                      {item.platform}
-                    </td>
-
-                    {/* ✅ Status Badge */}
-                    <td className="p-[14px]">
-                      <span className={`px-3 py-[4px] rounded-full text-sm font-medium ${statusClass}`}>
-                        {item.scheduled_type}
-                      </span>
-                    </td>
-
-                    {/* ✅ Actions Dropdown */}
-                    <td className="p-[14px] whitespace-nowrap relative">
-                      <button
-                        className="p-2 rounded-lg"
-                        onClick={(e) => handleDropdownClick(index, e)}
-                      >
-                        <div className='bg-[#F4F5F6] p-2 rounded-lg'>
-                          <ThreeDots />
+                      {/* Social Accounts */}
+                      <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-[#1E1E1E] font-[400] text-start">
+                        <div className="flex items-center gap-2">
+                          {platformDetails.icon && (
+                            <img src={platformDetails.icon} alt={platformDetails.name} className="w-5 h-5 flex-shrink-0" />
+                          )}
+                          <span className="text-[#1E1E1E]">@{item.platform || "Ecosysteme"}</span>
                         </div>
-                      </button>
+                      </td>
 
-                      {activeDropdown === index && (
-                        <div
-                          ref={dropdownRef} // move ref here, only wraps the actual dropdown
-                          className={`absolute right-0 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 z-10 ${dropdownDirection === "up" ? "bottom-full mb-2" : "mt-2"
-                            }`}
-                          onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
-                        >
-                          <div className="py-1">
-                            {/* Always show Preview */}
-                            <button
-                              className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handlePreview(item);
-                              }}
-                            >
-                              <div className="flex items-center gap-2"><Preview /><span>Preview</span></div>
-                            </button>
+                      {/* Content */}
+                      <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-[#1E1E1E] font-[400] text-start break-words">
+                        <span className="text-[#1E1E1E]">{getContentText(item)}</span>
+                      </td>
 
-                            {["schedule", "draft"].includes(item.scheduled_type?.toLowerCase()) && (
-                              <>
-                                <button
-                                  className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setActiveDropdown(null);
-                                    setSelectedItem(item);
-                                    if (typeof onEdit === "function") {
-                                      onEdit(item.scheduled_content_id);
-                                    }
-                                  }}
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <Edit />
-                                    <span>{t("edit")}</span>
-                                  </div>
-                                </button>
-
-                                {/* 🚀 Post Now */}
-                                <button
-                                  className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500] cursor-pointer disabled:opacity-50"
-                                  disabled={postNowLoading}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handlePostNowClick(item);
-                                  }}
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <PostNow />
-                                    <span>{postNowLoading ? "Posting..." : "Post Now"}</span>
-                                  </div>
-                                </button>
-                              </>
-                            )}
-
-
-                            <hr className="my-2 border-[#E6EAEE]" />
-
-                            {/* ✅ Always show Delete */}
-                            <button
-                              className="block w-full text-left px-4 py-2 text-sm text-[#FF3B30] hover:bg-[#F4F5F6] font-[500]"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteClick(item);
-                              }}
-                            >
-                              <div className="flex items-center gap-2"><Delete /><span>{t("delete")}</span></div>
-                            </button>
+                      {/* Status */}
+                      <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px]">
+                        {isScheduled ? (
+                          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border bg-[#E8FFF3] border-[#34C759]">
+                            <div className="w-2 h-2 rounded-full bg-[#34C759]"></div>
+                            <span className="text-xs sm:text-sm font-[500] text-[#34C759]">
+                              Scheduled
+                            </span>
                           </div>
+                        ) : (
+                          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border bg-gray-50 border-gray-300">
+                            <div className="w-2 h-2 rounded-full bg-gray-400"></div>
+                            <span className="text-xs sm:text-sm font-[500] text-[#5A687C]">
+                              {isDraft ? "Draft" : item.scheduled_type || "Draft"}
+                            </span>
+                          </div>
+                        )}
+                      </td>
 
-                        </div>
-                      )}
-                    </td>
+                      {/* Action */}
+                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-4 text-center relative">
+                        <button
+                          className="p-2 bg-[#ffffff] shadow-sm cursor-pointer hover:bg-gray-200 rounded-lg border border-gray-200 transition-colors"
+                          onClick={(e) => handleDropdownClick(index, e)}
+                        >
+                          <BsThreeDots className="w-5 h-5 text-[#1E1E1E]" />
+                        </button>
 
-                  </tr>
-                );
-              })
-            ) : (
-              <tr><td colSpan="6" className="text-center py-4">Scheduler Not Listed</td></tr>
-            )}
-          </tbody>
-        </table>
-        {error && (
-          <div className="text-center text-red-600 text-sm mt-2 bg-red-50 border border-red-200 p-2 rounded">
-            {error}
+                        {activeDropdown === index && (
+                          <div
+                            ref={dropdownRef}
+                            className={`absolute right-0 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 z-10 ${dropdownDirection === "up" ? "bottom-full mb-2" : "mt-2"
+                              }`}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <div className="py-1">
+                              {/* Always show Preview */}
+                              <button
+                                className="block w-full text-left group cursor-pointer px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handlePreview(item);
+                                }}
+                              >
+                                <div className="flex items-center gap-2"><Preview /><span>Preview</span></div>
+                              </button>
+
+                              {["schedule", "draft"].includes(item.scheduled_type?.toLowerCase()) && (
+                                <>
+                                  <button
+                                    className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setActiveDropdown(null);
+                                      setSelectedItem(item);
+                                      if (typeof onEdit === "function") {
+                                        onEdit(item.scheduled_content_id);
+                                      }
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <Edit />
+                                      <span>{t("edit")}</span>
+                                    </div>
+                                  </button>
+
+                                  {/* Post Now */}
+                                  <button
+                                    className="block w-full text-left group px-4 py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500] cursor-pointer disabled:opacity-50"
+                                    disabled={postNowLoading}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handlePostNowClick(item);
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <PostNow />
+                                      <span>{postNowLoading ? "Posting..." : "Post Now"}</span>
+                                    </div>
+                                  </button>
+                                </>
+                              )}
+
+                              <hr className="my-2 border-[#E6EAEE]" />
+
+                              {/* Always show Delete */}
+                              <button
+                                className="block w-full text-left px-4 py-2 cursor-pointer text-sm text-[#FF3B30] hover:bg-[#F4F5F6] font-[500]"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteClick(item);
+                                }}
+                              >
+                                <div className="flex items-center gap-2"><Delete /><span>{t("delete")}</span></div>
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="5" className="px-6 py-8 text-center text-xs sm:text-sm md:text-[16px] text-[#5A687C]">
+                    No scheduled posts found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        {filteredData.length > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between bg-[#F7F7F8] px-4 sm:px-6 py-3 gap-4 sm:gap-0">
+            {/* Page Navigation Buttons */}
+            <div className="flex items-center gap-1 md:gap-2 w-full sm:w-auto overflow-x-auto scrollbar-hide py-1">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="border border-[#D6D6D6] text-[#000000] rounded-lg px-2 py-1 text-xs sm:text-sm bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors whitespace-nowrap"
+              >
+                ‹ Prev
+              </button>
+
+              {/* Always show page 1 */}
+              <button
+                onClick={() => handlePageChange(1)}
+                className={`border rounded-lg px-2 py-1 text-xs sm:text-sm cursor-pointer min-w-[32px] sm:min-w-[36px] transition-colors whitespace-nowrap ${
+                  currentPage === 1
+                    ? "bg-[#675FFF] text-white border-[#675FFF] hover:bg-[#5E54FF]"
+                    : "border-[#D6D6D6] text-[#000000] hover:bg-gray-50"
+                }`}
+              >
+                1
+              </button>
+
+              {/* Show page 2 if totalPages > 1 */}
+              {totalPages > 1 && (
+                <button
+                  onClick={() => handlePageChange(2)}
+                  className={`border rounded-lg px-2 py-1 text-xs sm:text-sm cursor-pointer min-w-[32px] sm:min-w-[36px] transition-colors whitespace-nowrap ${
+                    currentPage === 2
+                      ? "bg-[#675FFF] text-white border-[#675FFF] hover:bg-[#5E54FF]"
+                      : "border-[#D6D6D6] text-[#000000] hover:bg-gray-50"
+                  }`}
+                >
+                  2
+                </button>
+              )}
+
+              {/* Show page 3 if totalPages > 2 */}
+              {totalPages > 2 && (
+                <button
+                  onClick={() => handlePageChange(3)}
+                  className={`border rounded-lg px-2 py-1 text-xs sm:text-sm cursor-pointer min-w-[32px] sm:min-w-[36px] transition-colors whitespace-nowrap ${
+                    currentPage === 3
+                      ? "bg-[#675FFF] text-white border-[#675FFF] hover:bg-[#5E54FF]"
+                      : "border-[#D6D6D6] text-[#000000] hover:bg-gray-50"
+                  }`}
+                >
+                  3
+                </button>
+              )}
+
+              {/* Show ellipsis if totalPages > 3 */}
+              {totalPages > 3 && <span className="text-[#000000] text-xs sm:text-sm px-1 whitespace-nowrap">…</span>}
+
+              {/* Show last page if totalPages > 3 */}
+              {totalPages > 3 && (
+                <button
+                  onClick={() => handlePageChange(totalPages)}
+                  className={`border rounded-lg px-2 py-1 text-xs sm:text-sm cursor-pointer min-w-[32px] sm:min-w-[36px] transition-colors whitespace-nowrap ${
+                    currentPage === totalPages
+                      ? "bg-[#675FFF] text-white border-[#675FFF] hover:bg-[#5E54FF]"
+                      : "border-[#D6D6D6] text-[#000000] hover:bg-gray-50"
+                  }`}
+                >
+                  {totalPages}
+                </button>
+              )}
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="border border-[#D6D6D6] text-[#000000] rounded-lg px-2 py-1 text-xs sm:text-sm bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors whitespace-nowrap"
+              >
+                Next ›
+              </button>
+            </div>
+
+            {/* Rows per page */}
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-[#5A687C] w-full sm:w-auto justify-center sm:justify-end">
+              <span>Rows per page:</span>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => handleRowsPerPageChange(5)}
+                  className={`border rounded-lg px-2 py-1 text-xs sm:text-sm cursor-pointer transition-colors whitespace-nowrap ${
+                    rowsPerPage === 5
+                      ? "bg-white border-[#D6D6D6] text-[#000000]"
+                      : "bg-transparent border-[#D6D6D6] text-[#5A687C] hover:bg-white"
+                  }`}
+                >
+                  5 rows
+                </button>
+                <button
+                  onClick={() => handleRowsPerPageChange(10)}
+                  className={`border rounded-lg px-2 py-1 text-xs sm:text-sm cursor-pointer transition-colors whitespace-nowrap ${
+                    rowsPerPage === 10
+                      ? "bg-white border-[#D6D6D6] text-[#000000]"
+                      : "bg-transparent border-[#D6D6D6] text-[#5A687C] hover:bg-white"
+                  }`}
+                >
+                  10
+                </button>
+                <button
+                  onClick={() => handleRowsPerPageChange(20)}
+                  className={`border rounded-lg px-2 py-1 text-xs sm:text-sm cursor-pointer transition-colors whitespace-nowrap ${
+                    rowsPerPage === 20
+                      ? "bg-white border-[#D6D6D6] text-[#000000]"
+                      : "bg-transparent border-[#D6D6D6] text-[#5A687C] hover:bg-white"
+                  }`}
+                >
+                  20
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
+
+      {error && (
+        <div className="text-center text-red-600 text-sm mt-2 bg-red-50 border border-red-200 p-2 rounded">
+          {error}
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       {deleteModalStatus && (
