@@ -1,15 +1,15 @@
-import { X, ChevronDown, Hash, Settings, Edit3, Camera, Link, Trash2, UploadIcon, Tag, CircleX, StarsIcon, Italic, Bold, Smile, SquarePen, Image, Share2 } from "lucide-react"
+import { X, ChevronDown, Hash, Settings, Edit3, Camera, Link, Trash2, UploadIcon, Tag, CircleX, StarsIcon, Italic, Bold, Smile, SquarePen, Image, Share2, Heart, MessageCircle, Send, Bookmark, MoreHorizontal } from "lucide-react"
 import inkartinkLogo from '../assets/svg/inkartink.svg';
 import { useTranslation } from "react-i18next";
 import DateTimePicker from "./DateTimePicker";
 import { useState, useRef, useEffect } from "react";
 import { publishContent, saveDraftContent, scheduleContent, editScheduledContent } from '../api/contentCreationAgent';
-import { getInstaAccounts, getLinkedInAccounts } from '../api/brainai';
+import { getInstaAccounts, getLinkedInAccounts, getTikTokAccounts } from '../api/brainai';
 import { SelectDropdown } from "./Dropdown";
 import { Duplicate } from "../icons/icons";
 import instagram from '../assets/svg/instagram.svg'
 import linkedin from '../assets/svg/linkedin.svg'
-import twitter from '../assets/svg/twitter.svg'
+import twitter from '../assets/svg/tiktok.png'
 
 export default function CreatePost({ onClose, editData }) {
   const { t } = useTranslation();
@@ -51,18 +51,33 @@ export default function CreatePost({ onClose, editData }) {
     }
   }, [editData]);
 
-  // Fetch Instagram accounts when platform is 'instagram'
+  // Fetch accounts when platform is selected
   useEffect(() => {
-    if (platform === "instagram" || platform === "linkedin") {
+    // Clear selected account when platform changes
+    setSelectedAccount("");
+    
+    if (platform === "instagram" || platform === "linkedin" || platform === "X") {
       setAccountsOptionsLoading(true);
       setAccountsError(null);
       const fetchAccounts = async () => {
         try {
-          const accounts = platform === "instagram" ? await getInstaAccounts() : await getLinkedInAccounts()
-          const accountsData = platform === "instagram" ? accounts?.data?.insta_account_info : accounts?.data?.linkedin_account_info;
+          let accounts;
+          let accountsData;
+          
+          if (platform === "instagram") {
+            accounts = await getInstaAccounts();
+            accountsData = accounts?.data?.insta_account_info;
+          } else if (platform === "linkedin") {
+            accounts = await getLinkedInAccounts();
+            accountsData = accounts?.data?.linkedin_account_info;
+          } else if (platform === "X") {
+            accounts = await getTikTokAccounts();
+            accountsData = accounts?.data?.tiktok_account_info;
+          }
+          
           setAccountsOptions(accountsData);
         } catch (err) {
-          setAccountsError("Failed to fetch Instagram accounts");
+          setAccountsError("Failed to fetch accounts");
         } finally {
           setAccountsOptionsLoading(false);
         }
@@ -87,21 +102,50 @@ export default function CreatePost({ onClose, editData }) {
       return [{ key: '', label: 'Loading...' }];
     }
     if (accountsOptions?.length > 0) {
-      return accountsOptions.map(acc => ({
-        key: platform === "instagram" ? acc.instagram_user_id : acc.linkedin_id,
-        label: platform === "instagram" ? acc.username : acc.name
-      }));
+      return accountsOptions.map(acc => {
+        let key, label;
+        
+        if (platform === "instagram") {
+          key = acc.instagram_user_id;
+          label = acc.username;
+        } else if (platform === "linkedin") {
+          key = acc.linkedin_id;
+          label = acc.name;
+        } else if (platform === "X") {
+          key = acc.tiktok_id;
+          label = acc.name;
+        }
+        
+        return { key, label };
+      });
     }
     return [];
+  }
+
+  const getSelectedAccountLabel = () => {
+    const options = renderOptions();
+    const match = options.find(opt => opt.key === selectedAccount);
+    return match ? match.label : "";
+  }
+
+  const renderCaptionWithHashtags = (value) => {
+    if (!value) return null;
+    const parts = value.split(/(\#[\w\u00C0-\u024F\u1E00-\u1EFF]+)/g);
+    return parts.map((part, idx) => {
+      if (/^\#[\w\u00C0-\u024F\u1E00-\u1EFF]+$/.test(part)) {
+        return <span key={idx} className="text-[#3B82F6]">{part}</span>;
+      }
+      return <span key={idx}>{part}</span>;
+    });
   }
 
   // Handle file upload and convert to base64
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    // Only allow webp/jpeg/png/pdf
-    if (!['image/webp', 'image/jpeg', 'image/png', 'application/pdf', 'video/mp4'].includes(file.type)) {
-      setErrors({ document: 'Only webp, jpeg, png images or pdf files are allowed.' });
+    // Only allow video files
+    if (!file.type.startsWith('video/')) {
+      setErrors({ document: 'Only video files are allowed.' });
       return;
     }
     setFileName(file.name);
@@ -147,13 +191,25 @@ export default function CreatePost({ onClose, editData }) {
     return '';
   };
 
+  const normalizePlatform = (platform) => {
+    if (!platform) return platform;
+    const platformMap = {
+      "X": "tiktok",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn"
+    };
+    return platformMap[platform] || platform;
+  };
+
   // Handle Draft button click
   const handleSaveDraft = async () => {
     let newErrors = {};
     if (!text) newErrors.text = `${t("constance.post_text") + " " + t("is_required")}`;
     if (!platform) newErrors.platform = `${t("constance.platform") + " " + t("is_required")}`;
     if (!selectedAccount) newErrors.selectedAccount = `${t("constance.account") + " " + t("is_required")}`;
-    if (platform === "instagram" && !document && !(editData && editData.document)) newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
+    if ((platform === "instagram" || platform === "X") && !document && !(editData && editData.document)) {
+      newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
+    }
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
     try {
@@ -169,7 +225,7 @@ export default function CreatePost({ onClose, editData }) {
         const payload = {
           text,
           document,
-          platform,
+          platform: normalizePlatform(platform),
           platform_unique_id: selectedAccount,
           media_type: getMediaType(document),
         };
@@ -178,6 +234,8 @@ export default function CreatePost({ onClose, editData }) {
           setText("");
           setDocument(null);
           setFileName("");
+          setPreview(null);
+          setPreviewMediaType(null);
           setSelectedAccount("");
           setPlatform("");
           if (fileInputRef.current) fileInputRef.current.value = '';
@@ -192,7 +250,7 @@ export default function CreatePost({ onClose, editData }) {
       const payload = {
         text,
         document,
-        platform,
+        platform: normalizePlatform(platform), // Normalize platform name for API
         platform_unique_id: selectedAccount,
         media_type: getMediaType(document),
       };
@@ -201,6 +259,8 @@ export default function CreatePost({ onClose, editData }) {
         setText("");
         setDocument(null);
         setFileName("");
+        setPreview(null);
+        setPreviewMediaType(null);
         setSelectedAccount("");
         setPlatform("");
         fileInputRef.current.value = '';
@@ -220,7 +280,9 @@ export default function CreatePost({ onClose, editData }) {
     if (!text) newErrors.text = `${t("constance.post_text") + " " + t("is_required")}`;
     if (!platform) newErrors.platform = `${t("constance.platform") + " " + t("is_required")}`;
     if (!selectedAccount) newErrors.selectedAccount = `${t("constance.account") + " " + t("is_required")}`;
-    if (platform === "instagram" && !document && !(editData && editData.document)) newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
+    if ((platform === "instagram" || platform === "X") && !document && !(editData && editData.document)) {
+      newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
+    }
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
     try {
@@ -229,7 +291,7 @@ export default function CreatePost({ onClose, editData }) {
       const payload = {
         text,
         document,
-        platform,
+        platform: normalizePlatform(platform), // Normalize platform name for API
         platform_unique_id: selectedAccount,
         media_type: getMediaType(document),
       };
@@ -239,6 +301,8 @@ export default function CreatePost({ onClose, editData }) {
         setText("");
         setDocument(null);
         setFileName("");
+        setPreview(null);
+        setPreviewMediaType(null);
         setSelectedAccount("");
         setPlatform("");
         fileInputRef.current.value = '';
@@ -259,7 +323,9 @@ export default function CreatePost({ onClose, editData }) {
     if (!text) newErrors.text = `${t("constance.post_text") + " " + t("is_required")}`;
     if (!platform) newErrors.platform = `${t("constance.platform") + " " + t("is_required")}`;
     if (!selectedAccount) newErrors.selectedAccount = `${t("constance.account") + " " + t("is_required")}`;
-    if (platform === "instagram" && !document && !(editData && editData.document)) newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
+    if ((platform === "instagram" || platform === "X") && !document && !(editData && editData.document)) {
+      newErrors.document = `${t("brain_ai.upload_file_images_placeholder") + " " + t("is_required")}`;
+    }
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
     try {
@@ -287,7 +353,7 @@ export default function CreatePost({ onClose, editData }) {
         const payload = {
           text,
           document,
-          platform,
+          platform: normalizePlatform(platform), // Normalize platform name for API
           scheduled_date: scheduledDate,
           scheduled_time: scheduledTime,
           platform_unique_id: selectedAccount,
@@ -298,6 +364,8 @@ export default function CreatePost({ onClose, editData }) {
           setText("");
           setDocument(null);
           setFileName("");
+          setPreview(null);
+          setPreviewMediaType(null);
           setSelectedAccount("");
           setPlatform("");
           if (fileInputRef.current) fileInputRef.current.value = '';
@@ -312,7 +380,7 @@ export default function CreatePost({ onClose, editData }) {
       const payload = {
         text,
         document,
-        platform,
+        platform: normalizePlatform(platform), // Normalize platform name for API
         scheduled_date: scheduledDate,
         scheduled_time: scheduledTime,
         platform_unique_id: selectedAccount,
@@ -323,6 +391,8 @@ export default function CreatePost({ onClose, editData }) {
         setText("");
         setDocument(null);
         setFileName("");
+        setPreview(null);
+        setPreviewMediaType(null);
         setSelectedAccount("");
         setPlatform("");
         fileInputRef.current.value = '';
@@ -352,12 +422,12 @@ export default function CreatePost({ onClose, editData }) {
   };
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8">
       {/* Header */}
-      <div className="flex flex-row items-center justify-between h-[38px]">
-        <h1 className="text-2xl font-semibold text-gray-900">{t("constance.scheduler") + ' > ' + (editData ? t("edit") : t("brain_ai.create"))}</h1>
-        <button className="p-2 hover:bg-gray-100 rounded-full" onClick={onClose}>
-          <X className="w-5 h-5 text-gray-500" />
+      <div className="flex flex-row items-center justify-between min-h-[38px] sm:h-[38px]">
+        <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 pr-2">{t("constance.scheduler") + ' > ' + (editData ? t("edit") : t("brain_ai.create"))}</h1>
+        <button className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full cursor-pointer flex-shrink-0" onClick={onClose}>
+          <X className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
         </button>
       </div>
 
@@ -376,7 +446,7 @@ export default function CreatePost({ onClose, editData }) {
                     name="platform"
                     options={[
                       { key: "linkedin", label: "Linkedin" },
-                      { key: "X", label: "Twitter" },
+                      { key: "X", label: "TikTok" },
                       { key: "instagram", label: "Instagram" },
                     ]}
                     value={platform}
@@ -427,11 +497,11 @@ export default function CreatePost({ onClose, editData }) {
                <div className="flex flex-row items-center gap-2 bg-[#F0EFFF] p-1 rounded-lg">
                   <div className="w-6 h-6 rounded flex items-center justify-center">
                     {platform === "instagram" ? (
-                      <img src={instagram} alt="Instagram" className="w-5 h-5" />
+                      <img src={instagram} alt="Instagram" className="w-6 h-6" />
                     ) : platform === "X" ? (
-                      <img src={twitter} alt="X / Twitter" className="w-5 h-5" />
+                      <img src={twitter} alt="X / Twitter" className="w-6 h-6" />
                     ) : (
-                      <img src={linkedin} alt="LinkedIn" className="w-5 h-5" />
+                      <img src={linkedin} alt="LinkedIn" className="w-6 h-6" />
                     )}
                   </div>
                 </div>
@@ -460,14 +530,14 @@ export default function CreatePost({ onClose, editData }) {
             {/* Post Header */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="flex flex-row items-center gap-2 bg-[#F0EFFF] p-2 rounded-lg">
+                <div className="flex flex-row items-center gap-2 bg-[#F0EFFF] p-1 rounded-lg">
                   <div className="w-8 h-8 rounded flex items-center justify-center">
                     {platform === "instagram" ? (
-                      <img src={instagram} alt="Instagram" className="w-7 h-7" />
+                      <img src={instagram} alt="Instagram" className="w-8 h-8" />
                     ) : platform === "X" ? (
-                      <img src={twitter} alt="X / Twitter" className="w-7 h-7" />
+                      <img src={twitter} alt="X / Twitter" className="w-8 h-8" />
                     ) : (
-                      <img src={linkedin} alt="LinkedIn" className="w-7 h-7" />
+                      <img src={linkedin} alt="LinkedIn" className="w-8 h-8" />
                     )}
                   </div>
                 </div>
@@ -539,10 +609,10 @@ export default function CreatePost({ onClose, editData }) {
 
               {/* Upload Section */}
               <div className="mb-4 w-full">
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t("brain_ai.upload_file_images_placeholder")} (webp, jpeg, png, pdf, mp4) *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t("brain_ai.upload_file_images_placeholder")} (video files only) *</label>
                 <input
                   type="file"
-                  accept="image/webp,image/jpeg,image/png,application/pdf/,video/mp4"
+                  accept="video/*"
                   onChange={handleFileChange}
                   className="mb-2 hidden"
                   ref={fileInputRef}
@@ -637,8 +707,39 @@ export default function CreatePost({ onClose, editData }) {
             </div>
 
             {/* Preview Content */}
-            <div className="flex-1 flex justify-center">
-              <div className="relative w-[260px] h-[234px] rounded-md overflow-hidden flex items-center justify-center bg-gray-50 border border-gray-200">
+            <div className="flex-1 flex flex-col gap-3 overflow-y-auto">
+              {/* Header (Instagram-like) */}
+              {(text || getSelectedAccountLabel() || platform) && (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-[#F0EFFF] flex items-center justify-center">
+                    {platform === "instagram" ? (
+                      <img src={instagram} alt="Instagram" className="w-5 h-5" />
+                    ) : platform === "X" ? (
+                      <img src={twitter} alt="X / Twitter" className="w-5 h-5" />
+                    ) : platform === "linkedin" ? (
+                      <img src={linkedin} alt="LinkedIn" className="w-5 h-5" />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-gray-200" />
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="text-sm font-semibold text-gray-900 truncate max-w-[140px]">
+                      {getSelectedAccountLabel() || "user_name"}
+                    </div>
+                    
+                  </div>
+                </div>
+                <div className="flex items-center gap-1">
+                  <button className="px-1 py-0.5 text-[11px] uppercase tracking-wide rounded-[6px] border border-blue-600 text-blue-500">
+                    {t("follow") || "FOLLOW"}
+                  </button>
+                  <MoreHorizontal className="w-5 h-5 text-gray-500" />
+                </div>
+              </div>
+              )}
+              {/* Image/Media Preview */}
+              <div className="relative w-full h-[234px] rounded-md overflow-hidden flex items-center justify-center bg-gray-50 border border-gray-200 flex-shrink-0">
                 {preview ? (
                   previewMediaType === 'image' ? (
                     <img
@@ -682,6 +783,33 @@ export default function CreatePost({ onClose, editData }) {
                   />
                 )}
               </div>
+
+              {/* Action row (Instagram-like) */}
+              {(text || getSelectedAccountLabel()) && (
+                <div className="flex items-center justify-between mt-1">
+                  <div className="flex items-center gap-3">
+                    <Heart className="w-5 h-5 text-gray-700" />
+                    <MessageCircle className="w-5 h-5 text-gray-700" />
+                    <Send className="w-5 h-5 text-gray-700" />
+                  </div>
+                  <Bookmark className="w-5 h-5 text-gray-700" />
+                </div>
+              )}
+
+              {/* Likes */}
+              {(text || getSelectedAccountLabel()) && (
+                <div className="text-sm font-semibold text-gray-900">
+                  396 {t("likes") || "likes"}
+                </div>
+              )}
+
+              {/* Caption Preview */}
+              {(text || getSelectedAccountLabel()) && (
+                <div className="text-sm text-gray-800 whitespace-pre-wrap break-words">
+                  <span className="font-semibold mr-2">{getSelectedAccountLabel() || "user_name"}</span>
+                  {renderCaptionWithHashtags(text)}
+                </div>
+              )}
             </div>
 
           </div>
