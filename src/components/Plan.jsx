@@ -164,7 +164,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
     yearly: [
       {
         id: import.meta.env.VITE_YEARLY_PRO_PLAN,
-        name: `${t("Standard")}`,
+        name: `${t("settings.tab_2_list.standard_plan")}`,
         key: "pro",
         svg: <ProPlanIcon />,
         price: "€931",
@@ -184,7 +184,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
       },
       {
         id: import.meta.env.VITE_YEARLY_TEAM_PLAN,
-        name: `${t("Pro")}`,
+        name: `${t("settings.tab_2_list.pro")}`,
         key: "team",
         svg: <TeamPlanIcon />,
         price: "€1603",
@@ -223,7 +223,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
         svg: <CustomPlanIcon />,
         key: "enterprise",
         price: `${t("settings.tab_2_list.custom")}`,
-        description: "Best performance, support and security.",
+        description: `${t("settings.tab_2_list.enterprise_content")}`,
         features: [
           `${t("settings.tab_2_list.priority_support")}`,
           `${t("settings.tab_2_list.advanced_auth")}`,
@@ -291,7 +291,7 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
         svg: <CustomPlanIcon />,
         key: "enterprise",
         price: `${t("settings.tab_2_list.custom")}`,
-        description: "Best performance, support and security.",
+        description: `${t("settings.tab_2_list.enterprise_content")}`,
         features: [
           `${t("settings.tab_2_list.priority_support")}`,
           `${t("settings.tab_2_list.advanced_auth")}`,
@@ -367,12 +367,12 @@ const PlanManagementPopup = ({ t, onClose, onOpen }) => {
   const renderPlanExpire = () => {
     if (userDetails?.subscriptionType == 'trial') {
       if (new Date() > new Date(userDetails?.subscriptionEndDate)) {
-        return <p className="text-red-500 pb-3">Your Trail Plan ended on {DateFormat(userDetails?.subscriptionEndDate)}</p>
+        return <p className="text-red-500 pb-3">{t("settings.tab_2_list.your_trail_plan_ended")} {DateFormat(userDetails?.subscriptionEndDate)}</p>
       } else {
-        return <p className="text-green-500 pb-3">Your Trail Plan ends on {DateFormat(userDetails?.subscriptionEndDate)}</p>
+        return <p className="text-green-500 pb-3">{t("settings.tab_2_list.your_trail_plan_ends")} {DateFormat(userDetails?.subscriptionEndDate)}</p>
       }
     } else if (new Date() > new Date(userDetails?.subscriptionEndDate)) {
-      return <p className="text-red-500 pb-3">Your current plan ended on {DateFormat(userDetails?.subscriptionEndDate)}</p>
+      return <p className="text-red-500 pb-3">{t("settings.tab_2_list.your_current_plan_ended")} {DateFormat(userDetails?.subscriptionEndDate)}</p>
     }
   }
 
@@ -535,9 +535,9 @@ export const CancelSubscriptionPopup = ({ t, onClose }) => {
               </h3>
 
               <p className="text-[14px] text-[#5A687C] leading-relaxed">
-                Before you cancel, we're offering a special<br></br>
-                <span className="font-semibold text-black"> 30% lifetime discount </span>
-                to stay with Ecosystem.ai.
+                {t("settings.tab_2_list.before_cancel_offer")}<br></br>
+                <span className="font-semibold text-black"> {t("settings.tab_2_list.lifetime_discount_text")} </span>
+                {t("settings.tab_2_list.to_stay_with")}
               </p>
             </div>
 
@@ -546,10 +546,10 @@ export const CancelSubscriptionPopup = ({ t, onClose }) => {
 
               <div className="flex items-center gap-2 mb-1 justify-between">
                 <h2 className="text-[#1E1E1E] font-[600] text-[18px]">
-                  Standard
+                  {t("settings.tab_2_list.standard_plan")}
                 </h2>
                 <span className="bg-[#E8E7FF] text-[#675FFF] text-[11px] font-semibold px-2 py-1 rounded-full">
-                  30% Off
+                  {t("settings.tab_2_list.discount_30_off")}
                 </span>
               </div>
 
@@ -563,15 +563,15 @@ export const CancelSubscriptionPopup = ({ t, onClose }) => {
                   €97
                 </span>
 
-                <span className="text-[#5A687C] text-[14px]">/ month</span>
+                <span className="text-[#5A687C] text-[14px]">{t("settings.tab_2_list.per_month")}</span>
               </div>
 
               <p className="text-[#5A687C] text-[13px] mt-1">
-                Saving €48.50/month indefinitely
+                {t("settings.tab_2_list.saving_indefinitely")}
               </p>
             </div>
             <p className="text-[#8891A5] text-[12px] text-center">
-              Offer expires in 48 hours.
+              {t("settings.tab_2_list.offer_expires")}
             </p>
           </div>
 
@@ -582,11 +582,11 @@ export const CancelSubscriptionPopup = ({ t, onClose }) => {
                 onClick={() => setInitailTab(false)}
                 className="flex-1 py-2.5 text-sm font-semibold border cursor-pointer border-[#E1E4EA] text-[#1E1E1E] rounded-lg hover:bg-gray-50"
               >
-                No, I still want to cancel
+                {t("settings.tab_2_list.no_still_cancel")}
               </button>
 
               <button className="flex-1 py-2.5 text-sm font-semibold cursor-pointer bg-[#675FFF] text-white rounded-lg hover:bg-[#5E54FF]">
-                Accept Discount & Stay
+                {t("settings.tab_2_list.accept_discount_stay")}
               </button>
             </div>
           </div>
@@ -615,11 +615,11 @@ export const CancelSubscriptionPopup = ({ t, onClose }) => {
     </div>
 
     <h3 className="text-[20px] font-[600] text-[#1E1E1E]">
-      Final Confirmation
+      {t("settings.tab_2_list.final_confirmation")}
     </h3>
 
     <p className="text-[14px] text-center text-[#5A687C] font-[400]">
-      We appreciate your feedback. Please share your reason for canceling.
+      {t("settings.tab_2_list.cancel_feedback_message")}
     </p>
   </div>
 
@@ -644,12 +644,12 @@ export const CancelSubscriptionPopup = ({ t, onClose }) => {
     {/* Reason Textarea (Always Visible as Requested) */}
     <div className="flex flex-col gap-2">
       <label className="text-[14px] font-[500] text-[#5A687C]">
-        Reason
+        {t("settings.tab_2_list.reason")}
       </label>
 
       <textarea
         className="w-full rounded-lg resize-none border border-[#E1E4EA] p-3 text-[14px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none"
-        placeholder="Enter your reasons"
+        placeholder={t("settings.tab_2_list.enter_your_reasons")}
         rows={3}
         value={otherIssue}
         onChange={(e) => setOtherIssue(e.target.value)}
@@ -659,7 +659,7 @@ export const CancelSubscriptionPopup = ({ t, onClose }) => {
 
   {/* Warning Text */}
   <p className="text-xs text-[#5A687C] font-[400] mb-6 items-center">
-    Your credits will be revoked immediately, even before the end of your billing period. You're always welcome back.
+    {t("settings.tab_2_list.credits_revoked_warning")}
   </p>
 
   {/* Buttons */}
@@ -710,15 +710,15 @@ const formatRenewalDate = (dateString) => {
 };
 
 // Helper function to get plan display name
-const getPlanDisplayName = (subscriptionType) => {
+const getPlanDisplayName = (subscriptionType, t) => {
   const planMap = {
-    'pro': 'Standard',
-    'team': 'Pro',
-    'business': 'Business',
-    'enterprise': 'Enterprise',
-    'trial': 'Trial'
+    'pro': t("settings.tab_2_list.standard_plan"),
+    'team': t("settings.tab_2_list.pro"),
+    'business': t("settings.tab_2_list.business"),
+    'enterprise': t("settings.tab_2_list.enterprise"),
+    'trial': t("settings.tab_2_list.trial")
   };
-  return planMap[subscriptionType] || subscriptionType?.charAt(0).toUpperCase() + subscriptionType?.slice(1) || 'Standard';
+  return planMap[subscriptionType] || subscriptionType?.charAt(0).toUpperCase() + subscriptionType?.slice(1) || t("settings.tab_2_list.standard_plan");
 };
 
 const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShowPlanPopup, handleAddSeatsTeam, setShowManagePlan, setSearchParams }) => {
@@ -820,10 +820,10 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
       {/* Header */}
       <div className="flex flex-col gap-2 mb-6">
         <h1 className="text-md md:text-2xl font-[600] text-[#1E1E1E]">
-          Plan & Billing
+          {t("settings.tab_2_list.plan_billing")}
         </h1>
         <p className="text-[14px] sm:text-[16px] text-[#5A687C] font-[400]">
-          Manage your subscription, billing methods, and team seats in one place.
+          {t("settings.tab_2_list.plan_billing_description")}
         </p>
       </div>
 
@@ -842,13 +842,13 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
         {/* Current Plan Card */}
         <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-xl border border-[#E1E4EA] min-w-0 overflow-hidden flex flex-col">
           <div className="min-w-0 flex-1">
-            <h3 className="text-xs sm:text-sm font-[500] text-[#5A687C] mb-2 sm:mb-3">Current plan</h3>
+            <h3 className="text-xs sm:text-sm font-[500] text-[#5A687C] mb-2 sm:mb-3">{t("settings.tab_2_list.current_plan")}</h3>
             <h2 className="text-lg sm:text-xl md:text-2xl lg:text-2xl font-[600] text-[#1E1E1E] mb-2 break-words">
-              {getPlanDisplayName(userDetails?.subscriptionType)}
+              {getPlanDisplayName(userDetails?.subscriptionType, t)}
             </h2>
             {userDetails?.subscriptionEndDate && (
               <p className="text-xs sm:text-sm font-[400] text-[#5A687C] break-words">
-                Auto renew on <span className="text-black font-semibold">{formatRenewalDate(userDetails.subscriptionEndDate)}</span> 
+                {t("settings.tab_2_list.auto_renew_on")} <span className="text-black font-semibold">{formatRenewalDate(userDetails.subscriptionEndDate)}</span> 
               </p>
             )}
           </div>
@@ -863,14 +863,14 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
             }}
             className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] cursor-pointer text-sm sm:text-base font-semibold shadow-sm hover:bg-[#F9F8FF] transition-colors overflow-hidden text-ellipsis mt-4 sm:mt-5"
           >
-            Manage Plan
+            {t("settings.tab_2_list.manage_plan")}
           </button>
         </div>
 
         {/* Payment Method Card */}
         <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-xl border border-[#E1E4EA] min-w-0 overflow-hidden flex flex-col">
           <div className="min-w-0 flex-1">
-            <h3 className="text-xs sm:text-sm font-[500] text-[#5A687C] mb-2 sm:mb-3">Payment method</h3>
+            <h3 className="text-xs sm:text-sm font-[500] text-[#5A687C] mb-2 sm:mb-3">{t("settings.tab_2_list.payment_method")}</h3>
             <h2 className="text-lg sm:text-xl md:text-2xl lg:text-2xl font-[600] text-[#1E1E1E] mb-2 break-words">
               Visa
             </h2>
@@ -881,24 +881,24 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
           <button
             className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] cursor-pointer text-sm sm:text-base font-semibold shadow-sm hover:bg-[#F9F8FF] transition-colors overflow-hidden text-ellipsis mt-4 sm:mt-5"
           >
-            Change Method
+            {t("settings.tab_2_list.change_method")}
           </button>
         </div>
 
         {/* Member Seats Card */}
         <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-xl border border-[#E1E4EA] font-semibold shadow-sm min-w-0 overflow-hidden flex flex-col">
           <div className="min-w-0 flex-1">
-            <h3 className="text-xs sm:text-sm font-[500] text-[#5A687C] mb-2 sm:mb-3">Member Seats</h3>
+            <h3 className="text-xs sm:text-sm font-[500] text-[#5A687C] mb-2 sm:mb-3">{t("settings.tab_2_list.members_seats")}</h3>
             <h2 className="text-lg sm:text-xl md:text-2xl lg:text-2xl font-[600] text-[#1E1E1E] mb-1 break-words">
               {teamMembersData?.teamMembers || 0} / {teamMembersData?.teamSize || 0}
             </h2>
-            <p className="text-xs sm:text-sm font-[400] text-[#5A687C] break-words">Total Users</p>
+            <p className="text-xs sm:text-sm font-[400] text-[#5A687C] break-words">{t("settings.tab_2_list.total_users")}</p>
           </div>
           <button
             onClick={handleAddSeatsTeam}
             className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-white border border-[#E1E4EA] font-semibold shadow-sm cursor-pointer rounded-lg text-[#1E1E1E] text-sm sm:text-base hover:bg-[#F9F8FF] transition-colors overflow-hidden text-ellipsis mt-4 sm:mt-5"
           >
-            + Add New Seats
+            {t("settings.tab_2_list.add_new_seats")}
           </button>
         </div>
 
@@ -935,12 +935,12 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
       {/* Billing History Section */}
       <div className="mt-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-          <h2 className="text-[20px] sm:text-[24px] font-[600] text-[#1E1E1E]">Billing History</h2>
+          <h2 className="text-[20px] sm:text-[24px] font-[600] text-[#1E1E1E]">{t("settings.tab_2_list.billing_history")}</h2>
           <div className="relative w-full sm:w-auto">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
             <input
               type="text"
-              placeholder="Search Invoices"
+              placeholder={t("settings.tab_2_list.search_invoices")}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -956,12 +956,12 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
             <table className="min-w-full border-separate border-spacing-0">
               <thead className="bg-[#F7F7F8]">
                 <tr>
-                  <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Invoice ID</th>
-                  <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Plan</th>
-                  <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Billing Period</th>
-                  <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Amount</th>
-                  <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Status</th>
-                  <th className="px-12 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Action</th>
+                  <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">{t("settings.tab_2_list.invoice_id")}</th>
+                  <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">{t("settings.tab_2_list.plan")}</th>
+                  <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">{t("settings.tab_2_list.billing_period")}</th>
+                  <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">{t("settings.tab_2_list.amount")}</th>
+                  <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">{t("settings.tab_2_list.status")}</th>
+                  <th className="px-12 text-start py-3 text-[16px] font-[400] text-[#5A687C]">{t("settings.tab_2_list.action")}</th>
                 </tr>
               </thead>
               <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-xl [&>tr:first-child>td:last-child]:rounded-tr-xl [&>tr:last-child>td:first-child]:rounded-bl-xl [&>tr:last-child>td:last-child]:rounded-br-xl">
@@ -974,7 +974,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
                 ) : paginatedTransactions.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-6 py-8 text-center text-[#5A687C]">
-                      No invoices found
+                      {t("settings.tab_2_list.no_invoices_found")}
                     </td>
                   </tr>
                 ) : (
@@ -987,7 +987,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
                           {generateInvoiceId(originalIndex, transaction.transactionDate)}
                         </td>
                         <td className={`px-6 py-4 text-[14px] text-[#1E1E1E] font-[400] capitalize ${index === 0 ? 'border-t-0' : ''} ${isLastRow ? 'border-b-0' : ''}`}>
-                          {transaction.subscriptionType || "N/A"}
+                          {transaction.subscriptionType || t("settings.tab_2_list.not_available")}
                         </td>
                         <td className={`px-6 py-4 text-[14px] text-[#1E1E1E] font-[400] ${index === 0 ? 'border-t-0' : ''} ${isLastRow ? 'border-b-0' : ''}`}>
                           {formatBillingPeriod(transaction.transactionDate)}
@@ -1003,7 +1003,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
                               }`}
                           >
                             <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
-                            {transaction.status ? transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1) : "N/A"}
+                            {transaction.status ? transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1) : t("settings.tab_2_list.not_available")}
                           </span>
                         </td>
                         <td
@@ -1018,10 +1018,10 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
                               className=" inline-flex items-center gap-2  bg-white  border border-[#E5E7EB] px-2 py-2  rounded-lg   text-[#1E1E1E]  text-[14px] font-[500] shadow-[0px_2px_6px_rgba(0,0,0,0.06)] hover:shadow-[0px_3px_8px_rgba(0,0,0,0.10)] transition "
                             >
                               <Download className="w-4 h-4" />
-                              Download
+                              {t("settings.tab_2_list.download")}
                             </a>
                           ) : (
-                            <span className="text-[#5A687C] flex items-center mr-12 justify-center text-[14px]">N/A</span>
+                            <span className="text-[#5A687C] flex items-center mr-12 justify-center text-[14px]">{t("settings.tab_2_list.not_available")}</span>
                           )}
                         </td>
 
@@ -1044,7 +1044,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
         disabled={currentPage === 1}
         className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
       >
-        ‹ Prev
+        ‹ {t("settings.tab_2_list.prev")}
       </button>
       
       {getPageNumbers().map((page, idx) => (
@@ -1069,13 +1069,13 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
         disabled={currentPage === totalPages}
         className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
       >
-        Next ›
+        {t("settings.tab_2_list.next")} ›
       </button>
     </div>
 
     {/* Rows per page selector */}
     <div className="flex items-center gap-2 text-sm text-[#5A687C]">
-      <span>Rows per page:</span>
+      <span>{t("settings.tab_2_list.rows_per_page")}</span>
       <div className="flex gap-1">
         <button
           onClick={() => setRowsPerPage(5)}
@@ -1085,7 +1085,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
               : "bg-transparent border-[#D6D6D6] text-[#5A687C] hover:bg-white"
           }`}
         >
-          5 rows
+          {t("settings.tab_2_list.rows_5")}
         </button>
         <button
           onClick={() => setRowsPerPage(10)}

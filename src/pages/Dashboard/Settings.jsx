@@ -982,10 +982,10 @@ const SettingsPage = () => {
           <div className="flex flex-col md:flex-row md:items-center sm:justify-between w-full mb-4 gap-4 px-4 py-6">
             <div className="flex flex-col gap-2">
               <h1 className="text-[#1e1e1e] dark:text-white text-[22px]  font-[600] leading-tight">
-                My Profile Settings
+                {t("settings.tab_1_list.my_profile_settings")}
               </h1>
               <p className="text-[#5A687C] dark:text-gray-400 text-[14px] sm:text-[16px] font-[400]">
-                Update your personal details, control your preferences, and keep your account secure.
+                {t("settings.tab_1_list.my_profile_paragraph")}
               </p>
             </div>
             <div className="flex items-center gap-3 flex-shrink-0">
@@ -1018,23 +1018,25 @@ const SettingsPage = () => {
                 }}
                 className="px-2.5 py-1.5 bg-white dark:bg-[#2D3151] border border-[#E1E4EA] dark:border-[#2D3151] rounded-lg text-[#000000] dark:text-gray-300 text-[14px] sm:text-[16px] font-[500] cursor-pointer hover:bg-[#F9F8FF] dark:hover:bg-[#1E2A4A] transition-colors whitespace-nowrap"
               >
-                Discard
+                {t("settings.tab_1_list.discard")}
               </button>
               <button
                 type="button"
                 disabled={updateLoading}
                 onClick={handleProfileSubmit}
-                className={`px-2.5 py-1.5 rounded-lg text-white text-[14px] sm:text-[16px] font-[500] cursor-pointer transition-colors whitespace-nowrap ${updateLoading ? "bg-[#5f54ff87] cursor-not-allowed" : "bg-[#675FFF] hover:bg-[#5E54FF]"}`}
+                className={`px-2.5 py-1.5 rounded-lg text-white text-[14px] sm:text-[16px] font-[500] cursor-pointer transition-colors whitespace-nowrap ${updateLoading ? "bg-[#5f54ff87] cursor-not-allowed" : "bg-[#675FFF] hover:bg-[#5E54FF]"
+                  }`}
               >
                 {updateLoading ? (
                   <div className="flex items-center justify-center gap-2">
-                    <p>Processing</p>
+                    <p>{t("settings.tab_1_list.processing")}</p>
                     <span className="loader" />
                   </div>
                 ) : (
-                  "Save Changes"
+                  t("settings.tab_1_list.save_changes")
                 )}
               </button>
+
             </div>
 
           </div>
@@ -1045,9 +1047,9 @@ const SettingsPage = () => {
 
             <div className=" grid md:grid-cols-[40%_60%] gap-4 md:items-center justify-left px-4 py-2">
               <div>
-                <h3 className="text-[#1E1E1E] text-[16px] font-[600]">{"Profile Picture"}</h3>
+                <h3 className="text-[#1E1E1E] text-[16px] font-[600]">{t("settings.tab_1_list.profile_picture")}</h3>
                 <p className="text-[#5A687C] text-[14px] font-[400]">
-                  Your photo so your teammates can easily recognize you
+                  {t("settings.tab_1_list.profile_picture_description")}
                 </p>
               </div>
               <div className="flex flex-col items-start">
@@ -1075,7 +1077,7 @@ const SettingsPage = () => {
                         className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#675FFF] text-white text-sm font-[500] cursor-pointer hover:bg-[#5E54FF] transition-colors"
                       >
                         <Upload className="w-4 h-4" />
-                        Upload New
+                        {t("settings.tab_1_list.upload_new")}
                       </button>
 
                       <button
@@ -1093,13 +1095,13 @@ const SettingsPage = () => {
                         className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-[#E1E4EA] text-black text-sm font-[500] cursor-pointer hover:bg-[#F5F7FF] transition-colors"
                       >
                         <Delete className="w-4 h-4 text-black" />
-                        Delete
+                        {t("settings.tab_1_list.delete")}
                       </button>
                     </div>
 
                     <div className="w-full flex justify-center">
                       <p className="text-xs text-[#5A687C] mt-1 text-center w-full">
-                        Recommended 400×400px, Max 5MB
+                        {t("settings.tab_1_list.recommended_size")}
                       </p>
                     </div>
 
@@ -1127,17 +1129,17 @@ const SettingsPage = () => {
               <div className="grid md:grid-cols-[40%_60%] gap-4 pb-2">
                 <div>
                   <h3 className="text-[#1E1E1E] text-[16px] font-[600]">
-                    {"Personal Information"}
+                    {t("settings.tab_1_list.personal_information")}
                   </h3>
                   <p className="text-[#5A687C] text-sm">
-                    Manage the basic details that identify your account
+                    {t("settings.tab_1_list.personal_information_description")}
                   </p>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2 text-[#1E1E1E]">
                   <div className="col-span-2 flex flex-col gap-1.5">
                     <label className="font-medium text-sm text-[#868C98]">
-                      {"Full Name"}
+                      {t("settings.tab_1_list.full_name")}
                     </label>
                     <input
                       type="text"
@@ -1185,7 +1187,7 @@ const SettingsPage = () => {
                           <div className="absolute px-1 z-10 rounded-md shadow-lg border border-gray-200 max-h-40 overflow-auto top-6 w-full left-[-13px] bg-white mt-1">
                             <input
                               type="text"
-                              placeholder="Search"
+                              placeholder={t("settings.tab_1_list.search")}
                               onChange={handleSearch}
                               className="w-full px-3 py-2 border-b border-gray-200 outline-none text-sm"
                             />
@@ -1214,7 +1216,7 @@ const SettingsPage = () => {
                                 </div>
                               ))
                             ) : (
-                              <p className="text-center text-sm text-gray-500 py-2">No results found</p>
+                              <p className="text-center text-sm text-gray-500 py-2">{t("settings.tab_1_list.no_results_found")}</p>
                             )}
                           </div>
                         )}
@@ -1294,17 +1296,17 @@ const SettingsPage = () => {
               <div className="w-full p-5 mt-6">
                 <div className="grid md:grid-cols-[40%_60%] gap-4">
                   <div>
-                    <h3 className="text-[#1E1E1E] text-[16px] font-[600]">Security</h3>
+                    <h3 className="text-[#1E1E1E] text-[16px] font-[600]">{t("settings.tab_1_list.security")}</h3>
                     <p className="text-[#5A687C] text-sm">
-                      Keep your account protected with secure login and verification methods.
+                      {t("settings.tab_1_list.security_description")}
                     </p>
                   </div>
                   <div className="flex flex-col gap-6">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div>
-                        <p className="text-[14px] text-[#1E1E1E] font-[500]">Your Password</p>
+                        <p className="text-[14px] text-[#1E1E1E] font-[500]">{t("settings.tab_1_list.your_password")}</p>
                         <p className="text-sm text-[#5A687C]">
-                          Last changed password: {userDetails?.user?.passwordUpdatedAt
+                          {t("settings.tab_1_list.last_changed_password")} {userDetails?.user?.passwordUpdatedAt
                             ? getPasswordLastChanged(userDetails.user.passwordUpdatedAt)
                             : 'Never'}
                         </p>
@@ -1318,7 +1320,7 @@ const SettingsPage = () => {
                         className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E1E1] rounded-lg text-[#1E1E1E] text-sm font-[500] cursor-pointer hover:bg-[#F9F8FF]"
                       >
                         <Pencil className="w-4 h-4 text-[#1E1E1E]" />
-                        Change Password
+                        {t("settings.tab_1_list.change_password")}
                       </button>
                     </div>
 
@@ -1397,7 +1399,6 @@ const SettingsPage = () => {
     }
 
     if (activeSidebarItem === "billing") {
-      // If manage-plan view is active, show ManagePlan component
       if (showManagePlan) {
         return (
           <div className="flex py-3 pr-4 flex-col h-full w-full gap-6">
@@ -1408,7 +1409,6 @@ const SettingsPage = () => {
           </div>
         );
       }
-      // Otherwise show the Plan & Billing section
       return (
         <div className="flex py-6 pr-4 flex-col h-full w-full gap-6">
           <Plan t={t} teamMembersData={teamMembersData} setActiveSidebarItem={setActiveSidebarItem} showPlanPopup={showPlanPopup} setShowPlanPopup={setShowPlanPopup} handleAddSeatsTeam={handleAddSeatsTeam} setShowManagePlan={setShowManagePlan} setSearchParams={setSearchParams} />
@@ -1855,9 +1855,9 @@ const SettingsPage = () => {
         <div className="overflow-hidden">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 px-6 py-6 ">
             <div className="space-y-2">
-              <h2 className="text-2xl font-semibold text-[#1E1E1E] dark:text-white">General Settings</h2>
+              <h2 className="text-2xl font-semibold text-[#1E1E1E] dark:text-white">{t("settings.tab_1_list.general_settings")}</h2>
               <p className="text-md text-[#5A687C] dark:text-gray-400 max-w-2xl">
-                Adjust your workspace preferences, default behaviors, and system display options.
+                {t("settings.tab_1_list.general_settings_description")}
               </p>
               {success.general && (
                 <p className="text-sm text-green-600 dark:text-green-400">{success.general}</p>
@@ -1869,14 +1869,14 @@ const SettingsPage = () => {
                 onClick={handleResetGeneralSettings}
                 className="px-2.5 py-1.5 bg-white dark:bg-[#2D3151] border border-[#E1E4EA] dark:border-[#2D3151] rounded-lg text-[#000000] dark:text-gray-300 text-[14px] sm:text-[16px] font-[500] cursor-pointer hover:bg-[#F9F8FF] dark:hover:bg-[#1E2A4A] transition-colors whitespace-nowrap"
               >
-                Discard
+                {t("settings.tab_1_list.discard")}
               </button>
               <button
                 type="button"
                 onClick={handleSaveGeneralSettings}
                 className={`px-2.5 py-1.5 rounded-lg text-white text-[14px] sm:text-[16px] font-[500] cursor-pointer transition-colors whitespace-nowrap ${updateLoading ? "bg-[#5f54ff87] cursor-not-allowed" : "bg-[#675FFF] hover:bg-[#5E54FF]"}`}
               >
-                Save Changes
+                {t("settings.tab_1_list.save_changes")}
               </button>
             </div>
           </div>
@@ -1889,13 +1889,25 @@ const SettingsPage = () => {
               <section className="flex flex-col gap-4">
                 <div className="w-full flex flex-col lg:flex-row lg:justify-between gap-6 border-b border-[#d1d3db] dark:border-[#2D3151] pb-2">
                   <div className="min-w-[260px] max-w-sm">
-                    <h3 className="text-lg font-semibold text-[#1E1E1E] dark:text-white">Theme & Appearance</h3>
-                    <p className="text-sm text-[#7A8298] dark:text-gray-400">Choose between light, dark, or system themes</p>
+                    <h3 className="text-lg font-semibold text-[#1E1E1E] dark:text-white">{t("settings.tab_1_list.theme_appearance")}</h3>
+                    <p className="text-sm text-[#7A8298] dark:text-gray-400">{t("settings.tab_1_list.theme_appearance_description")}</p>
                   </div>
 
                   <div className="flex flex-wrap gap-4 lg:gap-6">
                     {THEME_OPTIONS.map((option) => {
                       const selected = generalSettings.theme === option.key
+                      const getThemeLabel = (key) => {
+                        switch(key) {
+                          case "light":
+                            return t("settings.tab_1_list.theme_light_mode");
+                          case "dark":
+                            return t("settings.tab_1_list.theme_dark_mode");
+                          case "system":
+                            return t("settings.tab_1_list.theme_system_mode");
+                          default:
+                            return option.label;
+                        }
+                      };
                       return (
                         <div key={option.key} className="flex flex-col items-center gap-3 w-[150px] sm:w-[170px]">
                           <button
@@ -1918,14 +1930,14 @@ const SettingsPage = () => {
                                       ? DarkTheme
                                       : SystemTheme
                                 }
-                                alt={option.label}
+                                alt={getThemeLabel(option.key)}
                                 className="w-full h-full object-cover rounded-md transition-transform duration-300 hover:scale-110"
                               />
                             </div>
                           </button>
 
                           <span className={`text-sm font-semibold transition-colors duration-300 ${selected ? "text-[#1E1E1E] dark:text-white" : "text-[#6C7489] dark:text-gray-400"}`}>
-                            {option.label}
+                            {getThemeLabel(option.key)}
                           </span>
                         </div>
                       )
@@ -1940,9 +1952,9 @@ const SettingsPage = () => {
               <section className="flex flex-col gap-6">
                 <div className="w-full flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 border-b border-[#d1d3db] dark:border-[#2D3151] pb-2">
                   <div className="min-w-[240px] max-w-sm">
-                    <h3 className="text-lg font-semibold text-[#1E1E1E] dark:text-white">Account Preferences</h3>
+                    <h3 className="text-lg font-semibold text-[#1E1E1E] dark:text-white">{t("settings.tab_1_list.account_preferences")}</h3>
                     <p className="text-sm text-[#7A8298] dark:text-gray-400">
-                      Customize how Ecosystem.ai behaves to match your working style.
+                      {t("settings.tab_1_list.account_preferences_description")}
                     </p>
                   </div>
 
@@ -1952,7 +1964,7 @@ const SettingsPage = () => {
 
                         {/* Language */}
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-sm font-medium text-[#7A8298] dark:text-gray-400">Language</label>
+                          <label className="text-sm font-medium text-[#7A8298] dark:text-gray-400">{t("settings.tab_1_list.language")}</label>
                           <div className="relative">
                             <select
                               value={generalSettings.language}
@@ -1969,7 +1981,7 @@ const SettingsPage = () => {
 
                         {/* Timezone */}
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-sm font-medium text-[#7A8298] dark:text-gray-400">Timezone</label>
+                          <label className="text-sm font-medium text-[#7A8298] dark:text-gray-400">{t("settings.tab_1_list.timezone")}</label>
                           <div className="relative">
                             <select
                               value={generalSettings.timezone}
@@ -1986,7 +1998,7 @@ const SettingsPage = () => {
 
                         {/* Date Format */}
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-sm font-medium text-[#7A8298] dark:text-gray-400">Date Format</label>
+                          <label className="text-sm font-medium text-[#7A8298] dark:text-gray-400">{t("settings.tab_1_list.date_format")}</label>
                           <div className="relative">
                             <select
                               value={generalSettings.dateFormat}
@@ -2013,9 +2025,9 @@ const SettingsPage = () => {
               <section className="flex flex-col gap-4">
                 <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
                   <div className="min-w-[240px] max-w-sm">
-                    <h3 className="text-lg font-semibold text-[#1E1E1E] dark:text-white">Notifications & Alerts</h3>
+                    <h3 className="text-lg font-semibold text-[#1E1E1E] dark:text-white">{t("settings.tab_1_list.notifications_alerts")}</h3>
                     <p className="text-sm text-[#7A8298] dark:text-gray-400">
-                      Control how you receive important updates and insights from Ecosystem.ai.
+                      {t("settings.tab_1_list.notifications_alerts_description")}
                     </p>
                   </div>
 
@@ -2023,13 +2035,13 @@ const SettingsPage = () => {
                     {[
                       {
                         key: "pushEnabled",
-                        title: "Push Notifications",
-                        description: "Get real-time updates and alerts directly on your device",
+                        title: t("settings.tab_1_list.push_notifications"),
+                        description: t("settings.tab_1_list.push_notifications_description"),
                       },
                       {
                         key: "emailEnabled",
-                        title: "Email notification",
-                        description: "Receive notifications via email",
+                        title: t("settings.tab_1_list.email_notification"),
+                        description: t("settings.tab_1_list.email_notification_description"),
                       },
                     ].map((item) => {
                       const enabled = generalSettings[item.key]
@@ -2044,7 +2056,7 @@ const SettingsPage = () => {
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-xs font-semibold text-[#675FFF]">
-                              {enabled ? "On" : "Off"}
+                              {enabled ? t("settings.tab_1_list.on") : t("settings.tab_1_list.off")}
                             </span>
                             <button
                               type="button"

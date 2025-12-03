@@ -267,14 +267,14 @@ export default function OutBoundCalls() {
               <h1 className="text-xl md:text-2xl font-semibold text-[#1E1E1E]">{t("phone.outbound_calls")}</h1>
               <p className="text-sm md:text-base text-[#5A687C] font-[400]">Track all outbound call activities across your campaigns.</p>
             </div>
-            <button
-                    className="bg-[#7065F0] text-white font-medium px-5 py-2 rounded-lg shadow"
+            {/* <button
+                    className="bg-[#7065F0] text-white font-medium px-5 py-1.5 rounded-lg shadow"
                     onClick={() => setShowModal(true)}
                 >
                     {
                         t("emailings.new_campaign")
                     }
-                </button>
+                </button> */}
             </div>
 
             {/* Search and Filters */}
@@ -330,8 +330,8 @@ export default function OutBoundCalls() {
                 </div>
             </div>
             {/* Table */}
-            <div className="overflow-auto w-full">
-              <div className="border border-[#D6D6D6] rounded-2xl overflow-hidden">
+            <div className="rounded-2xl border border-[#D6D6D6] overflow-auto mb-2 w-full">
+              <div className="overflow-x-auto">
                 <table className="min-w-full border-separate border-spacing-0">
                   <thead className="bg-[#F7F7F8]">
                     <tr className="text-[#5A687C]">

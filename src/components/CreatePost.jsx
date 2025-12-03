@@ -1,4 +1,4 @@
-import { X, ChevronDown, Hash, Settings, Edit3, Camera, Link, Trash2, UploadIcon, Tag, CircleX, StarsIcon, Italic, Bold, Smile, SquarePen, Image, Share2, Heart, MessageCircle, Send, Bookmark, MoreHorizontal } from "lucide-react"
+import { X, Trash2, Italic, Bold, Smile, MessageCircle, Underline, Strikethrough, ThumbsUp, Share, Check } from "lucide-react"
 import inkartinkLogo from '../assets/svg/inkartink.svg';
 import { useTranslation } from "react-i18next";
 import DateTimePicker from "./DateTimePicker";
@@ -9,7 +9,12 @@ import { SelectDropdown } from "./Dropdown";
 import { Duplicate } from "../icons/icons";
 import instagram from '../assets/svg/instagram.svg'
 import linkedin from '../assets/svg/linkedin.svg'
-import twitter from '../assets/svg/tiktok.svg'
+import twitter from '../assets/svg/tiktok.png'
+import ImageFile from '../assets/svg/ImageFile.svg'
+import VideoFile from '../assets/svg/VideoFile.svg'
+import VideoPlayIcon from '../assets/svg/VideoPlay.svg'
+import constanceImg from "../assets/svg/constance_logo.svg"
+import ShareIcon from '../assets/svg/Share.svg'
 
 export default function CreatePost({ onClose, editData }) {
   const { t } = useTranslation();
@@ -17,6 +22,7 @@ export default function CreatePost({ onClose, editData }) {
   // State for required fields
   const [text, setText] = useState("");
   const [document, setDocument] = useState(null); // base64 string
+  const [documents, setDocuments] = useState([]); // Array of files for multiple uploads
   const [platform, setPlatform] = useState("");
   const [selectedAccount, setSelectedAccount] = useState(""); // New state for selected account
   const [isSaving, setIsSaving] = useState({ draft: false, publish: false, schedule: false });
@@ -26,13 +32,20 @@ export default function CreatePost({ onClose, editData }) {
   const [fileName, setFileName] = useState("");
   const [preview, setPreview] = useState(null);
   const [previewMediaType, setPreviewMediaType] = useState(null); // 'image' | 'document' | 'video' | null
-  // State for Instagram accounts
-  const [accountsOptions, setAccountsOptions] = useState([]);
-  const [accountsOptionsLoading, setAccountsOptionsLoading] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [uploadMode, setUploadMode] = useState(null); // 'image' | 'video'
+  // State for all accounts (Instagram, LinkedIn, TikTok)
+  const [allAccounts, setAllAccounts] = useState([]);
+  const [accountsLoading, setAccountsLoading] = useState(false);
   const [accountsError, setAccountsError] = useState(null);
   const textInputRef = useRef(); // Add ref for text input
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+
+  const [isPlaying, setIsPlaying] = useState([]); // track which videos are playing
+  const [showOverlay, setShowOverlay] = useState([]); // track overlay visibility
+  const videoRefs = useRef([]); // store video refs
+
   // Prefill when editing existing content
   useEffect(() => {
     if (editData) {
@@ -51,42 +64,70 @@ export default function CreatePost({ onClose, editData }) {
     }
   }, [editData]);
 
-  // Fetch accounts when platform is selected
+  // Fetch all accounts on component mount
   useEffect(() => {
-    // Clear selected account when platform changes
-    setSelectedAccount("");
-    
-    if (platform === "instagram" || platform === "linkedin" || platform === "X") {
-      setAccountsOptionsLoading(true);
+    const fetchAllAccounts = async () => {
+      setAccountsLoading(true);
       setAccountsError(null);
-      const fetchAccounts = async () => {
-        try {
-          let accounts;
-          let accountsData;
-          
-          if (platform === "instagram") {
-            accounts = await getInstaAccounts();
-            accountsData = accounts?.data?.insta_account_info;
-          } else if (platform === "linkedin") {
-            accounts = await getLinkedInAccounts();
-            accountsData = accounts?.data?.linkedin_account_info;
-          } else if (platform === "X") {
-            accounts = await getTikTokAccounts();
-            accountsData = accounts?.data?.tiktok_account_info;
-          }
-          
-          setAccountsOptions(accountsData);
-        } catch (err) {
-          setAccountsError("Failed to fetch accounts");
-        } finally {
-          setAccountsOptionsLoading(false);
+      try {
+        const [instaResponse, linkedinResponse, tiktokResponse] = await Promise.all([
+          getInstaAccounts(),
+          getLinkedInAccounts(),
+          getTikTokAccounts()
+        ]);
+
+        const allAccountsList = [];
+
+        // Add Instagram accounts
+        if (instaResponse?.status === 200 && instaResponse?.data?.insta_account_info) {
+          instaResponse.data.insta_account_info.forEach(acc => {
+            allAccountsList.push({
+              id: acc.instagram_user_id,
+              username: acc.username || `@${acc.username}`,
+              platform: "instagram",
+              platformLabel: "Instagram",
+              accountData: acc
+            });
+          });
         }
-      };
-      fetchAccounts();
-    } else {
-      setAccountsOptions([]);
-    }
-  }, [platform]);
+
+        // Add LinkedIn accounts
+        if (linkedinResponse?.status === 200 && linkedinResponse?.data?.linkedin_account_info) {
+          linkedinResponse.data.linkedin_account_info.forEach(acc => {
+            allAccountsList.push({
+              id: acc.linkedin_id,
+              username: acc.name || `@${acc.name}`,
+              platform: "linkedin",
+              platformLabel: "LinkedIn",
+              accountData: acc
+            });
+          });
+        }
+
+        // Add TikTok accounts
+        if (tiktokResponse?.status === 200 && tiktokResponse?.data?.tiktok_account_info) {
+          tiktokResponse.data.tiktok_account_info.forEach(acc => {
+            allAccountsList.push({
+              id: acc.tiktok_id,
+              username: acc.name || `@${acc.name}`,
+              platform: "X",
+              platformLabel: "TikTok",
+              accountData: acc
+            });
+          });
+        }
+
+        setAllAccounts(allAccountsList);
+      } catch (err) {
+        console.error("Error fetching accounts:", err);
+        setAccountsError("Failed to fetch accounts");
+      } finally {
+        setAccountsLoading(false);
+      }
+    };
+
+    fetchAllAccounts();
+  }, []);
 
   useEffect(() => {
     if (successMessage) {
@@ -97,35 +138,68 @@ export default function CreatePost({ onClose, editData }) {
   }, [successMessage])
 
 
-  const renderOptions = () => {
-    if (accountsOptionsLoading) {
-      return [{ key: '', label: 'Loading...' }];
+  // Handle account selection
+  const handleAccountSelect = (account) => {
+    setSelectedAccount(account.id);
+    setPlatform(account.platform);
+    if (errors.selectedAccount) {
+      setErrors(prev => ({ ...prev, selectedAccount: undefined }));
     }
-    if (accountsOptions?.length > 0) {
-      return accountsOptions.map(acc => {
-        let key, label;
-        
-        if (platform === "instagram") {
-          key = acc.instagram_user_id;
-          label = acc.username;
-        } else if (platform === "linkedin") {
-          key = acc.linkedin_id;
-          label = acc.name;
-        } else if (platform === "X") {
-          key = acc.tiktok_id;
-          label = acc.name;
-        }
-        
-        return { key, label };
-      });
-    }
-    return [];
   }
 
+  // Get platform icon
+  const getPlatformIcon = (platformType) => {
+    if (platformType === "instagram") {
+      return instagram;
+    } else if (platformType === "X") {
+      return twitter;
+    } else {
+      return linkedin;
+    }
+  }
+
+  const handleVideoClick = (index) => {
+    const video = videoRefs.current[index];
+    if (!video) return;
+
+    if (video.paused) {
+      video.play();
+      setIsPlaying((prev) => {
+        const copy = [...prev];
+        copy[index] = true;
+        return copy;
+      });
+      setShowOverlay((prev) => {
+        const copy = [...prev];
+        copy[index] = true;
+        return copy;
+      });
+
+      setTimeout(() => {
+        setShowOverlay((prev) => {
+          const copy = [...prev];
+          copy[index] = false; // hide overlay after 1 sec
+          return copy;
+        });
+      }, 1000);
+    } else {
+      video.pause();
+      setIsPlaying((prev) => {
+        const copy = [...prev];
+        copy[index] = false;
+        return copy;
+      });
+      setShowOverlay((prev) => {
+        const copy = [...prev];
+        copy[index] = true; // show overlay when paused
+        return copy;
+      });
+    }
+  };
+
   const getSelectedAccountLabel = () => {
-    const options = renderOptions();
-    const match = options.find(opt => opt.key === selectedAccount);
-    return match ? match.label : "";
+    const account = allAccounts.find(acc => acc.id === selectedAccount);
+    return account ? account.username : "";
   }
 
   const renderCaptionWithHashtags = (value) => {
@@ -141,22 +215,74 @@ export default function CreatePost({ onClose, editData }) {
 
   // Handle file upload and convert to base64
   const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    // Only allow webp/jpeg/png/pdf
-    if (!['image/webp', 'image/jpeg', 'image/png', 'application/pdf', 'video/mp4'].includes(file.type)) {
-      setErrors({ document: 'Only webp, jpeg, png images or pdf files are allowed.' });
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    const validFiles = files.filter(file => {
+      // Restrict by upload mode (image or video)
+      if (uploadMode === "image" && !file.type.startsWith("image/")) return false;
+      if (uploadMode === "video" && !file.type.startsWith("video/")) return false;
+
+      // Fallback: allow only supported types
+      if (!["image/webp", "image/jpeg", "image/png", "application/pdf", "video/mp4"].includes(file.type)) {
+        return false;
+      }
+      return true;
+    });
+
+    if (validFiles.length === 0) {
+      setErrors({ document: 'Only webp, jpeg, png images, pdf files, or mp4 videos are allowed.' });
       return;
     }
-    setFileName(file.name);
-    setDocument(file);
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreview(reader.result); // base64 string only
-      setPreviewMediaType(getMediaType(file));
+
+    // Process each file
+    const filePromises = validFiles.map(file => {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          resolve({
+            file: file,
+            preview: reader.result,
+            mediaType: getMediaType(file),
+            name: file.name
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    try {
+      const newDocuments = await Promise.all(filePromises);
+      setDocuments(prev => [...prev, ...newDocuments]);
+      // Set first file as main document for API
+      if (!document) {
+        setDocument(validFiles[0]);
+        setPreview(newDocuments[0].preview);
+        setPreviewMediaType(newDocuments[0].mediaType);
+        setFileName(newDocuments[0].name);
+      }
       if (errors.document) setErrors(prev => ({ ...prev, document: undefined }));
-    };
-    reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Error processing files:', error);
+      setErrors({ document: 'Error processing files' });
+    }
+  };
+
+  // Remove a document from the list
+  const handleRemoveDocument = (index) => {
+    const newDocuments = documents.filter((_, i) => i !== index);
+    setDocuments(newDocuments);
+    if (newDocuments.length > 0) {
+      setDocument(newDocuments[0].file);
+      setPreview(newDocuments[0].preview);
+      setPreviewMediaType(newDocuments[0].mediaType);
+      setFileName(newDocuments[0].name);
+    } else {
+      setDocument(null);
+      setPreview(null);
+      setPreviewMediaType(null);
+      setFileName("");
+    }
   };
 
   // Drag and drop handlers
@@ -174,12 +300,24 @@ export default function CreatePost({ onClose, editData }) {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFileChange({ target: { files: e.dataTransfer.files[0] } });
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleFileChange({ target: { files: Array.from(e.dataTransfer.files) } });
     }
   };
   const handleUploadAreaClick = () => {
-    fileInputRef.current.click();
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleMediaButtonClick = (mode) => {
+    setUploadMode(mode);
+    // Trigger hidden input; accept logic is enforced in handleFileChange
+    if (fileInputRef.current) {
+      // Clear previous selection so same file can be re-selected
+      fileInputRef.current.value = "";
+      fileInputRef.current.click();
+    }
   };
 
   // Helper to determine media_type from file
@@ -406,403 +544,319 @@ export default function CreatePost({ onClose, editData }) {
   const handleTrashClick = () => {
     setText("");
     setDocument(null);
+    setDocuments([]);
     setFileName("");
     setPreview(null);
-
+    setPreviewMediaType(null);
   };
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8 h-screen">
       {/* Header */}
-      <div className="flex flex-row items-center justify-between h-[38px]">
-        <h1 className="text-2xl font-semibold text-gray-900">{t("constance.scheduler") + ' > ' + (editData ? t("edit") : t("brain_ai.create"))}</h1>
-        <button className="p-2 hover:bg-gray-100 rounded-full cursor-pointer" onClick={onClose}>
-          <X className="w-5 h-5 text-gray-500" />
-        </button>
+      <div className="flex flex-row items-center justify-between min-h-[38px] sm:h-[38px]">
+        <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 pr-2">{t("constance.create_scheduler") || "Create Scheduler"}</h1>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowPreview(!showPreview)}
+            className="px-4 py-2 text-sm font-medium text-[#5A687C] cursor-pointer bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F4F5F6] transition-colors"
+          >
+            {"Preview"}
+          </button>
+          <button
+            onClick={handleSaveDraft}
+            disabled={isSaving?.draft}
+            className={`px-4 py-2 text-sm font-medium text-[#5A687C] cursor-pointer bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F4F5F6] transition-colors ${isSaving?.draft ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+          >
+            {isSaving?.draft ? (
+              <div className="flex items-center justify-center gap-2">
+                <p>{t("processing")}</p>
+                <span className="loader" />
+              </div>
+            ) : (
+              "Save as Draft"
+            )}
+          </button>
+          <button
+            onClick={() => setShowDateTimePicker(true)}
+            className="px-4 py-2 text-sm font-medium text-white cursor-pointer bg-[#675FFF] border border-[#675FFF] rounded-lg hover:bg-[#5a4fe6] transition-colors"
+          >
+            {t("schedule") || "Schedule"}
+          </button>
+        </div>
       </div>
 
       {/* Main Content with Horizontal Scroll for Small Screens */}
       <div className="w-full overflow-x-auto">
         <div className="flex w-full min-w-[1000px] mx-auto rounded-[16px] border border-[#E1E4EA] bg-white">
           {/* Left Sidebar */}
-          <div className="w-[218px] h-[726px] bg-white border-r border-r-[#E1E4EA] border-t border-t-[#ffffff] border-b border-b-[#ffffff] border-l border-l-[#ffffff] rounded-l-[16px] flex flex-col relative p-4 min-h-[600px]">
-            {/* <div> */}
-            <div className="flex flex-col pt-3 w-[184px] max-h-[70px] gap-[6px] absolute top-[0px] left-[16px]">
-              {/* Select Platform */}
-              <div className="mb-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t("select") + " " + t("constance.platform")}</label>
-                <div className="relative mb-4">
-                  <SelectDropdown
-                    name="platform"
-                    options={[
-                      { key: "linkedin", label: "Linkedin" },
-                      { key: "X", label: "TikTok" },
-                      { key: "instagram", label: "Instagram" },
-                    ]}
-                    value={platform}
-                    onChange={val => {
-                      setPlatform(val);
-                      if (errors.platform) setErrors(prev => ({ ...prev, platform: undefined }));
-                    }}
-                    placeholder={t("select") + " " + t("constance.platform")}
-                    className={`w-full`}
-                    errors={errors}
-                  />
-                  {errors.platform && <div className="text-red-500 text-xs mt-1">{errors.platform}</div>}
-                </div>
-              </div>
-              {/* Select Account */}
-              <div className="mb-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t("select") + " " + t("constance.account")}</label>
-                <div className="relative mb-4">
-                  {/*
-                      The following static options are used for demo purposes only.
-                      The dynamic code for fetching/displaying real Instagram accounts is commented below and can be restored later.
-                    */}
-
-                  {/* // Uncomment this block to use dynamic Instagram accounts: */}
-                  <SelectDropdown
-                    name="selectedAccount"
-                    options={
-                      renderOptions()
-                    }
-                    value={selectedAccount}
-                    onChange={val => {
-                      setSelectedAccount(val);
-                      if (errors.selectedAccount) setErrors(prev => ({ ...prev, selectedAccount: undefined }));
-                    }}
-                    // disabled={platform !== "instagram" || accountsOptionsLoading}
-                    className={`w-full`}
-                    placeholder={t("select") + " " + t("constance.account")}
-                    errors={errors}
-                  />
-                  {accountsError && <div className="text-red-500 text-xs mt-1">{accountsError}</div>}
-                  {errors.selectedAccount && <div className="text-red-500 text-xs mt-1">{errors.selectedAccount}</div>}
-                </div>
-              </div>
-              {/* Platform Unique ID */}
-              {/* Removed this entire block for Platform Unique ID input */}
-              {/* Existing account display and remove button */}
-              <div className="flex flex-row items-center gap-[6px]  rounded-lg p-2 w-full mt-2">
-               <div className="flex flex-row items-center gap-2 bg-[#F0EFFF] p-1 rounded-lg">
-                  <div className="w-6 h-6 rounded flex items-center justify-center">
-                    {platform === "instagram" ? (
-                      <img src={instagram} alt="Instagram" className="w-6 h-6" />
-                    ) : platform === "X" ? (
-                      <img src={twitter} alt="X / Twitter" className="w-6 h-6" />
-                    ) : (
-                      <img src={linkedin} alt="LinkedIn" className="w-6 h-6" />
-                    )}
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <span className="font-semibold text-[14px] leading-[17px] tracking-[0] text-black flex-1">
-                    Ecosysteme.ai
-                  </span>
-                </div>
-                <button className="text-gray-400 hover:text-red-500">
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-              {/* </div> */}
+          <div className="w-[230px] h-[726px] bg-white border-r border-r-[#E1E4EA] border-t border-t-[#ffffff] border-b border-b-[#ffffff] border-l border-l-[#ffffff] rounded-l-[16px] flex flex-col relative min-h-[600px]">
+            {/* Header */}
+            <div className="px-4 pt-6 pb-4">
+              <h2 className="text-base font-semibold text-[#1E1E1E] text-center">
+                {t("select") + " " + t("constance.account") || "Select Account"}
+              </h2>
             </div>
 
-            {/* Add Account button with border styling - positioned to match Draft buttons exactly */}
-            <div className="absolute bottom-0 left-0 right-0 border-t border-[#E1E4EA] min-h-[88px] p-[25px] bg-white flex items-center">
-              <button className="w-full  text-sm text-[#5A687C] text-center font-medium border border-gray-200 rounded-md py-2 bg-white">
-                {t("constance.add") + " " + t("constance.account")}
-              </button>
+            {/* Accounts List */}
+            <div className="flex-1 overflow-y-auto px-2 pb-4">
+              {accountsLoading ? (
+                <div className="flex justify-center items-center h-full">
+                  <span className="loader" />
+                </div>
+              ) : accountsError ? (
+                <div className="text-red-500 text-sm text-center py-4">{accountsError}</div>
+              ) : allAccounts.length === 0 ? (
+                <div className="text-[#5A687C] text-sm text-center py-4">
+                  {t("no_accounts_found") || "No accounts found"}
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {allAccounts.map((account) => {
+                    const isSelected = selectedAccount === account.id;
+                    return (
+                      <div
+                        key={account.id}
+                        onClick={() => handleAccountSelect(account)}
+                        className={`flex items-center gap-3 px-1.5 py-3 rounded-lg cursor-pointer transition-colors ${
+                          isSelected
+                            ? "bg-[#E9E8F9]"
+                            : "bg-white hover:bg-gray-50"
+                        }`}
+                      >
+                        {/* Platform Icon */}
+                        <div className="flex-shrink-0">
+                          <img
+                            src={getPlatformIcon(account.platform)}
+                            alt={account.platformLabel}
+                            className="w-6 h-6"
+                          />
+                        </div>
+                        {/* Username */}
+                        <div className="flex-1 min-w-0">
+                          <span className={`text-sm font-medium ${
+                            isSelected ? "text-[#675FFF]" : "text-[#1E1E1E]"
+                          }`}>
+                            {account.username.startsWith("@") ? account.username : `@${account.username}`}
+                          </span>
+                        </div>
+                        {/* Checkmark for selected */}
+                        {isSelected && (
+                          <div className="flex-shrink-0 w-5 h-5 bg-[#675FFF] rounded flex items-center justify-center">
+                            <Check className="w-3 h-3 text-white" />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                  
+                  {/* Add Account button - positioned right after the last account */}
+                  <button className="w-full flex items-center justify-center gap-2 text-sm text-[#1E1E1E] font-medium border border-[#E1E4EA] rounded-[12px] py-2.5 bg-white hover:bg-[#F8F9FB] transition-colors shadow-[0_2px_6px_rgba(15,23,42,0.06)] mt-2">
+                    <span className="text-lg leading-none">+</span>
+                    <span>{t("constance.add") + " " + t("constance.account") || "Add Account"}</span>
+                  </button>
+                </div>
+              )}
+              {errors.selectedAccount && (
+                <div className="text-red-500 text-xs mt-2">{errors.selectedAccount}</div>
+              )}
             </div>
           </div>
 
-          {/* Center Post Creation */}
-          <div className="flex flex-col gap-2 bg-white  border-[#E1E4EA] rounded-lg p-6 w-[calc(100%-494px)] h-[726px] relative">
-            {/* Post Header */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="flex flex-row items-center gap-2 bg-[#F0EFFF] p-1 rounded-lg">
-                  <div className="w-8 h-8 rounded flex items-center justify-center">
-                    {platform === "instagram" ? (
-                      <img src={instagram} alt="Instagram" className="w-8 h-8" />
-                    ) : platform === "X" ? (
-                      <img src={twitter} alt="X / Twitter" className="w-8 h-8" />
-                    ) : (
-                      <img src={linkedin} alt="LinkedIn" className="w-8 h-8" />
-                    )}
-                  </div>
-                </div>
+          {/* Center Post Creation - Post Details */}
+          <div className="flex flex-col gap-4 bg-white border-[#E1E4EA] rounded-lg p-6 flex-1 h-[726px] relative overflow-y-auto">
+            {/* Post Details Title */}
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t("constance.post_details") || "Post Details"}</h2>
 
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex flex-row items-center gap-[6px] w-[178px] h-[27px]">
-                  <button className="flex flex-row items-center gap-[4px] w-[103px] h-[27px] rounded-[4px] border border-[#E1E4EA] px-[10px] py-[6px] text-xs text-gray-600 hover:text-gray-800 bg-white">
-                    <Tag className="w-3 h-3" />
-                    {t("constance.add") + " " + t("constance.labels")}
-                  </button>
-                  <button className="flex flex-row items-center gap-[4px] w-[69px] h-[27px] rounded-[4px] border border-[#E1E4EA] px-[10px] py-[6px] text-xs text-gray-600 hover:text-gray-800 bg-white">
-                    <CircleX className="w-3 h-3" />
-                    {t("constance.clear")}
-                  </button>
-                </div>
-              </div>
-            </div>
+            <div className="border border-[#D6D6D6] rounded-xl p-2 " >
 
-            {/* Action Buttons */}
-            <div className="flex flex-col w-full rounded-[10px] p-[10px] border border-[#E1E4EA] gap-[17px]">
-              {/* Post Title Input */}
-              <input
-                type="text"
+
+              {/* Rich Text Editor Toolbar */}
+              <div className="flex items-center gap-2 px-2 pt-2 mb-4 bg-white">
+                <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Bold">
+                  <Bold className="w-5 h-5 text-black" />
+                </button>
+                <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Italic">
+                  <Italic className="w-5 h-5 text-black" />
+                </button>
+                <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Underline">
+                  <Underline className="w-5 h-5 text-black" />
+                </button>
+                <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Strikethrough">
+                  <Strikethrough className="w-5 h-5 text-black" />
+                </button>
+                <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Emoji">
+                  <Smile className="w-5 h-5 text-black" />
+                </button>
+              </div>
+
+              {/* Text Content Area */}
+              <textarea
                 value={text}
                 onChange={e => {
                   setText(e.target.value);
                   if (errors.text) setErrors(prev => ({ ...prev, text: undefined }));
                 }}
-                className={`w-full pl-3 h-[48px] font-normal text-[16px] focus:outline-none focus:border focus:border-[#675FFF] text-[#5A687C] rounded-md  mb-4 ${errors.text ? 'border border-red-500' : ''}`}
-                placeholder={t("constance.post_text")}
+                className={`w-full h-[calc(100vh-550px)] px-4 font-normal text-[16px] text-[#5A687C] resize-none 
+     rounded-xl 
+    focus:border-[#AEB3BB] focus:ring-0 focus:outline-none
+    ${errors.text ? 'border-red-500' : ''}`}
+                placeholder={t("constance.post_text") || "Write your post content here..."}
                 style={{ fontWeight: 400, fontStyle: "normal", letterSpacing: 0 }}
                 ref={textInputRef}
               />
-              {errors.text && <div className="text-red-500 text-xs mb-2">{errors.text}</div>}
 
-              <div className="flex flex-row items-center justify-between w-full h-[27px] mb-4">
-                <div className="flex flex-row items-center w-[218px] h-[27px] gap-[6px]">
-                  <button
-                    className="flex items-center gap-[4px] rounded-[4px] border border-[#E1E4EA] px-[10px] py-[6px] text-xs text-gray-600 hover:text-gray-800 bg-white"
-                    style={{ width: "94px", height: "27px" }}
-                  >
-                    <Hash className="w-3 h-3" />
-                    {t("constance.hastags")}
-                  </button>
-                  <button
-                    className="flex items-center gap-[4px] rounded-[4px] border border-[#E1E4EA] px-[10px] py-[6px] text-xs text-gray-600 hover:text-gray-800 bg-white"
-                    style={{ width: "118px", height: "27px" }}
-                  >
-                    <StarsIcon className="w-3 h-3" />
-                    {t("constance.ai_assistance")}
-                  </button>
-                </div>
-                <div className="flex flex-row items-center gap-[6px]" style={{ width: "126px", height: "27px" }}>
-                  <button className="flex items-center justify-center w-[27px] h-[27px] rounded-[4px] border border-[#E1E4EA] bg-white">
-                    <span className="text-[#5A687C] font-inter font-semibold text-[12px]">9</span>
-                  </button>
-                  <button className="flex items-center justify-center w-[27px] h-[27px] rounded-[4px] border border-[#E1E4EA] bg-white">
-                    <span className="text-[#5A687C] font-inter font-semibold text-[12px]"><Bold /></span>
-                  </button>
-                  <button className="flex items-center justify-center w-[27px] h-[27px] rounded-[4px] border border-[#E1E4EA] bg-white">
-                    <span className="text-[#5A687C] font-inter font-semibold text-[12px]"><Italic /></span>
-                  </button>
-                  <button className="flex items-center justify-center w-[27px] h-[27px] rounded-[4px] border border-[#E1E4EA] bg-white">
-                    <span className="text-[#5A687C] font-inter font-semibold text-[12px]"><Smile /></span>
-                  </button>
-                </div>
-              </div>
 
-              {/* Upload Section */}
-              <div className="mb-4 w-full">
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t("brain_ai.upload_file_images_placeholder")} (webp, jpeg, png, pdf, mp4) *</label>
-                <input
-                  type="file"
-                  accept="image/webp,image/jpeg,image/png,application/pdf/,video/mp4"
-                  onChange={handleFileChange}
-                  className="mb-2 hidden"
-                  ref={fileInputRef}
-                />
-                <div
-                  className={`border-2 border-dashed ${dragActive ? 'border-[#335CFF80] bg-[#F5F7FF]' : errors.document ? 'border-red-500 bg-red-50' : 'border-[#335CFF80] bg-[#F5F7FF]'} rounded-lg p-6 text-center hover:border-[#335CFF80] cursor-pointer w-full`}
-                  onClick={handleUploadAreaClick}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <UploadIcon className="w-8 h-8 text-[#675FFF] mx-auto mb-2" />
-                  <p className="text-sm text-gray-600 font-medium">{t("brain_ai.upload_from_your_computer")}</p>
-                  <p className="text-xs text-gray-500 mt-1">{t("brain_ai.or_drag_and_drop")}</p>
+
+              {errors.text && <div className="text-red-500 text-xs mt-1">{errors.text}</div>}
+
+              {/* Media Section - Thumbnails */}
+              {/* Media Section - Thumbnails */}
+              {documents.length > 0 && (
+                <div className="mb-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    {documents.map((doc, index) => (
+                      <div key={index} className="relative group">
+                        <div className="relative w-full h-[200px] rounded-lg overflow-hidden border border-[#E1E4EA] bg-gray-50">
+
+                          {/* Image Preview */}
+                          {doc.mediaType === 'image' && (
+                            <img
+                              src={doc.preview}
+                              alt={doc.name}
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+
+                          {/* Video Preview */}
+                          {doc.mediaType === 'video' && (
+                            <div
+                              className="relative w-full h-full flex items-center justify-center bg-black cursor-pointer"
+                              onClick={() => handleVideoClick(index)}
+                            >
+                              <video
+                                ref={el => videoRefs.current[index] = el}
+                                src={doc.preview}
+                                muted
+                                playsInline
+                                className="w-full h-full object-contain"
+                              />
+                              {/* Overlay Play Icon */}
+                              {showOverlay[index] && (
+                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                  <div className="flex items-center justify-center">
+                                    <img
+                                      src={VideoPlayIcon}
+                                      alt="play"
+                                      className="w-8 h-8"
+                                    />
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Document Preview */}
+                          {doc.mediaType === 'document' && (
+                            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                              <div className="text-center">
+                                <svg
+                                  className="w-12 h-12 text-gray-400 mx-auto mb-2"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                                <p className="text-xs text-gray-500 truncate px-2">{doc.name}</p>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Remove Button */}
+                          <button
+                            onClick={() => handleRemoveDocument(index)}
+                            className="absolute bottom-2 right-2 p-1.5 bg-red-500 hover:bg-red-600 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                          >
+                            <Trash2 className="w-4 h-4 text-white" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                {fileName && (
-                  <div className="text-xs text-gray-700 mt-2">{t("brain_ai.selected_file")} <span className="font-medium">{fileName}</span></div>
-                )}
-                {errors.document && <div className="text-red-500 text-xs mt-1">{errors.document}</div>}
-                <div className="flex items-start justify-start mt-3">
-                  <label className="flex items-center gap-2 text-sm text-gray-700">
-                    <input type="checkbox" className="rounded border-gray-300 w-[21px] h-[21px]" />
-                    <span className="text-[#5A687C] text-[14px] leading-[23.8px]">{t("constance.post_photos_pdf")}</span>
+              )}
+
+
+              {/* Hidden input used by the media buttons (image / video) */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/webp,image/jpeg,image/png,video/mp4"
+                onChange={handleFileChange}
+                multiple
+              />
+
+              {/* Bottom Options */}
+              <div className="mt-6 pt-4 border-t border-[#E1E4EA] flex flex-col lg:flex-row items-end lg:items-center gap-4">
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <input
+                    type="checkbox"
+                    id="pdf-checkbox"
+                    className="rounded border-gray-300 w-[21px] h-[21px] cursor-pointer"
+                  />
+                  <label htmlFor="pdf-checkbox" className="text-sm text-[#5A687C] cursor-pointer">
+                    {t("constance.post_photos_pdf") || "Post photos as a PDF document"}
                   </label>
                 </div>
-              </div>
-            </div>
 
-            {/* Bottom Toolbar */}
-            <div className="flex flex-row items-center" style={{ width: "140px", height: "20px", gap: "4px" }}>
-              <button className="p-2 cursor-pointer rounded" onClick={handleEditClick}>
-                <SquarePen className="w-4 h-4" />
-              </button>
-              <button className="p-2 cursor-pointer rounded" onClick={handleCameraClick}>
-                <Image className="w-4 h-4" />
-              </button>
-              <button className="p-2 cursor-pointer rounded">
-                <Share2 className="w-4 h-4" />
-              </button>
-              <button className="p-2 cursor-pointer rounded" onClick={handleTrashClick}>
-                <Trash2 className="w-4 h-4" />
-              </button>
-              <button className="p-2 cursor-pointer rounded">
-                <Duplicate className="w-4 h-4" />
-              </button>
-              <button className="p-2 cursor-pointer rounded">
-                <StarsIcon className="w-4 h-4" />
-              </button>
-            </div>
+                {/* RIGHT — Image Icon + Publish button */}
+                <div className="flex items-center gap-3 lg:ml-auto w-full lg:w-auto justify-end">
 
-            {/* Action Buttons at the bottom */}
-            <div className="flex flex-row justify-center items-center gap-[9px] border-t border-[#E1E4EA] w-full min-h-[88px] absolute bottom-0 left-0 right-0 p-[25px] box-border bg-white">
-              <button className={`flex flex-row items-center justify-center gap-[10px] h-[38px] rounded-[7px] border-[1.5px] px-[20px] py-[7px] text-[#5A687C] bg-[#FFFFFF] font-medium ${isSaving?.draft ? 'cursor-not-allowed' : 'cursor-pointer'}`} onClick={handleSaveDraft} disabled={isSaving?.draft}>
-                {isSaving?.draft ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : t("draft")}
-              </button>
-              {!editData && (
-                <button disabled={isSaving?.publish} onClick={handlePublish} className={`flex flex-row items-center justify-center gap-[10px] min-w-[96px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#675FFF] bg-transparent font-medium ${isSaving?.publish ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
-                  {isSaving?.publish ? <div className="flex items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : t("publish")}
-                </button>
-              )}
-              <button className="flex cursor-pointer flex-row items-center justify-center gap-[10px] min-w-[112px] min-h-[38px] rounded-[7px] border-[1.5px] border-[#5F58E8] px-[20px] py-[7px] text-[#FFFFFF] bg-[#675FFF] font-medium" onClick={() => setShowDateTimePicker(true)}>
-                {t("schedule")}
-              </button>
-            </div>
-            {successMessage && <div className="text-green-600 text-sm mt-2 text-center">{successMessage}</div>}
-            {errorMessage && <div className="text-red-600 text-sm mt-2 text-center">{errorMessage}</div>}
-            {errors.general && <div className="text-red-500 text-sm mt-2">{errors.general}</div>}
-          </div>
-
-          {/* Right Post Preview */}
-          <div className="w-[287px] h-[726px] bg-white border-l border-[#E1E4EA] rounded-tr-[16px] rounded-br-[16px] p-4 flex flex-col">
-            <div className="flex flex-col gap-[14px] w-full mb-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t("constance.post_preview")}</label>
-                {/* <div className="relative w-full h-[44px]">
-                  <SelectDropdown
-                    name="platform-preview"
-                    options={[
-                      { key: "linkedin", label: "Linkedin" },
-                      // Add more platforms as needed
-                    ]}
-                    value={platform}
-                    onChange={setPlatform}
-                    placeholder={t("select") + " " + t("constance.platform")}
-                    className="w-full"
-                  />
-                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                </div> */}
-              </div>
-            </div>
-
-            {/* Preview Content */}
-            <div className="flex-1 flex flex-col gap-3 overflow-y-auto">
-              {/* Header (Instagram-like) */}
-              {(text || getSelectedAccountLabel() || platform) && (
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#F0EFFF] flex items-center justify-center">
-                    {platform === "instagram" ? (
-                      <img src={instagram} alt="Instagram" className="w-5 h-5" />
-                    ) : platform === "X" ? (
-                      <img src={twitter} alt="X / Twitter" className="w-5 h-5" />
-                    ) : platform === "linkedin" ? (
-                      <img src={linkedin} alt="LinkedIn" className="w-5 h-5" />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-gray-200" />
-                    )}
-                  </div>
-                  <div className="flex flex-col">
-                    <div className="text-sm font-semibold text-gray-900 truncate max-w-[140px]">
-                      {getSelectedAccountLabel() || "user_name"}
-                    </div>
-                    
-                  </div>
-                </div>
-                <div className="flex items-center gap-1">
-                  <button className="px-1 py-0.5 text-[11px] uppercase tracking-wide rounded-[6px] border border-blue-600 text-blue-500">
-                    {t("follow") || "FOLLOW"}
+                  {/* Video File Button */}
+                  <button
+                    className="p-2 hover:bg-gray-100 rounded transition-colors"
+                    title="Video File"
+                    onClick={() => handleMediaButtonClick("video")}
+                  >
+                    <img src={VideoFile} alt="video file" className="w-5 h-5" />
                   </button>
-                  <MoreHorizontal className="w-5 h-5 text-gray-500" />
+                  {/* Image Icon */}
+                  <button
+                    className="p-2 hover:bg-gray-100 rounded transition-colors"
+                    title="Image File"
+                    onClick={() => handleMediaButtonClick("image")}
+                  >
+                    <img src={ImageFile} alt="image file" className="w-5 h-5" />
+                  </button>
+
+
+
+                  {/* Publish Button */}
+                  <button
+                    onClick={handlePublish}
+                    disabled={isSaving?.publish}
+                    className={`px-4 py-2 text-sm font-medium text-white bg-[#675FFF] 
+        rounded-lg hover:bg-[#5a4fe6] transition-colors 
+        ${isSaving?.publish ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                  >
+                    {isSaving?.publish ? (
+                      <div className="flex items-center justify-center gap-2">
+                        <p>{t("processing")}</p>
+                        <span className="loader" />
+                      </div>
+                    ) : (
+                      t("publish_now") || "Publish Now"
+                    )}
+                  </button>
                 </div>
               </div>
-              )}
-              {/* Image/Media Preview */}
-              <div className="relative w-full h-[234px] rounded-md overflow-hidden flex items-center justify-center bg-gray-50 border border-gray-200 flex-shrink-0">
-                {preview ? (
-                  previewMediaType === 'image' ? (
-                    <img
-                      src={preview}
-                      alt="Content preview"
-                      className="absolute inset-0 w-full h-full object-contain"
-                    />
-                  ) : previewMediaType === 'document' ? (
-                    <embed
-                      src={preview}
-                      type="application/pdf"
-                      className="absolute inset-0 w-full h-full object-contain"
-                    />
-                  ) : previewMediaType === 'video' ? (
-                    <video
-                      src={preview}
-                      controls
-                      className="absolute inset-0 w-full h-full object-contain"
-                    />
-                  ) : (
-                    // Fallback for base64 checks if media type not set
-                    (preview.startsWith("data:image") ? (
-                      <img
-                        src={preview}
-                        alt="Content preview"
-                        className="absolute inset-0 w-full h-full object-contain"
-                      />
-                    ) : preview.startsWith("data:application/pdf") ? (
-                      <embed
-                        src={preview}
-                        type="application/pdf"
-                        className="absolute inset-0 w-full h-full object-contain"
-                      />
-                    ) : null)
-                  )
-                ) : (
-                  <img
-                    src={inkartinkLogo}
-                    alt="Default Preview"
-                    className="absolute inset-0 w-full h-full object-contain"
-                  />
-                )}
-              </div>
-
-              {/* Action row (Instagram-like) */}
-              {(text || getSelectedAccountLabel()) && (
-                <div className="flex items-center justify-between mt-1">
-                  <div className="flex items-center gap-3">
-                    <Heart className="w-5 h-5 text-gray-700" />
-                    <MessageCircle className="w-5 h-5 text-gray-700" />
-                    <Send className="w-5 h-5 text-gray-700" />
-                  </div>
-                  <Bookmark className="w-5 h-5 text-gray-700" />
-                </div>
-              )}
-
-              {/* Likes */}
-              {(text || getSelectedAccountLabel()) && (
-                <div className="text-sm font-semibold text-gray-900">
-                  396 {t("likes") || "likes"}
-                </div>
-              )}
-
-              {/* Caption Preview */}
-              {(text || getSelectedAccountLabel()) && (
-                <div className="text-sm text-gray-800 whitespace-pre-wrap break-words">
-                  <span className="font-semibold mr-2">{getSelectedAccountLabel() || "user_name"}</span>
-                  {renderCaptionWithHashtags(text)}
-                </div>
-              )}
+              {successMessage && <div className="text-green-600 text-sm mt-2">{successMessage}</div>}
+              {errorMessage && <div className="text-red-600 text-sm mt-2">{errorMessage}</div>}
+              {errors.general && <div className="text-red-500 text-sm mt-2">{errors.general}</div>}
             </div>
-
           </div>
+
         </div>
       </div>
       {showDateTimePicker && (
@@ -814,6 +868,213 @@ export default function CreatePost({ onClose, editData }) {
           }}
           isSaving={isSaving?.schedule}
         />
+      )}
+
+      {/* Preview Modal */}
+      {showPreview && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-[770px] max-h-[90vh] flex flex-col shadow-xl">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-2 border-b border-[#E1E4EA]">
+              <h2 className="text-lg font-semibold text-gray-900">{t("constance.post_preview") || "Preview Post "}</h2>
+              <button
+                onClick={() => setShowPreview(false)}
+                className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            <div className="bg-[#ffffff] w-full min-w-[232px] flex items-center justify-between p-[12px] rounded-[9px]">
+
+              {/* Left Section */}
+              <div className="flex gap-3 items-center">
+                <div className="w-10 h-10 rounded-full bg-[#FFE4C5] flex items-center justify-center">
+                  <img
+                    src={constanceImg}
+                    alt="constance"
+                    className="w-8 h-8 object-contain scale-115"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <h1 className="text-[#1E1E1E] text-[16px] font-[600]">
+                    {t("constance.constance")}
+                  </h1>
+                  <p className="text-[#5A687C] text-[14px] font-[400]">
+                    {t("constance.content_creation")}
+                  </p>
+                </div>
+              </div>
+
+              {/* Right Section */}
+              <div className="text-[#5A687C] text-[12px]">
+                1 min ago
+              </div>
+
+            </div>
+
+
+            {/* Preview Content */}
+            <div className="flex-1 overflow-y-auto px-6  flex flex-col gap-3">
+              {/* Header (Instagram-like) */}
+
+
+              {(text || getSelectedAccountLabel()) && (
+                <div className="text-sm text-gray-800 whitespace-pre-wrap break-words">
+                  {renderCaptionWithHashtags(text)}
+                </div>
+              )}
+
+              {/* Image/Media Preview */}
+              {documents.length <= 1 ? (
+                // ===== SINGLE FILE PREVIEW =====
+                <div className="relative w-full h-[250px] rounded-md overflow-hidden flex items-center justify-center bg-gray-50 border border-gray-200 flex-shrink-0">
+                  {preview ? (
+                    previewMediaType === 'image' ? (
+                      <img src={preview} alt="Content preview" className="absolute inset-0 w-full h-full object-contain" />
+                    ) : previewMediaType === 'document' ? (
+                      <embed src={preview} type="application/pdf" className="absolute inset-0 w-full h-full object-contain" />
+                    ) : previewMediaType === 'video' ? (
+                      <video src={preview} controls className="absolute inset-0 w-full h-full object-contain" />
+                    ) : null
+                  ) : (
+                    <img src={inkartinkLogo} alt="Default Preview" className="absolute inset-0 w-full h-full object-contain" />
+                  )}
+                </div>
+              ) : (
+                // ===== MULTI-FILE CARD VIEW =====
+                <div className="grid grid-cols-2 gap-3 mt-4 ">
+                  {documents.map((doc, i) => (
+                    <div
+                      key={i}
+                      className="relative w-full h-[180px] border border-gray-200 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center"
+                    >
+                      {doc.mediaType === "image" ? (
+                        <img
+                          src={doc.preview}
+                          alt={doc.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : doc.mediaType === "video" ? (
+                        <div className="relative w-full h-full bg-black">
+
+                          {/* ===== VIDEO ELEMENT ===== */}
+                          <video
+                            src={doc.preview}
+                            muted
+                            playsInline
+                            ref={(el) => (videoRefs.current[i] = el)}
+                            className="w-full h-full object-contain"
+                          />
+
+                          {/* ===== PLAY / PAUSE OVERLAY BUTTON ===== */}
+                          {showOverlay[i] && (
+                            <button
+                              onClick={() => handleVideoClick(i)}
+                              className="absolute inset-0 flex items-center justify-center bg-black/0"
+                            >
+                              <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+                                {isPlaying[i] ? (
+                                  // Pause Icon
+                                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M6 4h4v16H6zm8 0h4v16h-4z" />
+                                  </svg>
+                                ) : (
+                                  // Play Icon
+                                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z" />
+                                  </svg>
+                                )}
+                              </div>
+                            </button>
+                          )}
+                        </div>
+                      ) : doc.mediaType === "document" ? (
+                        <embed
+                          src={doc.preview}
+                          type="application/pdf"
+                          className="w-full h-full object-contain"
+                        />
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+
+              {/* Action row (Instagram-like) */}
+              {(text || getSelectedAccountLabel()) && (
+
+
+                <div className="flex items-center justify-between border-t border-gray-300 pb-4 py-2 mt-1 px-2">
+
+                  {/* Left: Likes + Comments */}
+                  <div className="flex items-center gap-6 text-gray-600 text-sm mt-1">
+
+                    {/* Likes */}
+                    <div className="flex items-center gap-1 cursor-pointer text-black">
+                      <ThumbsUp className="w-4 h-4" />
+                      <span>100 Likes</span>
+                    </div>
+
+                    {/* Comments */}
+                    <div className="flex items-center gap-1 cursor-pointer hover:text-black">
+                      <MessageCircle className="w-4 h-4" />
+                      <span>28 Comments</span>
+                    </div>
+
+                  </div>
+
+                  {/* Right: Share */}
+                  <div className="flex items-center gap-1 text-gray-600 text-sm cursor-pointer hover:text-black">
+                    <img src={ShareIcon} className="w-4 h-4" />
+                    <span>Share</span>
+                  </div>
+
+                </div>
+
+
+              )}
+
+              
+              {/* Caption Preview */}
+
+            </div>
+
+            {/* Action Buttons at Bottom */}
+            <div className="border-t border-[#E1E4EA] px-6 py-4 flex items-center justify-end gap-3">
+              <button
+                onClick={() => {
+                  setShowPreview(false);
+                  setShowDateTimePicker(true);
+                }}
+                className="px-4 py-2 text-sm font-medium text-[#5A687C] bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F4F5F6] transition-colors"
+              >
+                {t("schedule") || "Schedule"}
+              </button>
+              <button
+                onClick={() => {
+                  setShowPreview(false);
+                  handlePublish();
+                }}
+                disabled={isSaving?.publish}
+                className={`px-4 py-2 text-sm font-medium text-white bg-[#675FFF] border border-[#675FFF] rounded-lg hover:bg-[#5a4fe6] transition-colors ${
+                  isSaving?.publish ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                }`}
+              >
+                {isSaving?.publish ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <p>{t("processing")}</p>
+                    <span className="loader" />
+                  </div>
+                ) : (
+                  t("publish_now") || "Publish Now"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

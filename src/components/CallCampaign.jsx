@@ -1,7 +1,7 @@
 // Full-featured modal with pixel-perfect layout, click-outside-to-close, and toggle logic.
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { ChevronDown, MoreHorizontal, X, Search, Plus, Ellipsis, CheckCircle, Check } from "lucide-react";
+import { ChevronDown, MoreHorizontal, X, Search, Plus, Ellipsis, CheckCircle, Check, Upload, UploadCloudIcon, UploadIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { BritishFlag, Delete, DocIcon, Duplicate, Edit, Notes, TestCall, ThreeDots } from "../icons/icons";
 import { useDispatch } from "react-redux";
 import { getNavbarData } from "../store/navbarSlice";
@@ -17,6 +17,11 @@ import { getLists } from "../api/brainai";
 import { DateFormat } from "../utils/TimeFormat";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import googleCalendarIcon from "../assets/svg/google_calender.svg"
+import SlackIcon from "../assets/svg/Slack.svg"
+import NotionIcon from "../assets/svg/Notion.svg"
+import TrelloIcon from "../assets/svg/Trello.svg"
+import ClickupIcon from "../assets/svg/Clickup.svg"
 
 
 
@@ -62,7 +67,117 @@ export default function CallCampaign() {
       value: "00:00:00"
     }
   ]
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false); // edit/view modal
+  const [showNewCampaignForm, setShowNewCampaignForm] = useState(false); // inline create form
+  const [stepCampaignOpen, setStepCampaignOpen] = useState(true);
+  const [stepAgentOpen, setStepAgentOpen] = useState(false);
+
+  // Local form state for "Create a new agent" step (UI only for now)
+  const [newAgentForm, setNewAgentForm] = useState({
+    agent_name: "",
+    max_call_time: "",
+    language: "",
+    voice: "",
+    knowledge_base: "",
+    behavior: "",
+    pullsFromBrain: true,
+    tools: ["google_calendar"],
+    agentPrompt: "",
+  });
+
+  // File upload state
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const agentLanguageOptions = [
+    { key: "english_us", label: "English (America)" },
+    { key: "english_uk", label: "English (UK)" },
+    { key: "french", label: "French" },
+  ];
+
+  const agentVoiceOptions = [
+    { key: "france_man", label: "France (Man)" },
+    { key: "us_woman", label: "US (Woman)" },
+  ];
+
+  const knowledgeBaseOptions = [
+    { key: "none", label: "None" },
+    { key: "sales_playbook", label: "Sales Playbook" },
+    { key: "product_docs", label: "Product Docs" },
+  ];
+
+  const behaviorOptions = [
+    { key: "wait_to_speak", label: "Wait for the person to speak" },
+    { key: "start_pitch", label: "Start the pitch immediately" },
+  ];
+
+  const toolOptions = [
+    { key: "google_calendar", label: "Google Calendar", icon: googleCalendarIcon },
+    { key: "slack", label: "Slack", icon: SlackIcon },
+    { key: "notion", label: "Notion", icon: NotionIcon },
+    { key: "trello", label: "Trello", icon: TrelloIcon },
+    { key: "clickup", label: "Clickup", icon: ClickupIcon },
+  ];
+
+  const toggleToolSelection = (toolKey) => {
+    setNewAgentForm((prev) => {
+      const alreadySelected = prev.tools.includes(toolKey);
+      return {
+        ...prev,
+        tools: alreadySelected
+          ? prev.tools.filter((t) => t !== toolKey)
+          : [...prev.tools, toolKey],
+      };
+    });
+  };
+
+  // File upload handlers
+  const handleFileSelect = (file) => {
+    if (file) {
+      setSelectedFile(file);
+      // You can add file validation here (size, type, etc.)
+      console.log("File selected:", file.name, file.size, file.type);
+    }
+  };
+
+  const handleFileInputChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileSelect(file);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      handleFileSelect(file);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleUploadAreaClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleRemoveFile = (e) => {
+    e.stopPropagation();
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
   const [secondModel, setSecondModel] = useState(false);
   const [toggleTom, setToggleTom] = useState(true);
   const modalRef = useRef(null);
@@ -322,6 +437,9 @@ export default function CallCampaign() {
           console.log("Campaign created successfully:", response.data)
           setApiMessage({ type: 'success', message: 'Campaign created successfully!' });
           setTimeout(() => {
+            // Close inline form if open
+            setShowNewCampaignForm(false);
+            // Also close modal if it was used (edit flow)
             setShowModal(false);
             resetForm();
             handleGetPhoneCampaign();
@@ -534,191 +652,716 @@ export default function CallCampaign() {
       {!showModal ?
         <div className="py-6 px-6 flex flex-col gap-4 w-full h-screen overflow-auto">
           {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
-            <div className="flex flex-col gap-1">
-              <h1 className="text-xl md:text-2xl font-semibold text-[#1E1E1E]">{t("phone.call_campaigns")}</h1>
-              <p className="text-sm md:text-base text-[#5A687C] font-[400]">Manage and track your outbound and inbound calling campaigns.</p>
-            </div>
-            <button
-              className="bg-[#675FFF] cursor-pointer text-white font-medium px-4 py-2.5 rounded-lg shadow-sm hover:bg-[#5E54FF] transition-colors flex items-center gap-2 w-fit"
-              onClick={() => {
-                dispatch(getNavbarData("Tom, Phone"))
-                setShowModal(true)
-                setSecondModel(false)
-              }}
-            >
-              <Plus className="w-4 h-4" />
-              {t("phone.add_new_campaign") || "Add New Campaign"}
-            </button>
-          </div>
-
-          {/* Search and Filters */}
-          <div className="flex flex-col sm:flex-row gap-3 mb-3 justify-between">
-            {/* Search Bar */}
-            <div className="relative flex-1 min-w-0 max-w-[270px] rounded-lg ">
-              <Search className="absolute left-3 top-1/2 transform  -translate-y-1/2 text-[#5A687C] w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search name or phone number"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-[#E1E4EA] rounded-lg bg-white focus:outline-none focus:border-[#675FFF] text-sm"
-              />
-            </div>
-
-            {/* Filters */}
-            <div className="flex flex-wrap sm:flex-nowrap gap-3 flex-shrink-0">
-              <div className="w-full sm:w-[140px] text-[13px] font-[500]">
-                <SelectDropdown
-                  name="country"
-                  options={countryOptions}
-                  placeholder={t("phone.country")}
-                  value={filters.country}
-                  onChange={(value) => setFilters({ ...filters, country: value })}
-                />
+          {!showNewCampaignForm ? (
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
+              <div className="flex flex-col gap-1">
+                <h1 className="text-xl md:text-2xl font-semibold text-[#1E1E1E]">{t("phone.call_campaigns")}</h1>
+                <p className="text-sm md:text-base text-[#5A687C] font-[400]">
+                  Manage and track your outbound and inbound calling campaigns.
+                </p>
               </div>
-
-              <div className="w-full sm:w-[140px] text-[13px] font-[500]">
-                <SelectDropdown
-                  name="language"
-                  options={languageOptions}
-                  placeholder={t("phone.language")}
-                  value={filters.language}
-                  onChange={(value) => setFilters({ ...filters, language: value })}
-                />
+              <button
+                className="bg-[#675FFF] cursor-pointer text-white font-medium px-4 py-1.5 rounded-lg shadow-sm hover:bg-[#5E54FF] transition-colors flex items-center gap-2 w-fit"
+                onClick={() => {
+                  dispatch(getNavbarData("Tom, Phone"))
+                  setEditData();
+                  resetForm();
+                  setShowNewCampaignForm(true);
+                  setStepCampaignOpen(true);
+                  setStepAgentOpen(false);
+                }}
+              >
+                <Plus className="w-4 h-4" />
+                {t("phone.add_new_campaign") || "Add New Campaign"}
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
+              <div className="flex flex-col gap-1">
+                <h1 className="text-xl md:text-2xl font-semibold text-[#1E1E1E]">
+                  {t("phone.new_campaign") || "New Campaign"}
+                </h1>
               </div>
-
-              <div className="w-full sm:w-[100px] text-[13px] font-[500]">
-                <SelectDropdown
-                  name="voice"
-                  options={voiceOptions}
-                  placeholder={t("phone.voice")}
-                  value={filters.voice}
-                  onChange={(value) => setFilters({ ...filters, voice: value })}
-                />
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => {
+                    setShowNewCampaignForm(false);
+                    resetForm();
+                  }}
+                  className="px-5 py-1.5 cursor-pointer text-md text-[#1E1E1E] bg-white border border-[#E1E4EA] rounded-xl hover:bg-gray-50 transition-colors"
+                >
+                  {t("phone.cancel") || "Cancel"}
+                </button>
+                <button
+                  className="px-5 py-1.5 cursor-pointer text-md text-white rounded-xl bg-[#5E54FF] hover:bg-[#5a4aff] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={loader}
+                  onClick={handleSubmit}
+                >
+                  {t("phone.save_campaign")}
+                </button>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Table */}
-          <div className="overflow-auto w-full">
-            <div className="border border-[#D6D6D6] rounded-2xl overflow-hidden">
-              <table className="min-w-full border-separate border-spacing-0">
-                <thead className="bg-[#F7F7F8]">
-                  <tr className="text-[#5A687C]">
-                    <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("emailings.campaign_name")}</th>
-                    <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("appointment.agent_name")}</th>
-                    <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.creation_date")}</th>
-                    <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.language")}</th>
-                    <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.total_call")}</th>
-                    <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.status")}</th>
-                    <th className="px-6 text-center py-3 text-[16px] font-[400]">{t("phone.active")}</th>
-                  </tr>
-                </thead>
+          {/* Inline New Campaign Form (Accordion steps) */}
+          {showNewCampaignForm && (
+            <div className="bg-white border border-[#E1E4EA] rounded-2xl shadow-sm mb-4">
+              {/* Step 1: New Campaign */}
+              <div className="border-b border-[#E1E4EA]">
+                <button
+                  type="button"
+                  className="w-full flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 cursor-pointer"
+                  onClick={() => setStepCampaignOpen((prev) => !prev)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 flex items-center justify-center rounded-md bg-[#675FFF] text-white text-sm">
+                      1
+                    </div>
+                    <span className="text-sm sm:text-base font-[600] text-[#1E1E1E]">
+                      {t("phone.new_campaign") || "New Campaign"}
+                    </span>
+                  </div>
+                  <span className="text-[#5A687C] text-lg flex items-center">
+                    {stepCampaignOpen ? (
+                      <ChevronUpIcon className="w-5 h-5" />
+                    ) : (
+                      <ChevronDownIcon className="w-5 h-5" />
+                    )}
+                  </span>
 
-                <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
-                  {loading ? (
-                    <tr className="h-34">
-                      <td></td>
-                      <td></td>
-                      <td className="text-center"><span className="loader" /></td>
-                      <td ></td>
-                      <td></td>
-                      <td></td>
-                      <td ></td>
-                    </tr>
-                  ) : (() => {
-                    // Filter campaigns based on search query and filters
-                    const filteredCampaigns = campaigns.filter((campaign) => {
-                      // Search filter
-                      if (searchQuery) {
-                        const query = searchQuery.toLowerCase();
-                        const matchesSearch =
-                          campaign.campaign_name?.toLowerCase().includes(query) ||
-                          campaign.agent_name?.toLowerCase().includes(query) ||
-                          campaign.phone_number?.toLowerCase().includes(query);
-                        if (!matchesSearch) return false;
+                </button>
+              </div>
+
+              {stepCampaignOpen && (
+                <div className="px-4 sm:px-6 pb-6 space-y-6 mt-4">
+                  {/* Grid with campaign name and type */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("emailings.campaign_name")}</label>
+                      <input
+                        type="text"
+                        placeholder={t("phone.enter_campaign_name")}
+                        className={`w-full px-4 py-2 bg-white border rounded-lg ${errors.campaign_name ? 'border-red-500' : 'border-[#E1E4EA]'} focus:outline-none focus:border-[#675FFF]`}
+                        name="campaign_name"
+                        value={campaign.campaign_name || ''}
+                        onChange={handleCampaignForm}
+                      />
+                      {errors.campaign_name && <p className="text-red-500 text-sm mt-1">{errors.campaign_name}</p>}
+                    </div>
+
+                    <div>
+                      <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.campaign_type")}</label>
+                      <SelectDropdown
+                        name="campaign_type"
+                        options={[
+                          { key: "outbound", label: t("phone.outbound_call") },
+                          { key: "inbound", label: t("phone.inbound_call") }
+                        ]}
+                        placeholder="Select Campaign Type"
+                        value={campaign.campaign_type || ''}
+                        onChange={(value) => handleCampaignForm({ target: { name: 'campaign_type', value } })}
+                        errors={errors}
+                      />
+                      {errors.campaign_type && <p className="text-red-500 text-sm mt-1">{errors.campaign_type}</p>}
+                    </div>
+                  </div>
+
+                  {/* Grid with phone number and tags - Now in the same row */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Number linked to the campaign */}
+                    <div>
+                      <label className="block text-[14px] font-[500] text-[#868C98] mb-1">Number linked to the campaign</label>
+                      <div className="flex group items-center focus-within:border-[#675FFF] gap-2 border border-[#E1E4EA] rounded-lg px-4 py-2.5">
+                        <div className="relative country-selector">
+                          <button
+                            type="button"
+                            onClick={() => setIsCountryOpen(!isCountryOpen)}
+                            className="w-fit flex hover:cursor-pointer border-none justify-between gap-2 items-center"
+                          >
+                            <img src={selectedCountry?.flag} alt={selectedCountry?.name} width={20} />
+                            <span className="text-[14px] text-[#1E1E1E]">{selectedCountry?.dial_code}</span>
+                            <FaChevronDown color="#5A687C" className={`w-[10px] transition-transform duration-200 ${isCountryOpen ? 'transform rotate-180' : ''}`} />
+                            <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)", margin: "0 8px" }} />
+                          </button>
+                          {isCountryOpen && (
+                            <div className="absolute z-10 rounded-md shadow-lg border border-gray-200 max-h-40 overflow-auto top-8 left-0 bg-white mt-1 min-w-[120px]">
+                              {countries.map((country) => (
+                                <div
+                                  key={country.code}
+                                  onClick={() => {
+                                    setSelectedCountry(country);
+                                    setIsCountryOpen(false);
+                                  }}
+                                  className={`flex items-center gap-2 px-3 py-2 hover:bg-[#F4F5F6] cursor-pointer ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6]'}`}
+                                >
+                                  <img src={country.flag} alt={country.name} width={16} />
+                                  <span className="text-[14px] text-[#1E1E1E]">{country.dial_code}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        <input
+                          type="tel"
+                          name="phone_number"
+                          value={campaign.phone_number || ''}
+                          onChange={handleCampaignForm}
+                          placeholder="(555) 000-0000"
+                          className="w-full outline-none bg-transparent text-[#1E1E1E] text-[14px]"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          // Handle add new phone number logic here
+                          console.log("Add new phone number");
+                        }}
+                        className="text-[#675FFF] text-[14px] font-[500] mt-2 hover:underline"
+                      >
+                        + Add New Phone Number
+                      </button>
+                      {errors.phone_number && <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>}
+                    </div>
+
+                    {/* Tags selection */}
+                    <div>
+                      <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.select_your_tag")}</label>
+                      <div className="flex flex-wrap gap-2">
+                        {tagsOptions.map((e) => {
+                          const isSelected = campaign.tag === e.key;
+                          return (
+                            <button
+                              key={e.key}
+                              type="button"
+                              onClick={() => {
+                                setCampaign((prev) => ({ ...prev, tag: e.key }))
+                                setErrors((prev) => ({ ...prev, tag: "" }))
+                              }}
+                              className={`flex items-center cursor-pointer gap-2 px-2 py-2 rounded-lg border transition-all ${isSelected
+                                ? 'bg-white border-[#675FFF] text-[#1E1E1E]'
+                                : 'bg-white border-[#E1E4EA] text-[#1E1E1E] hover:border-[#675FFF]'
+                                }`}
+                            >
+                              {isSelected ? (
+                                <div className="w-[18px] h-[18px] bg-[#675FFF] rounded-sm flex items-center justify-center flex-shrink-0">
+                                  <Check size={14} className="text-white" strokeWidth={3} />
+                                </div>
+                              ) : (
+                                <div className="w-[18px] h-[18px] border-2 border-[#D6D6D6] rounded-sm flex-shrink-0"></div>
+                              )}
+                              <span className={`text-[14px] ${isSelected ? 'font-[600]' : 'font-[400]'}`}>{e.label}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {errors.tag && <p className="text-red-500 text-sm mt-1">{errors.tag}</p>}
+                    </div>
+                  </div>
+
+                  {/* Create a custom tag table */}
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-[14px] font-[500] text-[#868C98] mb-3">Create a custom tag (Optional)</p>
+                      <div className="rounded-2xl border border-[#D6D6D6] overflow-auto w-full">
+                        <div className="overflow-x-auto">
+                          <table className="min-w-full border-separate border-spacing-0">
+                            <thead className="bg-[#F7F7F8]">
+                              <tr className="text-[#5A687C]">
+                                <th className="px-6 text-start py-3 text-[16px] font-[400]">Tag Name</th>
+                                <th className="px-3 text-start py-3 text-[16px] font-[400]">Action Description</th>
+                                <th className="px-3 text-start py-3 text-[16px] font-[400]">Tag color</th>
+                                <th className="px-6 text-center py-3 text-[16px] font-[400]">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
+                              <tr className="text-[16px] text-[#1E1E1E]">
+                                <td className="px-6 py-2 text-[16px] text-[#1E1E1E] font-medium text-start">Interested</td>
+                                <td className="px-3 py-2 text-[16px] text-start">Lead showed interest and requested follow-up.</td>
+                                <td className="px-3 py-2 text-[16px] text-start">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-4 h-4 rounded bg-[#15B462]"></div>
+                                    <span className="text-[#1E1E1E]">Green (15B462)</span>
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4 text-center whitespace-nowrap">
+                                  <div className='flex items-center justify-center'>
+                                    <button className="p-2 rounded-lg relative">
+                                      <div className='bg-white cursor-pointer border border-[#D6D6D6] shadow-sm p-1.5 rounded-xl'><Ellipsis /></div>
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr className="text-[16px] text-[#1E1E1E]">
+                                <td className="px-6 py-2 text-[16px] text-[#1E1E1E] font-medium text-start">No Answer</td>
+                                <td className="px-3 py-2 text-[16px] text-start">Call not picked up after 3 attempts.</td>
+                                <td className="px-3 py-2 text-[16px] text-start">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-4 h-4 rounded bg-[#FF9500]"></div>
+                                    <span className="text-[#1E1E1E]">Orange (FF9500)</span>
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4 text-center whitespace-nowrap">
+                                  <div className='flex items-center justify-center'>
+                                    <button className="p-2 rounded-lg relative">
+                                      <div className='bg-white cursor-pointer border border-[#D6D6D6] shadow-sm p-1.5 rounded-xl'><Ellipsis /></div>
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Advanced qualification (Optional) */}
+                    <div className="">
+                      <button
+                        type="button"
+                        className="w-full flex items-center justify-between px-4 sm:px-5 py-3 cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-md font-[500] text-[#1E1E1E]">
+                            Advanced qualification
+                          </span>
+                          <span className="text-[15px] text-[#868C98]">(Optional)</span>
+                          <ChevronDown className="w-4 h-4 text-[#5A687C]" />
+                        </div>
+
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Action buttons moved to header (Cancel / Save Campaign) */}
+                </div>
+              )}
+
+              {/* Step 2: Create a new agent */}
+              <button
+                type="button"
+                className="w-full flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 cursor-pointer border-t border-[#E1E4EA]"
+                onClick={() => setStepAgentOpen((prev) => !prev)}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-7 h-7 flex items-center justify-center rounded-md bg-[#2d7e12] text-[#fafbfc] text-md">
+                    2
+                  </div>
+                  <span className="text-sm sm:text-base font-[600] text-[#1E1E1E]">
+                    {t("phone.create_new_agent") || "Create a new agent"}
+                  </span>
+                </div>
+                <span className="text-[#5A687C] text-lg flex items-center">
+                  {stepCampaignOpen ? (
+                    < ChevronDownIcon className="w-5 h-5" />
+                  ) : (
+                    <ChevronUpIcon className="w-5 h-5" />
+                  )}
+                </span>
+              </button>
+
+              {stepAgentOpen && (
+                <div className="px-4 sm:px-6 pb-6 pt-2">
+                  {/* Row 1: Agent Name + Max Call Time */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[14px] font-[500] text-[#868C98] mb-1">
+                        Agent Name
+                      </label>
+                      <input
+                        type="text"
+                        value={newAgentForm.agent_name}
+                        onChange={(e) =>
+                          setNewAgentForm((prev) => ({ ...prev, agent_name: e.target.value }))
+                        }
+                        placeholder="Agent Outbound Saas Market"
+                        className="w-full px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg focus:outline-none focus:border-[#675FFF] text-[14px]"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[14px] font-[500] text-[#868C98] mb-1">
+                        Maximum Call Time in Minutes
+                      </label>
+                      <input
+                        type="number"
+                        value={newAgentForm.max_call_time}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === "" || /^\d+$/.test(value)) {
+                            setNewAgentForm((prev) => ({ ...prev, max_call_time: value }));
+                          }
+                        }}
+                        placeholder="Enter number"
+                        className="w-full px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg focus:outline-none focus:border-[#675FFF] text-[14px] appearance-none [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Row 2: Language + Voice */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[14px] font-[500] text-[#868C98] mb-1">
+                        Language
+                      </label>
+                      <SelectDropdown
+                        name="agent_language"
+                        options={agentLanguageOptions}
+                        value={newAgentForm.language}
+                        onChange={(value) =>
+                          setNewAgentForm((prev) => ({ ...prev, language: value }))
+                        }
+                        placeholder="Select language"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[14px] font-[500] text-[#868C98] mb-1">
+                        Voice
+                      </label>
+                      <SelectDropdown
+                        name="agent_voice"
+                        options={agentVoiceOptions}
+                        value={newAgentForm.voice}
+                        onChange={(value) =>
+                          setNewAgentForm((prev) => ({ ...prev, voice: value }))
+                        }
+                        placeholder="Select voice"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Row 3: Knowledge base + Behavior */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[14px] font-[500] text-[#868C98] mb-1">
+                        Knowledge base <span className="text-[#9CA3AF]">(Optional)</span>
+                      </label>
+                      <SelectDropdown
+                        name="knowledge_base"
+                        options={knowledgeBaseOptions}
+                        value={newAgentForm.knowledge_base}
+                        onChange={(value) =>
+                          setNewAgentForm((prev) => ({ ...prev, knowledge_base: value }))
+                        }
+                        placeholder="Select"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[14px] font-[500] text-[#868C98] mb-1">
+                        Behavior
+                      </label>
+                      <SelectDropdown
+                        name="behavior"
+                        options={behaviorOptions}
+                        value={newAgentForm.behavior}
+                        onChange={(value) =>
+                          setNewAgentForm((prev) => ({ ...prev, behavior: value }))
+                        }
+                        placeholder="Wait for the person to speak"
+                      />
+                    </div>
+                  </div>
+
+                  {/* AI Brain toggle */}
+                  <div className="flex items-center justify-start px-2 py-3 mb-4">
+                    <button
+                      type="button"
+                      className={`w-10 h-5 rounded-full relative transition-colors duration-300 cursor-pointer ${newAgentForm.pullsFromBrain ? "bg-[#675FFF]" : "bg-gray-300"
+                        }`}
+                      onClick={() =>
+                        setNewAgentForm((prev) => ({
+                          ...prev,
+                          pullsFromBrain: !prev.pullsFromBrain,
+                        }))
                       }
+                    >
+                      <span
+                        className={`block w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${newAgentForm.pullsFromBrain ? "translate-x-5" : "translate-x-0.5"
+                          }`}
+                      />
+                    </button>
+                    <div className="flex flex-col">
 
-                      // Language filter
-                      if (filters.language && campaign.language?.toLowerCase() !== filters.language.toLowerCase()) {
-                        return false;
-                      }
+                      <span className="text-sm px-3 font-[500] text-[#1E1E1E]">
+                        The agent pulls information directly from the AI Brain.
+                      </span>
+                    </div>
 
-                      // Voice filter (if campaign has voice field)
-                      if (filters.voice && campaign.voice?.toLowerCase() !== filters.voice.toLowerCase()) {
-                        return false;
-                      }
+                  </div>
 
-                      return true;
-                    });
+                  {/* Select tools */}
+                  <div className="mb-4">
+                    <p className="text-[12px] font-[500] text-[#868C98] mb-2">Select Tools</p>
+                    <div className="flex flex-wrap gap-2">
+                      {toolOptions.map((tool) => {
+                        const active = newAgentForm.tools.includes(tool.key);
+                        return (
+                          <button
+                            key={tool.key}
+                            type="button"
+                            onClick={() => toggleToolSelection(tool.key)}
+                            className={`px-3 py-1.5 rounded-md border shadow-sm text-sm font-[500] cursor-pointer transition-colors flex items-center gap-2 ${active
+                              ? "bg-white border-[#675FFF] text-[#1E1E1E]"
+                              : "bg-white border-[#E1E4EA] text-[#5A687C] hover:border-[#675FFF]"
+                              }`}
+                          >
+                            {tool.icon && (
+                              <img
+                                src={tool.icon}
+                                alt={`${tool.label} icon`}
+                                className="w-4 h-4"
+                              />
+                            )}
+                            {tool.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
 
-                    return filteredCampaigns.length !== 0 ? (
-                      filteredCampaigns.map((agent, index) => (
-                        <tr key={agent.id} className="text-[16px] text-[#1E1E1E]">
-                          <td className="px-4 py-4 text-[16px] text-[#1E1E1E] font-medium text-start">{agent.campaign_name}</td>
-                          <td className="px-4 py-4 text-[16px] text-start">{agent.agent_name}</td>
-                          <td className="px-4 py-4 text-[16px] text-start whitespace-nowrap">{DateFormat(agent.creation_date)}</td>
-                          <td className="px-4 py-4 text-[16px] text-start">{agent.language}</td>
-                          <td className="px-4 py-4 text-[16px] text-start">{agent.total_calls}</td>
-                          <td className="px-4 py-4 text-start">
-                            <span className={`inline-block border ${renderColor(agent.status)} text-sm font-medium px-3 py-1 rounded-full`}>
-                              {agent.status}
-                            </span>
-                          </td>
-                          <td className="px-4 py-4 text-center whitespace-nowrap">
-                            <div className='flex items-center justify-center'>
-                              <button onClick={(e) => handleDropdownClick(index, agent, e)} className="p-2 rounded-lg relative">
-                                <div className='bg-white cursor-pointer border border-[#D6D6D6] shadow-sm p-1.5 rounded-xl'><Ellipsis /></div>
+                  {/* Import file + Agent prompt */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-[12px] font-[500] text-[#868C98] mb-1">
+                        Import File
+                      </p>
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileInputChange}
+                        className="hidden"
+                        accept=".pdf,.doc,.docx,.txt,.csv"
+                      />
+                      <div
+                        onClick={handleUploadAreaClick}
+                        onDrop={handleDrop}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        className={`border border-dashed min-h-[200px] border-[#E1E4EA] rounded-2xl flex flex-col items-center justify-center px-4 py-8 text-center cursor-pointer transition-colors ${isDragOver ? 'border-[#675FFF] bg-[#F1EEFF]' : 'hover:border-[#675FFF] hover:bg-[#FAFAFA]'
+                          } ${selectedFile ? 'border-[#675FFF]' : ''}`}
+                      >
+                        {selectedFile ? (
+                          <div className="flex flex-col items-center gap-2 w-full">
+                            <div className="flex items-center gap-2 bg-[#F1EEFF] px-3 py-2 rounded-lg w-full max-w-[90%]">
+                              <div className="flex-1 min-w-0">
+                                <p className="text-[13px] font-[500] text-[#1E1E1E] truncate">
+                                  {selectedFile.name}
+                                </p>
+                                <p className="text-[11px] text-[#868C98]">
+                                  {(selectedFile.size / 1024).toFixed(2)} KB
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={handleRemoveFile}
+                                className="ml-2 p-1 hover:bg-[#E1E4EA] rounded transition-colors"
+                              >
+                                <X size={16} className="text-[#5A687C]" />
                               </button>
                             </div>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr className="h-34">
-                        <td colSpan="7" className="text-center text-[#1E1E1E]">
-                          {t("phone.no_call_listed")}
-                        </td>
-                      </tr>
-                    );
-                  })()}
-                </tbody>
-              </table>
+                            <p className="text-[12px] text-[#868C98] mt-2">
+                              Click to change file
+                            </p>
+                          </div>
+                        ) : (
+                          <>
+                            <Upload className="mb-2 text-[#9CA3AF] w-6 h-6" />
+                            <p className="text-[13px] text-[#5A687C]">
+                              <span className="text-[#675FFF] font-[500]">Choose a file</span> or drag & drop it here.
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1 ">
+                      <p className="text-[12px] font-[500] text-[#868C98] mb-1 ">
+                        Agent Prompt
+                      </p>
+                      <textarea
+                        rows={5}
+                        value={newAgentForm.agentPrompt}
+                        onChange={(e) =>
+                          setNewAgentForm((prev) => ({ ...prev, agentPrompt: e.target.value }))
+                        }
+                        placeholder="Enter Agent Prompt"
+                        className="w-full px-4 py-3 border min-h-[200px] border-[#E1E4EA] rounded-2xl resize-none focus:outline-none focus:border-[#675FFF] text-[13px] text-[#1E1E1E]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
-              <div className="flex items-center justify-between bg-[#F7F7F8] px-4 py-3">
-                {/* pagination + row controls */}
-                <div className="flex items-center gap-2">
-                  <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
-                    ‹ Prev
-                  </button>
-                  <button className="bg-[#675FFF] text-white rounded-lg px-3 py-1 text-sm cursor-pointer">
-                    1
-                  </button>
-                  <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
-                    2
-                  </button>
-                  <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
-                    3
-                  </button>
-                  <span className="text-[#000000] text-sm">…</span>
-                  <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
-                    10
-                  </button>
-                  <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
-                    Next ›
-                  </button>
+          {/* Search and Filters (hidden while creating a new campaign) */}
+          {!showNewCampaignForm && (
+            <div className="flex flex-col sm:flex-row gap-3 mb-3 justify-between">
+              {/* Search Bar */}
+              <div className="relative flex-1 min-w-0 max-w-[270px] rounded-lg ">
+                <Search className="absolute left-3 top-1/2 transform  -translate-y-1/2 text-[#5A687C] w-4 h-4" />
+                <input
+                  type="text"
+                  placeholder="Search name or phone number"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-[#E1E4EA] rounded-lg bg-white focus:outline-none focus:border-[#675FFF] text-sm"
+                />
+              </div>
+
+              {/* Filters */}
+              <div className="flex flex-wrap sm:flex-nowrap gap-3 flex-shrink-0">
+                <div className="w-full sm:w-[140px] text-[13px] font-[500]">
+                  <SelectDropdown
+                    name="country"
+                    options={countryOptions}
+                    placeholder={t("phone.country")}
+                    value={filters.country}
+                    onChange={(value) => setFilters({ ...filters, country: value })}
+                  />
                 </div>
 
-                {/* Right side – rows per page */}
-                <div className="flex items-center gap-2 text-sm text-[#5A687C]">
-                  <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 rows</button>
-                  <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">10</button>
-                  <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">20</button>
+                <div className="w-full sm:w-[140px] text-[13px] font-[500]">
+                  <SelectDropdown
+                    name="language"
+                    options={languageOptions}
+                    placeholder={t("phone.language")}
+                    value={filters.language}
+                    onChange={(value) => setFilters({ ...filters, language: value })}
+                  />
+                </div>
+
+                <div className="w-full sm:w-[100px] text-[13px] font-[500]">
+                  <SelectDropdown
+                    name="voice"
+                    options={voiceOptions}
+                    placeholder={t("phone.voice")}
+                    value={filters.voice}
+                    onChange={(value) => setFilters({ ...filters, voice: value })}
+                  />
                 </div>
               </div>
             </div>
-          </div>
+          )}
+
+          {/* Table (hidden while creating a new campaign) */}
+          {!showNewCampaignForm && (
+            <div className="rounded-2xl border border-[#D6D6D6] overflow-auto mb-2 w-full">
+              <div className="overflow-x-auto">
+                <table className="min-w-full border-separate border-spacing-0">
+                  <thead className="bg-[#F7F7F8]">
+                    <tr className="text-[#5A687C]">
+                      <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("emailings.campaign_name")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("appointment.agent_name")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.creation_date")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.language")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.total_call")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.status")}</th>
+                      <th className="px-6 text-center py-3 text-[16px] font-[400]">{t("phone.active")}</th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
+                    {loading ? (
+                      <tr className="h-34">
+                        <td></td>
+                        <td></td>
+                        <td className="text-center"><span className="loader" /></td>
+                        <td ></td>
+                        <td></td>
+                        <td></td>
+                        <td ></td>
+                      </tr>
+                    ) : (() => {
+                      // Filter campaigns based on search query and filters
+                      const filteredCampaigns = campaigns.filter((campaign) => {
+                        // Search filter
+                        if (searchQuery) {
+                          const query = searchQuery.toLowerCase();
+                          const matchesSearch =
+                            campaign.campaign_name?.toLowerCase().includes(query) ||
+                            campaign.agent_name?.toLowerCase().includes(query) ||
+                            campaign.phone_number?.toLowerCase().includes(query);
+                          if (!matchesSearch) return false;
+                        }
+
+                        // Language filter
+                        if (filters.language && campaign.language?.toLowerCase() !== filters.language.toLowerCase()) {
+                          return false;
+                        }
+
+                        // Voice filter (if campaign has voice field)
+                        if (filters.voice && campaign.voice?.toLowerCase() !== filters.voice.toLowerCase()) {
+                          return false;
+                        }
+
+                        return true;
+                      });
+
+                      return filteredCampaigns.length !== 0 ? (
+                        filteredCampaigns.map((agent, index) => (
+                          <tr key={agent.id} className="text-[16px] text-[#1E1E1E]">
+                            <td className="px-4 py-4 text-[16px] text-[#1E1E1E] font-medium text-start">{agent.campaign_name}</td>
+                            <td className="px-4 py-4 text-[16px] text-start">{agent.agent_name}</td>
+                            <td className="px-4 py-4 text-[16px] text-start whitespace-nowrap">{DateFormat(agent.creation_date)}</td>
+                            <td className="px-4 py-4 text-[16px] text-start">{agent.language}</td>
+                            <td className="px-4 py-4 text-[16px] text-start">{agent.total_calls}</td>
+                            <td className="px-4 py-4 text-start">
+                              <span className={`inline-block border ${renderColor(agent.status)} text-sm font-medium px-3 py-1 rounded-full`}>
+                                {agent.status}
+                              </span>
+                            </td>
+                            <td className="px-4 py-4 text-center whitespace-nowrap">
+                              <div className='flex items-center justify-center'>
+                                <button onClick={(e) => handleDropdownClick(index, agent, e)} className="p-2 rounded-lg relative">
+                                  <div className='bg-white cursor-pointer border border-[#D6D6D6] shadow-sm p-1.5 rounded-xl'><Ellipsis /></div>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr className="h-34">
+                          <td colSpan="7" className="text-center text-[#1E1E1E]">
+                            {t("phone.no_call_listed")}
+                          </td>
+                        </tr>
+                      );
+                    })()}
+                  </tbody>
+                </table>
+
+                <div className="flex items-center justify-between bg-[#F7F7F8] px-4 py-3">
+                  {/* pagination + row controls */}
+                  <div className="flex items-center gap-2">
+                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
+                      ‹ Prev
+                    </button>
+                    <button className="bg-[#675FFF] text-white rounded-lg px-3 py-1 text-sm cursor-pointer">
+                      1
+                    </button>
+                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                      2
+                    </button>
+                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                      3
+                    </button>
+                    <span className="text-[#000000] text-sm">…</span>
+                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                      10
+                    </button>
+                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
+                      Next ›
+                    </button>
+                  </div>
+
+                  {/* Right side – rows per page */}
+                  <div className="flex items-center gap-2 text-sm text-[#5A687C]">
+                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 rows</button>
+                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">10</button>
+                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">20</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           {typeof document !== "undefined" && activeDropdown !== null && dropdownAgent && createPortal(
             <div className="fixed inset-0 z-[9998]" onClick={closeDropdown}>
               <div
@@ -811,7 +1454,7 @@ export default function CallCampaign() {
           </div>}
         </div> : null}
       {showModal && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 overflow-y-auto py-4"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
@@ -821,7 +1464,7 @@ export default function CallCampaign() {
             }
           }}
         >
-          <div 
+          <div
             ref={modalRef}
             className="bg-white rounded-2xl w-full max-w-[754px] px-6 relative shadow-lg my-auto max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
@@ -987,11 +1630,10 @@ export default function CallCampaign() {
                               setCampaign((prev) => ({ ...prev, tag: e.key }))
                               setErrors((prev) => ({ ...prev, tag: "" }))
                             }}
-                            className={`flex items-center cursor-pointer gap-2 px-2 py-2 rounded-lg border transition-all ${
-                              isSelected
-                                ? 'bg-white border-[#675FFF] text-[#1E1E1E]'
-                                : 'bg-white border-[#E1E4EA] text-[#1E1E1E] hover:border-[#675FFF]'
-                            }`}
+                            className={`flex items-center cursor-pointer gap-2 px-2 py-2 rounded-lg border transition-all ${isSelected
+                              ? 'bg-white border-[#675FFF] text-[#1E1E1E]'
+                              : 'bg-white border-[#E1E4EA] text-[#1E1E1E] hover:border-[#675FFF]'
+                              }`}
                           >
                             {isSelected ? (
                               <div className="w-[18px] h-[18px] bg-[#675FFF] rounded-sm flex items-center justify-center flex-shrink-0">
@@ -1006,7 +1648,7 @@ export default function CallCampaign() {
                       })}
                     </div>
                     {errors.tag && <p className="text-red-500 text-sm mt-1">{errors.tag}</p>}
-                    <button 
+                    <button
                       className="flex items-center cursor-pointer gap-1 text-[#675FFF] text-sm font-medium mt-3 hover:text-[#483ed1] transition-colors"
                       onClick={() => navigator('/dashboard/brain')}
                     >
@@ -1105,7 +1747,7 @@ export default function CallCampaign() {
                         }`}
                     >
                       <span
-                        className={`block w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${toggleTom ? "translate-x-5" : "translate-x-0.5"
+                        className={`block w-6 h-6 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${toggleTom ? "translate-x-5" : "translate-x-0.5"
                           }`}
                       ></span>
                     </button>
@@ -1145,59 +1787,59 @@ export default function CallCampaign() {
                   {/* Action Buttons */}
                   {editData ? (
                     <div className="flex justify-end gap-4 mt-6 pt-4 border-t border-[#E1E4EA]">
-                      <button 
+                      <button
                         onClick={() => {
                           setShowModal(false)
                           setEditData()
                           resetForm()
-                        }} 
+                        }}
                         className="px-6 py-2 cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px] hover:bg-gray-50 transition-colors"
                       >
                         {t("phone.cancel")}
                       </button>
-                      <button 
+                      <button
                         className="px-6 py-2 cursor-pointer text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px] hover:bg-[#5a4aff] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        onClick={handleEditCampaign} 
+                        onClick={handleEditCampaign}
                         disabled={loader}
                       >
                         {t("phone.save_campaign")}
                       </button>
                     </div>
                   ) :
-                <div>
-                  {/* API Message Display */}
-                  {apiMessage.message && (
-                    <div className={`mt-4 p-3 rounded-lg ${apiMessage.type === 'success'
-                      ? 'bg-green-100 text-green-800 border border-green-200'
-                      : 'bg-red-100 text-red-800 border border-red-200'
-                      }`}>
-                      {apiMessage.message}
-                    </div>
-                  )}
+                    <div>
+                      {/* API Message Display */}
+                      {apiMessage.message && (
+                        <div className={`mt-4 p-3 rounded-lg ${apiMessage.type === 'success'
+                          ? 'bg-green-100 text-green-800 border border-green-200'
+                          : 'bg-red-100 text-red-800 border border-red-200'
+                          }`}>
+                          {apiMessage.message}
+                        </div>
+                      )}
 
-                  <div className="flex gap-4 mt-6">
-                    <button onClick={() => {
-                      setSecondModel(true)
-                      // setShowModal(false)
-                    }} className="w-[195px] text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
-                      {t("phone.test_call")}
-                    </button>
-
-
-                    <button
-                      className="w-[195px] text-[16px] cursor-pointer text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
-                      disabled={loader}
-                      onClick={handleSubmit}
-                    >
-
-                      <p>  {t("phone.launch_call")}</p>
-                      {loader && <span className="loader text-[#5E54FF]"></span>}
+                      <div className="flex gap-4 mt-6">
+                        <button onClick={() => {
+                          setSecondModel(true)
+                          // setShowModal(false)
+                        }} className="w-[195px] text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]">
+                          {t("phone.test_call")}
+                        </button>
 
 
-                    </button>
+                        <button
+                          className="w-[195px] text-[16px] cursor-pointer text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
+                          disabled={loader}
+                          onClick={handleSubmit}
+                        >
 
-                  </div>
-                </div>}
+                          <p>  {t("phone.launch_call")}</p>
+                          {loader && <span className="loader text-[#5E54FF]"></span>}
+
+
+                        </button>
+
+                      </div>
+                    </div>}
                 </div>
               </div>
             </div>

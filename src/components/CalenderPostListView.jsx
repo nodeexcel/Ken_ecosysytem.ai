@@ -29,13 +29,19 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
   const [campaignFilter, setCampaignFilter] = useState("Campaign");
   const dropdownRef = useRef(null);
 
-  const handleDropdownClick = (index, event) => {
+  const handleDropdownClick = (index, event, isLastTwo = false) => {
     const rect = event.currentTarget.getBoundingClientRect();
     const windowHeight = window.innerHeight;
+    const isSmallScreen = window.innerWidth < 640; // sm breakpoint
 
-    // If dropdown would go below viewport, open upwards
-    const shouldOpenUp = rect.bottom + 200 > windowHeight; // 200 = dropdown height estimate
-    setDropdownDirection(shouldOpenUp ? 'up' : 'down');
+    // On small screens, open downward unless it's one of the last two items
+    if (isSmallScreen) {
+      setDropdownDirection(isLastTwo ? 'up' : 'down');
+    } else {
+      // For larger screens, check if it's last two items or if there's not enough space below
+      const shouldOpenUp = isLastTwo || rect.bottom + 260 > windowHeight;
+      setDropdownDirection(shouldOpenUp ? 'up' : 'down');
+    }
 
     setActiveDropdown(activeDropdown === index ? null : index);
   };
@@ -198,16 +204,12 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
       timeStr = item.scheduled_time && item.scheduled_time !== "None" ? item.scheduled_time : "--";
     }
 
-    // Format date: "27 Mar 2025"
     if (dateStr !== "--") {
       try {
-        // Handle different date formats
         let date;
         if (dateStr.includes("-")) {
-          // Format: "2025-03-27" or "2025-03-27T..."
           date = new Date(dateStr);
         } else if (dateStr.includes("/")) {
-          // Format: "27/03/2025"
           const parts = dateStr.split("/");
           date = new Date(parts[2], parts[1] - 1, parts[0]);
         } else {
@@ -261,30 +263,30 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
   ];
 
   return (
-    <div className="w-full p-4 flex flex-col gap-4 overflow-auto h-screen">
+    <div className="w-full p-2 sm:p-3 lg:p-4 flex flex-col gap-3 sm:gap-4 overflow-auto h-screen">
       {/* Search and Filters */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4">
         {/* Search Bar */}
-        <div className="relative flex-1 md:flex-initial md:w-auto md:max-w-md bg-white rounded-xl">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
+        <div className="relative flex-1 md:flex-initial md:w-auto md:max-w-md bg-white rounded-lg sm:rounded-xl">
+          <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-3.5 h-3.5 sm:w-4 sm:h-4" />
           <input
             type="text"
             placeholder="Search here"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 pr-8 py-2 border whitespace-nowrap border-[#E1E4EA] rounded-lg focus:outline-none focus:border-[#675FFF] text-sm"
+            className="w-full pl-7 sm:pl-8 pr-6 sm:pr-8 py-1.5 sm:py-2 border whitespace-nowrap border-[#E1E4EA] rounded-lg focus:outline-none focus:border-[#675FFF] text-xs sm:text-sm"
           />
         </div>
 
         {/* Date Range and Campaign Dropdowns */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <SelectDropdown
             name="dateRange"
             options={dateRangeOptions}
             value={dateRange}
             onChange={(val) => setDateRange(val)}
             placeholder="1 Aug - 31 Aug"
-            className="w-[160px]"
+            className="w-[140px] sm:w-[160px]"
           />
           <SelectDropdown
             name="campaign"
@@ -292,13 +294,13 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
             value={campaignFilter}
             onChange={(val) => setCampaignFilter(val)}
             placeholder="Campaign"
-            className="w-[140px]"
+            className="w-[120px] sm:w-[140px]"
           />
         </div>
       </div>
 
       {/* Table */}
-      <div className="rounded-2xl border border-[#D6D6D6] overflow-auto mb-2">
+      <div className="rounded-lg sm:rounded-xl lg:rounded-2xl border border-[#D6D6D6] overflow-auto mb-2">
         <div className="overflow-x-auto">
           <table className="min-w-full border-separate border-spacing-0">
             <thead className="bg-[#F7F7F8]">
@@ -369,10 +371,13 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
                       </td>
 
                       {/* Action */}
-                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-4 text-center relative">
+                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-4 text-center relative overflow-visible">
                         <button
                           className="p-2 bg-[#ffffff] shadow-sm cursor-pointer hover:bg-gray-200 rounded-lg border border-gray-200 transition-colors"
-                          onClick={(e) => handleDropdownClick(index, e)}
+                          onClick={(e) => {
+                            const isLastTwo = index >= currentData.length - 2;
+                            handleDropdownClick(index, e, isLastTwo);
+                          }}
                         >
                           <BsThreeDots className="w-5 h-5 text-[#1E1E1E]" />
                         </button>
@@ -380,7 +385,7 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
                         {activeDropdown === index && (
                           <div
                             ref={dropdownRef}
-                            className={`absolute right-0 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 z-10 ${dropdownDirection === "up" ? "bottom-full mb-2" : "mt-2"
+                            className={`absolute right-0 w-40 mx-1 rounded-md shadow-lg bg-white ring-1 ring-gray-300 z-50 ${dropdownDirection === "up" ? "bottom-full mb-2" : "mt-2"
                               }`}
                             onClick={(e) => e.stopPropagation()}
                           >

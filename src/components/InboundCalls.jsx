@@ -247,8 +247,8 @@ export default function InBoundCalls() {
                 </div>
             </div>
             {/* Table */}
-            <div className="overflow-auto w-full">
-              <div className="border border-[#D6D6D6] rounded-2xl overflow-hidden">
+            <div className="rounded-2xl border border-[#D6D6D6] overflow-auto mb-2 w-full">
+              <div className="overflow-x-auto">
                 <table className="min-w-full border-separate border-spacing-0">
                   <thead className="bg-[#F7F7F8]">
                     <tr className="text-[#5A687C]">

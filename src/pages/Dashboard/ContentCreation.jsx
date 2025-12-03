@@ -1,20 +1,22 @@
 import { useEffect, useRef, useState } from 'react'
 import { CalenderIcon, ConversationIcon, CreationStudioIcon, LeftArrow, LinkedInIcon, XIcon, YoutubeIcon } from '../../icons/icons'
 import constanceImg from "../../assets/svg/constance_logo.svg"
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import constanceMsgLogo from '../../assets/svg/constance_msg_logo.svg'
 import { v4 as uuidv4 } from 'uuid';
 import { deleteContentCreationChat, getContentCreationChatById, getContentCreationChats, updateContentCreationChatName } from '../../api/contentCreationAgent'
 import AgentChatBox from '../../components/AgentChatBox'
 import { formatTimeAgo } from '../../utils/TimeFormat'
 import CreationStudio from '../../components/CreationStudio'
+import GeneratedResultsView from '../../components/GeneratedResultsView'
 import { useTranslation } from "react-i18next";
 import Calendar from '../../components/Calendar'
 import YoutubeScriptContent from '../../components/YoutubeScriptContent'
 import LinkedInNukeContent from '../../components/LinkedInNukeContent'
 import XPostContent from '../../components/XPostContent'
 import { BsThreeDots } from 'react-icons/bs'
-import { X, Plus, MoreVertical, Edit, Trash2 } from 'lucide-react'
+import TutorialPlay from '../../assets/svg/WatchTutorial.svg'
+import { X, Plus, MoreVertical, Edit, Trash2, Play } from 'lucide-react'
 import dummy1 from '../../assets/images/dummy1.png'
 import dummy2 from '../../assets/images/dummy2.png'
 import chatInstance from '../../api/chatInstance'
@@ -23,7 +25,23 @@ import { discardSkillsData } from '../../store/agentSkillsSlice'
 import ContentCreationCalender from '../../components/ContentCreationCalender'
 
 function ContentCreation() {
-    const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
+    const [searchParams, setSearchParams] = useSearchParams()
+    const location = useLocation()
+    const navigate = useNavigate()
+    const { t } = useTranslation();
+    const dispatch = useDispatch()
+
+    // Get tab from URL query param, default to "chat"
+    const tabFromUrl = searchParams.get('tab') || 'chat'
+    const [activeSidebarItem, setActiveSidebarItem] = useState(tabFromUrl)
+
+    // Initialize URL with default tab if not present
+    useEffect(() => {
+        if (!searchParams.get('tab')) {
+            setSearchParams({ tab: 'chat' }, { replace: true })
+        }
+    }, [])
+
     const [showCreationStudioModal, setShowCreationStudioModal] = useState(false)
     const [activeDropdown, setActiveDropdown] = useState(null)
     const [activeConversation, setActiveConversation] = useState()
@@ -39,15 +57,13 @@ function ContentCreation() {
     const [updateNameLoading, setUpdateNameLoading] = useState(false)
     const [editData, setEditData] = useState({})
     const [sidebarStatus, setSideBarStatus] = useState(false)
+    const [showGeneratedResults, setShowGeneratedResults] = useState(false)
+    const [generatedContentData, setGeneratedContentData] = useState(null)
     const socketRef = useRef(null)
     const socket2Ref = useRef(null)
     const newwebsocketurl = `${chatInstance}/new-content-creation-agent-chat`
     const websocketurl = `${chatInstance}/content-creation-agent`
-    const initialMessage = "Hello! I’m Constance, your Content Creator.\nI’m here to support you across all your HR needs, from recruiting and screening candidates to onboarding, managing interviews, and beyond.\nI can also help you with day-to-day HR topics like policy clarification, employee onboarding support, FAQ responses, and internal coordination.\nJust tell me what you need, whether it's hiring your next top talent or streamlining your HR processes. and I’ll take care of it.\nReady to simplify your HR tasks and save time? Let’s get started 😊"
-
-    const navigate = useNavigate()
-    const { t } = useTranslation();
-    const dispatch = useDispatch()
+    const initialMessage = "Hello! I'm Constance, your Content Creator.\nI'm here to support you across all your HR needs, from recruiting and screening candidates to onboarding, managing interviews, and beyond.\nI can also help you with day-to-day HR topics like policy clarification, employee onboarding support, FAQ responses, and internal coordination.\nJust tell me what you need, whether it's hiring your next top talent or streamlining your HR processes. and I'll take care of it.\nReady to simplify your HR tasks and save time? Let's get started 😊"
 
     // Handle click outside to close dropdown
     useEffect(() => {
@@ -65,17 +81,46 @@ function ContentCreation() {
     const sideMenuList = [
         { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
         { label: `${t("constance.creation_studio")}`, icon: <CreationStudioIcon status={activeSidebarItem == "creation_studio"} />, hoverIcon: <CreationStudioIcon hover={true} />, path: "creation_studio" },
-        { label: t("constance.scheduler"), icon: <CalenderIcon status={activeSidebarItem == "calender"} />, hoverIcon: <CalenderIcon hover={true} />, path: "calender" },
-        { label: t("skills.constance_content1_header"), icon: <YoutubeIcon status={activeSidebarItem == "youtube"} />, hoverIcon: <YoutubeIcon hover={true} />, path: "youtube" },
+        { label: t("constance.scheduler"), icon: <CalenderIcon status={activeSidebarItem == "scheduler"} />, hoverIcon: <CalenderIcon hover={true} />, path: "scheduler" },
+        // { label: t("skills.constance_content1_header"), icon: <YoutubeIcon status={activeSidebarItem == "youtube"} />, hoverIcon: <YoutubeIcon hover={true} />, path: "youtube" },
         { label: t("skills.constance_content2_header"), icon: <LinkedInIcon status={activeSidebarItem == "linkedin"} />, hoverIcon: <LinkedInIcon hover={true} />, path: "linkedin" },
-        { label: t("skills.constance_content3_header"), icon: <XIcon status={activeSidebarItem == "x_post"} />, hoverIcon: <XIcon hover={true} />, path: "x_post" },
+        // { label: t("skills.constance_content3_header"), icon: <XIcon status={activeSidebarItem == "x_post"} />, hoverIcon: <XIcon hover={true} />, path: "x_post" },
     ]
 
     const activeTab = useSelector((state) => state.skills)
 
+    // Initialize URL with default tab if not present on mount
+    useEffect(() => {
+        if (!searchParams.get('tab')) {
+            setSearchParams({ tab: 'chat' }, { replace: true })
+        }
+    }, [])
+
+    // Sync active tab with URL query param when URL changes
+    useEffect(() => {
+        const tabFromUrl = searchParams.get('tab') || 'chat'
+        if (tabFromUrl !== activeSidebarItem) {
+            setActiveSidebarItem(tabFromUrl)
+        }
+    }, [searchParams])
+
+    // Update URL when tab changes
+    const handleTabChange = (tabPath) => {
+        setActiveSidebarItem(tabPath)
+        setShowGeneratedResults(false)
+        setGeneratedContentData(null)
+        // Update URL query param
+        if (tabPath === 'chat') {
+            // For default tab, remove query param or set it explicitly
+            setSearchParams({ tab: 'chat' }, { replace: true })
+        } else {
+            setSearchParams({ tab: tabPath }, { replace: true })
+        }
+    }
+
     useEffect(() => {
         if (activeTab.label !== null) {
-            setActiveSidebarItem(activeTab.label)
+            handleTabChange(activeTab.label)
         }
     }, [activeTab.loading])
 
@@ -98,15 +143,35 @@ function ContentCreation() {
                     // setOpenChat(false)
                 } else {
                     const formatData = (response?.data?.success)
+                    // Sort by updated_at in ascending order (oldest first) for main chat list
+                    const sortedData = [...formatData].sort((a, b) => {
+                        // Use updated_at first, fallback to created_at if not available
+                        const dateAStr = a.updated_at || a.created_at || null
+                        const dateBStr = b.updated_at || b.created_at || null
+
+                        if (!dateAStr && !dateBStr) return 0 // Both have no date, maintain order
+                        if (!dateAStr) return 1 // A has no date, put it at bottom
+                        if (!dateBStr) return -1 // B has no date, put it at bottom
+
+                        const dateA = new Date(dateAStr).getTime()
+                        const dateB = new Date(dateBStr).getTime()
+
+                        // Check for invalid dates
+                        if (isNaN(dateA) && isNaN(dateB)) return 0
+                        if (isNaN(dateA)) return 1 // Invalid date goes to bottom
+                        if (isNaN(dateB)) return -1 // Invalid date goes to bottom
+
+                        return dateA - dateB // Ascending order (oldest first)
+                    })
                     if (!activeConversation && openChat) {
-                        const newChatActive = formatData.filter(element => {
+                        const newChatActive = sortedData.filter(element => {
                             return !chatList.some(chat => chat.chat_id === element.chat_id);
                         });
                         if (newChatActive?.length > 0 && messages?.length > 0) {
                             setActiveConversation(newChatActive[0].chat_id)
                         }
                     }
-                    setChatList(formatData)
+                    setChatList(sortedData)
                     console.log(response?.data)
                 }
             }
@@ -117,12 +182,18 @@ function ContentCreation() {
     }
 
     const transformApiMessages = (apiMessages) => {
-        return apiMessages.map((msg) => {
+        if (!apiMessages || !Array.isArray(apiMessages)) {
+            return [];
+        }
+
+        return apiMessages.map((msg, index) => {
             const isUser = !!msg.user;
             let content = isUser ? msg.user : msg.agent;
             let file_id = null;
             let filename = null;
+            let file_name = null;
 
+            // Handle user message content - could be string or JSON
             if (isUser && typeof content === "string") {
                 try {
                     const parsed = JSON.parse(content);
@@ -130,19 +201,32 @@ function ContentCreation() {
                         if (parsed.message) content = parsed.message;
                         if (parsed.file_id) file_id = parsed.file_id;
                         if (parsed.filename) filename = parsed.filename;
+                        if (parsed.file_name) file_name = parsed.file_name;
                     }
-                } catch (e) { }
+                } catch (e) {
+                    // If parsing fails, content is already a string, use it as is
+                }
             }
 
+            // Preserve original message structure and add display fields
             return {
-                id: uuidv4(),
+                // Original API fields
+                ...msg,
+                // Display fields
+                id: msg.id || msg.message_id || uuidv4(),
                 isUser,
-                content,
+                content: content || "",
                 sender: isUser ? "User" : "Ecosystem.ai",
-                time: msg?.message_at ? formatTimeAgo(msg?.message_at) : `${t("seo.just_now")}`,
+                time: msg?.message_at ? formatTimeAgo(new Date(msg.message_at)) : (msg?.created_at ? formatTimeAgo(new Date(msg.created_at)) : `${t("seo.just_now")}`),
+                timestamp: msg?.message_at ? new Date(msg.message_at) : (msg?.created_at ? new Date(msg.created_at) : new Date()),
                 status: "Read",
+                // File attachments
                 ...(file_id && { file_id }),
                 ...(filename && { filename }),
+                ...(file_name && { file_name }),
+                ...(msg.file_id && { file_id: msg.file_id }),
+                ...(msg.filename && { filename: msg.filename }),
+                ...(msg.file_name && { file_name: msg.file_name }),
             };
         });
     };
@@ -189,13 +273,20 @@ function ContentCreation() {
         try {
             setLoadingChats(true)
             const response = await getContentCreationChatById(id);
-            console.log(response.data)
+            console.log("API Response:", response.data)
             if (response.status === 200) {
-                const data = await transformApiMessages(response?.data?.success)
+                const apiMessages = response?.data?.success || response?.data || [];
+                console.log("Raw API Messages:", apiMessages)
+                const data = transformApiMessages(apiMessages)
+                console.log("Transformed Messages:", data)
                 setMessages(data)
+            } else {
+                console.error("Failed to fetch chat history:", response)
+                setMessages([])
             }
         } catch (error) {
-            console.log(error)
+            console.error("Error fetching chat history:", error)
+            setMessages([])
         } finally {
             setLoadingChats(false)
         }
@@ -253,35 +344,49 @@ function ContentCreation() {
     }
 
     const renderMainContent = () => {
+        // Show Generated Results if flag is set
+        if (showGeneratedResults && generatedContentData) {
+            return (
+                <GeneratedResultsView
+                    generatedContent={generatedContentData}
+                    onCancel={() => {
+                        setShowGeneratedResults(false);
+                        setGeneratedContentData(null);
+                        setActiveSidebarItem("creation_studio");
+                    }}
+                />
+            );
+        }
+
         switch (activeSidebarItem) {
             case "creation_studio":
                 return (
-                    <div className="px-6 py-6 w-full h-full flex flex-col gap-6">
+                    <div className="px-2 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6 w-full h-full flex flex-col gap-3 sm:gap-4 lg:gap-6">
                         {/* Header Section */}
-                        <div className="flex items-start justify-between w-full">
-                            <div className="flex flex-col gap-2">
-                                <h1 className="text-[#1E1E1E] text-[28px] font-[600]">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-3 sm:gap-0">
+                            <div className="flex flex-col gap-1.5 sm:gap-2">
+                                <h1 className="text-[#1E1E1E] text-[20px] sm:text-[24px] lg:text-[28px] font-[600]">
                                     {t("constance.creation_studio") || "Creation Studio"}
                                 </h1>
-                                <p className="text-[#5A687C] text-[16px] font-[400]">
+                                <p className="text-[#5A687C] text-[14px] sm:text-[15px] lg:text-[16px] font-[400]">
                                     {"Create, manage, and schedule content effortlessly using AI-powered creativity."}
                                 </p>
                             </div>
                             <button
                                 onClick={() => setShowCreationStudioModal(true)}
-                                className="flex items-center gap-2 bg-[#675FFF] cursor-pointer text-white px-5 py-2 rounded-lg font-[500] text-sm hover:bg-[#5a4fe6] transition-colors whitespace-nowrap"
+                                className="flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 bg-[#675FFF] cursor-pointer text-white px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 rounded-lg font-[500] text-xs sm:text-sm hover:bg-[#5a4fe6] transition-colors whitespace-nowrap w-full sm:w-auto"
                             >
-                                <Plus size={18} />
+                                <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
                                 <span>{t("constance.add_creation_studio") || "Add Creation Studio"}</span>
                             </button>
                         </div>
 
                         {/* Recent Creations Section */}
-                        <div className="flex flex-col gap-4 w-full">
-                            <h2 className="text-[#1E1E1E] text-[20px] font-[600]">Recent Creations</h2>
+                        <div className="flex flex-col gap-3 sm:gap-4 w-full">
+                            <h2 className="text-[#1E1E1E] text-[18px] sm:text-[19px] lg:text-[20px] font-[600]">Recent Creations</h2>
 
                             {/* Grid of Creation Cards */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full">
                                 {[1, 2, 3, 4, 5, 6].map((item, index) => {
                                     const isEven = index % 2 === 0;
                                     const cardImage = isEven ? dummy1 : dummy2;
@@ -290,55 +395,55 @@ function ContentCreation() {
                                     return (
                                         <div
                                             key={index}
-                                            className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+                                            className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
                                         >
                                             {/* Thumbnail Image with rounded top corners */}
-                                            <div className="w-full min-h-[100px] overflow-hidden bg-gray-100 rounded-2xl">
+                                            <div className="w-full min-h-[80px] sm:min-h-[100px] overflow-hidden bg-gray-100 rounded-xl sm:rounded-2xl">
                                                 <img
                                                     src={cardImage}
                                                     alt="Creation thumbnail"
-                                                    className="w-full h-full object-cover rounded-2xl p-2 bg-white"
+                                                    className="w-full h-full object-cover rounded-xl sm:rounded-2xl p-1.5 sm:p-2 bg-white"
                                                 />
                                             </div>
 
 
                                             {/* Card Content - White background */}
-                                            <div className="bg-white p-4 rounded-b-xl relative">
-                                                <div className="flex items-start justify-between gap-3">
+                                            <div className="bg-white p-3 sm:p-4 rounded-b-lg sm:rounded-b-xl relative">
+                                                <div className="flex items-start justify-between gap-2 sm:gap-3">
                                                     <div className="flex-1 min-w-0 ">
-                                                        <h3 className="text-[#1E1E1E] text-lg font-[500] mb-1.5 leading-tight py-2">
+                                                        <h3 className="text-[#1E1E1E] text-base sm:text-lg font-[500] mb-1 sm:mb-1.5 leading-tight py-1 sm:py-2">
                                                             Summer Promo Video
                                                         </h3>
-                                                        <p className="text-[#5A687C] text-[14px] font-[400]">
+                                                        <p className="text-[#5A687C] text-[12px] sm:text-[13px] lg:text-[14px] font-[400]">
                                                             Reels • Video
                                                         </p>
                                                     </div>
 
                                                     {/* Three Dots Menu - Bottom Right */}
-                                                    <div className="relative dropdown-container flex-shrink-0 border border-gray-200 rounded-xl">
+                                                    <div className="relative dropdown-container flex-shrink-0 border border-gray-200 rounded-lg sm:rounded-xl">
                                                         <button
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
                                                                 setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
                                                             }}
-                                                            className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+                                                            className="p-1 sm:p-1.5 hover:bg-gray-100 rounded-lg sm:rounded-xl transition-colors cursor-pointer"
                                                         >
-                                                            <MoreVertical className="w-5 h-5 text-gray-500" />
+                                                            <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
                                                         </button>
 
                                                         {/* Dropdown Menu */}
                                                         {activeDropdown === dropdownId && (
-                                                            <div className="absolute right-0 bottom-full mb-2 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[120px] z-50">
+                                                            <div className="absolute right-0 bottom-full mb-2 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[100px] sm:min-w-[120px] z-50">
                                                                 <button
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
                                                                         console.log("Edit clicked for item", index);
                                                                         setActiveDropdown(null);
                                                                     }}
-                                                                    className="w-full flex items-center gap-2 px-4 py-2 hover:bg-[#F2F2F7] transition-colors text-left"
+                                                                    className="w-full flex cursor-pointer items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-[#F2F2F7] transition-colors text-left"
                                                                 >
-                                                                    <Edit className="w-4 h-4 text-gray-700" />
-                                                                    <span className="text-sm text-gray-700">Edit</span>
+                                                                    <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-700" />
+                                                                    <span className="text-xs sm:text-sm text-gray-700">Edit</span>
                                                                 </button>
                                                                 <button
                                                                     onClick={(e) => {
@@ -346,10 +451,10 @@ function ContentCreation() {
                                                                         console.log("Delete clicked for item", index);
                                                                         setActiveDropdown(null);
                                                                     }}
-                                                                    className="w-full flex items-center gap-2 px-4 py-2 hover:bg-[#F2F2F7] transition-colors text-left"
+                                                                    className="w-full flex cursor-pointer items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-[#F2F2F7] transition-colors text-left"
                                                                 >
-                                                                    <Trash2 className="w-4 h-4 text-red-600" />
-                                                                    <span className="text-sm text-red-600">Delete</span>
+                                                                    <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600" />
+                                                                    <span className="text-xs sm:text-sm text-red-600">Delete</span>
                                                                 </button>
                                                             </div>
                                                         )}
@@ -363,7 +468,7 @@ function ContentCreation() {
                         </div>
                     </div>
                 )
-            case "calender":
+            case "scheduler":
                 return <ContentCreationCalender />
             case "youtube":
                 return <YoutubeScriptContent />
@@ -396,7 +501,7 @@ function ContentCreation() {
                         </div>
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-3">
-                        <div className="bg-[#ffffff] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
+                        <div className="bg-[#ffffff] w-full min-w-[232px] flex gap-3 p-[12px] rounded-[9px]">
                             <div className="flex justify-center items-center">
                                 <div className="w-10 h-10 rounded-full bg-[#FFE4C5] flex items-center justify-center">
                                     <img
@@ -416,15 +521,29 @@ function ContentCreation() {
                             </div>
                         </div>
 
+                        {/* Watch Tutorial Button */}
+                        <button
+                            onClick={() => {
+                                console.log("Watch Tutorial clicked");
+                            }}
+                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer mb-2"
+                        >
+                            <img src={TutorialPlay} className="w-5 h-5" />
+                            <span className='text-md font-md'>{t("watch_tutorial") || "Watch Tutorial"}</span>
+                        </button>
+
+                            <hr className='border border-gray-200 w-full mt-2'></hr>
                         {sideMenuList.map((e, i) => <div
                             key={i}
-                            onClick={() => setActiveSidebarItem(e.path)}
+                            onClick={() => {
+                                handleTabChange(e.path);
+                            }}
                             className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                 }`}
                         >
                             {activeSidebarItem === `${e.path}` ? e.icon :
                                 <div className="flex items-center gap-2"><div className='group-hover:hidden'>{e.icon}</div> <div className='hidden group-hover:block'>{e.hoverIcon}</div></div>}
-                            <span className={`font-[400] text-[16px] ${activeSidebarItem === `${e.path}` ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                            <span className={`font-[400] text-[16px] ${activeSidebarItem === `${e.path}` ? "text-[#000000]" : "text-[#000000] group-hover:text-[#1E1E1E]"}`}>
                                 {e.label}
                             </span>
                         </div>)}
@@ -439,7 +558,15 @@ function ContentCreation() {
 
             {/* Creation Studio Modal */}
             {showCreationStudioModal && (
-                <CreationStudio onClose={() => setShowCreationStudioModal(false)} />
+                <CreationStudio
+                    onClose={() => setShowCreationStudioModal(false)}
+                    onGenerateContent={(contentData) => {
+                        setGeneratedContentData(contentData);
+                        setShowGeneratedResults(true);
+                        setShowCreationStudioModal(false);
+                        setActiveSidebarItem("creation_studio");
+                    }}
+                />
             )}
             {sidebarStatus &&
                 <div className="lg:hidden fixed inset-0 bg-black/20 flex items-end z-50">
@@ -477,8 +604,8 @@ function ContentCreation() {
                             {sideMenuList.map((e, i) => <div
                                 key={i}
                                 onClick={() => {
-                                    setActiveSidebarItem(e.path)
-                                    setSideBarStatus(false)
+                                    handleTabChange(e.path);
+                                    setSideBarStatus(false);
                                 }}
                                 className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                     }`}

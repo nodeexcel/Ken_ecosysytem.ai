@@ -588,16 +588,16 @@ export default function CalendarPost({ status = true, calenderData = [] }) {
 
   const renderCalendarHeader = () => {
     return (
-      <div className="flex justify-between items-center p-4 border-b border-gray-200">
+      <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 sm:gap-0 p-2 sm:p-3 lg:p-4 border-b border-gray-200">
         {/* Left Side - Date Selector */}
         <div className="relative" ref={dateDropdownRef}>
-          <div className="flex items-center justify-center  p-2 border border-transparent rounded-md hover:border-gray-300 cursor-pointer transition-all">
+          <div className="flex items-center justify-center p-1.5 sm:p-2 border border-transparent rounded-md hover:border-gray-300 cursor-pointer transition-all">
             <button
               onClick={() => setShowDateDropdown(!showDateDropdown)}
-              className="flex items-center gap-2 text-[#1E1E1E] cursor-pointer font-medium text-base hover:text-gray-700 transition-colors"
+              className="flex items-center gap-1.5 sm:gap-2 text-[#1E1E1E] cursor-pointer font-medium text-sm sm:text-base hover:text-gray-700 transition-colors"
             >
               <span>{getCurrentDateText()}</span>
-              <ChevronDown className="w-4 h-4 text-gray-500" />
+              <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500" />
             </button>
           </div>
 
@@ -606,8 +606,8 @@ export default function CalendarPost({ status = true, calenderData = [] }) {
 
           {/* Date Dropdown - Month/Year Picker */}
           {showDateDropdown && (
-            <div className="absolute left-0 top-full mt-2 bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-50 min-w-[280px]">
-              <div className="flex items-center justify-between mb-4">
+            <div className="absolute left-0 sm:left-auto right-0 sm:right-auto top-full mt-2 bg-white rounded-lg shadow-lg border border-gray-200 p-3 sm:p-4 z-50 w-[calc(100vw-2rem)] sm:w-auto sm:min-w-[280px] max-w-[320px] sm:max-w-none">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
                 <button
                   onClick={() => {
                     if (currentMonth === 0) {
@@ -617,11 +617,11 @@ export default function CalendarPost({ status = true, calenderData = [] }) {
                       setCurrentMonth(currentMonth - 1)
                     }
                   }}
-                  className="p-1 hover:bg-gray-100 rounded"
+                  className="p-0.5 sm:p-1 hover:bg-gray-100 rounded"
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
-                <span className="font-semibold">{getCurrentDateText()}</span>
+                <span className="font-semibold text-sm sm:text-base">{getCurrentDateText()}</span>
                 <button
                   onClick={() => {
                     if (currentMonth === 11) {
@@ -631,14 +631,14 @@ export default function CalendarPost({ status = true, calenderData = [] }) {
                       setCurrentMonth(currentMonth + 1)
                     }
                   }}
-                  className="p-1 hover:bg-gray-100 rounded"
+                  className="p-0.5 sm:p-1 hover:bg-gray-100 rounded"
                 >
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
               </div>
 
               {/* Month Grid */}
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
                 {monthNames.map((month, index) => (
                   <button
                     key={index}
@@ -646,7 +646,7 @@ export default function CalendarPost({ status = true, calenderData = [] }) {
                       setCurrentMonth(index)
                       setShowDateDropdown(false)
                     }}
-                    className={`p-2 rounded text-sm hover:bg-gray-100 ${currentMonth === index ? "bg-[#675FFF] text-white" : "text-gray-700"
+                    className={`p-1.5 sm:p-2 rounded text-xs sm:text-sm hover:bg-gray-100 ${currentMonth === index ? "bg-[#675FFF] text-white" : "text-gray-700"
                       }`}
                   >
                     {month.substring(0, 3)}
@@ -655,19 +655,19 @@ export default function CalendarPost({ status = true, calenderData = [] }) {
               </div>
 
               {/* Year Selector */}
-              <div className="mt-4 flex items-center justify-between">
+              <div className="mt-3 sm:mt-4 flex items-center justify-between">
                 <button
                   onClick={() => setCurrentYear(currentYear - 1)}
-                  className="p-1 hover:bg-gray-100 rounded"
+                  className="p-0.5 sm:p-1 hover:bg-gray-100 rounded"
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
-                <span className="font-medium">{currentYear}</span>
+                <span className="font-medium text-sm sm:text-base">{currentYear}</span>
                 <button
                   onClick={() => setCurrentYear(currentYear + 1)}
-                  className="p-1 hover:bg-gray-100 rounded"
+                  className="p-0.5 sm:p-1 hover:bg-gray-100 rounded"
                 >
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
               </div>
             </div>
@@ -675,16 +675,16 @@ export default function CalendarPost({ status = true, calenderData = [] }) {
         </div>
 
         {/* Right Side - Search and View Dropdown */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Search Input */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <div className="relative flex-1 sm:flex-initial">
+            <Search className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400" />
             <input
               type="text"
               placeholder="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:border-[#675FFF] text-[#1E1E1E] placeholder:text-gray-400 w-[200px]"
+              className="pl-7 sm:pl-9 pr-3 sm:pr-4 py-3 md:py-2.5 text-xs sm:text-sm border border-[#E1E4EA] rounded-lg bg-white focus:outline-none focus:border-[#675FFF] text-[#1E1E1E] placeholder:text-gray-400 w-full sm:w-[180px] lg:w-[200px]"
             />
           </div>
 
@@ -697,7 +697,8 @@ export default function CalendarPost({ status = true, calenderData = [] }) {
               setCurrentView(updated)
             }}
             placeholder="Monthly"
-            className="w-[120px]"
+            className="w-[100px] sm:w-[120px]"
+            forceDownward={true}
           />
         </div>
       </div>
@@ -707,9 +708,9 @@ export default function CalendarPost({ status = true, calenderData = [] }) {
   if (loading) return <p className="h-screen flex justify-center items-center"><span className="loader" /></p>
 
   return (
-    <div className="gap-6 h-screen overflow-auto py-4 pr-2">
-      {status && <h1 className="font-semibold text-[#1e1e1e] mb-5 text-2xl leading-8">Scheduler</h1>}
-      <div className="w-full  mx-auto bg-white rounded-xl border border-[#E1E4EA]">
+    <div className="gap-3 sm:gap-4 lg:gap-6 h-screen overflow-auto py-2 sm:py-3 lg:py-4 pr-1 sm:pr-2">
+      {status && <h1 className="font-semibold text-[#1e1e1e] mb-3 sm:mb-4 lg:mb-5 text-xl sm:text-2xl leading-7 sm:leading-8 px-2 sm:px-0">Scheduler</h1>}
+      <div className="w-full mx-auto bg-white rounded-lg sm:rounded-xl border border-[#E1E4EA]">
         {renderCalendarHeader()}
         {currentView === "month" && renderMonthView()}
         {currentView === "week" && renderWeekView()}

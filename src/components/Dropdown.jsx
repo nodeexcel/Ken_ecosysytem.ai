@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-export const SelectDropdown = ({ name, options, placeholder = 'Select', value, onChange, className = '', errors, disabled, extraName, hideArrow = false }) => {
+export const SelectDropdown = ({ name, options, placeholder = 'Select', value, onChange, className = '', errors, disabled, extraName, hideArrow = false, forceUpward = false, forceDownward = false }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [openUpward, setOpenUpward] = useState(false);
     const dropdownRef = useRef(null);
@@ -19,6 +19,11 @@ export const SelectDropdown = ({ name, options, placeholder = 'Select', value, o
 
     useEffect(() => {
         if (isOpen && buttonRef.current) {
+            if (forceDownward) {
+                setOpenUpward(false);
+            } else if (forceUpward) {
+                setOpenUpward(true);
+            } else {
             const rect = buttonRef.current.getBoundingClientRect();
             const dropdownHeight = 240;
             const spaceBelow = window.innerHeight - rect.bottom;
@@ -29,7 +34,8 @@ export const SelectDropdown = ({ name, options, placeholder = 'Select', value, o
                 setOpenUpward(false);
             }
         }
-    }, [isOpen]);
+        }
+    }, [isOpen, forceUpward, forceDownward]);
 
     const handleSelect = (optionKey) => {
         onChange(optionKey);
@@ -57,7 +63,7 @@ export const SelectDropdown = ({ name, options, placeholder = 'Select', value, o
             </button>
             {isOpen && (
                 <div
-                    className={`absolute z-10 w-full rounded-md bg-white shadow-lg border border-gray-200 max-h-60 overflow-auto ${openUpward ? 'bottom-full mb-1' : 'mt-1'}`}
+                    className={`absolute z-10 w-full rounded-md bg-white shadow-lg border border-gray-200 max-h-40 sm:max-h-60 overflow-auto ${openUpward ? 'bottom-full mb-1' : 'mt-1'}`}
                 >
                     <ul className="py-1 px-2 flex flex-col gap-1 my-1">
                         {options?.length > 0 && options.map((option) => (

@@ -86,6 +86,7 @@ function Navbar({ sidebarItems }) {
         const breadcrumbs = []
         const searchParams = new URLSearchParams(location.search)
         const view = searchParams.get('view')
+        const tab = searchParams.get('tab')
 
         const routeMap = {
             'dashboard': 'AI Agents',
@@ -96,7 +97,7 @@ function Navbar({ sidebarItems }) {
             'content-creation': 'Constance',
             'accounting': 'Accounting',
             'hr': 'HR',
-            'seo': 'SEO',
+            'seo': 'GEO',
             'customer-support': 'Customer Support',
             'brain': 'Brain AI',
             'settings': 'Settings',
@@ -116,36 +117,83 @@ function Navbar({ sidebarItems }) {
             'content-creation': 'Constance'
         }
 
-        if (paths.length === 0 || (paths.length === 1 && paths[0] === 'dashboard')) {
-            return ['AI Agents', 'Agents']
+        // Tab name mapping for Constance (matching actual URL params)
+        const constanceTabMap = {
+            'chat': 'Chat',
+            'creation_studio': 'Creation Studio',
+            'scheduler': 'Scheduler',
+            'youtube': 'YouTube Script Writer',
+            'linkedin': 'LinkedIn Nuke',
+            'x_post': 'X Post Generator'
         }
 
-        breadcrumbs.push('AI Agents')
+        // Tab name mapping for Rebecca (Phone outreach) - matches Phone.jsx sideMenuList paths
+        const phoneTabMap = {
+            'dashboard': 'Dashboard',
+            'phone-numbers': 'Phone Numbers',
+            'call-agents': 'Call Agents',
+            'call-campaigns': 'Call Campaigns',
+            'outbound-calls': 'Outbound Calls',
+            'inbound-calls': 'Inbound Calls',
+        }
+
+        if (paths.length === 0 || (paths.length === 1 && paths[0] === 'dashboard')) {
+            return [{ label: 'AI Agents', path: '/dashboard' }, { label: 'Agents', path: null }]
+        }
+
+        breadcrumbs.push({ label: 'AI Agents', path: '/dashboard' })
         const currentPath = paths[paths.length - 1]
         
         // Check if we're in settings with manage-plan view
         if (currentPath === 'settings' && view === 'manage-plan') {
-            breadcrumbs.push('Settings')
-            breadcrumbs.push('Manage Plan')
+            breadcrumbs.push({ label: 'Settings', path: '/dashboard/settings' })
+            breadcrumbs.push({ label: 'Manage Plan', path: null })
+            return breadcrumbs
+        }
+        
+        // Handle Constance with tab param
+        if (currentPath === 'content-creation') {
+            breadcrumbs.push({ label: 'Constance', path: '/dashboard/content-creation?tab=chat' })
+            if (tab && constanceTabMap[tab]) {
+                breadcrumbs.push({ label: constanceTabMap[tab], path: null })
+            }
+            return breadcrumbs
+        }
+
+        // Handle Rebecca (Phone outreach) with tab param
+        if (currentPath === 'phone') {
+            // Base crumb for Rebecca
+            breadcrumbs.push({ label: 'Rebecca', path: '/dashboard/phone?tab=dashboard' })
+
+            const phoneTabKey = tab || 'dashboard'
+            if (phoneTabMap[phoneTabKey]) {
+                breadcrumbs.push({ label: phoneTabMap[phoneTabKey], path: null })
+            }
             return breadcrumbs
         }
         
         if (agentNameMap[currentPath]) {
-            breadcrumbs.push(agentNameMap[currentPath])
+            breadcrumbs.push({ label: agentNameMap[currentPath], path: `/dashboard/${currentPath}` })
         } else if (routeMap[currentPath]) {
-            breadcrumbs.push(routeMap[currentPath])
+            breadcrumbs.push({ label: routeMap[currentPath], path: `/dashboard/${currentPath}` })
         }
 
         const finalPage = routeMap[currentPath] || sidebarItems.find(item => item.id === currentPath)?.label || currentPath
-        if (finalPage && !breadcrumbs.includes(finalPage)) {
-            breadcrumbs.push(finalPage)
+        if (finalPage && !breadcrumbs.some(b => b.label === finalPage)) {
+            breadcrumbs.push({ label: finalPage, path: null })
         } else if (currentPath === '' || currentPath === 'dashboard') {
-            breadcrumbs.push('Agents')
+            breadcrumbs.push({ label: 'Agents', path: null })
         }
         return breadcrumbs
     }
 
     const breadcrumbs = buildBreadcrumbs()
+
+    const handleBreadcrumbClick = (path) => {
+        if (path) {
+            navigate(path)
+        }
+    }
 
     return (
         <div className='bg-white dark:bg-black dark:text-white border-b border-[#D6D6D6]'>
@@ -172,9 +220,22 @@ function Navbar({ sidebarItems }) {
                     <div className="flex items-center gap-1 text-sm text-[#5A687C]">
                         {breadcrumbs.map((crumb, index) => (
                             <React.Fragment key={index}>
-                                <span className={index === breadcrumbs.length - 1 ? 'text-[#1E1E1E] dark:text-white font-medium' : ''}>
-                                    {crumb}
-                                </span>
+                                {crumb.path ? (
+                                    <span
+                                        onClick={() => handleBreadcrumbClick(crumb.path)}
+                                        className={`cursor-pointer hover:text-[#675FFF] transition-colors ${
+                                            index === breadcrumbs.length - 1 
+                                                ? 'text-[#1E1E1E] dark:text-white font-medium' 
+                                                : 'text-[#5A687C] dark:text-gray-300'
+                                        }`}
+                                    >
+                                        {crumb.label}
+                                    </span>
+                                ) : (
+                                    <span className={index === breadcrumbs.length - 1 ? 'text-[#1E1E1E] dark:text-white font-medium' : 'text-[#5A687C] dark:text-gray-300'}>
+                                        {crumb.label}
+                                    </span>
+                                )}
                                 {index < breadcrumbs.length - 1 && (
                                     <span className="mx-1 text-[#5A687C] dark:text-white">›</span>
                                 )}

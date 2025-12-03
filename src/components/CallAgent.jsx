@@ -279,7 +279,7 @@ export default function CallAgentsPage() {
           <p className="text-sm md:text-base text-[#5A687C] font-[400]">Manage your AI and human call agents</p>
         </div>
         <button 
-          className="bg-[#675FFF] cursor-pointer text-white font-medium px-4 py-2.5 rounded-lg shadow-sm hover:bg-[#5E54FF] transition-colors flex items-center gap-2 w-fit"
+          className="bg-[#675FFF] cursor-pointer text-white font-medium px-4 py-1.5 rounded-lg shadow-sm hover:bg-[#5E54FF] transition-colors flex items-center gap-2 w-fit"
           onClick={() => setShowModal(true)}
         >
           <Plus className="w-4 h-4" />
@@ -336,8 +336,8 @@ export default function CallAgentsPage() {
       </div>
 
       {/* Table */}
-      <div className="overflow-auto w-full">
-        <div className="border border-[#D6D6D6] rounded-2xl overflow-hidden">
+      <div className="rounded-2xl border border-[#D6D6D6] overflow-auto mb-2 w-full">
+        <div className="overflow-x-auto">
           <table className="min-w-full border-separate border-spacing-0">
             <thead className="bg-[#F7F7F8]">
               <tr className="text-[#5A687C]">

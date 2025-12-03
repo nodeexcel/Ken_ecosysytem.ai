@@ -12,7 +12,7 @@ import active_campaign from '../assets/svg/activecampaign.svg'
 import hubspot from '../assets/svg/hubspot.svg'
 import mailchimp from '../assets/svg/mailchimp.svg'
 import click_funnels from '../assets/svg/click-funnels.svg'
-import tiktok from '../assets/svg/tiktok.svg'
+import tiktok from '../assets/svg/tiktok.png'
 import AdditionalIntegration from './AdditionalIntegrations';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNavbarData } from '../store/navbarSlice'

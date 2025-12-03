@@ -3,6 +3,9 @@ import { DateFormat } from "../utils/TimeFormat"
 import { Delete, DownloadIcon, EyeIcon, ThreeDots } from "../icons/icons"
 import GenerateSeoArticle from "./GenerateSeoArticle"
 import { useTranslation } from "react-i18next";
+import DailyPromptIcon from "../assets/svg/DailyPromptIcon.svg"
+import { ChevronDown } from "lucide-react"
+import { useSelector } from "react-redux"
 
 
 function SeoArticles() {
@@ -10,8 +13,11 @@ function SeoArticles() {
     const [loading, setLoading] = useState(true)
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [generateSeoArticleOpen, setGenerateSeoArticleOpen] = useState(false)
+    const [showBanner, setShowBanner] = useState(true)
+    const [selectedLanguage] = useState("English")
     const moreActionsRef = useRef()
     const { t } = useTranslation();
+    const userDetails = useSelector((state) => state.profile)
 
     const staticData = [
         {
@@ -55,88 +61,65 @@ function SeoArticles() {
     return (
         <>
             {!generateSeoArticleOpen ? <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                    <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{t("seo.articles")} </h1>
-                    <button
-                        onClick={() => setGenerateSeoArticleOpen(true)}
-                        className="bg-[#675FFF] cursor-pointer border border-[#5F58E8] text-white font-medium rounded-lg px-5 py-2 flex items-center gap-2"
-                    >
-                        {t("sandro.generate_article")}
-                    </button>
-                </div>
-                <div>
-                    <input placeholder={t("brain_ai.search")} className="max-w-[399px] bg-white focus:outline-none focus:border-[#675FFF] w-full rounded-[8px] border border-[#E1E4EA] py-[5px] px-[14px]" />
-                </div>
-                {/* Table */}
-                <div className="w-full">
-                    <table className="w-full">
-                        <div className="px-5 w-full">
-                            <thead>
-                                <tr className="text-left text-[#5A687C] text-[16px]">
-                                    <th className="px-[14px] py-[14px] min-w-[200px] max-w-[50%] w-full font-[400] table-cell-wrap">{t("seo.article_title")}</th>
-              <th className="px-[14px] py-[14px] min-w-[200px] max-w-[50%] w-full font-[400] table-cell-wrap">{t("brain_ai.date")}</th>
-              <th className="py-[14px] w-full font-[400] table-cell-wrap">{t("brain_ai.actions")}</th>
-                                </tr>
-                            </thead>
+                {/* Daily prompt header banner */}
+                {showBanner && (
+                    <div className="bg-white border border-[#E1E4EA] rounded-2xl px-4 sm:px-5 py-3 sm:py-4 flex items-start justify-between gap-4">
+                        <div className="flex items-start gap-3 flex-1">
+                            <div className="mt-1 flex h-8 w-8 items-center justify-center rounded-lg bg-[#675FFF] flex-shrink-0">
+                                <img
+                                    src={DailyPromptIcon}
+                                    alt="Daily Prompt"
+                                    className="w-5 h-5 object-contain"
+                                    style={{ filter: 'brightness(0) invert(1)' }}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <div>
+                                    <h1 className="text-base md:text-xl font-[600] text-[#1E1E1E]">
+                                        Daily prompt generation
+                                    </h1>
+                                    <p className="mt-1 text-sm sm:text-[16px] text-[#5A687C]">
+                                        We&apos;ll automatically generate personalized prompts every day. Set your preferred language below to get started.
+                                    </p>
+                                </div>
+                                <div className="mt-3 flex items-center gap-3">
+                                    <span className="text-sm font-medium text-[#808591]">
+                                        Language
+                                    </span>
+                                    <button
+                                        type="button"
+                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E1E4EA] bg-white text-xs sm:text-sm text-[#1E1E1E] hover:bg-[#F8F9FB] cursor-pointer shadow-sm"
+                                    >
+                                        <span className="text-base">🌐</span>
+                                        <span>{selectedLanguage}</span>
+                                        <ChevronDown className="w-3 h-3 text-[#5A687C]" />
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
-                            {loading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
-                                articleData.length !== 0 ?
-                                    <tbody className="w-full">
-                                        {articleData.map((row, index) =>
-                                            <tr
-                                                key={row.id}
-                                                className={`text-[16px] text-[#1E1E1E] ${index !== articleData?.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
-                                            >
-                                                <td className="px-[14px] py-[14px] min-w-[200px] max-w-[50%] w-full font-[600] text-[#1E1E1E] table-cell-wrap">{row.article_title}</td>
-                <td className="py-[14px] min-w-[200px] max-w-[50%] w-full text-[#5A687C] table-cell-wrap">{DateFormat(row.date)}</td>
-                                                <td ref={moreActionsRef} className="pr-[14px] relative">
-                                                    <button
-                                                        onClick={() => handleDropdownClick(index)}
-                                                        className="flex items-center">
-                                                        <div className="bg-[#F4F5F6] h-[34px] w-[34px] flex justify-center items-center rounded-[4px]"><ThreeDots /></div>
-                                                    </button>
-                                                    {activeDropdown === index && (
-                                                        <div className="absolute right-6 px-2 w-52 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[10]">
-                                                            <div className="py-1">
-                                                                <button
-                                                                    className="block w-full group text-left px-4 hover:rounded-lg py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
-                                                                    onClick={() => {
-                                                                        setActiveDropdown(null);
-                                                                    }}
-                                                                >
-                                                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'><EyeIcon /></div> <div className='hidden group-hover:block'><EyeIcon status={true} /></div> <span>{t("view")}</span> </div>
-                                                                </button>
-                                                                <button
-                                                                    className="block w-full group text-left hover:rounded-lg pr-4 pl-[14px] py-2 text-sm text-[#5A687C] hover:text-[#675FFF] hover:bg-[#F4F5F6] font-[500]"
-                                                                    onClick={() => {
-                                                                        setActiveDropdown(null);
-                                                                    }}
-                                                                >
-                                                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'><DownloadIcon /></div> <div className='hidden group-hover:block'><DownloadIcon status={true} /></div> <span>{t("download_html_file")}</span> </div>
-                                                                </button>
-                                                                <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
-                                                                <div className='py-2'>
-                                                                    <button
-                                                                        className="block w-full text-left px-4 hover:rounded-lg py-2 text-sm text-red-600 hover:bg-[#F4F5F6] font-[500]"
-                                                                        onClick={() => {
-                                                                            setActiveDropdown(null);
-                                                                        }}
-                                                                    >
-                                                                        <div className="flex items-center gap-2">{<Delete />} <span>{t("delete")}</span> </div>
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </td>
 
-                                            </tr>
-                                        )}
-                                    </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">{t("tara.no_article_listed")}</p>}
-                        </div>
-                    </table>
+                        <button
+                            type="button"
+                            onClick={() => setShowBanner(false)}
+                            className="mt-1 text-[#9CA3AF] hover:text-[#4B5563] text-base cursor-pointer flex-shrink-0"
+                            aria-label="Close"
+                        >
+                            ✕
+                        </button>
+                    </div>
+                )}
+
+                {/* Greeting below banner */}
+                <div className="flex flex-col text-start gap-1 pt-2 px-4">
+                    <h2 className="font-[600] text-lg sm:text-2xl text-[#1E1E1E]">
+                        Hi,{" "}
+                        <span className="text-[#020202]">
+                            {userDetails?.user?.firstName}
+                        </span>
+                    </h2>
+                    <p className="font-[400] text-[13px] sm:text-[16px] text-[#5A687C]">
+                        See how ecosystem.ai platform in AI conversations
+                    </p>
                 </div>
             </div> :
                 <GenerateSeoArticle setGenerateSeoArticleOpen={setGenerateSeoArticleOpen} />

@@ -294,7 +294,7 @@ export default function PhoneNumbers() {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="bg-[#675FFF] cursor-pointer whitespace-nowrap text-white rounded-xl text-sm md:text-base px-3 py-2 mt-3 md:mt-0 flex items-center gap-2"
+          className="bg-[#675FFF] cursor-pointer whitespace-nowrap text-white rounded-xl text-sm md:text-base px-3 py-1.5 mt-3 md:mt-0 flex items-center gap-2"
         >
           <Plus size={20} />
           {t("phone.new_phone_number")}

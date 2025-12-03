@@ -12,7 +12,7 @@ import { getNavbarData } from "../../store/navbarSlice";
 import tomImg from "../../assets/svg/tom_logo.svg"
 import rebeccaImg from "../../assets/svg/rebecca_logo.svg"
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ColdCallingScriptPhone from "../../components/ColdCallingScriptPhone";
 import { BsThreeDots } from "react-icons/bs";
@@ -21,6 +21,7 @@ import { discardSkillsData } from "../../store/agentSkillsSlice";
 
 
 const PhonePage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeSidebarItem, setActiveSidebarItem] = useState("dashboard");
   const [sidebarStatus, setSideBarStatus] = useState(false)
   const dispatch = useDispatch();
@@ -39,24 +40,32 @@ const PhonePage = () => {
     // { label: t("phone.cold_calling"), icon: <HeadPhonesIcon status={activeSidebarItem == "cold_calling"} />, hoverIcon: <HeadPhonesIcon hover={true} />, path: "cold_calling", header: `Tom & Rebecca,${t("phone.phone")} ` },
   ];
 
+  // Helper to update URL param for active tab (state follows URL)
+  const handleTabChange = (tabPath) => {
+    setSearchParams({ tab: tabPath }, { replace: true });
+  };
+
   const handleSectionRedirect = (sectionKey) => {
     const target = sideMenuList.find((item) => item.path === sectionKey);
     if (target) {
       dispatch(getNavbarData(target.header));
-      setActiveSidebarItem(target.path);
+      handleTabChange(target.path);
     }
   };
 
-  const activeTab = useSelector((state) => state.skills)
-
+  // Initialize URL with default tab if not present on mount
   useEffect(() => {
-    if (activeTab.label !== null) {
-      setActiveSidebarItem(activeTab.label)
-      if (activeTab.label === "inbound-calls") {
-        dispatch(getNavbarData('Rebecca'))
-      }
+    if (!searchParams.get("tab")) {
+      setSearchParams({ tab: "dashboard" }, { replace: true });
     }
-  }, [activeTab.loading])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Sync active tab with URL query param when URL changes
+  useEffect(() => {
+    const tabFromUrl = searchParams.get("tab") || "dashboard";
+    setActiveSidebarItem(tabFromUrl);
+  }, [searchParams]);
 
   const renderMainContent = () => {
     switch (activeSidebarItem) {
@@ -79,7 +88,7 @@ const PhonePage = () => {
 
   useEffect(() => {
     if (navbarDetails?.label === "Rebecca") {
-      setActiveSidebarItem("inbound-calls")
+      setSearchParams({ tab: "inbound-calls" }, { replace: true });
       dispatch(getNavbarData('Rebecca'))
     }
 
@@ -143,11 +152,11 @@ const PhonePage = () => {
                 key={i}
                 onClick={() => {
                   dispatch(getNavbarData(item.header))
-                  setActiveSidebarItem(item.path)
+                  handleTabChange(item.path)
                 }}
                 className={`flex items-center gap-2 px-3 py-2 group cursor-pointer w-full rounded-2xl ${activeSidebarItem === item.path
-                  ? "bg-[#E9E8F9] text-[#675FFF]"
-                  : "text-[#5A687C] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
+                  ? "bg-[#E9E8F9] text-[#000000]"
+                  : "text-[#000000] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
                   }`}
               >
                 {activeSidebarItem === item.path ? item.icon :
@@ -191,7 +200,7 @@ const PhonePage = () => {
                   key={i}
                   onClick={() => {
                     dispatch(getNavbarData(item.header))
-                    setActiveSidebarItem(item.path)
+                    handleTabChange(item.path)
                     setSideBarStatus(false)
                   }}
                   className={`flex items-center gap-2 px-3 py-2 rounded-md group cursor-pointer w-full ${activeSidebarItem === item.path

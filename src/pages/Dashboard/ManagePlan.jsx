@@ -100,6 +100,46 @@ const getFeatureIcon = (feature) => {
   
   const lowerFeature = feature.toLowerCase();
   
+  // French to English keyword mapping (order matters - more specific first)
+  const frenchToEnglishMap = [
+    { french: "compte unique par plateforme", english: "single_account_per_platform" },
+    { french: "intégrations complètes", english: "full_integrations" },
+    { french: "support par chat en direct", english: "live_chat" },
+    { french: "planifier les exécutions d'outils", english: "schedule_tool_runs" },
+    { french: "support multi-régions", english: "support_for_multi_region" },
+    { french: "support prioritaire", english: "priority_support" },
+    { french: "authentification avancée", english: "advanced_auth" },
+    { french: "support premium", english: "premium_support" },
+    { french: "agents ia", english: "agents" },
+    { french: "crédits par mois", english: "credits_per_month" },
+    { french: "de connaissances", english: "of_knowledge" },
+    { french: "chat en direct", english: "live-chat" },
+    { french: "crédits", english: "credits" },
+    { french: "utilisateurs", english: "users" },
+    { french: "utilisateur", english: "user" },
+    { french: "connaissances", english: "knowledge" },
+    { french: "intégrations", english: "integrations" },
+    { french: "compte unique", english: "single_account" },
+    { french: "planifier", english: "schedule" },
+    { french: "exécutions", english: "runs" },
+    { french: "outil", english: "tool" },
+    { french: "support", english: "support" },
+    { french: "chat", english: "chat" },
+    { french: "priorité", english: "priority" },
+    { french: "multi-régions", english: "multi_region" },
+    { french: "multi-région", english: "multi-region" },
+    { french: "premier", english: "premier" },
+    { french: "premium", english: "premium_support" },
+  ];
+  
+  // Check French translations first (more specific matches first)
+  for (const { french, english } of frenchToEnglishMap) {
+    if (lowerFeature.includes(french.toLowerCase())) {
+      const icon = featureIcons[english];
+      if (icon) return icon;
+    }
+  }
+  
   // Priority matching - check for more specific matches first
   const priorityMatches = [
     "single account per platform",
@@ -170,7 +210,7 @@ const ManagePlan = ({ onClose }) => {
     yearly: [
       {
         id: import.meta.env.VITE_YEARLY_PRO_PLAN,
-        name: `${t("Standard")}`,
+        name: `${t("settings.tab_2_list.standard_plan")}`,
         key: "pro",
         svg: <ProPlanIcon />,
         price: "€931",
@@ -190,7 +230,7 @@ const ManagePlan = ({ onClose }) => {
       },
       {
         id: import.meta.env.VITE_YEARLY_TEAM_PLAN,
-        name: `${t("Pro")}`,
+        name: `${t("settings.tab_2_list.pro")}`,
         key: "team",
         svg: <TeamPlanIcon />,
         price: "€1,603",
@@ -211,7 +251,7 @@ const ManagePlan = ({ onClose }) => {
         svg: <CustomPlanIcon />,
         key: "enterprise",
         price: `${t("settings.tab_2_list.custom")}`,
-        description: "Best performance, support and security.",
+        description: `${t("settings.tab_2_list.enterprise_content")}`,
         features: [
           `${t("settings.tab_2_list.priority_support")}`,
           `${t("settings.tab_2_list.advanced_auth")}`,
@@ -223,39 +263,39 @@ const ManagePlan = ({ onClose }) => {
     monthly: [
       {
         id: import.meta.env.VITE_MONTHLY_PRO_PLAN,
-        name: "Standard",
+        name: `${t("settings.tab_2_list.standard_plan")}`,
         svg: <ProPlanIcon />,
         price: "€97",
         key: "pro",
-        period: `/ month`,
-        description: "For independent professionals",
+        period: `/${t("settings.tab_2_list.month")}`,
+        description: `${t("settings.tab_2_list.pro_content")}`,
         features: [
-          `8 AI agents`,
-          `1000 credits per month`,
-          `1 user`,
-          `1GB of Knowledge`,
-          `5 Integrations`,
-          `Schedule tool runs`,
-          `Live-chat support`,
+          `8 ${t("settings.tab_2_list.ai_agents")}`,
+          `1000 ${t("settings.tab_2_list.credits_per_month_text")}`,
+          `1 ${t("settings.tab_2_list.user")}`,
+          `1GB ${t("settings.tab_2_list.of_knowledge_text")}`,
+          `5 ${t("settings.tab_2_list.integrations_text")}`,
+          `${t("settings.tab_2_list.schedule_tool_runs_text")}`,
+          `${t("settings.tab_2_list.live_chat_support")}`,
         ],
         selected: true,
       },
       {
         id: import.meta.env.VITE_MONTHLY_TEAM_PLAN,
-        name: "Pro",
+        name: `${t("settings.tab_2_list.pro")}`,
         svg: <TeamPlanIcon />,
         key: "team",
         price: "€167",
-        period: `/ month`,
-        description: "For teams working collaboratively.",
+        period: `/${t("settings.tab_2_list.month")}`,
+        description: `${t("settings.tab_2_list.team_content")}`,
         features: [
-          `9 AI agents`,
-          `2 500 credits per month`,
-          `5 users`,
-          `5GB of Knowledge`,
-          `Full integrations`,
-          `Single account per platform`,
-          `Live-chat support`,
+          `9 ${t("settings.tab_2_list.ai_agents")}`,
+          `2 500 ${t("settings.tab_2_list.credits_per_month_text")}`,
+          `5 ${t("settings.tab_2_list.users")}`,
+          `5GB ${t("settings.tab_2_list.of_knowledge_text")}`,
+          `${t("settings.tab_2_list.full_integrations_text")}`,
+          `${t("settings.tab_2_list.single_account_per_platform_text")}`,
+          `${t("settings.tab_2_list.live_chat_support")}`,
         ],
       },
       {
@@ -263,7 +303,7 @@ const ManagePlan = ({ onClose }) => {
         svg: <CustomPlanIcon />,
         key: "enterprise",
         price: `${t("settings.tab_2_list.custom")}`,
-        description: "Best performance, support and security.",
+        description: `${t("settings.tab_2_list.enterprise_content")}`,
         features: [
           `${t("settings.tab_2_list.priority_support")}`,
           `${t("settings.tab_2_list.advanced_auth")}`,
@@ -370,20 +410,20 @@ const ManagePlan = ({ onClose }) => {
       if (new Date() > new Date(userDetails?.subscriptionEndDate)) {
         return (
           <p className="text-red-500 pb-3">
-            Your Trail Plan ended on {DateFormat(userDetails?.subscriptionEndDate)}
+            {t("settings.tab_2_list.your_trail_plan_ended")} {DateFormat(userDetails?.subscriptionEndDate)}
           </p>
         );
       } else {
         return (
           <p className="text-green-500 pb-3">
-            Your Trail Plan ends on {DateFormat(userDetails?.subscriptionEndDate)}
+            {t("settings.tab_2_list.your_trail_plan_ends")} {DateFormat(userDetails?.subscriptionEndDate)}
           </p>
         );
       }
     } else if (new Date() > new Date(userDetails?.subscriptionEndDate)) {
       return (
         <p className="text-red-500 pb-3">
-          Your current plan ended on {DateFormat(userDetails?.subscriptionEndDate)}
+          {t("settings.tab_2_list.your_current_plan_ended")} {DateFormat(userDetails?.subscriptionEndDate)}
         </p>
       );
     }
@@ -455,10 +495,10 @@ const ManagePlan = ({ onClose }) => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 relative">
           <div className="flex flex-col gap-1">
             <h1 className="text-[24px] sm:text-2xl font-[600] text-[#1E1E1E]">
-              Manage Plan
+              {t("settings.tab_2_list.manage_plan")}
             </h1>
             <p className="text-[14px] sm:text-[16px] text-[#5A687C] font-[400]">
-              Adjust your subscription or billing cycle at any time.
+              {t("settings.tab_2_list.manage_plan_description")}
             </p>
           </div>
 
@@ -481,7 +521,7 @@ const ManagePlan = ({ onClose }) => {
                 }`}
               onClick={() => setActiveTab("monthly")}
             >
-              Monthly
+              {t("settings.tab_2_list.monthly")}
             </button>
             <button
               className={`px-4 py-2 cursor-pointer rounded-lg text-sm font-medium transition-colors ${activeTab === "yearly"
@@ -490,7 +530,7 @@ const ManagePlan = ({ onClose }) => {
                 }`}
               onClick={() => setActiveTab("yearly")}
             >
-              Annual (Save 20%)
+              {t("settings.tab_2_list.annual_save")}
             </button>
           </div>
         </div>
@@ -522,14 +562,14 @@ const ManagePlan = ({ onClose }) => {
                 {/* Current Plan Badge */}
                 {isCurrentPlan && (
                   <div className="absolute top-4 right-4 bg-[#E1E0F8] text-[#675FFF] text-xs font-[600] px-2 py-1 rounded-2xl">
-                    Current Plan
+                    {t("settings.tab_2_list.current_plan")}
                   </div>
                 )}
 
                 {/* Popular Tag for Pro Plan */}
                 {isProPlan && !isCurrentPlan && (
                   <div className="absolute top-4 right-4 bg-[#E8E7FF] text-[#675FFF] text-xs font-[600] px-2 py-1 rounded-2xl">
-                    Popular
+                    {t("settings.tab_2_list.popular")}
                   </div>
                 )}
 
@@ -573,11 +613,11 @@ const ManagePlan = ({ onClose }) => {
                     }`}
                   >
                     {isCurrentPlan
-                      ? "Current Plan"
+                      ? t("settings.tab_2_list.current_plan")
                       : plan.key === "enterprise"
-                        ? "Get a Quote"
+                        ? t("settings.tab_2_list.get_a_quote")
                         : plan.key === "team" && activeTab === "monthly"
-                          ? "Upgrade Pro"
+                          ? t("settings.tab_2_list.upgrade_pro")
                           : `${t("settings.tab_2_list.upgrade")}`}
                   </button>
                 </div>
@@ -586,7 +626,7 @@ const ManagePlan = ({ onClose }) => {
                 <div className="relative flex items-center mt-2 mb-4">
                   <hr className="w-full border-t border-[#E4E6EF]" />
                   <span className="absolute left-1/2 -translate-x-1/2 px-3 bg-white text-[#5A687C] text-sm font-[400]">
-                    INCLUDE
+                    {t("settings.tab_2_list.include")}
                   </span>
                 </div>
 
@@ -608,16 +648,16 @@ const ManagePlan = ({ onClose }) => {
         {/* Thinking about leaving section */}
         <div className="bg-white rounded-xl border border-[#E1E4EA] p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex-1">
-            <h3 className="text-[16px] font-[600] text-[#1E1E1E] mb-2">Thinking about leaving?</h3>
+            <h3 className="text-[16px] font-[600] text-[#1E1E1E] mb-2">{t("settings.tab_2_list.thinking_about_leaving")}</h3>
             <p className="text-[14px] font-[400] text-[#5A687C]">
-              You can cancel your subscription at any time. Your access will remain active until the end of the current billing period.
+              {t("settings.tab_2_list.cancel_subscription_description")}
             </p>
           </div>
           <button
             onClick={() => setShowCancelPopup(true)}
             className="px-4 py-2 bg-[#F7F7F8] border border-[#E1E4EA] text-[#1E1E1E] text-[14px] font-[500] rounded-lg hover:bg-[#EFF0F2] transition-colors whitespace-nowrap"
           >
-            Cancel My Plan
+            {t("settings.tab_2_list.cancel_my_plan")}
           </button>
         </div>
 

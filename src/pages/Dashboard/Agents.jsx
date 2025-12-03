@@ -105,8 +105,8 @@ const Agents = () => {
       image: finnImg
     },
     {
-      name: "Sandro",
-      role: `${t("seo_name")}`,
+      name: "Georgio",
+      role: `${t("geo_name")}`,
       gradient: "bg-[#F8DDFF]",
       path: "/dashboard/seo",
       label: "Sandro",
@@ -183,8 +183,7 @@ const Agents = () => {
             const isDisabled =
               employee.name === "Emile" ||
               employee.name === "Tara" ||
-              employee.name === "Rima" ||
-              employee.name === "Sandro";
+              employee.name === "Rima";
 
             return (
               <div
