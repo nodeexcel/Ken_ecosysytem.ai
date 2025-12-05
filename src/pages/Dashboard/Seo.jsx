@@ -1,26 +1,28 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArticleIcon, AuditIcon, AutomationIcon, ConversationIcon, LeftArrow } from '../../icons/icons'
-import sandroImg from "../../assets/svg/sandro_logo.svg"
+import emileImg from "../../assets/svg/emile_logo.svg"
+
 import { useNavigate } from 'react-router-dom'
 import sandroMsgLogo from '../../assets/svg/sandro_msg_logo.svg'
-import HomeGrid from "../../assets/svg/Home Grid.svg"
+import HomeGrid from "../../assets/svg/DashboardGrey.svg"
 import { v4 as uuidv4 } from 'uuid';
 import { deleteSeoChat, getSeoChatById, getSeoChats, updateSeoChatName } from '../../api/seoAgent'
 import SeoArticles from '../../components/SeoArticles'
 import SeoAudit from '../../components/SeoAudit'
 import SeoAutomation from '../../components/SeoAutomation'
+import Product from '../../components/Product'
 import { formatTimeAgo } from '../../utils/TimeFormat'
 import { useTranslation } from "react-i18next";
 import { BsThreeDots } from 'react-icons/bs'
-import { X } from 'lucide-react'
+import { Archive, X } from 'lucide-react'
 import chatInstance from '../../api/chatInstance'
 import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
 import TutorialPlay from '../../assets/svg/WatchTutorial.svg'
 
 function Seo() {
-    // Default sidebar tab set to articles (shown as Dashboard in UI)
-    const [activeSidebarItem, setActiveSidebarItem] = useState("articles")
+    // Default sidebar tab set to product
+    const [activeSidebarItem, setActiveSidebarItem] = useState("product")
     const [activeConversation, setActiveConversation] = useState()
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
@@ -44,7 +46,14 @@ function Seo() {
     const dispatch = useDispatch()
 
     const sideMenuList = [
-        // First tab: Dashboard (uses articles view)
+        // First tab Product
+        {
+            label: t("product") || "Product",
+            icon: <Archive alt="product" className="w-4 h-4" />,
+            hoverIcon: <Archive alt="product" className="w-4 h-4" />,
+            path: "product"
+        },
+        // Second tab Dashboard
         {
             label: t("dashboard") || "Dashboard",
             icon: <img src={HomeGrid} alt="dashboard" className="w-4 h-4" />,
@@ -223,15 +232,16 @@ function Seo() {
 
     const renderMainContent = () => {
         switch (activeSidebarItem) {
+            case "product":
+                return <Product />
             case "articles":
-                // Articles view used as Dashboard
                 return <SeoArticles />
             case "audit":
                 return <SeoAudit />
             case "automation":
                 return <SeoAutomation />
             default:
-                return <SeoArticles />
+                return <Product />
         }
     }
     return (
@@ -253,36 +263,40 @@ function Seo() {
                         </div>
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-3">
-                        <div className="bg-[#ffffff] w-full min-w-[232px] flex gap-3 p-[12px] rounded-[9px]">
-                            <div className="flex justify-center items-center">
-                                <div className="w-10 h-10 rounded-full bg-[#FFE4C5] flex items-center justify-center">
-                                    <img
-                                        src={sandroImg}
-                                        alt="sandro"
-                                        className="w-8 h-8 object-contain scale-115"
-                                    />
+                        <div className="bg-[#ffffff] lg:w-[232px] w-full mb-2 flex flex-col gap-3 p-[12px] rounded-[9px]">
+                            <div className="flex gap-3">
+                                <div className="flex justify-center items-center">
+                                    <div className="w-10 h-10 rounded-full bg-[#FFE4C5] flex items-center justify-center">
+                                        <img
+                                            src={emileImg}
+                                            alt="georgio"
+                                            className="w-8 h-8 object-contain scale-115"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col">
+                                    <h1 className="text-[#1E1E1E] text-[16px] font-[600]">
+                                        {t("seo.georgio")}
+                                    </h1>
+                                    <p className="text-[#5A687C] text-[14px] font-[400]">
+                                        GEO
+                                    </p>
                                 </div>
                             </div>
-                            <div className="flex flex-col">
-                                <h1 className="text-[#1E1E1E] text-[16px] font-[600]">
-                                    {t("seo.georgio")}
-                                </h1>
-                                <p className="text-[#5A687C] text-[14px] font-[400]">
-                                    {t("seo.seo_heading")}
-                                </p>
-                            </div>
-                        </div>
 
-                        {/* Watch Tutorial Button */}
-                        <button
-                            onClick={() => {
-                                console.log("Watch Tutorial clicked");
-                            }}
-                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer mb-2"
-                        >
-                            <img src={TutorialPlay} className="w-5 h-5" />
-                            <span>{t("watch_tutorial") || "Watch Tutorial"}</span>
-                        </button>
+                            {/* Watch Tutorial Button */}
+                            <button
+                                onClick={() => {
+                                    console.log("Watch Tutorial clicked");
+                                }}
+                                className="w-full flex items-center justify-center gap-2 px-2 py-2.5 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
+                            >
+                                <img src={TutorialPlay} className="w-5 h-5" />
+                                <span className="text-md font-md">{t("watch_tutorial") || "Watch Tutorial"}</span>
+                            </button>
+
+                            <hr className="border border-gray-200 w-full mt-2" />
+                        </div>
 
                         {sideMenuList.map((e, i) => <div
                             key={i}
@@ -291,7 +305,7 @@ function Seo() {
                                 }`}
                         >
                             {activeSidebarItem === `${e.path}` ? e.icon :
-                                <div className="flex items-center gap-2"><div className='group-hover:hidden'>{e.icon}</div> <div className='hidden group-hover:block'>{e.hoverIcon}</div></div>}
+                                <div className="flex items-center gap-4"><div className='group-hover:hidden'>{e.icon}</div> <div className='hidden group-hover:block'>{e.hoverIcon}</div></div>}
                             <span className={`font-[400] text-[16px] ${activeSidebarItem === `${e.path}` ? "text-[#000000]" : "text-[#000000] group-hover:text-[#1E1E1E]"}`}>
                                 {e.label}
                             </span>

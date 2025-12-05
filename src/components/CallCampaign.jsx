@@ -23,8 +23,6 @@ import NotionIcon from "../assets/svg/Notion.svg"
 import TrelloIcon from "../assets/svg/Trello.svg"
 import ClickupIcon from "../assets/svg/Clickup.svg"
 
-
-
 const renderColor = (text) => {
   switch (text) {
     case "Issue Detected":
@@ -74,6 +72,7 @@ export default function CallCampaign() {
 
   // Local form state for "Create a new agent" step (UI only for now)
   const [newAgentForm, setNewAgentForm] = useState({
+    agent_id: "",
     agent_name: "",
     max_call_time: "",
     language: "",
@@ -91,14 +90,13 @@ export default function CallCampaign() {
   const fileInputRef = useRef(null);
 
   const agentLanguageOptions = [
-    { key: "english_us", label: "English (America)" },
-    { key: "english_uk", label: "English (UK)" },
+    { key: "english", label: "English" },
     { key: "french", label: "French" },
   ];
 
   const agentVoiceOptions = [
-    { key: "france_man", label: "France (Man)" },
-    { key: "us_woman", label: "US (Woman)" },
+    { key: "english", label: "English" },
+    { key: "french", label: "French" },
   ];
 
   const knowledgeBaseOptions = [
@@ -201,7 +199,6 @@ export default function CallCampaign() {
   const { t } = useTranslation();
   const navigator = useNavigate()
 
-  // Add filter state
   const [filters, setFilters] = useState({
     country: "",
     language: "",
@@ -209,22 +206,18 @@ export default function CallCampaign() {
   });
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Define options for filters
   const countryOptions = [
-    // { key: "", label: "Country" },
     { key: "US", label: "United States" },
     { key: "GB", label: "United Kingdom" },
     { key: "FR", label: "France" }
   ];
 
   const languageOptions = [
-    // { key: "", label: "Language" },
     { key: "english", label: "English" },
     { key: "french", label: "French" },
     { key: "spanish", label: "Spanish" }
   ];
   const voiceOptions = [
-    // { key: "", label: "Voice" },
     { key: "male", label: `${t("male")}` },
     { key: "female", label: `${t("female")}` },
     { key: "neutral", label: `${t("neutral")}` }
@@ -354,9 +347,6 @@ export default function CallCampaign() {
 
   }
 
-
-
-
   const handleGetPhoneAgent = async () => {
     try {
       const response = await getCallAgent();
@@ -467,8 +457,6 @@ export default function CallCampaign() {
       if (response.status === 200) {
         setCampaign(response.data.campaign_data);
         setShowModal(true)
-
-
       } else {
         console.error("Failed to fetch campaign details:", response);
       }
@@ -479,14 +467,10 @@ export default function CallCampaign() {
     }
   }
 
-
   const handleEditCampaign = async () => {
-    try {
-
-      if (!validateForm()) {
+    try { if (!validateForm()) {
         console.log("Validation failed");
         return;
-
       }
       const response = await updatePhoneCampaign(campaign);
       if (response.status === 200) {
@@ -615,9 +599,6 @@ export default function CallCampaign() {
     );
   };
 
-
-
-
   const closeDropdown = () => {
     setActiveDropdown(null);
     setDropdownAgent(null);
@@ -633,7 +614,7 @@ export default function CallCampaign() {
     }
 
     const rect = event.currentTarget.getBoundingClientRect();
-    const dropdownWidth = 192; // matches w-48
+    const dropdownWidth = 192;
     const horizontalPadding = 16;
     const verticalGap = 8;
 
@@ -650,7 +631,7 @@ export default function CallCampaign() {
   return (
     <div>
       {!showModal ?
-        <div className="py-6 px-6 flex flex-col gap-4 w-full h-screen overflow-auto">
+        <div className="py-6 px-6 flex flex-col gap-4 w-full h-full overflow-auto">
           {/* Header */}
           {!showNewCampaignForm ? (
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
@@ -813,10 +794,10 @@ export default function CallCampaign() {
                       <button
                         type="button"
                         onClick={() => {
-                          // Handle add new phone number logic here
-                          console.log("Add new phone number");
+                          // Redirect to Phone Numbers tab in Rebecca (Phone) section
+                          navigator("/dashboard/phone?tab=phone-numbers");
                         }}
-                        className="text-[#675FFF] text-[14px] font-[500] mt-2 hover:underline"
+                        className="text-[#675FFF] text-[14px] font-[500] mt-2 cursor-pointer hover:underline"
                       >
                         + Add New Phone Number
                       </button>
@@ -951,10 +932,10 @@ export default function CallCampaign() {
                   </span>
                 </div>
                 <span className="text-[#5A687C] text-lg flex items-center">
-                  {stepCampaignOpen ? (
-                    < ChevronDownIcon className="w-5 h-5" />
-                  ) : (
+                  {stepAgentOpen ? (
                     <ChevronUpIcon className="w-5 h-5" />
+                  ) : (
+                    <ChevronDownIcon className="w-5 h-5" />
                   )}
                 </span>
               </button>
@@ -967,14 +948,19 @@ export default function CallCampaign() {
                       <label className="text-[14px] font-[500] text-[#868C98] mb-1">
                         Agent Name
                       </label>
-                      <input
-                        type="text"
-                        value={newAgentForm.agent_name}
-                        onChange={(e) =>
-                          setNewAgentForm((prev) => ({ ...prev, agent_name: e.target.value }))
-                        }
-                        placeholder="Agent Outbound Saas Market"
-                        className="w-full px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg focus:outline-none focus:border-[#675FFF] text-[14px]"
+                      <SelectDropdown
+                        name="agent"
+                        options={agents.map(agent => ({ key: agent.id.toString(), label: agent.agent_name }))}
+                        placeholder="Select Agent"
+                        value={newAgentForm.agent_id ? newAgentForm.agent_id.toString() : ''}
+                        onChange={(value) => {
+                          const selectedAgent = agents.find(agent => agent.id.toString() === value);
+                          setNewAgentForm((prev) => ({ 
+                            ...prev, 
+                            agent_id: value ? parseInt(value) : '',
+                            agent_name: selectedAgent ? selectedAgent.agent_name : ''
+                          }));
+                        }}
                       />
                     </div>
                     <div className="flex flex-col gap-1">

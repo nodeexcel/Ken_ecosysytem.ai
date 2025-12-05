@@ -49,7 +49,7 @@ function ContentCreationCalender() {
   }, []);
 
   return (
-    <div className="w-full p-2 sm:p-4 lg:p-6 flex flex-col gap-3 sm:gap-4 overflow-auto h-[calc(100vh-110px)] rounded-xl">
+    <div className="w-full p-2 sm:p-4 lg:p-6 flex flex-col gap-3 sm:gap-4 overflow-auto h-full rounded-xl">
       {!showCreatePost && (
         <>
           {/* Header Section */}

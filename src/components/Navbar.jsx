@@ -137,6 +137,22 @@ function Navbar({ sidebarItems }) {
             'inbound-calls': 'Inbound Calls',
         }
 
+        // Tab name mapping for Brain AI - matches Brain.jsx sideMenuItems paths
+        const brainTabMap = {
+            'contacts': 'Contacts',
+            'knowledge': 'Knowledge',
+            'integration': 'Integration',
+        }
+
+        // Tab name mapping for Settings - matches Settings.jsx tabs
+        const settingsTabMap = {
+            'my-profile': 'My Profile',
+            'general': 'General Settings',
+            'billing': 'Plan & Billing',
+            'team': 'Team Members',
+            'transaction-history': 'Transaction History',
+        }
+
         if (paths.length === 0 || (paths.length === 1 && paths[0] === 'dashboard')) {
             return [{ label: 'AI Agents', path: '/dashboard' }, { label: 'Agents', path: null }]
         }
@@ -144,10 +160,23 @@ function Navbar({ sidebarItems }) {
         breadcrumbs.push({ label: 'AI Agents', path: '/dashboard' })
         const currentPath = paths[paths.length - 1]
         
-        // Check if we're in settings with manage-plan view
-        if (currentPath === 'settings' && view === 'manage-plan') {
-            breadcrumbs.push({ label: 'Settings', path: '/dashboard/settings' })
-            breadcrumbs.push({ label: 'Manage Plan', path: null })
+        // Handle Settings with tab param
+        if (currentPath === 'settings') {
+            // Check for manage-plan view first
+            if (view === 'manage-plan') {
+                breadcrumbs.push({ label: 'Settings', path: '/dashboard/settings?tab=billing' })
+                breadcrumbs.push({ label: 'Plan & Billing', path: '/dashboard/settings?tab=billing' })
+                breadcrumbs.push({ label: 'Manage Plan', path: null })
+                return breadcrumbs
+            }
+            
+            // Base crumb for Settings
+            const settingsTabKey = tab || 'my-profile'
+            breadcrumbs.push({ label: 'Settings', path: `/dashboard/settings?tab=${settingsTabKey}` })
+            
+            if (settingsTabMap[settingsTabKey]) {
+                breadcrumbs.push({ label: settingsTabMap[settingsTabKey], path: null })
+            }
             return breadcrumbs
         }
         
@@ -168,6 +197,18 @@ function Navbar({ sidebarItems }) {
             const phoneTabKey = tab || 'dashboard'
             if (phoneTabMap[phoneTabKey]) {
                 breadcrumbs.push({ label: phoneTabMap[phoneTabKey], path: null })
+            }
+            return breadcrumbs
+        }
+
+        // Handle Brain AI with tab param
+        if (currentPath === 'brain') {
+            // Base crumb for Brain AI
+            breadcrumbs.push({ label: 'Brain AI', path: '/dashboard/brain?tab=contacts' })
+
+            const brainTabKey = tab || 'contacts'
+            if (brainTabMap[brainTabKey]) {
+                breadcrumbs.push({ label: brainTabMap[brainTabKey], path: null })
             }
             return breadcrumbs
         }

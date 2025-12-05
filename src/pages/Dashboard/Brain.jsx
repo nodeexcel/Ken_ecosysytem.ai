@@ -1,5 +1,5 @@
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Contacts from "../../components/Contacts"
 import Knowledge from "../../components/Knowledge"
 import Integration from "../../components/Integration"
@@ -11,15 +11,25 @@ import { useTranslation } from "react-i18next";
 import { BsThreeDots } from "react-icons/bs"
 
 const BrainAI = () => {
-  const [activePath, setActivePath] = useState("contacts")
-  const [showModal, setShowModal] = useState(true)
-  const [sidebarStatus, setSideBarStatus] = useState(false)
-  const [firstRender, setFirstRender] = useState(true)
-
   const navigate = useNavigate()
   const navbarDetails = useSelector((state) => state.navbar)
   const [searchParams, setSearchParams] = useSearchParams()
   const { t } = useTranslation();
+  
+  // Get tab from URL or default to "contacts"
+  const tabFromUrl = searchParams.get('tab') || 'contacts'
+  const [activePath, setActivePath] = useState(tabFromUrl)
+  const [showModal, setShowModal] = useState(true)
+  const [sidebarStatus, setSideBarStatus] = useState(false)
+  const [firstRender, setFirstRender] = useState(true)
+
+  // Sync activePath with URL param
+  useEffect(() => {
+    const tabFromUrl = searchParams.get('tab')
+    if (tabFromUrl && ['contacts', 'knowledge', 'integration'].includes(tabFromUrl)) {
+      setActivePath(tabFromUrl)
+    }
+  }, [searchParams])
 
 
   const sideMenuItems = [
@@ -221,7 +231,10 @@ const BrainAI = () => {
                 return (
                   <button
                     key={i}
-                    onClick={() => setActivePath(item.path)}
+                    onClick={() => {
+                      setActivePath(item.path);
+                      setSearchParams({ tab: item.path }, { replace: true });
+                    }}
                     className={`cursor-pointer group flex items-center justify-start gap-1.5 px-2 py-2 w-full h-auto rounded-2xl ${isActive ? "bg-[#F0EFFF] text-[#675FFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                       }`}
                   >
@@ -280,7 +293,8 @@ const BrainAI = () => {
                   <button
                     key={i}
                     onClick={() => {
-                      setActivePath(item.path)
+                      setActivePath(item.path);
+                      setSearchParams({ tab: item.path }, { replace: true });
                       setSideBarStatus(false)
                     }}
                     className={`cursor-pointer group flex items-center justify-start gap-1.5 px-2 py-2 w-full h-auto rounded ${isActive ? "bg-[#F0EFFF] text-[#675FFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"

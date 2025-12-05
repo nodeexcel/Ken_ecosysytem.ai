@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getNavbarData } from "../../store/navbarSlice";
 import tomImg from "../../assets/svg/tom_logo.svg"
 import rebeccaImg from "../../assets/svg/rebecca_logo.svg"
+import TutorialPlay from '../../assets/svg/WatchTutorial.svg'
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -95,37 +96,30 @@ const PhonePage = () => {
   }, [navbarDetails])
 
   const renderImg = () => {
-    if (navbarDetails.label === "Rebecca") {
-      return <div className="bg-[#ffffff] lg:w-[232px] w-full mb-5 flex gap-3 p-[12px] rounded-[9px]">
-        <div className="flex justify-center items-center">
-          <img src={rebeccaImg} alt={"rebecca"} className="object-fit" />
+    return (
+      <div className="bg-[#ffffff] lg:w-[232px] w-full mb-5 flex flex-col gap-3 p-[12px] rounded-[9px]">
+        <div className="flex gap-3">
+          <div className="flex justify-center items-center">
+            <img src={rebeccaImg} alt={"rebecca"} className="object-fit" />
+          </div>
+          <div className="flex flex-col">
+            <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Rebecca</h1>
+            <p className="text-[#5A687C] text-[14px] font-[400]">{t("phone.phone_outreach")}</p>
+          </div>
         </div>
-        <div className="flex flex-col">
-          <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Rebecca</h1>
-          <p className="text-[#5A687C] text-[14px] font-[400]">{t("phone.phone_outreach")}</p>
-        </div>
+        {/* Watch Tutorial Button */}
+        <button
+          onClick={() => {
+            console.log("Watch Tutorial clicked");
+          }}
+          className="w-full flex items-center justify-center gap-2 px-2 py-2.5 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
+        >
+          <img src={TutorialPlay} className="w-5 h-5" />
+          <span className="text-md font-md">{t("watch_tutorial") || "Watch Tutorial"}</span>
+        </button>
+        <hr className="border border-gray-200 w-full mt-2" />
       </div>
-    } else if (navbarDetails.label === "Tom") {
-      return <div className="bg-[#ffffff]  lg:w-[232px] w-full mb-5 flex gap-3 p-[12px] rounded-[9px]">
-        <div className="flex justify-center items-center">
-          <img src={rebeccaImg} alt={"rebecca"} className="object-fit" />
-        </div>
-        <div className="flex flex-col">
-          <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Rebecca</h1>
-          <p className="text-[#5A687C] text-[14px] font-[400]">{t("phone.phone_outreach")}</p>
-        </div>
-      </div>
-    } else {
-      return <div className="bg-[#ffffff]  lg:w-[232px] w-full mb-5 flex gap-3 p-[12px] rounded-[9px]">
-        <div className="flex justify-center items-center">
-          <img src={rebeccaImg} alt={"rebecca"} className="object-fit" />
-        </div>
-        <div className="flex flex-col">
-          <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Rebecca</h1>
-          <p className="text-[#5A687C] text-[14px] font-[400]">{t("phone.phone_outreach")}</p>
-        </div>
-      </div>
-    }
+    );
   }
 
   return (

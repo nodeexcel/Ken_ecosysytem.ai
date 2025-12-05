@@ -33,6 +33,7 @@ import ChatFile from '../assets/svg/ChatFile.svg'
 import ChatSearch from '../assets/svg/ChatSearch.svg'
 import ChatIcon from '../assets/svg/ChatIcon.svg'
 import EmptyChat from '../assets/svg/EmptyChat.svg'
+import ToastModal from './ToastModal'
 
 const AgentChatBox = ({ listedProps }) => {
   const {
@@ -89,6 +90,7 @@ const AgentChatBox = ({ listedProps }) => {
   const [activeHistoryDropdown, setActiveHistoryDropdown] = useState(null)
   const historyDropdownRefs = useRef({})
   const location = useLocation();
+  const [toast, setToast] = useState({ open: false, type: 'success', title: '', description: '', highlightText: '' })
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -207,6 +209,10 @@ const AgentChatBox = ({ listedProps }) => {
 
   const handleHistoryDelete = async (chatId) => {
     try {
+      // Get chat name before deleting for toast message
+      const chatToDelete = historyChats.find(chat => (chat.chat_id || chat.id) === chatId)
+      const chatName = chatToDelete?.name || 'conversation'
+      
       const response = await deleteContentCreationChat(chatId)
       if (response?.status === 200) {
         // Refresh history list
@@ -226,9 +232,32 @@ const AgentChatBox = ({ listedProps }) => {
         if (handleGetAccountChats) {
           handleGetAccountChats()
         }
+        // Show success toast
+        setToast({
+          open: true,
+          type: 'success',
+          title: 'Conversation Deleted Successfully',
+          description: `Your conversation "${chatName}" has been deleted.`,
+          highlightText: chatName
+        })
+      } else {
+        // Show error toast
+        setToast({
+          open: true,
+          type: 'error',
+          title: 'Delete Failed',
+          description: 'We couldn\'t delete the conversation. Please try again.',
+        })
       }
     } catch (error) {
       console.error("Error deleting chat:", error)
+      // Show error toast
+      setToast({
+        open: true,
+        type: 'error',
+        title: 'Delete Failed',
+        description: 'We couldn\'t delete the conversation. Please try again.',
+      })
     } finally {
       setActiveHistoryDropdown(null)
     }
@@ -643,7 +672,7 @@ const AgentChatBox = ({ listedProps }) => {
   }
 
   return (
-    <div className="w-full h-[calc(100vh-90px)] px-2 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6 flex flex-col gap-2 sm:gap-3">
+    <div className="w-full h-[calc(100vh-80px)] px-2 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6 flex flex-col gap-2 sm:gap-3">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 px-2 sm:px-4 lg:px-6">
         <h1 className="text-[18px] sm:text-[20px] lg:text-[24px] font-[600] text-[#1E1E1E]">{t("seo.chat")}</h1>
         <div className="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
@@ -793,7 +822,6 @@ const AgentChatBox = ({ listedProps }) => {
                       ))
                     ) : (
                       <div className="flex flex-col items-center justify-center h-full gap-4 sm:gap-6 lg:gap-8 px-2 sm:px-4">
-                        {/* Agent Avatar */}
                         <div className="flex justify-center">
                           <div className="relative flex items-center justify-center">
                             <div className="absolute w-16 h-16 sm:w-20 sm:h-20 lg:w-20 lg:h-20 rounded-full bg-white -z-10"></div>
@@ -807,8 +835,6 @@ const AgentChatBox = ({ listedProps }) => {
                           </div>
                         </div>
 
-
-                        {/* Welcome Text */}
                         <div className="flex flex-col items-center gap-2 sm:gap-3 text-center">
                           <h1 className="text-[#1E1E1E] text-[20px] sm:text-[24px] lg:text-[28px] font-[600] px-2">
                             {t("tara.how_can_i_help") || "How can I help you today?"}
@@ -818,7 +844,6 @@ const AgentChatBox = ({ listedProps }) => {
                           </p>
                         </div>
 
-                        {/* Suggestions */}
                         <div className="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-3 gap-2 sm:gap-3 lg:gap-4 xl:gap-4 px-2">
                           {suggestionsChat.map((e, index) => (
                             <div
@@ -826,12 +851,10 @@ const AgentChatBox = ({ listedProps }) => {
                               onClick={() => handleSelectMessage(e.key)}
                               className="cursor-pointer w-full bg-white rounded-lg sm:rounded-xl shadow-sm hover:shadow-md transition-all px-4 sm:px-5 lg:px-6 py-3 sm:py-3.5 lg:py-4 flex flex-col gap-3 sm:gap-4"
                             >
-                              {/* Icon with colored square background */}
                               <div className={`${e.iconBg} w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 rounded-lg sm:rounded-xl flex items-center justify-center`}>
                                 <img src={e.icon} alt="" className="w-4 h-4 sm:w-[18px] sm:h-[18px] lg:w-5 lg:h-5 object-contain" />
                               </div>
 
-                              {/* Question text */}
                               <p className="text-[#1E1E1E] font-[400] text-[12px] sm:text-[13px] lg:text-[14px] leading-relaxed">{e.label}</p>
                             </div>
                           ))}
@@ -842,7 +865,7 @@ const AgentChatBox = ({ listedProps }) => {
                 </div>
 
                 {/* Input */}
-                <div className="w-full mx-auto p-1 sm:p-1.5 lg:p-2">
+                <div className="w-full mx-auto p-1 sm:p-1.5 lg:px-2">
                   <ChatInput
                     value={input}
                     onChange={setInput}
@@ -1130,6 +1153,15 @@ transform transition-transform duration-300 ease-in-out">
           </>
         )}
       </div>
+      {/* Toast Modal */}
+      <ToastModal
+        open={toast.open}
+        type={toast.type}
+        title={toast.title}
+        description={toast.description}
+        highlightText={toast.highlightText}
+        onClose={() => setToast({ ...toast, open: false })}
+      />
     </div>
   )
 }

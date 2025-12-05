@@ -15,9 +15,12 @@ import VideoFile from '../assets/svg/VideoFile.svg'
 import VideoPlayIcon from '../assets/svg/VideoPlay.svg'
 import constanceImg from "../assets/svg/constance_logo.svg"
 import ShareIcon from '../assets/svg/Share.svg'
+import StatusModal from './StatusModal'
+import { useNavigate } from 'react-router-dom'
 
 export default function CreatePost({ onClose, editData }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [showDateTimePicker, setShowDateTimePicker] = useState(false);
   // State for required fields
   const [text, setText] = useState("");
@@ -39,6 +42,7 @@ export default function CreatePost({ onClose, editData }) {
   const [accountsLoading, setAccountsLoading] = useState(false);
   const [accountsError, setAccountsError] = useState(null);
   const textInputRef = useRef(); // Add ref for text input
+  const [statusModal, setStatusModal] = useState({ open: false, type: 'success', title: '', description: '', primaryButtonText: 'OK', onPrimaryClick: null });
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -439,15 +443,44 @@ export default function CreatePost({ onClose, editData }) {
         setPlatform("");
         fileInputRef.current.value = '';
         setIsSaving((prev) => ({ ...prev, publish: false }));
+        // Show success modal
+        setStatusModal({
+          open: true,
+          type: 'success',
+          title: 'Published Successfully',
+          description: response?.data?.success || 'Your content has been published successfully.',
+          primaryButtonText: 'OK',
+          onPrimaryClick: () => setStatusModal({ ...statusModal, open: false })
+        });
       }
       else {
-        setErrorMessage(response?.response?.data?.error);
+        const errorMessage = response?.response?.data?.error || response?.data?.error || 'Failed to publish content. Please try again.';
+        setErrorMessage(errorMessage);
         setSuccessMessage("");
         setIsSaving((prev) => ({ ...prev, publish: false }));
+        // Show error modal
+        setStatusModal({
+          open: true,
+          type: 'error',
+          title: 'Publish Failed',
+          description: errorMessage,
+          primaryButtonText: 'OK',
+          onPrimaryClick: () => setStatusModal({ ...statusModal, open: false })
+        });
       }
     } catch (err) {
       setIsSaving((prev) => ({ ...prev, publish: false }));
       setErrors({ general: 'Failed to publish' });
+      // Show error modal
+      const errorMessage = err?.response?.data?.error || err?.data?.error || 'Failed to publish content. Please try again.';
+      setStatusModal({
+        open: true,
+        type: 'error',
+        title: 'Publish Failed',
+        description: errorMessage,
+        primaryButtonText: 'OK',
+        onPrimaryClick: () => setStatusModal({ ...statusModal, open: false })
+      });
     }
   };
   const handleSchedule = async (scheduledDate, scheduledTime) => {
@@ -650,7 +683,10 @@ export default function CreatePost({ onClose, editData }) {
                   })}
                   
                   {/* Add Account button - positioned right after the last account */}
-                  <button className="w-full flex items-center justify-center gap-2 text-sm text-[#1E1E1E] font-medium border border-[#E1E4EA] rounded-[12px] py-2.5 bg-white hover:bg-[#F8F9FB] transition-colors shadow-[0_2px_6px_rgba(15,23,42,0.06)] mt-2">
+                  <button 
+                    onClick={() => navigate('/dashboard/brain?tab=integration')}
+                    className="w-full flex items-center justify-center gap-2 text-sm text-[#1E1E1E] font-medium border border-[#E1E4EA] rounded-[12px] py-2.5 bg-white hover:bg-[#F8F9FB] transition-colors shadow-[0_2px_6px_rgba(15,23,42,0.06)] mt-2 cursor-pointer"
+                  >
                     <span className="text-lg leading-none">+</span>
                     <span>{t("constance.add") + " " + t("constance.account") || "Add Account"}</span>
                   </button>
@@ -663,7 +699,7 @@ export default function CreatePost({ onClose, editData }) {
           </div>
 
           {/* Center Post Creation - Post Details */}
-          <div className="flex flex-col gap-4 bg-white border-[#E1E4EA] rounded-lg p-6 flex-1 h-[726px] relative overflow-y-auto">
+          <div className="flex flex-col gap-4 bg-white border-[#E1E4EA] rounded-lg p-6 flex-1 h-full relative overflow-y-auto">
             {/* Post Details Title */}
             <h2 className="text-lg font-semibold text-gray-900 mb-4">{t("constance.post_details") || "Post Details"}</h2>
 
@@ -1076,6 +1112,16 @@ export default function CreatePost({ onClose, editData }) {
           </div>
         </div>
       )}
+      {/* Status Modal for Publish Success/Error */}
+      <StatusModal
+        isOpen={statusModal.open}
+        onClose={() => setStatusModal({ ...statusModal, open: false })}
+        type={statusModal.type}
+        title={statusModal.title}
+        description={statusModal.description}
+        primaryButtonText={statusModal.primaryButtonText}
+        onPrimaryClick={statusModal.onPrimaryClick || (() => setStatusModal({ ...statusModal, open: false }))}
+      />
     </div>
   )
 }

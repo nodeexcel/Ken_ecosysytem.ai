@@ -706,7 +706,7 @@ const englishTranslation = {
     inactive: "Inactive",
     cancel: "Cancel",
     type: "Type",
-    create_new_agent:"Create New Agent",
+    create_new_agent:"Choose a New Agent",
 
     no_phonenumber_listed: "No Phone Numbers Listed",
     add_new_number: " Add a New Number",
@@ -1297,6 +1297,7 @@ const englishTranslation = {
   paused: "Paused",
   email_statistics: "Email Statistics",
   dashboard: "Dashboard",
+  product: "Product",
   download_html_file: "Download HTML File",
   processing_normal: "Processing",
   welcome_to: "Welcome, to",

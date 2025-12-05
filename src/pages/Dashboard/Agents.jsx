@@ -86,7 +86,7 @@ const Agents = () => {
       gradient: "bg-[#CEBFFD]",
       path: "/dashboard/campaigns",
       label: "Emailing",
-      image: emileImg
+      image: sandroImg
     },
     {
       name: "Rima",
@@ -110,7 +110,7 @@ const Agents = () => {
       gradient: "bg-[#F8DDFF]",
       path: "/dashboard/seo",
       label: "Sandro",
-      image: sandroImg
+      image: emileImg
     },
   ];
 

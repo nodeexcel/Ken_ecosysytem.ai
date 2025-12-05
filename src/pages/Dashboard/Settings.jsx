@@ -95,8 +95,12 @@ const SettingsPage = () => {
 
   const countryData = useSelector((state) => state.country.data)
   const [countries, setCountries] = useState(countryData);
-
-  const [activeSidebarItem, setActiveSidebarItem] = useState("my-profile");
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Get tab from URL or default to "my-profile"
+  const tabFromUrl = searchParams.get('tab') || 'my-profile';
+  const [activeSidebarItem, setActiveSidebarItem] = useState(tabFromUrl);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -132,8 +136,6 @@ const SettingsPage = () => {
   const [success, setSuccess] = useState({})
   const [showPlanPopup, setShowPlanPopup] = useState(false);
   const [teamMembersData, setTeamMembersData] = useState({})
-  const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [showManagePlan, setShowManagePlan] = useState(false);
   const dispatch = useDispatch()
   const [isOpen, setIsOpen] = useState(false)
@@ -251,10 +253,18 @@ const SettingsPage = () => {
     if (view === 'manage-plan') {
       setShowManagePlan(true);
       setActiveSidebarItem('billing');
-    } else if (tab === 'billing' && !view) {
-      setActiveSidebarItem('billing');
-      setShowManagePlan(false);
-    } else if (!view && !tab) {
+    } else if (tab) {
+      // Handle all tabs from URL
+      const validTabs = ['my-profile', 'general', 'billing', 'team', 'transaction-history'];
+      if (validTabs.includes(tab)) {
+        setActiveSidebarItem(tab);
+        if (tab !== 'billing') {
+          setShowManagePlan(false);
+        }
+      }
+    } else {
+      // Default to my-profile if no tab specified
+      setActiveSidebarItem('my-profile');
       setShowManagePlan(false);
     }
   }, [searchParams])
@@ -874,14 +884,8 @@ const SettingsPage = () => {
     // Update active sidebar item
     setActiveSidebarItem(value);
 
-    // Clear or update URL params based on selected section
-    if (value === "billing") {
-      // When clicking billing, show main Plan & Billing page (not Manage Plan)
-      setSearchParams({ tab: 'billing' });
-    } else {
-      // Clear URL params when switching to other sections
-      setSearchParams({});
-    }
+    // Update URL params for all tabs
+    setSearchParams({ tab: value }, { replace: true });
     // }
   }
 
