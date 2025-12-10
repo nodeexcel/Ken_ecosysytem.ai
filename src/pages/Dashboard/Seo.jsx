@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ArticleIcon, AuditIcon, AutomationIcon, ConversationIcon, LeftArrow } from '../../icons/icons'
 import emileImg from "../../assets/svg/emile_logo.svg"
 
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import sandroMsgLogo from '../../assets/svg/sandro_msg_logo.svg'
 import HomeGrid from "../../assets/svg/DashboardGrey.svg"
 import { v4 as uuidv4 } from 'uuid';
@@ -11,18 +11,32 @@ import SeoArticles from '../../components/SeoArticles'
 import SeoAudit from '../../components/SeoAudit'
 import SeoAutomation from '../../components/SeoAutomation'
 import Product from '../../components/Product'
+import CitationAnalytics from '../../components/CitationAnalytics'
+import ContentAnalytics from '../../components/ContentAnalytics'
+import PromptAnalytics from '../../components/PromptAnalytics'
 import { formatTimeAgo } from '../../utils/TimeFormat'
 import { useTranslation } from "react-i18next";
 import { BsThreeDots } from 'react-icons/bs'
-import { Archive, X } from 'lucide-react'
+import { Archive, X, BarChart3, AtSign, FileText, PieChart, ChevronUp, BarChartIcon, ChartColumnBig, ArrowUp, FolderDown, Upload, Search } from 'lucide-react'
+import ChatgptLogo from '../../assets/svg/Chatgpt.svg'
+import GeminiLogo from '../../assets/svg/Gemini.svg'
+import DeepseekLogo from '../../assets/svg/Deepseek.svg'
+import PerplexityLogo from '../../assets/svg/Perplexity.svg'
 import chatInstance from '../../api/chatInstance'
 import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
 import TutorialPlay from '../../assets/svg/WatchTutorial.svg'
 
 function Seo() {
+    const [searchParams, setSearchParams] = useSearchParams()
+    const { t } = useTranslation();
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+    
+    // Get tab from URL query param, default to "product"
+    const tabFromUrl = searchParams.get('tab') || 'product'
     // Default sidebar tab set to product
-    const [activeSidebarItem, setActiveSidebarItem] = useState("product")
+    const [activeSidebarItem, setActiveSidebarItem] = useState(tabFromUrl)
     const [activeConversation, setActiveConversation] = useState()
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
@@ -36,14 +50,96 @@ function Seo() {
     const [updateNameLoading, setUpdateNameLoading] = useState(false)
     const [editData, setEditData] = useState({})
     const [sidebarStatus, setSideBarStatus] = useState(false)
+    const [isAnalyticsExpanded, setIsAnalyticsExpanded] = useState(true)
+    const [promptSearchQuery, setPromptSearchQuery] = useState('')
+    const [selectedPromptRows, setSelectedPromptRows] = useState([])
     const socketRef = useRef(null)
     const socket2Ref = useRef(null)
     const newwebsocketurl = `${chatInstance}/new-seo-agent-chat`
     const websocketurl = `${chatInstance}/seo-agent`
-    const initialMessage = "Hi there! I’m Sandro, your SEO Expert. \nI’m here to help you boost your website’s visibility, generate high-quality traffic, and improve your search engine rankings — all automatically. \nI can research keywords, optimize blog posts, create SEO-friendly content, and publish directly to your CMS like WordPress, Wix, or Shopify. \nWant to start ranking higher on Google without lifting a finger? Just tell me your goal, and I’ll take it from there. \nReady to grow your traffic? 🚀"
-    const { t } = useTranslation();
-    const navigate = useNavigate()
-    const dispatch = useDispatch()
+    const initialMessage = "Hi there! I'm Sandro, your SEO Expert. \nI'm here to help you boost your website's visibility, generate high-quality traffic, and improve your search engine rankings — all automatically. \nI can research keywords, optimize blog posts, create SEO-friendly content, and publish directly to your CMS like WordPress, Wix, or Shopify. \nWant to start ranking higher on Google without lifting a finger? Just tell me your goal, and I'll take it from there. \nReady to grow your traffic? 🚀"
+
+    // Model logo mapping
+    const modelLogos = {
+        'Chatgpt': ChatgptLogo,
+        'Gemini': GeminiLogo,
+        'Deepseek': DeepseekLogo,
+        'Perplexity': PerplexityLogo,
+    };
+
+    // Dummy prompts data
+    const prompts = [
+        {
+            id: 1,
+            text: 'Comment puis-je automatiser la prospection et le suivi des leads en intégrant mes outils existants...',
+            models: ['Chatgpt', 'Gemini', 'Perplexity'],
+            created: '27 Mar 2025'
+        },
+        {
+            id: 2,
+            text: 'Comment puis-je automatiser la génération de leads, la prospection et l\'envoi d\'emails en intégran...',
+            models: ['Chatgpt', 'Gemini', 'Perplexity'],
+            created: '26 Mar 2025'
+        },
+        {
+            id: 3,
+            text: 'Comment puis-je automatiser la prospection, la génération de leads et la création de contenu en I...',
+            models: ['Chatgpt', 'Gemini', 'Perplexity'],
+            created: '20 Mar 2025'
+        },
+        {
+            id: 4,
+            text: 'Comment puis-je automatiser la prospection et le suivi des leads en intégrant mes outils existants...',
+            models: ['Chatgpt', 'Gemini', 'Perplexity'],
+            created: '18 Mar 2025'
+        },
+        {
+            id: 5,
+            text: 'Comment puis-je automatiser la génération de leads, la prospection et l\'envoi d\'emails en intégran...',
+            models: ['Chatgpt', 'Gemini', 'Perplexity'],
+            created: '16 Mar 2025'
+        },
+        {
+            id: 6,
+            text: 'Comment puis-je automatiser la prospection, la génération de leads et la création de contenu en I...',
+            models: ['Chatgpt', 'Gemini', 'Perplexity'],
+            created: '16 Mar 2025'
+        },
+        {
+            id: 7,
+            text: 'Comment puis-je automatiser la prospection et le suivi des leads en intégrant mes outils existants...',
+            models: ['Chatgpt', 'Gemini', 'Perplexity'],
+            created: '16 Mar 2025'
+        },
+        {
+            id: 8,
+            text: 'Comment puis-je automatiser la génération de leads, la prospection et l\'envoi d\'emails en intégran...',
+            models: ['Chatgpt', 'Gemini', 'Perplexity'],
+            created: '16 Mar 2025'
+        },
+        {
+            id: 9,
+            text: 'Comment puis-je automatiser la prospection, la génération de leads et la création de contenu en I...',
+            models: ['Chatgpt', 'Gemini', 'Perplexity'],
+            created: '16 Mar 2025'
+        }
+    ];
+
+    const handleSelectPromptRow = (id) => {
+        setSelectedPromptRows((prev) =>
+            prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+        );
+    };
+
+    const handleSelectAllPrompts = () => {
+        if (selectedPromptRows.length === prompts.length) {
+            setSelectedPromptRows([]);
+        } else {
+            setSelectedPromptRows(prompts.map((p) => p.id));
+        }
+    };
+
+    const allPromptsSelected = prompts.length > 0 && selectedPromptRows.length === prompts.length;
 
     const sideMenuList = [
         // First tab Product
@@ -67,11 +163,39 @@ function Seo() {
 
     const activeTab = useSelector((state) => state.skills)
 
+    // Helper to update URL param for active tab (state follows URL)
+    const handleTabChange = (tabPath) => {
+        setSearchParams({ tab: tabPath }, { replace: true });
+    };
+
+    // Initialize URL with default tab if not present on mount
     useEffect(() => {
-        if (activeTab.label !== null) {
-            setActiveSidebarItem(activeTab.label)
+        if (!searchParams.get("tab")) {
+            setSearchParams({ tab: "product" }, { replace: true });
         }
-    }, [activeTab.loading])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Sync active tab with URL query param when URL changes (URL is source of truth)
+    useEffect(() => {
+        const tabFromUrl = searchParams.get("tab") || "product";
+        if (tabFromUrl === 'product' || tabFromUrl === 'articles' || tabFromUrl === 'prompts' || tabFromUrl === 'citation-analytics' || tabFromUrl === 'prompt-analytics' || tabFromUrl === 'content-analytics') {
+            setActiveSidebarItem(tabFromUrl);
+            // Auto-expand Analytics if one of its tabs is active
+            if (tabFromUrl === 'citation-analytics' || tabFromUrl === 'prompt-analytics' || tabFromUrl === 'content-analytics') {
+                setIsAnalyticsExpanded(true);
+            }
+        }
+    }, [searchParams]);
+
+    // Handle Redux activeTab changes (only on initial load or when URL has no tab)
+    useEffect(() => {
+        // Only sync from Redux if URL doesn't have a tab param (initial load scenario)
+        const currentTab = searchParams.get('tab')
+        if (!currentTab && activeTab.label !== null && (activeTab.label === 'product' || activeTab.label === 'articles' || activeTab.label === 'prompts' || activeTab.label === 'citation-analytics' || activeTab.label === 'prompt-analytics' || activeTab.label === 'content-analytics')) {
+            setSearchParams({ tab: activeTab.label }, { replace: true })
+        }
+    }, [activeTab.loading, activeTab.label, searchParams, setSearchParams])
 
     useEffect(() => {
         if (chatList?.length > 0) {
@@ -236,6 +360,139 @@ function Seo() {
                 return <Product />
             case "articles":
                 return <SeoArticles />
+            case "prompts":
+                return (
+                    <div className="p-6 flex flex-col gap-4">
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                            <div className="flex flex-col gap-1">
+                                <h2 className="text-2xl font-[600] text-[#1E1E1E]">Prompts</h2>
+                                <p className="text-sm text-[#5A687C]">
+                                    Simulate conversations with AI models across different platforms.
+                                </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-sm font-[500] text-[#1E1E1E] hover:bg-[#F8F9FB] transition-colors cursor-pointer">
+                                    <Upload className="w-4 h-4" />
+                                    Export All
+                                </button>
+                                <button className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-sm font-[500] text-[#1E1E1E] hover:bg-[#F8F9FB] transition-colors cursor-pointer">
+                                    <FolderDown className="w-4 h-4" />
+                                    Import
+                                </button>
+                                <button className="inline-flex items-center gap-2 px-4 py-2 bg-[#675FFF] text-white rounded-lg text-sm font-[400] hover:bg-[#594edb] transition-colors cursor-pointer">
+                                    <span className="text-lg leading-none">+</span>
+                                    Add prompt
+                                </button>
+                            </div>
+                        </div>
+                        
+                        {/* Search and Sort Section */}
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#F7F7F8] px-4 pt-4 rounded-lg">
+                            <p className="text-sm text-[#5A687C]">Sorted by created date (newest first)</p>
+                            <div className="relative w-full sm:w-auto sm:min-w-[270px]">
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
+                                <input
+                                    type="text"
+                                    placeholder="Search name or phone number"
+                                    value={promptSearchQuery}
+                                    onChange={(e) => setPromptSearchQuery(e.target.value)}
+                                    className="w-full pl-10 pr-4 py-2 border border-[#E1E4EA] rounded-lg bg-white focus:outline-none focus:border-[#675FFF] text-sm text-[#1E1E1E] placeholder:text-[#5A687C]"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Prompts Table */}
+                        <div className="rounded-2xl border border-[#D6D6D6] overflow-auto mb-2 w-full">
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full border-separate border-spacing-0">
+                                    <thead className="bg-[#F7F7F8]">
+                                        <tr className="text-[#5A687C]">
+                                            <th className="px-6 text-start py-2 text-[16px] font-[400]">
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={allPromptsSelected}
+                                                        onChange={handleSelectAllPrompts}
+                                                        className="w-4 h-4 border border-[#D6D6D6] rounded cursor-pointer"
+                                                    />
+                                                    <span>Cited sources</span>
+                                                </div>
+                                            </th>
+                                            <th className="px-3 text-start py-2 text-[16px] font-[400]">Models</th>
+                                            <th className="px-3 text-start py-2 text-[16px] font-[400]">Created</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
+                                        {prompts.map((prompt) => (
+                                            <tr key={prompt.id} className="text-[16px] text-[#1E1E1E]">
+                                                <td className="px-6 py-2 text-[16px] text-[#1E1E1E] text-start">
+                                                    <div className="flex items-start gap-3">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={selectedPromptRows.includes(prompt.id)}
+                                                            onChange={() => handleSelectPromptRow(prompt.id)}
+                                                            className="mt-1 w-4 h-4 border border-[#D6D6D6] rounded cursor-pointer flex-shrink-0"
+                                                        />
+                                                        <span className="text-[#1E1E1E]">{prompt.text}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-3 py-2 text-[16px] text-start">
+                                                    <div className="flex items-center gap-1">
+                                                        {prompt.models.map((model, idx) => (
+                                                            <img
+                                                                key={idx}
+                                                                src={modelLogos[model]}
+                                                                alt={model}
+                                                                className="w-5 h-5 rounded-full"
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                </td>
+                                                <td className="px-3 py-2 text-[16px] text-start">{prompt.created}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* Pagination */}
+                            <div className="flex items-center justify-between bg-[#F7F7F8] px-4 py-3">
+                                <div className="flex items-center gap-2">
+                                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white opacity-50 cursor-not-allowed">
+                                        ‹ Prev
+                                    </button>
+                                    <button className="bg-[#675FFF] text-white rounded-lg px-3 py-1 text-sm cursor-pointer">
+                                        1
+                                    </button>
+                                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                                        2
+                                    </button>
+                                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                                        3
+                                    </button>
+                                    <span className="text-[#000000] text-sm">…</span>
+                                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer">
+                                        10
+                                    </button>
+                                    <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
+                                        Next ›
+                                    </button>
+                                </div>
+                                <div className="flex items-center gap-2 text-sm text-[#5A687C]">
+                                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 rows</button>
+                                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">10</button>
+                                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">20</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )
+            case "citation-analytics":
+                return <CitationAnalytics />
+            case "prompt-analytics":
+                return <PromptAnalytics />
+            case "content-analytics":
+                return <ContentAnalytics />
             case "audit":
                 return <SeoAudit />
             case "automation":
@@ -300,7 +557,7 @@ function Seo() {
 
                         {sideMenuList.map((e, i) => <div
                             key={i}
-                            onClick={() => setActiveSidebarItem(e.path)}
+                            onClick={() => handleTabChange(e.path)}
                             className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                 }`}
                         >
@@ -310,6 +567,88 @@ function Seo() {
                                 {e.label}
                             </span>
                         </div>)}
+
+                        {/* Analytics Section */}
+                        <div className="w-full">
+                            {/* Analytics Header */}
+                            <div
+                                onClick={() => setIsAnalyticsExpanded(!isAnalyticsExpanded)}
+                                className="flex justify-between items-center px-2 py-2 cursor-pointer hover:bg-[#F9F8FF] rounded-2xl transition-colors"
+                            >
+                                <div className="flex items-center gap-1.5">
+                                    <ChartColumnBig className={`w-4 h-4 text-[#5A687C] ${activeSidebarItem === 'citation-analytics' || activeSidebarItem === 'prompt-analytics' || activeSidebarItem === 'content-analytics' ? 'text-[#000000]' : 'text-[#000000]'}`} />
+                                    <span className={`font-[400] text-[16px] ${activeSidebarItem === 'citation-analytics' || activeSidebarItem === 'prompt-analytics' || activeSidebarItem === 'content-analytics' ? 'text-[#000000]' : 'text-[#000000]'}`}>
+                                        Analytics
+                                    </span>
+                                </div>
+                                <ChevronUp 
+                                    className={`w-4 h-4 text-[#5A687C] transition-transform duration-200 ${isAnalyticsExpanded ? '' : 'rotate-180'}`} 
+                                />
+                            </div>
+
+                            {/* Analytics Sub-tabs */}
+                            {isAnalyticsExpanded && (
+                                <div className="ml-6 mt-1 space-y-1">
+                                    {/* Citation Analytics */}
+                                    <div
+                                        onClick={() => handleTabChange('citation-analytics')}
+                                        className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
+                                            activeSidebarItem === 'citation-analytics'
+                                                ? 'bg-[#E9E8F9]'
+                                                : 'hover:bg-[#F9F8FF]'
+                                        }`}
+                                    >
+                                        <AtSign className={`w-4 h-4 ${activeSidebarItem === 'citation-analytics' ? 'text-[#675FFF]' : 'text-[#000000]'}`} />
+                                        <span className={`font-[400] text-[16px] ${activeSidebarItem === 'citation-analytics' ? 'text-[#000000]' : 'text-[#000000]'}`}>
+                                            Citation Analytics
+                                        </span>
+                                    </div>
+
+                                    {/* Prompt Analytics */}
+                                    <div
+                                        onClick={() => handleTabChange('prompt-analytics')}
+                                        className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
+                                            activeSidebarItem === 'prompt-analytics'
+                                                ? 'bg-[#E9E8F9]'
+                                                : 'hover:bg-[#F9F8FF]'
+                                        }`}
+                                    >
+                                        <FileText className={`w-4 h-4 ${activeSidebarItem === 'prompt-analytics' ? 'text-[#675FFF]' : 'text-[#000000]'}`} />
+                                        <span className={`font-[400] text-[16px] ${activeSidebarItem === 'prompt-analytics' ? 'text-[#000000]' : 'text-[#000000]'}`}>
+                                            Prompt Analytics
+                                        </span>
+                                    </div>
+
+                                    {/* Content Analytics */}
+                                    <div
+                                        onClick={() => handleTabChange('content-analytics')}
+                                        className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
+                                            activeSidebarItem === 'content-analytics'
+                                                ? 'bg-[#E9E8F9]'
+                                                : 'hover:bg-[#F9F8FF]'
+                                        }`}
+                                    >
+                                        <PieChart className={`w-4 h-4 ${activeSidebarItem === 'content-analytics' ? 'text-[#675FFF]' : 'text-[#000000]'}`} />
+                                        <span className={`font-[400] text-[16px] ${activeSidebarItem === 'content-analytics' ? 'text-[#000000]' : 'text-[#000000]'}`}>
+                                            Content Analytics
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Prompts Tab */}
+                        <div
+                            onClick={() => handleTabChange('prompts')}
+                            className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === 'prompts' ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                                }`}
+                        >
+                            {activeSidebarItem === 'prompts' ? <FileText className="w-4 h-4" /> :
+                                <div className="flex items-center gap-4"><div className='group-hover:hidden'><FileText className="w-4 h-4" /></div> <div className='hidden group-hover:block'><FileText className="w-4 h-4" /></div></div>}
+                            <span className={`font-[400] text-[16px] ${activeSidebarItem === 'prompts' ? "text-[#000000]" : "text-[#000000] group-hover:text-[#1E1E1E]"}`}>
+                                {t("Prompts") || "Prompts"}
+                            </span>
+                        </div>
                     </div>
                 </div>
 
@@ -346,18 +685,18 @@ function Seo() {
                                 <div className="flex justify-center items-center">
                                     <div className="w-10 h-10 rounded-full bg-[#FFE4C5] flex items-center justify-center">
                                         <img
-                                            src={sandroImg}
-                                            alt="sandro"
+                                            src={emileImg}
+                                            alt="georgio"
                                             className="w-8 h-8 object-contain scale-115"
                                         />
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
                                     <h1 className="text-[#1E1E1E] text-[16px] font-[600]">
-                                        {t("seo.sandro")}
+                                        {t("seo.georgio")}
                                     </h1>
                                     <p className="text-[#5A687C] text-[14px] font-[400]">
-                                        {t("seo.seo_heading")}
+                                        GEO
                                     </p>
                                 </div>
                             </div>
@@ -377,7 +716,7 @@ function Seo() {
                             {sideMenuList.map((e, i) => <div
                                 key={i}
                                 onClick={() => {
-                                    setActiveSidebarItem(e.path)
+                                    handleTabChange(e.path)
                                     setSideBarStatus(false)
                                 }}
                                 className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
@@ -389,6 +728,102 @@ function Seo() {
                                     {e.label}
                                 </span>
                             </div>)}
+
+                            {/* Analytics Section - Mobile */}
+                            <div className="w-full mt-2">
+                                {/* Analytics Header */}
+                                <div
+                                    onClick={() => setIsAnalyticsExpanded(!isAnalyticsExpanded)}
+                                    className="flex justify-between items-center px-2 py-2 cursor-pointer hover:bg-[#F9F8FF] rounded-2xl transition-colors"
+                                >
+                                    <div className="flex items-center gap-1.5">
+                                        <BarChart3 className={`w-4 h-4 ${activeSidebarItem === 'citation-analytics' || activeSidebarItem === 'prompt-analytics' || activeSidebarItem === 'content-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`} />
+                                        <span className={`font-[400] text-[16px] ${activeSidebarItem === 'citation-analytics' || activeSidebarItem === 'prompt-analytics' || activeSidebarItem === 'content-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`}>
+                                            Analytics
+                                        </span>
+                                    </div>
+                                    <ChevronUp 
+                                        className={`w-4 h-4 text-[#5A687C] transition-transform duration-200 ${isAnalyticsExpanded ? '' : 'rotate-180'}`} 
+                                    />
+                                </div>
+
+                                {/* Analytics Sub-tabs */}
+                                {isAnalyticsExpanded && (
+                                    <div className="ml-6 mt-1 space-y-1">
+                                        {/* Citation Analytics */}
+                                        <div
+                                            onClick={() => {
+                                                handleTabChange('citation-analytics')
+                                                setSideBarStatus(false)
+                                            }}
+                                            className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
+                                                activeSidebarItem === 'citation-analytics'
+                                                    ? 'bg-[#E9E8F9]'
+                                                    : 'hover:bg-[#F9F8FF]'
+                                            }`}
+                                        >
+                                            <AtSign className={`w-4 h-4 ${activeSidebarItem === 'citation-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`} />
+                                            <span className={`font-[400] text-[16px] ${activeSidebarItem === 'citation-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`}>
+                                                Citation Analytics
+                                            </span>
+                                        </div>
+
+                                        {/* Prompt Analytics */}
+                                        <div
+                                            onClick={() => {
+                                                handleTabChange('prompt-analytics')
+                                                setSideBarStatus(false)
+                                            }}
+                                            className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
+                                                activeSidebarItem === 'prompt-analytics'
+                                                    ? 'bg-[#E9E8F9]'
+                                                    : 'hover:bg-[#F9F8FF]'
+                                            }`}
+                                        >
+                                            <FileText className={`w-4 h-4 ${activeSidebarItem === 'prompt-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`} />
+                                            <span className={`font-[400] text-[16px] ${activeSidebarItem === 'prompt-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`}>
+                                                Prompt Analytics
+                                            </span>
+                                        </div>
+
+                                        {/* Content Analytics */}
+                                        <div
+                                            onClick={() => {
+                                                handleTabChange('content-analytics')
+                                                setSideBarStatus(false)
+                                            }}
+                                            className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
+                                                activeSidebarItem === 'content-analytics'
+                                                    ? 'bg-[#E9E8F9]'
+                                                    : 'hover:bg-[#F9F8FF]'
+                                            }`}
+                                        >
+                                            <PieChart className={`w-4 h-4 ${activeSidebarItem === 'content-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`} />
+                                            <span className={`font-[400] text-[16px] ${activeSidebarItem === 'content-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`}>
+                                                Content Analytics
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Prompts Tab - Mobile */}
+                            <div
+                                onClick={() => {
+                                    handleTabChange('prompts')
+                                    setSideBarStatus(false)
+                                }}
+                                className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors mt-2 ${
+                                    activeSidebarItem === 'prompts'
+                                        ? 'bg-[#E9E8F9]'
+                                        : 'hover:bg-[#F9F8FF]'
+                                }`}
+                            >
+                                <FileText className={`w-4 h-4 ${activeSidebarItem === 'prompts' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`} />
+                                <span className={`font-[400] text-[16px] ${activeSidebarItem === 'prompts' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`}>
+                                    {t("Prompts") || "Prompts"}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>

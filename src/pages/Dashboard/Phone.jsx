@@ -99,14 +99,14 @@ const PhonePage = () => {
     return (
       <div className="bg-[#ffffff] lg:w-[232px] w-full mb-5 flex flex-col gap-3 p-[12px] rounded-[9px]">
         <div className="flex gap-3">
-          <div className="flex justify-center items-center">
-            <img src={rebeccaImg} alt={"rebecca"} className="object-fit" />
-          </div>
-          <div className="flex flex-col">
-            <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Rebecca</h1>
-            <p className="text-[#5A687C] text-[14px] font-[400]">{t("phone.phone_outreach")}</p>
-          </div>
+        <div className="flex justify-center items-center">
+          <img src={rebeccaImg} alt={"rebecca"} className="object-fit" />
         </div>
+        <div className="flex flex-col">
+          <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Rebecca</h1>
+          <p className="text-[#5A687C] text-[14px] font-[400]">{t("phone.phone_outreach")}</p>
+        </div>
+      </div>
         {/* Watch Tutorial Button */}
         <button
           onClick={() => {

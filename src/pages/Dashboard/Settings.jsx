@@ -22,26 +22,10 @@ import { BsThreeDots } from "react-icons/bs";
 import default_avatar from '../../assets/images/default_avatar.png';
 
 import { parsePhoneNumberFromString } from "libphonenumber-js";
-import { set } from "date-fns";
 import LightTheme from '../../assets/images/Light-Theme.png'
 import DarkTheme from '../../assets/images/Dark-Theme.png'
 import SystemTheme from '../../assets/images/Match-System.png'
 
-
-
-
-// User profile data
-const profileData = {
-  firstName: "Robert",
-  lastName: "Downey",
-  email: "robertdowney45@gmail.com",
-  phone: "+1 (252) 212 2125",
-  company: "Ecosysteme",
-  role: "Admin",
-  city: "Springfield",
-  country: "United States",
-  avatar: profile_pic,
-};
 
 const GENERAL_DEFAULT_SETTINGS = {
   theme: "light",
@@ -1445,7 +1429,7 @@ const SettingsPage = () => {
                 </p>
               </div>
               <button
-                className="flex items-center gap-2 bg-[#675FFF] hover:bg-[#5E54FF] text-white rounded-lg px-4 py-2 text-[14px] font-[500] transition-colors"
+                className="flex items-center gap-2 cursor-pointer bg-[#675FFF] hover:bg-[#5E54FF] text-white rounded-lg px-4 py-2 text-[14px] font-[500] transition-colors"
                 onClick={handleInviteTeam}
               >
                 <Plus className="w-4 h-4" />
@@ -1461,7 +1445,7 @@ const SettingsPage = () => {
                   <button
                     key={option.key}
                     onClick={() => handleChangeRole(option.key)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${role === option.key
+                    className={`px-4 py-2 rounded-lg text-sm cursor-pointer font-medium transition-colors ${role === option.key
                       ? "bg-white text-[#1E1E1E] shadow-sm"
                       : "bg-transparent text-[#5A687C]"
                       }`}
@@ -1490,7 +1474,7 @@ const SettingsPage = () => {
                 </div>
                 <button
                   onClick={() => renderTeamMembers(role)}
-                  className="flex items-center gap-2 px-3 py-2 bg-white border border-[#E1E4EA] rounded-lg text-black text-sm font-semibold hover:bg-gray-50 transition-colors"
+                  className="flex items-center cursor-pointer gap-2 px-3 py-2 bg-white border border-[#E1E4EA] rounded-lg text-black text-sm font-semibold hover:bg-gray-50 transition-colors"
                 >
                   <RefreshIcon />
                   {t("refresh")}
@@ -1973,7 +1957,7 @@ const SettingsPage = () => {
                             <select
                               value={generalSettings.language}
                               onChange={(e) => handleGeneralSettingChange("language", e.target.value)}
-                              className="w-full appearance-none rounded-xl border border-[#E1E4EA] dark:border-[#2D3151] bg-white dark:bg-[#2D3151] px-4 py-2 text-sm text-[#1E1E1E] dark:text-white focus:border-[#675FFF] focus:outline-none"
+                              className="w-full appearance-none rounded-xl border cursor-pointer border-[#E1E4EA] dark:border-[#2D3151] bg-white dark:bg-[#2D3151] px-4 py-2 text-sm text-[#1E1E1E] dark:text-white focus:border-[#675FFF] focus:outline-none"
                             >
                               {LANGUAGE_OPTIONS.map((lang) => (
                                 <option key={lang} value={lang}>{lang}</option>
@@ -1990,7 +1974,7 @@ const SettingsPage = () => {
                             <select
                               value={generalSettings.timezone}
                               onChange={(e) => handleGeneralSettingChange("timezone", e.target.value)}
-                              className="w-full appearance-none rounded-xl border border-[#E1E4EA] dark:border-[#2D3151] bg-white dark:bg-[#2D3151] px-4 py-2 text-sm text-[#1E1E1E] dark:text-white focus:border-[#675FFF] focus:outline-none"
+                              className="w-full appearance-none rounded-xl cursor-pointer border border-[#E1E4EA] dark:border-[#2D3151] bg-white dark:bg-[#2D3151] px-4 py-2 text-sm text-[#1E1E1E] dark:text-white focus:border-[#675FFF] focus:outline-none"
                             >
                               {TIMEZONE_OPTIONS.map((zone) => (
                                 <option key={zone} value={zone}>{zone}</option>
@@ -2007,7 +1991,7 @@ const SettingsPage = () => {
                             <select
                               value={generalSettings.dateFormat}
                               onChange={(e) => handleGeneralSettingChange("dateFormat", e.target.value)}
-                              className="w-full appearance-none rounded-xl border border-[#E1E4EA] dark:border-[#2D3151] bg-white dark:bg-[#2D3151] px-4 py-2 text-sm text-[#1E1E1E] dark:text-white focus:border-[#675FFF] focus:outline-none"
+                              className="w-full appearance-none rounded-xl cursor-pointer border border-[#E1E4EA] dark:border-[#2D3151] bg-white dark:bg-[#2D3151] px-4 py-2 text-sm text-[#1E1E1E] dark:text-white focus:border-[#675FFF] focus:outline-none"
                             >
                               {DATE_FORMAT_OPTIONS.map((format) => (
                                 <option key={format} value={format}>{format}</option>
@@ -2065,7 +2049,7 @@ const SettingsPage = () => {
                             <button
                               type="button"
                               onClick={() => handleGeneralSettingChange(item.key, !enabled)}
-                              className={`inline-flex h-5 w-10 items-center rounded-full transition-colors ${enabled ? "bg-[#675FFF]" : "bg-[#D7DBE6]"
+                              className={`inline-flex h-5 w-10 cursor-pointer items-center rounded-full transition-colors ${enabled ? "bg-[#675FFF]" : "bg-[#D7DBE6]"
                                 }`}
                             >
                               <span
@@ -2218,7 +2202,7 @@ const SettingsPage = () => {
                   {t("settings.tab_1_list.confirm_delete")}
                 </button>
                 <button
-                  className="w-full cursor-pointer bg-white dark:bg-[#2D3151] text-[#5A687C] dark:text-gray-300 border-[1.5px] border-[#E1E4EA] dark:border-[#2D3151] font-[500] test-[16px] px-5 py-2 rounded-lg"
+                  className="w-full cursor-pointer bg-white  dark:bg-[#2D3151] text-[#5A687C] dark:text-gray-300 border-[1.5px] border-[#E1E4EA] dark:border-[#2D3151] font-[500] test-[16px] px-5 py-2 rounded-lg"
                   onClick={() => setDeleteModalStatus(false)}
                 >
                   {t("settings.tab_1_list.cancel")}

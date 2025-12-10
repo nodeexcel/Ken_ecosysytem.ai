@@ -286,33 +286,9 @@ function ContentCreation() {
             if (response?.status === 200) {
                 setEditData({})
                 handleGetAccountChats()
-                // Show success toast
-                setToast({
-                    open: true,
-                    type: 'success',
-                    title: 'Conversation Renamed Successfully',
-                    description: `Your conversation has been renamed to "${name}".`,
-                    highlightText: name
-                })
-            } else {
-                // Show error toast
-                setToast({
-                    open: true,
-                    type: 'error',
-                    title: 'Rename Failed',
-                    description: 'We couldn\'t rename the conversation. Please try again.',
-                })
             }
-
         } catch (error) {
             console.log(error)
-            // Show error toast
-            setToast({
-                open: true,
-                type: 'error',
-                title: 'Rename Failed',
-                description: 'We couldn\'t rename the conversation. Please try again.',
-            })
         } finally {
             setUpdateNameLoading(false)
         }
@@ -552,36 +528,36 @@ function ContentCreation() {
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-3">
                         <div className="bg-[#ffffff] lg:w-[232px] w-full mb-2 flex flex-col gap-3 p-[12px] rounded-[9px]">
-                            <div className="flex gap-3">
-                                <div className="flex justify-center items-center">
-                                    <div className="w-10 h-10 rounded-full bg-[#FFE4C5] flex items-center justify-center">
-                                        <img
-                                            src={constanceImg}
-                                            alt="constance"
-                                            className="w-8 h-8 object-contain scale-115"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="flex flex-col">
-                                    <h1 className="text-[#1E1E1E] text-[16px] font-[600]">
-                                        {t("constance.constance")}
-                                    </h1>
-                                    <p className="text-[#5A687C] text-[14px] font-[400]">
-                                        {t("constance.content_creation")}
-                                    </p>
+                        <div className="flex gap-3">
+                            <div className="flex justify-center items-center">
+                                <div className="w-10 h-10 rounded-full bg-[#FFE4C5] flex items-center justify-center">
+                                    <img
+                                        src={constanceImg}
+                                        alt="constance"
+                                        className="w-8 h-8 object-contain scale-115"
+                                    />
                                 </div>
                             </div>
+                            <div className="flex flex-col">
+                                <h1 className="text-[#1E1E1E] text-[16px] font-[600]">
+                                    {t("constance.constance")}
+                                </h1>
+                                <p className="text-[#5A687C] text-[14px] font-[400]">
+                                    {t("constance.content_creation")}
+                                </p>
+                            </div>
+                        </div>
 
-                            {/* Watch Tutorial Button */}
-                            <button
-                                onClick={() => {
-                                    console.log("Watch Tutorial clicked");
-                                }}
+                        {/* Watch Tutorial Button */}
+                        <button
+                            onClick={() => {
+                                console.log("Watch Tutorial clicked");
+                            }}
                                 className="w-full flex items-center justify-center gap-2 px-2 py-2.5 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
-                            >
-                                <img src={TutorialPlay} className="w-5 h-5" />
-                                <span className='text-md font-md'>{t("watch_tutorial") || "Watch Tutorial"}</span>
-                            </button>
+                        >
+                            <img src={TutorialPlay} className="w-5 h-5" />
+                            <span className='text-md font-md'>{t("watch_tutorial") || "Watch Tutorial"}</span>
+                        </button>
 
                             <hr className='border border-gray-200 w-full mt-2' />
                         </div>

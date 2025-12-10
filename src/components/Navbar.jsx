@@ -153,6 +153,21 @@ function Navbar({ sidebarItems }) {
             'transaction-history': 'Transaction History',
         }
 
+        // Tab name mapping for GEO (SEO) - matches Seo.jsx sideMenuList paths
+        const geoTabMap = {
+            'product': 'Product',
+            'articles': 'Dashboard',
+            'audit': 'SEO Audit',
+            'automation': 'SEO Automation',
+        }
+
+        // Analytics tab map under GEO
+        const geoAnalyticsTabMap = {
+            'citation-analytics': 'Citation Analytics',
+            'prompt-analytics': 'Prompt Analytics',
+            'content-analytics': 'Content Analytics',
+        }
+
         if (paths.length === 0 || (paths.length === 1 && paths[0] === 'dashboard')) {
             return [{ label: 'AI Agents', path: '/dashboard' }, { label: 'Agents', path: null }]
         }
@@ -166,7 +181,7 @@ function Navbar({ sidebarItems }) {
             if (view === 'manage-plan') {
                 breadcrumbs.push({ label: 'Settings', path: '/dashboard/settings?tab=billing' })
                 breadcrumbs.push({ label: 'Plan & Billing', path: '/dashboard/settings?tab=billing' })
-                breadcrumbs.push({ label: 'Manage Plan', path: null })
+            breadcrumbs.push({ label: 'Manage Plan', path: null })
                 return breadcrumbs
             }
             
@@ -209,6 +224,33 @@ function Navbar({ sidebarItems }) {
             const brainTabKey = tab || 'contacts'
             if (brainTabMap[brainTabKey]) {
                 breadcrumbs.push({ label: brainTabMap[brainTabKey], path: null })
+            }
+            return breadcrumbs
+        }
+
+        // Handle GEO (SEO) with tab param
+        if (currentPath === 'seo') {
+            // Base crumb for GEO
+            breadcrumbs.push({ label: 'GEO', path: '/dashboard/seo?tab=product' })
+
+            const geoTabKey = tab || 'product'
+
+            // Analytics nested tabs
+            if (geoAnalyticsTabMap[geoTabKey]) {
+                breadcrumbs.push({ label: 'Analytics', path: null })
+                breadcrumbs.push({ label: geoAnalyticsTabMap[geoTabKey], path: null })
+                return breadcrumbs
+            }
+
+            // Prompts standalone
+            if (geoTabKey === 'prompts') {
+                breadcrumbs.push({ label: 'Prompts', path: null })
+                return breadcrumbs
+            }
+
+            // Default GEO tabs
+            if (geoTabMap[geoTabKey]) {
+                breadcrumbs.push({ label: geoTabMap[geoTabKey], path: null })
             }
             return breadcrumbs
         }

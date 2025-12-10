@@ -10,6 +10,7 @@ import fr_flag from "../assets/images/fr_flag.png"
 import { getPhoneNumber, createPhoneAgent, getCallAgent, updatePhoneNumberAgentStatus } from "../api/callAgent";
 import { SelectDropdown } from "./Dropdown";
 import { useTranslation } from "react-i18next";
+import ToastModal from "./ToastModal";
 
 const countries = [
   { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
@@ -48,6 +49,13 @@ export default function CallAgentsPage() {
     voice: ""
   });
   const [searchQuery, setSearchQuery] = useState("");
+  const [toast, setToast] = useState({
+    open: false,
+    type: "success",
+    title: "",
+    description: "",
+    highlightText: "",
+  });
 
   const countryOptions = [
     { key: "US", label: "United States" },
@@ -229,14 +237,32 @@ export default function CallAgentsPage() {
         setLoader(true);
         setAgent({ agent_name: "", language: "", voice: "", type: "", phone_number: "" });
         fetchAgents();
+        setToast({
+          open: true,
+          type: "success",
+          title: t("success") || "Success",
+          description: t("phone.agent_created_success") || "Call agent has been created successfully.",
+        });
       } else { 
     error.response=response.response?.data?.error|| "An error occurred";
     setError({...error});
+        setToast({
+          open: true,
+          type: "error",
+          title: t("error") || "Error",
+          description: error.response || t("phone.agent_create_failed") || "Failed to create agent. Please try again.",
+        });
       }
       setLoader(false);
     }
   } catch (error) {
     setLoader(false);
+    setToast({
+      open: true,
+      type: "error",
+      title: t("error") || "Error",
+      description: error?.message || t("phone.agent_create_failed") || "Failed to create agent. Please try again.",
+    });
   }
 }
 
@@ -719,53 +745,15 @@ export default function CallAgentsPage() {
                   </div>
         )}
 
-        {/* Commented out - no longer needed with single phone number selection
-        {inboundLimitStatus && (
-          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl w-full max-w-[406px] p-6 relative shadow-lg">
-              <button
-                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-                onClick={() => {
-                  setInboundLimitStatus(false)
-                  setShowPhoneNumberList(true)
-                }}
-              >
-                <X size={20} />
-              </button>
-
-              <div className="flex flex-col justify-center items-center gap-6 py-4 text-center">
-                <div>
-                  <AlertIcon />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <h2 className="text-[20px] font-[600] text-[#1E1E1E]">
-                    {
-                      t("phone.warning_inbound")
-                    }
-                  </h2>
-                  <p className="text-[14px] font-[400] text-[#5A687C]">
-                    {
-                      t("phone.warning_inbound_msg")
-                    }
-                  </p>
-                </div>
-                <button
-                  className="w-full bg-[#675FFF] text-center text-white px-5 py-[7px] border-[1.5px] border-[#5F58E8] font-[500] test-[16px]  rounded-lg"
-                  onClick={() => {
-                    setInboundLimitStatus(false)
-                    setShowPhoneNumberList(true)
-                  }}
-                >
-                  {
-                    t("phone.ok")
-                  }
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-        */}
-
+      {/* Toast notifications */}
+      <ToastModal
+        open={toast.open}
+        type={toast.type}
+        title={toast.title}
+        description={toast.description}
+        highlightText={toast.highlightText}
+        onClose={() => setToast((prev) => ({ ...prev, open: false }))}
+      />
       </div>
     );
   }

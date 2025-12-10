@@ -91,6 +91,7 @@ const AgentChatBox = ({ listedProps }) => {
   const historyDropdownRefs = useRef({})
   const location = useLocation();
   const [toast, setToast] = useState({ open: false, type: 'success', title: '', description: '', highlightText: '' })
+  const isSavingRef = useRef(false)
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -212,7 +213,7 @@ const AgentChatBox = ({ listedProps }) => {
       // Get chat name before deleting for toast message
       const chatToDelete = historyChats.find(chat => (chat.chat_id || chat.id) === chatId)
       const chatName = chatToDelete?.name || 'conversation'
-      
+
       const response = await deleteContentCreationChat(chatId)
       if (response?.status === 200) {
         // Refresh history list
@@ -269,7 +270,7 @@ const AgentChatBox = ({ listedProps }) => {
     const conversationName = (conversation.name || t("account_chat")).toLowerCase()
     return conversationName.includes(searchTerm)
   })
-  
+
   // Apply sorting: newest chats at top, oldest at bottom
   const sortedFilteredHistoryChats = filteredHistoryChats ? sortHistoryChatsDescending(filteredHistoryChats) : []
 
@@ -913,58 +914,6 @@ const AgentChatBox = ({ listedProps }) => {
           </div>
         )}
 
-        {editData?.chat_id && (
-          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl sm:rounded-2xl w-full max-w-[514px] p-4 sm:p-5 lg:p-6 relative shadow-lg">
-              <button
-                className="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-500 hover:text-gray-700"
-                onClick={() => {
-                  setEditData({})
-                }}
-              >
-                <X size={18} className="sm:w-5 sm:h-5" />
-              </button>
-
-              <div className="flex flex-col gap-2 sm:gap-3">
-                <h2 className="text-[16px] sm:text-[18px] lg:text-[20px] font-semibold text-[#1E1E1E] mb-2 sm:mb-3 lg:mb-4">{t("tara.update_chat_name")}</h2>
-                <div>
-                  <label className="text-xs sm:text-sm font-medium text-[#1e1e1e]">{t("brain_ai.name")}</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={name}
-                    onChange={handleChange}
-                    className={`w-full bg-white p-2 rounded-lg border text-sm sm:text-base ${errors.name ? "border-red-500" : "border-[#e1e4ea]"} focus:outline-none focus:border-[#675FFF]`}
-                    placeholder={t("tara.name_placeholder")}
-                  />
-                  {errors.name && <p className="text-[11px] sm:text-[12px] font-[400] text-red-500 my-2 sm:my-3">{errors.name}</p>}
-                </div>
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-2 w-full">
-                  <button
-                    className="w-full bg-[#675FFF] text-white px-4 sm:px-5 py-1.5 sm:py-2 font-[500] text-sm sm:text-base rounded-lg"
-                    onClick={handleUpdateName}
-                    disabled={updateNameLoading}
-                  >
-                    {updateNameLoading ? (
-                      <p className="flex items-center justify-center gap-1">
-                        {t("processing_normal")}
-                        <span className="loader" />
-                      </p>
-                    ) : (
-                      `${t("brain_ai.update")}`
-                    )}
-                  </button>
-                  <button
-                    className="w-full bg-white text-[#5A687C] border-[1.5px] border-[#E1E4EA] font-[500] text-sm sm:text-base px-4 sm:px-5 py-1.5 sm:py-2 rounded-lg"
-                    onClick={() => setEditData({})}
-                  >
-                    {t("cancel")}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* History Sidebar */}
         {isHistoryOpen && (
@@ -1010,9 +959,9 @@ transform transition-transform duration-300 ease-in-out">
                   </div>
                 ) : sortedFilteredHistoryChats && sortedFilteredHistoryChats.length > 0 ? (
                   <div className="flex flex-col gap-2 h-full overflow-y-auto" style={{ position: 'relative' }}>
-                     {sortedFilteredHistoryChats.slice().reverse().map((conversation, index) => {
-    const chatId = conversation.chat_id || conversation.id
-    const isActive = activeConversation === chatId
+                    {sortedFilteredHistoryChats.slice().reverse().map((conversation, index) => {
+                      const chatId = conversation.chat_id || conversation.id
+                      const isActive = activeConversation === chatId
 
                       // Calculate if this is one of the last few items
                       const isLastThree = index >= sortedFilteredHistoryChats.length - 3
@@ -1021,95 +970,130 @@ transform transition-transform duration-300 ease-in-out">
                         <div
                           key={chatId}
                           className={`relative p-3 rounded-lg transition-colors ${isActive
-                            ? "bg-[#675FFF] text-white"
+                            ? "bg-[#675FFF] text-black"
                             : "bg-white hover:bg-gray-200 text-[#1E1E1E]"
                             }`}
                         >
-                          <div
-                            onClick={() => {
-                              handleSelectChat(chatId)
-                              setIsHistoryOpen(false)
-                            }}
-                            className="cursor-pointer pr-8 sm:pr-8 touch-manipulation"
-                          >
-                            <div className="flex items-center gap-2 mb-1">
-                              {/* Use ChatIcon as img src */}
-                              <img
-                                src={ChatIcon}
-                                alt="chat"
-                                className={`w-4 h-4 ${isActive ? "filter brightness-0 invert" : ""}`}
-                              />
-                              <p className="text-sm font-medium truncate flex-1">
-                                {conversation.name || t("account_chat")}
-                              </p>
-                            </div>
-                            {conversation.updated_at && (
-                              <p className={`text-xs mt-1 ml-6 ${isActive
-                                ? "text-white/80"
-                                : "text-[#5A687C]"
-                                }`}>
-                                {formatTimeAgo(new Date(conversation.updated_at))}
-                              </p>
-                            )}
-                          </div>
-                          {/* ThreeDots Button */}
-                          <div
-                            className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                            ref={(el) => {
-                              if (el) {
-                                historyDropdownRefs.current[chatId] = el
-                              } else {
-                                delete historyDropdownRefs.current[chatId]
-                              }
-                            }}
-                            style={{ zIndex: 100 }}
-                          >
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setActiveHistoryDropdown(activeHistoryDropdown === chatId ? null : chatId)
-                              }}
-                              className={`p-1.5 rounded-lg hover:bg-opacity-20 transition-colors cursor-pointer ${isActive
-                                ? "hover:bg-white/20 text-white "
-                                : "hover:bg-[#675FFF]/10 text-[#5A687C]"
-                                }`}
-                            >
-                              <ThreeDots className="w-4 h-4" color="black" />
-
-
-                            </button>
-                            {/* Dropdown Menu - Opens BELOW the button, above next card */}
-                            {activeHistoryDropdown === chatId && (
-                              <div
-                                className="absolute right-0 sm:right-6 top-full mt-2 w-32 sm:w-32 bg-white rounded-lg shadow-xl border border-[#E1E4EA] overflow-hidden z-[9999]"
-                                style={{
-                                  boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.15)',
-                                  zIndex: 9999
+                          {editData?.chat_id === chatId ? (
+                            // Inline Edit Mode
+                            <div className="flex flex-col gap-2">
+                              <input
+                                type="text"
+                                name="name"
+                                value={name}
+                                onChange={handleChange}
+                                className={`w-full bg-white p-2 rounded-lg border text-sm ${errors.name ? "border-red-500" : "border-[#675FFF]"} focus:outline-none focus:border-[#675FFF]`}
+                                placeholder={t("tara.name_placeholder")}
+                                autoFocus
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    isSavingRef.current = true
+                                    handleUpdateName()
+                                  }
                                 }}
+                                onBlur={() => {
+                                  // Cancel edit when clicking outside, but not if we're saving
+                                  setTimeout(() => {
+                                    if (!isSavingRef.current) {
+                                      setEditData({})
+                                      setName("")
+                                    }
+                                    isSavingRef.current = false
+                                  }, 100)
+                                }}
+                              />
+                              {errors.name && <p className="text-[11px] font-[400] text-red-500">{errors.name}</p>}
+                            </div>
+                          ) : (
+                            <>
+                              <div
+                                onClick={() => {
+                                  handleSelectChat(chatId)
+                                  setIsHistoryOpen(false)
+                                }}
+                                className="cursor-pointer pr-8 sm:pr-8 touch-manipulation"
+                              >
+                                <div className="flex items-center gap-2 mb-1">
+                                  {/* Use ChatIcon as img src */}
+                                  <img
+                                    src={ChatIcon}
+                                    alt="chat"
+                                    className={`w-4 h-4 ${isActive ? "filter brightness-0 invert" : ""}`}
+                                  />
+                                  <p className="text-sm font-medium truncate flex-1">
+                                    {conversation.name || t("account_chat")}
+                                  </p>
+                                </div>
+                                {conversation.updated_at && (
+                                  <p className={`text-xs mt-1 ml-6 ${isActive
+                                    ? "text-white/80"
+                                    : "text-[#5A687C]"
+                                    }`}>
+                                    {formatTimeAgo(new Date(conversation.updated_at))}
+                                  </p>
+                                )}
+                              </div>
+                              {/* ThreeDots Button */}
+                              <div
+                                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                                ref={(el) => {
+                                  if (el) {
+                                    historyDropdownRefs.current[chatId] = el
+                                  } else {
+                                    delete historyDropdownRefs.current[chatId]
+                                  }
+                                }}
+                                style={{ zIndex: 100 }}
                               >
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation()
-                                    handleHistoryRename(conversation)
+                                    setActiveHistoryDropdown(activeHistoryDropdown === chatId ? null : chatId)
                                   }}
-                                  className="w-full px-4 py-2.5 text-left text-sm text-[#1E1E1E] hover:bg-[#F4F5F6] transition-colors flex items-center gap-2"
+                                  className={`p-1.5 rounded-lg hover:bg-opacity-20 transition-colors cursor-pointer ${isActive
+                                    ? "hover:bg-white/20 text-white "
+                                    : "hover:bg-[#675FFF]/10 text-[#5A687C]"
+                                    }`}
                                 >
-                                  <EditIcon className="w-4 h-4" />
-                                  {t("rename") || "Rename"}
+                                  <ThreeDots className="w-4 h-4" color="black" />
+
+
                                 </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleHistoryDelete(chatId)
-                                  }}
-                                  className="w-full px-4 py-2.5 text-left text-sm text-[#DC2626] hover:bg-[#FEF2F2] transition-colors flex items-center gap-2"
-                                >
-                                  <Delete className="w-4 h-4" />
-                                  {t("delete") || "Delete"}
-                                </button>
+                                {/* Dropdown Menu - Opens BELOW the button, above next card */}
+                                {activeHistoryDropdown === chatId && (
+                                  <div
+                                    className="absolute right-0 sm:right-6 top-full mt-2 w-32 sm:w-32 bg-white rounded-lg shadow-xl border border-[#E1E4EA] overflow-hidden z-[9999]"
+                                    style={{
+                                      boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.15)',
+                                      zIndex: 9999
+                                    }}
+                                  >
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleHistoryRename(conversation)
+                                        setActiveHistoryDropdown(null)
+                                      }}
+                                      className="w-full px-4 py-2.5 text-left text-sm text-[#1E1E1E] hover:bg-[#F4F5F6] transition-colors flex items-center gap-2"
+                                    >
+                                      <EditIcon className="w-4 h-4" />
+                                      {t("rename") || "Rename"}
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleHistoryDelete(chatId)
+                                      }}
+                                      className="w-full px-4 py-2.5 text-left text-sm text-[#DC2626] hover:bg-[#FEF2F2] transition-colors flex items-center gap-2"
+                                    >
+                                      <Delete className="w-4 h-4" />
+                                      {t("delete") || "Delete"}
+                                    </button>
+                                  </div>
+                                )}
                               </div>
-                            )}
-                          </div>
+                            </>
+                          )}
                         </div>
                       )
                     })}

@@ -20,6 +20,7 @@ import { getGoogleCalendarAccounts, getInstaAccounts, getLinkedInAccounts, getWh
 
 
 const Integration = ({ firstRender, setFirstRender }) => {
+  const navbarDetails = useSelector((state) => state.navbar)
   const [integartionData, setIntegrationData] = useState({})
   const [instagramData, setInstagramData] = useState([])
   const [whatsappData, setWhatsappData] = useState([])
@@ -177,122 +178,162 @@ const Integration = ({ firstRender, setFirstRender }) => {
     {
       icon: instagram,
       name: "Instagram",
+      description: "It works with only professional and creator account.",
       connectedAccounts: instagramData?.length,
       path: import.meta.env.VITE_INSTA_URL + `&state=${userDetails.id}`,
     },
     {
       icon: google,
       name: "Google",
+      description: "Using regular google account.",
       connectedAccounts: 0,
     },
     {
       icon: linkedin,
       name: "LinkedIn",
+      description: "Using regular linkedin account.",
       connectedAccounts: linkedInData?.length,
       path: import.meta.env.VITE_LINKEDIN_URL + `&state=${userDetails.id}`,
     },
     {
       icon: facebook,
       name: "Facebook",
+      description: "Using regular facebook account.",
       connectedAccounts: 0,
+    },
+        {
+      icon: tiktok,
+      name: "TikTok",
+      description: "Using regular TikTok account.",
+      connectedAccounts: tikTokData?.length,
+      path:  import.meta.env.VITE_TIK_TOK_URL + `&state=${userDetails.id}`,
     },
     {
       icon: systemio,
       name: "Systeme.io",
+      description: "Using regular systeme account.",
       connectedAccounts: 0,
     },
     {
       icon: calendly,
       name: "Calendly",
+      description: "Using regular Calendly account.",
       connectedAccounts: 0,
     },
     {
       icon: google_calender,
       name: "Google Calendar",
+      description: "Using regular Google Calendar account.",
       connectedAccounts: googleCalendarData?.length,
       path: import.meta.env.VITE_GOOGLE_CALENDAR_URL + `&state=${userDetails.id}`,
     },
     {
       icon: whatsapp,
       name: "WhatsApp",
+      description: "Only possible with a WhatsApp Business Account.",
       connectedAccounts: whatsappData?.length,
       path: import.meta.env.VITE_WHATS_APP_URL + `&state=${userDetails.id}`,
     },
     {
       icon: active_campaign,
       name: "Active Campaign",
+      description: "Using regular ActiveCampaign account.",
       connectedAccounts: 0,
     },
     {
       icon: hubspot,
       name: "Hubspot",
+      description: "Using regular Hubspot account.",
       connectedAccounts: 0,
     },
     {
       icon: mailchimp,
       name: "Mailchimp",
+      description: "Using regular Mailchimp account.",
       connectedAccounts: 0,
     },
-    {
-      icon: click_funnels,
-      name: "Clickfunnels",
-      connectedAccounts: 0,
-    },
-    {
-      icon: tiktok,
-      name: "TikTok",
-      connectedAccounts: tikTokData?.length,
-      path:  import.meta.env.VITE_TIK_TOK_URL + `&state=${userDetails.id}`,
-    },
+
   ];
 
   const handleClick = (data) => {
     dispatch(getNavbarData("integrations"))
     setFirstRender(false)
     setIntegrationData(data)
+    // Save to localStorage to persist across tab switches
+    localStorage.setItem('selectedIntegration', JSON.stringify(data))
   }
 
-  if (loading.whatsapp && loading.instagram) return <p className='flex justify-center items-center h-full'><span className='loader' /></p>
+  // Reset to list view when switching back to integration tab from another tab
+  useEffect(() => {
+    if (firstRender) {
+      // Clear saved integration and reset state when firstRender is true
+      localStorage.removeItem('selectedIntegration')
+      setIntegrationData({})
+    }
+  }, [firstRender])
+
+  // Ensure navbar/sidebar stays visible when navigating into a specific integration
+  useEffect(() => {
+    if (!firstRender) {
+      dispatch(getNavbarData("integrations"))
+    }
+  }, [firstRender, dispatch])
+
+  if (loading.whatsapp && loading.instagram) return (
+    <div className='fixed inset-0 flex justify-end items-center pr-[40%]'>
+      <span className='loader' />
+    </div>
+  )
+
+  // Determine if we should show the list or detail view
+  const shouldShowList = firstRender || !integartionData || Object.keys(integartionData).length === 0
 
   return (
-    <div className={`flex flex-col  ${firstRender ? 'py-4 pr-4' : 'pb-4 pr-0'} w-full items-start gap-6 `}>
-      {firstRender ? <>
+    <div className={`flex flex-col  ${shouldShowList ? 'p-6' : 'pb-4 pr-0'} w-full items-start gap-6 `}>
+      {shouldShowList ? <>
         {/* Header */}
         <header className="flex items-center justify-between w-full ">
-          <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
+          <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8 px-5">
             Integrations
           </h1>
         </header>
 
         {/* Integrations List */}
-        <div className="flex flex-col px-5 py-3 items-center justify-center gap-3 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-5 py-3 w-full">
           {integrations.map((integration, index) => (
             <div
               key={index}
               onClick={() => handleClick(integration)}
-              className="w-full cursor-pointer hover:opacity-70 md:max-w-[763px] mx-auto bg-white border-[0.5px] border-solid border-[#e1e4ea] rounded-lg"
+              className="cursor-pointer hover:opacity-70 bg-white border-[0.5px] border-solid border-[#e1e4ea] rounded-2xl"
             >
               <div className="flex items-center justify-between p-5">
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-start gap-3 flex-1 min-w-0">
                   {integration.icon ? (
                     <img
                       loading='lazy'
-                      className="w-5 h-5"
+                      className="w-10 h-10 flex-shrink-0 rounded-lg"
                       alt={integration.name}
                       src={integration.icon}
                     />
                   ) : (
-                    <div className="w-5 h-5 bg-[url(${integration.iconBg})] bg-[100%_100%]" />
+                    <div className="w-10 h-10 bg-[url(${integration.iconBg})] bg-[100%_100%] flex-shrink-0 rounded-lg" />
                   )}
-                  <span className="font-medium text-[#1E1E1E] text-base">
+                  <div className="flex flex-col gap-1 flex-1 min-w-0">
+                    <span className="font-semibold text-[#1E1E1E] text-base leading-tight">
                     {integration.name}
                   </span>
+                    <span className="text-sm text-[#5A687C] leading-tight">
+                      {integration.description}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-[#5A687C] text-base">
-                    {integration.connectedAccounts} connected account
+                <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+                  <div className="w-6 h-6 rounded-full bg-[#F3F4F6] flex items-center justify-center">
+                    <span className="font-medium text-[#1E1E1E] text-sm">
+                      {integration.connectedAccounts}
                   </span>
-                  <ChevronRight className="w-5 h-5" color='#5A687C' />
+                  </div>
+                  <ChevronRight className="w-5 h-5 flex-shrink-0" color='#5A687C' />
                 </div>
               </div>
             </div>

@@ -646,7 +646,7 @@ const ManagePlan = ({ onClose }) => {
         </div>
 
         {/* Thinking about leaving section */}
-        <div className="bg-white rounded-xl border border-[#E1E4EA] p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="bg-white rounded-xl border border-[#E1E4EA]  p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex-1">
             <h3 className="text-[16px] font-[600] text-[#1E1E1E] mb-2">{t("settings.tab_2_list.thinking_about_leaving")}</h3>
             <p className="text-[14px] font-[400] text-[#5A687C]">
@@ -655,7 +655,7 @@ const ManagePlan = ({ onClose }) => {
           </div>
           <button
             onClick={() => setShowCancelPopup(true)}
-            className="px-4 py-2 bg-[#F7F7F8] border border-[#E1E4EA] text-[#1E1E1E] text-[14px] font-[500] rounded-lg hover:bg-[#EFF0F2] transition-colors whitespace-nowrap"
+            className="px-4 py-2 bg-[#F7F7F8] cursor-pointer border border-[#E1E4EA] text-[#1E1E1E] text-[14px] font-[500] rounded-lg hover:bg-[#EFF0F2] transition-colors whitespace-nowrap"
           >
             {t("settings.tab_2_list.cancel_my_plan")}
           </button>

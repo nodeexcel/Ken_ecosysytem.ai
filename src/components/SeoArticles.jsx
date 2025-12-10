@@ -181,18 +181,18 @@ function SeoArticles() {
     }, []);
 
 
-    // Dummy data for Share of Voice chart
-    const chartData = {
+    // Dummy data for Share of Voice chart - Overall view
+    const overallChartData = {
         labels: ['1/3', '2/3', '3/3', '4/3', '5/3', '6/3', '7/3', '8/3', '9/3'],
         datasets: [
             {
                 label: 'Share of Voice',
-                data: [8, 12, 15, 10, 18, 14, 16, 20, 10],
+                data: [18, 12, 20, 12, 28, 14, 24, 12, 22],
                 borderColor: '#675FFF',
                 backgroundColor: 'rgba(103, 95, 255, 0.1)',
                 fill: true,
                 tension: 0.4,
-                pointRadius: 4,
+                pointRadius: 0,
                 pointBackgroundColor: '#675FFF',
                 pointBorderColor: '#fff',
                 pointBorderWidth: 2,
@@ -200,12 +200,80 @@ function SeoArticles() {
         ],
     };
 
+    // Dummy data for Share of Voice chart - Per engine view
+    const perEngineChartData = {
+        labels: ['1/3', '2/3', '3/3', '4/3', '5/3', '6/3', '7/3', '8/3', '9/3'],
+        datasets: [
+            {
+                label: 'ChatGPT',
+                data: [12, 18, 15, 10, 20, 22, 18, 16, 14],
+                borderColor: '#22C55E', // Green
+                backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                fill: false,
+                tension: 0.4,
+                pointRadius: 0,
+                pointBackgroundColor: '#22C55E',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+            },
+            {
+                label: 'DeepSeek',
+                data: [28, 26, 24, 26, 30, 32, 30, 28, 26],
+                borderColor: '#3B82F6', // Blue
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                fill: false,
+                tension: 0.4,
+                pointRadius: 0,
+                pointBackgroundColor: '#3B82F6',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+            },
+            {
+                label: 'Gemini',
+                data: [14, 10, 12, 18, 16, 14, 18, 20, 18],
+                borderColor: '#06B6D4', // Cyan/Light blue
+                backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                fill: false,
+                tension: 0.4,
+                pointRadius: 0,
+                pointBackgroundColor: '#06B6D4',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+            },
+            {
+                label: 'Perplexity',
+                data: [6, 5, 4, 5, 6, 7, 6, 5, 5],
+                borderColor: '#F97316', // Orange
+                backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                fill: false,
+                tension: 0.4,
+                pointRadius: 0,
+                pointBackgroundColor: '#F97316',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+            },
+        ],
+    };
+
+    // Use appropriate chart data based on selected view
+    const chartData = selectedView === "Per engine" ? perEngineChartData : overallChartData;
+
     const chartOptions = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
             legend: {
-                display: false,
+                display: selectedView === "Per engine",
+                position: 'bottom',
+                labels: {
+                    usePointStyle: true,
+                    padding: 15,
+                    font: {
+                        size: 12,
+                        weight: 400,
+                    },
+                    color: '#5A687C',
+                },
             },
             tooltip: {
                 backgroundColor: '#fff',
@@ -214,7 +282,7 @@ function SeoArticles() {
                 borderColor: '#E1E4EA',
                 borderWidth: 1,
                 padding: 12,
-                displayColors: false,
+                displayColors: selectedView === "Per engine",
             },
         },
         scales: {
@@ -355,11 +423,11 @@ function SeoArticles() {
                                         <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#5A687C] pointer-events-none" />
                                     </div>
                                     {/* Toggle slider for Overall / Per engine */}
-                                    <div className="inline-flex items-center bg-[#F3F4F6] rounded-lg p-1 cursor-pointer">
+                                    <div className="inline-flex items-center bg-[#F3F4F6] rounded-lg p-1 ">
                                         <button
                                             type="button"
                                             onClick={() => setSelectedView("Overall")}
-                                            className={`px-4 py-1.5 rounded-lg text-sm font-[600] transition-all ${selectedView === "Overall"
+                                            className={`px-4 py-1.5 rounded-lg text-sm font-[600] cursor-pointer transition-all ${selectedView === "Overall"
                                                 ? "bg-white text-[#111827] shadow-sm"
                                                 : "bg-transparent text-[#9CA3AF]"
                                                 }`}
@@ -369,7 +437,7 @@ function SeoArticles() {
                                         <button
                                             type="button"
                                             onClick={() => setSelectedView("Per engine")}
-                                            className={`px-4 py-1.5 rounded-lg text-sm font-[500] transition-all ${selectedView === "Per engine"
+                                            className={`px-4 py-1.5 rounded-lg text-sm font-[500] cursor-pointer transition-all ${selectedView === "Per engine"
                                                 ? "bg-white text-[#111827] shadow-sm"
                                                 : "bg-transparent text-[#9CA3AF]"
                                                 }`}

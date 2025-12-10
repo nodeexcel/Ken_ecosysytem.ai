@@ -9,6 +9,8 @@ import { useSelector } from "react-redux";
 import { FaChevronDown } from "react-icons/fa";
 import { outboundCall } from "../api/callAgent";
 import { format } from "date-fns";
+import StatusModal from "./StatusModal";
+import ToastModal from "./ToastModal";
 
 // Mock data for fallback
 // const mockAgents = [
@@ -78,6 +80,43 @@ export default function OutBoundCalls() {
     const [loading, setLoading] = useState(true);
     const [agents, setAgents] = useState([]);
     const [error, setError] = useState(null);
+    const [statusModal, setStatusModal] = useState({
+        open: false,
+        type: "success",
+        title: "",
+        description: "",
+        primaryButtonText: "OK",
+    });
+    const [toast, setToast] = useState({
+        open: false,
+        type: "success",
+        title: "",
+        description: "",
+        highlightText: "",
+    });
+
+    const handleFinishTest = () => {
+        setStatusModal({
+            open: true,
+            type: "success",
+            title: t("phone.test_call_success") || "Test call completed",
+            description: t("phone.test_call_success_desc") || "Your test call finished successfully.",
+            primaryButtonText: t("ok") || "OK",
+        });
+        setShowModal(false);
+        setSecondModel(false);
+    };
+
+    const handleNotReceiveCall = () => {
+        setToast({
+            open: true,
+            type: "error",
+            title: t("phone.call_not_received") || "Call not received",
+            description: t("phone.call_not_received_desc") || "We couldn't detect the test call. Please try again.",
+        });
+        setShowModal(false);
+        setSecondModel(false);
+    };
 
     // Fetch outbound calls data on component mount
     useEffect(() => {
@@ -147,6 +186,12 @@ export default function OutBoundCalls() {
         } catch (error) {
             console.error('Error fetching outbound calls:', error);
             setError('Failed to load outbound calls data');
+            setToast({
+                open: true,
+                type: "error",
+                title: t("error") || "Error",
+                description: error?.message || "Failed to load outbound calls data. Please try again.",
+            });
             // Fallback to mock data on error
             // setAgents(mockAgents);
         } finally {
@@ -679,12 +724,13 @@ export default function OutBoundCalls() {
                         </div>
                         <div className="flex gap-2 mt-4">
                             <button
-                                onClick={() => setShowModal(false)}
+                                onClick={handleNotReceiveCall}
                                 className="w-full text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
                             >
                                {t("phone.not_receive_a_call")}
                             </button>
                             <button
+                                onClick={handleFinishTest}
                                 className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
                             >
                                {t("phone.finish_test")}
@@ -693,6 +739,26 @@ export default function OutBoundCalls() {
                     </div>}
                 </div>
             )}
+            {/* Status modal for test call */}
+            <StatusModal
+                isOpen={statusModal.open}
+                type={statusModal.type}
+                title={statusModal.title}
+                description={statusModal.description}
+                primaryButtonText={statusModal.primaryButtonText}
+                onClose={() => setStatusModal((prev) => ({ ...prev, open: false }))}
+                onPrimaryClick={() => setStatusModal((prev) => ({ ...prev, open: false }))}
+            />
+
+            {/* Toast notifications */}
+            <ToastModal
+                open={toast.open}
+                type={toast.type}
+                title={toast.title}
+                description={toast.description}
+                highlightText={toast.highlightText}
+                onClose={() => setToast((prev) => ({ ...prev, open: false }))}
+            />
         </div>
     );
 }

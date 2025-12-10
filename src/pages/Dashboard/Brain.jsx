@@ -1,9 +1,12 @@
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Contacts from "../../components/Contacts"
 import Knowledge from "../../components/Knowledge"
 import Integration from "../../components/Integration"
-import { ContactIcon, IntegrationIcon, KnowledgeIcon, LeftArrow } from "../../icons/icons"
+import { LeftArrow } from "../../icons/icons"
+import integrationSvg from "../../assets/svg/Integration.svg"
+import userBrainSvg from "../../assets/svg/UserBrain.svg"
+import knowledgeBookSvg from "../../assets/svg/KnowledgeBook.svg"
 import { useSelector } from "react-redux"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { CheckCircle, XCircle, Instagram, ArrowRight, RefreshCw, X } from "lucide-react"
@@ -22,20 +25,83 @@ const BrainAI = () => {
   const [showModal, setShowModal] = useState(true)
   const [sidebarStatus, setSideBarStatus] = useState(false)
   const [firstRender, setFirstRender] = useState(true)
+  const prevTabRef = useRef(tabFromUrl)
 
   // Sync activePath with URL param
   useEffect(() => {
-    const tabFromUrl = searchParams.get('tab')
+    const tabFromUrl = searchParams.get('tab') || 'contacts'
     if (tabFromUrl && ['contacts', 'knowledge', 'integration'].includes(tabFromUrl)) {
+      const prevTab = prevTabRef.current
       setActivePath(tabFromUrl)
+      
+      // Reset firstRender when switching to integration tab from another tab
+      if (tabFromUrl === 'integration' && prevTab !== 'integration') {
+        setFirstRender(true)
+        // Clear saved integration when switching back to integration tab
+        localStorage.removeItem('selectedIntegration')
+      }
+      
+      prevTabRef.current = tabFromUrl
     }
   }, [searchParams])
 
 
+  const IntegrationIcon = ({ isActive, isHover }) => {
+    const color = isActive ? "#2563eb" : isHover ? "#1E1E1E" : "#5A687C"
+    return (
+      <img 
+        src={integrationSvg} 
+        alt="Integration" 
+        className="w-4 h-4" 
+        style={{ 
+          filter: isActive 
+            ? "brightness(0) saturate(100%) invert(27%) sepia(96%) saturate(7482%) hue-rotate(245deg) brightness(98%) contrast(96%)" 
+            : isHover 
+            ? "brightness(0) saturate(100%) invert(8%) sepia(4%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)"
+            : "brightness(0) saturate(100%) invert(38%) sepia(6%) saturate(1000%) hue-rotate(180deg) brightness(95%) contrast(88%)"
+        }} 
+      />
+    )
+  }
+
+  const ContactsIcon = ({ isActive, isHover }) => {
+    return (
+      <img
+        src={userBrainSvg}
+        alt="Contacts"
+        className="w-4 h-4"
+        style={{
+          filter: isActive
+            ? "brightness(0) saturate(100%) invert(30%) sepia(96%) saturate(2291%) hue-rotate(221deg) brightness(92%) contrast(99%)"
+            : isHover
+            ? "brightness(0) saturate(100%) invert(8%) sepia(4%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)"
+            : "brightness(0) saturate(100%) invert(38%) sepia(6%) saturate(1000%) hue-rotate(180deg) brightness(95%) contrast(88%)"
+        }}
+      />
+    )
+  }
+
+  const KnowledgeIconLocal = ({ isActive, isHover }) => {
+    return (
+      <img
+        src={knowledgeBookSvg}
+        alt="Knowledge"
+        className="w-4 h-4"
+        style={{
+          filter: isActive
+            ? "brightness(0) saturate(100%) invert(30%) sepia(96%) saturate(2291%) hue-rotate(221deg) brightness(92%) contrast(99%)"
+            : isHover
+            ? "brightness(0) saturate(100%) invert(8%) sepia(4%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)"
+            : "brightness(0) saturate(100%) invert(38%) sepia(6%) saturate(1000%) hue-rotate(180deg) brightness(95%) contrast(88%)"
+        }}
+      />
+    )
+  }
+
   const sideMenuItems = [
-    { label: `${t("contacts")}`, icon: <ContactIcon status={activePath == "contacts"} />, hoverIcon: <ContactIcon hover={true} />, path: "contacts" },
-    { label: `${t("knowledge")}`, icon: <KnowledgeIcon status={activePath == "knowledge"} />, hoverIcon: <KnowledgeIcon hover={true} />, path: "knowledge" },
-    { label: `${t("integration")}`, icon: <IntegrationIcon status={activePath == "integration"} />, hoverIcon: <IntegrationIcon hover={true} />, path: "integration" },
+    { label: `${t("contacts")}`, icon: <ContactsIcon isActive={activePath == "contacts"} />, hoverIcon: <ContactsIcon isHover={true} />, path: "contacts" },
+    { label: `${t("knowledge")}`, icon: <KnowledgeIconLocal isActive={activePath == "knowledge"} />, hoverIcon: <KnowledgeIconLocal isHover={true} />, path: "knowledge" },
+    { label: `${t("integration")}`, icon: <IntegrationIcon isActive={activePath == "integration"} />, hoverIcon: <IntegrationIcon isHover={true} />, path: "integration" },
   ]
 
   const renderMainContent = () => {
@@ -206,7 +272,6 @@ const BrainAI = () => {
       <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><BsThreeDots size={24} color='#1e1e1e' /></div>
       <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
         {/* Sidebar */}
-        {navbarDetails?.label !== "integrations" && (
           <div className="lg:flex hidden flex-col bg-white gap-8 border border-[#D6D6D6]
     min-w-[272px] h-[calc(100vh-89px)] mt-2 rounded-r-2xl rounded-tl-none rounded-bl-none fixed overflow-y-auto">
 
@@ -220,7 +285,7 @@ const BrainAI = () => {
                   <h1 className="text-[20px] font-[600]">Brain AI</h1>
                 </div>
               </div>
-              <hr className="text-[#E1E4EA]" />
+              <hr className="text-[#E1E4EA] px-6"  />
             </div>
             <div className="flex flex-col w-full items-start gap-2 px-3">
               {sideMenuItems.map((item, i) => {
@@ -235,13 +300,13 @@ const BrainAI = () => {
                       setActivePath(item.path);
                       setSearchParams({ tab: item.path }, { replace: true });
                     }}
-                    className={`cursor-pointer group flex items-center justify-start gap-1.5 px-2 py-2 w-full h-auto rounded-2xl ${isActive ? "bg-[#F0EFFF] text-[#675FFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                    className={`cursor-pointer group flex items-center justify-start gap-1.5 px-2 py-2 w-full h-auto rounded-2xl ${isActive ? "bg-[#F0EFFF] text-blue-600" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                       }`}
                   >
                     {isActive ? Icon
                       : <div className="flex items-center gap-2"><div className='group-hover:hidden'>{Icon}</div> <div className='hidden group-hover:block'>{hoverIcon}</div></div>
                     }
-                    <span className={`font-[400] text-[16px] ${isActive ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                    <span className={`font-[400] text-[16px] ${isActive ? "text-blue-600" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
                       {item.label}
                     </span>
                   </button>
@@ -249,7 +314,6 @@ const BrainAI = () => {
               })}
             </div>
           </div>
-        )}
 
         {/* Instagram Status Modal */}
         <InstagramStatus />
@@ -297,13 +361,13 @@ const BrainAI = () => {
                       setSearchParams({ tab: item.path }, { replace: true });
                       setSideBarStatus(false)
                     }}
-                    className={`cursor-pointer group flex items-center justify-start gap-1.5 px-2 py-2 w-full h-auto rounded ${isActive ? "bg-[#F0EFFF] text-[#675FFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                    className={`cursor-pointer group flex items-center justify-start gap-1.5 px-2 py-2 w-full h-auto rounded ${isActive ? "bg-[#F0EFFF] text-blue-600" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                       }`}
                   >
                     {isActive ? Icon
                       : <div className="flex items-center gap-2"><div className='group-hover:hidden'>{Icon}</div> <div className='hidden group-hover:block'>{hoverIcon}</div></div>
                     }
-                    <span className={`font-[400] text-[16px] ${isActive ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                    <span className={`font-[400] text-[16px] ${isActive ? "text-blue-600" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
                       {item.label}
                     </span>
                   </button>

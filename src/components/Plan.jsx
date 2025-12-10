@@ -667,7 +667,7 @@ export const CancelSubscriptionPopup = ({ t, onClose }) => {
   {/* Left Button */}
   <button
     onClick={onClose}
-    className="flex-1 h-[38px] flex items-center justify-center border border-[#E1E1E1] 
+    className="flex-1 h-[38px] flex cursor-pointer items-center justify-center border border-[#E1E1E1] 
                bg-white text-[#1E1E1E] rounded-lg hover:bg-gray-50 
                text-[13px] font-medium whitespace-nowrap"
   >
@@ -677,7 +677,7 @@ export const CancelSubscriptionPopup = ({ t, onClose }) => {
   {/* Right Button */}
   <button
     onClick={onClose}
-    className="flex-1 h-[38px] flex items-center justify-center 
+    className="flex-1 h-[38px] flex cursor-pointer items-center justify-center 
                bg-[#675FFF] text-white rounded-lg hover:bg-[#5E54FF] 
                text-[13px] font-medium whitespace-nowrap"
   >

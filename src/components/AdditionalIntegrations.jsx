@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import messageIcon from '../assets/svg/message_temp.svg'
+import messageIcon from '../assets/svg/Messages.svg'
 import metaIntegartion from '../assets/svg/meta_integration.svg'
-import { X } from "lucide-react";
+import { X, Pencil, Trash2, Sparkles } from "lucide-react";
 import { IoIosAdd, IoMdHelpCircleOutline } from "react-icons/io";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { TfiHelpAlt } from "react-icons/tfi";
@@ -125,28 +125,28 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
         switch (integartionData.name) {
             case "WhatsApp":
                 return (
-                    <>
+                    <div className="grid grid-cols-2 gap-4 w-full">
                         {staticData.map((e) => (
-                            <div key={e.label} className="w-full my-1 gap-3 p-3 flex justify-between border border-solid border-[#e1e4ea] bg-white rounded-lg">
-                                <div className="flex gap-2">
-                                    <div>
+                            <div key={e.label} className="bg-white rounded-2xl border border-[#e1e4ea] p-4 shadow-sm flex flex-col gap-3">
+                                <div className="flex items-start gap-3">
+                                    <div className="flex items-center justify-center w-10 h-10 bg-[#F3F0FF] rounded-full flex-shrink-0">
                                         <img
-                                            className="w-12 h-12"
+                                            className="w-5 h-5"
                                             alt="messageIcon"
                                             src={messageIcon}
                                         />
                                     </div>
-                                    <div className="pt-1">
-                                        <div className="flex items-center gap-2">
-                                            <h1 className="text-[14px] font-[600] font-inter">{e.label}</h1>
-                                            <p className="text-[#067647] font-[500] bg-[#ECFDF3] rounded-2xl px-2 border text-[14px] border-[#067647]">{e.status}</p>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                            <h1 className="text-[14px] font-[600] font-inter text-[#1E1E1E]">{e.label}</h1>
+                                            <span className="text-[#067647] font-[500] bg-[#ECFDF3] rounded-full px-2 py-0.5 text-[12px] border border-[#067647] whitespace-nowrap">{e.status}</span>
                                         </div>
-                                        <p className="text-[12px] text-[#5A687C] font-[400] font-inter">{e.description}</p>
+                                        <p className="text-[12px] text-[#5A687C] font-[400] font-inter mt-2 leading-relaxed">{e.description}</p>
                                     </div>
                                 </div>
                             </div>
                         ))}
-                    </>
+                    </div>
                 )
         }
     }
@@ -155,24 +155,38 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
         return (
             <div>
                 {accountsData?.length > 0 && accountsData.map((e, i) => (
-                    <div key={i} className="w-full gap-3 mb-2 p-3 flex justify-between border border-solid border-[#e1e4ea] bg-white rounded-lg">
-                        <div className="flex flex-col gap-2 pl-2">
-                            <div className="flex items-center gap-2">
-                                <div>
-                                    <img
-                                        className="w-5 h-5"
-                                        alt={integartionData.name}
-                                        src={integartionData.icon}
-                                    />
-                                </div>
-                                <h1 className="text-[16px] font-[500] font-inter">{specialCharacter}{e[label].length > 30
-                                    ? `${e[label].slice(0, 30)}...`
-                                    : e[label]}</h1>
+                    <div key={i} className="w-full mb-2 p-4 flex items-center justify-between border border-[#e1e4ea] bg-white rounded-2xl">
+                        <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-full bg-[#F6F7F9] flex items-center justify-center flex-shrink-0">
+                                <img
+                                    className="w-8 h-8"
+                                    alt={integartionData.name}
+                                    src={integartionData.icon}
+                                />
                             </div>
-                            <li className="text-[12px] pl-1 text-[#5A687C] font-[500] font-inter">{t("brain_ai.integrations.read_write")} {integartionData.name}.</li>
+                            <div className="flex flex-col gap-0.5 min-w-0">
+                                <h1 className="text-[16px] font-[600] font-inter truncate">
+                                    {specialCharacter}{e[label].length > 30 ? `${e[label].slice(0, 30)}...` : e[label]}
+                                </h1>
+                                <p className="text-[13px] text-[#5A687C] font-[500] font-inter truncate">
+                                    {t("brain_ai.integrations.read_write")} {integartionData.name}.
+                                </p>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <button onClick={() => handleDelete(e[id])} className="text-[#FF3B30] cursor-pointer border-[1.5px] border-[#FF3B30] rounded-lg px-[20px] py-[7px] text-[16px] font-[500]" >{t("brain_ai.delete")}</button>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                            <button
+                                className="flex items-center cursor-pointer gap-1 px-3 py-1 text-sm text-[#5A687C] bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F8F9FB]"
+                            >
+                                <Pencil className="w-4 h-4" />
+                                <span>{t("brain_ai.edit") || "Edit"}</span>
+                            </button>
+                            <button
+                                onClick={() => handleDelete(e[id])}
+                                className="flex items-center cursor-pointer gap-1 px-3 py-1 font-[500] text-sm text-[#FF3B30] bg-white border border-[#FF3B30] rounded-lg hover:bg-[#FFF1EF]"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                                <span>{t("brain_ai.delete")}</span>
+                            </button>
                         </div>
                     </div>
                 ))}
@@ -243,6 +257,8 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
     const handleBack = () => {
         dispatch(getNavbarData("Brain AI"));
         setFirstRender(true)
+        // Clear saved integration when going back to list
+        localStorage.removeItem('selectedIntegration')
     }
 
     const renderNumberOfAccounts = () => {
@@ -263,22 +279,18 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
     }
 
     return (
-        <div className="w-full flex flex-col gap-5">
-            <div className=''>
-                <div className='flex justify-between px-2 items-center'>
-                    <div className="flex gap-4 items-center h-[45px] pb-2 pl-5 cursor-pointer" onClick={handleBack}>
-                        <LeftArrow />
-                        <h1 className="text-[20px] font-[600]">{t("brain_ai.integrations.integrations")}</h1>
-                    </div>
-                </div>
-                <hr className='text-[#E1E4EA]' />
-            </div>
-            <div className="flex flex-col w-full items-start gap-6 md:max-w-[763px] lg:px-0 px-10 mx-auto">
+        <div className="w-full flex flex-col gap-5 p-10">
+            <div className="flex flex-col w-full items-start gap-6 md:max-w-full lg:px-0 mx-auto">
                 <div className="flex items-center justify-between w-full">
-                    <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
-                        {integartionData.name}
-                    </h1>
-                    <button onClick={() => setOpen(true)} className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-lg text-white">
+                    <div className="flex flex-col gap-1">
+                        <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
+                            {integartionData.name}
+                        </h1>
+                        <p className="text-sm text-[#5A687C]">
+                            {renderNumberOfAccounts()} Account Connected
+                        </p>
+                    </div>
+                    <button onClick={() => setOpen(true)} className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#d6d6d6] rounded-lg text-white">
                         <div className="flex items-center gap-2">
                             <IoIosAdd color="" />
                             <span className="font-medium text-base leading-6">
@@ -286,21 +298,6 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             </span>
                         </div>
                     </button>
-                </div>
-
-                <div className="flex items-start relative self-stretch w-full flex-[0_0_auto] border-b border-[#e1e4ea]">
-                    {tabs.map((e, i) => <button
-                        key={i}
-                        className={`inline-flex items-center justify-center gap-1 p-2.5 relative flex-[0_0_auto] border-b-2 ${integartionData.connectedAccounts > 0
-                            ? "border-[black] text-black"
-                            : "border-[#e1e4ea] text-text-grey"
-                            } rounded-none`}
-                    >
-                        <span className={`font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${integartionData.connectedAccounts > 0 ? "text-[black]"
-                            : "text-[#5A687C] "}`}>
-                            {renderNumberOfAccounts()} {e.label}
-                        </span>
-                    </button>)}
                 </div>
 
                 <div className="w-full">
@@ -399,7 +396,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                 </div>
             </div>} */}
                 {open && <div className="fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
-                    <div className="bg-white max-h-[600px] flex flex-col gap-2 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
+                    <div className="bg-white max-h-[600px] flex flex-col gap-4 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
                         <button
                             onClick={() => setOpen(false)}
                             className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
@@ -407,54 +404,50 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             <X className="w-5 h-5" />
                         </button>
 
-                        <div className="flex bg-[#F6F7F9] border border-[#E1E4EA] rounded-xl p-[10px] w-fit">
-                            <img
-                                className="w-5 h-5"
-                                alt={integartionData.name}
-                                src={activeTab === "insta" ? integartionData.icon : metaIntegartion}
-                            />
+                        <div className="flex items-center justify-center">
+                            <div className="flex items-center justify-center bg-[#F6F7F9] border border-[#E1E4EA] rounded-full w-14 h-14">
+                                <img
+                                    className="w-8 h-8"
+                                    alt={integartionData.name}
+                                    src={activeTab === "insta" ? integartionData.icon : metaIntegartion}
+                                />
+                            </div>
                         </div>
-                        <h2 className="text-[#1E1E1E] font-[600] text-[20px] mb-1">
-                            {t("brain_ai.integrations.connect")} {integartionData.name}
-                        </h2>
-                        <p className="text-[16px] font-[400] text-[#5A687C]">
-                            {activeTab === "insta" ? ` ${t("brain_ai.integrations.use_your")} ${integartionData.name} ${t("brain_ai.integrations.account_to_ecosystem")}` : `${t("brain_ai.integrations.use_meta_business")}`}
-                        </p>
+                        <div className="text-center">
+                            <h2 className="text-[#1E1E1E] font-[600] text-[20px] mb-1">
+                                {t("brain_ai.integrations.connect")} {integartionData.name}
+                            </h2>
+                            <p className="text-[16px] font-[400] text-[#5A687C]">
+                                {activeTab === "insta" ? ` ${t("brain_ai.integrations.use_your")} ${integartionData.name} ${t("brain_ai.integrations.account_to_ecosystem")}` : `${t("brain_ai.integrations.use_meta_business")}`}
+                            </p>
+                        </div>
 
                         {/* Tab Content */}
                         <div className="mt-3">
                             {activeTab === "insta" && (
                                 <>
-                                    <div className="flex flex-col gap-3">
-                                        <div className="flex items-center gap-2" > <p className="text-[14px] font-medium text-[#292D32]">{t("brain_ai.integrations.few_steps_left")}
-                                        </p>
-                                            <IoMdHelpCircleOutline /></div>
+                                    <div className="bg-[#F6F7F9] border border-[#E1E4EA] rounded-xl p-4 flex flex-col gap-3 px-2">
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-[14px] font-medium text-[#292D32]">{t("brain_ai.integrations.few_steps_left")}</p>
+                                            <IoMdHelpCircleOutline className="w-4 h-4 text-[#5A687C]" />
+                                        </div>
                                         <p className="text-[16px] font-[400] text-[#5A687C]">
                                             {t("brain_ai.integrations.log_in_with")} {integartionData.name} {t("brain_ai.integrations.your_permissions")}
                                         </p>
-                                        <p className="text-[14px] text-[#5A687C]">
-                                            {t("by_continuing")}{" "}
-                                            <span className="text-[#5E54FF] underline cursor-pointer" onClick={() => renderPath("privacy")}>
-                                                {t("privacy_policy")}
-                                            </span>.
-                                        </p>
+                                        
                                     </div>
-                                    <div className="flex flex-col gap-5 w-full mt-4">
+                                    <div className="flex flex-col gap-3 w-full mt-4">
                                         <a href={integartionData.path} target="_blank">
                                             <button
-                                                // onClick={handleNext}
-                                                className="w-full text-[16px] cursor-pointer text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
-
-
+                                                className="w-full text-[16px] cursor-pointer text-white rounded-[8px] bg-[#5E54FF] h-[38px] font-medium"
                                             >
                                                 {t("brain_ai.integrations.go_to")} {integartionData.name}
-
                                             </button>
                                         </a>
 
                                         <button
                                             onClick={() => setActiveTab("meta")}
-                                            className="w-full cursor-pointer text-[16px] text-[#5E54FF] mt-3 bg-white"
+                                            className="w-full cursor-pointer text-[16px] text-[#5E54FF] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px] font-medium"
                                         >
                                             {t("brain_ai.integrations.connect_with_meta")}
                                         </button>
@@ -463,27 +456,27 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             )}
                             {activeTab === "meta" && (
                                 <>
-                                    <div className="flex flex-col gap-3">
-                                        <div className="flex items-center gap-2" > <p className="text-[14px] font-medium text-[#292D32]">{t("brain_ai.integrations.continue_with_meta_business")}
-                                        </p>
-                                            <IoMdHelpCircleOutline /></div>
+                                    <div className="bg-[#F6F7F9] border border-[#E1E4EA] rounded-xl p-4 flex flex-col gap-3">
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-[14px] font-medium text-[#292D32]">{t("brain_ai.integrations.continue_with_meta_business")}</p>
+                                            <IoMdHelpCircleOutline className="w-4 h-4 text-[#5A687C]" />
+                                        </div>
                                         <p className="text-[16px] font-[400] text-[#5A687C]">
                                             {t("brain_ai.integrations.go_to_facebook_to_link")}
                                         </p>
                                     </div>
-                                    <div className="flex flex-col gap-5 w-full mt-4">
-                                        <button
-                                            // onClick={handleNext}
-                                            className="w-full text-[16px] cursor-pointer text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
-                                        >
-                                            {t("brain_ai.integrations.go_to_facebook")}
-                                        </button>
+                                    <div className="flex flex-row gap-3 w-full mt-4">
                                         <button
                                             onClick={() => setActiveTab("insta")}
-                                            className="w-full flex cursor-pointer items-center justify-center gap-3 text-[16px] text-[#1E1E1E] mt-3 bg-white"
+                                            className="flex-1 flex cursor-pointer items-center justify-center gap-2 text-[16px] text-[#1E1E1E] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px] font-medium"
                                         >
-                                            <FaArrowLeft />
+                                            
                                             {t("brain_ai.integrations.back")}
+                                        </button>
+                                        <button
+                                            className="flex-1 text-[16px] cursor-pointer text-white rounded-[8px] bg-[#5E54FF] h-[38px] font-medium"
+                                        >
+                                            {t("brain_ai.integrations.go_to_facebook")}
                                         </button>
                                     </div>
                                 </>
@@ -495,10 +488,10 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                     <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
                         {t("brain_ai.integrations.message_temple")}
                     </h1>
-                    <button onClick={() => setCreateTemplateOpen(true)} className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] border-[#675FFF] border-[1.5px] rounded-lg bg-white text-white">
+                    <button onClick={() => setCreateTemplateOpen(true)} className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] border-[#d6d6d6] border-[1.5px] rounded-lg bg-white text-[#000000]">
                         <div className="flex items-center gap-2">
-                            <IoIosAdd color="#675FFF" />
-                            <span className="font-medium text-[#675FFF] text-base leading-6">
+                            <IoIosAdd color="#000000" fontWeight={400}/>
+                            <span className="font-medium text-[#000000] text-base leading-6">
                                 {t("brain_ai.integrations.create_temple")}
                             </span>
                         </div>
@@ -518,14 +511,12 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                         <h2 className="text-[#1E1E1E] font-[600] text-[20px] mb-1">
                             {t("brain_ai.integrations.create_new_message_template")}
                         </h2>
-                        <p className="text-[16px] font-[400] text-[#5A687C]">
-                            {t("brain_ai.integrations.add_custom_message")}
-                        </p>
+                       
 
                         {/* Tab Content */}
                         <div className="mt-3 flex flex-col gap-2">
                             <div>
-                                <label className="text-[14px] flex items-center gap-2 font-medium text-[#292D32] mb-1">{t("brain_ai.integrations.heading")} <TfiHelpAlt />
+                                <label className="text-[14px] flex items-center gap-2 font-medium text-[#292D32] mb-1">{t("brain_ai.integrations.heading")}
                                 </label>
                                 <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] rounded-[8px] px-4 py-3">
                                     <input
@@ -538,27 +529,34 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             </div>
                             <div>
                                 <label className="block text-[14px] font-medium text-[#292D32] mb-1">{t("brain_ai.integrations.message")}</label>
-                                <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] rounded-[8px] px-4 py-3">
+                                <div className="relative border border-[#E1E4EA] focus-within:border-[#675FFF] rounded-[8px] px-4 py-3">
                                     <textarea
                                         rows={4}
                                         type="text"
                                         name="message"
                                         placeholder={t("brain_ai.integrations.message_placeholder")}
-                                        className="w-full focus:outline-none resize-none"
+                                        className="w-full focus:outline-none resize-none pb-10"
                                     />
+                                    <button
+                                        type="button"
+                                        className="absolute bottom-3 left-4 flex items-center gap-2 text-blue-600 rounded-lg text-sm font-medium hover:bg-[#5E54FF] transition-colors"
+                                    >
+                                        <Sparkles className="w-4 h-4" />
+                                        Generate
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex gap-2 mt-4">
+                        <div className="flex gap-2 mt-4 justify-end">
                             <button
                                 onClick={() => setCreateTemplateOpen(false)}
-                                className="w-full cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
+                                className="cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px] px-4 font-medium"
                             >
                                 {t("brain_ai.cancel")}
                             </button>
                             <button
-                                className="w-full cursor-pointer text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+                                className="cursor-pointer text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px] px-4 font-medium"
                             >
                                 {t("brain_ai.save")}
                             </button>

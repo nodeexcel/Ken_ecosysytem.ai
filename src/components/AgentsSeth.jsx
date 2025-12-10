@@ -1,4 +1,4 @@
-import { EllipsisVertical } from 'lucide-react';
+import { EllipsisVertical, Search, ChevronDown } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import CreateNewAgent from './CreateNewAgent';
 import { deleteAppointmentSetter, getAppointmentSetter, updateAppointmentSetterStatus } from '../api/appointmentSetter';
@@ -120,25 +120,48 @@ function AgentsSeth() {
 
     return (
         <div className='h-screen w-full overflow-hidden flex flex-col'>
-            {open ? <div className="w-full h-full  py-4 pr-4 flex flex-col gap-4 ">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-                    <div>
-                        <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">Agents</h1>
-                        <p className="text-[#5A687C] text-sm md:text-base mt-1">
-                            Your AI agents are ready to boost your outreach.
-                        </p>
+            {open ? <div className="w-full h-full p-6 flex flex-col gap-4 ">
+                <div className="flex flex-col gap-3 mb-2">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                        <div>
+                            <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">Agents</h1>
+                            <p className="text-[#5A687C] text-sm md:text-base mt-1">
+                                Manage all agents in one place
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => setOpen(false)}
+                            className="bg-[#675FFF] cursor-pointer text-white rounded-xl text-sm md:text-base px-3 py-2 mt-3 md:mt-0"
+                        >
+                            <span className="text-xl font-medium px-1">+</span>
+                            {t("appointment.new_agent")}
+                        </button>
                     </div>
-
-                    <button
-                        onClick={() => setOpen(false)}
-                        className="bg-[#675FFF] cursor-pointer text-white rounded-xl text-sm md:text-base px-3 py-2 mt-3 md:mt-0"
-                    >
-                        <span className="text-xl font-medium px-1">+</span>
-                        {t("appointment.new_agent")}
-                    </button>
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mt-4">
+                        <div className="w-full md:max-w-md">
+                            <div className="flex items-center gap-2 border border-[#D6D6D6] rounded-xl px-3 py-2 bg-white">
+                                <Search className="w-4 h-4 text-[#5A687C]" />
+                                <input
+                                    type="text"
+                                    placeholder="Search name or phone number"
+                                    className="w-full text-sm focus:outline-none text-[#1E1E1E] placeholder:text-[#5A687C]"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3 justify-end">
+                            <button className="flex items-center gap-2 border border-[#D6D6D6] rounded-xl px-3 py-2 text-sm text-[#1E1E1E] bg-white cursor-pointer">
+                                Short By
+                                <ChevronDown className="w-4 h-4 text-[#5A687C]" />
+                            </button>
+                            <button className="flex items-center gap-2 border border-[#D6D6D6] rounded-xl px-3 py-2 text-sm text-[#1E1E1E] bg-white cursor-pointer">
+                                Status
+                                <ChevronDown className="w-4 h-4 text-[#5A687C]" />
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="overflow-y-auto h-[calc(100vh-180px)]">
+                <div className="overflow-y-auto h-[calc(100vh-190px)]">
                     <div className="border border-[#D6D6D6] rounded-2xl overflow-hidden">
                         <table className="min-w-full border-separate border-spacing-0">
                             <thead className="bg-[#F7F7F8]  ">

@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, Plus, Download, RefreshCw, Ellipsis, ArrowRight, ArrowUpRight, ArrowDownRight, Info, ChevronDown, X, Globe, FileText, Filter, Users, Building2, Sparkles, Upload, Cloud, Trash2, Pencil, ArrowRight as ArrowRightIcon } from 'lucide-react';
 import SuccessIcon from '../assets/svg/SuccessIcon.svg';
-import ChatgptLogo from '../assets/svg/Chatgpt.svg';
+import ChatgptLogoWhite from '../assets/svg/ChatgptLogoWhite.svg';
 import GeneratedBackgroundImage from '../assets/images/ProductBg.png'
+import Preview from '../assets/svg/Preview.svg'
+import LoadingSpinner from '../assets/svg/LoadingSpinner.svg'
+import GlobeIcon from "../assets/svg/GlobeIcon.svg";
+import AnalysisIcon from "../assets/svg/AnalysisIcon.svg";
+import DifferentiatorIcon from "../assets/svg/DifferentiatorIcon.svg";
+import CompetitorIcon from "../assets/svg/CompetitorIcon.svg";
+import CompanyIcon from "../assets/svg/CompanyIcon.svg";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -29,6 +37,7 @@ ChartJS.register(
 );
 
 const Product = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPeriod, setSelectedPeriod] = useState('Last 30 days');
   const [selectedView, setSelectedView] = useState('Overall');
@@ -197,15 +206,15 @@ const Product = () => {
 
   // Progress steps configuration
   const progressSteps = [
-    { id: 0, label: 'Scraping website', icon: Globe },
-    { id: 1, label: 'Detecting Language', icon: Globe },
-    { id: 2, label: 'Analyzing Your Product', icon: FileText },
-    { id: 3, label: 'Generating Differentiators', icon: Filter },
-    { id: 4, label: 'Finding Competitors', icon: Users },
-    { id: 5, label: 'Creating Company Profile', icon: Building2 },
+    { id: 0, label: "Scraping website", icon: GlobeIcon },
+    { id: 1, label: "Detecting Language", icon: GlobeIcon },
+    { id: 2, label: "Analyzing Your Product", icon: AnalysisIcon },
+    { id: 3, label: "Generating Differentiators", icon: DifferentiatorIcon },
+    { id: 4, label: "Finding Competitors", icon: CompetitorIcon },
+    { id: 5, label: "Creating Company Profile", icon: CompanyIcon },
   ];
 
-  // Simulate progress through steps
+
   useEffect(() => {
     if (!showProgressModal) {
       setCurrentStep(0);
@@ -344,18 +353,19 @@ const Product = () => {
     ];
 
     return (
-      <div key={step.id} className="relative flex items-start gap-4 mb-4 bg-white rounded-lg p-4">
-        {/* Vertical line - positioned to stop at bottom of card */}
+      <div key={step.id} className="relative flex items-start gap-4 mb-4 bg-white rounded-xl p-4 border border-[#E1E4EA]">
+        {/* Vertical line - starts from bottom of current icon to top of next icon */}
         {index < progressSteps.length - 1 && (
           <div
-            className={`absolute left-[31px] top-[40px] w-1.5 ${isCompleted
-              ? 'bg-gradient-to-b from-[#22C55E] via-[#22C55E] to-[#22C55E]/0'
+            className={`absolute left-[29px] w-1.5 ${isCompleted
+              ? 'bg-gradient-to-b from-[#9ac8b8] via-[#CDE4DC] to-[#22C55E]/0'
               : isInProgress
-                ? 'bg-gradient-to-b from-[#22C55E] via-[#22C55E] to-[#22C55E]/0'
+                ? 'bg-gradient-to-b from-[#CDE4DC] via-[#CDE4DC] to-[#22C55E]/0'
                 : 'bg-gradient-to-b from-[#E5E7EB] via-[#E5E7EB]/50 to-[#E5E7EB]/0'
               }`}
             style={{
-              height: 'calc(100% - 0.5rem)',
+              top: '48px',
+              height: 'calc(100% - 48px + 16px + 16px)',
               opacity: isCompleted ? 1 : isInProgress ? 1 : 0.4
             }}
           />
@@ -366,13 +376,15 @@ const Product = () => {
             ? ''
             : isInProgress
               ? 'bg-[#675FFF]'
-              : 'bg-[#E5E7EB]'
+              : 'bg-[#AAAEB7]'
             }`}
         >
           {isCompleted ? (
             <img src={SuccessIcon} alt="Success" className="w-8 h-8" />
           ) : isInProgress ? (
-            <Sparkles className="w-5 h-5 text-white animate-spin" />
+            <img src={LoadingSpinner} className="w-4 h-4 text-white animate-spin" />
+          ) : typeof IconComponent === 'string' ? (
+            <img src={IconComponent} alt={step.label} className="w-4 h-4" />
           ) : (
             <IconComponent className="w-4 h-4 text-[#6B7280]" />
           )}
@@ -436,13 +448,13 @@ const Product = () => {
   };
 
   return (
-    <div className="w-full h-full p-6">
+    <div className="w-full h-full p-4">
       {showProgressModal ? (
         /* Progress Animation View */
         <div className="w-full h-full flex items-center justify-center">
           <div className=" rounded-2xl w-full max-w-full p-8">
             {/* Title */}
-            <h2 className="text-xl font-[600] text-[#1E1E1E] mb-8 text-center">
+            <h2 className="text-2xl font-[600] text-[#1E1E1E] mb-8 text-center">
               We're collecting information for your product...
             </h2>
 
@@ -456,7 +468,7 @@ const Product = () => {
         /* Product Form View */
         <div className="w-full h-full">
           {/* Header Section */}
-          <div className="px-6 py-4">
+          <div className="px-6 py-4 mb-2">
             <h1 className="text-2xl font-[600] text-[#1E1E1E]">Add Product</h1>
           </div>
           <div className="bg-white rounded-2xl border border-[#E1E4EA]">
@@ -518,11 +530,11 @@ const Product = () => {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <label className="text-sm font-[500] text-[#4B5563]">Import File</label>
-                      
+
                     </div>
-                    <div className="border-2 border-dashed border-[#E1E4EA] rounded-lg p-8 flex flex-col items-center justify-center gap-2 min-h-[200px]">
-                      <div className="w-16 h-16 rounded-full bg-[#F3F4F6] flex items-center justify-center">
-                        <Users className="w-8 h-8 text-[#9CA3AF]" />
+                    <div className="border-2 border-dashed border-[#E1E4EA] rounded-lg p-8 flex flex-col items-center justify-center gap-2 min-h-[260px]">
+                      <div className="w-16 h-16 rounded-full bg-[#F6F8FA] flex items-center justify-center">
+                        <img src={Preview} className='w-10 h-10' />
                       </div>
                       <p className="text-sm text-[#6B7280]">Preview</p>
                     </div>
@@ -631,99 +643,123 @@ const Product = () => {
           <div className="flex-1">
             <h1 className="text-2xl font-[600] text-[#1E1E1E] mb-6">Add Product</h1>
 
-            <div className="bg-white rounded-2xl border border-[#E1E4EA] p-6">
-              <h2 className="text-lg font-[600] text-[#1E1E1E] mb-2">Prompt Suggestions</h2>
-              <p className="text-sm text-[#6B7280] mb-6">
-                We run thousands of simulations to find prompts that best match your product.
-              </p>
-
-              {/* Prompt List */}
-              <div className="space-y-3 mb-6">
-                {prompts.map((prompt, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center cursor-pointer justify-between p-4 border border-[#E1E4EA] rounded-lg hover:border-[#675FFF] transition-colors"
-                  >
-                    <p className="text-md text-[#1E1E1E] font-[500] flex-1 pr-4">{prompt}</p>
-                    <button className="text-[#6B7280] hover:text-[#675FFF] cursor-pointer">
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
+            <div className="bg-white rounded-2xl border border-[#E1E4EA] overflow-hidden">
+              {/* Header Section */}
+              <div className="px-6 py-4 border-b border-[#E1E4EA]">
+                <h2 className="text-lg font-[600] text-[#1E1E1E] mb-2">Prompt Suggestions</h2>
+                <p className="text-sm text-[#6B7280]">
+                  We run thousands of simulations to find prompts that best match your product.
+                </p>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center justify-between pt-4 border-t border-[#E1E4EA]">
-                <button
-                  onClick={() => {
-                    // Regenerate prompts
-                    console.log('Regenerate clicked');
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] text-[#1E1E1E] rounded-lg text-sm font-[500] hover:bg-[#F8F9FB] transition-colors cursor-pointer"
-                >
-                  <RefreshCw className="w-4 h-4" />
-                  Regenerate
-                </button>
-                <button
-                  onClick={() => {
-                    console.log('Show Results clicked');
-                    // Handle show results action
-                  }}
-                  className="flex items-center gap-2 px-5 py-2 bg-[#675FFF] text-white rounded-lg text-sm font-[500] hover:bg-[#5A4FE6] transition-colors cursor-pointer"
-                >
-                  Show Results
-                  <ArrowRightIcon className="w-4 h-4" />
-                </button>
+              {/* Content Section */}
+              <div className="p-6">
+                {/* Prompt List */}
+                <div className="space-y-3 mb-6">
+                  {prompts.map((prompt, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center cursor-pointer justify-between p-4 border border-[#E1E4EA] rounded-lg hover:border-[#675FFF] transition-colors"
+                    >
+                      <p className="text-md text-[#1E1E1E] font-[500] flex-1 pr-4">{prompt}</p>
+                      <button className="text-[#6B7280] hover:text-[#675FFF] cursor-pointer">
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center justify-between pt-4 border-t border-[#E1E4EA]">
+                  <button
+                    onClick={() => {
+                      // Regenerate prompts
+                      console.log('Regenerate clicked');
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] text-[#1E1E1E] rounded-lg text-sm font-[500] hover:bg-[#F8F9FB] transition-colors cursor-pointer"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Regenerate
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigate('/dashboard/seo?tab=articles');
+                    }}
+                    className="flex items-center gap-2 px-5 py-2 bg-[#675FFF] text-white rounded-lg text-sm font-[500] hover:bg-[#5A4FE6] transition-colors cursor-pointer"
+                  >
+                    Show Results
+                    <ArrowRightIcon className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Right Section - Conversation Preview */}
-          <div
-            className="w-[400px] relative rounded-2xl overflow-hidden bg-cover bg-no-repeat bg-bottom"
-            style={{
-              backgroundImage: `url(${GeneratedBackgroundImage})`
-            }}
-          >
-            {/* Background overlay for better text readability */}
-            <div className="absolute inset-0 bg-black/20"></div>
+          <div className="w-[400px] rounded-2xl bg-white p-[6px] mt-[57px]">
+            <div className="rounded-xl h-full overflow-hidden relative">
 
-            {/* Conversation Card */}
-            <div className="relative h-full p-6 flex flex-col justify-center">
-              <div className="bg-white rounded-xl p-6 shadow-xl">
-                {/* User Section */}
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-[#675FFF] flex items-center justify-center text-white font-[600] text-sm">
-                    S
+              <img
+                src={GeneratedBackgroundImage}
+                alt="background"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              {/* Dark overlay */}
+              <div className="absolute inset-0 bg-black/20"></div>
+
+              {/* Main card */}
+              <div className="relative p-6">
+                <div className="bg-white rounded-xl shadow-xl overflow-hidden">
+                  {/* Header Section */}
+                  <div className="px-6 py-4 border-b border-[#E1E4EA]">
+                    <h2 className="text-lg font-[600] text-[#1E1E1E]">ChatGPT</h2>
                   </div>
-                  <div>
-                    <p className="text-sm font-[600] text-[#1E1E1E]">User (Sami)</p>
+
+                  {/* Content Section */}
+                  <div className="p-4">
+                    {/* User Section */}
+                    <div className='flex gap-2'>
+                      <div className="w-8 h-8 rounded-full bg-[#675FFF] flex items-center justify-center text-white font-[600] text-sm">
+                        S
+                      </div>
+
+                      <div className='flex flex-col flex-1'>
+                        <p className="text-sm font-[600] text-[#1E1E1E]">User (Sami)</p>
+                        <p className="text-sm text-[#1E1E1E] mb-6">
+                          Which platform offers AI-powered ticket triage and automated customer support workflows?
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3 items-start">
+                      {/* Left: Icon only */}
+                      <div className="w-8 h-8 rounded-full bg-[#000000] flex items-center justify-center text-white font-[600] text-sm">
+                        <img src={ChatgptLogoWhite} alt="ChatGPT" className="w-5 h-5 mt-[2px]" />
+                      </div>
+
+
+                      {/* Right: ChatGPT label + paragraph */}
+                      <div className="flex flex-col flex-1">
+                        <p className="text-sm font-[600] text-[#1E1E1E] mb-1">ChatGPT</p>
+
+                        <p className="text-sm text-[#1E1E1E]">
+                          <span className="font-[600]">NovaDesk</span> appears to be an ideal solution.
+                          NovaDesk is an AI-powered customer support automation platform that instantly
+                          triages tickets based on urgency, context, and customer sentiment. It integrates
+                          with major SaaS tools such as Intercom, Zendesk, Slack, and HubSpot.
+                        </p>
+                        <p className='text-sm text-[#1E1E1E] mt-1 font-[600]'>
+                          We track Share of Voice (SOV) for your brand and competitors across various channels, providing insights into market perception and competitive landscape.
+                        </p>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
-
-                {/* User Query */}
-                <p className="text-sm text-[#1E1E1E] mb-6 leading-relaxed">
-                  Which platform offers AI-powered ticket triage and automated customer support workflows?
-                </p>
-
-                {/* ChatGPT Section */}
-                <div className="flex items-center gap-3 mb-4">
-                  <img src={ChatgptLogo} alt="ChatGPT" className="w-6 h-6" />
-                  <p className="text-sm font-[600] text-[#1E1E1E]">ChatGPT</p>
-                </div>
-
-                {/* ChatGPT Response */}
-                <p className="text-sm text-[#1E1E1E] leading-relaxed mb-4">
-                  NovaDesk appears to be an ideal solution. NovaDesk is an AI-powered customer support automation platform that instantly triages tickets based on urgency, context, and customer sentiment. It integrates with major SaaS tools such as Intercom, Zendesk, Slack, and HubSpot, making it easy to centralize all support interactions. The platform provides multilingual AI-generated replies, smart adaptive macros, and automated SLA workflows.
-                </p>
-
-                {/* We Track */}
-                <p className="text-xs text-[#6B7280] mt-4 pt-4 border-t border-[#E1E4EA]">
-                  We Track
-                </p>
               </div>
             </div>
           </div>
+
         </div>
       ) : (
         <>
