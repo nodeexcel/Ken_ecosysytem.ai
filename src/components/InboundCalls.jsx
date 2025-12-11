@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { MoreHorizontal, X, Search } from "lucide-react";
-import { BritishFlag, Delete, Notes, Phone, TestCall, ThreeDots } from "../icons/icons";
+import { BritishFlag, Delete, Notes, Phone, TestCall, Ellipsis } from "../icons/icons";
 import DatePicker from "react-datepicker";
 import { LuCalendarDays } from "react-icons/lu";
 import { SelectDropdown } from "./Dropdown";
@@ -301,7 +301,7 @@ export default function InBoundCalls() {
                           <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.duration}</td>
                           <td className="px-4 py-4 text-center">
                             <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative cursor-pointer">
-                              <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
+                              <div className='bg-[#F4F5F6] p-2 rounded-lg'><Ellipsis /></div>
                               {activeDropdown === index && (
                                 <div className="absolute right-0 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                                   <div className="py-1">

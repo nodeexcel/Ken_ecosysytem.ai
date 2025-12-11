@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { PostNow, Preview, ThreeDots, Delete, Edit } from "../icons/icons";
+import { PostNow, Preview, Ellipsis, Delete, Edit } from "../icons/icons";
 import { getContentDetails, deleteContent, postContent } from "../api/contentCreationAgent";
 import { Cross, X, Search, ChevronDown, MoreVertical } from "lucide-react";
 import InstagramIcon from "../assets/svg/instagram.svg";
 import TwitterIcon from "../assets/svg/twitter.svg";
 import LinkedinIcon from "../assets/svg/linkedin_hr.svg";
 import { SelectDropdown } from "./Dropdown";
-import { BsThreeDots, BsThreeDotsVertical } from "react-icons/bs";
 
 function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
   const { t } = useTranslation();
@@ -379,7 +378,7 @@ function CalenderPostListView({ calenderData = [], setCalenderData, onEdit }) {
                             handleDropdownClick(index, e, isLastTwo);
                           }}
                         >
-                          <BsThreeDots className="w-5 h-5 text-[#1E1E1E]" />
+                          <MoreVertical className="w-5 h-5 text-[#1E1E1E]" />
                         </button>
 
                         {activeDropdown === index && (

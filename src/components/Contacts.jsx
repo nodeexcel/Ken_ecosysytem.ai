@@ -1,7 +1,7 @@
 import { Contact, Download, Mail, Phone, SquarePen, Trash2, Upload, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi";
-import { Delete, Duplicate, Edit, Notes, ThreeDots, UploadIcon } from "../icons/icons";
+import { Delete, Duplicate, Edit, Notes, Ellipsis, UploadIcon } from "../icons/icons";
 import { addContactsToList, createContactList, getContactList, uploadContacts, getLists, newContactAdd, deleteList, duplicateList, updateList, deleteContact, updateContact } from "../api/brainai";
 import { DateFormat } from "../utils/TimeFormat";
 import { format } from "date-fns";
@@ -747,7 +747,7 @@ const ContactsPage = () => {
 
 
   return (
-    <div className="flex h-full overflow-auto lg:pl-0 pl-4 pr-4 py-4 flex-col w-full items-start gap-6 ">
+    <div className="flex h-full overflow-auto p-6 flex-col w-full items-start gap-6 ">
       <div className="flex flex-col items-start gap-2.5 w-full">
         <div className="flex items-center justify-between w-full">
           <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
@@ -1095,7 +1095,7 @@ const ContactsPage = () => {
                           <td className="py-[14px]  pl-[5px] pr-[14px] min-w-[200px] max-w-[25%] w-full font-[400] text-[#5A687C] whitespace-nowrap">{format(list.createdDate, 'dd/MM/yyyy hh:mm a')}</td>
                           <td className="px-[14px] relative w-full">
                             <button onClick={() => handleDropdownClick(index)} className="p-2 cursor-pointer rounded-lg relative">
-                              <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
+                              <div className='bg-[#F4F5F6] p-2 rounded-lg'><Ellipsis /></div>
                             </button>
                             {activeDropdown === index && (
                               <div ref={moreActionsRef} data-dropdown className={`absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ${openUpward ? 'bottom-full mb-1' : 'mt-1'} ring-gray-300 ring-opacity-5 z-9999999999`}>

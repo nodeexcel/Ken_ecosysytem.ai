@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { X } from "lucide-react"
 import { GoDotFill } from "react-icons/go"
 import { v4 as uuidv4 } from 'uuid';
-import { BulbIcon, Delete, DislikeIcon, Duplicate, Edit, EditIcon, FlashIcon, ImageChatIcon, LikeIcon, MicChatIcon, PaperClipChatIcon, SearchChatIcon, SearchIcon, SendIcon, SpeakerIcon, StarsIcon, ThreeDots, WebSearchChatIcon } from "../icons/icons";
+import { BulbIcon, Delete, DislikeIcon, Duplicate, Edit, EditIcon, FlashIcon, ImageChatIcon, LikeIcon, MicChatIcon, PaperClipChatIcon, SearchChatIcon, SearchIcon, SendIcon, SpeakerIcon, StarsIcon, Ellipsis, WebSearchChatIcon } from "../icons/icons";
 import { useSelector } from "react-redux";
 import { formatTimeAgo } from "../utils/TimeFormat";
 import { SelectDropdown } from "./Dropdown";
@@ -252,7 +252,7 @@ const CustomChat = ({ listedProps }) => {
 
 
     return (
-        <div className="w-full py-4 h-screen pr-2 flex flex-col gap-3">
+        <div className="w-full p-6 h-full flex flex-col gap-3">
             <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{header}</h1>
             <div className="h-full overflow-auto flex pb-2 flex-col">
                 <div className="flex bg-white h-full rounded-2xl border-[#E1E4EA] border">

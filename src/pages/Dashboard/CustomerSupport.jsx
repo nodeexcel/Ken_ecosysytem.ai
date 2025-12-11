@@ -6,13 +6,12 @@ import SmartChatbot from '../../components/CustomerSupportSmartChatbot'
 // import FaqCustomerSupport from '../../components/FaqCustomerSupport'
 // import UserGuideCustomerSupport from '../../components/UserGuideCustomerSupport'
 // import EmailCustomerSupport from '../../components/EmailCustomerSupport'
-import { BsThreeDots } from 'react-icons/bs'
-import { X } from 'lucide-react'
+import { X, EllipsisVertical } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
 import { useTranslation } from 'react-i18next'
 import AgentChatBox from '../../components/AgentChatBox'
-import rimaMsgLogo from '../../assets/svg/rima_msg_logo.svg'
+import calinaMsgLogo from '../../assets/svg/calina_msg_logo.svg'
 import chatInstance from '../../api/chatInstance'
 import { deleteCustomerSupportChat, getCustomerSupportChatById, getCustomerSupportChats, updateCustomerSupportChatName } from '../../api/customerSupport'
 import { v4 as uuidv4 } from 'uuid';
@@ -171,7 +170,7 @@ function CustomerSupport() {
         }
 
         const listedProps = {
-            agentLogo: rimaMsgLogo,
+            agentLogo: calinaMsgLogo,
             agentName: "Calina",
             initialMessage: initialMessage,
             setActiveConversation: setActiveConversation,
@@ -234,7 +233,7 @@ function CustomerSupport() {
 
     return (
         <div className="h-full w-full relative">
-            <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><BsThreeDots size={24} color='#1e1e1e' /></div>
+            <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><EllipsisVertical size={24} color='#1e1e1e' /></div>
             <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full mt-2">
                 {/* Sidebar */}
                 <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-89px)] mb-8 overflow-y-auto">

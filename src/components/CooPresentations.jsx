@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { DateFormat } from "../utils/TimeFormat"
-import { Delete, DownloadIcon, Edit, EyeIcon, ThreeDots } from "../icons/icons"
+import { Delete, DownloadIcon, Edit, EyeIcon, Ellipsis } from "../icons/icons"
 import { useTranslation } from "react-i18next";
 
 
@@ -121,7 +121,7 @@ function CooPresentations() {
                                                 <button
                                                     onClick={() => handleDropdownClick(index)}
                                                     className="flex items-center">
-                                                    <div className="bg-[#F4F5F6] cursor-pointer h-[34px] w-[34px] flex justify-center items-center rounded-[4px]"><ThreeDots /></div>
+                                                    <div className="bg-[#F4F5F6] cursor-pointer h-[34px] w-[34px] flex justify-center items-center rounded-[4px]"><Ellipsis /></div>
                                                 </button>
                                                 {activeDropdown === index && (
                                                     <div className="absolute right-6 px-2 w-52 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[10]">

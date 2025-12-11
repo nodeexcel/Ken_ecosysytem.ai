@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ActiveIcon, DeactiveIcon, Delete, Duplicate, Edit, EndIcon, ThreeDots } from '../icons/icons';
+import { ActiveIcon, DeactiveIcon, Delete, Duplicate, Edit, EndIcon, Ellipsis } from '../icons/icons';
 import { X } from 'lucide-react';
 import { deleteEmailCampaign, duplicateCampaign, getEmailCampaign, updateEmailCampaignStatus } from '../api/emailCampaign';
 import CampaignsTable from './Campaigns';
@@ -238,7 +238,7 @@ useEffect(() => {
                                                         </button>   
                                                         <div   className="dropdown-container">
                                                                <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
-                                                            <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
+                                                            <div className='bg-[#F4F5F6] p-2 rounded-lg'><Ellipsis /></div>
                                                             {activeDropdown === index && (
                                                                 <div className="absolute right-6 px-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10 dropdown-menu">
                                                                     <div className="py-1">

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import { ChevronDown, Info, MoreHorizontal, X, Search, Plus, Ellipsis } from "lucide-react";
-import { ThreeDots, Edit, Delete, DocIcon } from "../icons/icons";
-// import { AlertIcon, ThreeDots } from "../icons/icons"; // Commented out - no longer needed with single phone number selection
+import { ChevronDown, Info, MoreHorizontal, X, Search, Plus } from "lucide-react";
+import { Ellipsis, Edit, Delete, DocIcon } from "../icons/icons";
+// import { AlertIcon, Ellipsis } from "../icons/icons"; // Commented out - no longer needed with single phone number selection
 // import { FaChevronDown } from "react-icons/fa"; // Commented out - using ChevronDown from lucide-react instead
 
 import uk_flag from "../assets/images/uk_flag.png"

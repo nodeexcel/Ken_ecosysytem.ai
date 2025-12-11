@@ -1,8 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import nodata from '../assets/svg/brainai_nodata.svg'
+import emptySnippets from '../assets/svg/EmptySnippets.svg'
 import letter from '../assets/svg/letter_t.svg'
-import { Upload, X } from "lucide-react";
-import { Delete, Edit, ThreeDots, UploadIcon } from "../icons/icons";
+import snippetsTop from "../assets/svg/Snippets1.svg"
+import snippetsBottom from "../assets/svg/Snippets2.svg"
+import fileTop from "../assets/svg/File1.svg"
+import fileBottom from "../assets/svg/File2.svg"
+import brainEmptyWebsite from "../assets/svg/BrainEmptyWebsite.svg"
+import { Upload, X, Globe2, Folder, FileStack, Globe, File } from "lucide-react";
+import EmptyChat from "../assets/svg/EmptyChat.svg"
+import { Delete, Edit, Ellipsis, UploadIcon } from "../icons/icons";
 import { deleteKnowledgeSnippets, getKnowledgeSnippets, knowledgeBase } from "../api/brainai";
 import { useTranslation } from "react-i18next";
 
@@ -17,19 +24,22 @@ const staticData = [
   { header: "Skill improvement area", description: "Looking to improve in an unspecified area to help Lev grow." }
 ]
 
-const NoData = ({ t, setOpen }) => {
-  return (
-    <div className="mt-3">
-      <div className="w-full gap-3 min-h-[360px] flex flex-col justify-center items-center border border-solid border-[#e1e4ea] bg-white rounded-2xl">
-        <div onClick={setOpen} className="cursor-pointer">
-          <img src={nodata} alt="nodata" />
-        </div>
-        <h1 className="text-[20px] font-[600] font-inter"> {t("brain_ai.knowledge.brain_ai_emplty")}</h1>
-        <p className="text-[14px] font-[500] font-inter">{t("brain_ai.knowledge.add_information")}</p>
+const NoData = ({ icon, title, description, onAction }) => (
+  <div className="mt-3">
+    <div className="w-full gap-3 min-h-[320px] flex flex-col justify-center items-center text-center">
+      <div
+        onClick={onAction}
+        className={`cursor-pointer ${onAction ? "" : "pointer-events-none"} flex items-center justify-center bg-[#F1F1F1] rounded-full w-30 h-30`}
+      >
+        {icon}
       </div>
+      <h1 className="text-[18px] font-semibold font-inter text-[#1E1E1E]">{title}</h1>
+      <p className="text-[14px] text-[#868C98] font-inter max-w-[440px] leading-6">
+        {description}
+      </p>
     </div>
-  )
-}
+  </div>
+)
 
 const Knowledge = () => {
   const [open, setOpen] = useState(false);
@@ -238,6 +248,55 @@ const Knowledge = () => {
     }
   }
 
+const renderEmptyState = (tabKey, onAction) => {
+  const config = {
+    snippets: {
+      icon: (
+        <div className="relative w-20 h-20 flex items-center justify-center">
+          <img
+            src={snippetsTop}
+            alt="No snippets"
+            className="absolute top-5 left-1/2 -translate-x-1/2 w-40 h-20 object-contain z-10"
+          />
+          <img
+            src={snippetsBottom}
+            alt="No snippets"
+            className="absolute bottom-3 left-1/2 -translate-x-1/2 w-30 h-16 object-contain "
+          />
+        </div>
+      ),
+      title: "No snippets added yet",
+      desc: "Add key information, facts, and guidelines to help your AI understand your business better."
+    },
+    website: {
+      icon: <img src={brainEmptyWebsite} alt="No websites" className="w-28 h-22 object-contain mt-2" />,
+      title: "No websites connected",
+      desc: "Connect your website so Brain AI can learn from your public pages and provide more accurate responses."
+    },
+    files: {
+      icon: (
+        <div className="relative w-20 h-20 flex items-center justify-center">
+          <img src={fileTop} alt="No files" className="absolute top-5 left-1/2 -translate-x-1/2 w-30 h-20 object-contain z-10" />
+          <img src={fileBottom} alt="No files" className="absolute bottom-1 left-1/2 -translate-x-1/2 w-36 h-16" />
+        </div>
+      ),
+      title: "No files uploaded",
+      desc: "Upload documents to teach your AI about internal processes, product details, or policies."
+    }
+  }
+
+  const content = config[tabKey] || config.snippets
+
+  return (
+    <NoData
+      icon={content.icon}
+      title={content.title}
+      description={content.desc}
+      onAction={onAction}
+    />
+  )
+}
+
   const renderFileName = (file) => {
     const filename = file.split('/').pop();
     return filename
@@ -250,35 +309,26 @@ const Knowledge = () => {
         return (
           <>
             {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.website?.length > 0 ? <div className="mt-3">
-              <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
-                {knowledgeData?.website?.length > 0 && knowledgeData?.website.map((e, i) => <div key={e.id} className="bg-[#f7f8fc] p-4 rounded-xl flex justify-between items-center gap-2">
-                  <div className="flex  items-center gap-2">
-                    <div className="text-[#675FFF]">
-                      W
+              <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+                {knowledgeData?.website?.length > 0 && knowledgeData?.website.map((e, i) => <div key={e.id} className="bg-white p-4 rounded-xl border border-[#d6d6d6] shadow-sm flex justify-between items-center gap-3">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="bg-[#E4E3F2] rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0">
+                      <Globe className="w-5 h-5 text-[#675FFF]" />
                     </div>
-                    <div>
-                      <a href={e.url} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C]">{e.url}</a>
+                    <div className="flex-1 min-w-0">
+                      <a href={e.url} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C] break-words">{e.url}</a>
                     </div>
                   </div>
-                  <div ref={moreActionsRef} className='bg-[#fff] relative rounded-lg'>
+                  <div ref={moreActionsRef} className='relative flex-shrink-0'>
                     <button
                       onClick={() => handleDropdownClick(i)}
-                      className="text-[#1e1e1e] p-2 cursor-pointer"
+                      className="text-[#1e1e1e] p-2 cursor-pointer border border-[#d6d6d6] rounded-lg hover:bg-gray-100 transition-colors"
                     >
-                      <ThreeDots />
+                      <Ellipsis fill="#1e1e1e" />
                     </button>
                     {activeDropdown === i && (
                       <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[99999]">
                         <div className="py-1">
-                          {/* <button
-                            className="block cursor-pointer w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
-                            onClick={() => {
-                              setActiveDropdown(null);
-                            }}
-                          >
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
-                          </button>
-                          <hr style={{ color: "#E6EAEE", marginTop: "5px" }} /> */}
                           <div className="py-1">
                             <button
                               className="block cursor-pointer w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
@@ -296,35 +346,36 @@ const Knowledge = () => {
                 </div>)}
               </div>
             </div> :
-              <NoData t={t} setOpen={() => {
+              renderEmptyState("website", () => {
                 setOpen(true);
                 setActiveDropdown(null);
-              }} />}
+                setActiveTab("website");
+              })}
           </>
         )
-
+        
       case "snippets":
         return (
           <>
             {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.snippets?.length > 0 ? <div className="mt-3">
-              <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
-                {knowledgeData?.snippets?.length > 0 && knowledgeData?.snippets.map((e, i) => <div key={e.id} className="bg-[#f7f8fc] p-4 rounded-xl flex justify-between items-start gap-2">
-                  <div className="flex  items-center gap-2">
-                    <div className="pt-1">
-                      <img src={letter} alt="letter" />
+              <div className="w-full flex flex-col gap-4 rounded-2xl">
+                {knowledgeData?.snippets?.length > 0 && knowledgeData?.snippets.map((e, i) => <div key={e.id} className="bg-white p-4 rounded-xl border border-[#d6d6d6] shadow-sm flex justify-between items-start gap-3">
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    <div className="bg-[#E4E3F2] rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0">
+                      <img src={letter} alt="letter" className="w-5 h-5" />
                     </div>
-                    <div>
-                      <p className="text-[14px] font-[400] font-inter text-[#5A687C] break-all whitespace-normal">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[14px] font-[400] font-inter text-[#5A687C] break-words whitespace-normal leading-relaxed">
                         {e.data}
                       </p>
                     </div>
                   </div>
-                  <div ref={moreActionsRef} className='bg-[#fff] relative rounded-lg'>
+                  <div ref={moreActionsRef} className='relative flex-shrink-0'>
                     <button
                       onClick={() => handleDropdownClick(i)}
-                      className="text-[#1e1e1e] p-2 cursor-pointer"
+                      className="text-[#1e1e1e] p-2 cursor-pointer border border-[#d6d6d6] rounded-lg hover:bg-gray-100 transition-colors"
                     >
-                      <ThreeDots />
+                      <Ellipsis fill="#1e1e1e" />
                     </button>
                     {activeDropdown === i && (
                       <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[99999]" data-dropdown-menu onClick={(event) => event.stopPropagation()}>
@@ -356,45 +407,42 @@ const Knowledge = () => {
                 </div>)}
               </div>
             </div> :
-              <NoData t={t} setOpen={() => {
+              renderEmptyState("snippets", () => {
                 setOpen(true);
                 setActiveDropdown(null);
-              }} />}
+                setActiveTab("snippets");
+              })}
           </>
         )
       default:
         return (
           <>
             {loadingData ? <div className="flex justify-center items-center h-[50vh]"><span className="loader" /></div> : knowledgeData?.files?.length > 0 ? <div className="mt-3">
-              <div className="w-full flex flex-col gap-4 border border-solid border-[#e1e4ea] bg-white rounded-2xl p-4">
-                {knowledgeData?.files?.length > 0 && knowledgeData?.files.map((e, i) => <div key={e.id} className="bg-[#f7f8fc] p-4 rounded-xl flex justify-between items-center gap-2">
-                  <div className="flex  items-center gap-2">
-                    <div className="text-[#675FFF]">
-                      F
+              <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+                {knowledgeData?.files?.length > 0 && knowledgeData?.files.map((e, i) => <div key={e.id} className="bg-white p-4 rounded-xl border border-[#d6d6d6] shadow-sm flex justify-between items-center gap-3">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="bg-[#E4E3F2] rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0">
+                      <File className="w-5 h-5 text-[#675FFF]" />
                     </div>
-                    <div>
-                      <a href={e.path} target="_blank" className="text-[14px] hover:underline hover:text-[#675FFF] font-[400] font-inter text-[#5A687C]">{renderFileName(e.path)}</a>
+                    <div className="flex-1 min-w-0">
+                      <a href={e.path} target="_blank" className="block text-[14px] font-[500] text-[#1E1E1E] truncate hover:underline hover:text-[#675FFF]">
+                        {renderFileName(e.path)}
+                      </a>
+                      {e?.size && (
+                        <p className="text-[12px] text-[#5A687C] mt-0.5">{e.size}</p>
+                      )}
                     </div>
                   </div>
-                  <div ref={moreActionsRef} className='bg-[#fff] relative rounded-lg'>
+                  <div ref={moreActionsRef} className='relative flex-shrink-0'>
                     <button
                       onClick={() => handleDropdownClick(i)}
-                      className="text-[#1e1e1e] p-2 cursor-pointer"
+                      className="text-[#1e1e1e] p-2 cursor-pointer border border-[#d6d6d6] rounded-lg hover:bg-gray-100 transition-colors"
                     >
-                      <ThreeDots />
+                      <Ellipsis fill="#1e1e1e" />
                     </button>
                     {activeDropdown === i && (
                       <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                         <div className="py-1">
-                          {/* <button
-                            className="block cursor-pointer w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
-                            onClick={() => {
-                              setActiveDropdown(null);
-                            }}
-                          >
-                            <div className="flex items-center gap-2"><div className='group-hover:hidden'><Edit /></div> <div className='hidden group-hover:block'><Edit status={true} /></div> <span>{t("edit")}</span> </div>
-                          </button>
-                          <hr style={{ color: "#E6EAEE", marginTop: "5px" }} /> */}
                           <div className="py-1">
                             <button
                               className="block cursor-pointer w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
@@ -412,10 +460,11 @@ const Knowledge = () => {
                 </div>)}
               </div>
             </div> :
-              <NoData t={t} setOpen={() => {
+              renderEmptyState("files", () => {
                 setOpen(true);
                 setActiveDropdown(null);
-              }} />}
+                setActiveTab("files");
+              })}
           </>
         )
     }
@@ -424,45 +473,47 @@ const Knowledge = () => {
 
 
   return (
-    <div className="flex lg:pl-0 pl-4 pr-4 py-4 flex-col w-full items-start gap-6 ">
-      <div className="flex items-center justify-between w-full">
-        <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
-          {t("brain_ai.knowledge.sub_heading")}
-        </h1>
-        <button onClick={() => {
-          setOpen(true);
-          setActiveDropdown(null);
-        }} className="flex items-center cursor-pointer gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white">
-          <span className="font-medium text-base leading-6">
-            {t("brain_ai.knowledge.add")} {renderHeader()}
-          </span>
-        </button>
-      </div>
-
-      <div className="flex items-start relative self-stretch w-full flex-[0_0_auto] border-b border-[#e1e4ea]">
-        {tabs.map((e) => <button
-          key={e.key}
+    <div className="flex p-8 flex-col w-full items-start gap-4 ">
+      <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8 mt-1">
+        {t("brain_ai.knowledge.sub_heading")}
+      </h1>
+      <div className="flex w-full items-center justify-between gap-4 mt-4">
+        <div className="flex items-center gap-1 bg-[#F7F7F8] border border-[#E5E7EB] rounded-xl p-0.5">
+          {tabs.map((e) => (
+            <button
+              key={e.key}
+              onClick={() => {
+                setActiveTab(e.key);
+                setActiveDropdown(null);
+              }}
+              className={`inline-flex cursor-pointer items-center justify-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                activeTab === e.key
+                  ? "bg-white text-[#1E1E1E] shadow-sm border border-[#E5E7EB]"
+                  : "bg-transparent text-[#9CA3AF] border border-transparent hover:text-[#1E1E1E]"
+              }`}
+            >
+              <span className="leading-5">
+                {e.label}
+              </span>
+            </button>
+          ))}
+        </div>
+        <button
           onClick={() => {
-            setActiveTab(e.key);
+            setOpen(true);
             setActiveDropdown(null);
           }}
-          className={`inline-flex cursor-pointer items-center justify-center gap-1 p-2.5 relative flex-[0_0_auto] border-b-2 transition-colors duration-200 ${activeTab === e.key
-              ? "border-[#5E54FF] text-primary-color"
-              : "border-[#e1e4ea] text-text-grey hover:text-[#5E54FF] hover:border-[#D9D6FF]"
-            } rounded-none`}
+          className="flex items-center cursor-pointer gap-2 px-4 py-2 bg-[#675FFF] border border-[#5f58e8] rounded-xl text-white text-sm font-medium"
         >
-          <span className={`font-medium text-sm tracking-[0] leading-6 whitespace-nowrap ${activeTab === e.key ? "text-[#5E54FF]"
-            : "text-[#5A687C] "}`}>
-            {e.label}
-          </span>
-        </button>)}
+          + {t("brain_ai.knowledge.add")} {renderHeader()}
+        </button>
       </div>
 
       <div className="w-full">
         {renderMainContent()}
       </div>
-      {open && <div className=" fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
-        <div className="bg-white max-h-[600px] flex flex-col gap-4 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
+      {open && <div className="fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
+        <div className="bg-white max-h-[600px] w-full max-w-lg rounded-2xl shadow-xl relative flex flex-col">
           <button
             onClick={() => {
               setOpen(false)
@@ -475,75 +526,68 @@ const Knowledge = () => {
             <X className="w-5 h-5" />
           </button>
 
-          <h2 className="text-[#1E1E1E] font-semibold text-[20px] mb-1">
-            {t("brain_ai.knowledge.add")} {renderHeader()}
-          </h2>
-          <p className="text-[14px] text-[#5A687C]">
-            {modelData[activeTab].label}
-          </p>
+          {/* Header */}
+          <div className="px-6 pt-6 pb-4 border-b border-[#E5E7EB]">
+            <h2 className="text-[#1E1E1E] font-semibold text-[20px] mb-1">
+              {t("brain_ai.knowledge.add")} {renderHeader()}
+            </h2>
+          </div>
 
-          {/* Tabs */}
-          {/* <div className="flex bg-[#F3F4F6] rounded-lg overflow-hidden mt-2">
-            {tabs.map((tab) => (
-              <div key={tab.key} className="w-full p-1" onClick={() => setActiveTab(tab.key)}>
-                <button
-
-                  className={`w-full py-2 text-sm font-medium transition ${activeTab === tab.key
-                    ? "bg-white text-[#1E1E1E] rounded-lg"
-                    : "text-[#5A687C]"
-                    }`}
-
-                >
-                  {tab.label}
-                </button>
-              </div>
-            ))}
-          </div> */}
-
-
-          {/* Tab Content */}
-          <div className="mt-3">
+          {/* Body */}
+          <div className="px-6 py-4 overflow-auto">
             {activeTab === "files" && (
               <div>
-                <label className="block text-sm font-medium mb-1">{t("brain_ai.upload_file_images_placeholder")}</label>
-                <div className="mt-2">
-                  <div
-                    onClick={handleClick}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    className={`flex flex-col items-center justify-center py-4 border-2 border-dashed rounded-md text-center cursor-pointer transition ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-[#335CFF80] bg-[#F5F7FF]'
-                      }`}
+                <p className="text-[14px] mb-2">
+                  {modelData[activeTab].label}
+                </p>
+                
+                <label className="block text-[14px] font-medium text-[#868C98] mb-2">Reupload Your File</label>
+                <div
+                  onClick={handleClick}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  className={`flex flex-col items-center justify-center py-8 border-2 border-dashed rounded-lg text-center cursor-pointer transition ${dragActive ? 'border-[#675FFF] bg-[#F5F7FF]' : 'border-[#E1E4EA] bg-white'
+                    }`}
+                >
+                  <Upload className="w-8 h-8 text-[#675FFF] mb-3" />
+                  <p className="text-[14px] font-[400] text-[#1E1E1E] mb-3">
+                    Choose a file or drag & drop it here.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleClick();
+                    }}
+                    className="px-4 py-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-lg text-[14px] font-medium text-[#1E1E1E] hover:bg-[#F9FAFB] transition-colors"
                   >
-                    <UploadIcon />
-                    <p className="text-[18px] font-[600] text-[#1E1E1E] mt-2">
-                      {t("brain_ai.upload_from_your_computer")}
-                    </p>
-                    <p className="text-[14px] font-[500] text-[#5A687C] mt-1">
-                      {t("brain_ai.or_drag_and_drop")}
-                    </p>
-                    <input
-                      type="file"
-                      accept="application/pdf"
-                      ref={fileInputRef}
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
-                  </div>
-
-                  {selectedFile && (
-                    <div className="mt-3 text-sm text-gray-700">
-                      <strong>{t("brain_ai.selected_file")}</strong> {selectedFile.name}
-                    </div>
-                  )}
-                  {errors.files && <p className="text-red-500 mt-2">{errors.files}</p>}
+                    Browse File
+                  </button>
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
                 </div>
+
+                {selectedFile && (
+                  <div className="mt-3 text-sm text-gray-700 ">
+                    <strong>{t("brain_ai.selected_file")}</strong> <span className="text-[#5A687C] hover:underline">{selectedFile.name}</span>
+                  </div>
+                )}
+                {errors.files && <p className="text-red-500 mt-2">{errors.files}</p>}
               </div>
             )}
             {activeTab === "snippets" && (
               <div>
-                <label className="block text-[14px] font-medium text-[#292D32] mb-1">{t("brain_ai.details")}</label>
-                <div className={`flex items-center border focus-within:border-[#675FFF] ${errors.snippet ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-[8px] px-4 py-3`}>
+                <p className="text-[14px] mb-2">
+              {modelData[activeTab].label}
+            </p>
+                <label className="block text-[14px] font-medium text-[#868C98] mb-1 mt-2">{t("brain_ai.details")}</label>
+                <div className={`flex items-center border text-[#868C98] focus-within:border-[#675FFF] ${errors.snippet ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-[8px] px-4 py-3`}>
                   <textarea
                     type="text"
                     name="snippet"
@@ -551,7 +595,7 @@ const Knowledge = () => {
                     onChange={handleChange}
                     placeholder={t("brain_ai.detail_placeholder")}
                     rows={3}
-                    className="w-full focus:outline-none resize-none"
+                    className="w-full focus:outline-none resize-none "
                     maxLength={400}
                   />
                 </div>
@@ -564,15 +608,21 @@ const Knowledge = () => {
             )}
             {activeTab === "website" && (
               <div>
-                <label className="block text-[14px] font-medium text-[#292D32] mb-1">{t("brain_ai.knowledge.website")}</label>
+                <p className="text-[14px] mb-2">
+                  {modelData[activeTab].label}
+                </p>
+                <label className="block text-[14px] font-medium text-[#868C98] mb-1 mt-2">Webpage Link</label>
                 <div className={`flex items-center border focus-within:border-[#675FFF] ${errors.website ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-[8px] px-4 py-3`}>
+                  <div className="flex items-center h-full mr-2 pr-2 border-r border-[#E1E4EA] self-stretch">
+                    <span className="text-[#9CA3AF] text-[14px]">http://</span>
+                  </div>
                   <input
                     type="text"
                     name="website"
                     value={formData?.website}
                     onChange={handleChange}
-                    placeholder="https://ecosysteme.ai"
-                    className="w-full focus:outline-none"
+                    placeholder="Objectiveexample.com"
+                    className="flex-1 focus:outline-none text-[#1E1E1E]"
                   />
                 </div>
                 {errors.website && <p className="text-red-500 mt-2">{errors.website}</p>}
@@ -580,7 +630,8 @@ const Knowledge = () => {
             )}
           </div>
 
-          <div className="flex gap-2 mt-4">
+          {/* Footer */}
+          <div className="flex justify-end gap-2 px-6 py-4 border-t border-[#E5E7EB]">
             <button
               onClick={() => {
                 setOpen(false)
@@ -588,16 +639,16 @@ const Knowledge = () => {
                 setErrors({})
                 setSelectedFile(null)
               }}
-              className="w-full cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
+              className="cursor-pointer text-[15px] text-[#111827] bg-white border border-[#E5E7EB] rounded-xl px-4 py-2 shadow-sm hover:bg-[#F9FAFB]"
             >
               {t("brain_ai.cancel")}
             </button>
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="w-full disabled:cursor-not-allowed cursor-pointer text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
+              className="cursor-pointer text-[15px] text-white rounded-xl px-4 py-2 bg-[#675FFF] hover:bg-[#5E54FF] disabled:cursor-not-allowed"
             >
-              {loading ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : `${t("brain_ai.save")}`}
+              {loading ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : `${t("brain_ai.knowledge.add")} ${renderHeader()}`}
             </button>
           </div>
         </div>

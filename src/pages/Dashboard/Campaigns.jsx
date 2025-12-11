@@ -9,8 +9,7 @@ import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { BsThreeDots } from "react-icons/bs";
-import { X } from "lucide-react";
+import { X, EllipsisVertical } from "lucide-react";
 import { discardSkillsData } from "../../store/agentSkillsSlice";
 
 
@@ -49,7 +48,7 @@ const Campaigns = () => {
 
     return (
         <div className="h-full w-full relative">
-            <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><BsThreeDots size={24} color='#1e1e1e' /></div>
+            <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><EllipsisVertical size={24} color='#1e1e1e' /></div>
             <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
                 {/* Sidebar */}
                 <div className="lg:flex hidden flex-col bg-white gap-8 border-r border-[#E1E4EA] min-w-[272px] h-full">

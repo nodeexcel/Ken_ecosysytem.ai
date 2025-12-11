@@ -119,7 +119,7 @@ function AgentsSeth() {
     }
 
     return (
-        <div className='h-screen w-full overflow-hidden flex flex-col'>
+        <div className='h-full w-full overflow-hidden flex flex-col'>
             {open ? <div className="w-full h-full p-6 flex flex-col gap-4 ">
                 <div className="flex flex-col gap-3 mb-2">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">

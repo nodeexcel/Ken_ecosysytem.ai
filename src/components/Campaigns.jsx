@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Delete, Notes, ThreeDots, UploadIcon, CheckIcon, RightArrowIcon } from '../icons/icons';
+import { Delete, Notes, Ellipsis, UploadIcon, CheckIcon, RightArrowIcon } from '../icons/icons';
 import { ChevronDown, Info, X } from 'lucide-react';
 import { format, isValid } from 'date-fns';
 import { createEmailCampaign, getEmailCampaignById, updateEmailCampaign } from '../api/emailCampaign';
@@ -1102,7 +1102,7 @@ function CampaignsTable({ isEdit, setNewCampaignStatus, setIsEdit }) {
                                     <td className="px-6 py-4 text-sm text-[#1E1E1E]"><div className={`px-2 py-1 w-fit border rounded-2xl ${renderColor(item.status)}`}>{item.status}</div></td>
                                     <td className="px-6 py-4 text-sm text-[#1E1E1E]">
                                         <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg">
-                                            <div className='bg-[#F4F5F6] p-2 rounded-lg'><ThreeDots /></div>
+                                            <div className='bg-[#F4F5F6] p-2 rounded-lg'><Ellipsis /></div>
                                         </button>
                                         {activeDropdown === index && (
                                             <div className="absolute right-6  w-48 rounded-md shadow-lg bg-white ring-1 ring-[#E1E4EA] ring-opacity-5 z-10">

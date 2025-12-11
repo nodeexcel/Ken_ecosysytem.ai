@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Search } from 'lucide-react'
-import { Edit, Delete, ThreeDots } from '../icons/icons'
+import { Edit, Delete, Ellipsis } from '../icons/icons'
 
 function ContentAnalytics() {
     const [activeTab, setActiveTab] = useState('Cited Content')
@@ -203,7 +203,7 @@ function ContentAnalytics() {
                                                     className="p-2 rounded-lg relative cursor-pointer"
                                                 >
                                                     <div className="bg-[#F4F5F6] p-2 rounded-lg">
-                                                        <ThreeDots />
+                                                        <Ellipsis />
                                                     </div>
                                                 </button>
                                                 {activeDropdown === index && (

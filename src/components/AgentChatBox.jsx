@@ -19,7 +19,7 @@ import {
   SearchIcon,
   SendIcon,
   SpeakerIcon,
-  ThreeDots,
+  Ellipsis,
 } from "../icons/icons"
 import PdfIcon from "../assets/svg/pdf.svg";
 import { useSelector } from "react-redux"
@@ -1033,7 +1033,7 @@ transform transition-transform duration-300 ease-in-out">
                                   </p>
                                 )}
                               </div>
-                              {/* ThreeDots Button */}
+                              {/* Ellipsis Button */}
                               <div
                                 className="absolute right-2 top-1/2 transform -translate-y-1/2"
                                 ref={(el) => {
@@ -1055,7 +1055,7 @@ transform transition-transform duration-300 ease-in-out">
                                     : "hover:bg-[#675FFF]/10 text-[#5A687C]"
                                     }`}
                                 >
-                                  <ThreeDots className="w-4 h-4" color="black" />
+                                  <Ellipsis className="w-4 h-4" color="black" />
 
 
                                 </button>

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react"
 import { DateFormat } from "../utils/TimeFormat"
-import { Delete, DownloadIcon, EyeIcon, ThreeDots } from "../icons/icons"
+import { Delete, DownloadIcon, EyeIcon, Ellipsis } from "../icons/icons"
 import GenerateSeoArticle from "./GenerateSeoArticle"
 import { useTranslation } from "react-i18next";
 import DailyPromptIcon from "../assets/svg/DailyPromptIcon.svg"
-import { ChevronDown, Info, Plus, X, Sparkles, Ellipsis, FileText } from "lucide-react"
+import { ChevronDown, Info, Plus, X, Sparkles, FileText } from "lucide-react"
 import { useSelector } from "react-redux"
 import ChatgptLogo from '../assets/svg/Chatgpt.svg'
 import GeminiLogo from '../assets/svg/Gemini.svg'

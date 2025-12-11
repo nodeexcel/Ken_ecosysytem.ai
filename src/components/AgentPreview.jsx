@@ -6,15 +6,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 
-const staticData = [{ label: "Agent Name", key: "agent_name", value: "Seth" }, { label: "Personality", key: "personality", value: "Friendly" }, { label: "Language(s)", key: "language", value: "English, French" },
-{ label: "Emoji Frequency", key: "emoji_frequency", value: '25%' }, { label: "Business Offer", key: "business_offer", value: "Assist with booking appointments" }, { label: "Prompt Summary", key: "prompt_summary", value: "[Excerpt of the prompt]" },
-{ label: "Trigger & Channel", key: "trigger_and_channel", value: "Systeme.io → Instagram" }, { label: "Delay", key: "delay", value: "15 Min" }, { label: "Calendar Integration", key: "calendar_integration", value: "Enabled" }
-]
-
-export default function AgentPreviewModal({ setPreviewAgent, previewAgent }) {
+export default function AgentPreviewModal({ setPreviewAgent, previewAgent, formData, agentsPersonalityOptions, languagesOptions }) {
     const [message, setMessage] = useState("")
     const [messages, setMessages] = useState([
-        { id: uuidv4(), sender: "agent", isUser: false, text: "I'm Seth, your appointment setter. How can I assist you today?" }
+        { id: uuidv4(), sender: "agent", isUser: false, text: "I'm your appointment setter. How can I assist you today?" }
     ]);
     const [chat_id, setChatId] = useState("")
 
@@ -23,6 +18,14 @@ export default function AgentPreviewModal({ setPreviewAgent, previewAgent }) {
     useEffect(() => {
         setChatId(uuidv4())
     }, [])
+
+    useEffect(() => {
+        if (formData?.agent_name) {
+            setMessages([
+                { id: uuidv4(), sender: "agent", isUser: false, text: `I'm ${formData.agent_name}, your appointment setter. How can I assist you today?` }
+            ]);
+        }
+    }, [formData?.agent_name])
 
     useEffect(() => {
         if (agentChatRef.current) {
@@ -35,8 +38,53 @@ export default function AgentPreviewModal({ setPreviewAgent, previewAgent }) {
 
 
     const closeModal = () => {
-        setPreviewAgent("")
+        setPreviewAgent(false)
     }
+
+    // Generate preview data from formData
+    const getPreviewData = () => {
+        if (!formData) return [];
+
+        const personalityLabel = formData.agent_personality 
+            ? agentsPersonalityOptions?.find(opt => opt.key === formData.agent_personality)?.label || formData.agent_personality
+            : "Not set";
+
+        const languagesLabel = formData.agent_language && formData.agent_language.length > 0
+            ? formData.agent_language.map(lang => {
+                const found = languagesOptions?.find(opt => opt.key === lang);
+                return found?.label || lang;
+            }).join(", ")
+            : "Not set";
+
+        const emojiFrequency = formData.emoji_frequency !== undefined ? `${formData.emoji_frequency}%` : "Not set";
+
+        const triggerChannel = formData.sequence?.trigger && formData.sequence?.channel
+            ? `${formData.sequence.trigger} → ${formData.sequence.channel}`
+            : "Not set";
+
+        const delay = formData.sequence?.delay !== undefined ? `${formData.sequence.delay} Min` : "Not set";
+
+        const calendarIntegration = formData.objective_of_the_agent && Array.isArray(formData.objective_of_the_agent) && formData.objective_of_the_agent.includes("book_call")
+            ? (formData.calendar_choosed ? formData.calendar_choosed.charAt(0).toUpperCase() + formData.calendar_choosed.slice(1).replace('_', ' ') : "Enabled")
+            : "Disabled";
+
+        const businessOffer = formData.business_description || "Not set";
+        const promptSummary = formData.prompt ? (formData.prompt.length > 50 ? formData.prompt.substring(0, 50) + "..." : formData.prompt) : "Not set";
+
+        return [
+            { label: "Agent Name", key: "agent_name", value: formData.agent_name || "Not set" },
+            { label: "Personality", key: "personality", value: personalityLabel },
+            { label: "Language(s)", key: "language", value: languagesLabel },
+            { label: "Emoji Frequency", key: "emoji_frequency", value: emojiFrequency },
+            { label: "Business Offer", key: "business_offer", value: businessOffer },
+            { label: "Prompt Summary", key: "prompt_summary", value: promptSummary },
+            { label: "Trigger & Channel", key: "trigger_and_channel", value: triggerChannel },
+            { label: "Delay", key: "delay", value: delay },
+            { label: "Calendar Integration", key: "calendar_integration", value: calendarIntegration }
+        ];
+    };
+
+    const previewData = getPreviewData();
     const handleSendMessage = async () => {
         if (!message.trim()) return;
 
@@ -92,7 +140,7 @@ export default function AgentPreviewModal({ setPreviewAgent, previewAgent }) {
                             <div className="w-[45px] h-[45px] rounded-full bg-[#fff] flex items-center justify-center">
                                 <img src={sethImg} alt="seth" className="w-[26.18px] h-[33.53px] object-contain" />
                             </div>
-                            <div className="font-[600] text-[18px] text-[#1E1E1E]">Seth (AI Agent)</div>
+                            <div className="font-[600] text-[18px] text-[#1E1E1E]">{formData?.agent_name || "Seth"} (AI Agent)</div>
                         </div>
                         <div className="flex flex-col justify-between h-full">
                             <div ref={agentChatRef} className="px-4 overflow-auto max-h-[300px] mb-2">
@@ -146,8 +194,8 @@ export default function AgentPreviewModal({ setPreviewAgent, previewAgent }) {
 
                     <div className="w-3/5 h-[466px] border rounded-[10px] border-[#E1E4EA] p-6">
                         <div className="space-y-2">
-                            {staticData.map((e, i) => (
-                                <div key={e.key} className={`flex ${staticData?.length - 1 !== i ? 'border-b border-[#E1E4EA] py-2' : ''} `}>
+                            {previewData.map((e, i) => (
+                                <div key={e.key} className={`flex ${previewData?.length - 1 !== i ? 'border-b border-[#E1E4EA] py-2' : ''} `}>
                                     <div className="w-1/3 text-[16px] font-[600] text-[#1E1E1E]">{e.label}:</div>
                                     <div className="w-2/3 text-[16px] font-[400] text-[#5A687C]">{e.value}</div>
                                 </div>

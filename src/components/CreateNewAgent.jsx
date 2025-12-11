@@ -1,9 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import trigger from '../assets/svg/sequence_trigger.svg'
 import delay from '../assets/svg/sequence_delay.svg'
 import channel from '../assets/svg/sequence_channel.svg'
 import template from '../assets/svg/sequence_template.svg'
-import { ChevronDown, X } from 'lucide-react';
+import calendlyIcon from '../assets/svg/calendly.svg'
+import googleCalendarIcon from '../assets/svg/google_calender.svg'
+import whatsappIcon from '../assets/svg/whatsapp.svg'
+import instagramIcon from '../assets/svg/instagram.svg'
+import { ChevronDown, InfoIcon, X, Trash2, ChevronRight, Clock } from 'lucide-react';
 import { LuRefreshCw } from 'react-icons/lu';
 import { AddPlus, CheckedCheckbox, CrossDelete, EmptyCheckbox, RequestSend, CheckIcon, RightArrowIcon } from '../icons/icons'
 import { appointmentSetter, getAppointmentSetterById, updateAppointmentSetter } from '../api/appointmentSetter'
@@ -22,7 +27,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         agent_language: [], agent_personality: "", business_description: "", your_business_offer: "",
         qualification_questions: [""],
         sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
-        objective_of_the_agent: '',
+        objective_of_the_agent: [],
         calendar_choosed: '',
         // reply_min_time: 15,
         // reply_max_time: 60,
@@ -54,6 +59,13 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const [errorMessage, setErrorMessage] = useState("")
     const [step, setStep] = useState(1)
     const [statusSteps, setStatusSteps] = useState({ step1: false, step2: false, step3: false })
+    const [isPersonalityDropdownOpen, setIsPersonalityDropdownOpen] = useState(false)
+    const [personalityDropdownPosition, setPersonalityDropdownPosition] = useState({ top: 0, right: 0 })
+    const [isTooltipVisible, setIsTooltipVisible] = useState(false)
+    const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 })
+    const personalityDropdownRef = useRef(null)
+    const personalityButtonRef = useRef(null)
+    const tooltipIconRef = useRef(null)
 
     const handleInstagram = async () => {
         try {
@@ -143,10 +155,34 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setShowLanguageSelector(false);
             }
+            if (personalityButtonRef.current && !personalityButtonRef.current.contains(event.target) &&
+                !event.target.closest('.personality-dropdown-portal')) {
+                setIsPersonalityDropdownOpen(false);
+            }
         };
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    useEffect(() => {
+        if (isPersonalityDropdownOpen && personalityButtonRef.current) {
+            const buttonRect = personalityButtonRef.current.getBoundingClientRect();
+            setPersonalityDropdownPosition({
+                top: buttonRect.top,
+                right: window.innerWidth - buttonRect.right
+            });
+        }
+    }, [isPersonalityDropdownOpen]);
+
+    useEffect(() => {
+        if (isTooltipVisible && tooltipIconRef.current) {
+            const iconRect = tooltipIconRef.current.getBoundingClientRect();
+            setTooltipPosition({
+                top: iconRect.top - 8,
+                left: iconRect.left + iconRect.width / 2
+            });
+        }
+    }, [isTooltipVisible]);
 
     useEffect(() => {
         if (editData) {
@@ -170,7 +206,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         if (step === 1) {
             if (!formData.agent_name.trim()) newErrors.agent_name = t("appointment.agent_name_validation");
             if (!formData.gender) newErrors.gender = t("appointment.gender_validation");
-            if (!formData.age) newErrors.age = t("appointment.age_validation"); // Commented out as per Figma design
+            // if (!formData.age) newErrors.age = t("appointment.age_validation"); // Commented out as per Figma design
             if (formData.agent_language.length === 0) newErrors.agent_language = t("appointment.agent_language_validation");
             if (!formData.agent_personality) newErrors.agent_personality = t("appointment.agent_personality_validation");
         }
@@ -189,34 +225,34 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 (formData.sequence.trigger === "Instagram" || formData.sequence.trigger === "Whatsapp") &&
                 !formData.platform_unique_id
             ) {
-                newErrors.platform_unique_id =  t("appointment.account_msg");
+                newErrors.platform_unique_id = t("appointment.account_msg");
             }
         }
 
         if (step === 2) {
             if (!formData.business_description.trim()) newErrors.business_description = t("appointment.business_des_validation");
             if (formData.business_description.trim().length > 1 && formData.business_description.length < 50) newErrors.business_description = t("appointment.min_char_validation");
-            if (!formData.your_business_offer.trim()) newErrors.your_business_offer = t("appointment.business_offer_validation");
-            if (formData.your_business_offer.trim().length > 1 && formData.your_business_offer.length < 50) newErrors.your_business_offer = t("appointment.min_char_validation");
-            if (!formData.objective_of_the_agent) newErrors.objective_of_the_agent = t("appointment.object_of_agent_validation");
-            if (formData.objective_of_the_agent === "book_call") {
+            // if (!formData.your_business_offer.trim()) newErrors.your_business_offer = t("appointment.business_offer_validation");
+            // if (formData.your_business_offer.trim().length > 1 && formData.your_business_offer.length < 50) newErrors.your_business_offer = t("appointment.min_char_validation");
+            if (!formData.objective_of_the_agent || formData.objective_of_the_agent.length === 0) {
+                newErrors.objective_of_the_agent = t("appointment.object_of_agent_validation");
+            }
+            if (formData.objective_of_the_agent && formData.objective_of_the_agent.includes("book_call")) {
                 if (!formData.calendar_choosed) {
                     newErrors.calendar_choosed = t("appointment.choose_calendar_validation");
                 }
-            }
-            if (formData.objective_of_the_agent === "book_call") {
                 if (formData.calendar_choosed === "google_calendar") {
                     if (!formData.calendar_id) {
                         newErrors.calendar_id = t("appointment.calendar_validation");
                     }
                 }
             }
-            if (formData.objective_of_the_agent === "whatsapp_number") {
+            if (formData.objective_of_the_agent && formData.objective_of_the_agent.includes("whatsapp_number")) {
                 if (!formData.whatsapp_number) {
                     newErrors.whatsapp_number = t("appointment.whatsapp_no_validation");
                 }
             }
-            if (formData.objective_of_the_agent === "web_page") {
+            if (formData.objective_of_the_agent && formData.objective_of_the_agent.includes("web_page")) {
                 if (!formData.webpage_link.trim()) {
                     newErrors.webpage_link = t("appointment.website_link_validation");
                 }
@@ -244,11 +280,12 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             title: t("appointment.trigger"),
             key: "trigger",
             iconSrc: trigger,
+            iconColor: "bg-[#675FFF]",
             options: [
                 // { label: "Systeme.io", key: "systeme.io" },
                 //  { label: "Clickfunnels", key: "clickfunnels" },
-                { label: "Whatsapp", key: "Whatsapp" },
-                { label: "Instagram", key: "Instagram" }],
+                { label: "Whatsapp", key: "Whatsapp", icon: whatsappIcon },
+                { label: "Instagram", key: "Instagram", icon: instagramIcon }],
             value: "systeme.io",
             selected: true,
         },
@@ -257,7 +294,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             title: t("appointment.delay"),
             key: "delay",
             iconSrc: delay,
-            options: [{ label: "0", key: 0 },{ label: "1", key: 1 }, { label: "5", key: 5 }, { label: "10", key: 10 }, { label: "15", key: 15 }, { label: "20", key: 20 }, { label: "30", key: 30 }],
+            iconColor: "bg-orange-500",
+            options: [{ label: "0", key: 0 }, { label: "1", key: 1 }, { label: "5", key: 5 }, { label: "10", key: 10 }, { label: "15", key: 15 }, { label: "20", key: 20 }, { label: "30", key: 30 }],
             value: 15,
             unit: "Min",
             selected: false,
@@ -267,8 +305,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             title: t("appointment.channel"),
             key: "channel",
             iconSrc: channel,
-            options: [{ label: "Whatsapp", key: "Whatsapp" }, { label: "Instagram", key: "Instagram" }],
-            options2: [{ label: "Whatsapp", key: "Whatsapp" }, { label: "Email", key: "email" }, { label: "SMS", key: "SMS" }],
+            iconColor: "bg-blue-500",
+            options: [{ label: "Whatsapp", key: "Whatsapp", icon: whatsappIcon }, { label: "Instagram", key: "Instagram", icon: instagramIcon }],
+            options2: [{ label: "Whatsapp", key: "Whatsapp", icon: whatsappIcon }, { label: "Email", key: "email" }, { label: "SMS", key: "SMS" }],
             value: "Instagram",
             selected: true,
         },
@@ -277,6 +316,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             title: t("appointment.template"),
             key: "template",
             iconSrc: template,
+            iconColor: "bg-green-500",
             options: [{ label: "Select", key: "Select" }, { label: "Select2", key: "Select2" }],
             value: "Select",
             selected: false,
@@ -338,8 +378,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     ]
 
     const calendarOptions = [
-        { label: "Calendly", key: "calendly" },
-        { label: "Google Calendar", key: "google_calendar" }
+        { label: "Calendly", key: "calendly", icon: calendlyIcon },
+        { label: "Google Calendar", key: "google_calendar", icon: googleCalendarIcon }
     ]
 
     const handleContinue = (nextStep) => {
@@ -368,7 +408,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     agent_language: [], agent_personality: "", business_description: "", your_business_offer: "",
                     qualification_questions: [""],
                     sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
-                    objective_of_the_agent: '',
+                    objective_of_the_agent: [],
                     calendar_choosed: '',
                     // reply_min_time: 15,
                     // reply_max_time: 60,
@@ -391,7 +431,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     ...prev, business_description: "", your_business_offer: "",
                     qualification_questions: [""],
                     sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
-                    objective_of_the_agent: '',
+                    objective_of_the_agent: [],
                     calendar_choosed: '',
                     is_followups_enabled: true,
                     follow_up_details: { number_of_followups: '', min_time: 15, max_time: 60 },
@@ -454,6 +494,11 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 setLoadingStatus(false)
                 const payload = {
                     ...response.data.agent,
+                    objective_of_the_agent: response.data.agent.objective_of_the_agent 
+                        ? (Array.isArray(response.data.agent.objective_of_the_agent) 
+                            ? response.data.agent.objective_of_the_agent 
+                            : [response.data.agent.objective_of_the_agent])
+                        : [],
                     follow_up_details: response.data.agent.is_followups_enabled
                         ? response.data.agent.follow_up_details
                         : formData.follow_up_details,
@@ -496,11 +541,31 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
     }, [formData.sequence.trigger])
 
+    const countWords = (text) => {
+        if (!text || !text.trim()) return 0;
+        return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+    }
+
     const handleChange = (e) => {
         const { name, value } = e.target
         setErrors((prev) => ({
             ...prev, [name]: ""
         }))
+        
+        // Limit business_description to 80 words
+        if (name === 'business_description') {
+            const wordCount = countWords(value);
+            if (wordCount > 80) {
+                // Truncate to 80 words
+                const words = value.trim().split(/\s+/);
+                const truncated = words.slice(0, 80).join(' ');
+                setFormData((prev) => ({
+                    ...prev, [name]: truncated
+                }))
+                return;
+            }
+        }
+        
         if (name.startsWith("qualification_questions[")) {
             const index = parseInt(name.match(/\[(\d+)\]/)[1]);
             const updatedQuestions = [...formData?.qualification_questions];
@@ -581,7 +646,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         }
         const finalPayload = {
             ...formData,
-             qualification_questions: formData.qualification_questions.filter(question => question.trim() !== ""),
+            qualification_questions: formData.qualification_questions.filter(question => question.trim() !== ""),
             follow_up_details: formData.is_followups_enabled
                 ? formData.follow_up_details
                 : {},
@@ -669,151 +734,119 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     }
 
     const renderObjectiveAgent = () => {
-        switch (formData.objective_of_the_agent) {
-            case "whatsapp_number":
-                return (
-                    <div className="flex items-start gap-3 w-full mt-2">
-                        <div className="flex-1">
-                            <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
-                                <label className="text-sm font-medium text-[#1e1e1e]">
-                                    {t("appointment.whatsapp_number")}
-                                </label>
-                                <input
-                                    type="text"
-                                    name='whatsapp_number'
-                                    value={formData?.whatsapp_number}
-                                    onChange={handleChange}
-                                    // onChange={(e) => {
-                                    //     const { name, value } = e.target;
-                                    //     if (value === '' || /^\d+$/.test(value)) {
-                                    //         setFormData((prev) => ({
-                                    //             ...prev,
-                                    //             [name]: value === '' ? '' : parseInt(value, 10)
-                                    //         }));
-                                    //         setErrors((prev) => ({ ...prev, [name]: '' }))
-                                    //     }
-                                    // }}
-                                    className={`w-full p-2 rounded-lg border ${errors.whatsapp_number ? 'border-red-500' : 'border-[#e1e4ea]'} bg-white focus:outline-none focus:border-[#675FFF]`}
-                                    placeholder={t("appointment.input_whatsapp")}
-                                />
-                                {errors.whatsapp_number && <p className="text-red-500 text-sm mt-1">{errors.whatsapp_number}</p>}
-                            </div>
-                        </div>
-                    </div>
-                )
-            case "web_page":
-                return (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-1 w-full">
-                        <div className="flex flex-col gap-1.5 w-full">
-                            <label className="text-sm font-medium text-[#1e1e1e]">
-                                {t("appointment.webpage_link")}
-                            </label>
-                            <div className="flex items-center border rounded-lg overflow-hidden w-full bg-white focus-within:border-[#675FFF]
-  border-[#e1e4ea] focus-within:ring-0">
-                                <span className="pl-3 pr-2 text-[#4B5563] bg-white focus:outline-none  font-medium  border-r border-[#e1e4ea]">
-                                    http://
-                                </span>
-                                <input
-                                    type="text"
-                                    name="webpage_link"
-                                    value={formData?.webpage_link}
-                                    onChange={handleChange}
-                                    className="flex-1 p-2 px-3 text-[#4B5563] bg-white focus:outline-none"
-                                    placeholder={t("appointment.enter_link")}
-                                />
-                            </div>
+        const objectives = formData.objective_of_the_agent || [];
+        const sections = [];
 
-                            {errors.webpage_link && <p className="text-red-500 text-sm mt-1">{errors.webpage_link}</p>}
-                        </div>
-                        {/* <div className="flex flex-col items-start gap-1.5 w-full">
-                            <label className="font-medium text-[#1e1e1e] text-sm">Send to a web page for</label>
-                            <select
+        if (objectives.includes("book_call")) {
+            sections.push(
+                <div key="book_call" className="flex items-start gap-3 w-full mt-2">
+                    <div className="flex flex-col gap-2 w-full">
+                        <div className="flex flex-col items-start gap-1.5">
+                            <label className="font-medium text-[#1e1e1e] text-sm">{t("appointment.select_calender")}</label>
+                            <SelectDropdown
                                 name="calendar"
-                                value={formData.webpage_type}
-                                onChange={(e) => {
+                                options={calendarOptions}
+                                value={formData.calendar_choosed}
+                                onChange={(updated) => {
                                     setFormData((prev) => ({
                                         ...prev,
-                                        webpage_type: e.target.value,
+                                        calendar_choosed: updated,
                                     }))
-                                    setErrors((prev) => ({ ...prev, webpage_type: '' }))
-                                }
-                                }
-                                className={`w-full py-[9px] px-2 bg-white border ${errors.webpage_type ? 'border-red-500' : 'border-[#e1e4ea]'} rounded-lg text-base text-[#1e1e1e]`}
-                            >
-                                <option disabled value="">Select</option>
-                                <option value="sales">Sales</option>
-                                <option value="ebook">ebook</option>
-                            </select>
-                            {errors.webpage_type && <p className="text-red-500 text-sm mt-1">{errors.webpage_type}</p>}
-                        </div> */}
-                    </div>
-                )
-            default:
-                return (
-                    <div className="flex items-start gap-3 w-full mt-2">
-                        <div className="flex flex-col gap-2 w-full">
+                                    setErrors((prev) => ({ ...prev, calendar_choosed: '' }))
+                                }}
+                                placeholder={t("appointment.select")}
+                                className="w-full"
+                                errors={errors}
+                            />
+                            {errors.calendar_choosed && <p className="text-red-500 text-sm mt-1">{errors.calendar_choosed}</p>}
+                        </div>
+                        {formData.calendar_choosed === "google_calendar" &&
                             <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
-                                <label className="font-medium text-[#1e1e1e] text-sm">{t("appointment.select_calender")}</label>
-                                {/* <select
-                                    name="calendar"
-                                    value={formData.calendar_choosed}
-                                    onChange={(e) => {
-                                        setFormData((prev) => ({
-                                            ...prev,
-                                            calendar_choosed: e.target.value,
-                                        }))
-                                        setErrors((prev) => ({ ...prev, calendar_choosed: '' }))
-                                    }
-                                    }
-                                    className={`w-full p-2 bg-white border ${errors.calendar_choosed ? 'border-red-500' : 'border-[#e1e4ea]'} rounded-lg text-base text-[#1e1e1e]`}
-                                >
-                                    <option value="" disabled>Select</option>
-                                    <option value="calendly">Calendly</option>
-                                    <option value="google_calendar">Google Calendar</option>
-                                </select> */}
+                                <label className="font-medium text-[#1e1e1e] text-sm">{t("appointment.select_google_calendar")}</label>
                                 <SelectDropdown
-                                    name="calendar"
-                                    options={calendarOptions}
-                                    value={formData.calendar_choosed}
+                                    name="calendar_id"
+                                    options={googleCalendarData}
+                                    value={formData.calendar_id}
                                     onChange={(updated) => {
+                                        console.log(updated)
                                         setFormData((prev) => ({
                                             ...prev,
-                                            calendar_choosed: updated,
+                                            calendar_id: updated,
                                         }))
-                                        setErrors((prev) => ({ ...prev, calendar_choosed: '' }))
+                                        setErrors((prev) => ({ ...prev, calendar_id: '' }))
                                     }}
                                     placeholder={t("appointment.select")}
                                     className="w-full"
                                     errors={errors}
                                 />
-                                {errors.calendar_choosed && <p className="text-red-500 text-sm mt-1">{errors.calendar_choosed}</p>}
+                                {errors.calendar_id && <p className="text-red-500 text-sm mt-1">{errors.calendar_id}</p>}
                             </div>
-                            {formData.calendar_choosed === "google_calendar" &&
-                                <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
-                                    <label className="font-medium text-[#1e1e1e] text-sm">{t("appointment.select_google_calendar")}</label>
-                                    <SelectDropdown
-                                        name="calendar_id"
-                                        options={googleCalendarData}
-                                        value={formData.calendar_id}
-                                        onChange={(updated) => {
-                                            console.log(updated)
-                                            setFormData((prev) => ({
-                                                ...prev,
-                                                calendar_id: updated,
-                                            }))
-                                            setErrors((prev) => ({ ...prev, calendar_id: '' }))
-                                        }}
-                                        placeholder={t("appointment.select")}
-                                        className="w-full"
-                                        errors={errors}
-                                    />
-                                    {errors.calendar_id && <p className="text-red-500 text-sm mt-1">{errors.calendar_id}</p>}
-                                </div>
-                            }
+                        }
+                    </div>
+                </div>
+            );
+        }
+
+        if (objectives.includes("whatsapp_number")) {
+            sections.push(
+                <div key="whatsapp_number" className="flex items-start gap-3 w-full mt-2">
+                    <div className="flex-1">
+                        <div className="flex flex-col items-start gap-1.5 max-w-[498px]">
+                            <label className="text-sm font-medium text-[#1e1e1e]">
+                                {t("appointment.whatsapp_number")}
+                            </label>
+                            <input
+                                type="text"
+                                name='whatsapp_number'
+                                value={formData?.whatsapp_number}
+                                onChange={handleChange}
+                                className={`w-full p-2 rounded-lg border ${errors.whatsapp_number ? 'border-red-500' : 'border-[#e1e4ea]'} bg-white focus:outline-none focus:border-[#675FFF]`}
+                                placeholder={t("appointment.input_whatsapp")}
+                            />
+                            {errors.whatsapp_number && <p className="text-red-500 text-sm mt-1">{errors.whatsapp_number}</p>}
                         </div>
                     </div>
-                )
+                </div>
+            );
         }
+
+        if (objectives.includes("web_page")) {
+            sections.push(
+                <div key="web_page" className="grid grid-cols-1 gap-1 w-full mt-2">
+                    <div className="flex flex-col gap-1.5 w-full">
+                        <label className="text-sm font-medium text-[#1e1e1e]">
+                            {t("appointment.webpage_link")}
+                        </label>
+                        <div className="flex items-center border rounded-lg overflow-hidden w-full bg-white focus-within:border-[#675FFF]
+  border-[#e1e4ea] focus-within:ring-0">
+                            <span className="pl-3 pr-2 text-[#4B5563] bg-white focus:outline-none  font-medium  border-r border-[#e1e4ea]">
+                                http://
+                            </span>
+                            <input
+                                type="text"
+                                name="webpage_link"
+                                value={formData?.webpage_link}
+                                onChange={handleChange}
+                                className="flex-1 p-2 px-3 text-[#4B5563] bg-white focus:outline-none"
+                                placeholder={t("appointment.enter_link")}
+                            />
+                        </div>
+
+                        {errors.webpage_link && <p className="text-red-500 text-sm mt-1">{errors.webpage_link}</p>}
+                    </div>
+                </div>
+            );
+        }
+
+        if (sections.length === 0) {
+            return null;
+        }
+
+        return (
+            <div className="flex flex-col gap-3 w-full mt-2">
+                {sections}
+            </div>
+        );
     }
 
     if (dataRenderStatus) return <p className='flex justify-center items-center h-[100vh]'><span className='loader' /></p>
@@ -821,39 +854,50 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
     return (
         <>
-            <div className="w-full py-4 pr-4 flex flex-col gap-4 overflow-auto ">
+            <div className="w-full p-6 flex flex-col gap-4 overflow-auto ">
                 <div className="flex justify-between items-center">
                     <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">{t("appointment.create_new_agent")}</h1>
                     <div className='flex gap-2'>
+                        <button
+                            onClick={() => setPreviewAgent(true)}
+                            className="px-4 py-2 bg-white cursor-pointer border border-[#E1E4EA] rounded-lg text-[14px] font-medium text-[#1E1E1E] hover:bg-[#F9FAFB] transition-colors"
+                        >
+                            Preview Agent
+                        </button>
+                        <button
+                            onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()}
+                            disabled={loading || step !== 3}
+                            className="px-4 py-2 bg-[#675FFF] cursor-pointer border border-[#5F58E8] rounded-lg text-[14px] font-medium text-white hover:bg-[#5F58E8] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            {loading ? (
+                                <div className="flex items-center justify-center gap-2">
+                                    <p>{t("processing")}</p>
+                                    <span className="loader" />
+                                </div>
+                        ) : (
+                            updateAgentStatus ? t("appointment.update_agent") : t("appointment.create_agent")
+                        )}
+                        </button>
                     </div>
                 </div>
                 <div className="flex flex-col gap-8 w-full">
-                    {/* <header className="flex flex-col gap-[11px]">
-                    <h1 className="font-semibold text-text-black text-xl leading-7">
-                        Configure your agent
-                    </h1>
-                    <p className="font-medium text-text-black text-sm leading-5">
-                        Adjust agent conversation behavior based on your need
-                    </p>
-                </header> */}
                     <div className="flex flex-col gap-4 w-full">
-                        <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
-                            <div className="flex justify-between cursor-pointer items-center" onClick={() => {
+                        <div className="bg-white rounded-[14px] border border-[#E1E4EA] flex flex-col overflow-hidden">
+                            <div className="flex justify-between cursor-pointer items-center px-[17px] py-4 border-b border-[#E1E4EA]" onClick={() => {
                                 handleSelectSteps(1)
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 1 ? 'bg-[#675FFF]' : statusSteps.step1 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step1 ? <CheckIcon /> : '1'}</p>
-                                    <p className={`text-[14px] font-[600] ${step === 1 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("appointment.identify")}</p>
+                                    <p className={`text-md font-[600] ${step === 1 ? 'text-[#000000]' : 'text-[#000000]'}`}>{t("appointment.identify")}</p>
                                 </div>
                                 {step !== 1 && <RightArrowIcon />}
                             </div>
-                            {step === 1 && <div className="flex flex-col gap-5">
-                                <hr style={{ color: "#E1E4EA" }} />
+                            {step === 1 && <div className="flex flex-col gap-5 p-[17px]">
                                 {/* Agent Name */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                                     <div className="flex flex-col gap-1.5 w-full">
-                                        <label className="text-sm font-medium text-[#1e1e1e]">
-                                            {t("appointment.agent_name")}<span className="text-[#675fff]">*</span>
+                                        <label className="text-sm font-medium text-[#868C98]">
+                                            {t("appointment.agent_name")}
                                         </label>
                                         <input
                                             type="text"
@@ -865,10 +909,10 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         />
                                         {errors.agent_name && <p className="text-red-500 text-sm mt-1">{errors.agent_name}</p>}
                                     </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                                    <div className="grid grid-cols-1 gap-4 w-full">
                                         <div className="flex flex-col gap-1.5 flex-1">
-                                            <label className="text-sm font-medium text-[#1e1e1e]">
-                                                {t("appointment.gender")}<span className="text-[#675fff]">*</span>
+                                            <label className="text-sm font-medium text-[#868C98]">
+                                                {t("appointment.gender")}
                                             </label>
                                             {/* <select
                                         name='gender'
@@ -897,7 +941,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             />
                                             {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
                                         </div>
-                                        <div className="flex flex-col gap-1.5 w-full">
+                                        {/* <div className="flex flex-col gap-1.5 w-full">
                                             <label className="text-sm font-medium text-[#1e1e1e]">
                                                 {t("appointment.age")}<span className="text-[#675fff]">*</span>
                                             </label>
@@ -919,7 +963,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                 placeholder={t("appointment.agent_age_placeholder")}
                                             />
                                             {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
 
@@ -928,58 +972,62 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <div className="flex flex-col md:flex-row  gap-4 w-full">
                                     <div className="flex flex-col gap-1.5 flex-1">
                                         <div className='flex justify-between items-center'>
-                                            <label className="text-sm font-medium text-[#1e1e1e]">
-                                                {t("appointment.agent_personality")}<span className="text-[#675fff]">*</span>
+                                            <label className="text-sm font-medium text-[#868C98]">
+                                                {t("appointment.agent_personality")}
                                             </label>
-                                            <a href='/agent-personality-documentation' target='_blank' className='flex items-center hover:underline gap-1 text-[14px] text-[#675FFF] font-[500]'>{t("appointment.learn_more")}<RequestSend status={true} /></a>
-                                        </div>
-                                        {/* <select
-                                    name='agent_personality'
-                                    value={formData?.agent_personality}
-                                    onChange={handleChange}
-                                    className={`w-full bg-white p-2 rounded-lg border ${errors.agent_personality ? 'border-red-500' : 'border-[#e1e4ea]'}`}>
-                                    <option disabled value="">Choose your agent personality</option>
-                                    {agentsPersonalityOptions.map((e) => (
-                                        <option key={e.key} value={e.key}>{e.label}</option>
-                                    ))}
-                                </select> */}
 
-                                        <SelectDropdown
-                                            name="agent_personality"
-                                            options={agentsPersonalityOptions}
-                                            value={formData?.agent_personality}
-                                            onChange={(updated) => {
-                                                setFormData((prev) => ({
-                                                    ...prev, agent_personality: updated
-                                                }))
-                                                setErrors((prev) => ({
-                                                    ...prev, agent_personality: ""
-                                                }))
-                                            }}
-                                            placeholder={t("appointment.choose_your_personality_placeholder")}
-                                            className=""
-                                            errors={errors}
-                                        />
+                                        </div>
+
+                                        <div ref={personalityDropdownRef} className="relative">
+                                            <button
+                                                ref={personalityButtonRef}
+                                                type="button"
+                                                onClick={() => setIsPersonalityDropdownOpen(!isPersonalityDropdownOpen)}
+                                                className={`flex justify-between items-center w-full border ${errors?.agent_personality ? 'border-red-500' : 'border-[#E1E4EA]'} rounded-lg px-3 py-2 bg-white text-left hover:cursor-pointer focus:outline-none focus:border-[#675FFF]`}
+                                            >
+                                                <span className={`block truncate ${!formData?.agent_personality ? 'text-[#9CA3AF]' : 'text-[#1E1E1E]'}`}>
+                                                    {formData?.agent_personality ? agentsPersonalityOptions.find(opt => opt.key === formData.agent_personality)?.label : t("appointment.choose_your_personality_placeholder")}
+                                                </span>
+                                                <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${isPersonalityDropdownOpen ? '' : 'transform rotate-180'}`} />
+                                            </button>
+                                            {isPersonalityDropdownOpen && createPortal(
+                                                <div
+                                                    className="personality-dropdown-portal fixed w-[250px] rounded-lg bg-white shadow-lg border-2 border-solid border-[#E1E4EA] z-[9999] max-h-60 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#675FFF] [&::-webkit-scrollbar-thumb]:rounded-full"
+                                                    style={{
+                                                        top: `${personalityDropdownPosition.top - 8}px`,
+                                                        right: `${personalityDropdownPosition.right}px`,
+                                                        transform: 'translateY(-100%)'
+                                                    }}
+                                                >
+                                                    <ul className="py-2">
+                                                        {agentsPersonalityOptions.map((option) => (
+                                                            <li
+                                                                key={option.key}
+                                                                className={`cursor-pointer font-[400] select-none px-4 py-2 hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF] ${formData?.agent_personality === option.key ? 'text-[#675FFF] bg-[#F4F5F6]' : 'text-[#5A687C]'}`}
+                                                                onClick={() => {
+                                                                    setFormData((prev) => ({
+                                                                        ...prev, agent_personality: option.key
+                                                                    }))
+                                                                    setErrors((prev) => ({
+                                                                        ...prev, agent_personality: ""
+                                                                    }))
+                                                                    setIsPersonalityDropdownOpen(false)
+                                                                }}
+                                                            >
+                                                                {option.label}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>,
+                                                document.body
+                                            )}
+                                        </div>
                                         {errors.agent_personality && <p className="text-red-500 text-sm mt-1">{errors.agent_personality}</p>}
                                     </div>
-                                    {/* <div className="flex flex-col gap-1.5 flex-1">
-                            <label className="text-sm font-medium text-[#1e1e1e]">
-                                Agent Language<span className="text-[#675fff]">*</span>
-                            </label>
-                            <select
-                                name='agent_language'
-                                value={formData?.agent_language}
-                                onChange={handleChange}
-                                className="w-full p-2 rounded-lg border border-[#e1e4ea]">
-                                <option value="english">English</option>
-                                <option value="spanish">Spanish</option>
-                                <option value="french">French</option>
-                            </select>
-                        </div> */}
                                     <div className='flex flex-col gap-1.5 flex-1'>
                                         <div className="relative" ref={dropdownRef}>
-                                            <label className="text-sm font-medium text-[#1e1e1e]">
-                                                {t("appointment.agent_language")}<span className="text-[#675fff]">*</span>
+                                            <label className="text-sm font-medium text-[#868C98]">
+                                                {t("appointment.agent_language")}
                                             </label>
                                             <button
                                                 onClick={() => setShowLanguageSelector((prev) => !prev)}
@@ -990,7 +1038,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                         const found = languagesOptions?.length > 0 && languagesOptions.find(d => d.key === lan);
                                                         return found?.label;
                                                     }).join(', ')
-                                                    : `${t("appointment.select")+" "+t("appointment.languages")}`}</span>
+                                                    : `${t("appointment.select") + " " + t("appointment.languages")}`}</span>
                                                 <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showLanguageSelector ? 'transform rotate-180' : ''}`} />
                                             </button>
                                             {showLanguageSelector && (
@@ -1013,16 +1061,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 </div>
 
                                 {/* Emoji Frequency */}
-                                <div className="flex justify-between gap-3 p-3.5 bg-[#fff] border border-[#E1E4EA] rounded-[10px] w-full">
+                                <div className="flex justify-between gap-3 p-2 bg-[#fff] w-full">
                                     <div className='flex gap-1'>
-                                        <div className="text-base font-medium text-[#1e1e1e]">
-                                            {t("appointment.emoji_freq")}<span className="text-[#675fff]">*</span>
-                                        </div>
-                                        <div className="text-[12px] text-[#5A687C] pt-0.5">
-                                            {t("appointment.pow_msg")}
-                                        </div>
-                                    </div>
-                                    <div>
                                         <button
                                             onClick={() => setFormData((prev) => ({
                                                 ...prev,
@@ -1036,44 +1076,24 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                     }`}
                                             />
                                         </button>
+                                        <div className="pl-2 text-sm font-medium ">
+                                            {t("appointment.emoji_freq")}
+                                        </div>
+                                        <div className="text-sm">
+                                            {t("appointment.pow_msg")}
+                                        </div>
                                     </div>
-                                    {/* <label className="text-sm font-medium text-[#1e1e1e]">
-                                   {
-                                    t("appointment.no_of_follower")
-                                   }
-                                    </label> */}
-
-                                    {/* Using grid layout */}
-                                    {/* <div className="grid grid-col-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 w-full">
-                                        {emojiOptions.map((option) => (
-                                            <div
-                                                key={option.id}
-                                                value={formData.emoji_frequency}
-                                                className={`p-2 cursor-pointer  text-center rounded-lg border  ${formData.emoji_frequency === option.value
-                                                    ? "bg-[#335bfb1a] border-[#675fff]"
-                                                    : "bg-white border-[#e1e4ea]"
-                                                    }`}
-                                                onClick={() =>
-                                                    setFormData((prev) => ({
-                                                        ...prev,
-                                                        emoji_frequency: option.value,
-                                                    }))
-                                                }
-                                            >
-                                                {option.label === "25%" ? `${option.label} (Recommended)` : option.label}
-
-                                            </div>
-                                        ))}
-                                    </div> */}
+                                    <div>
+                                    </div>
                                 </div>
 
                                 <hr style={{ color: "#E1E4EA" }} />
 
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center justify-end gap-2">
+                                    <button onClick={() => handleCancel(1)} className="px-2 cursor-pointer rounded-[7px]  py-[7px] text-center bg-white border-[1.5px] border-[#E1E4EA] text-[#1E1E1E]">{t("appointment.cancel")}</button>
                                     <button onClick={() => {
                                         handleContinue(2)
-                                    }} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("appointment.continue")}</button>
-                                    <button onClick={() => handleCancel(1)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("appointment.cancel")}</button>
+                                    }} className="px-5 cursor-pointer rounded-[7px]  py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("appointment.continue")}</button>
                                 </div>
 
                             </div>}
@@ -1086,7 +1106,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 2 ? 'bg-[#675FFF]' : statusSteps.step2 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step2 ? <CheckIcon /> : '2'}</p>
-                                    <p className={`text-[14px] font-[600] ${step === 2 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("appointment.objective")}</p>
+                                    <p className={`text-md font-[600] ${step === 2 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("appointment.objective")}</p>
                                 </div>
                                 {step !== 2 && <RightArrowIcon />}
                             </div>
@@ -1096,83 +1116,116 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 {/* Business Description and Offer */}
                                 <div className="flex flex-col md:flex-row gap-4 w-full">
                                     <div className="flex flex-col gap-1.5 flex-1">
-                                        <label className="text-sm font-medium text-[#1e1e1e]">
+                                        <label className="text-sm font-medium text-[#868C98] flex items-center gap-1">
                                             {t("appointment.business_description")}
-                                            <span className="text-[#675fff]">*</span>
+
+                                            <div
+                                                ref={tooltipIconRef}
+                                                className="relative"
+                                                onMouseEnter={() => setIsTooltipVisible(true)}
+                                                onMouseLeave={() => setIsTooltipVisible(false)}
+                                            >
+                                                <InfoIcon className="w-4 h-4 cursor-pointer" />
+
+                                                {/* Tooltip */}
+                                                {isTooltipVisible && createPortal(
+                                                    <div
+                                                        className="fixed w-[450px] bg-black text-white text-xs rounded-md px-2 py-1 z-[10000] pointer-events-none"
+                                                        style={{
+                                                            top: `${tooltipPosition.top}px`,
+                                                            left: `${tooltipPosition.left}px`,
+                                                            transform: 'translate(-50%, -100%)',
+                                                            marginTop: '-8px'
+                                                        }}
+                                                    >
+                                                        Example: I’m a therapist specialized in stress management. I help anxious individuals regain calm and clarity through a blend of breathing techniques.
+                                                    </div>,
+                                                    document.body
+                                                )}
+                                            </div>
                                         </label>
-                                        <textarea
-                                            name='business_description'
-                                            onChange={handleChange}
-                                            value={formData?.business_description}
-                                            rows={4}
-                                            className={`w-full bg-white p-2 rounded-lg border  ${errors.business_description ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                            placeholder={t("appointment.business_description_placeholder")}
-                                        />
+                                        <div className="relative">
+                                            <textarea
+                                                name='business_description'
+                                                onChange={handleChange}
+                                                value={formData?.business_description}
+                                                rows={4}
+                                                className={`w-full bg-white text-black p-2 pb-8 rounded-lg border  ${errors.business_description ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
+                                                placeholder={t("appointment.business_description_placeholder")}
+                                            />
+                                            <div className="absolute bottom-2 right-2 text-[#868C98] text-xs">
+                                                {countWords(formData?.business_description || '')}/80 Word
+                                            </div>
+                                        </div>
                                         {errors.business_description && <p className="text-red-500 text-sm mt-1">{errors.business_description}</p>}
-                                    </div>
-                                    <div className="flex flex-col gap-1.5 flex-1">
-                                        <label className="text-sm font-medium text-[#1e1e1e]">
-                                            {t("appointment.business_offer")}<span className="text-[#675fff]">*</span>
-                                        </label>
-                                        <textarea
-                                            name='your_business_offer'
-                                            onChange={handleChange}
-                                            value={formData?.your_business_offer}
-                                            rows={4}
-                                            className={`w-full bg-white p-2 rounded-lg border  ${errors.your_business_offer ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                            placeholder={t("appointment.agent_business_placeholder")}
-                                        />
-                                        {errors.your_business_offer && <p className="text-red-500 text-sm mt-1">{errors.your_business_offer}</p>}
                                     </div>
                                 </div>
 
-                                {/* Objective of the agent */}
-                                <div className="flex flex-col items-start gap-3 p-3.5 w-full bg-[#fff] border border-[#E1E4EA] rounded-[10px]">
-                                    <div className="flex items-center gap-2.5 w-full">
-                                        <div className="flex-1">
-                                            <div className="font-medium text-[#1e1e1e] text-base">{t("appointment.business_offer")}</div>
+                                {/* Objective of the agent and Followup Options */}
+                                <div className="flex flex-col md:flex-row gap-4 w-full">
+                                    {/* Objective of the agent */}
+                                    <div className="flex flex-col items-start gap-3 p-3.5 w-full md:w-1/2 bg-[#fff] border border-[#E1E4EA] rounded-[10px]">
+                                        <div className="flex items-center gap-2.5 w-full">
+                                            <div className="flex-1">
+                                                <div className="font-medium text-[#1e1e1e] text-base">{t("appointment.business_offer")}</div>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div className="flex flex-col md:flex-row items-start gap-4">
-                                        {objectiveAgent.map((each) => (
-                                            <div key={each.key} className="flex items-center gap-2 cursor-pointer" onClick={() => {
-                                                setFormData((prev) => ({
-                                                    ...prev, objective_of_the_agent: each.key,
-                                                    webpage_link: "",
-                                                    // webpage_type: "",
-                                                    calendar_choosed: '',
-                                                    whatsapp_number: ""
-                                                }))
+                                        <div className="flex flex-col md:flex-row items-start gap-4">
+                                            {objectiveAgent.map((each) => (
+                                            <div key={each.key} className="flex px-2 items-center gap-2 cursor-pointer" onClick={() => {
+                                                setFormData((prev) => {
+                                                    const currentObjectives = prev.objective_of_the_agent || [];
+                                                    const isSelected = currentObjectives.includes(each.key);
+                                                    let newObjectives;
+                                                    
+                                                    if (isSelected) {
+                                                        // Remove from array
+                                                        newObjectives = currentObjectives.filter(obj => obj !== each.key);
+                                                    } else {
+                                                        // Add to array
+                                                        newObjectives = [...currentObjectives, each.key];
+                                                    }
+                                                    
+                                                    // Clear related fields when unchecking
+                                                    const updates = { objective_of_the_agent: newObjectives };
+                                                    if (!newObjectives.includes("web_page")) {
+                                                        updates.webpage_link = "";
+                                                    }
+                                                    if (!newObjectives.includes("book_call")) {
+                                                        updates.calendar_choosed = '';
+                                                        updates.calendar_id = '';
+                                                    }
+                                                    if (!newObjectives.includes("whatsapp_number")) {
+                                                        updates.whatsapp_number = "";
+                                                    }
+                                                    
+                                                    return { ...prev, ...updates };
+                                                })
                                                 setErrors((prev) => ({ ...prev, objective_of_the_agent: "" }))
                                             }}
                                             >
-                                                {/* <input
-                                        type="radio"
-                                        name="objective_type"
-                                        value={each.key}
-                                        checked={formData.objective_of_the_agent === each.key}
-                                        onChange={(e) =>
-                                            setFormData((prev) => ({
-                                                ...prev,
-                                                objective_of_the_agent: e.target.value,
-                                            }))
-                                        }
-                                    /> */}
-                                                <div>{formData.objective_of_the_agent === each.key ? <CheckedCheckbox /> : <EmptyCheckbox />}</div>
+                                                <div>{formData.objective_of_the_agent && formData.objective_of_the_agent.includes(each.key) ? <CheckedCheckbox /> : <EmptyCheckbox />}</div>
 
-                                                <span className="text-sm font-medium text-gray-700">{each.label}</span>
+                                                <span className="text-md text-gray-700">{each.label}</span>
                                             </div>
-                                        ))}
+                                            ))}
+                                        </div>
+                                        {errors.objective_of_the_agent && <p className="text-red-500 text-sm mt-1">{errors.objective_of_the_agent}</p>}
+                                        {renderObjectiveAgent()}
                                     </div>
-                                    {errors.objective_of_the_agent && <p className="text-red-500 text-sm mt-1">{errors.objective_of_the_agent}</p>}
-                                    {renderObjectiveAgent()}
-                                </div>
 
-
-                                {/* Followup Options */}
-                                <div className="flex flex-col gap-3 p-3.5 bg-[#fff] border border-[#E1E4EA] rounded-[10px] w-full">
-                                    <div className="flex items-center gap-2.5">
+                                    {/* Followup Options */}
+                                    <div className="flex flex-col gap-3 p-3.5 w-full md:w-1/2 bg-[#fff] border border-[#E1E4EA] rounded-[10px]">
+                                    <div className="flex items-center justify-between w-full">
+                                        <div className="flex flex-col gap-1">
+                                            <span className="font-medium text-base text-black">
+                                                {t("appointment.enable_followup")}
+                                            </span>
+                                            <span className="text-sm text-[#868C98]">
+                                                Customize total followup and number of the days.
+                                            </span>
+                                        </div>
                                         <button
                                             onClick={() => setFormData((prev) => ({
                                                 ...prev,
@@ -1186,11 +1239,6 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                     }`}
                                             />
                                         </button>
-                                        <span className="font-medium text-base text-black">
-                                            {
-                                                t("appointment.enable_followup")
-                                            }
-                                        </span>
                                     </div>
 
 
@@ -1233,101 +1281,68 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                     setErrors((prev) => ({ ...prev, [name]: '' }));
                                                 }
                                             }}
-                                            style={{ width: '300px' }}
+                                            style={{ width: '100%' }}
                                             className={`p-2 bg-white rounded-lg border ${errors.number_of_followups ? 'border-red-500' : 'border-[#e1e4ea]'} no-spinner focus:outline-none focus:border-[#675FFF]`}
                                             placeholder={t("appointment.enter_number_between")}
                                         />
 
                                         {errors.number_of_followups && <p className="text-red-500 text-sm mt-1">{errors.number_of_followups}</p>}
 
-                                        {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
-                                {followupOptions.map((option) => (
-                                    <div
-                                        key={option.id}
-                                        className={`p-2 cursor-pointer text-center rounded-lg border  ${formData.follow_up_details.number_of_followups === option.value ? "bg-[#335bfb1a] border-[#675fff]" : "bg-white border-[#e1e4ea]"
-                                            }`}
-                                        onClick={() =>
-                                            formData.is_followups_enabled &&
-                                            setFormData((prev) => ({
-                                                ...prev,
-                                                follow_up_details: {
-                                                    ...prev.follow_up_details,
-                                                    number_of_followups: option.value
-                                                },
-                                            }))
-                                        }
-                                    >
-                                        {option.value === 2 ? `${option.value} (Recommended)` : option.value}
-                                    </div>
-                                ))}
-                            </div> */}
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                                        {messageTimeRange.map((each) => (
-                                            <div key={each.key} className="flex flex-col items-start gap-1.5 w-full">
-                                                <label className="font-medium text-[#1e1e1e] text-sm">
-                                                    {each.label}<span className="text-[#675fff]"></span>
-                                                </label>
-                                                <div className="flex items-center w-full">
-                                                    <div className="flex relative items-center justify-between">
-                                                        {/* <select
-                                                    className="flex-1 bg-transparent text-text-black text-base focus:outline-none appearance-none"
-                                                    name={each.key}
-                                                    value={formData.follow_up_details[each.key]}
-                                                    disabled={!formData.is_followups_enabled}
-                                                    onChange={(e) => {
-                                                        const { name, value } = e.target;
-                                                        setFormData((prev) => ({
-                                                            ...prev,
-                                                            follow_up_details: {
-                                                                ...prev.follow_up_details,
-                                                                [name]: parseInt(value),
-                                                            },
-                                                        }));
-                                                    }}
-                                                >
-                                                    {each.options.map((e) => (
-                                                        <option key={e} value={e}>{e}</option>
-                                                    ))}
-                                                </select> */}
-                                                        <SelectDropdown
-                                                            name={each.key}
-                                                            options={each.options}
-                                                            value={formData.follow_up_details[each.key]}
-                                                            onChange={(updated) => {
-                                                                setFormData((prev) => ({
-                                                                    ...prev,
-                                                                    follow_up_details: {
-                                                                        ...prev.follow_up_details,
-                                                                        [each.key]: parseInt(updated),
-                                                                    },
-                                                                }));
-                                                            }}
-                                                            placeholder={t("appointment.select")}
-                                                            className="w-[300px]"
-                                                            errors={errors}
-                                                            disabled={!formData.is_followups_enabled}
-                                                            hideArrow={true}
-                                                        />
-                                                        <span className="text-[#5A687C] absolute  right-2 text-[16px] font-[400]">{t("appointment.days")}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
-
+                                    <div className="flex flex-col gap-1.5 w-full">
+                                        <label className="text-sm font-medium text-[#1e1e1e]">
+                                            {t("appointment.no_of_days_followups")}
+                                        </label>
+                                        <div className="relative flex items-center w-full">
+                                            <input
+                                                type="number"
+                                                name="wait_time_for_follow_up"
+                                                value={formData?.follow_up_details?.wait_time_for_follow_up ?? ''}
+                                                onChange={(e) => {
+                                                    const { name, value } = e.target;
+                                                    let parsedValue = parseInt(value);
+                                                    
+                                                    if (value === '') {
+                                                        parsedValue = '';
+                                                    } else if (!isNaN(parsedValue)) {
+                                                        parsedValue = Math.max(0, parsedValue);
+                                                    }
+                                                    
+                                                    setFormData((prev) => ({
+                                                        ...prev,
+                                                        follow_up_details: {
+                                                            ...prev.follow_up_details,
+                                                            [name]: parsedValue
+                                                        }
+                                                    }));
+                                                    
+                                                    if (value === '' || isNaN(parsedValue)) {
+                                                        setErrors((prev) => ({ ...prev, [name]: t("appointment.field_required") }));
+                                                    } else {
+                                                        setErrors((prev) => ({ ...prev, [name]: '' }));
+                                                    }
+                                                }}
+                                                disabled={!formData.is_followups_enabled}
+                                                className={`w-full p-2 pr-16 rounded-lg border ${errors.wait_time_for_follow_up ? 'border-red-500' : 'border-[#e1e4ea]'} bg-white focus:outline-none focus:border-[#675FFF] no-spinner`}
+                                                placeholder="15"
+                                            />
+                                            <span className="absolute right-3 text-[#868C98] text-sm pointer-events-none">
+                                                {t("appointment.days")}
+                                            </span>
+                                        </div>
+                                        {errors.wait_time_for_follow_up && <p className="text-red-500 text-sm mt-1">{errors.wait_time_for_follow_up}</p>}
                                     </div>
-
-
+                                </div>
                                 </div>
 
                                 <hr style={{ color: "#E1E4EA" }} />
 
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center justify-end gap-2">
+                                    <button onClick={() => handleCancel(2)} className="px-2 cursor-pointer rounded-[7px] py-[7px] text-center bg-white border-[1.5px] border-[#E1E4EA] text-[#1E1E1E]">{t("appointment.cancel")}</button>
                                     <button onClick={() => {
                                         handleContinue(3)
-                                    }} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("appointment.continue")}</button>
-                                    <button onClick={() => handleCancel(2)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("appointment.cancel")}</button>
+                                    }} className="px-5 cursor-pointer rounded-[7px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("appointment.continue")}</button>
                                 </div>
                             </div>}
                         </div>
@@ -1339,73 +1354,107 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 3 ? 'bg-[#675FFF]' : statusSteps.step3 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step3 ? <CheckIcon /> : '3'}</p>
-                                    <p className={`text-[14px] font-[600] ${step === 3 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("appointment.behavior")}</p>
+                                    <p className={`text-md font-[600] ${step === 3 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("appointment.behavior")}</p>
                                 </div>
                                 {step !== 3 && <RightArrowIcon />}
                             </div>
                             {step === 3 && <div className="flex flex-col gap-5">
                                 <hr style={{ color: "#E1E4EA" }} />
 
-                                {/* Prompt */}
-                                <div className="flex flex-col gap-1.5 flex-1">
-                                    <label className="text-sm font-medium text-[#1e1e1e]">
-                                    {t("appointment.more_information")}
-                                        <span className="text-[#675fff]">*</span>
-                                    </label>
-                                    <p className='text-[#5A687C] text-[14px] font-[400]'>{t("appointment.prompt_guild")}</p>
-                                    <textarea
-                                        name='prompt'
-                                        onChange={handleChange}
-                                        value={formData?.prompt}
-                                        rows={3}
-                                        className={`w-full bg-white p-2 rounded-lg border  ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                        placeholder={t("appointment.more_info_placeholder")}
-                                    />
-                                    {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
-                                </div>
-                                {/* More informations for the setter */}
-                                <div className="flex flex-col gap-1.5 flex-1">
-                                    <label className="text-sm font-medium text-[#1e1e1e]">
-                                        {t("appointment.first_message")}
-                                        {/* <span className="text-[#675fff]">*</span> */}
-                                    </label>
-                                    <textarea
-                                        name='first_message'
-                                        onChange={handleChange}
-                                        value={formData?.first_message}
-                                        rows={3}
-                                        className="w-full bg-white p-2 rounded-lg border border-[#e1e4ea] resize-none focus:outline-none focus:border-[#675FFF]"
-                                        placeholder= {t("appointment.first_message_placeholder")}
-                                    />
+                                {/* Prompt Section */}
+                                <div className="flex flex-col gap-4">
+                                    <h3 className="text-base font-medium text-[#1e1e1e]">{t("appointment.prompt") || "Prompt"}</h3>
+                                    
+                                    <div className="flex flex-col md:flex-row gap-4 w-full">
+                                        {/* Guidelines/Prompt */}
+                                        <div className="flex flex-col gap-1.5 flex-1">
+                                            <label className="text-[11px] text-[#868C98]">
+                                                {t("appointment.prompt_guild") || "Guidelines, instructions, or context to shape your AI agent's behavior."}
+                                            </label>
+                                            <textarea
+                                                name='prompt'
+                                                onChange={handleChange}
+                                                value={formData?.prompt}
+                                                rows={6}
+                                                className={`w-full bg-white p-2 rounded-lg border ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
+                                                placeholder="Enter your prompt here"
+                                            />
+                                            {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
+                                        </div>
+                                        
+                                        {/* More Information For Setter */}
+                                        <div className="flex flex-col gap-1.5 flex-1">
+                                            <label className="text-[11px] font-medium text-[#868C98]">
+                                                {t("appointment.more_information") || "More Information For Setter"}
+                                            </label>
+                                            <textarea
+                                                name='first_message'
+                                                onChange={handleChange}
+                                                value={formData?.first_message}
+                                                rows={6}
+                                                className="w-full bg-white p-2 rounded-lg border border-[#e1e4ea] resize-none focus:outline-none focus:border-[#675FFF]"
+                                                placeholder={t("appointment.enter_info_setter_placeholder") || "Enter your information for setter..."}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {/* Qualification Questions */}
-                                <div className="flex flex-col gap-1.5 w-full">
-                                    <label className="text-sm font-medium text-[#1e1e1e]">
-                                        {t("appointment.qualification_questions")}<span className="text-[#675fff]">*</span>
-                                    </label>
-                                    {formData.qualification_questions.map((question, index) => (
-                                        <div key={index} className="flex items-center gap-2 w-full">
-                                            <input
-                                                type="text"
-                                                name={`qualification_questions[${index}]`}
-                                                value={question}
-                                                onChange={handleChange}
-                                                placeholder={t("appointment.enter_question")}
-                                                className={`flex-1 bg-white p-2 rounded-lg border ${errors[`qualification_questions[${index}]`] ? "border-red-500" : "border-[#e1e4ea]"} focus:outline-none focus:border-[#675FFF]`} />
-                                            {index === formData.qualification_questions.length - 1 ? (
-                                                <button type="button" onClick={addQuestion}>
-                                                    <AddPlus />
+                                <div className="flex flex-col gap-4 w-full">
+                                    <h3 className="text-base font-medium text-[#1e1e1e]">
+                                        {t("appointment.qualification_questions") || "Qualifications questions"}
+                                    </h3>
+                                    
+                                    <div className="flex flex-col gap-3">
+                                        {formData.qualification_questions.map((question, index) => (
+                                            <div key={index} className="flex items-center gap-3 w-full">
+                                                <span className="text-base font-medium text-[#1e1e1e] flex-shrink-0">
+                                                    {index + 1}.
+                                                </span>
+                                                <input
+                                                    type="text"
+                                                    name={`qualification_questions[${index}]`}
+                                                    value={question}
+                                                    onChange={handleChange}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            e.preventDefault();
+                                                            // If current question has content, add a new question
+                                                            if (question.trim()) {
+                                                                const currentLength = formData.qualification_questions.length;
+                                                                addQuestion();
+                                                                // Focus on the new input after state update
+                                                                setTimeout(() => {
+                                                                    const nextInput = document.querySelector(`input[name="qualification_questions[${currentLength}]"]`);
+                                                                    if (nextInput) {
+                                                                        nextInput.focus();
+                                                                    }
+                                                                }, 10);
+                                                            }
+                                                        }
+                                                    }}
+                                                    placeholder={t("appointment.enter_question") || "this is example content for my first questions and how the action look likes ?"}
+                                                    className={`flex-1 bg-white p-2 rounded-lg border ${errors[`qualification_questions[${index}]`] ? "border-red-500" : "border-[#e1e4ea]"} focus:outline-none focus:border-[#675FFF]`}
+                                                />
+                                                <button 
+                                                    type="button" 
+                                                    onClick={() => deleteQuestion(index)}
+                                                    className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg border border-[#e1e4ea] hover:bg-[#F4F5F6] transition-colors"
+                                                >
+                                                    <Trash2 className="w-4 h-4 text-red-500" />
                                                 </button>
-                                            ) : (
-                                                <button type="button" onClick={() =>
-                                                    deleteQuestion(index)
-                                                }>
-                                                    <CrossDelete />
-                                                </button>
-                                            )}
-                                        </div>
-                                    ))}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    
+                                    <button 
+                                        type="button" 
+                                        onClick={addQuestion}
+                                        className="flex items-center gap-1 text-[#675FFF] font-medium text-sm hover:text-[#5F58E8] transition-colors self-start"
+                                    >
+                                        <span className="text-[#675FFF]">+</span>
+                                        <span>{t("appointment.add_new_questions") || "Add New Questions"}</span>
+                                    </button>
                                 </div>
 
                                 {/* Sequence Section */}
@@ -1418,31 +1467,43 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         {sequenceCards.map((card, index) => (
                                             <React.Fragment key={card.id}>
                                                 {index > 0 && (
-                                                    <div className="h-[2px] w-[25px] mx-1 bg-[#e1e4ea]" />
+                                                    <div className="flex items-center mx-2">
+                                                        <svg width="36" height="18" viewBox="0 0 40 20" className="text-[#e1e4ea]">
+                                                            <path
+                                                                d="M 0 10 Q 15 0, 30 10 Q 35 15, 40 10"
+                                                                stroke="currentColor"
+                                                                strokeWidth="2"
+                                                                fill="none"
+                                                                strokeLinecap="round"
+                                                            />
+                                                            <polygon
+                                                                points="38,10 40,8 40,12"
+                                                                fill="currentColor"
+                                                            />
+                                                        </svg>
+                                                    </div>
                                                 )}
 
                                                 <div
-                                                    className={`flex flex-col w-[25%] items-center justify-center gap-2.5 p-2 bg-[#f9fafb] rounded-[11px] border ${card.selected ? "border-[#335bfb66]" : "border-[#e1e4ea]"
-                                                        }`}
+                                                    className={`flex flex-col w-[25%] items-center justify-center bg-white rounded-[11px] border ${card.selected ? "border-[#335bfb66]" : "border-[#e1e4ea]"
+                                                        } overflow-hidden`}
                                                 >
-                                                    <div className="flex items-center gap-2 w-full">
-                                                        <div
-                                                            className={`flex items-center gap-2.5 p-[7px] rounded-[10px]`}
-                                                        >
+                                                    {/* Header with Icon */}
+                                                    <div className="w-full flex items-center gap-2 px-3 py-2 bg-white">
+                                                        <div className={`${card.iconColor || 'bg-[#675FFF]'} rounded-lg p-2 flex items-center justify-center`}>
                                                             <img
                                                                 alt={card.title}
                                                                 src={card.iconSrc}
+                                                                className="w-5 h-5"
                                                             />
-
                                                         </div>
-                                                        <div className="font-semibold text-[#1e1e1e] text-base">
+                                                        <div className="font-semibold text-[#1E1E1E] text-sm">
                                                             {card.title}
                                                         </div>
                                                     </div>
 
-                                                    <div className="w-full h-px bg-[#e1e4ea]" />
+                                                    <div className="w-full p-3 flex flex-col gap-2">
 
-                                                    <div className="flex items-center gap-2 w-full">
                                                         <div className="relative w-full">
                                                             {/* <select
                                                                         name={card.key}
@@ -1471,7 +1532,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                                     console.log(updated)
                                                                     setFormData((prev) => ({
                                                                         ...prev,
-                                                                        platform_unique_id:'',
+                                                                        platform_unique_id: '',
                                                                         sequence: {
                                                                             ...prev.sequence,
                                                                             [card.key]: card.key === "delay" ? parseInt(updated) : updated,
@@ -1523,135 +1584,65 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 </div>
 
                                 {/* Silent Hours Section (single, non-removable time range) */}
-                                <div className="flex flex-col gap-1.5 flex-1 mt-4">
+                                <div className="flex flex-col gap-1.5 w-full mt-4">
                                     <label className="text-sm font-medium text-[#1e1e1e]">
                                         {t("appointment.silent_hours")}
                                     </label>
-                                    <div className="flex flex-row gap-4 w-full items-center">
+                                    <div className="flex flex-row gap-4 w-full items-end">
                                         {/* Start Time */}
-                                        <div className="relative flex-1" style={{ maxWidth: '248.5px', minWidth: '248.5px' }}>
-                                            <input
-                                                type="time"
-                                                value={formData.silent_hours && formData.silent_hours[0] ? formData.silent_hours[0].start : ''}
-                                                onChange={e => {
-                                                    const updated = [{
-                                                        start: e.target.value,
-                                                        end: formData.silent_hours && formData.silent_hours[0] ? formData.silent_hours[0].end : ''
-                                                    }];
-                                                    setFormData(prev => ({ ...prev, silent_hours: updated }));
-                                                }}
-                                                placeholder="Start"
-                                                className="w-full p-2 pl-4 rounded-xl border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] text-base text-[#5A687C] bg-white h-11"
-                                                style={{ width: '248.5px' }}
-                                            />
-
+                                        <div className="flex flex-col gap-1.5 w-1/2">
+                                            <label className="text-sm font-medium text-[#868C98]">
+                                                {"Time Start"}
+                                            </label>
+                                            <div className="relative">
+                                                <input
+                                                    type="time"
+                                                    value={formData.silent_hours && formData.silent_hours[0] ? formData.silent_hours[0].start : ''}
+                                                    onChange={e => {
+                                                        const updated = [{
+                                                            start: e.target.value,
+                                                            end: formData.silent_hours && formData.silent_hours[0] ? formData.silent_hours[0].end : ''
+                                                        }];
+                                                        setFormData(prev => ({ ...prev, silent_hours: updated }));
+                                                    }}
+                                                    placeholder="Start"
+                                                    className="w-full p-2 pl-4 rounded-xl border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] text-base text-[#1E1E1E] bg-white h-11"
+                                                />
+                                            </div>
                                         </div>
+                                        
+                                        {/* Separator */}
+                                        <div className="flex items-center pb-2">
+                                            <span className="text-[#1E1E1E] text-lg">-</span>
+                                        </div>
+                                        
                                         {/* End Time */}
-                                        <div className="relative flex-1" style={{ maxWidth: '248.5px', minWidth: '248.5px' }}>
-                                            <input
-                                                type="time"
-                                                value={formData.silent_hours && formData.silent_hours[0] ? formData.silent_hours[0].end : ''}
-                                                onChange={e => {
-                                                    const updated = [{
-                                                        start: formData.silent_hours && formData.silent_hours[0] ? formData.silent_hours[0].start : '',
-                                                        end: e.target.value
-                                                    }];
-                                                    setFormData(prev => ({ ...prev, silent_hours: updated }));
-                                                }}
-                                                placeholder="End"
-                                                className="w-full p-2 pl-4 rounded-xl border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] text-base text-[#5A687C] bg-white h-11"
-                                                style={{ width: '248.5px' }}
-                                            />
-
+                                        <div className="flex flex-col gap-1.5 w-1/2">
+                                            <label className="text-sm font-medium text-[#868C98]">
+                                                {"Time End"}
+                                            </label>
+                                            <div className="relative">
+                                                <input
+                                                    type="time"
+                                                    value={formData.silent_hours && formData.silent_hours[0] ? formData.silent_hours[0].end : ''}
+                                                    onChange={e => {
+                                                        const updated = [{
+                                                            start: formData.silent_hours && formData.silent_hours[0] ? formData.silent_hours[0].start : '',
+                                                            end: e.target.value
+                                                        }];
+                                                        setFormData(prev => ({ ...prev, silent_hours: updated }));
+                                                    }}
+                                                    placeholder="End"
+                                                    className="w-full p-2 pl-4 rounded-xl border border-[#e1e4ea] focus:outline-none focus:border-[#675FFF] text-base text-[#1E1E1E] bg-white h-11"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-
                             </div>}
                         </div>
                         {errors.success && <p className="text-green-500 text-sm mt-1">{errors.success}</p>}
                         {errors.error && <p className="text-red-500 text-sm mt-1">{errors.error}</p>}
-
-                        {step === 3 && <div className="flex items-center gap-2 py-3">
-                            <button disabled={loading} onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()} className="bg-[#675FFF] cursor-pointer  text-[16px] font-[500] text-white rounded-md text-sm md:text-base px-4 py-2">
-                                {loading ? <div className="flex cursor-pointer items-center justify-center gap-2"><p>{t("processing")}</p><span className="loader" /></div> : updateAgentStatus ? `${t("appointment.update_agent")}` : t("appointment.confirm_agent")}
-                            </button>
-                            <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-[7px] w-[162px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("appointment.cancel")}</button>
-                        </div>}
-
-                        {/* Message Time Range */}
-
-                        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                        {globalMessageTimeRange.map((each) => (
-                            <div key={each.key} className="flex flex-col items-start gap-1.5 w-full">
-                                <label className="font-medium text-[#1e1e1e] text-sm">
-                                    {each.label}<span className="text-[#675fff]">*</span>
-                                </label>
-                                <div className="flex items-center w-full">
-                                    <div className="flex items-center justify-between w-full bg-white rounded-lg border border-[#e1e4ea] shadow-shadows-shadow-xs px-3 py-2">
-                                        <select
-                                            className="flex-1 bg-transparent text-text-black text-base focus:outline-none appearance-none"
-                                            name={each.key}
-                                            value={formData[each.key]}
-                                            onChange={(e) => {
-                                                const { name, value } = e.target;
-                                                setFormData((prev) => ({
-                                                    ...prev,
-                                                    [name]: parseInt(value),
-                                                }));
-                                            }}
-                                        >
-                                            {each.options.map((e) => (
-                                                <option key={e} value={e}>{e}</option>
-                                            ))}
-                                        </select>
-                                        <span className="text-text-grey text-base">Minutes</span>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-
-                    </div> */}
-
-
-
-
-                        {/* Directness */}
-                        {/* <div className="flex flex-col items-start gap-3 p-3.5 w-full bg-[#F2F2F7] rounded-[10px] overflow-hidden">
-
-                        <div className="flex items-center gap-2.5 w-full">
-                            <div className="flex items-center gap-[5px] flex-1">
-                                <div className="font-medium text-[#1e1e1e] text-base">
-                                    Directness<span className="text-[#675fff]">*</span>
-                                </div>
-                                <div className="font-normal text-text-grey text-xs">
-                                    (0 = empathetic, 10 = highly direct for more calls)
-                                </div>
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
-                            {directnessOptions.map((option) => (
-                                <div
-                                    key={option.id}
-                                    onClick={() =>
-                                        setFormData((prev) => ({
-                                            ...prev,
-                                            directness: option.value,
-                                        }))
-                                    }
-                                    className={`text-center cursor-pointer rounded-lg border px-3 py-2 transition
-        ${formData.directness === option.value ? "bg-[#335bfb1a] border-[#675fff]" : "bg-white border-[#e1e4ea]"}`}
-                                >
-                                    <span className="font-normal text-text-black text-base">
-                                        {option.value === 2 ? `${option.value} (Recommended)` : option.value}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-
-
-                    </div> */}
-
 
                     </div>
                 </div>
@@ -1723,7 +1714,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     </div>
                 )}
             </div >
-            {previewAgent && <AgentPreviewModal setPreviewAgent={setPreviewAgent} />
+            {previewAgent && <AgentPreviewModal setPreviewAgent={setPreviewAgent} formData={formData} agentsPersonalityOptions={agentsPersonalityOptions} languagesOptions={languagesOptions} />
             }
             {
                 errorMessage && <div className="inter fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">

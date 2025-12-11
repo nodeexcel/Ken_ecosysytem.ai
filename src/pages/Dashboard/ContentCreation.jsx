@@ -14,7 +14,6 @@ import Calendar from '../../components/Calendar'
 import YoutubeScriptContent from '../../components/YoutubeScriptContent'
 import LinkedInNukeContent from '../../components/LinkedInNukeContent'
 import XPostContent from '../../components/XPostContent'
-import { BsThreeDots } from 'react-icons/bs'
 import TutorialPlay from '../../assets/svg/WatchTutorial.svg'
 import { X, Plus, MoreVertical, Edit, Trash2, Play } from 'lucide-react'
 import dummy1 from '../../assets/images/dummy1.png'
@@ -510,7 +509,7 @@ function ContentCreation() {
 
     return (
         <div className="h-full w-full relative">
-            <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><BsThreeDots size={24} color='#1e1e1e' /></div>
+            <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><MoreVertical size={24} color='#1e1e1e' /></div>
             <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full mt-2">
                 {/* Sidebar */}
                 <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-89px)] mb-8 overflow-y-auto">

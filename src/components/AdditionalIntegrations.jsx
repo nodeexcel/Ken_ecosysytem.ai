@@ -174,12 +174,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             </div>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                            <button
-                                className="flex items-center cursor-pointer gap-1 px-3 py-1 text-sm text-[#5A687C] bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F8F9FB]"
-                            >
-                                <Pencil className="w-4 h-4" />
-                                <span>{t("brain_ai.edit") || "Edit"}</span>
-                            </button>
+                            
                             <button
                                 onClick={() => handleDelete(e[id])}
                                 className="flex items-center cursor-pointer gap-1 px-3 py-1 font-[500] text-sm text-[#FF3B30] bg-white border border-[#FF3B30] rounded-lg hover:bg-[#FFF1EF]"

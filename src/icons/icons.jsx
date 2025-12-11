@@ -457,7 +457,7 @@ export const CalenderIcon = ({ status, hover }) => {
   );
 };
 
-export const ThreeDots = () => {
+export const Ellipsis = () => {
   return (
     <svg
   width="14"

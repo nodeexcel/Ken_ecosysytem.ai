@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Search, ChevronDown, Eye, Download, Trash2, CirclePlus, CreditCard, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { ThreeDots, AddIcon, CreditsIcon, EditPlanIcon, Delete, ProIcon, TeamIcon, BusinessIcon, EnterpriseIcon } from '../../icons/icons';
+import { Ellipsis, AddIcon, CreditsIcon, EditPlanIcon, Delete, ProIcon, TeamIcon, BusinessIcon, EnterpriseIcon } from '../../icons/icons';
 
 // Mock data for Billing Subscription Management
 const billingData = [
@@ -363,7 +363,7 @@ const BillingSubscription = () => {
                                 data-dropdown-trigger={index}
                               >
                                 <div className='bg-[#F4F5F6] p-2 rounded-lg'>
-                                  <ThreeDots />
+                                  <Ellipsis />
                                 </div>
                               </button>
                             </div>

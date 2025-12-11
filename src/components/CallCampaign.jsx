@@ -1,8 +1,8 @@
 // Full-featured modal with pixel-perfect layout, click-outside-to-close, and toggle logic.
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { ChevronDown, MoreHorizontal, X, Search, Plus, Ellipsis, CheckCircle, Check, Upload, UploadCloudIcon, UploadIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
-import { BritishFlag, Delete, DocIcon, Duplicate, Edit, Notes, TestCall, ThreeDots } from "../icons/icons";
+import { ChevronDown, MoreHorizontal, X, Search, Plus, CheckCircle, Check, Upload, UploadCloudIcon, UploadIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { BritishFlag, Delete, DocIcon, Duplicate, Edit, Notes, TestCall, Ellipsis } from "../icons/icons";
 import { useDispatch } from "react-redux";
 import { getNavbarData } from "../store/navbarSlice";
 import uk_flag from "../assets/images/uk_flag.png"

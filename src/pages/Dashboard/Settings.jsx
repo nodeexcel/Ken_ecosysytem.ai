@@ -13,12 +13,11 @@ import { updatePassword } from "../../api/auth";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getTeamMembers, removeTeamMember, sendInviteEmail, updateTeamMember, updateGeneralSettings } from "../../api/teamMember";
 import TransactionHistory from "../../components/TransactionHistory";
-import { Delete, Edit, LeftArrow, PasswordLock, PlanIcon, ProfileEditIcon, RefreshIcon, Settings, SuccessIcon, TeamMemberIcon, ThreeDots } from "../../icons/icons";
+import { Delete, Edit, LeftArrow, PasswordLock, PlanIcon, ProfileEditIcon, RefreshIcon, Settings, SuccessIcon, TeamMemberIcon, Ellipsis } from "../../icons/icons";
 import { discardData } from "../../store/profileSlice";
 import { SelectDropdown } from "../../components/Dropdown";
 import { FaChevronDown } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import { BsThreeDots } from "react-icons/bs";
 import default_avatar from '../../assets/images/default_avatar.png';
 
 import { parsePhoneNumberFromString } from "libphonenumber-js";
@@ -2085,7 +2084,7 @@ const SettingsPage = () => {
         </div>
         <hr className='text-[#E1E4EA]' />
       </div> */}
-      <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><BsThreeDots size={24} className="text-[#1e1e1e] dark:text-white" /></div>
+      <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><Ellipsis size={24} className="text-[#1e1e1e] dark:text-white" /></div>
       <div className="flex flex-col md:flex-row items-start lg:gap-8 relative w-full">
         {/* Sidebar Navigation */}
         <div className="lg:flex hidden flex-col bg-white dark:bg-[#1A1C23] gap-4 border border-[#D6D6D6] dark:border-[#2D3151] min-w-[272px] rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-89px)] mt-2 mb-8 overflow-y-auto">

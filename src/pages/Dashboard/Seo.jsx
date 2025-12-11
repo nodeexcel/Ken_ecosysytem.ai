@@ -16,8 +16,7 @@ import ContentAnalytics from '../../components/ContentAnalytics'
 import PromptAnalytics from '../../components/PromptAnalytics'
 import { formatTimeAgo } from '../../utils/TimeFormat'
 import { useTranslation } from "react-i18next";
-import { BsThreeDots } from 'react-icons/bs'
-import { Archive, X, BarChart3, AtSign, FileText, PieChart, ChevronUp, BarChartIcon, ChartColumnBig, ArrowUp, FolderDown, Upload, Search } from 'lucide-react'
+import { Archive, X, BarChart3, AtSign, FileText, PieChart, ChevronUp, BarChartIcon, ChartColumnBig, ArrowUp, FolderDown, Upload, Search, EllipsisVertical } from 'lucide-react'
 import ChatgptLogo from '../../assets/svg/Chatgpt.svg'
 import GeminiLogo from '../../assets/svg/Gemini.svg'
 import DeepseekLogo from '../../assets/svg/Deepseek.svg'
@@ -503,7 +502,7 @@ function Seo() {
     }
     return (
         <div className="h-full w-full relative">
-            <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><BsThreeDots size={24} color='#1e1e1e' /></div>
+            <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><EllipsisVertical size={24} color='#1e1e1e' /></div>
             <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full mt-2">
                 {/* Sidebar */}
                 <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-89px)] mb-8 overflow-y-auto">
