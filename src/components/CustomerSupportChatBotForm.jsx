@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { CheckIcon, FacebookIcon, RightArrowIcon, SlackIcon, UploadIcon, WebsiteIcon, WhatsAppIcon } from "../icons/icons";
+import { ChevronUp, ChevronDown, X } from "lucide-react";
 import { SelectDropdown } from "./Dropdown";
 import { useTranslation } from "react-i18next";
 import CustomizeAgent from "./CustomizeAgent";
@@ -10,7 +11,8 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
     const [formData, setFormData] = useState({ bot_name: "", role: "", personality: "", prompt: "", transfer: "", file: [], reference_text: "", transfer_case: {}, include_brainai: false })
     // const [errors, setErrors] = useState({})
     const [whatsappFormData, SetWhatsappFormData] = useState({
-        platform_unique_id: ""
+        platform_unique_id: "",
+        whatsapp_type: "Business"
     })
     const [step, setStep] = useState(1)
     const [statusSteps, setStatusSteps] = useState({ step1: false, step2: false, step3: false, step4: false })
@@ -156,9 +158,9 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
     ]
 
     const integrationsData = [
+        { label: `${t("calina.whatsapp")}`, icon: <WhatsAppIcon />, content: `${t("calina.whatsapp_content")}`, is_active: true },
         { label: `${t("calina.website")}`, icon: <WebsiteIcon />, content: `${t("calina.website_content")}`, is_active: true },
         { label: `${t("calina.messenger")}`, icon: <FacebookIcon />, content: `${t("calina.messenger_content")}`, is_active: false },
-        { label: `${t("calina.whatsapp")}`, icon: <WhatsAppIcon />, content: `${t("calina.whatsapp_content")}`, is_active: true },
         { label: `${t("calina.slack")}`, icon: <SlackIcon />, content: `${t("calina.slack_content")}`, is_active: false }
     ]
 
@@ -405,7 +407,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
             const response = await intregrateWhatsapp(agent_id, payload);
             if (response.status == 201 || response.status == 200) {
                 // reset and close
-                SetWhatsappFormData({ platform_unique_id: "" });
+                SetWhatsappFormData({ platform_unique_id: "", whatsapp_type: "Business" });
                 SetopenWhatsappModal(false);
                 handleCancel();
             }
@@ -416,17 +418,41 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
 
     return (
         <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
-            {/* <h1 className="text-[#1E1E1E] font-[600] text-[24px]">{t("calina.create_new_chatbot")}</h1> */}
-            <h1 className="text-[#1E1E1E] font-[600] text-[24px]">{editData ? t("calina.edit_new_chatbot") : t("calina.create_new_chatbot")}</h1>
+            {/* Header */}
+            <div className="flex justify-between items-center">
+                <h1 className="text-[#1E1E1E] font-[600] text-[24px]">{editData ? t("calina.edit_new_chatbot") : t("calina.create_new_chatbot")}</h1>
+                <div className="flex items-center gap-2">
+                    <button 
+                        onClick={handleCancel}
+                        className="px-4 py-2 bg-white text-[#1E1E1E] border border-[#E1E4EA] rounded-lg text-[16px] font-medium hover:bg-gray-50 focus:outline-none focus:border-[#675FFF]"
+                    >
+                        {t("cancel")}
+                    </button>
+                    <button 
+                        onClick={handleSubmit}
+                        disabled={loading || step !== 3}
+                        className={`px-4 py-2 rounded-lg text-[16px] font-medium focus:outline-none ${
+                            loading || step !== 3 
+                                ? 'bg-[#E1E4EA] text-[#5A687C] cursor-not-allowed' 
+                                : 'bg-[#E1E4EA] text-[#5A687C] hover:bg-[#D1D5DB] cursor-pointer'
+                        }`}
+                    >
+                        {editData ? t("brain_ai.update") : "Create Chatbot"}
+                    </button>
+                </div>
+            </div>
             <div className="h-full flex flex-col gap-4 w-full">
                 <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
-                    <div className="flex justify-between items-center" onClick={() => {
+                    <div className="flex justify-between items-center cursor-pointer" onClick={() => {
                         handleSelectSteps(1)
                     }}>
-                        <div className='flex items-center gap-2'>
-                            <p className={`${step === 1 ? 'bg-[#675FFF]' : statusSteps.step1 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step1 ? <CheckIcon /> : '1'}</p>
-                            <p className={`text-[14px] font-[600] ${step === 1 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("calina.bot_details")}</p>
+                        <div className='flex items-center gap-3'>
+                            <div className={`${step === 1 ? 'bg-[#675FFF]' : statusSteps.step1 ? 'bg-[#34C759]' : 'bg-[#9CA3AF]'} h-[30px] w-[30px] flex justify-center items-center rounded-lg text-white font-semibold`}>
+                                {'1'}
+                            </div>
+                            <p className={`text-md font-[600] ${step === 1 ? 'text-[#1E1E1E]' : 'text-[#000000]'}`}>{t("calina.bot_details")}</p>
                         </div>
+                        {step === 1 && <ChevronUp className="w-5 h-5 text-[#5A687C]" />}
                         {step !== 1 && <RightArrowIcon />}
                     </div>
                     {step === 1 && <div className="flex flex-col gap-5">
@@ -462,7 +488,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                             ...prev, role: ""
                                         }))
                                     }}
-                                    placeholder={t("calina.role")}
+                                    placeholder="Select Role"
                                     className=""
                                     errors={errors}
                                 />
@@ -470,9 +496,9 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                             </div>
                             <div className="flex flex-col gap-1.5 flex-1">
                                 <label className="text-sm font-medium text-[#1e1e1e]">
-                                    {t("phone.language")}
+                                    Bot Language
                                 </label>
-                                <p className="text-[#5A687C] font-[400] text-[12px]">{t("calina.personality_description")}</p>
+                                <p className="text-[#5A687C] font-[400] text-[14px]">The chatbot automatically detects the language used by customer during the first interaction.</p>
                             </div>
                             <div className="flex flex-col gap-1.5 flex-1">
                                 <label className="text-sm font-medium text-[#1e1e1e]">
@@ -490,7 +516,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                             ...prev, personality: ""
                                         }))
                                     }}
-                                    placeholder={t("calina.personality")}
+                                    placeholder="Select Personality"
                                     className=""
                                     errors={errors}
                                 />
@@ -507,18 +533,18 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                 value={formData?.prompt}
                                 rows={4}
                                 className={`w-full bg-white p-2 rounded-lg border  ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                placeholder={t("calina.prompt_hello")}
+                                placeholder="Enter your prompt here"
                             />
                             {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
                         </div>
 
                         <hr style={{ color: "#E1E4EA" }} />
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center justify-end gap-2">
+                            <button onClick={() => handleCancel(1)} className="px-5 cursor-pointer rounded-lg py-2 text-center bg-white border border-[#E1E4EA] text-[#1E1E1E] font-medium hover:bg-gray-50 focus:outline-none">{t("cancel")}</button>
                             <button onClick={() => {
                                 handleContinue(2)
-                            }} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("continue")}</button>
-                            <button onClick={() => handleCancel(1)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
+                            }} className="px-5 cursor-pointer rounded-lg py-2 text-center bg-[#675FFF] text-white font-medium hover:bg-[#5A52E5] focus:outline-none">{t("continue")}</button>
                         </div>
 
                     </div>}
@@ -528,8 +554,8 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                         handleSelectSteps(2)
                     }}>
                         <div className='flex items-center gap-2'>
-                            <p className={`${step === 2 ? 'bg-[#675FFF]' : statusSteps.step2 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step2 ? <CheckIcon /> : '2'}</p>
-                            <p className={`text-[14px] font-[600] ${step === 2 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("calina.transfer_details")}</p>
+                            <div className={`${step === 2 ? 'bg-[#675FFF]' : statusSteps.step2 ? 'bg-[#34C759]' : 'bg-[#9CA3AF]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white font-semibold`}>{'2'}</div>
+                            <p className={`text-md font-[600] ${step === 2 ? 'text-[#000000]' : 'text-[#000000]'}`}>{t("calina.transfer_details")}</p>
                         </div>
                         {step !== 2 && <RightArrowIcon />}
                     </div>
@@ -576,45 +602,78 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
 
                         <hr style={{ color: "#E1E4EA" }} />
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center justify-end gap-2">
+                            <button onClick={() => handleCancel(2)} className="px-5 cursor-pointer rounded-lg py-2 text-center bg-white border border-[#E1E4EA] text-[#1E1E1E] font-medium hover:bg-gray-50 focus:outline-none">{t("cancel")}</button>
                             <button onClick={() => {
                                 handleContinue(3)
-                            }} className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("continue")}</button>
-                            <button onClick={() => handleCancel(2)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
+                            }} className="px-5 cursor-pointer rounded-lg py-2 text-center bg-[#675FFF] text-white font-medium hover:bg-[#5A52E5] focus:outline-none">{t("continue")}</button>
                         </div>
 
                     </div>}
                 </div>
                 <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
-                    <div className="flex justify-between items-center" onClick={() => {
+                    <div className="flex justify-between items-center cursor-pointer" onClick={() => {
                         handleSelectSteps(3)
                     }}>
-                        <div className='flex items-center gap-2'>
-                            <p className={`${step === 3 ? 'bg-[#675FFF]' : statusSteps.step3 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step3 ? <CheckIcon /> : '3'}</p>
-                            <p className={`text-[14px] font-[600] ${step === 3 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>Add Resources</p>
+                        <div className='flex items-center gap-3'>
+                            <div className={`${step === 3 ? 'bg-[#675FFF]' : statusSteps.step3 ? 'bg-[#34C759]' : 'bg-[#9CA3AF]'} h-[30px] w-[30px] flex justify-center items-center rounded-lg text-white font-semibold`}>{'3'}</div>
+                            <p className={`text-md font-[600] ${step === 3 ? 'text-[#1E1E1E]' : 'text-[#000000]'}`}>Add Resources</p>
                         </div>
+                        {step === 3 && <ChevronUp className="w-5 h-5 text-[#5A687C]" />}
                         {step !== 3 && <RightArrowIcon />}
                     </div>
                     {step === 3 && <div className="flex flex-col gap-5">
                         <hr style={{ color: "#E1E4EA" }} />
-                        <div>
-                            <label className="block text-sm font-medium mb-1">{t("my_file")}</label>
-                            <div className="mt-2">
+                        
+                        {/* Toggle at the top */}
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => {
+                                    setFormData((prev) => ({ ...prev, include_brainai: !formData.include_brainai }));
+                                   
+                                    if (formData.include_brainai) {
+                                        setErrors((prev) => ({ ...prev, custom_prompt: "" }));
+                                    }
+                                }}
+                                className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${formData.include_brainai ? "bg-[#675FFF]" : "bg-[#E1E4EA]"}`}
+                            >
+                                <span
+                                    className={`block w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${formData.include_brainai ? "translate-x-5" : "translate-x-0.5"}`}
+                                ></span>
+                            </button>
+                            <label className="text-sm font-medium text-[#1E1E1E]">
+                                Take ressources form AI Brain
+                            </label>
+                        </div>
+
+                        {/* Two-column layout */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Left Column - Upload File */}
+                            <div className="flex flex-col gap-2 h-full">
+                                <label className="text-sm font-medium text-[#5A687C]">Upload File</label>
                                 <div
                                     onClick={handleClick}
                                     onDragOver={handleDragOver}
                                     onDragLeave={handleDragLeave}
                                     onDrop={handleDrop}
-                                    className={`flex flex-col items-center justify-center py-4 border-2 border-dashed rounded-md text-center cursor-pointer transition ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-[#335CFF80] bg-[#F5F7FF]'
+                                    className={`flex flex-col items-center justify-center py-8 border-2 border-dashed rounded-lg text-center cursor-pointer transition h-full ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-[#E1E4EA] bg-white'
                                         }`}
                                 >
-                                    <UploadIcon />
-                                    <p className="text-[18px] font-[600] text-[#1E1E1E] mt-2">
-                                        {t("brain_ai.upload_from_your_computer")}
+                                    <div className="text-[#675FFF] mb-3">
+                                        <UploadIcon />
+                                    </div>
+                                    <p className="text-[14px] font-[400] text-[#1E1E1E] mb-4">
+                                        Choose a file or drag & drop it here.
                                     </p>
-                                    <p className="text-[14px] font-[500] text-[#5A687C] mt-1">
-                                        {t("brain_ai.or_drag_and_drop")}
-                                    </p>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleClick();
+                                        }}
+                                        className="px-4 py-2 bg-white border border-[#E1E4EA] text-[#1E1E1E] rounded-lg text-sm font-medium hover:bg-gray-50"
+                                    >
+                                        Browse File
+                                    </button>
                                     <input
                                         type="file"
                                         accept="application/pdf"
@@ -625,94 +684,79 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                 </div>
 
                                 {!isUploading && selectedFile && (
-                                    <div className="mt-3 text-sm text-gray-700">
+                                    <div className="mt-2 text-sm text-gray-700">
                                         <strong>{t("brain_ai.selected_file")}</strong> {selectedFile.name}
                                         <p className="text-green-500">File Uploaded Successfully!</p>
                                     </div>
-                                    
-
                                 )}
                                 {showUploadProgress && isUploading && (
-                                    <div className="mt-3 w-full">
+                                    <div className="mt-2 w-full">
                                         <div className="w-full h-[14px] rounded-[40px] bg-[#D7D4FF]">
                                             <div className={`h-[14px] bg-[#675FFF] ${uploadProgress >= 100 ? 'rounded-[40px]' : 'rounded-l-[40px]'}`} style={{ width: `${uploadProgress}%` }}></div>
                                         </div>
                                         <p className="text-[#5A687C] text-[12px] mt-1">{uploadProgress}% Uploading...</p>
                                     </div>
                                 )}
-                                {/* {errors.file && <p className='my-1 text-[#FF3B30]'>{errors.file}</p>} */}
                             </div>
-                        </div>
-                        <div className="flex flex-col gap-1.5 w-full">
-                            <label className="text-sm font-medium text-[#1e1e1e]">
-                                {t("free_text")}
-                            </label>
-                            <textarea
-                                name='reference_text'
-                                onChange={handleChange}
-                                value={formData?.reference_text}
-                                rows={4}
-                                className={`w-full bg-white p-2 rounded-lg border  ${errors.reference_text ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                placeholder={t("calina.prompt_hello")}
-                            />
-                            {errors.reference_text && <p className="text-red-500 text-sm mt-1">{errors.reference_text}</p>}
-                        </div>
 
-                        {/* Use AI Brain Toggle */}
-                        <div className="flex items-center justify-between">
-                            <label className="text-sm font-medium mb-1 flex items-center gap-2">
-                                <p>Take Resources from AI Brain</p>
-                                <div className="relative group">
-                                    <div className="absolute bottom-full flex-col mb-1 gap-1 w-60 left-3 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 hidden group-hover:flex transition-opacity duration-200 z-10">
-                                        {t("emailings.continue_same_spirit")}
-                                    </div>
-                                </div>
-                            </label>
-                            <button
-                                onClick={() => {
-                                    setFormData((prev) => ({ ...prev, include_brainai: !formData.include_brainai }));
-                                   
-                                    if (formData.include_brainai) {
-                                        setErrors((prev) => ({ ...prev, custom_prompt: "" }));
-                                    }
-                                }}
-                                className={`w-11 h-6 rounded-full relative transition-colors duration-300 ${formData.include_brainai ? "bg-[#7065F0]" : "bg-[#E1E4EA]"}`}
-                            >
-                                <span
-                                    className={`block w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${formData.include_brainai ? "translate-x-5" : "translate-x-0.5"}`}
-                                ></span>
-                            </button>
+                            {/* Right Column - Description */}
+                            <div className="flex flex-col gap-2 h-full">
+                                <label className="text-sm font-medium text-[#5A687C]">Description</label>
+                                <textarea
+                                    name='reference_text'
+                                    onChange={handleChange}
+                                    value={formData?.reference_text}
+                                    rows={8}
+                                    className={`w-full bg-white p-3 rounded-lg border h-full ${errors.reference_text ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
+                                    placeholder="Enter description here"
+                                />
+                                {errors.reference_text && <p className="text-red-500 text-sm mt-1">{errors.reference_text}</p>}
+                            </div>
                         </div>
 
                         <hr style={{ color: "#E1E4EA" }} />
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center justify-end gap-2">
+                            <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-lg py-2 text-center bg-white border border-[#E1E4EA] text-[#1E1E1E] font-medium hover:bg-gray-50 focus:outline-none">{t("cancel")}</button>
                             <button onClick={
                                 handleSubmit
-                            } className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{editData ? t("brain_ai.update") : t("brain_ai.create")}</button>
-                            <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button>
+                            } className="px-5 cursor-pointer rounded-lg py-2 text-center bg-[#675FFF] text-white font-medium hover:bg-[#5A52E5] focus:outline-none">{editData ? t("brain_ai.update") : t("brain_ai.create")}</button>
                         </div>
 
                     </div>}
                 </div>
                 <div className="bg-white rounded-[14px] border border-[#E1E4EA] p-[17px] flex flex-col gap-3">
-                    <div className="flex justify-between items-center" onClick={() => {
+                    <div className="flex justify-between items-center cursor-pointer" onClick={() => {
                         handleSelectSteps(4)
                     }}>
-                        <div className='flex items-center gap-2'>
-                            <p className={`${step === 4 ? 'bg-[#675FFF]' : statusSteps.step4 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step4 ? <CheckIcon /> : '4'}</p>
-                            <p className={`text-[14px] font-[600] ${step === 4 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("brain_ai.integrations.integrations")}</p>
+                        <div className='flex items-center gap-3'>
+                            <div className={`${step === 4 ? 'bg-[#675FFF]' : statusSteps.step4 ? 'bg-[#34C759]' : 'bg-[#9CA3AF]'} h-[30px] w-[30px] flex justify-center items-center rounded-lg text-white font-semibold`}>{'4'}</div>
+                            <p className={`text-md font-[600] ${step === 4 ? 'text-[#1E1E1E]' : 'text-[#000000]'}`}>{t("brain_ai.integrations.integrations")}</p>
                         </div>
+                        {step === 4 && <ChevronDown className="w-5 h-5 text-[#5A687C]" />}
                         {step !== 4 && <RightArrowIcon />}
                     </div>
                     {step === 4 && <div className="flex flex-col gap-5">
                         <hr style={{ color: "#E1E4EA" }} />
-                        <div className="w-full flex flex-wrap gap-4">
-                            {integrationsData.map((each) => (
-                                <div key={each.label} className="flex w-full lg:w-[32%] flex-col gap-[10px] border-[0.5px] rounded-[8px] border-[#E1E4EA] p-[20px]">
-                                    <div>{each.icon}</div>
-                                    <h1 className="text-[#1E1E1E] text-[18px] font-[600]">{each.label}</h1>
-                                    <p className="text-[#5A687C] text-[14px] font-[400]">{each.content}</p>
+                        <p className="text-[#5A687C] text-[14px] font-[400]">Connect your chatbot to Instagram and let it respond to your customers messages</p>
+                        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {integrationsData.map((each) => {
+                                const isConnected = editDataId && connectedPlatforms?.platforms?.some(
+                                    (platform) => platform?.integration_platform?.toLowerCase() === each.label.toLowerCase() ||
+                                                 platform?.platform_name?.toLowerCase() === each.label.toLowerCase()
+                                );
+                                const buttonText = !each.is_active 
+                                    ? t("coming_soon") 
+                                    : isConnected 
+                                        ? t("brain_ai.update") 
+                                        : "Connect";
+                                
+                                return (
+                                <div key={each.label} className="flex items-center justify-between gap-4 border-[0.5px] rounded-[8px] border-[#E1E4EA] p-4">
+                                    <div className="flex items-center gap-3">
+                                        <div>{each.icon}</div>
+                                        <h1 className="text-[#1E1E1E] text-[16px] font-[600]">{each.label}</h1>
+                                    </div>
                                     <button onClick={async () => {
                                         setCustomIntegartion(each)
                                         handleGetWebsiteLink()
@@ -775,9 +819,19 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                         }
                                     }}
                                         disabled={!each.is_active}
-                                        className={`w-full px-[20px] py-[7px] border-[1.5px] font-[500] text-[16px] rounded-[7px] ${each.is_active ? 'bg-[#675FFF] border-[#5F58E8] text-[#fff] cursor-pointer' : 'border-[#E1E4EA] bg-[#E1E4EA] text-[#5A687C]'}`}>{each.is_active ? `${t("brain_ai.update")}` : `${t("coming_soon")}`}</button>
+                                        className={`px-4 py-2 font-[500] text-[14px] rounded-lg whitespace-nowrap ${
+                                            !each.is_active 
+                                                ? 'bg-[#E1E4EA] text-[#5A687C] cursor-not-allowed' 
+                                                : isConnected
+                                                    ? 'bg-[#E1E4EA] text-[#1E1E1E] border border-[#E1E4EA] hover:bg-gray-100 cursor-pointer'
+                                                    : 'bg-[#675FFF] text-white hover:bg-[#5A52E5] cursor-pointer'
+                                        }`}
+                                    >
+                                        {buttonText}
+                                    </button>
                                 </div>
-                            ))}
+                                );
+                            })}
                         </div>
 
                         <hr style={{ color: "#E1E4EA" }} />
@@ -790,43 +844,70 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
             {
                 openWhatsappModal && (
                     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999]">
-                        <div className="bg-white rounded-2xl w-[600px] p-8 relative shadow-lg">
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4">Whatsapp Intregration</h2>
-                            <p className="text-gray-500 mb-4">Are you sure you want to Whatsapp Intregration for this Smart Bot?</p>
-                            <div className="pb-4">
-                                <SelectDropdown
-                                    name="platform_unique_id"
-                                    options={Array.isArray(whatsappData) ? whatsappData : []}
-                                    value={whatsappFormData.platform_unique_id}
-                                    onChange={(updated) => {
-                                        console.log("Selected value:", updated);
-                                        SetWhatsappFormData((prev) => ({
-                                            ...prev,
-                                            platform_unique_id: updated
-                                        }));
-                                        // setErrors((prev) => ({ ...prev, platform_unique_id: "" }));
-                                    }}
-                                    placeholder={t("appointment.account")}
-                                    className="mt-2"
-                                    errors={errors}
-                                    disabled={false}
-                                />
-                            </div>
-                            <div className="flex gap-2">
+                        <div className="bg-white rounded-2xl w-[600px] p-6 relative shadow-lg">
+                            {/* Header */}
+                            <div className="flex items-center justify-between mb-6">
+                                <div className="flex items-center gap-3">
+                                    <div className="text-green-500">
+                                        <WhatsAppIcon />
+                                    </div>
+                                    <h2 className="text-xl font-semibold text-[#1E1E1E]">Connect Whatsapp</h2>
+                                </div>
                                 <button
-                                    onClick={() => SetopenWhatsappModal(null)}
-                                    className="w-full text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
+                                    onClick={() => SetopenWhatsappModal(false)}
+                                    className="text-gray-500 hover:text-gray-700 cursor-pointer"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            {/* Content */}
+                            <div className="flex flex-col gap-4 mb-6">
+                                {/* WhatsApp type field */}
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-sm font-medium text-[#5A687C]">WhatsApp type</label>
+                                    <div className="w-full bg-white p-3 rounded-lg border border-[#E1E4EA] text-[#1E1E1E]">
+                                        {whatsappFormData.whatsapp_type}
+                                    </div>
+                                </div>
+
+                                {/* Account field */}
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-sm font-medium text-[#5A687C]">Account</label>
+                                    <SelectDropdown
+                                        name="platform_unique_id"
+                                        options={Array.isArray(whatsappData) ? whatsappData : []}
+                                        value={whatsappFormData.platform_unique_id}
+                                        onChange={(updated) => {
+                                            console.log("Selected value:", updated);
+                                            SetWhatsappFormData((prev) => ({
+                                                ...prev,
+                                                platform_unique_id: updated
+                                            }));
+                                        }}
+                                        placeholder="Select account"
+                                        className=""
+                                        errors={errors}
+                                        disabled={false}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Footer Buttons */}
+                            <div className="flex gap-2 justify-end">
+                                <button
+                                    onClick={() => SetopenWhatsappModal(false)}
+                                    className="px-4 py-2 text-[16px] cursor-pointer text-[#1E1E1E] bg-white border border-[#E1E4EA] rounded-lg hover:bg-gray-50 focus:outline-none"
                                 >
                                     {t("phone.cancel")}
                                 </button>
                                 <button
                                     onClick={() => {
                                         whatsappIntregrate();
-
                                     }}
-                                    className="w-full text-[16px] cursor-pointer text-white rounded-[8px] bg-red-500 h-[38px] flex justify-center items-center gap-2 relative"
+                                    className="px-4 py-2 text-[16px] cursor-pointer text-white bg-[#675FFF] rounded-lg hover:bg-[#5A52E5] focus:outline-none"
                                 >
-                                    Submit
+                                    Connect
                                 </button>
                             </div>
                         </div>

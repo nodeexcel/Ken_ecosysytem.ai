@@ -1,4 +1,4 @@
-import { X } from "lucide-react"
+import { X, Copy } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { SketchPicker } from "react-color"
 import { DeleteIcon, UploadIcon } from "../icons/icons"
@@ -6,6 +6,15 @@ import { testAgentChat } from "../api/appointmentSetter"
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next"
 import { addAvatars, getAvatars, intregateWebsiteChat, intregateWebsiteChatById, testChatBotById, updateWebsiteChatById } from "../api/customerSupport"
+import agentImage1 from "../assets/svg/tara_logo.svg"
+import agentImage2 from "../assets/svg/constance_logo.svg"
+import agentImage3 from "../assets/svg/rebecca_logo.svg"
+import agentImage4 from "../assets/svg/emile_logo.svg"
+import agentImage5 from "../assets/svg/calina_logo.svg"
+import agentImage6 from "../assets/svg/finn_logo.svg"
+import agentImage7 from "../assets/svg/rima_logo.svg"
+import agentImage8 from "../assets/svg/seth_logo.svg"
+import agentImage9 from "../assets/svg/tom_logo.svg"
 
 function CustomizeAgent({ customIntegartion, setCustomStatus, agentId, editDataId, websiteData }) {
     const [activeTab, setActiveTab] = useState("customize")
@@ -51,6 +60,19 @@ function CustomizeAgent({ customIntegartion, setCustomStatus, agentId, editDataI
     const [chatbotIntegrate, setChatbotIntegrate] = useState("chat_bubble")
     const [code, setCode] = useState("")
     const [avatarList, setAvatarList] = useState([]);
+
+    // 9 fixed/predefined avatars
+    const fixedAvatars = [
+        { id: 'fixed-1', name: 'Avatar 1', url: agentImage1 },
+        { id: 'fixed-2', name: 'Avatar 2', url: agentImage2 },
+        { id: 'fixed-3', name: 'Avatar 3', url: agentImage3 },
+        { id: 'fixed-4', name: 'Avatar 4', url: agentImage4 },
+        { id: 'fixed-5', name: 'Avatar 5', url: agentImage5 },
+        { id: 'fixed-6', name: 'Avatar 6', url: agentImage6 },
+        { id: 'fixed-7', name: 'Avatar 7', url: agentImage7 },
+        { id: 'fixed-8', name: 'Avatar 8', url: agentImage8 },
+        { id: 'fixed-9', name: 'Avatar 9', url: agentImage9 },
+    ];
 
     const agentChatRef = useRef()
     const [uploadImage, SetuploadImage] = useState("")
@@ -278,7 +300,7 @@ function CustomizeAgent({ customIntegartion, setCustomStatus, agentId, editDataI
             }
         } catch (error) {
             console.log(error)
-        } 
+        }
     };
 
     useEffect(() => {
@@ -329,30 +351,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     return (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl w-full max-w-[80%] h-full max-h-[80%] overflow-auto p-6 relative shadow-lg">
-                <button
-                    className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-700"
-                    onClick={() => {
-                        setCustomStatus(false)
-                    }}
-                >
-                    <X size={20} />
-                </button>
-
-                <div className='flex flex-col gap-6 py-4'>
+            <div className="bg-white rounded-2xl w-full max-w-[70%] h-full max-h-[80%] overflow-auto relative shadow-lg flex flex-col">
+                {/* Header Section */}
+                <div className="flex items-center justify-between gap-3 px-6 py-4 border-b border-[#E1E4EA]">
                     <div className="flex items-center gap-3">
-                        <div className="rounded-[12px] p-[10px] bg-[#EBEFFF]">
+                        <div className="rounded-full p-[8px] bg-[#EBEFFF] h-8 w-8 flex items-center justify-center">
                             {customIntegartion.icon}
                         </div>
                         <h1 className="text-[#1E1E1E] text-[20px] font-[600]">{customIntegartion.label}</h1>
-                        <div className="bg-[#F2F2F7] p-[4px] flex rounded-[13px]">
+                        <div className="bg-[#F2F2F7] p-[3px] flex rounded-[13px]">
                             {tabs.map((each) => {
                                 const isDisabled = each.key === "share" && !isIntegrationSuccess;
                                 return (
                                     <p
                                         key={each.key}
                                         onClick={() => !isDisabled && setActiveTab(each.key)} // prevent click
-                                        className={`py-[7px] px-[20px] text-[16px] font-[500] rounded-[10px] cursor-pointer
+                                        className={`py-[5px] px-[20px] text-[16px] font-[500] rounded-[10px] cursor-pointer
           ${activeTab === each.key ? 'bg-[#fff] text-[#1E1E1E]' : 'text-[#5A687C]'}
           ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
         `}
@@ -363,13 +377,83 @@ document.addEventListener("DOMContentLoaded", () => {
                             })}
                         </div>
                     </div>
-                    {activeTab === "customize" ? <div className="w-full flex gap-5">
-                        <div className="w-[60%]">
+                    <button
+                        className="cursor-pointer text-gray-500 hover:text-gray-700"
+                        onClick={() => {
+                            setCustomStatus(false)
+                        }}
+                    >
+                        <X size={20} />
+                    </button>
+                </div>
+
+                {/* Content Section */}
+                <div className='flex flex-col gap-6 px-6 py-4 overflow-auto flex-1'>
+                    {activeTab === "customize" ? <div className="w-full flex gap-5 h-full">
+                        <div className="w-[70%] border-r border-[#E1E4EA] pr-5 flex flex-col h-full">
                             <h1 className="text-[#1E1E1E] font-[600] text-[16px] pb-4">{t("calina.personalize_your_chatbox")}</h1>
                             <div className="flex flex-col gap-4">
+                                <div className="flex flex-col gap-4 border-b border-[#E1E4EA] pb-4">
+                                    <div className="flex gap-3 flex-wrap items-center">
+                                        {/* 9 Fixed Avatars */}
+                                        {fixedAvatars.map((avatar) => (
+                                            <div
+                                                key={avatar.id}
+                                                onClick={() => setFormData((prev) => ({ ...prev, selected_avatar_url: avatar.url }))}
+                                                className={`rounded-full h-[63px] w-[63px] cursor-pointer flex justify-center items-center bg-[#F0EFFF] transition-all ${formData.selected_avatar_url === avatar.url
+                                                        ? 'border-4 border-[#675FFF] ring-[#675FFF] ring-opacity-30'
+                                                        : 'border-2 border-transparent hover:border-[#E1E4EA]'
+                                                    }`}
+                                            >
+                                                <img
+                                                    src={avatar.url}
+                                                    alt={avatar.name}
+                                                    className="object-fit h-[55px] w-[55px] rounded-full"
+                                                />
+                                            </div>
+                                        ))}
+
+                                        {/* User Uploaded Avatars */}
+                                        {avatarList.map((each) => (
+                                            <div
+                                                key={each.id}
+                                                onClick={() => setFormData((prev) => ({ ...prev, selected_avatar_url: each.url }))}
+                                                className={`rounded-full h-[63px] w-[63px] cursor-pointer flex justify-center items-center bg-[#F0EFFF] transition-all ${formData.selected_avatar_url === each.url
+                                                        ? 'border-4 border-[#675FFF] ring-2 ring-[#675FFF] ring-opacity-30'
+                                                        : 'border-2 border-transparent hover:border-[#E1E4EA]'
+                                                    }`}
+                                            >
+                                                <img
+                                                    src={each.url}
+                                                    alt={each.name}
+                                                    className="object-cover h-[55px] w-[55px] rounded-full"
+                                                />
+                                            </div>
+                                        ))}
+
+                                        {/* Upload Icon */}
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            id="avatar-upload"
+                                            style={{ display: "none" }}
+                                            onChange={handleImageUpload}
+                                        />
+                                        <label htmlFor="avatar-upload">
+                                            <div className="rounded-full h-[63px] w-[63px] flex justify-center items-center bg-[#F0EFFF] cursor-pointer border-2 border-transparent hover:border-[#E1E4EA] transition-all">
+                                                <UploadIcon />
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <h1 className="py-2 font-[600] text-[16px]">General Details</h1>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+
+
                                     <div className="flex flex-col gap-1.5 w-full">
-                                        <label className="text-sm font-medium text-[#1e1e1e]">
+
+
+                                        <label className="text-sm font-medium text-[#868C98]">
                                             {t("calina.display_name")}
                                         </label>
                                         <input
@@ -383,7 +467,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                         {errors.agent_name && <p className="text-red-500 text-sm mt-1">{errors.agent_name}</p>}
                                     </div>
                                     <div ref={colorPickerRef} className="flex flex-col gap-1.5 w-full">
-                                        <label className="text-sm font-medium text-[#1e1e1e]">
+                                        <label className="text-sm font-medium text-[#868C98]">
                                             {t("calina.color")}
                                         </label>
                                         <div className="relative">
@@ -402,80 +486,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                         {errors.color && <p className="text-red-500 text-sm mt-1">{errors.color}</p>}
                                     </div>
                                 </div>
-                                <div className="w-full">
-                                    <label className="text-sm font-medium text-[#1e1e1e]">
-                                        {t("calina.avatar")}
-                                    </label>
-                                    <div className="flex items-center gap-5">
-                                        <div className="border border-[#E1E4EA] justify-around flex flex-col items-center w-[148px] h-[148px] p-[10px] rounded-[10px]">
-                                            <div className="rounded-full h-[63px] w-[63px] flex justify-center items-center bg-[#F0EFFF]">
-                                                {formData.selected_avatar_url ? (
-                                                    (() => {
-                                                        const selectedAvatar = avatarList.find(
-                                                            (avatar) => avatar.url === formData.selected_avatar_url
-                                                        );
-                                                        return selectedAvatar ? (
-                                                            <img
-                                                                src={selectedAvatar.url}
-                                                                alt={selectedAvatar.name}
-                                                                className="object-cover h-[55px] w-[55px] rounded-full"
-                                                            />
-                                                        ) : (
-                                                            <div className="text-[#5A687C] text-sm font-medium">No Avatar</div>
-                                                        );
-                                                    })()
-                                                ) : (
-                                                    <div className="text-[#5A687C] text-sm font-medium">No Avatar</div>
-                                                )}
-                                            </div>
-
-                                            {formData.selected_avatar_url && (
-                                                <div
-                                                    className="cursor-pointer hover:opacity-70 transition-opacity"
-                                                    onClick={() => setFormData(prev => ({ ...prev, selected_avatar_url: "" }))}
-                                                >
-                                                    <DeleteIcon />
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="h-[148px] border-r border-[#E1E4EA]"></div>
-                                        <div className="flex gap-2 flex-wrap">
-                                            {avatarList.map((each) => (
-                                                <div key={each.id} onClick={() => setFormData((prev) => ({ ...prev, selected_avatar_url: each.url }))} className={`rounded-full h-[63px] w-[63px] cursor-pointer ${formData.selected_avatar_url === each.url && 'border-2 border-[#675FFF]'} flex justify-center items-center bg-[#F0EFFF]`}>
-                                                    <img src={each.url} alt={each.name} className="object-cover h-[55px] w-[55px] rounded-full" />
-                                                </div>
-                                            ))}
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                id="avatar-upload"
-                                                style={{ display: "none" }}
-                                                onChange={handleImageUpload}
-                                            />
-                                            <label htmlFor="avatar-upload">
-                                                <div className="rounded-full h-[63px] w-[63px] flex justify-center items-center bg-[#F0EFFF] cursor-pointer">
-                                                    <UploadIcon />
-                                                </div>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div className="flex flex-col gap-1.5 w-full">
-                                    <label className="text-sm font-medium text-[#1e1e1e]">
-                                        {t("calina.intro_chat")}
-                                    </label>
-                                    <textarea
-                                        name='first_message'
-                                        onChange={handleChange}
-                                        value={formData?.first_message}
-                                        rows={4}
-                                        className={`w-full bg-white p-2 rounded-lg border  ${errors.first_message ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                        placeholder="Hello"
-                                    />
-                                    {errors.first_message && <p className="text-red-500 text-sm mt-1">{errors.first_message}</p>}
-                                </div>
-                                <div className="flex flex-col gap-1.5 w-full">
-                                    <label className="text-sm font-medium text-[#1e1e1e]">
+                                    <label className="text-sm font-medium text-[#868C98]">
                                         {t("calina.domain_name")}
                                     </label>
 
@@ -536,80 +548,110 @@ document.addEventListener("DOMContentLoaded", () => {
                                         </p>
                                     )}
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <button onClick={
-                                        handleSubmitForm
-                                    } className="px-5 rounded-[7px] cursor-pointer w-[200px] py-[7px] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white"> {websiteData ? t("brain_ai.update") : t("brain_ai.create")}</button>
-                                    {/* <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-[7px] w-[200px] py-[7px] text-center border-[1.5px] border-[#E1E4EA] text-[#5A687C]">{t("cancel")}</button> */}
+                                <div className="flex flex-col gap-1.5 w-full">
+                                    <label className="text-sm font-medium text-[#868C98]">
+                                        {t("calina.intro_chat")}
+                                    </label>
+                                    <textarea
+                                        name='first_message'
+                                        onChange={handleChange}
+                                        value={formData?.first_message}
+                                        rows={4}
+                                        className={`w-full bg-white p-2 rounded-lg border  ${errors.first_message ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
+                                        placeholder="Hello"
+                                    />
+                                    {errors.first_message && <p className="text-red-500 text-sm mt-1">{errors.first_message}</p>}
                                 </div>
                             </div>
                         </div>
-                        <div className="w-[40%]">
-                            <h1 className="text-[#1E1E1E] font-[600] text-[16px]">{t("calina.preview")}</h1>
-                            <div className="py-6 flex gap-6 w-full">
-                                <div className="h-[466px] relative border border-[#E1E4EA] rounded-lg">
-                                    <div className="bg-[#F5F7FF] rounded-y-lg rounded-t-lg p-2 mb-4 flex items-center gap-3">
-                                        <div className="rounded-full h-[63px] w-[63px] flex justify-center items-center bg-[#F0EFFF]">
-                                            {formData.selected_avatar_url ? (
-                                                (() => {
-                                                    const selectedAvatar = avatarList.find(
-                                                        (avatar) => avatar.id === formData.selected_avatar_url
-                                                    );
-                                                    return selectedAvatar ? (
+                        <div className="w-[30%] flex flex-col h-full">
+                            <h1 className="text-[#1E1E1E] font-[600] text-md mb-4">{t("calina.preview")}</h1>
+                            <div className="flex-1 border border-[#E1E4EA] rounded-lg overflow-hidden flex flex-col bg-white">
+                                {/* Header */}
+                                <div className="bg-[#F5F7FF] p-3 flex items-center gap-3">
+                                    <div className="rounded-full h-[63px] w-[63px] flex justify-center items-center  flex-shrink-0">
+                                        {formData.selected_avatar_url ? (
+                                            (() => {
+                                                // Check fixed avatars first
+                                                const fixedAvatar = fixedAvatars.find(
+                                                    (avatar) => avatar.url === formData.selected_avatar_url
+                                                );
+                                                if (fixedAvatar) {
+                                                    return (
                                                         <img
-                                                            src={selectedAvatar.url}
-                                                            alt={selectedAvatar.name}
-                                                            className="object-cover h-[55px] w-[55px] rounded-full"
+                                                            src={fixedAvatar.url}
+                                                            alt={fixedAvatar.name}
+                                                            className="object-fit h-[55px] w-[55px] bg-white rounded-full"
                                                         />
-                                                    ) : (
-                                                        <div className="text-[#5A687C] text-sm font-medium">?</div>
                                                     );
-                                                })()
-                                            ) : (
-                                                <div className="text-[#5A687C] text-sm font-medium">?</div>
-                                            )}
-                                        </div>
-                                        <div className="font-[600] text-[18px] text-[#1E1E1E]">
-                                            {formData.avatar ? `${(formData.avatar.slice(0, 1).toUpperCase()) + formData.avatar.slice(1)} (AI Agent)` : "AI Agent"}
-                                        </div>
+                                                }
+                                                // Then check user uploaded avatars
+                                                const selectedAvatar = avatarList.find(
+                                                    (avatar) => avatar.url === formData.selected_avatar_url
+                                                );
+                                                return selectedAvatar ? (
+                                                    <img
+                                                        src={selectedAvatar.url}
+                                                        alt={selectedAvatar.name}
+                                                        className="object-cover h-[55px] w-[55px] rounded-full"
+                                                    />
+                                                ) : (
+                                                    <div className="text-[#5A687C] text-sm font-medium">?</div>
+                                                );
+                                            })()
+                                        ) : (
+                                            <div className="text-[#5A687C] text-sm font-medium">?</div>
+                                        )}
                                     </div>
-                                    <div className="flex flex-col justify-between h-full">
-                                        <div ref={agentChatRef} className="px-4 overflow-auto max-h-[300px] mb-2">
-                                            {messages.map((msg,) => (
-                                                <div key={msg.id} className="flex flex-col">
-                                                    {msg.isUser && (
-                                                        <div className="flex items-center gap-1 mt-1 ml-auto w-fit max-w-[80%]">
-                                                            <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] text-[#675FFF] font-[600]">U</div>
-                                                            <span className="text-xs text-gray-500">User</span>
-                                                        </div>
-                                                    )}
-                                                    {msg.id === "typing" ? <div className="pl-[40px] pt-3 flex "><span className="three-dots" /></div> : <div
-                                                        className={`w-fit max-w-[80%] text-[12px] font-[400] p-3 rounded-lg ${!msg.isUser ? "mr-auto my-1 bg-[#F2F2F7] text-[#5A687C]" : "my-1 ml-auto bg-[#675FFF] text-white"
+                                    <div className="font-[600] text-[18px] text-[#1E1E1E]">
+                                        {formData.agent_name ? `${formData.agent_name} Calina(AI Agent)` : "Calina(AI Agent)"}
+                                    </div>
+                                </div>
+
+                                {/* Chat Messages Area */}
+                                <div className="flex-1 overflow-auto p-4 flex flex-col gap-2">
+                                    {messages.length > 0 ? (
+                                        messages.map((msg) => (
+                                            <div key={msg.id} className="flex flex-col">
+                                                {msg.id === "typing" ? (
+                                                    <div className="pl-[40px] pt-3 flex">
+                                                        <span className="three-dots" />
+                                                    </div>
+                                                ) : (
+                                                    <div
+                                                        className={`w-fit max-w-[80%] text-[14px] font-[400] p-3 rounded-lg ${!msg.isUser
+                                                                ? "mr-auto bg-[#F5F7FF] text-[#1E1E1E]"
+                                                                : "ml-auto bg-[#675FFF] text-white"
                                                             }`}
                                                     >
-                                                        <p className="text-sm">{msg.text}</p>
-                                                    </div>}
-                                                </div>
-                                            ))}
+                                                        <p>{msg.text}</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="w-fit max-w-[80%] text-[14px] font-[400] p-3 rounded-lg bg-[#F5F7FF] text-[#1E1E1E]">
+                                            <p>{formData.first_message || "Hello! How can I assist you today?"}</p>
                                         </div>
-                                        <div className="mt-auto p-4 flex gap-2 bg-[#F0EFFF] rounded-b-lg absolute bottom-0">
-                                            <input
-                                                type="text"
-                                                value={message}
-                                                onChange={(e) => setMessage(e.target.value)}
-                                                disabled
-                                                placeholder={t("type_message")}
-                                                className="flex w-full border bg-white border-[#E1E4EA] focus:outline-none focus:border-[#675FFF] rounded-lg px-4 py-2 text-[#5A687C]"
-                                            />
-                                            <button
-                                                disabled
-                                                className="px-6 py-2 font-[500] text-[16px] bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white rounded-lg"
-                                            >
-                                                {t("send")}
-                                            </button>
-                                        </div>
-                                    </div>
+                                    )}
+                                </div>
 
+                                {/* Input Area */}
+                                <div className="p-4 flex gap-2 bg-white border-[#E1E4EA]">
+                                    <input
+                                        type="text"
+                                        value={message}
+                                        onChange={(e) => setMessage(e.target.value)}
+                                        disabled
+                                        placeholder="Type message here"
+                                        className="flex-1 border bg-white border-[#E1E4EA] focus:outline-none focus:border-[#675FFF] rounded-lg px-4 py-2 text-[#5A687C] text-sm"
+                                    />
+                                    <button
+                                        disabled
+                                        className="px-6 py-2 font-[500] text-[14px] bg-[#675FFF] text-white rounded-lg"
+                                    >
+                                        {t("send")}
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -617,21 +659,37 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div className="w-full flex flex-col gap-3">
                             <div className="flex items-center justify-between">
                                 <h1 className="text-[#1E1E1E] font-[600] text-[16px] pb-4">{t("calina.integrate_your_chatbox")}</h1>
-                                <p className="text-[#FF9500] font-[400] text-[16px]">{t("calina.actions_required_from_you")}</p>
+                                <p className="text-[#DF1C41] font-[400] text-[16px]">{t("calina.actions_required_from_you")}</p>
                             </div>
-                            <ul className="flex w-full gap-2">
+                            <ul className="flex w-full gap-3 border-b border-[#E1E4EA] pb-4">
                                 {chatbotOptions.map((each) => (
-                                    <li key={each.key} className={`border w-[50%] ${each.key === chatbotIntegrate ? 'border-[#675FFF]' : 'border-[#E1E4EA]'} bg-[#fff] flex cursor-pointer gap-3 p-[12px] rounded-[12px]`} onClick={() => setChatbotIntegrate(each.key)}>
-                                        <div className="flex gap-3 pl-2">
-                                            <div className="pt-5">
-                                                <input style={{ accentColor: "#675FFF", width: "20px", height: "20px" }} className="" type="radio" checked={each.key === chatbotIntegrate} />
-                                            </div>
-                                            <div className="flex flex-col gap-2">
-                                                <div className="flex items-center justify-between py-1">
-                                                    <h2 className="text-[#1E1E1E] text-[16px] font-[500]">{each.label}</h2>
-                                                    {each.is_recommended && <p className="text-[#1E1E1E] font-[400] text-[14px] rounded-[40px] py-[8px] px-[12px] bg-[#F0EFFF]">{t("calina.recommended")}</p>}
+                                    <li 
+                                        key={each.key} 
+                                        className={`border w-[50%] ${each.key === chatbotIntegrate ? 'border-[#675FFF]' : 'border-[#E1E4EA]'} bg-white cursor-pointer p-4 rounded-3xl transition-all hover:border-[#675FFF] hover:border-opacity-50`} 
+                                        onClick={() => setChatbotIntegrate(each.key)}
+                                    >
+                                        <div className="flex gap-4">
+                                            <div className="flex items-start pt-2">
+                                                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                                    each.key === chatbotIntegrate 
+                                                        ? 'border-[#675FFF] bg-[#675FFF]' 
+                                                        : 'border-[#E1E4EA] bg-white'
+                                                }`}>
+                                                    {each.key === chatbotIntegrate && (
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-white"></div>
+                                                    )}
                                                 </div>
-                                                <p className="text-[#5A687C] text-[14px] font-[400]">{each.content}</p>
+                                            </div>
+                                            <div className="flex flex-col gap-1 flex-1">
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <h2 className="text-[#1E1E1E] text-lg font-[600]">{each.label}</h2>
+                                                    {each.is_recommended && (
+                                                        <span className="text-[#675FFF] font-[400] text-[14px] rounded-full py-1 px-3 bg-[#F0EFFF] whitespace-nowrap">
+                                                            {t("calina.recommended")}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <p className="text-[#5A687C] text-[14px] font-[400] leading-relaxed">{each.content}</p>
                                             </div>
                                         </div>
                                     </li>
@@ -640,14 +698,13 @@ document.addEventListener("DOMContentLoaded", () => {
                             <div className="flex flex-col gap-3">
                                 <h1 className="text-[#1E1E1E] font-[600] text-[16px]">{t("calina.config")}</h1>
                                 <div className="flex flex-col gap-1">
-                                    <h2 className="text-[#1E1E1E] font-[600] text-[14px]">{t("calina.install_following_code")}</h2>
                                     <p className="text-[#5A687C] font-[400] text-[12px]">{t("calina.place_code")}</p>
                                 </div>
                                 <>
                                     <div className="flex items-center justify-between pb-1">
-                                        <p className="text-[#1E1E1E] font-[500] text-[14px]">{t("calina.add_code_here")}</p>
+                                        <p className="text-[#868C98] font-[500] text-[14px]">{t("calina.add_code_here")}</p>
                                         <button
-                                            className="border-[1.5px] cursor-pointer rounded-[7px] py-[4px] px-[14px] border-[#5F58E8] text-[#675FFF] text-[16px] font-[500]"
+                                            className="flex items-center gap-2 cursor-pointer py-[4px] px-[14px] border-[#5F58E8] text-[#675FFF] text-[16px] font-[500]"
                                             onClick={() => {
                                                 navigator.clipboard.writeText(code)
                                                     .then(() => {
@@ -657,6 +714,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                                     .catch((err) => console.error("Failed to copy: ", err));
                                             }}
                                         >
+                                            <Copy size={16} />
                                             {t("calina.copy")}
                                         </button>
                                     </div>
@@ -666,12 +724,28 @@ document.addEventListener("DOMContentLoaded", () => {
                                         value={code}
                                         rows={10}
                                         readOnly
-                                        className="w-full text-[14px] font-mono bg-gray-50 p-3 rounded-lg border border-[#e1e4ea] resize-none focus:outline-none"
+                                        className="w-full text-[14px] font-mono p-3 rounded-lg border border-[#D6D6D6] resize-none focus:outline-none"
                                     />
                                 </>
 
                             </div>
                         </div>}
+                </div>
+
+                {/* Footer */}
+                <div className="border-t border-[#E1E4EA] px-6 py-4 flex justify-end gap-2">
+                    <button
+                        onClick={() => setCustomStatus(false)}
+                        className="px-5 cursor-pointer rounded-lg py-2 text-center bg-white border border-[#E1E4EA] text-[#1E1E1E] font-medium hover:bg-gray-50 focus:outline-none"
+                    >
+                        {t("cancel")}
+                    </button>
+                    <button
+                        onClick={handleSubmitForm}
+                        className="px-5 cursor-pointer rounded-lg py-2 text-center bg-[#675FFF] text-white font-medium hover:bg-[#5A52E5] focus:outline-none"
+                    >
+                        {websiteData ? t("brain_ai.update") : t("calina.update")}
+                    </button>
                 </div>
             </div>
         </div >

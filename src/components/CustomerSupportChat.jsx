@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import DatePicker from "react-datepicker";
 import { LuCalendarDays } from "react-icons/lu";
 import { FaTrashAlt, FaDownload } from "react-icons/fa";
 import { SelectDropdown } from "./Dropdown";
 import { useTranslation } from "react-i18next";
+import { format } from "date-fns";
 import calinaImg from "../assets/svg/calina_logo.svg";
 import botAvatar from "../assets/svg/calina_logo.svg";
 import { deleteSmartBotChatById, getSmartbotChatByAgentId, getSmartbotchatByChatId } from "../api/customerSupport";
 import { Delete } from "../icons/icons";
+import emptyChatbotImg from "../assets/svg/EmptyChat.svg";
 
 function CustomerSupportChat({ agentId }) {
   const [startDate, setStartDate] = useState(new Date());
@@ -85,63 +87,82 @@ function CustomerSupportChat({ agentId }) {
     if (container) container.scrollTop = container.scrollHeight;
   }, [chatMessage]);
 
+  // Format date range for display
+  const dateRangeDisplay = useMemo(() => {
+    if (startDate && endDate) {
+      const startFormatted = format(startDate, 'd MMM');
+      const endFormatted = format(endDate, 'd MMM yyyy');
+      return `${startFormatted} - ${endFormatted}`;
+    } else if (startDate) {
+      return `${format(startDate, 'd MMM')} - ...`;
+    }
+    return "Select date range";
+  }, [startDate, endDate]);
+
 
   return (
     <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
-      <h1 className="text-[24px] font-[600] text-[#1E1E1E]">Chats</h1>
-      <p className="text-[14px] font-[400] text-[#5A687C] py-1">
-        {t("calina.chats_descrp")}
-      </p>
+      {/* Header */}
+      <div className="flex flex-col gap-1">
+        <h1 className="text-[24px] font-[600] text-[#1E1E1E]">Chatbot Alpha</h1>
+        <p className="text-[14px] font-[400] text-[#5A687C]">
+          {t("calina.chats_descrp")}
+        </p>
+      </div>
 
       {/* FILTERS */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <div className="relative">
           <DatePicker
             selected={startDate}
-            onChange={(date) => setStartDate(date)}
+            startDate={startDate}
+            endDate={endDate}
+            selectsRange
+            onChange={(dates) => {
+              const [start, end] = dates;
+              if (start) setStartDate(start);
+              if (end) setEndDate(end);
+              // Reset if both are null
+              if (!start && !end) {
+                setStartDate(new Date());
+                setEndDate(new Date());
+              }
+            }}
+            dateFormat="d MMM"
             customInput={
               <button className="flex items-center cursor-pointer gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px] focus:border-[#675FFF] focus:outline-none">
-                {t("phone.start_date")}
+                {dateRangeDisplay}
                 <LuCalendarDays className="text-[16px]" />
               </button>
             }
           />
         </div>
-        <div className="relative">
-          <DatePicker
-            selected={endDate}
-            onChange={(date) => setEndDate(date)}
-            customInput={
-              <button className="flex items-center cursor-pointer gap-2 px-4 py-[8px] bg-white text-[#5A687C] border border-[#E1E4EA] rounded-lg text-[16px] focus:border-[#675FFF] focus:outline-none">
-                {t("phone.end_date")}
-                <LuCalendarDays className="text-[16px]" />
-              </button>
-            }
-          />
-        </div>
-        <div className="w-38">
-          <SelectDropdown
-            name="dropDown1"
-            options={options}
-            placeholder={t("emailings.campaign")}
-            value={dropDown1}
-            onChange={(value) => setDropDown1(value)}
-          />
-        </div>
-        <div className="w-38">
-          <SelectDropdown
-            name="dropDown2"
-            options={options}
-            placeholder={t("emailings.campaign")}
-            value={dropDown2}
-            onChange={(value) => setDropDown2(value)}
-          />
+        <div className="flex-grow"></div>
+        <div className="flex items-center gap-2">
+          <div className="w-38">
+            <SelectDropdown
+              name="dropDown1"
+              options={options}
+              placeholder="Sort By"
+              value={dropDown1}
+              onChange={(value) => setDropDown1(value)}
+            />
+          </div>
+          <div className="w-38">
+            <SelectDropdown
+              name="dropDown2"
+              options={options}
+              placeholder="Status"
+              value={dropDown2}
+              onChange={(value) => setDropDown2(value)}
+            />
+          </div>
         </div>
       </div>
 
       <div className="flex gap-4 overflow-x-auto overflow-y-auto h-[calc(100vh-200px)]">
         <div
-          className={`border border-[#E1E4EA] bg-white p-[24px] rounded-[10px] flex flex-col min-w-[720px] ${isChatVisible ? "flex-shrink-0" : "w-full"
+          className={` p-[24px] rounded-[10px] mt-20 flex flex-col min-w-[720px] ${isChatVisible ? "flex-shrink-0" : "w-full"
             } transition-all duration-300`}
         >
           {loading ? (
@@ -190,19 +211,15 @@ function CustomerSupportChat({ agentId }) {
           ) : (
             <div className="flex flex-col gap-3 items-center">
               <div className="flex flex-col items-center gap-2">
-                <img src={calinaImg} alt="calina" className="object-fit" />
+                <div className="bg-[#F1F1F1] rounded-full p-4 flex items-center justify-center">
+                  <img src={emptyChatbotImg} alt="calina" className="object-fit h-25 w-25 mt-2 mr-2" />
+                </div>
                 <p className="text-[#1E1E1E] text-[18px] font-[600]">
                   {t("calina.no_charts_appear")}
                 </p>
-                <p className="text-[#5A687C] text-[14px] font-[400]">
+                <p className="text-[#5A687C] text-md font-[400]">
                   {t("calina.your_charts_conversations")}
                 </p>
-                <button
-                  onClick={fetchSmartBotsByAgentId}
-                  className="mt-2 border-[1.5px] text-[#fff] rounded-[7px] bg-[#675FFF] px-[20px] py-[7px] border-[#5F58E8]"
-                >
-                  {t("refresh")}
-                </button>
               </div>
             </div>
           )}

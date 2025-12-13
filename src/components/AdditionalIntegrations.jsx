@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import messageIcon from '../assets/svg/Messages.svg'
 import metaIntegartion from '../assets/svg/meta_integration.svg'
-import { X, Pencil, Trash2, Sparkles } from "lucide-react";
+import { X, Pencil, Trash2, AlertTriangle } from "lucide-react";
 import { IoIosAdd, IoMdHelpCircleOutline } from "react-icons/io";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { TfiHelpAlt } from "react-icons/tfi";
@@ -19,7 +18,6 @@ import { Link } from "react-router-dom";
 
 const AdditionalIntegration = ({ setInstagramData, instagramData, integartionData, setFirstRender, whatsappData, setWhatsappData, googleCalendarData, setGoogleCalendarData, linkedInData, setLinkedInData, tikTokData, setTikTokData }) => {
     const [open, setOpen] = useState(false);
-    const [createTemplateOpen, setCreateTemplateOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("insta");
     const [errorMessage, setErrorMessage] = useState("")
     const { t } = useTranslation();
@@ -28,11 +26,6 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
         { label: "Account" },
     ]
 
-    const staticData = [
-        { label: `${t("brain_ai.integrations.orsay_sample")}`, status: "Approved", description: `${t("brain_ai.integrations.orsay_description")}` },
-        { label: `${t("brain_ai.integrations.orsay_sample")}`, status: "Approved", description: `${t("brain_ai.integrations.orsay_description")}` },
-        { label: `${t("brain_ai.integrations.orsay_sample")}`, status: "Approved", description: `${t("brain_ai.integrations.orsay_description")}` }
-    ]
 
     const renderPath = (path) => {
         if (path === "terms") {
@@ -121,35 +114,6 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
 
 
 
-    const renderMainContent2 = () => {
-        switch (integartionData.name) {
-            case "WhatsApp":
-                return (
-                    <div className="grid grid-cols-2 gap-4 w-full">
-                        {staticData.map((e) => (
-                            <div key={e.label} className="bg-white rounded-2xl border border-[#e1e4ea] p-4 shadow-sm flex flex-col gap-3">
-                                <div className="flex items-start gap-3">
-                                    <div className="flex items-center justify-center w-10 h-10 bg-[#F3F0FF] rounded-full flex-shrink-0">
-                                        <img
-                                            className="w-5 h-5"
-                                            alt="messageIcon"
-                                            src={messageIcon}
-                                        />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 flex-wrap">
-                                            <h1 className="text-[14px] font-[600] font-inter text-[#1E1E1E]">{e.label}</h1>
-                                            <span className="text-[#067647] font-[500] bg-[#ECFDF3] rounded-full px-2 py-0.5 text-[12px] border border-[#067647] whitespace-nowrap">{e.status}</span>
-                                        </div>
-                                        <p className="text-[12px] text-[#5A687C] font-[400] font-inter mt-2 leading-relaxed">{e.description}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )
-        }
-    }
 
     const RenderAccountData = ({ accountsData, label, id, specialCharacter, handleDelete }) => {
         return (
@@ -295,101 +259,24 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                     </button>
                 </div>
 
+                {/* Warning Messages */}
+                {integartionData.name === "WhatsApp" && (
+                    <div className="flex items-center gap-2 text-[#5A687C] text-sm">
+                        <AlertTriangle size={16} className="text-[#FF9500] flex-shrink-0" />
+                        <span>Only possible with a WhatsApp business account. <span className="text-[#675FFF] cursor-pointer hover:underline">See tutorial.</span></span>
+                    </div>
+                )}
+                {integartionData.name === "Instagram" && (
+                    <div className="flex items-center gap-2 text-[#5A687C] text-sm">
+                        <AlertTriangle size={16} className="text-[#FF9500] flex-shrink-0" />
+                        <span>You can only connect professional and creator account. <span className="text-[#675FFF] cursor-pointer hover:underline">See tutorial.</span></span>
+                    </div>
+                )}
+
                 <div className="w-full">
                     {renderMainContent()}
                 </div>
-                {/* {open && <div className="onest fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
-                <div className="bg-white max-h-[600px] flex flex-col gap-2 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
-                    <button
-                        onClick={() => setOpen(false)}
-                        className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
 
-                    <div className="flex bg-[#F6F7F9] border border-[#E1E4EA] rounded-xl p-[10px] w-fit">
-                        <img
-                            className="w-5 h-5"
-                            alt={integartionData.name}
-                            src={integartionData.icon}
-                        />
-                    </div>
-                    <h2 className="text-[#1E1E1E] font-[600] text-[20px] mb-1">
-                        Connect {integartionData.name}
-                    </h2>
-                    <p className="text-[16px] font-[400] text-[#5A687C]">
-                        Use your {integartionData.name} account to connect to Ecosystem.ai
-                    </p>
-
-                    <div className="mt-3">
-                        {activeTab === "securitykey" && (
-                            <div>
-                                <label className="block text-[14px] font-medium text-[#292D32] mb-1">Provide your secret key</label>
-                                <label>Secret Key:<span>How to get your secret key</span></label>
-                                <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
-                                    <input
-                                        type="password"
-                                        name="password"
-                                        placeholder="......"
-                                        className="w-full focus:outline-none"
-                                    />
-                                </div>
-                            </div>
-                        )}
-                        {activeTab === "password" && (
-                            <div>
-                                <label className="block text-[14px] font-medium text-[#292D32] mb-1">Provide the password for @Username</label>
-                                <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
-                                    <input
-                                        type="password"
-                                        name="password"
-                                        placeholder="@password"
-                                        className="w-full focus:outline-none"
-                                    />
-                                </div>
-                            </div>
-                        )}
-                        {activeTab === "username" && (
-                            <div>
-                                <label className="block text-[14px] font-medium text-[#292D32] mb-1">Provide your Instagram username</label>
-                                <div className="flex items-center border border-gray-300 rounded-[8px] px-4 py-3">
-                                    <input
-                                        type="text"
-                                        name="username"
-                                        placeholder="@ Username"
-                                        className="w-full focus:outline-none"
-                                    />
-                                </div>
-                            </div>
-                        )}
-                        {activeTab === "insta" && (
-                            <div className="flex flex-col gap-3">
-                                <div className="flex items-center gap-2" > <p className="text-[14px] font-medium text-[#292D32]">A few steps left
-                                </p>
-                                    <IoMdHelpCircleOutline /></div>
-                                <p className="text-[16px] font-[400] text-[#5A687C]">
-                                    Log in with Instagram and set your permissions. Once that’s done, you're all set to connect to Ecosystem.ai
-                                </p>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="flex flex-col gap-5 w-full mt-4">
-                        <button
-                            onClick={handleNext}
-                            className="w-full text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px]"
-                        >
-                            Go To Instagram
-                        </button>
-                        <button
-                            onClick={() => setOpen(false)}
-                            className="w-full text-[16px] text-[#5E54FF] mt-3 bg-white"
-                        >
-                            Connect with Meta Business Suite instead
-                        </button>
-                    </div>
-                </div>
-            </div>} */}
                 {open && <div className="fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
                     <div className="bg-white max-h-[600px] flex flex-col gap-4 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
                         <button
@@ -476,85 +363,6 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                                     </div>
                                 </>
                             )}
-                        </div>
-                    </div>
-                </div>}
-                {integartionData.name === "WhatsApp" && <div className="flex items-center justify-between w-full">
-                    <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
-                        {t("brain_ai.integrations.message_temple")}
-                    </h1>
-                    <button onClick={() => setCreateTemplateOpen(true)} className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] border-[#d6d6d6] border-[1.5px] rounded-lg bg-white text-[#000000]">
-                        <div className="flex items-center gap-2">
-                            <IoIosAdd color="#000000" fontWeight={400}/>
-                            <span className="font-medium text-[#000000] text-base leading-6">
-                                {t("brain_ai.integrations.create_temple")}
-                            </span>
-                        </div>
-                    </button>
-                </div>}
-                <div className="w-full">
-                    {renderMainContent2()}
-                </div>
-                {createTemplateOpen && <div className="fixed inset-0 bg-[rgb(0,0,0,0.7)] flex items-center justify-center z-50">
-                    <div className="bg-white max-h-[600px] flex flex-col gap-2 w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
-                        <button
-                            onClick={() => setCreateTemplateOpen(false)}
-                            className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
-                        >
-                            <X className="w-5 h-5" />
-                        </button>
-                        <h2 className="text-[#1E1E1E] font-[600] text-[20px] mb-1">
-                            {t("brain_ai.integrations.create_new_message_template")}
-                        </h2>
-                       
-
-                        {/* Tab Content */}
-                        <div className="mt-3 flex flex-col gap-2">
-                            <div>
-                                <label className="text-[14px] flex items-center gap-2 font-medium text-[#292D32] mb-1">{t("brain_ai.integrations.heading")}
-                                </label>
-                                <div className="flex items-center border border-[#E1E4EA] focus-within:border-[#675FFF] rounded-[8px] px-4 py-3">
-                                    <input
-                                        type="text"
-                                        name="heading"
-                                        placeholder={t("brain_ai.integrations.heading_placeholder")}
-                                        className="w-full focus:outline-none"
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-[14px] font-medium text-[#292D32] mb-1">{t("brain_ai.integrations.message")}</label>
-                                <div className="relative border border-[#E1E4EA] focus-within:border-[#675FFF] rounded-[8px] px-4 py-3">
-                                    <textarea
-                                        rows={4}
-                                        type="text"
-                                        name="message"
-                                        placeholder={t("brain_ai.integrations.message_placeholder")}
-                                        className="w-full focus:outline-none resize-none pb-10"
-                                    />
-                                    <button
-                                        type="button"
-                                        className="absolute bottom-3 left-4 flex items-center gap-2 text-blue-600 rounded-lg text-sm font-medium hover:bg-[#5E54FF] transition-colors"
-                                    >
-                                        <Sparkles className="w-4 h-4" />
-                                        Generate
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex gap-2 mt-4 justify-end">
-                            <button
-                                onClick={() => setCreateTemplateOpen(false)}
-                                className="cursor-pointer text-[16px] text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px] px-4 font-medium"
-                            >
-                                {t("brain_ai.cancel")}
-                            </button>
-                            <button
-                                className="cursor-pointer text-[16px] text-white rounded-[8px] bg-[#5E54FF] h-[38px] px-4 font-medium"
-                            >
-                                {t("brain_ai.save")}
-                            </button>
                         </div>
                     </div>
                 </div>}

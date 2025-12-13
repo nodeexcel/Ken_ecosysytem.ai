@@ -155,7 +155,7 @@ function SmartChatbot() {
                     </div>
 
                     {/* Row 2: Search + Filters */}
-                    <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center justify-between gap-4 mt-4">
                         <div className="w-full max-w-[300px]">
                             <div className="relative">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />

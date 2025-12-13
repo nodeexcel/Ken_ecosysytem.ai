@@ -492,12 +492,7 @@ function SeoArticles() {
                             <div className="flex items-center gap-2">
                                 <button
                                     type="button"
-                                    className="
-    border border-[#D6D6D6] text-[#000000]
-    rounded-lg bg-white opacity-50 cursor-not-allowed
-    flex items-center gap-1
-    px-2 py-1 text-sm
-  "
+                                    className="border border-[#D6D6D6] text-[#000000] rounded-lg bg-white opacity-50 cursor-not-allowed flex items-center gap-1 px-2 py-1 text-sm"
                                 >
                                     <span className="text-sm">‹</span>
                                     <span className="text-sm">Prev</span>
@@ -509,7 +504,7 @@ function SeoArticles() {
                                 >
                                     1
                                 </button>
-                                <button
+                                <button 
                                     type="button"
                                     className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm hover:bg-white cursor-pointer"
                                 >
@@ -525,12 +520,7 @@ function SeoArticles() {
                                 </button>
                                 <button
                                     type="button"
-                                    className="
-    border border-[#D6D6D6] text-[#000000]
-    rounded-lg bg-white opacity-50 cursor-not-allowed
-    flex items-center gap-1
-    px-2 py-1 text-sm
-  "
+                                    className="border border-[#D6D6D6] text-[#000000] rounded-lg bg-white opacity-50 cursor-not-allowed flex items-center gap-1 px-2 py-1 text-sm"
                                 >
 
                                     <span className="text-sm">Next</span>
