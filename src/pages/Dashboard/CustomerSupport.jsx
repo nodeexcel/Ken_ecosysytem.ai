@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { AutomationIcon, CallAgent, ConversationIcon, EmailIcon, HelpIcon, LeftArrow, } from '../../icons/icons'
 import calinaImg from "../../assets/svg/calina_logo.svg"
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import SmartChatbot from '../../components/CustomerSupportSmartChatbot'
 // import FaqCustomerSupport from '../../components/FaqCustomerSupport'
 // import UserGuideCustomerSupport from '../../components/UserGuideCustomerSupport'
@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { formatTimeAgo } from '../../utils/TimeFormat'
 
 function CustomerSupport() {
+    const [searchParams, setSearchParams] = useSearchParams()
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
     const [sidebarStatus, setSideBarStatus] = useState(false)
     const dispatch = useDispatch()
@@ -55,11 +56,30 @@ function CustomerSupport() {
     { label: `${t("calina.quick_email_responder")}`, key: `${t("calina.quick_email_responder_key")}`, agent_type:"email_responder" }
     ]
 
+    // Initialize URL with default tab if not present on mount
+    useEffect(() => {
+        if (!searchParams.get("tab")) {
+            setSearchParams({ tab: "chat" }, { replace: true });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Sync active tab with URL query param when URL changes
+    useEffect(() => {
+        const tabFromUrl = searchParams.get("tab") || "chat";
+        setActiveSidebarItem(tabFromUrl);
+    }, [searchParams]);
+
+    // Helper to update URL param for active tab
+    const handleTabChange = (tabPath) => {
+        setSearchParams({ tab: tabPath }, { replace: true });
+    };
+
     const activeTab = useSelector((state) => state.skills)
 
     useEffect(() => {
         if (activeTab.label !== null) {
-            setActiveSidebarItem(activeTab.label)
+            handleTabChange(activeTab.label)
         }
     }, [activeTab.loading])
 
@@ -261,7 +281,7 @@ function CustomerSupport() {
                         </div>
                         {sideMenuList.map((e, i) => <div
                             key={i}
-                            onClick={() => setActiveSidebarItem(e.path)}
+                            onClick={() => handleTabChange(e.path)}
                             className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                 }`}
                         >
@@ -316,7 +336,7 @@ function CustomerSupport() {
                             {sideMenuList.map((e, i) => <div
                                 key={i}
                                 onClick={() => {
-                                    setActiveSidebarItem(e.path)
+                                    handleTabChange(e.path)
                                     setSideBarStatus(false)
                                 }}
                                 className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"

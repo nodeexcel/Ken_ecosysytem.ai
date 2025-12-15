@@ -27,7 +27,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         agent_language: [], agent_personality: "", business_description: "", your_business_offer: "",
         qualification_questions: [""],
         sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
-        objective_of_the_agent: [],
+        objective_of_the_agent: '',
         calendar_choosed: '',
         // reply_min_time: 15,
         // reply_max_time: 60,
@@ -234,10 +234,10 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             if (formData.business_description.trim().length > 1 && formData.business_description.length < 50) newErrors.business_description = t("appointment.min_char_validation");
             // if (!formData.your_business_offer.trim()) newErrors.your_business_offer = t("appointment.business_offer_validation");
             // if (formData.your_business_offer.trim().length > 1 && formData.your_business_offer.length < 50) newErrors.your_business_offer = t("appointment.min_char_validation");
-            if (!formData.objective_of_the_agent || formData.objective_of_the_agent.length === 0) {
+            if (!formData.objective_of_the_agent || formData.objective_of_the_agent === '') {
                 newErrors.objective_of_the_agent = t("appointment.object_of_agent_validation");
             }
-            if (formData.objective_of_the_agent && formData.objective_of_the_agent.includes("book_call")) {
+            if (formData.objective_of_the_agent && formData.objective_of_the_agent === "book_call") {
                 if (!formData.calendar_choosed) {
                     newErrors.calendar_choosed = t("appointment.choose_calendar_validation");
                 }
@@ -247,12 +247,12 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     }
                 }
             }
-            if (formData.objective_of_the_agent && formData.objective_of_the_agent.includes("whatsapp_number")) {
+            if (formData.objective_of_the_agent && formData.objective_of_the_agent === "whatsapp_number") {
                 if (!formData.whatsapp_number) {
                     newErrors.whatsapp_number = t("appointment.whatsapp_no_validation");
                 }
             }
-            if (formData.objective_of_the_agent && formData.objective_of_the_agent.includes("web_page")) {
+            if (formData.objective_of_the_agent && formData.objective_of_the_agent === "web_page") {
                 if (!formData.webpage_link.trim()) {
                     newErrors.webpage_link = t("appointment.website_link_validation");
                 }
@@ -408,7 +408,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     agent_language: [], agent_personality: "", business_description: "", your_business_offer: "",
                     qualification_questions: [""],
                     sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
-                    objective_of_the_agent: [],
+                    objective_of_the_agent: '',
                     calendar_choosed: '',
                     // reply_min_time: 15,
                     // reply_max_time: 60,
@@ -431,7 +431,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     ...prev, business_description: "", your_business_offer: "",
                     qualification_questions: [""],
                     sequence: { trigger: 'systeme.io', delay: 5, channel: 'SMS', template: '' },
-                    objective_of_the_agent: [],
+                    objective_of_the_agent: '',
                     calendar_choosed: '',
                     is_followups_enabled: true,
                     follow_up_details: { number_of_followups: '', min_time: 15, max_time: 60 },
@@ -734,10 +734,10 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     }
 
     const renderObjectiveAgent = () => {
-        const objectives = formData.objective_of_the_agent || [];
+        const objective = formData.objective_of_the_agent || '';
         const sections = [];
 
-        if (objectives.includes("book_call")) {
+        if (objective === "book_call") {
             sections.push(
                 <div key="book_call" className="flex items-start gap-3 w-full mt-2">
                     <div className="flex flex-col gap-2 w-full">
@@ -787,7 +787,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             );
         }
 
-        if (objectives.includes("whatsapp_number")) {
+        if (objective === "whatsapp_number") {
             sections.push(
                 <div key="whatsapp_number" className="flex items-start gap-3 w-full mt-2">
                     <div className="flex-1">
@@ -810,7 +810,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             );
         }
 
-        if (objectives.includes("web_page")) {
+        if (objective === "web_page") {
             sections.push(
                 <div key="web_page" className="grid grid-cols-1 gap-1 w-full mt-2">
                     <div className="flex flex-col gap-1.5 w-full">
@@ -909,8 +909,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                         />
                                         {errors.agent_name && <p className="text-red-500 text-sm mt-1">{errors.agent_name}</p>}
                                     </div>
-                                    <div className="grid grid-cols-1 gap-4 w-full">
-                                        <div className="flex flex-col gap-1.5 flex-1">
+                                    <div className="flex flex-col md:flex-row gap-4 w-full">
+                                        <div className="flex flex-col gap-1.5 w-full md:w-1/2">
                                             <label className="text-sm font-medium text-[#868C98]">
                                                 {t("appointment.gender")}
                                             </label>
@@ -941,9 +941,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             />
                                             {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
                                         </div>
-                                        {/* <div className="flex flex-col gap-1.5 w-full">
-                                            <label className="text-sm font-medium text-[#1e1e1e]">
-                                                {t("appointment.age")}<span className="text-[#675fff]">*</span>
+                                        <div className="flex flex-col gap-1.5 w-full md:w-1/2">
+                                            <label className="text-sm font-medium text-[#868C98]">
+                                                {t("appointment.age")}
                                             </label>
                                             <input
                                                 type="text"
@@ -963,7 +963,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                 placeholder={t("appointment.agent_age_placeholder")}
                                             />
                                             {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
-                                        </div> */}
+                                        </div>
                                     </div>
                                 </div>
 
@@ -1045,12 +1045,13 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                 <div className="absolute z-50 mt-1 w-full">
                                                     <LanguageSelector
                                                         value={formData.agent_language}
-                                                        onChange={(updated) =>
+                                                        onChange={(updated) => {
                                                             setFormData((prev) => ({
                                                                 ...prev,
                                                                 agent_language: updated,
                                                             }))
-                                                        }
+                                                            setShowLanguageSelector(false)
+                                                        }}
                                                     />
                                                 </div>
                                             )}
@@ -1175,28 +1176,22 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             {objectiveAgent.map((each) => (
                                             <div key={each.key} className="flex px-2 items-center gap-2 cursor-pointer" onClick={() => {
                                                 setFormData((prev) => {
-                                                    const currentObjectives = prev.objective_of_the_agent || [];
-                                                    const isSelected = currentObjectives.includes(each.key);
-                                                    let newObjectives;
+                                                    const currentObjective = prev.objective_of_the_agent || '';
+                                                    const isSelected = currentObjective === each.key;
                                                     
-                                                    if (isSelected) {
-                                                        // Remove from array
-                                                        newObjectives = currentObjectives.filter(obj => obj !== each.key);
-                                                    } else {
-                                                        // Add to array
-                                                        newObjectives = [...currentObjectives, each.key];
-                                                    }
+                                                    // If clicking the same option, deselect it; otherwise select the new one
+                                                    const newObjective = isSelected ? '' : each.key;
                                                     
-                                                    // Clear related fields when unchecking
-                                                    const updates = { objective_of_the_agent: newObjectives };
-                                                    if (!newObjectives.includes("web_page")) {
+                                                    // Clear related fields when changing or deselecting
+                                                    const updates = { objective_of_the_agent: newObjective };
+                                                    if (newObjective !== "web_page") {
                                                         updates.webpage_link = "";
                                                     }
-                                                    if (!newObjectives.includes("book_call")) {
+                                                    if (newObjective !== "book_call") {
                                                         updates.calendar_choosed = '';
                                                         updates.calendar_id = '';
                                                     }
-                                                    if (!newObjectives.includes("whatsapp_number")) {
+                                                    if (newObjective !== "whatsapp_number") {
                                                         updates.whatsapp_number = "";
                                                     }
                                                     
@@ -1205,7 +1200,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                 setErrors((prev) => ({ ...prev, objective_of_the_agent: "" }))
                                             }}
                                             >
-                                                <div>{formData.objective_of_the_agent && formData.objective_of_the_agent.includes(each.key) ? <CheckedCheckbox /> : <EmptyCheckbox />}</div>
+                                                <div>{formData.objective_of_the_agent && formData.objective_of_the_agent === each.key ? <CheckedCheckbox /> : <EmptyCheckbox />}</div>
 
                                                 <span className="text-md text-gray-700">{each.label}</span>
                                             </div>

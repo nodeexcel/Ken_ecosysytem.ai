@@ -86,12 +86,14 @@ import EmbededChatbot from './pages/embededChatbot/embededChatbot'
           <Route path="campaigns" element={<Campaigns />} />
           <Route path="support" element={<Support />} />
           <Route path="community" element={<Community />} />
+          <Route path="appointment-setter/:id" element={<AppointmentSetter />} />
           <Route path="appointment-setter" element={<AppointmentSetter />} />
           <Route path="accounting" element={<Accounting />} />
           <Route path="hr" element={<Hr />} />
           <Route path="coo" element={<Coo />} />
           <Route path="seo" element={<Seo />} />
           <Route path="content-creation" element={<ContentCreation />} />
+          <Route path="customer-support/:id" element={<CustomerSupport />} />
           <Route path="customer-support" element={<CustomerSupport />} />
           {/* <Route path="skills" element={<Skills />} /> */}
         </Route>

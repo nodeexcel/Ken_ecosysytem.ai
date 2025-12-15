@@ -10,13 +10,14 @@ import dashboardProfile from '../../assets/svg/dashboard_profile.svg'
 import { AnalyticsIcon, ConversationIcon, LeftArrow, TeamMemberIcon } from '../../icons/icons'
 import sethImg from "../../assets/svg/seth_logo.svg"
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next';
 import { X, EllipsisVertical } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
 
 function AppointmentSetter() {
+    const [searchParams, setSearchParams] = useSearchParams()
     const [activeSidebarItem, setActiveSidebarItem] = useState("agents")
     const [sidebarStatus, setSideBarStatus] = useState(false)
 
@@ -32,11 +33,30 @@ function AppointmentSetter() {
         // { label: "Demo Chat", icon: <ConversationIcon status={activeSidebarItem == "demo"} />, path: "demo" },
     ]
 
+    // Initialize URL with default tab if not present on mount
+    useEffect(() => {
+        if (!searchParams.get("tab")) {
+            setSearchParams({ tab: "agents" }, { replace: true });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Sync active tab with URL query param when URL changes
+    useEffect(() => {
+        const tabFromUrl = searchParams.get("tab") || "agents";
+        setActiveSidebarItem(tabFromUrl);
+    }, [searchParams]);
+
+    // Helper to update URL param for active tab
+    const handleTabChange = (tabPath) => {
+        setSearchParams({ tab: tabPath }, { replace: true });
+    };
+
     const activeTab = useSelector((state) => state.skills)
 
     useEffect(() => {
         if (activeTab.label !== null) {
-            setActiveSidebarItem(activeTab.label)
+            handleTabChange(activeTab.label)
         }
     }, [activeTab.loading])
 
@@ -83,7 +103,7 @@ function AppointmentSetter() {
                         </div>
                         {sideMenuList.map((e, i) => <div
                             key={i}
-                            onClick={() => setActiveSidebarItem(e.path)}
+                            onClick={() => handleTabChange(e.path)}
                             className={`flex justify-center group md:justify-start items-center gap-2 px-2 py-2 mb-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                 }`}
                         >
@@ -135,7 +155,7 @@ function AppointmentSetter() {
                             {sideMenuList.map((e, i) => <div
                                 key={i}
                                 onClick={() => {
-                                    setActiveSidebarItem(e.path)
+                                    handleTabChange(e.path)
                                     setSideBarStatus(false)
                                 }}
                                 className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"

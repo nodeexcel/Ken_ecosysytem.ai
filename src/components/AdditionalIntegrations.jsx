@@ -110,11 +110,6 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
         }
     };
 
-
-
-
-
-
     const RenderAccountData = ({ accountsData, label, id, specialCharacter, handleDelete }) => {
         return (
             <div>
@@ -392,7 +387,6 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                         </div>
                     </div>
                 </div>}
-
             </div>
         </div>
     );

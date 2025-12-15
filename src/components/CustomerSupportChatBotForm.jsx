@@ -417,7 +417,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
     }
 
     return (
-        <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
+        <div className="p-6 h-screen overflow-auto flex flex-col gap-4 w-full">
             {/* Header */}
             <div className="flex justify-between items-center">
                 <h1 className="text-[#1E1E1E] font-[600] text-[24px]">{editData ? t("calina.edit_new_chatbot") : t("calina.create_new_chatbot")}</h1>

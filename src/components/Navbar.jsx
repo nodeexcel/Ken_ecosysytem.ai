@@ -98,7 +98,7 @@ function Navbar({ sidebarItems }) {
             'accounting': 'Accounting',
             'hr': 'HR',
             'seo': 'GEO',
-            'customer-support': 'Customer Support',
+            'customer-support': 'Calina',
             'brain': 'Brain AI',
             'settings': 'Settings',
             'notification': 'Notification',
@@ -114,7 +114,8 @@ function Navbar({ sidebarItems }) {
             'phone': 'Rebecca',
             'campaigns': 'Emile',
             'coo': 'Tara',
-            'content-creation': 'Constance'
+            'content-creation': 'Constance',
+            'customer-support': 'Calina'
         }
 
         // Tab name mapping for Constance (matching actual URL params)
@@ -168,12 +169,69 @@ function Navbar({ sidebarItems }) {
             'content-analytics': 'Content Analytics',
         }
 
+        // Tab name mapping for Seth (Appointment Setter) - matches AppointmentSetter.jsx sideMenuList paths
+        const sethTabMap = {
+            'agents': 'Agents',
+            'conversations': 'Conversations',
+            'analytics': 'Analytics',
+        }
+
+        // Tab name mapping for Calina (Customer Support) - matches CustomerSupport.jsx sideMenuList paths
+        const calinaTabMap = {
+            'chat': 'Chat',
+            'smart_bot': 'Smart Chatbot',
+        }
+
+        // Tab name mapping for Finn (Accounting) - matches Accounting.jsx sideMenuList paths
+        const finnTabMap = {
+            'chat': 'Chat',
+            'balance_sheet': 'Balance Sheet Calculator',
+            'profit_loss_calculator': 'Profit & Loss Calculator',
+            'sales_forecaster': 'Sales Forecaster',
+            'roi_calculator': 'ROI Calculator',
+        }
+
         if (paths.length === 0 || (paths.length === 1 && paths[0] === 'dashboard')) {
             return [{ label: 'AI Agents', path: '/dashboard' }, { label: 'Agents', path: null }]
         }
 
         breadcrumbs.push({ label: 'AI Agents', path: '/dashboard' })
         const currentPath = paths[paths.length - 1]
+        const previousPath = paths.length > 1 ? paths[paths.length - 2] : null
+        
+        // Handle Seth (appointment-setter) with tab param
+        if (currentPath === 'appointment-setter') {
+            // Base crumb for Seth
+            const sethTabKey = tab || 'agents'
+            breadcrumbs.push({ label: 'Seth', path: `/dashboard/appointment-setter?tab=${sethTabKey}` })
+            
+            if (sethTabMap[sethTabKey]) {
+                breadcrumbs.push({ label: sethTabMap[sethTabKey], path: null })
+            }
+            return breadcrumbs
+        } else if (previousPath === 'appointment-setter') {
+            // Has id param: /dashboard/appointment-setter/:id
+            breadcrumbs.push({ label: 'Seth', path: '/dashboard/appointment-setter' })
+            breadcrumbs.push({ label: currentPath, path: null })
+            return breadcrumbs
+        }
+        
+        // Handle Calina (customer-support) with tab param
+        if (currentPath === 'customer-support') {
+            // Base crumb for Calina
+            const calinaTabKey = tab || 'chat'
+            breadcrumbs.push({ label: 'Calina', path: `/dashboard/customer-support?tab=${calinaTabKey}` })
+            
+            if (calinaTabMap[calinaTabKey]) {
+                breadcrumbs.push({ label: calinaTabMap[calinaTabKey], path: null })
+            }
+            return breadcrumbs
+        } else if (previousPath === 'customer-support') {
+            // Has id param: /dashboard/customer-support/:id
+            breadcrumbs.push({ label: 'Calina', path: '/dashboard/customer-support' })
+            breadcrumbs.push({ label: currentPath, path: null })
+            return breadcrumbs
+        }
         
         // Handle Settings with tab param
         if (currentPath === 'settings') {
@@ -251,6 +309,16 @@ function Navbar({ sidebarItems }) {
             // Default GEO tabs
             if (geoTabMap[geoTabKey]) {
                 breadcrumbs.push({ label: geoTabMap[geoTabKey], path: null })
+            }
+            return breadcrumbs
+        }
+        
+        // Handle Finn (Accounting) with tab param
+        if (currentPath === 'accounting') {
+            const finnTabKey = tab || 'chat'
+            breadcrumbs.push({ label: 'Finn', path: `/dashboard/accounting?tab=${finnTabKey}` })
+            if (finnTabMap[finnTabKey]) {
+                breadcrumbs.push({ label: finnTabMap[finnTabKey], path: null })
             }
             return breadcrumbs
         }

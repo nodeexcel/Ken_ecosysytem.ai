@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { BalanceSheetIcon, CalculatorIcon, ConversationIcon, LeftArrow, PhoneCampaign, ROICalculatorIcon } from '../../icons/icons'
 import finnImg from "../../assets/svg/finn_logo.svg"
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import finnMsgLogo from '../../assets/svg/finn_msg_logo.svg'
 import { v4 as uuidv4 } from 'uuid';
 import { deleteChat, getAccountingChatById, getAccountingChats, updateChatName } from '../../api/account'
@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
 
 function Accounting() {
+    const [searchParams, setSearchParams] = useSearchParams()
     const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
     const [activeConversation, setActiveConversation] = useState()
     const [messages, setMessages] = useState([]);
@@ -50,11 +51,30 @@ function Accounting() {
         { label: t("skills.finn_content4_header"), icon: <ROICalculatorIcon status={activeSidebarItem == "roi_calculator"} />, hoverIcon: <ROICalculatorIcon hover={true} />, path: "roi_calculator" },
     ]
 
+    // Initialize URL with default tab if not present on mount
+    useEffect(() => {
+        if (!searchParams.get("tab")) {
+            setSearchParams({ tab: "chat" }, { replace: true });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Sync active tab with URL query param when URL changes
+    useEffect(() => {
+        const tabFromUrl = searchParams.get("tab") || "chat";
+        setActiveSidebarItem(tabFromUrl);
+    }, [searchParams]);
+
+    // Helper to update URL param for active tab
+    const handleTabChange = (tabPath) => {
+        setSearchParams({ tab: tabPath }, { replace: true });
+    };
+
     const activeTab = useSelector((state) => state.skills)
 
     useEffect(() => {
         if (activeTab.label !== null) {
-            setActiveSidebarItem(activeTab.label)
+            handleTabChange(activeTab.label)
         }
     }, [activeTab.loading])
 
@@ -263,7 +283,7 @@ function Accounting() {
                         </div>
                         {sideMenuList.map((e, i) => <div
                             key={i}
-                            onClick={() => setActiveSidebarItem(e.path)}
+                            onClick={() => handleTabChange(e.path)}
                             className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                 }`}
                         >
@@ -317,7 +337,7 @@ function Accounting() {
                             {sideMenuList.map((e, i) => <div
                                 key={i}
                                 onClick={() => {
-                                    setActiveSidebarItem(e.path)
+                                    handleTabChange(e.path)
                                     setSideBarStatus(false)
                                 }}
                                 className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
