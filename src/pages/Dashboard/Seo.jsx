@@ -24,7 +24,19 @@ import PerplexityLogo from '../../assets/svg/Perplexity.svg'
 import chatInstance from '../../api/chatInstance'
 import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
-import TutorialPlay from '../../assets/svg/WatchTutorial.svg'
+import TutorialPlay from '../../assets/svg/WatchTutorialGrey.svg'
+import ProductActive from '../../assets/svg/ProductActive.svg'
+import DashboardActive from '../../assets/svg/Home Grid.svg'
+import DashboardInactive from '../../assets/svg/DashboardGrey.svg'
+import CitationActive from '../../assets/svg/CitationActive.svg'
+import CitationInactive from '../../assets/svg/CitationInactive.svg'
+import PromptActive from '../../assets/svg/PromptActive.svg'
+import PromptInactive from '../../assets/svg/PromptInactive.svg'
+import ContentActive from '../../assets/svg/ContentActive.svg'
+import ContentInactive from '../../assets/svg/ContentInactive.svg'
+import PromptsActive from '../../assets/svg/PromptsActive.svg'
+import Prompts from '../../assets/svg/Prompts.svg'
+import GeoAnalytics from '../../assets/svg/GeoAnalytics.svg'
 
 function Seo() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -144,19 +156,17 @@ function Seo() {
         // First tab Product
         {
             label: t("product") || "Product",
-            icon: <Archive alt="product" className="w-4 h-4" />,
-            hoverIcon: <Archive alt="product" className="w-4 h-4" />,
-            path: "product"
+            path: "product",
+            iconActive: <img src={ProductActive} alt="Product" className="w-5 h-5" />,
+            iconInactive: <img src={ProductActive} alt="Product" className="w-5 h-5" />,
         },
         // Second tab Dashboard
         {
             label: t("dashboard") || "Dashboard",
-            icon: <img src={HomeGrid} alt="dashboard" className="w-4 h-4" />,
-            hoverIcon: <img src={HomeGrid} alt="dashboard" className="w-4 h-4" />,
-            path: "articles"
+            path: "articles",
+            iconActive: <img src={DashboardActive} alt="Dashboard" className="w-5 h-5" />,
+            iconInactive: <img src={DashboardInactive} alt="Dashboard" className="w-5 h-5" style={{ filter: 'brightness(0.5)' }} />,
         },
-        // { label: `${t("seo.start_seo_automation")}`, icon: <AutomationIcon status={activeSidebarItem == "automation"} />, hoverIcon: <AutomationIcon hover={true} />, path: "automation" },
-        // { label: `${t("seo.seo_audit")}`, icon: <AuditIcon status={activeSidebarItem == "audit"} />, hoverIcon: <AuditIcon hover={true} />, path: "audit" },
     ]
 
 
@@ -361,7 +371,7 @@ function Seo() {
                 return <SeoArticles />
             case "prompts":
                 return (
-                    <div className="p-6 flex flex-col gap-4">
+                    <div className="p-12 flex flex-col gap-4">
                         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                             <div className="flex flex-col gap-1">
                                 <h2 className="text-2xl font-[600] text-[#1E1E1E]">Prompts</h2>
@@ -505,7 +515,7 @@ function Seo() {
             <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><EllipsisVertical size={24} color='#1e1e1e' /></div>
             <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full mt-2">
                 {/* Sidebar */}
-                <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-89px)] mb-8 overflow-y-auto">
+                <div className="lg:flex hidden flex-col bg-white gap-4 border-t border-r border-b border-l border-[#D6D6D6] min-w-[272px] rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-89px)] mb-8 overflow-y-auto">
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
@@ -519,14 +529,14 @@ function Seo() {
                         </div>
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-3">
-                        <div className="bg-[#ffffff] lg:w-[232px] w-full mb-2 flex flex-col gap-3 p-[12px] rounded-[9px]">
+                        <div className="bg-[#ffffff] lg:w-[232px] w-full mb-2 flex flex-col gap-3 px-[12px] py-[10px] border-b border-gray-200">
                             <div className="flex gap-3">
                                 <div className="flex justify-center items-center">
-                                    <div className="w-10 h-10 rounded-full bg-[#FFE4C5] flex items-center justify-center">
+                                    <div className="w-12 h-12 rounded-full bg-[#FFE4C5] flex items-center justify-center">
                                         <img
                                             src={emileImg}
                                             alt="georgio"
-                                            className="w-8 h-8 object-contain scale-115"
+                                            className="w-10 h-10 object-contain scale-115"
                                         />
                                     </div>
                                 </div>
@@ -539,33 +549,42 @@ function Seo() {
                                     </p>
                                 </div>
                             </div>
-
                             {/* Watch Tutorial Button */}
                             <button
                                 onClick={() => {
                                     console.log("Watch Tutorial clicked");
                                 }}
-                                className="w-full flex items-center justify-center gap-2 px-2 py-2.5 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
+                                className="w-full flex items-center justify-center gap-2 px-2 py-2 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
                             >
-                                <img src={TutorialPlay} className="w-5 h-5" />
-                                <span className="text-md font-md">{t("watch_tutorial") || "Watch Tutorial"}</span>
+                                <img src={TutorialPlay} className="w-4 h-4" />
+                                <span className='text-md font-md'>{t("watch_tutorial") || "Watch Tutorial"}</span>
                             </button>
-
-                            <hr className="border border-gray-200 w-full mt-2" />
+                            <hr className='border border-transparent w-full' />
                         </div>
 
-                        {sideMenuList.map((e, i) => <div
-                            key={i}
-                            onClick={() => handleTabChange(e.path)}
-                            className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
-                                }`}
-                        >
-                            {activeSidebarItem === `${e.path}` ? e.icon :
-                                <div className="flex items-center gap-4"><div className='group-hover:hidden'>{e.icon}</div> <div className='hidden group-hover:block'>{e.hoverIcon}</div></div>}
-                            <span className={`font-[400] text-[16px] ${activeSidebarItem === `${e.path}` ? "text-[#000000]" : "text-[#000000] group-hover:text-[#1E1E1E]"}`}>
-                                {e.label}
-                            </span>
-                        </div>)}
+                        {sideMenuList.map((e, i) => {
+                            const isActive = activeSidebarItem === e.path;
+                            return (
+                                <div
+                                    key={i}
+                                    onClick={() => handleTabChange(e.path)}
+                                    className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                                        }`}
+                                >
+                                    {isActive ? (
+                                        e.iconActive
+                                    ) : (
+                                        <div className="flex items-center gap-2">
+                                            <div className='group-hover:hidden'>{e.iconInactive}</div>
+                                            <div className='hidden group-hover:block'>{e.iconActive}</div>
+                                        </div>
+                                    )}
+                                    <span className={`font-[400] text-[16px] ${isActive ? "text-[#000000]" : "text-[#000000] group-hover:text-[#1E1E1E]"}`}>
+                                        {e.label}
+                                    </span>
+                                </div>
+                            )
+                        })}
 
                         {/* Analytics Section */}
                         <div className="w-full">
@@ -575,8 +594,12 @@ function Seo() {
                                 className="flex justify-between items-center px-2 py-2 cursor-pointer hover:bg-[#F9F8FF] rounded-2xl transition-colors"
                             >
                                 <div className="flex items-center gap-1.5">
-                                    <ChartColumnBig className={`w-4 h-4 text-[#5A687C] ${activeSidebarItem === 'citation-analytics' || activeSidebarItem === 'prompt-analytics' || activeSidebarItem === 'content-analytics' ? 'text-[#000000]' : 'text-[#000000]'}`} />
-                                    <span className={`font-[400] text-[16px] ${activeSidebarItem === 'citation-analytics' || activeSidebarItem === 'prompt-analytics' || activeSidebarItem === 'content-analytics' ? 'text-[#000000]' : 'text-[#000000]'}`}>
+                                    <img 
+                                        src={GeoAnalytics} 
+                                        alt="Analytics" 
+                                        className="w-5 h-5"
+                                    />
+                                    <span className="font-[400] text-[16px] text-[#000000]">
                                         Analytics
                                     </span>
                                 </div>
@@ -597,7 +620,11 @@ function Seo() {
                                                 : 'hover:bg-[#F9F8FF]'
                                         }`}
                                     >
-                                        <AtSign className={`w-4 h-4 ${activeSidebarItem === 'citation-analytics' ? 'text-[#675FFF]' : 'text-[#000000]'}`} />
+                                        {activeSidebarItem === 'citation-analytics' ? (
+                                            <img src={CitationActive} alt="Citation Analytics" className="w-5 h-5" />
+                                        ) : (
+                                            <img src={CitationInactive} alt="Citation Analytics" className="w-5 h-5" />
+                                        )}
                                         <span className={`font-[400] text-[16px] ${activeSidebarItem === 'citation-analytics' ? 'text-[#000000]' : 'text-[#000000]'}`}>
                                             Citation Analytics
                                         </span>
@@ -612,7 +639,11 @@ function Seo() {
                                                 : 'hover:bg-[#F9F8FF]'
                                         }`}
                                     >
-                                        <FileText className={`w-4 h-4 ${activeSidebarItem === 'prompt-analytics' ? 'text-[#675FFF]' : 'text-[#000000]'}`} />
+                                        {activeSidebarItem === 'prompt-analytics' ? (
+                                            <img src={PromptActive} alt="Prompt Analytics" className="w-5 h-5" />
+                                        ) : (
+                                            <img src={PromptInactive} alt="Prompt Analytics" className="w-5 h-5" />
+                                        )}
                                         <span className={`font-[400] text-[16px] ${activeSidebarItem === 'prompt-analytics' ? 'text-[#000000]' : 'text-[#000000]'}`}>
                                             Prompt Analytics
                                         </span>
@@ -627,7 +658,11 @@ function Seo() {
                                                 : 'hover:bg-[#F9F8FF]'
                                         }`}
                                     >
-                                        <PieChart className={`w-4 h-4 ${activeSidebarItem === 'content-analytics' ? 'text-[#675FFF]' : 'text-[#000000]'}`} />
+                                        {activeSidebarItem === 'content-analytics' ? (
+                                            <img src={ContentActive} alt="Content Analytics" className="w-5 h-5" />
+                                        ) : (
+                                            <img src={ContentInactive} alt="Content Analytics" className="w-5 h-5" />
+                                        )}
                                         <span className={`font-[400] text-[16px] ${activeSidebarItem === 'content-analytics' ? 'text-[#000000]' : 'text-[#000000]'}`}>
                                             Content Analytics
                                         </span>
@@ -642,8 +677,18 @@ function Seo() {
                             className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === 'prompts' ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                 }`}
                         >
-                            {activeSidebarItem === 'prompts' ? <FileText className="w-4 h-4" /> :
-                                <div className="flex items-center gap-4"><div className='group-hover:hidden'><FileText className="w-4 h-4" /></div> <div className='hidden group-hover:block'><FileText className="w-4 h-4" /></div></div>}
+                            {activeSidebarItem === 'prompts' ? (
+                                <img src={PromptsActive} alt="Prompts" className="w-5 h-5" />
+                            ) : (
+                                <div className="flex items-center gap-2">
+                                    <div className='group-hover:hidden'>
+                                        <img src={Prompts} alt="Prompts" className="w-5 h-5" />
+                                    </div>
+                                    <div className='hidden group-hover:block'>
+                                        <img src={PromptsActive} alt="Prompts" className="w-5 h-5" />
+                                    </div>
+                                </div>
+                            )}
                             <span className={`font-[400] text-[16px] ${activeSidebarItem === 'prompts' ? "text-[#000000]" : "text-[#000000] group-hover:text-[#1E1E1E]"}`}>
                                 {t("Prompts") || "Prompts"}
                             </span>
@@ -680,53 +725,65 @@ function Seo() {
                             <hr className='text-[#E1E4EA]' />
                         </div>
                         <div className="flex flex-col w-full items-start gap-2 relative px-5">
-                            <div className="bg-[#ffffff] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
-                                <div className="flex justify-center items-center">
-                                    <div className="w-10 h-10 rounded-full bg-[#FFE4C5] flex items-center justify-center">
-                                        <img
-                                            src={emileImg}
-                                            alt="georgio"
-                                            className="w-8 h-8 object-contain scale-115"
-                                        />
+                            <div className="bg-[#F7F7FF] border border-[#E9E8FF] w-full min-w-[232px] flex flex-col gap-3 mb-5 p-[12px] rounded-[9px]">
+                                <div className="flex gap-3">
+                                    <div className="flex justify-center items-center">
+                                        <div className="w-10 h-10 rounded-full bg-[#FFE4C5] flex items-center justify-center">
+                                            <img
+                                                src={emileImg}
+                                                alt="georgio"
+                                                className="w-8 h-8 object-contain scale-115"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <h1 className="text-[#1E1E1E] text-[16px] font-[600]">
+                                            {t("seo.georgio")}
+                                        </h1>
+                                        <p className="text-[#5A687C] text-[14px] font-[400]">
+                                            GEO
+                                        </p>
                                     </div>
                                 </div>
-                                <div className="flex flex-col">
-                                    <h1 className="text-[#1E1E1E] text-[16px] font-[600]">
-                                        {t("seo.georgio")}
-                                    </h1>
-                                    <p className="text-[#5A687C] text-[14px] font-[400]">
-                                        GEO
-                                    </p>
-                                </div>
+                                {/* Watch Tutorial Button */}
+                                <button
+                                    onClick={() => {
+                                        console.log("Watch Tutorial clicked");
+                                        setSideBarStatus(false);
+                                    }}
+                                    className="w-full flex items-center justify-center gap-2 px-2 py-2 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
+                                >
+                                    <img src={TutorialPlay} className="w-4 h-5" />
+                                    <span className='text-md font-md'>{t("watch_tutorial") || "Watch Tutorial"}</span>
+                                </button>
                             </div>
 
-                            {/* Watch Tutorial Button */}
-                            <button
-                                onClick={() => {
-                                    console.log("Watch Tutorial clicked");
-                                    setSideBarStatus(false);
-                                }}
-                                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer mb-2"
-                            >
-                                <div className="w-0 h-0 border-l-[6px] border-l-[#675FFF] border-t-[4px] border-t-transparent border-b-[4px] border-b-transparent ml-0.5"></div>
-                                <span>{t("watch_tutorial") || "Watch Tutorial"}</span>
-                            </button>
-
-                            {sideMenuList.map((e, i) => <div
-                                key={i}
-                                onClick={() => {
-                                    handleTabChange(e.path)
-                                    setSideBarStatus(false)
-                                }}
-                                className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
-                                    }`}
-                            >
-                                {activeSidebarItem === `${e.path}` ? e.icon :
-                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'>{e.icon}</div> <div className='hidden group-hover:block'>{e.hoverIcon}</div></div>}
-                                <span className={`font-[400] text-[16px] ${activeSidebarItem === `${e.path}` ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
-                                    {e.label}
-                                </span>
-                            </div>)}
+                            {sideMenuList.map((e, i) => {
+                                const isActive = activeSidebarItem === e.path;
+                                return (
+                                    <div
+                                        key={i}
+                                        onClick={() => {
+                                            handleTabChange(e.path)
+                                            setSideBarStatus(false)
+                                        }}
+                                        className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                                            }`}
+                                    >
+                                        {isActive ? (
+                                            e.iconActive
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                <div className='group-hover:hidden'>{e.iconInactive}</div>
+                                                <div className='hidden group-hover:block'>{e.iconActive}</div>
+                                            </div>
+                                        )}
+                                        <span className={`font-[400] text-[16px] ${isActive ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                                            {e.label}
+                                        </span>
+                                    </div>
+                                )
+                            })}
 
                             {/* Analytics Section - Mobile */}
                             <div className="w-full mt-2">
@@ -736,8 +793,12 @@ function Seo() {
                                     className="flex justify-between items-center px-2 py-2 cursor-pointer hover:bg-[#F9F8FF] rounded-2xl transition-colors"
                                 >
                                     <div className="flex items-center gap-1.5">
-                                        <BarChart3 className={`w-4 h-4 ${activeSidebarItem === 'citation-analytics' || activeSidebarItem === 'prompt-analytics' || activeSidebarItem === 'content-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`} />
-                                        <span className={`font-[400] text-[16px] ${activeSidebarItem === 'citation-analytics' || activeSidebarItem === 'prompt-analytics' || activeSidebarItem === 'content-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`}>
+                                        <img 
+                                            src={GeoAnalytics} 
+                                            alt="Analytics" 
+                                            className="w-5 h-5"
+                                        />
+                                        <span className="font-[400] text-[16px] text-[#000000]">
                                             Analytics
                                         </span>
                                     </div>
@@ -761,7 +822,11 @@ function Seo() {
                                                     : 'hover:bg-[#F9F8FF]'
                                             }`}
                                         >
-                                            <AtSign className={`w-4 h-4 ${activeSidebarItem === 'citation-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`} />
+                                            {activeSidebarItem === 'citation-analytics' ? (
+                                                <img src={CitationActive} alt="Citation Analytics" className="w-5 h-5" />
+                                            ) : (
+                                                <img src={CitationInactive} alt="Citation Analytics" className="w-5 h-5" />
+                                            )}
                                             <span className={`font-[400] text-[16px] ${activeSidebarItem === 'citation-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`}>
                                                 Citation Analytics
                                             </span>
@@ -779,7 +844,11 @@ function Seo() {
                                                     : 'hover:bg-[#F9F8FF]'
                                             }`}
                                         >
-                                            <FileText className={`w-4 h-4 ${activeSidebarItem === 'prompt-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`} />
+                                            {activeSidebarItem === 'prompt-analytics' ? (
+                                                <img src={PromptActive} alt="Prompt Analytics" className="w-5 h-5" />
+                                            ) : (
+                                                <img src={PromptInactive} alt="Prompt Analytics" className="w-5 h-5" />
+                                            )}
                                             <span className={`font-[400] text-[16px] ${activeSidebarItem === 'prompt-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`}>
                                                 Prompt Analytics
                                             </span>
@@ -797,7 +866,11 @@ function Seo() {
                                                     : 'hover:bg-[#F9F8FF]'
                                             }`}
                                         >
-                                            <PieChart className={`w-4 h-4 ${activeSidebarItem === 'content-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`} />
+                                            {activeSidebarItem === 'content-analytics' ? (
+                                                <img src={ContentActive} alt="Content Analytics" className="w-5 h-5" />
+                                            ) : (
+                                                <img src={ContentInactive} alt="Content Analytics" className="w-5 h-5" />
+                                            )}
                                             <span className={`font-[400] text-[16px] ${activeSidebarItem === 'content-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`}>
                                                 Content Analytics
                                             </span>
@@ -818,7 +891,11 @@ function Seo() {
                                         : 'hover:bg-[#F9F8FF]'
                                 }`}
                             >
-                                <FileText className={`w-4 h-4 ${activeSidebarItem === 'prompts' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`} />
+                                {activeSidebarItem === 'prompts' ? (
+                                    <img src={PromptsActive} alt="Prompts" className="w-5 h-5" />
+                                ) : (
+                                    <img src={Prompts} alt="Prompts" className="w-5 h-5" />
+                                )}
                                 <span className={`font-[400] text-[16px] ${activeSidebarItem === 'prompts' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`}>
                                     {t("Prompts") || "Prompts"}
                                 </span>

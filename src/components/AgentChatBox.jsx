@@ -673,8 +673,8 @@ const AgentChatBox = ({ listedProps }) => {
   }
 
   return (
-    <div className="w-full h-[calc(100vh-80px)] px-2 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6 flex flex-col gap-2 sm:gap-3">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 px-2 sm:px-4 lg:px-6">
+    <div className="w-full h-[calc(100vh-80px)] p-12 flex flex-col gap-2 sm:gap-3">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 ">
         <h1 className="text-[18px] sm:text-[20px] lg:text-[24px] font-[600] text-[#1E1E1E]">{t("seo.chat")}</h1>
         <div className="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
           <button
@@ -822,17 +822,14 @@ const AgentChatBox = ({ listedProps }) => {
                         </div>
                       ))
                     ) : (
-                      <div className="flex flex-col items-center justify-center h-full gap-4 sm:gap-6 lg:gap-8 px-2 sm:px-4">
+                    <div className="flex flex-col items-center justify-center h-full gap-4 sm:gap-6 lg:gap-8 px-2 sm:px-4">
                         <div className="flex justify-center">
-                          <div className="relative flex items-center justify-center">
-                            <div className="absolute w-16 h-16 sm:w-20 sm:h-20 lg:w-20 lg:h-20 rounded-full bg-white -z-10"></div>
-                            <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-full bg-[#FFE4C5] flex items-center justify-center overflow-hidden">
-                              <img
-                                src={agentLogo || "/placeholder.svg"}
-                                alt={agentName}
-                                className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 object-contain rounded-full scale-120"
-                              />
-                            </div>
+                          <div className="flex items-center justify-center mt-4">
+                            <img
+                              src={agentLogo || "/placeholder.svg"}
+                              alt={agentName}
+                              className="w-16 h-16 sm:w-18 sm:h-18 lg:w-28 lg:h-28 object-contain rounded-full"
+                            />
                           </div>
                         </div>
 

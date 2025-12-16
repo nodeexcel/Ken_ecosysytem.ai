@@ -220,7 +220,7 @@ const DemoChat = () => {
 
 
     return (
-        <div className="w-full py-4 h-screen pr-2 flex flex-col gap-3">
+        <div className="w-full p-12 h-screen pr-2 flex flex-col gap-3">
             <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{t('appointment.conversations')}</h1>
             <div className="h-full overflow-auto flex pb-2 flex-col">
                 {message ? <p>{message}</p> : <div className="flex bg-white h-full rounded-2xl border-[#E1E4EA] border">

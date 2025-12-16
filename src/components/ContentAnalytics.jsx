@@ -94,7 +94,7 @@ function ContentAnalytics() {
     }
 
     return (
-        <div className="p-6 h-full overflow-auto flex flex-col gap-6 w-full">
+        <div className="p-12 h-full overflow-auto flex flex-col gap-6 w-full">
             {/* Header Section */}
             <div className="flex flex-col gap-1">
                 <h1 className="text-2xl font-[600] text-[#1E1E1E]">
@@ -106,7 +106,7 @@ function ContentAnalytics() {
             </div>
 
             {/* Navigation Tabs - slider style */}
-            <div className="inline-flex items-center gap-1 bg-[#F3F4F6] rounded-xl p-1 w-fit">
+            <div className="inline-flex items-center gap-1 bg-[#F3F4F6] rounded-lg p-0.5 w-fit border border-[#E1E4EA]">
                 {tabs.map((tab) => {
                     const isActive = activeTab === tab
                     return (
@@ -115,7 +115,7 @@ function ContentAnalytics() {
                             onClick={() => setActiveTab(tab)}
                             className={`px-4 py-2 rounded-lg text-sm font-[600] transition-all ${
                                 isActive
-                                    ? 'bg-white text-[#111827] shadow-sm'
+                                    ? 'bg-white text-[#111827] shadow-sm border border-[#D6D6D6]'
                                     : 'bg-transparent text-[#5A687C]'
                             }`}
                         >

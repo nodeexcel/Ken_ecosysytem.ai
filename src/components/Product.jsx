@@ -448,7 +448,7 @@ const Product = () => {
   };
 
   return (
-    <div className="w-full h-full p-4">
+    <div className="w-full h-full p-12">
       {showProgressModal ? (
         /* Progress Animation View */
         <div className="w-full h-full flex items-center justify-center">
@@ -683,7 +683,7 @@ const Product = () => {
                   </button>
                   <button
                     onClick={() => {
-                      navigate('/dashboard/seo?tab=articles');
+                      navigate('/dashboard/geo?tab=articles');
                     }}
                     className="flex items-center gap-2 px-5 py-2 bg-[#675FFF] text-white rounded-lg text-sm font-[500] hover:bg-[#5A4FE6] transition-colors cursor-pointer"
                   >

@@ -305,11 +305,11 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
 
 
   return (
-    <div className="py-6 px-6 flex flex-col gap-6 w-full h-screen overflow-auto">
+    <div className="p-12 flex flex-col gap-6 w-full h-screen overflow-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Overview</h1>
+          <h1 className="text-[24px] font-bold text-gray-800">Overview</h1>
           <p className="text-md text-[#5A687C] mt-2">Monitor your call activity, credits, and agent performance.</p>
         </div>
         <div className="flex items-center gap-3">

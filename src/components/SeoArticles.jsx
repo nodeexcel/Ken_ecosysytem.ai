@@ -329,7 +329,7 @@ function SeoArticles() {
 
     return (
         <>
-            {!generateSeoArticleOpen ? <div className="p-6 h-full overflow-auto flex flex-col gap-4 w-full">
+            {!generateSeoArticleOpen ? <div className="p-12 h-full overflow-auto flex flex-col gap-4 w-full">
                 {/* Daily prompt header banner */}
                 {showBanner && (
                     <div className="bg-white border border-[#E1E4EA] rounded-2xl px-4 sm:px-5 py-3 sm:py-4 flex items-start justify-between gap-4">

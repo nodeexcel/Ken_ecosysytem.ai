@@ -283,11 +283,11 @@ export default function PhoneNumbers() {
 
   return (
 
-    <div className="py-6 px-6 min-h-[calc(100vh-80px)] overflow-y-auto flex flex-col gap-4 w-full">
+    <div className="p-12 min-h-[calc(100vh-80px)] overflow-y-auto flex flex-col gap-4 w-full">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
         <div>
-          <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">{t("phone.phone_numbers")}</h1>
+          <h1 className="text-gray-900 font-semibold text-xl md:text-[24px]">{t("phone.phone_numbers")}</h1>
           <p className="text-[#5A687C] text-sm md:text-base mt-1">
             Manage and monitor active business numbers across your organization.
           </p>

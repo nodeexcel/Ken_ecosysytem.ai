@@ -526,6 +526,11 @@ function CreationStudio({ onClose, onGenerateContent }) {
     // Handle click outside to close modal
     useEffect(() => {
         const handleClickOutside = (event) => {
+            // Ignore clicks coming from dropdown portals
+            if (event.target.closest('.select-dropdown-portal')) {
+                return;
+            }
+
             if (modalRef.current && !modalRef.current.contains(event.target)) {
                 if (onClose) {
                     onClose();

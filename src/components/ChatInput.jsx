@@ -159,7 +159,7 @@ const ChatInput = ({
   };
 
   return (
-    <div className="w-full mx-auto p-2 relative">
+    <div className="w-full mx-auto p-2   relative">
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -308,12 +308,12 @@ const ChatInput = ({
                 </div>
               )}
             </div>
-            <div
+            {/* <div
               className="p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] rounded-xl px-3 border border-gray-300"
               onClick={() => setShowEmojiPicker((prev) => !prev)}
             >
               <EmojiIcon />
-            </div>
+            </div> */}
             {/* <div className="p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] rounded-xl px-3 border border-gray-300">
               <ImageChatIcon />
             </div> */}

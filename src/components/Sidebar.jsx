@@ -25,6 +25,8 @@ import textLogo from '../assets/images/ecosysteme.ai_logo.png'
 import { discardSkillsData } from '../store/agentSkillsSlice';
 import FourBox from '../assets/svg/Home Grid.svg';
 import Brain from '../assets/svg/Brain.svg'
+import BrainAIActive from '../assets/svg/BrainAIActive.svg'
+import HomeInactive from '../assets/svg/HomeInactive.svg'
 
 const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
   const navigate = useNavigate()
@@ -34,7 +36,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
   const lastPath = location.pathname.split('/').filter(Boolean).pop();
   const { t } = useTranslation();
 
-  const paths = ['campaigns', 'phone', 'appointment-setter', "accounting", "hr", "coo", "seo", "content-creation", "customer-support"]
+  const paths = ['campaigns', 'phone', 'appointment-setter', "accounting", "hr", "coo", "geo", "content-creation", "customer-support"]
 
   const [isNotification, setIsNotification] = useState(false);
 
@@ -164,9 +166,9 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
         {isOpen ? <IoClose size={24} /> : <RxHamburgerMenu size={24} color='#1e1e1e' />}
       </button>
       <aside className={`bg-[#F7F7F8] ${isOpen && 'rounded-r-[8px] px-8 pt-3'} pl-2 overflow-auto w-full  h-full transition-all duration-300 ${isOpen ? 'w-[120px]' : 'w-0 overflow-auto'}  flex flex-col justify-between`}>
-        <div className={`flex flex-col bg-white h-full justify-between py-3 my-2 px-2 border border-[#D6D6D6] ${(location.pathname.includes('/settings') || location.pathname.includes('/brain') || location.pathname.includes('/content-creation') || location.pathname.includes('/phone') || location.pathname.includes('/appointment-setter') || location.pathname.includes('/customer-support') || location.pathname.includes('/accounting') || location.pathname.includes('/seo')) ? 'rounded-l-2xl rounded-tr-none rounded-br-none' : 'rounded-2xl'}`}>
+        <div className={`flex flex-col bg-white h-full justify-between py-3 my-2 px-2 ${(location.pathname.includes('/settings') || location.pathname.includes('/brain') || location.pathname.includes('/content-creation') || location.pathname.includes('/phone') || location.pathname.includes('/appointment-setter') || location.pathname.includes('/customer-support') || location.pathname.includes('/accounting') || location.pathname.includes('/geo')) ? 'border-t border-l border-b border-r-0 border-[#D6D6D6] rounded-l-2xl rounded-tr-none rounded-br-none' : 'border border-[#D6D6D6] rounded-2xl'}`}>
           {/* Top Section */}
-          <div className="flex flex-col">
+          <div className="flex flex-col mt-2 gap-1">
             {/* Logo */}
             {/* <div className={`flex ${!isOpen && 'justify-center'} py-4`} onClick={handleHome}>
               <img src={isOpen ? textLogo : logo} alt="image" />
@@ -184,24 +186,27 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
             {/* Home */}
             <div
               className={`text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'
-                } py-3`}
+                }`}
               onClick={() => handleSelect(sidebarItems[0].id, sidebarItems[0].label)}
             >
               <div className="flex items-center">
-                <div className="flex items-center gap-2">
+                <div
+                  className={`flex items-center justify-center w-12 h-12 rounded-full transition-colors
+                    ${renderColor(0) ? 'bg-[#F0EFFF]' : 'bg-transparent'}`}
+                >
                   <div className="group-hover:hidden">
-                    <img 
-                      src={FourBox} 
-                      alt="Home" 
-                      className={`w-6 h-6 ${renderColor(0) ? 'opacity-100' : 'opacity-90'}`}
+                    <img
+                      src={renderColor(0) ? FourBox : HomeInactive}
+                      alt="Home"
+                      className={`w-5 h-5 ${renderColor(0) ? 'opacity-100' : 'opacity-90'}`}
                       style={{ filter: renderColor(0) ? 'none' : 'brightness(0.8)' }}
                     />
                   </div>
                   <div className="hidden group-hover:block">
-                    <img 
-                      src={FourBox} 
-                      alt="Home" 
-                      className="w-6 h-6 opacity-100"
+                    <img
+                      src={FourBox}
+                      alt="Home"
+                      className="w-5 h-5 opacity-100"
                     />
                   </div>
                 </div>
@@ -223,24 +228,29 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
 
             {/* Brain AI */}
             <div
-              className={`text-xl flex group hover:cursor-pointer my-1 relative ${!isOpen && 'justify-center'
+              className={`text-xl flex group hover:cursor-pointer  relative ${!isOpen && 'justify-center'
                 } py-3`}
               onClick={() => handleSelect(sidebarItems[1].id, sidebarItems[1].label)}
             >
               <div className="flex items-center">
-                <div className="flex items-center gap-2">
+                <div
+                  className={`flex items-center justify-center w-12 h-12 rounded-full transition-colors
+                    ${renderColor(1) ? 'bg-[#F0EFFF]' : 'bg-transparent'}`}
+                >
+                  {/* Default state */}
                   <div className="group-hover:hidden">
-                    <img 
-                      src={Brain} 
-                      alt="Home" 
-                      className={`w-5 h-5 ${renderColor(0) ? 'opacity-100' : 'opacity-90'}`}
-                      style={{ filter: renderColor(0) ? 'none' : 'brightness(0.8)' }}
+                    <img
+                      src={renderColor(1) ? BrainAIActive : Brain}
+                      alt="Brain AI"
+                      className={`w-5 h-5 ${renderColor(1) ? 'opacity-100' : 'opacity-90'}`}
+                      style={{ filter: renderColor(1) ? 'none' : 'brightness(0.8)' }}
                     />
                   </div>
+                  {/* Hover state */}
                   <div className="hidden group-hover:block">
-                    <img 
-                      src={Brain} 
-                      alt="Home" 
+                    <img
+                      src={BrainAIActive}
+                      alt="Brain AI"
                       className="w-5 h-5 opacity-100"
                     />
                   </div>
@@ -326,7 +336,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
             {/* Language Selector */}
               <div
                 ref={languageRef}
-                className={`relative bg-white ${!showDropdown && 'group'} text-xl flex ${!isOpen ? 'justify-center' : 'pl-3'} py-3 cursor-pointer`}
+                className={`relative mt-2 bg-white ${!showDropdown && 'group'} text-xl flex ${!isOpen ? 'justify-center' : 'pl-3'} py-3 cursor-pointer`}
                 onClick={toggleDropdown}
               >
                 <div className='flex items-center'>
@@ -362,7 +372,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                 onClick={redirectHelpCenterDoc}
               >
                 <div className='flex items-center'>
-                  <div className="flex items-center gap-2">
+                  <div className={`flex items-center gap-2 rounded-lg p-1 ${renderColor(3) ? 'bg-[#F0EFFF]' : ''}`}>
                     <div className='group-hover:hidden'><SidebarHelpCenterIcon status={renderColor(3)} /></div>
                     <div className='hidden group-hover:block'><SidebarHelpCenterIcon status={true} /></div>
                   </div>
@@ -381,7 +391,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                 onClick={() => setCommissionStatus(true)}
               >
                 <div className='flex items-center'>
-                  <div className="flex items-center gap-2">
+                  <div className={`flex items-center gap-2 rounded-lg p-1 ${renderColor(4) ? 'bg-[#F0EFFF]' : ''}`}>
                     <div className='group-hover:hidden'><GiftIcon status={renderColor(4)} /></div>
                     <div className='hidden group-hover:block'><GiftIcon status={true} /></div>
                   </div>
@@ -403,7 +413,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
               onClick={() => handleSelect(sidebarItems[2].id, sidebarItems[2].label)}
             >
               <div className='flex items-center'>
-                <div className="flex items-center gap-2">
+                <div className={`flex items-center gap-2 rounded-lg p-1 ${renderColor(2) ? 'bg-[#F0EFFF]' : ''}`}>
                   <div className='group-hover:hidden'><SidebarSettingIcon status={renderColor(2)} /></div>
                   <div className='hidden group-hover:block'><SidebarSettingIcon status={true} /></div>
                 </div>

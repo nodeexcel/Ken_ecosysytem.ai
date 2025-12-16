@@ -295,7 +295,17 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                                 {t("brain_ai.integrations.connect")} {integartionData.name}
                             </h2>
                             <p className="text-[16px] font-[400] text-[#5A687C]">
-                                {activeTab === "insta" ? ` ${t("brain_ai.integrations.use_your")} ${integartionData.name} ${t("brain_ai.integrations.account_to_ecosystem")}` : `${t("brain_ai.integrations.use_meta_business")}`}
+                                {activeTab === "insta" ? (
+                                    integartionData.name === "WhatsApp" ? (
+                                        <>Only possible with a WhatsApp business account. <span className="text-[#675FFF] cursor-pointer hover:underline">See tutorial.</span></>
+                                    ) : integartionData.name === "Instagram" ? (
+                                        <>You can only connect professional and creator account. <span className="text-[#675FFF] cursor-pointer hover:underline">See tutorial.</span></>
+                                    ) : (
+                                        ` ${t("brain_ai.integrations.use_your")} ${integartionData.name} ${t("brain_ai.integrations.account_to_ecosystem")}`
+                                    )
+                                ) : (
+                                    `${t("brain_ai.integrations.use_meta_business")}`
+                                )}
                             </p>
                         </div>
 

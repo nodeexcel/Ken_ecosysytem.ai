@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { CalenderIcon, ConversationIcon, CreationStudioIcon, LeftArrow, LinkedInIcon, XIcon, YoutubeIcon } from '../../icons/icons'
 import constanceImg from "../../assets/svg/constance_logo.svg"
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
-import constanceMsgLogo from '../../assets/svg/constance_msg_logo.svg'
+import constanceMsgLogo from '../../assets/svg/ConstanceChat.svg'
 import { v4 as uuidv4 } from 'uuid';
 import { deleteContentCreationChat, getContentCreationChatById, getContentCreationChats, updateContentCreationChatName } from '../../api/contentCreationAgent'
 import AgentChatBox from '../../components/AgentChatBox'
@@ -14,7 +14,7 @@ import Calendar from '../../components/Calendar'
 import YoutubeScriptContent from '../../components/YoutubeScriptContent'
 import LinkedInNukeContent from '../../components/LinkedInNukeContent'
 import XPostContent from '../../components/XPostContent'
-import TutorialPlay from '../../assets/svg/WatchTutorial.svg'
+import TutorialPlay from '../../assets/svg/WatchTutorialGrey.svg'
 import { X, Plus, MoreVertical, Edit, Trash2, Play } from 'lucide-react'
 import dummy1 from '../../assets/images/dummy1.png'
 import dummy2 from '../../assets/images/dummy2.png'
@@ -23,6 +23,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
 import ContentCreationCalender from '../../components/ContentCreationCalender'
 import ToastModal from '../../components/ToastModal'
+import ChatActive from '../../assets/svg/ChatActive.svg'
+import ChatInactive from '../../assets/svg/ChatInactive.svg'
+import CreationStudioActive from '../../assets/svg/CreationStudioActive.svg'
+import CreationStudioInactive from '../../assets/svg/CreationStudioInactive.svg'
+import StudioActive from '../../assets/svg/StudioActive.svg'
+import StudioInactive from '../../assets/svg/StudioInactive.svg'
 
 function ContentCreation() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -80,11 +86,26 @@ function ContentCreation() {
     }, [activeDropdown]);
 
     const sideMenuList = [
-        { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
-        { label: `${t("constance.creation_studio")}`, icon: <CreationStudioIcon status={activeSidebarItem == "creation_studio"} />, hoverIcon: <CreationStudioIcon hover={true} />, path: "creation_studio" },
-        { label: t("constance.scheduler"), icon: <CalenderIcon status={activeSidebarItem == "scheduler"} />, hoverIcon: <CalenderIcon hover={true} />, path: "scheduler" },
+        {
+            label: `${t("seo.chat")}`,
+            path: "chat",
+            iconActive: <img src={ChatActive} alt="Chat" className="w-5 h-5" />,
+            iconInactive: <img src={ChatInactive} alt="Chat" className="w-5 h-5" />,
+        },
+        {
+            label: `${t("constance.creation_studio")}`,
+            path: "creation_studio",
+            iconActive: <img src={CreationStudioActive} alt="Creation Studio" className="w-5 h-5" />,
+            iconInactive: <img src={CreationStudioInactive} alt="Creation Studio" className="w-5 h-5" />,
+        },
+        {
+            label: t("constance.scheduler"),
+            path: "scheduler",
+            iconActive: <img src={StudioActive} alt="Scheduler" className="w-5 h-5" />,
+            iconInactive: <img src={StudioInactive} alt="Scheduler" className="w-5 h-5" />,
+        },
         // { label: t("skills.constance_content1_header"), icon: <YoutubeIcon status={activeSidebarItem == "youtube"} />, hoverIcon: <YoutubeIcon hover={true} />, path: "youtube" },
-        { label: t("skills.constance_content2_header"), icon: <LinkedInIcon status={activeSidebarItem == "linkedin"} />, hoverIcon: <LinkedInIcon hover={true} />, path: "linkedin" },
+        // { label: t("skills.constance_content2_header"), icon: <LinkedInIcon status={activeSidebarItem == "linkedin"} />, hoverIcon: <LinkedInIcon hover={true} />, path: "linkedin" },
         // { label: t("skills.constance_content3_header"), icon: <XIcon status={activeSidebarItem == "x_post"} />, hoverIcon: <XIcon hover={true} />, path: "x_post" },
     ]
 
@@ -386,11 +407,11 @@ function ContentCreation() {
         switch (activeSidebarItem) {
             case "creation_studio":
                 return (
-                    <div className="px-2 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6 w-full h-full flex flex-col gap-3 sm:gap-4 lg:gap-6">
+                    <div className="p-12 w-full h-full flex flex-col gap-3 sm:gap-4 lg:gap-6">
                         {/* Header Section */}
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-3 sm:gap-0">
                             <div className="flex flex-col gap-1.5 sm:gap-2">
-                                <h1 className="text-[#1E1E1E] text-[20px] sm:text-[24px] lg:text-[28px] font-[600]">
+                                <h1 className="text-[#1E1E1E] text-[20px] sm:text-[24px] lg:text-[24px] font-[600]">
                                     {t("constance.creation_studio") || "Creation Studio"}
                                 </h1>
                                 <p className="text-[#5A687C] text-[14px] sm:text-[15px] lg:text-[16px] font-[400]">
@@ -526,14 +547,14 @@ function ContentCreation() {
                         </div>
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-3">
-                        <div className="bg-[#ffffff] lg:w-[232px] w-full mb-2 flex flex-col gap-3 p-[12px] rounded-[9px]">
+                        <div className="bg-[#ffffff] lg:w-[232px] w-full mb-2 flex flex-col gap-3 px-[12px] py-[10px] border-b border-gray-200">
                         <div className="flex gap-3">
                             <div className="flex justify-center items-center">
-                                <div className="w-10 h-10 rounded-full bg-[#FFE4C5] flex items-center justify-center">
+                                <div className="w-12 h-12 rounded-full bg-[#FFE4C5] flex items-center justify-center">
                                     <img
                                         src={constanceImg}
                                         alt="constance"
-                                        className="w-8 h-8 object-contain scale-115"
+                                        className="w-10 h-10 object-contain scale-115"
                                     />
                                 </div>
                             </div>
@@ -552,29 +573,40 @@ function ContentCreation() {
                             onClick={() => {
                                 console.log("Watch Tutorial clicked");
                             }}
-                                className="w-full flex items-center justify-center gap-2 px-2 py-2.5 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
+                                className="w-full flex items-center justify-center gap-2 px-2 py-2 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
                         >
-                            <img src={TutorialPlay} className="w-5 h-5" />
+                            <img src={TutorialPlay} className="w-4 h-4" />
                             <span className='text-md font-md'>{t("watch_tutorial") || "Watch Tutorial"}</span>
                         </button>
 
-                            <hr className='border border-gray-200 w-full mt-2' />
+                            <hr className='border border-transparent w-full' />
                         </div>
 
-                        {sideMenuList.map((e, i) => <div
-                            key={i}
-                            onClick={() => {
-                                handleTabChange(e.path);
-                            }}
-                            className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
-                                }`}
-                        >
-                            {activeSidebarItem === `${e.path}` ? e.icon :
-                                <div className="flex items-center gap-2"><div className='group-hover:hidden'>{e.icon}</div> <div className='hidden group-hover:block'>{e.hoverIcon}</div></div>}
-                            <span className={`font-[400] text-[16px] ${activeSidebarItem === `${e.path}` ? "text-[#000000]" : "text-[#000000] group-hover:text-[#1E1E1E]"}`}>
-                                {e.label}
-                            </span>
-                        </div>)}
+                        {sideMenuList.map((e, i) => {
+                            const isActive = activeSidebarItem === e.path;
+                            return (
+                                <div
+                                    key={i}
+                                    onClick={() => {
+                                        handleTabChange(e.path);
+                                    }}
+                                    className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                                        }`}
+                                >
+                                    {isActive ? (
+                                        e.iconActive
+                                    ) : (
+                                        <div className="flex items-center gap-2">
+                                            <div className="group-hover:hidden">{e.iconInactive}</div>
+                                            <div className="hidden group-hover:block">{e.iconActive}</div>
+                                        </div>
+                                    )}
+                                    <span className={`font-[400] text-[16px] ${isActive ? "text-[#000000]" : "text-[#000000] group-hover:text-[#1E1E1E]"}`}>
+                                        {e.label}
+                                    </span>
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
 
@@ -629,21 +661,32 @@ function ContentCreation() {
                                     <p className="text-[#5A687C] text-[14px] font-[400]">{t("constance.content_creation")}</p>
                                 </div>
                             </div>
-                            {sideMenuList.map((e, i) => <div
-                                key={i}
-                                onClick={() => {
-                                    handleTabChange(e.path);
-                                    setSideBarStatus(false);
-                                }}
-                                className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
-                                    }`}
-                            >
-                                {activeSidebarItem === `${e.path}` ? e.icon :
-                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'>{e.icon}</div> <div className='hidden group-hover:block'>{e.hoverIcon}</div></div>}
-                                <span className={`font-[400] text-[16px] ${activeSidebarItem === `${e.path}` ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
-                                    {e.label}
-                                </span>
-                            </div>)}
+                            {sideMenuList.map((e, i) => {
+                                const isActive = activeSidebarItem === e.path;
+                                return (
+                                    <div
+                                        key={i}
+                                        onClick={() => {
+                                            handleTabChange(e.path);
+                                            setSideBarStatus(false);
+                                        }}
+                                        className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${isActive ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                                            }`}
+                                    >
+                                        {isActive ? (
+                                            e.iconActive
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                <div className="group-hover:hidden">{e.iconInactive}</div>
+                                                <div className="hidden group-hover:block">{e.iconActive}</div>
+                                            </div>
+                                        )}
+                                        <span className={`font-[400] text-[16px] ${isActive ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                                            {e.label}
+                                        </span>
+                                    </div>
+                                )
+                            })}
                         </div>
                     </div>
                 </div>

@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import CustomizeAgent from "./CustomizeAgent";
 import { createSmartBot, intregateWebsiteChatById, intregrateWhatsapp, updateSmartbot, getConnectedPlatform } from "../api/customerSupport";
 import { getWhatsappAccounts } from "../api/brainai";
+import StatusModal from "./StatusModal";
 
 function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
     const [formData, setFormData] = useState({ bot_name: "", role: "", personality: "", prompt: "", transfer: "", file: [], reference_text: "", transfer_case: {}, include_brainai: false })
@@ -24,6 +25,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
     const [smartBotData, setSmartBotData] = useState(null);
     const [whatsappData, setWhatsappData] = useState([])
     const [connectedPlatforms, setConnectedPlatforms] = useState(null)
+    const [statusModal, setStatusModal] = useState({ open: false, type: 'error', title: '', description: '', primaryButtonText: 'OK', onPrimaryClick: null });
 
 
     const fileInputRef = useRef(null);
@@ -405,14 +407,53 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
         const agent_id = agentId || editDataId || "";
         try {
             const response = await intregrateWhatsapp(agent_id, payload);
-            if (response.status == 201 || response.status == 200) {
-                // reset and close
+            console.log("WhatsApp integration response:", response);
+            
+            // Check if response is an error (axios errors have response.response property)
+            if (response?.response || (response?.status && response.status >= 400)) {
+                // Handle error response (API returns error object instead of throwing)
+                const errorMessage = response?.response?.data?.error || response?.data?.error || response?.message || 'Failed to connect WhatsApp account';
+                
+                if (errorMessage === "Account is already connected" || errorMessage.includes("already connected")) {
+                    setStatusModal({
+                        open: true,
+                        type: 'error',
+                        title: 'Connection Failed',
+                        description: 'Account is already connected',
+                        primaryButtonText: 'OK',
+                        onPrimaryClick: () => setStatusModal({ ...statusModal, open: false })
+                    });
+                } else {
+                    setStatusModal({
+                        open: true,
+                        type: 'error',
+                        title: 'Connection Failed',
+                        description: errorMessage,
+                        primaryButtonText: 'OK',
+                        onPrimaryClick: () => setStatusModal({ ...statusModal, open: false })
+                    });
+                }
+            } else if (response && (response.status === 201 || response.status === 200)) {
+                // Success case
                 SetWhatsappFormData({ platform_unique_id: "", whatsapp_type: "Business" });
                 SetopenWhatsappModal(false);
                 handleCancel();
             }
         } catch (error) {
             console.error("Error integrating WhatsApp:", error);
+            // Fallback error handling
+            const errorMessage = error?.response?.data?.error || error?.data?.error || error?.message || 'Failed to connect WhatsApp account';
+            
+            setStatusModal({
+                open: true,
+                type: 'error',
+                title: 'Connection Failed',
+                description: errorMessage === "Account is already connected" || errorMessage.includes("already connected") 
+                    ? 'Account is already connected' 
+                    : errorMessage,
+                primaryButtonText: 'OK',
+                onPrimaryClick: () => setStatusModal({ ...statusModal, open: false })
+            });
         }
     }
 
@@ -866,7 +907,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                 {/* WhatsApp type field */}
                                 <div className="flex flex-col gap-2">
                                     <label className="text-sm font-medium text-[#5A687C]">WhatsApp type</label>
-                                    <div className="w-full bg-white p-3 rounded-lg border border-[#E1E4EA] text-[#1E1E1E]">
+                                    <div className="w-full bg-gray-200 p-3 rounded-lg border border-[#E1E4EA] text-[#1E1E1E]">
                                         {whatsappFormData.whatsapp_type}
                                     </div>
                                 </div>
@@ -914,6 +955,16 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                     </div>
                 )
             }
+            {/* Status Modal for Error Messages */}
+            <StatusModal
+                isOpen={statusModal.open}
+                onClose={() => setStatusModal({ ...statusModal, open: false })}
+                type={statusModal.type}
+                title={statusModal.title}
+                description={statusModal.description}
+                primaryButtonText={statusModal.primaryButtonText}
+                onPrimaryClick={statusModal.onPrimaryClick || (() => setStatusModal({ ...statusModal, open: false }))}
+            />
         </div >
     )
 }

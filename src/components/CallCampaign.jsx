@@ -631,7 +631,7 @@ export default function CallCampaign() {
   return (
     <div>
       {!showModal ?
-        <div className="py-6 px-6 flex flex-col gap-4 w-full h-full overflow-auto">
+        <div className="p-12 flex flex-col gap-4 w-full h-full overflow-auto">
           {/* Header */}
           {!showNewCampaignForm ? (
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">

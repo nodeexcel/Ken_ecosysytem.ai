@@ -16,26 +16,38 @@ body,
     position: relative;
   }
 
- body::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 400px;
-  right: 2%;
-  bottom: 20%;
+  body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0px;
+    right: 0;
+    bottom: 0;
 
-  background-image: url('./assets/svg/Dot grid.svg');
-  background-repeat: repeat;
-  background-position: center;
-  background-size: 80%;
+    background-image: url("./assets/svg/Dot grid.svg");
+    background-repeat: repeat;
+    background-position: center;
+    background-size: 60%;
 
-  -webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
-  mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+    filter: grayscale(100%) brightness(0.7);
+    opacity: 0.35;
 
-  pointer-events: none;
-  z-index: -1;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 20%,
+      black 80%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 20%,
+      black 80%,
+      transparent
+    );
+
+    pointer-events: none;
+    z-index: -1;
+  }
 }
-
-}
-
-

@@ -91,7 +91,7 @@ import EmbededChatbot from './pages/embededChatbot/embededChatbot'
           <Route path="accounting" element={<Accounting />} />
           <Route path="hr" element={<Hr />} />
           <Route path="coo" element={<Coo />} />
-          <Route path="seo" element={<Seo />} />
+          <Route path="geo" element={<Seo />} />
           <Route path="content-creation" element={<ContentCreation />} />
           <Route path="customer-support/:id" element={<CustomerSupport />} />
           <Route path="customer-support" element={<CustomerSupport />} />

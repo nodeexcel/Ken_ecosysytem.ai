@@ -179,11 +179,11 @@ export default function InBoundCalls() {
     }, [startDate, endDate]);
 
     return (
-        <div className="py-6 px-6 h-screen overflow-auto flex flex-col gap-4 w-full">
+        <div className="p-12 h-screen overflow-auto flex flex-col gap-4 w-full">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
             <div className="flex flex-col gap-1">
-              <h1 className="text-xl md:text-2xl font-semibold text-[#1E1E1E]">{t("phone.outbound_calls")}</h1>
+              <h1 className="text-xl md:text-[24px] font-semibold text-[#1E1E1E]">{t("phone.inbound_calls")}</h1>
               <p className="text-sm md:text-base text-[#5A687C] font-[400]">Monitor all inbound calls received through your campaigns</p>
             </div>
             {/* <button

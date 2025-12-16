@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { AutomationIcon, CallAgent, ConversationIcon, EmailIcon, HelpIcon, LeftArrow, } from '../../icons/icons'
-import calinaImg from "../../assets/svg/calina_logo.svg"
+import calinaImg from "../../assets/svg/CalinaSidebar.svg"
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import SmartChatbot from '../../components/CustomerSupportSmartChatbot'
 // import FaqCustomerSupport from '../../components/FaqCustomerSupport'
@@ -11,11 +11,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
 import { useTranslation } from 'react-i18next'
 import AgentChatBox from '../../components/AgentChatBox'
-import calinaMsgLogo from '../../assets/svg/calina_msg_logo.svg'
+import calinaMsgLogo from '../../assets/svg/CalinaSidebar.svg'
 import chatInstance from '../../api/chatInstance'
 import { deleteCustomerSupportChat, getCustomerSupportChatById, getCustomerSupportChats, updateCustomerSupportChatName } from '../../api/customerSupport'
 import { v4 as uuidv4 } from 'uuid';
 import { formatTimeAgo } from '../../utils/TimeFormat'
+import TutorialPlay from '../../assets/svg/WatchTutorialGrey.svg'
+import ChatActive from '../../assets/svg/ChatActive.svg'
+import ChatInactive from '../../assets/svg/ChatInactive.svg'
+import SethBot from '../../assets/svg/SethBot.svg'
 
 function CustomerSupport() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -44,11 +48,18 @@ function CustomerSupport() {
     const navigate = useNavigate()
     const initialMessage = "Hello! I’m Calina, your Customer Support assistant. \nI’m here to support you across all your HR needs, from recruiting and screening candidates to onboarding, managing interviews, and beyond.\nI can also help you with day-to-day HR topics like policy clarification, employee onboarding support, FAQ responses, and internal coordination.\nJust tell me what you need, whether it's hiring your next top talent or streamlining your HR processes. and I’ll take care of it. \nReady to simplify your HR tasks and save time? Let’s get started 😊"
     const sideMenuList = [
-         { label: `${t("seo.chat")}`, icon: <ConversationIcon status={activeSidebarItem == "chat"} />, hoverIcon: <ConversationIcon hover={true} />, path: "chat" },
-        { label: t("calina.smart_chartbot"), icon: <AutomationIcon status={activeSidebarItem == "smart_bot"} />, hoverIcon: <AutomationIcon hover={true} />, path: "smart_bot" },
-        // { label: t("skills.calina_content2_header"), icon: <HelpIcon status={activeSidebarItem == "faq_generator"} />, hoverIcon: <HelpIcon hover={true} />, path: "faq_generator" },
-        // { label: t("skills.calina_content3_header"), icon: <CallAgent status={activeSidebarItem == "user_guide"} />, hoverIcon: <CallAgent hover={true} />, path: "user_guide" },
-        // { label: t("skills.calina_content4_header"), icon: <EmailIcon status={activeSidebarItem == "email"} />, hoverIcon: <EmailIcon hover={true} />, path: "email" },
+        {
+            label: `${t("seo.chat")}`,
+            path: "chat",
+            iconActive: <img src={ChatActive} alt="Chat" className="w-5 h-5" />,
+            iconInactive: <img src={ChatInactive} alt="Chat" className="w-5 h-5" />,
+        },
+        {
+            label: t("calina.smart_chartbot"),
+            path: "smart_bot",
+            iconActive: <img src={SethBot} alt="Smart Chatbot" className="w-5 h-5" />,
+            iconInactive: <img src={SethBot} alt="Smart Chatbot" className="w-5 h-5" style={{ filter: 'brightness(0.5)' }} />,
+        },
     ]
 
     const staticSuggestions = [{ label: `${t("calina.faq_generator")}`, key: `${t("calina.faq_generator_key")}`, agent_type:"faq_generator" },
@@ -270,27 +281,57 @@ function CustomerSupport() {
                         </div>
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-3">
-                        <div className="bg-[#ffffff] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
-                            <div className="flex justify-center items-center">
-                                <img src={calinaImg} alt={"calina"} className="object-fit" />
+                        <div className="bg-[#ffffff] lg:w-[232px] w-full mb-2 flex flex-col gap-3 px-[12px] py-[10px] border-b border-gray-200">
+                            <div className="flex gap-3">
+                                <div className="flex justify-center items-center">
+                                    <div className="w-12 h-12 rounded-full bg-[#E3F6ED] flex items-center justify-center">
+                                        <img
+                                            src={calinaImg}
+                                            alt="Calina"
+                                            className="w-10 h-10 object-contain scale-115"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col">
+                                    <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Calina</h1>
+                                    <p className="text-[#5A687C] text-[14px] font-[400]">Customer Support</p>
+                                </div>
                             </div>
-                            <div className="flex flex-col">
-                                <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Calina</h1>
-                                <p className="text-[#5A687C] text-[14px] font-[400]">Customer Support</p>
-                            </div>
+                            {/* Watch Tutorial Button */}
+                            <button
+                                onClick={() => {
+                                    console.log("Watch Tutorial clicked");
+                                }}
+                                className="w-full flex items-center justify-center gap-2 px-2 py-2 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
+                            >
+                                <img src={TutorialPlay} className="w-4 h-4" />
+                                <span className='text-md font-md'>{t("watch_tutorial") || "Watch Tutorial"}</span>
+                            </button>
+                            <hr className='border border-transparent w-full' />
                         </div>
-                        {sideMenuList.map((e, i) => <div
-                            key={i}
-                            onClick={() => handleTabChange(e.path)}
-                            className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
-                                }`}
-                        >
-                            {activeSidebarItem === `${e.path}` ? e.icon :
-                                <div className="flex items-center gap-2 "><div className='group-hover:hidden'>{e.icon}</div> <div className='hidden group-hover:block '>{e.hoverIcon}</div></div>}
-                            <span className={`font-[400] text-[16px] ${activeSidebarItem === `${e.path}` ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E] "}`}>
-                                {e.label}
-                            </span>
-                        </div>)}
+                        {sideMenuList.map((e, i) => {
+                            const isActive = activeSidebarItem === e.path;
+                            return (
+                                <div
+                                    key={i}
+                                    onClick={() => handleTabChange(e.path)}
+                                    className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive ? "bg-[]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                                        }`}
+                                >
+                                    {isActive ? (
+                                        e.iconActive
+                                    ) : (
+                                        <div className="flex items-center gap-2">
+                                            <div className='group-hover:hidden'>{e.iconInactive}</div>
+                                            <div className='hidden group-hover:block'>{e.iconActive}</div>
+                                        </div>
+                                    )}
+                                    <span className={`font-[400] text-[16px] ${isActive ? "text-[#000000]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                                        {e.label}
+                                    </span>
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
 
@@ -324,30 +365,53 @@ function CustomerSupport() {
                             <hr className='text-[#E1E4EA]' />
                         </div>
                         <div className="flex flex-col w-full items-start gap-2 relative px-5">
-                            <div className="bg-[#F7F7FF] border border-[#E9E8FF] w-full min-w-[232px] flex gap-3 mb-5 p-[12px] rounded-[9px]">
-                                <div className="flex justify-center items-center">
-                                    <img src={calinaImg} alt={"calina"} className="object-fit" />
+                            <div className="bg-[#F7F7FF] border border-[#E9E8FF] w-full min-w-[232px] flex flex-col gap-3 mb-5 p-[12px] rounded-[9px]">
+                                <div className="flex gap-3">
+                                    <div className="flex justify-center items-center">
+                                        <img src={calinaImg} alt={"calina"} className="object-fit" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Calina</h1>
+                                        <p className="text-[#5A687C] text-[14px] font-[400]">Customer Support</p>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col">
-                                    <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Calina</h1>
-                                    <p className="text-[#5A687C] text-[14px] font-[400]">Customer Support</p>
-                                </div>
+                                {/* Watch Tutorial Button */}
+                                <button
+                                    onClick={() => {
+                                        console.log("Watch Tutorial clicked");
+                                    }}
+                                    className="w-full flex items-center justify-center gap-2 px-2 py-2 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
+                                >
+                                    <img src={TutorialPlay} className="w-4 h-4" />
+                                    <span className='text-md font-md'>{t("watch_tutorial") || "Watch Tutorial"}</span>
+                                </button>
                             </div>
-                            {sideMenuList.map((e, i) => <div
-                                key={i}
-                                onClick={() => {
-                                    handleTabChange(e.path)
-                                    setSideBarStatus(false)
-                                }}
-                                className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === `${e.path}` ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
-                                    }`}
-                            >
-                                {activeSidebarItem === `${e.path}` ? e.icon :
-                                    <div className="flex items-center gap-2"><div className='group-hover:hidden'>{e.icon}</div> <div className='hidden group-hover:block'>{e.hoverIcon}</div></div>}
-                                <span className={`font-[400] text-[16px] ${activeSidebarItem === `${e.path}` ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
-                                    {e.label}
-                                </span>
-                            </div>)}
+                            {sideMenuList.map((e, i) => {
+                                const isActive = activeSidebarItem === e.path;
+                                return (
+                                    <div
+                                        key={i}
+                                        onClick={() => {
+                                            handleTabChange(e.path)
+                                            setSideBarStatus(false)
+                                        }}
+                                        className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${isActive ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                                            }`}
+                                    >
+                                        {isActive ? (
+                                            e.iconActive
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                <div className='group-hover:hidden'>{e.iconInactive}</div>
+                                                <div className='hidden group-hover:block'>{e.iconActive}</div>
+                                            </div>
+                                        )}
+                                        <span className={`font-[400] text-[16px] ${isActive ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                                            {e.label}
+                                        </span>
+                                    </div>
+                                )
+                            })}
                         </div>
                     </div>
                 </div>

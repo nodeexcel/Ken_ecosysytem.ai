@@ -122,7 +122,7 @@ function Dashboard() {
             {/* Content Area - Sidebar and Main Content Below Navbar */}
             <div className='w-full flex relative flex-1 overflow-hidden'>
                 {!isSidebarOpen && (
-                    <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-[250px]' : 'w-[0%]'} lg:w-[72px] h-full relative z-50`}>
+                    <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-[250px]' : 'w-[0%]'} lg:w-[80px] h-full relative z-50`}>
                         <Sidebar sidebarItems={SidebarItems} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
                     </div>
                 )}

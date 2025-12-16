@@ -339,7 +339,7 @@ function CitationAnalytics() {
     }
 
     return (
-        <div className="p-6 h-full overflow-auto flex flex-col gap-6 w-full">
+        <div className="p-12 h-full overflow-auto flex flex-col gap-6 w-full">
             {/* Header Section */}
             <div className="flex items-start justify-between w-full">
                 <div className="flex flex-col gap-1">

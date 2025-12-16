@@ -298,6 +298,11 @@ const BrainAI = () => {
                     onClick={() => {
                       setActivePath(item.path);
                       setSearchParams({ tab: item.path }, { replace: true });
+                      // Reset to main integration page when clicking on integration tab
+                      if (item.path === 'integration') {
+                        setFirstRender(true);
+                        localStorage.removeItem('selectedIntegration');
+                      }
                     }}
                     className={`cursor-pointer group flex items-center justify-start gap-1.5 px-2 py-2 w-full h-auto rounded-2xl ${isActive ? "bg-[#F0EFFF] text-blue-600" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                       }`}
@@ -358,7 +363,12 @@ const BrainAI = () => {
                     onClick={() => {
                       setActivePath(item.path);
                       setSearchParams({ tab: item.path }, { replace: true });
-                      setSideBarStatus(false)
+                      setSideBarStatus(false);
+                      // Reset to main integration page when clicking on integration tab
+                      if (item.path === 'integration') {
+                        setFirstRender(true);
+                        localStorage.removeItem('selectedIntegration');
+                      }
                     }}
                     className={`cursor-pointer group flex items-center justify-start gap-1.5 px-2 py-2 w-full h-auto rounded ${isActive ? "bg-[#F0EFFF] text-blue-600" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                       }`}

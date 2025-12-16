@@ -137,7 +137,7 @@ function SmartChatbot() {
 
     return (
         <>
-            {!chatBotFormStatus ? <div className="p-6 h-screen overflow-auto flex flex-col gap-4 w-full">
+            {!chatBotFormStatus ? <div className="p-12 h-screen overflow-auto flex flex-col gap-4 w-full">
                 {/* Header */}
                 <div className="flex flex-col gap-4">
                     {/* Row 1: Title + New Chatbot */}

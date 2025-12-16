@@ -139,7 +139,7 @@ const staticData2 = [
 
 
     return (
-        <div className="w-full  py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 ">
+        <div className="w-full p-12 h-screen overflow-auto flex flex-col gap-4 ">
             <div className="flex justify-between items-center">
                 <div className='flex flex-col gap-2'>
                     <h1 className="text-[#1E1E1E] font-[600] text-xl md:text-[24px]">{t('appointment.analytics')}</h1>

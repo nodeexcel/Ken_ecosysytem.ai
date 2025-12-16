@@ -388,9 +388,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 {/* Content Section */}
-                <div className='flex flex-col gap-6 px-6 py-4 overflow-auto flex-1'>
+                <div className='flex flex-col gap-6 px-6 py-4 overflow-auto flex-1 mb-2 '>
                     {activeTab === "customize" ? <div className="w-full flex gap-5 h-full">
-                        <div className="w-[70%] border-r border-[#E1E4EA] pr-5 flex flex-col h-full">
+                        <div className="w-[70%] border-r border-[#E1E4EA] pr-5 flex flex-col">
                             <h1 className="text-[#1E1E1E] font-[600] text-[16px] pb-4">{t("calina.personalize_your_chatbox")}</h1>
                             <div className="flex flex-col gap-4">
                                 <div className="flex flex-col gap-4 border-b border-[#E1E4EA] pb-4">

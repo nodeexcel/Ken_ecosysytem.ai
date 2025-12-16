@@ -744,6 +744,7 @@ export default function CreatePost({ onClose, editData }) {
 
 
               {errors.text && <div className="text-red-500 text-xs mt-1">{errors.text}</div>}
+              {errors.document && <div className="text-red-500 text-xs mt-1">{errors.document}</div>}
 
               {/* Media Section - Thumbnails */}
               {/* Media Section - Thumbnails */}

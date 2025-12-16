@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getNavbarData } from "../../store/navbarSlice";
 import taraImg from '../../assets/svg/tara.svg'
 import constanceImg from '../../assets/svg/constance.svg'
-import tomImg from '../../assets/svg/tom.svg'
+import tomImg from '../../assets/images/Sami_rev.png'
 import rebeccaImg from '../../assets/svg/rebecca.svg'
 import sethImg from '../../assets/svg/seth.svg'
 import assiaImg from '../../assets/svg/assia.svg'
@@ -80,22 +80,7 @@ const Agents = () => {
       label: "Rebecca",
       image: tomImg
     },
-    {
-      name: "Emile",
-      role: `${t("email")}`,
-      gradient: "bg-[#CEBFFD]",
-      path: "/dashboard/campaigns",
-      label: "Emailing",
-      image: sandroImg
-    },
-    {
-      name: "Rima",
-      role: `${t("hr")}`,
-      gradient: "bg-[#FFE4C5]",
-      path: "/dashboard/hr",
-      label: "Rima",
-      image: assiaImg
-    },
+
     {
       name: "Finn",
       role: `${t("accouting")}`,
@@ -108,7 +93,7 @@ const Agents = () => {
       name: "Georgio",
       role: `${t("geo_name")}`,
       gradient: "bg-[#F8DDFF]",
-      path: "/dashboard/seo",
+      path: "/dashboard/geo",
       label: "Sandro",
       image: emileImg
     },
@@ -135,7 +120,7 @@ const Agents = () => {
   if (userDetails?.loading) return <p className='flex justify-center items-center h-[70vh]'><span className='loader' /></p>
 
   return (
-    <div className="max-w-full h-800px pt-10 overflow-y-hidden">
+    <div className="max-w-full h-800px pt-16 overflow-y-hidden">
       {/* Header */}
       {/* <div>
         <div className="flex justify-between px-2 items-center">
@@ -165,12 +150,12 @@ const Agents = () => {
       </div> */}
 
       {/* Main Content */}
-      <div className="max-w-[1400px] mx-auto px-4">
+      <div className="max-w-full mx-auto pl-10 pr-20">
         {/* Welcome Message */}
         <div className="flex flex-col text-start gap-2 pb-5">
-          <h1 className="font-[500] text-2xl">
+          <h1 className="font-[500] text-[26px]">
             {t("Welcome")},{" "}
-            <span className="text-[#020202]">{userDetails?.user?.firstName}</span>{" !"}
+            <span className="text-[#020202] ">{userDetails?.user?.firstName}</span>{" !"}
           </h1>
           <p className="font-[400] text-[16px] text-[#5A687C]">
             {t("ai_agents_heading")}
@@ -178,12 +163,11 @@ const Agents = () => {
         </div>
 
         {/* Card Grid */}
-        <div className="flex justify-start flex-wrap gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-start">
           {employees.map((employee, index) => {
             const isDisabled =
-              employee.name === "Emile" ||
-              employee.name === "Tara" ||
-              employee.name === "Rima";
+              employee.name === "Ken" ||
+              employee.name === "Tara";
 
             return (
               <div
@@ -191,7 +175,7 @@ const Agents = () => {
                 onClick={() => {
                   if (!isDisabled) handleNavigate(employee.path, employee.label);
                 }}
-                className={`relative flex-shrink-0 basis-[calc(20%-1.5rem)] max-w-[290px] h-[210px] px-4 rounded-2xl shadow-sm transition-all duration-300 flex flex-col items-start pt-6
+                className={`relative h-[210px] px-4 rounded-2xl shadow-sm transition-all duration-300 flex flex-col items-start pt-6 w-full
           ${isDisabled
                     ? 'bg-[#d6dbe3] cursor-not-allowed opacity-70 border border-[#D6D6D6] '
                     : 'bg-white hover:shadow-md border border-[#D6D6D6] cursor-pointer hover:bg-[#f8fafa]'
@@ -205,25 +189,25 @@ const Agents = () => {
                     src={employee.image}
                     alt={employee.name}
                     loading="lazy"
-                    className="w-[80px] h-[80px] object-contain scale-100"
+                    className={`object-contain ${employee.name === "Ken" ? "w-[110px] h-[110px] scale-110" : "w-[80px] h-[80px] scale-100"}`}
                   />
                 </div>
 
                 {/* Name */}
-                <h3 className="text-[18px] font-semibold text-[#1E1E1E] mb-1 ml-2">
+                <h3 className="text-[20px] font-semibold text-[#1E1E1E] mb-1 ml-2">
                   {employee.name}
                 </h3>
 
                 {/* Role */}
-                <p className="text-[15px] text-[#5A687C] font-normal ml-2">
+                <p className="text-[14px] text-[#5A687C] font-normal ml-2">
                   {employee.role}
                 </p>
 
                 {/* Tooltip for disabled cards */}
                 {isDisabled && (
                   <div className="absolute inset-0 group">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute top-25 right-1/6 -translate-x-1/6 bg-[#272525] text-white text-[13px] py-1 px-3 rounded-lg shadow-lg whitespace-nowrap">
-                      Coming Soon!
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute top-5 font-[500] right-1/16 -translate-x-1/20 text-grey-200 text-[14px] py-1 px-3 whitespace-nowrap">
+                      {employee.name === "Tara" ? "Update in progress!" : "Coming soon!"}
                     </div>
                   </div>
                 )}

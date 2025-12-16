@@ -287,9 +287,9 @@ function Navbar({ sidebarItems }) {
         }
 
         // Handle GEO (SEO) with tab param
-        if (currentPath === 'seo') {
+        if (currentPath === 'geo') {
             // Base crumb for GEO
-            breadcrumbs.push({ label: 'GEO', path: '/dashboard/seo?tab=product' })
+            breadcrumbs.push({ label: 'GEO', path: '/dashboard/geo?tab=product' })
 
             const geoTabKey = tab || 'product'
 

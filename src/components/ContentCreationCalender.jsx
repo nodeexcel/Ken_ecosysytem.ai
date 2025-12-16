@@ -49,14 +49,14 @@ function ContentCreationCalender() {
   }, []);
 
   return (
-    <div className="w-full p-2 sm:p-4 lg:p-6 flex flex-col gap-3 sm:gap-4 overflow-auto h-full rounded-xl">
+    <div className="w-full p-2 sm:p-4 lg:p-12 flex flex-col gap-3 sm:gap-4 overflow-auto h-full rounded-xl">
       {!showCreatePost && (
         <>
           {/* Header Section */}
           <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between w-full gap-3 xl:gap-0 mb-3 sm:mb-4 lg:mb-5">
             {/* Left Side - Title and Description */}
             <div className="flex flex-col gap-1.5 sm:gap-2">
-              <h1 className="text-[#1E1E1E] text-[20px] sm:text-[24px] lg:text-[28px] font-[600]">
+              <h1 className="text-[#1E1E1E] text-[20px] sm:text-[24px] lg:text-[24px] font-[600]">
                 {t("constance.scheduler") || "Scheduler"}
               </h1>
               <p className="text-[#5A687C] text-[14px] sm:text-[15px] lg:text-[16px] font-[400]">
