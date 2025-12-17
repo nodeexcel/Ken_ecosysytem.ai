@@ -593,7 +593,7 @@ export default function CreatePost({ onClose, editData }) {
             onClick={() => setShowPreview(!showPreview)}
             className="px-4 py-2 text-sm font-medium text-[#5A687C] cursor-pointer bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F4F5F6] transition-colors"
           >
-            {"Preview"}
+            {t("constance.preview") || "Preview"}
           </button>
           <button
             onClick={handleSaveDraft}
@@ -606,14 +606,14 @@ export default function CreatePost({ onClose, editData }) {
                 <span className="loader" />
               </div>
             ) : (
-              "Save as Draft"
+              t("constance.save_as_draft") || "Save as Draft"
             )}
           </button>
           <button
             onClick={() => setShowDateTimePicker(true)}
             className="px-4 py-2 text-sm font-medium text-white cursor-pointer bg-[#675FFF] border border-[#675FFF] rounded-lg hover:bg-[#5a4fe6] transition-colors"
           >
-            {t("schedule") || "Schedule"}
+            {t("constance.schedule") || "Schedule"}
           </button>
         </div>
       </div>

@@ -152,10 +152,10 @@ const Agents = () => {
       {/* Main Content */}
       <div className="max-w-full mx-auto pl-10 pr-20">
         {/* Welcome Message */}
-        <div className="flex flex-col text-start gap-2 pb-5">
-          <h1 className="font-[500] text-[26px]">
+        <div className="flex flex-col text-start gap-2 pb-5 px-40 ">
+          <h1 className="font-[500] text-[30px]">
             {t("Welcome")},{" "}
-            <span className="text-[#020202] ">{userDetails?.user?.firstName}</span>{" !"}
+            <span className="text-[#675FFF] ">{userDetails?.user?.firstName}</span>{" !"}
           </h1>
           <p className="font-[400] text-[16px] text-[#5A687C]">
             {t("ai_agents_heading")}
@@ -163,7 +163,7 @@ const Agents = () => {
         </div>
 
         {/* Card Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-start">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-start px-40">
           {employees.map((employee, index) => {
             const isDisabled =
               employee.name === "Ken" ||
@@ -205,12 +205,13 @@ const Agents = () => {
 
                 {/* Tooltip for disabled cards */}
                 {isDisabled && (
-                  <div className="absolute inset-0 group">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute top-5 font-[500] right-1/16 -translate-x-1/20 text-grey-200 text-[14px] py-1 px-3 whitespace-nowrap">
+                  <div className="absolute inset-0">
+                    <div className="absolute top-5 font-[500] right-1/20 -translate-x-1/20 text-grey-200 text-[14px] py-1 px-3 whitespace-nowrap opacity-100">
                       {employee.name === "Tara" ? "Update in progress!" : "Coming soon!"}
                     </div>
                   </div>
                 )}
+
               </div>
             );
           })}

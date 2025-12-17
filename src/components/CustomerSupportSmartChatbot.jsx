@@ -148,7 +148,7 @@ function SmartChatbot() {
                         </div>
                         <button
                             onClick={() => setChatBotFormStatus(true)}
-                            className="bg-[#675FFF] cursor-pointer border border-[#5F58E8] text-white font-medium rounded-lg px-5 py-2 flex items-center gap-2 shadow-sm"
+                            className="bg-[#675FFF] cursor-pointer border border-[#5F58E8] text-white font-medium rounded-lg px-3 py-1.5    hover:bg-[#5F58E8] flex items-center gap-2 shadow-sm"
                         >
                             + {t("calina.new_chatbot")}
                         </button>

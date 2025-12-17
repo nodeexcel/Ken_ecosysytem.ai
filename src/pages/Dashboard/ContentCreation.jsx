@@ -4,7 +4,7 @@ import constanceImg from "../../assets/svg/constance_logo.svg"
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import constanceMsgLogo from '../../assets/svg/ConstanceChat.svg'
 import { v4 as uuidv4 } from 'uuid';
-import { deleteContentCreationChat, getContentCreationChatById, getContentCreationChats, updateContentCreationChatName } from '../../api/contentCreationAgent'
+import { deleteContentCreationChat, getContentCreationChatById, getContentCreationChats, updateContentCreationChatName, contentGenerationStatus } from '../../api/contentCreationAgent'
 import AgentChatBox from '../../components/AgentChatBox'
 import { formatTimeAgo } from '../../utils/TimeFormat'
 import CreationStudio from '../../components/CreationStudio'
@@ -65,6 +65,9 @@ function ContentCreation() {
     const [sidebarStatus, setSideBarStatus] = useState(false)
     const [showGeneratedResults, setShowGeneratedResults] = useState(false)
     const [generatedContentData, setGeneratedContentData] = useState(null)
+    const [contentId, setContentId] = useState("")
+    const [loadingSteps, setLoadingSteps] = useState(0)
+    const [showLoader, setShowLoader] = useState(false)
     const [toast, setToast] = useState({ open: false, type: 'success', title: '', description: '', highlightText: '' })
     const socketRef = useRef(null)
     const socket2Ref = useRef(null)
@@ -389,7 +392,100 @@ function ContentCreation() {
         }
     }
 
+    // API polling for content generation status
+    const getContentData = async () => {
+        try {
+            const response = await contentGenerationStatus(contentId)
+            if (response?.status === 200) {
+                return response?.data
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        let interval;
+        if (contentId) {
+            setShowLoader(true);
+            setLoadingSteps(0);
+            setActiveSidebarItem("creation_studio");
+            interval = setInterval(async () => {
+                const response = await getContentData()
+                console.log(response)
+                if (response?.status === "in_progress") {
+                    setLoadingSteps(prev => {
+                        if (prev >= 100) {
+                            clearInterval(interval);
+                            return 100;
+                        }
+                        return prev + 1;
+                    });
+                } else if (response?.status === "completed") {
+                    setLoadingSteps(100);
+                    clearInterval(interval);
+                    setShowLoader(false);
+                    
+                    // Transform API response to GeneratedResultsView format
+                    const transformedResults = {
+                        results: [{
+                            id: 1,
+                            title: `Generated Content`,
+                            content: response.caption || "",
+                            images: response.media_urls?.map(media => media.url) || []
+                        }]
+                    };
+                    
+                    // If there are multiple variations in the response, add them
+                    if (response.variations && Array.isArray(response.variations)) {
+                        response.variations.forEach((variation, index) => {
+                            transformedResults.results.push({
+                                id: index + 2,
+                                title: `Variation ${index + 1}`,
+                                content: variation.caption || "",
+                                images: variation.media_urls?.map(media => media.url) || []
+                            });
+                        });
+                    }
+                    
+                    setGeneratedContentData(transformedResults);
+                    setShowGeneratedResults(true);
+                    setContentId("");
+                }
+            }, 2000);
+        }
+        return () => {
+            if (interval) clearInterval(interval);
+        };
+    }, [contentId]);
+
+    const handleContentCreated = (id) => {
+        setContentId(id);
+    };
+
     const renderMainContent = () => {
+        // Show Loader if content is being generated
+        if (showLoader) {
+            return (
+                <div className="p-12 w-full h-full flex flex-col items-center justify-center">
+                    <div className="p-4 sm:p-6 lg:p-[20px] justify-center items-center rounded-lg sm:rounded-[10px] flex flex-col min-h-[300px] w-full max-w-4xl">
+                        <div className="flex flex-col gap-3 items-center">
+                            <div className="flex items-center gap-2">
+                                <div className="flex justify-center items-center">
+                                    <img src={constanceImg} alt={"constance"} className="object-fit w-8 h-8 sm:w-10 sm:h-10" />
+                                </div>
+                                <p className="text-[#1E1E1E] text-[14px] sm:text-[16px] font-[600]">{t("constance.loading_content")}</p>
+                            </div>
+                            <div className="w-full max-w-[500px] h-[14px] rounded-[40px] bg-[#D7D4FF]">
+                                <div style={{ width: `${loadingSteps}%` }} className={`${loadingSteps === 100 ? 'rounded-[40px]' : 'rounded-l-[40px]'}  h-[14px] leading-none bg-[#675FFF]`} ></div>
+                            </div>
+                            <p className="text-[#5A687C] text-[12px] sm:text-[14px] font-[400]">{loadingSteps}% Completed </p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
         // Show Generated Results if flag is set
         if (showGeneratedResults && generatedContentData) {
             return (
@@ -415,7 +511,7 @@ function ContentCreation() {
                                     {t("constance.creation_studio") || "Creation Studio"}
                                 </h1>
                                 <p className="text-[#5A687C] text-[14px] sm:text-[15px] lg:text-[16px] font-[400]">
-                                    {"Create, manage, and schedule content effortlessly using AI-powered creativity."}
+                                {t("constance.creation_studio_descrp") || "Create, manage, and schedule content effortlessly using AI-powered creativity."}
                                 </p>
                             </div>
                             <button
@@ -423,13 +519,13 @@ function ContentCreation() {
                                 className="flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 bg-[#675FFF] cursor-pointer text-white px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 rounded-lg font-[500] text-xs sm:text-sm hover:bg-[#5a4fe6] transition-colors whitespace-nowrap w-full sm:w-auto"
                             >
                                 <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
-                                <span>{t("constance.add_creation_studio") || "Add Creation Studio"}</span>
+                                <span>{t("constance.add_creation_studio")}</span>
                             </button>
                         </div>
 
                         {/* Recent Creations Section */}
                         <div className="flex flex-col gap-3 sm:gap-4 w-full">
-                            <h2 className="text-[#1E1E1E] text-[18px] sm:text-[19px] lg:text-[20px] font-[600]">Recent Creations</h2>
+                            <h2 className="text-[#1E1E1E] text-[18px] sm:text-[19px] lg:text-[20px] font-[600]">{t("constance.recent_creations") || "Recent Creations"}</h2>
 
                             {/* Grid of Creation Cards */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full">
@@ -620,12 +716,7 @@ function ContentCreation() {
             {showCreationStudioModal && (
                 <CreationStudio
                     onClose={() => setShowCreationStudioModal(false)}
-                    onGenerateContent={(contentData) => {
-                        setGeneratedContentData(contentData);
-                        setShowGeneratedResults(true);
-                        setShowCreationStudioModal(false);
-                        setActiveSidebarItem("creation_studio");
-                    }}
+                    onContentCreated={handleContentCreated}
                 />
             )}
             {sidebarStatus &&

@@ -468,7 +468,7 @@ export default function Login() {
 
             {/**OTP */}
             <div className="bg-white/90 w-full max-w-[440px] max-h-[90vh] rounded-lg sm:rounded-xl shadow-2xl p-4 sm:p-5 md:p-6 lg:p-6 border border-white/60 relative overflow-hidden flex flex-col">
-                <div className="absolute inset-x-0 top-0 h-10 sm:h-40 bg-gradient-to-r from-[#E8FEFC] via-[#D4E5FC] to-[#E7E6FF] blur-2xl pointer-events-none" />
+                
                 <div className="relative space-y-3 sm:space-y-4 md:space-y-3 lg:space-y-6 overflow-y-auto flex-1">
                     <div className="text-center space-y-1.5 sm:space-y-2 md:space-y-2 lg:space-y-3">
                         <div className="mx-auto h-9 w-8 sm:h-10 sm:w-9 md:h-11 md:w-10 flex items-center justify-center">

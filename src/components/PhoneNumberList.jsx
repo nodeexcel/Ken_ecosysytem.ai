@@ -289,12 +289,12 @@ export default function PhoneNumbers() {
         <div>
           <h1 className="text-gray-900 font-semibold text-xl md:text-[24px]">{t("phone.phone_numbers")}</h1>
           <p className="text-[#5A687C] text-sm md:text-base mt-1">
-            Manage and monitor active business numbers across your organization.
+            {t("phone.manage_and_monitor_active_business_numbers") || "Manage and monitor active business numbers across your organization."}
           </p>
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="bg-[#675FFF] cursor-pointer whitespace-nowrap text-white rounded-xl text-sm md:text-base px-3 py-1.5 mt-3 md:mt-0 flex items-center gap-2"
+          className="bg-[#675FFF] cursor-pointer whitespace-nowrap text-white rounded-lg text-sm md:text-base px-3 py-1.5 mt-3 md:mt-0 flex items-center gap-2"
         >
           <Plus size={20} />
           {t("phone.new_phone_number")}
@@ -324,7 +324,7 @@ export default function PhoneNumbers() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
           <input
             type="text"
-            placeholder="Search name or phone number"
+            placeholder={t("phone.search_name_or_phone_number") || "Search name or phone number"}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-8 pr-8 py-2 border whitespace-nowrap border-[#E1E4EA] rounded-lg focus:outline-none focus:border-[#675FFF] text-sm"

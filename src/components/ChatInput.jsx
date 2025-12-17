@@ -240,18 +240,24 @@ const ChatInput = ({
 
         {/* Mic modal above input */}
         {isListening && (
-          <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-full text-sm shadow-lg flex items-center gap-2">
+          <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white px-4 py-2 rounded-full text-sm shadow-sm flex items-center gap-2 text-black">
             <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-            <span>Listening... Speak now</span>
+
+            <span className="text-black">
+              Listening... Speak now
+            </span>
+
             <button
               type="button"
               onClick={toggleListening}
-              className="ml-2 p-1 hover:bg-gray-700 rounded-full"
+              className="ml-2 p-1 hover:bg-gray-100 rounded-full text-black cursor-pointer"
+              aria-label="Stop listening"
             >
               ✖️
             </button>
           </div>
         )}
+
 
 
         {/* Input */}
@@ -271,13 +277,13 @@ const ChatInput = ({
         <div className="flex w-full justify-between px-2 pt-2">
           <div className="flex items-center space-x-2">
             <div className="relative" ref={plusDropdownRef}>
-              <div 
+              <div
                 className="p-[10px] cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] rounded-xl px-3 border border-gray-300"
                 onClick={handlePlusClick}
               >
                 <PlusIcon size={18} />
               </div>
-              
+
               {/* Dropdown Menu */}
               {showPlusDropdown && (
                 <div className="absolute bottom-full left-0 mb-2 bg-gray-50 rounded-xl shadow-md border border-gray-300 py-1 min-w-[220px] z-50">

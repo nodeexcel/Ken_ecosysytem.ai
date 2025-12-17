@@ -695,7 +695,7 @@ const AgentChatBox = ({ listedProps }) => {
             )}
 
             <span className="hidden sm:inline">
-              {t("History") || "History"}
+              {t("history") || "History"}
             </span>
           </button>
         </div>

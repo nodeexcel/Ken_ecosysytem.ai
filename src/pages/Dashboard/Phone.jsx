@@ -190,17 +190,17 @@ const PhonePage = () => {
             {sideMenuList.map((item, i) => {
               const isActive = activeSidebarItem === item.path;
               return (
-                <div
-                  key={i}
-                  onClick={() => {
-                    dispatch(getNavbarData(item.header))
-                    handleTabChange(item.path)
-                  }}
+              <div
+                key={i}
+                onClick={() => {
+                  dispatch(getNavbarData(item.header))
+                  handleTabChange(item.path)
+                }}
                   className={`flex items-center gap-2 px-3 py-2 group cursor-pointer w-full rounded-2xl ${isActive
-                    ? "bg-[#E9E8F9] text-[#000000]"
-                    : "text-[#000000] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
-                    }`}
-                >
+                  ? "bg-[#E9E8F9] text-[#000000]"
+                  : "text-[#000000] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
+                  }`}
+              >
                   {isActive ? (
                     item.iconActive
                   ) : (
@@ -209,8 +209,8 @@ const PhonePage = () => {
                       <div className='hidden group-hover:block'>{item.iconActive}</div>
                     </div>
                   )}
-                  <span className="text-[16px] font-[400]">{item.label}</span>
-                </div>
+                <span className="text-[16px] font-[400]">{item.label}</span>
+              </div>
               )
             })}
           </div>
@@ -246,18 +246,18 @@ const PhonePage = () => {
               {sideMenuList.map((item, i) => {
                 const isActive = activeSidebarItem === item.path;
                 return (
-                  <div
-                    key={i}
-                    onClick={() => {
-                      dispatch(getNavbarData(item.header))
-                      handleTabChange(item.path)
-                      setSideBarStatus(false)
-                    }}
+                <div
+                  key={i}
+                  onClick={() => {
+                    dispatch(getNavbarData(item.header))
+                    handleTabChange(item.path)
+                    setSideBarStatus(false)
+                  }}
                     className={`flex items-center gap-2 px-3 py-2 rounded-md group cursor-pointer w-full ${isActive
-                      ? "bg-[#F0EFFF] text-[#675FFF]"
-                      : "text-[#5A687C] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
-                      }`}
-                  >
+                    ? "bg-[#F0EFFF] text-[#675FFF]"
+                    : "text-[#5A687C] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
+                    }`}
+                >
                     {isActive ? (
                       item.iconActive
                     ) : (
@@ -266,8 +266,8 @@ const PhonePage = () => {
                         <div className='hidden group-hover:block'>{item.iconActive}</div>
                       </div>
                     )}
-                    <span className="text-[16px] font-[400]">{item.label}</span>
-                  </div>
+                  <span className="text-[16px] font-[400]">{item.label}</span>
+                </div>
                 )
               })}
             </div>

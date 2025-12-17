@@ -302,14 +302,14 @@ export default function CallAgentsPage() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <div className="flex flex-col gap-1">
           <h1 className="text-xl md:text-[24px] font-semibold text-[#1E1E1E]">{t("phone.call_agents")}</h1>
-          <p className="text-sm md:text-base text-[#5A687C] font-[400]">Manage your AI and human call agents</p>
+          <p className="text-sm md:text-base text-[#5A687C] font-[400]">{t("phone.manage_your_ai_and_human_call_agents") || "Manage your AI and human call agents"}</p>
         </div>
         <button 
           className="bg-[#675FFF] cursor-pointer text-white font-medium px-4 py-1.5 rounded-lg shadow-sm hover:bg-[#5E54FF] transition-colors flex items-center gap-2 w-fit"
           onClick={() => setShowModal(true)}
         >
           <Plus className="w-4 h-4" />
-          { "Add a Call Agent"}
+          { t("phone.add_a_call_agent") || "Add a Call Agent"}
         </button>
       </div>
 
@@ -320,7 +320,7 @@ export default function CallAgentsPage() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
           <input
             type="text"
-            placeholder="Search name or phone number"
+            placeholder={t("phone.search_name_or_phone_number") || "Search name or phone number"}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-[#E1E4EA] bg-white rounded-lg focus:outline-none focus:border-[#675FFF] text-sm"
@@ -433,7 +433,7 @@ export default function CallAgentsPage() {
                           onClick={(e) => handleDropdownClick(index, e)} 
                           className="p-2 rounded-lg cursor-pointer relative"
                         >
-                          <div className='bg-white border border-[#D6D6D6] shadow-sm p-1.5 rounded-xl'><Ellipsis /></div>
+                          <div className='bg-white border border-[#D6D6D6] shadow-sm p-2 rounded-lg'><Ellipsis className="text-black"/></div>
                         </button>
                       </div>
                     </td>

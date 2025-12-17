@@ -310,7 +310,7 @@ export default function OutBoundCalls() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
             <div className="flex flex-col gap-1">
               <h1 className="text-xl md:text-[24px] font-semibold text-[#1E1E1E]">{t("phone.outbound_calls")}</h1>
-              <p className="text-sm md:text-base text-[#5A687C] font-[400]">Track all outbound call activities across your campaigns.</p>
+              <p className="text-sm md:text-base text-[#5A687C] font-[400]">{t("phone.track_all_outbound_call_activities_across_your_campaigns") || "Track all outbound call activities across your campaigns."}</p>
             </div>
             {/* <button
                     className="bg-[#7065F0] text-white font-medium px-5 py-1.5 rounded-lg shadow"
@@ -329,7 +329,7 @@ export default function OutBoundCalls() {
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
                     <input
                         type="text"
-                        placeholder="Search name or phone number"
+                        placeholder={t("phone.search_name_or_phone_number") || "Search name or phone number"}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full pl-10 pr-4 py-2 border border-[#E1E4EA] bg-white rounded-lg focus:outline-none focus:border-[#675FFF] text-sm"

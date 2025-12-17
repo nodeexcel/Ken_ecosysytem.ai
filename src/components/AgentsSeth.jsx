@@ -131,7 +131,7 @@ function AgentsSeth() {
                         </div>
                         <button
                             onClick={() => setOpen(false)}
-                            className="bg-[#675FFF] cursor-pointer text-white rounded-xl text-sm md:text-base px-3 py-2 mt-3 md:mt-0"
+                            className="bg-[#675FFF] cursor-pointer text-center justify-center items-center text-white rounded-lg text-sm md:text-base px-3 py-1.5 mt-3 md:mt-0"
                         >
                             <span className="text-xl font-medium px-1">+</span>
                             {t("appointment.new_agent")}

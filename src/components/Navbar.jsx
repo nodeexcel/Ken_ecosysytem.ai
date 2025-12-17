@@ -10,8 +10,10 @@ import { SearchIcon } from '../icons/icons';
 import logo from '../assets/images/dashboard_logo.png'
 import person from '../assets/images/person.svg'
 import Ecosystem from '../assets/images/ecosysteme.ai_logo.png'
+import { useTranslation } from "react-i18next"
 
 function Navbar({ sidebarItems }) {
+    const { t } = useTranslation()
     const location = useLocation()
     const navigate = useNavigate();
     const dispatch = useDispatch()
@@ -192,7 +194,7 @@ function Navbar({ sidebarItems }) {
         }
 
         if (paths.length === 0 || (paths.length === 1 && paths[0] === 'dashboard')) {
-            return [{ label: 'AI Agents', path: '/dashboard' }, { label: 'Agents', path: null }]
+            return [{ label: 'AI Agents', path: '/dashboard' }]
         }
 
         breadcrumbs.push({ label: 'AI Agents', path: '/dashboard' })
@@ -404,7 +406,7 @@ function Navbar({ sidebarItems }) {
                         <input
                             id="navbar-search"
                             type="text"
-                            placeholder="Search everything"
+                            placeholder={t("search_everything") || "Search everything"}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full pl-9 pr-14 py-2 text-sm border border-[#E1E4EA] rounded-lg bg-white focus:outline-none focus:border-[#9f9ea5] text-[#1E1E1E] placeholder:text-[#9CA3AF]"

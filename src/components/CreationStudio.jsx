@@ -2,9 +2,7 @@ import { useEffect, useState } from "react"
 import { SelectDropdown } from "./Dropdown"
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { contentGenerationStatus, createContent } from "../api/contentCreationAgent";
-import constanceImg from '../assets/svg/constance_logo.svg'
-import Slider from "react-slick";
+import { createContent } from "../api/contentCreationAgent";
 import { Calendar as CalendarIcon, Clock, X, Plus } from "lucide-react";
 import { useRef } from "react";
 
@@ -345,57 +343,15 @@ function DateSelector({ value, onChange, onClose }) {
     );
 }
 
-function CreationStudio({ onClose, onGenerateContent }) {
+function CreationStudio({ onClose, onGenerateContent, onContentCreated }) {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({ text: "", post_type: "", language: "", media_type: "", video_duration: "", author: "", created_at: new Date() })
     const [errors, setErrors] = useState({})
     const [loading, setLoading] = useState(false)
     const { t } = useTranslation();
-    const [generateContent, setGenerateContent] = useState({})
-    const [loadingSteps, setLoadingSteps] = useState(0)
-    const [contentId, setContentId] = useState("")
     const [showTimeDropdown, setShowTimeDropdown] = useState(false);
     const [showDateDropdown, setShowDateDropdown] = useState(false);
-    const [showGeneratedContent, setShowGeneratedContent] = useState(false)
 
-    const settings = {
-        dots: true,
-        infinite: true,
-        speed: 2500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        arrows: false,
-        autoplay: true,
-        autoplaySpeed: 0,
-        cssEase: "linear",
-        pauseOnHover: false,
-    };
-
-    // Commented out API polling - will uncomment later
-    // useEffect(() => {
-    //     let interval;
-    //     if (contentId) {
-    //         setLoadingSteps(0);
-    //         interval = setInterval(async () => {
-    //             const response = await getContentData()
-    //             console.log(response)
-    //             if (response?.status === "in_progress") {
-    //                 setLoadingSteps(prev => {
-    //                     if (prev >= 100) {
-    //                         clearInterval(interval);
-    //                         return 100;
-    //                     }
-    //                     return prev + 1;
-    //                 });
-    //             } else {
-    //                 setGenerateContent(response)
-    //                 setLoadingSteps(100);
-    //                 clearInterval(interval);
-    //             }
-    //         }, 2000);
-    //     }
-    //     return () => clearInterval(interval);
-    // }, [contentId]);
 
     const postTypeOptions = [{ label: `${t("constance.generic")}`, key: "generic" }, { label: `${t("constance.meme")}`, key: "meme" }, { label: `${t("constance.quoted")}`, key: "quotes" }]
     const mediaTypeOptions = [{ label: `${t("constance.single_image")}`, key: "single_image" }, { label: `${t("constance.carousel")}`, key: "carousel" }, { label: `${t("constance.video")}`, key: "video" }, { label: `${t("constance.reel")}`, key: "reel" }]
@@ -427,86 +383,41 @@ function CreationStudio({ onClose, onGenerateContent }) {
         setErrors((prev) => ({ ...prev, [name]: '' }))
     }
 
-    const getContentData = async () => {
-        try {
-            const response = await contentGenerationStatus(contentId)
-            if (response?.status === 200) {
-                return response?.data
-            }
-
-        } catch (error) {
-            console.log(error)
-        }
-    }
 
     const handleSubmit = async () => {
         if (!validateForm()) {
             return
         }
-        // Skip API call and progress bar - prepare generated content data
-        // Prepare mock generated content data (replace with actual API response later)
-        const mockGeneratedContent = {
-            results: [
-                {
-                    id: 1,
-                    title: "Post 1 (Text Only Post)",
-                    type: "text_only",
-                    content: generateContent?.caption || formData.text || "✨ Ready to elevate your productivity? Meet our brand-new AI Writing Assistant — designed to help you write faster, clearer, and smarter. ✨ Say goodbye to writer's block and hello to seamless creativity. #AIWriting #ProductivityBoost #NextGenTools",
-                    images: generateContent?.media_type === "single_image" && generateContent?.media_urls?.[0]?.url ? [generateContent.media_urls[0].url] : []
-                },
-                {
-                    id: 2,
-                    title: "Result 2 (Image + Text Post)",
-                    type: "image_text",
-                    content: "🧠 Need content ideas in seconds? Our AI Writing Assistant generates blogs, captions, and email copy instantly. 🚀 Perfect for creators, marketers, and fast-moving teams. #ContentCreation #MarketingTools #AIPowered",
-                    images: generateContent?.media_type === "carousel" && generateContent?.media_urls ? generateContent.media_urls.map(m => m.url).slice(0, 2) : ["dummy1", "dummy2"]
-                },
-                {
-                    id: 3,
-                    title: "Post 3 (Text Only Post)",
-                    type: "text_only",
-                    content: generateContent?.caption || formData.text || "✨ Ready to elevate your productivity? Meet our brand-new AI Writing Assistant — designed to help you write faster, clearer, and smarter. ✨ Say goodbye to writer's block and hello to seamless creativity. #AIWriting #ProductivityBoost #NextGenTools",
-                    images: []
-                }
-            ]
-        };
-
-        // If onGenerateContent callback is provided, use it (for ContentCreation integration)
-        if (onGenerateContent) {
-            onGenerateContent(mockGeneratedContent);
-        } else {
-            // Otherwise, navigate to standalone Generated Results page
-            navigate("/dashboard/generated-results", {
-                state: {
-                    generatedContent: mockGeneratedContent,
-                    formData: formData
-                }
-            });
-        }
-
-        // Close modal if onClose is provided
-        if (onClose) {
-            onClose();
-        }
         
-        // Commented out API call - will uncomment later
-        // setLoading(true)
-        // try {
-        //     // Remove empty keys from formData
-        //     const cleanedPayload = Object.fromEntries(
-        //         Object.entries(formData).filter(([_, value]) => value !== "" && value !== undefined && value !== null)
-        //     );
+        setLoading(true)
+        try {
+            // Remove empty keys from formData
+            const cleanedPayload = Object.fromEntries(
+                Object.entries(formData).filter(([_, value]) => value !== "" && value !== undefined && value !== null)
+            );
 
-        //     const response = await createContent(cleanedPayload)
-        //     if (response?.status === 200) {
-        //         console.log(response?.data)
-        //         setContentId(response?.data?.content_id)
-        //     }
-        // } catch (error) {
-        //     console.log(error)
-        // } finally {
-        //     setLoading(false)
-        // }
+            const response = await createContent(cleanedPayload)
+            if (response?.status === 200 || response?.status === 201) {
+                console.log(response?.data)
+                const contentId = response?.data?.content_id || response?.data?.id
+                
+                // Pass contentId to parent component
+                if (onContentCreated) {
+                    onContentCreated(contentId);
+                }
+                
+                // Close modal
+                if (onClose) {
+                    onClose();
+                }
+            } else {
+                console.error("Failed to create content:", response);
+                setLoading(false);
+            }
+        } catch (error) {
+            console.log(error)
+            setLoading(false)
+        }
     }
 
     const handleCancel = () => {
@@ -514,8 +425,6 @@ function CreationStudio({ onClose, onGenerateContent }) {
         setErrors({});
         setShowTimeDropdown(false);
         setShowDateDropdown(false);
-        setShowGeneratedContent(false);
-        setContentId("");
         if (onClose) {
             onClose();
         }
@@ -559,7 +468,7 @@ function CreationStudio({ onClose, onGenerateContent }) {
 
                 {/* Modal Content */}
                 <div className="px-3 sm:px-4 lg:px-6 py-2">
-                    {!showGeneratedContent ? <div className="h-full flex flex-col gap-3 sm:gap-4 w-full py-2 sm:py-3">
+                    <div className="h-full flex flex-col gap-3 sm:gap-4 w-full py-2 sm:py-3">
                         <div className="flex flex-col gap-1 sm:gap-1.5 w-full">
                             <label className="text-xs sm:text-sm font-medium text-[#808591]">
                                 {t("constance.text")}(prompt)
@@ -747,66 +656,10 @@ function CreationStudio({ onClose, onGenerateContent }) {
                             {errors.author && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.author}</p>}
                         </div>}
                     </div>
-                        : (
-                            // Commented out progress bar section - will uncomment later
-                            // loadingSteps !== 100 ? <div className="border border-[#E1E4EA] bg-white p-[24px] justify-center items-center rounded-[10px] flex flex-col h-full">
-                            //     <div className="flex flex-col gap-3 items-center">
-                            //         <div className="flex items-center gap-2">
-                            //             <div className="flex justify-center items-center">
-                            //                 <img src={constanceImg} alt={"constance"} className="object-fit" />
-                            //             </div>
-                            //             <p className="text-[#1E1E1E] text-[16px] font-[600]">{t("constance.loading_content")}</p>
-                            //         </div>
-                            //         <div className="w-[500px] h-[14px] rounded-[40px] bg-[#D7D4FF]">
-                            //             <div style={{ width: `${loadingSteps}%` }} className={`${loadingSteps === 100 ? 'rounded-[40px]' : 'rounded-l-[40px]'}  h-[14px] leading-none bg-[#675FFF]`} ></div>
-                            //         </div>
-                            //         <p className="text-[#5A687C] text-[14px] font-[400]">{loadingSteps}% Completed </p>
-                            //     </div>
-                            // </div> : 
-                            <div className="border border-[#E1E4EA] bg-white p-4 sm:p-6 lg:p-[24px] rounded-lg sm:rounded-[10px] gap-4 sm:gap-5 lg:gap-[20px] flex flex-col">
-                            <div className="flex items-center gap-2">
-                                <div className="flex justify-center items-center">
-                                    <img src={constanceImg} alt={"constance"} className="object-fit w-6 h-6 sm:w-8 sm:h-8" />
-                                </div>
-                                <p className="text-[#5A687C] text-[11px] sm:text-[12px] font-[600]">{t("constance.processed")}</p>
-                            </div>
-                            {generateContent?.caption ? <>
-                                <div className="flex items-center justify-between">
-                                    <p className="text-[#1E1E1E] text-[14px] sm:text-[15px] lg:text-[16px] font-[600]">{generateContent?.caption}</p>
-                                </div>
-                                <div className="flex">
-                                    {generateContent?.media_type === "single_image" && <img src={generateContent?.media_urls[0]?.url} alt={"article"} className="object-fit" />}
-                                    {generateContent?.media_type === "video" && <video
-                                        src={generateContent?.media_urls[0]?.url}
-                                        className="object-fit"
-                                        controls
-                                        autoPlay
-                                        muted
-                                    >
-                                    </video>}
-                                    {generateContent?.media_type === "carousel" && <div className="max-w-3xl mx-auto px-4">
-                                        <Slider {...settings}>
-                                            {generateContent?.media_urls?.map((media, index) => (
-                                                <div key={index} className="!mx-1">
-                                                    <img
-                                                        src={media.url}
-                                                        className="w-full rounded-lg object-cover max-h-[300px] mx-auto"
-                                                        autoPlay
-                                                    />
-                                                </div>
-                                            ))}
-                                        </Slider>
-                                    </div>}
-                                </div>
-                            </> : <p>Failed to Load</p>}
-
-                        </div>
-                        )}
                 </div>
 
                 {/* Modal Footer with Buttons - Full Width Border */}
-                {!showGeneratedContent && (
-                    <div className="sticky bottom-0 bg-white border-t border-gray-200 px-3 sm:px-4 lg:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 z-10">
+                <div className="sticky bottom-0 bg-white border-t border-gray-200 px-3 sm:px-4 lg:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 z-10">
                         <button
                             onClick={handleCancel}
                             className="w-full sm:w-auto px-4 sm:px-5 rounded-lg cursor-pointer py-2 sm:py-2.5 text-center bg-white border border-gray-300 text-[#1E1E1E] font-[500] text-xs sm:text-sm hover:bg-gray-50 transition-colors shadow-sm"
@@ -823,11 +676,10 @@ function CreationStudio({ onClose, onGenerateContent }) {
                                     <span className="loader" />
                                 </div>
                             ) : (
-                                "Add Creation"
+                                t("constance.add_creation_studio_form") || "Add Creation"
                             )}
                         </button>
                     </div>
-                )}
             </div>
         </div>
     )

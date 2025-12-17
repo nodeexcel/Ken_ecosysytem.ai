@@ -309,8 +309,8 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
         <div>
-          <h1 className="text-[24px] font-bold text-gray-800">Overview</h1>
-          <p className="text-md text-[#5A687C] mt-2">Monitor your call activity, credits, and agent performance.</p>
+          <h1 className="text-[24px] font-bold text-gray-800">{t("phone.overview") || "Overview"}</h1>
+          <p className="text-md text-[#5A687C] mt-2">{t("phone.overview_descrp") || "Monitor your call activity, credits, and agent performance."}</p>
         </div>
         <div className="flex items-center gap-3">
           <SelectDropdown
@@ -318,7 +318,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
             options={timePeriodOptions}
             value={timePeriod}
             onChange={(updated) => setTimePeriod(updated)}
-            placeholder="This Month"
+            placeholder={t("phone.this_month")}
             className="w-[140px] text-[14px] font-500"
           />
           <button
@@ -326,7 +326,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
             className="flex items-center gap-2 px-4 py-2 text-[14px] bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] text-sm font-medium hover:bg-gray-50 cursor-pointer"
           >
             <RefreshCw size={16} />
-            Refresh
+            {t("phone.refresh") || "Refresh"}
           </button>
         </div>
       </div>
@@ -342,9 +342,9 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
         {/* Credit Summary Card */}
         <div className="rounded-xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between relative">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-[500] text-[#5A687C]">Credit Summary</h2>
+            <h2 className="text-lg font-[500] text-[#5A687C]">{t("phone.credit_summary") || "Credit Summary"}</h2>
             <div className="flex items-center gap-2">
-              <span className="text-[14px] font-[500] text-[#5A687C]">Auto Refill</span>
+              <span className="text-[14px] font-[500] text-[#5A687C]">{t("phone.auto_refill") || "Auto Refill"}</span>
               <button
                 onClick={() => setAutoRefill(!autoRefill)}
                 className={`w-12 h-6 cursor-pointer rounded-full flex items-center px-1 transition-colors duration-300 ${autoRefill ? "bg-[#675FFF]" : "bg-gray-300"
@@ -360,14 +360,14 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
           <div className="flex items-center justify-between mt-4">
             <div>
               <h3 className="text-4xl font-bold text-[#1E1E1E] mb-2">€{balance.toFixed(2)}</h3>
-              <p className="text-sm text-[#5A687C]">Credit rate <span className="font-semibold text-black">0.20 € / min </span></p>
+              <p className="text-sm text-[#5A687C]">{t("phone.credit_rate") || "Credit rate"} <span className="font-semibold text-black">0.20 € / min </span></p>
             </div>
             <button
               className="bg-[#675FFF] text-white px-5 py-2.5 rounded-lg text-sm font-medium flex items-center justify-center gap-2 cursor-pointer hover:bg-[#5E54FF] transition"
               onClick={() => setShowModal(true)}
             >
               <Plus size={16} />
-              Add Credit
+              {t("phone.add_credit") || "Add Credit"}
             </button>
           </div>
         </div>
@@ -375,7 +375,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
         {/* Average Call Duration Card */}
         <div className="rounded-xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between">
           <div>
-            <h2 className="text-[14px] font-[500] text-[#5A687C] mb-4">Average Call Duration</h2>
+            <h2 className="text-[14px] font-[500] text-[#5A687C] mb-4">{t("phone.average_call_duration") || "Average Call Duration"}</h2>
             <h3 className="text-4xl font-bold mb-2 text-[#1E1E1E]">
               {dashboardData.loading ? '...' : dashboardData.average_call_duration}
             </h3>
@@ -395,7 +395,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
         {/* Agent Overview Card */}
         <div className="rounded-xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between">
           <div>
-            <h2 className="text-[14px] font-[500] text-[#5A687C] mb-4">Agent Overview</h2>
+            <h2 className="text-[14px] font-[500] text-[#5A687C] mb-4">{t("phone.agent_overview") || "Agent Overview"}</h2>
             <h3 className="text-4xl font-bold mb-2 text-[#1E1E1E]">
               {dashboardData.loading ? '...' : dashboardData.agents}
             </h3>
@@ -414,7 +414,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
         {/* Campaigns Card */}
         <div className="rounded-xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between">
           <div>
-            <h2 className="text-[14px] font-[500] text-[#5A687C] mb-4">Campaigns</h2>
+            <h2 className="text-[14px] font-[500] text-[#5A687C] mb-4">{t("phone.campaigns") || "Campaigns"}</h2>
             <h3 className="text-4xl font-bold mb-2 text-[#1E1E1E]">
               {dashboardData.loading ? '...' : dashboardData.campaigns}
             </h3>
@@ -433,7 +433,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
         {/* Called Clients Card */}
         <div className="rounded-xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between">
           <div>
-            <h2 className="text-[14px] font-[500] text-[#5A687C] mb-4">Called Clients</h2>
+            <h2 className="text-[14px] font-[500] text-[#5A687C] mb-4">{t("phone.called_clients") || "Called Clients"}</h2>
             <h3 className="text-4xl font-bold mb-2 text-[#1E1E1E]">
               {dashboardData.loading ? '...' : dashboardData.outbound_calls}
             </h3>
@@ -452,7 +452,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
         {/* Calls Received Card */}
         <div className="rounded-xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between">
           <div>
-            <h2 className="text-[14px] font-[500] text-[#5A687C] mb-4">Calls Received</h2>
+            <h2 className="text-[14px] font-[500] text-[#5A687C] mb-4">{t("phone.calls_received") || "Calls Received"}</h2>
             <h3 className="text-4xl font-bold mb-2 text-[#1E1E1E]">
               {dashboardData.loading ? '...' : dashboardData.inbound_calls}
             </h3>
@@ -474,8 +474,8 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
             {/* Header with Close button */}
             <div className="mb-6 flex items-start justify-between">
               <div>
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E]">My Call Credits</h2>
-                <p className="text-sm text-[#5A687C] mt-2">Top up your account to keep calls and campaigns running smoothly.</p>
+                <h2 className="text-[20px] font-[600] text-[#1E1E1E]">{t("phone.my_call_credits") || "My Call Credits"}</h2>
+                <p className="text-sm text-[#5A687C] mt-2">{t("phone.top_up_your_account") || "Top up your account to keep calls and campaigns running smoothly."}</p>
               </div>
               <button
                 className="text-gray-500 hover:text-gray-800 cursor-pointer"
@@ -490,8 +490,8 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
             {/* Choose an amount section */}
             <div className="p-1 mb-2">
               <div className="flex items-start justify-between mb-2">
-                <h2 className="text-md font-[600] text-[#1E1E1E]">Choose an amount</h2>
-                <p className="text-sm text-[#5A687C]">Price <span className="font-[500] text-black">€0.20/minute</span></p>
+                <h2 className="text-md font-[600] text-[#1E1E1E]">{t("phone.choose_an_amount") || "Choose an amount"}</h2>
+                <p className="text-sm text-[#5A687C]">{t("phone.price") || "Price"} <span className="font-[500] text-black">€0.20/minute</span></p>
               </div>
 
               {/* Predefined options */}
@@ -561,12 +561,12 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
                     className="w-full mt-1 bg-[#675FFF] text-white px-6 py-1.5 rounded-lg cursor-pointer hover:bg-[#5E54FF] transition font-medium"
                     onClick={handleTopUp}
                   >
-                    Top Up Credit
+                    {t("phone.top_up_credit") || "Top Up Credit"}
                   </button>
                 </div>
 
                 <div className="bg-[#F7F7F8] border border-[#E1E4EA] rounded-lg px-4 py-3 max-h-[88px] overflow-hidden">
-                  <p className="text-sm text-[#5A687C] mb-1">Calculated call minutes</p>
+                  <p className="text-sm text-[#5A687C] mb-1">{t("phone.calculated_call_minutes") || "Calculated call minutes"}</p>
                   <p className="text-3xl font-bold text-[#1E1E1E]">
                     {amount ? Math.round(Number(amount) / 0.2) : "0"}{" "}
                     <span className="text-lg font-normal">min</span>
@@ -581,9 +581,9 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
               <div className=''>
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <h2 className="text-md font-[600] text-[#1E1E1E] mb-2">Automatic Recharge</h2>
+                    <h2 className="text-md font-[600] text-[#1E1E1E] mb-2">{t("phone.automatic_recharge") || "Automatic Recharge"}</h2>
                     <p className="text-sm text-[#5A687C]">
-                      Automatically refill your balance when it drops below your chosen threshold.
+                      {t("phone.automatically_refill_your_balance") || "Automatically refill your balance when it drops below your chosen threshold."}
                     </p>
                   </div>
                   <div className="flex items-center gap-3 ml-4 flex-shrink-0">
@@ -626,16 +626,16 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
                   <div className="flex items-start justify-between gap-4">
                     <div className="w-1/2">
                       <label className="block text-sm font-semibold text-[#1E1E1E] mb-1">
-                        Recharge Threshold
+                        {t("phone.recharge_threshold") || "Recharge Threshold"}
                       </label>
-                      <p className="text-xs text-[#5A687C]">When balance falls below</p>
+                      <p className="text-xs text-[#5A687C]">{t("phone.when_balance_falls_below") || "When balance falls below"}</p>
                     </div>
 
                     {/* Right — 50% width */}
                     <div className="relative w-1/2">
                       <input
                         type="number"
-                        placeholder="Enter threshold"
+                        placeholder={t("phone.enter_threshold") || "Enter threshold"}
                         value={rechargeThreshold}
                         max={10000}
                         onChange={(e) => {
@@ -656,10 +656,10 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
                   <div className="flex items-start justify-between gap-4">
                     <div className="w-1/2">
                       <label className="block text-sm font-semibold text-[#1E1E1E] mb-1">
-                        Top-up Amount
+                        {t("phone.top_up_amount") || "Top-up Amount"}
                       </label>
                       <p className="text-xs text-[#5A687C]">
-                        Add balance up to
+                        {t("phone.add_balance_up_to") || "Add balance up to"}
                       </p>
                     </div>
                     <div className="relative w-1/2">
@@ -696,7 +696,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
                       // You can add API call here to save the settings
                     }}
                   >
-                    Save
+                    {t("phone.save") || "Save"}
                   </button>
                 </div>
               )}

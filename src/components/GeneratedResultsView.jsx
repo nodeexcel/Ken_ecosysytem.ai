@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { FileText, MoreVertical, Copy, Share2, Wand2, MoreHorizontal, Sparkles } from "lucide-react";
-import dummy1 from '../assets/images/dummy1.png';
-import dummy2 from '../assets/images/dummy2.png';
 
 const GeneratedResultsView = ({ generatedContent, onCancel }) => {
     const { t } = useTranslation();
@@ -53,7 +51,7 @@ const GeneratedResultsView = ({ generatedContent, onCancel }) => {
     }, [activeDropdown]);
 
     return (
-        <div className="px-6 py-6 w-full h-full flex flex-col gap-6">
+        <div className="p-12 w-full h-full flex flex-col gap-6">
             {/* Header Section */}
             <div className="flex items-start justify-between w-full">
                 <h1 className="text-[#1E1E1E] text-3xl font-[500]">
@@ -168,25 +166,18 @@ const GeneratedResultsView = ({ generatedContent, onCancel }) => {
 
                                         {result.images && result.images.length > 0 && (
                                             <div className="flex gap-2 flex-shrink-0">
-                                                {result.images.map((image, imgIndex) => {
-                                                    let imageSrc = image;
-                                                    if (result.id === 2) {
-                                                        if (imgIndex === 0) imageSrc = dummy1;
-                                                        else if (imgIndex === 1) imageSrc = dummy2;
-                                                    }
-                                                    return (
-                                                        <div
-                                                            key={imgIndex}
-                                                            className="w-40 h-28 rounded-lg overflow-hidden border border-gray-200"
-                                                        >
-                                                            <img
-                                                                src={imageSrc}
-                                                                className="w-full h-full object-fit"
-                                                                alt=""
-                                                            />
-                                                        </div>
-                                                    );
-                                                })}
+                                                {result.images.map((image, imgIndex) => (
+                                                    <div
+                                                        key={imgIndex}
+                                                        className="w-full h-95 rounded-lg overflow-hidden border border-gray-200"
+                                                    >
+                                                        <img
+                                                            src={image}
+                                                            className="w-full h-full object-cover"
+                                                            alt={`Generated image ${imgIndex + 1}`}
+                                                        />
+                                                    </div>
+                                                ))}
                                             </div>
                                         )}
                                     </div>

@@ -55,6 +55,7 @@ const Knowledge = () => {
   const [loadingData, setLoadingData] = useState(false);
   const [errors, setErrors] = useState({});
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [expandedSnippets, setExpandedSnippets] = useState({});
   const moreActionsRef = useRef();
 
   const { t } = useTranslation();
@@ -365,9 +366,19 @@ const renderEmptyState = (tabKey, onAction) => {
                       <img src={letter} alt="letter" className="w-5 h-5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-[400] font-inter text-[#5A687C] break-words whitespace-normal leading-relaxed">
-                        {e.data}
-                      </p>
+                      <div className="relative">
+                        <p className={`text-[14px] font-[400] font-inter text-[#5A687C] break-words whitespace-normal leading-relaxed ${!expandedSnippets[i] ? 'line-clamp-2' : ''}`}>
+                          {e.data}
+                        </p>
+                        {e.data && e.data.trim().length > 400 && (
+                          <button
+                            onClick={() => setExpandedSnippets(prev => ({ ...prev, [i]: !prev[i] }))}
+                            className="text-[#675FFF] text-[14px] font-[500] mt-1 hover:underline cursor-pointer"
+                          >
+                            {expandedSnippets[i] ? 'See less' : 'See more'}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div ref={moreActionsRef} className='relative flex-shrink-0'>

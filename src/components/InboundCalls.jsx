@@ -184,7 +184,7 @@ export default function InBoundCalls() {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
             <div className="flex flex-col gap-1">
               <h1 className="text-xl md:text-[24px] font-semibold text-[#1E1E1E]">{t("phone.inbound_calls")}</h1>
-              <p className="text-sm md:text-base text-[#5A687C] font-[400]">Monitor all inbound calls received through your campaigns</p>
+              <p className="text-sm md:text-base text-[#5A687C] font-[400]">{t("phone.monitor_all_inbound_calls_received_through_your_campaigns") || "Monitor all inbound calls received through your campaigns"}</p>
             </div>
             {/* <button
                     className="bg-[#7065F0] text-white font-medium px-5 py-2 rounded-lg shadow"

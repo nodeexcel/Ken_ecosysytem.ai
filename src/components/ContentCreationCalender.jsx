@@ -60,7 +60,7 @@ function ContentCreationCalender() {
                 {t("constance.scheduler") || "Scheduler"}
               </h1>
               <p className="text-[#5A687C] text-[14px] sm:text-[15px] lg:text-[16px] font-[400]">
-                Plan, organize, and manage all your scheduled posts in a visual calendar.
+                {t("constance.scheduler_descrp") || "Plan, organize, and manage all your scheduled posts in a visual calendar."}
               </p>
             </div>
 
@@ -76,7 +76,7 @@ function ContentCreationCalender() {
                       : "text-[#5A687C] hover:text-[#1E1E1E]"
                   }`}
                 >
-                  Calendar
+                  {t("constance.calendar") || "Calendar"}
                 </button>
                 <button
                   onClick={() => setActiveTab("list")}
@@ -86,7 +86,7 @@ function ContentCreationCalender() {
                       : "text-[#5A687C] hover:text-[#1E1E1E]"
                   }`}
                 >
-                  List View
+                  {t("constance.list_view") || "List View"}
                 </button>
               </div>
 
@@ -99,7 +99,7 @@ function ContentCreationCalender() {
                 className="flex items-center justify-center cursor-pointer gap-2 bg-[#675FFF] text-white px-5 py-2 rounded-lg font-[500] text-sm hover:bg-[#5a4fe6] transition-colors whitespace-nowrap"
               >
                 <Plus size={18} />
-                <span>Create Schedule</span>
+                <span>{t("constance.create_schedule") || "Create Schedule"}</span>
               </button>
             </div>
           </div>

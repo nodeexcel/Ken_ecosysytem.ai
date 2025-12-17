@@ -964,11 +964,11 @@ const SettingsPage = () => {
   const renderMainContent = () => {
     if (activeSidebarItem === "my-profile") {
       return (
-        <div className="flex flex-col pr-4 items-start relative gap-6 w-full px-4 py-4 ">
+        <div className="flex flex-col pr-4 items-start relative gap-6 w-full p-6 ">
           {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center sm:justify-between w-full mb-4 gap-4 px-4 py-6">
+          <div className="flex flex-col md:flex-row md:items-center sm:justify-between w-full mb-4 gap-4 px-5.5 py-6">
             <div className="flex flex-col gap-2">
-              <h1 className="text-[#1e1e1e] dark:text-white text-[22px]  font-[600] leading-tight">
+              <h1 className="text-[#1e1e1e] dark:text-white text-2xl  font-[600] leading-tight">
                 {t("settings.tab_1_list.my_profile_settings")}
               </h1>
               <p className="text-[#5A687C] dark:text-gray-400 text-[14px] sm:text-[16px] font-[400]">
@@ -1383,12 +1383,12 @@ const SettingsPage = () => {
         </div>
 
       );
-    }
+    } 
 
     if (activeSidebarItem === "billing") {
       if (showManagePlan) {
         return (
-          <div className="flex py-3 pr-4 flex-col h-full w-full gap-6">
+          <div className="flex p-10 flex-col h-full w-full gap-6">
             <ManagePlan onClose={() => {
               setShowManagePlan(false);
               setSearchParams({});
@@ -1397,7 +1397,7 @@ const SettingsPage = () => {
         );
       }
       return (
-        <div className="flex py-6 pr-4 flex-col h-full w-full gap-6">
+        <div className="flex p-12 flex-col h-full w-full gap-6">
           <Plan t={t} teamMembersData={teamMembersData} setActiveSidebarItem={setActiveSidebarItem} showPlanPopup={showPlanPopup} setShowPlanPopup={setShowPlanPopup} handleAddSeatsTeam={handleAddSeatsTeam} setShowManagePlan={setShowManagePlan} setSearchParams={setSearchParams} />
         </div>
       );
@@ -1416,7 +1416,7 @@ const SettingsPage = () => {
 
       return (
         <>
-          <div className="w-full pr-4 flex flex-col h-full gap-6 px-6 py-6">
+          <div className="w-full pr-4 flex flex-col h-full gap-6 p-12">
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div className="flex flex-col gap-1">
@@ -1838,9 +1838,9 @@ const SettingsPage = () => {
     }
 
     return (
-      <div className="flex flex-col gap-6 w-full px-3 py-2">
+      <div className="flex flex-col gap-6 w-full p-6">
         <div className="overflow-hidden">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 px-6 py-6 ">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 px-5.5 py-6 ">
             <div className="space-y-2">
               <h2 className="text-2xl font-semibold text-[#1E1E1E] dark:text-white">{t("settings.tab_1_list.general_settings")}</h2>
               <p className="text-md text-[#5A687C] dark:text-gray-400 max-w-2xl">

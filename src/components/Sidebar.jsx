@@ -195,17 +195,17 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                     ${renderColor(0) ? 'bg-[#F0EFFF]' : 'bg-transparent'}`}
                 >
                   <div className="group-hover:hidden">
-                    <img
+                    <img 
                       src={renderColor(0) ? FourBox : HomeInactive}
-                      alt="Home"
+                      alt="Home" 
                       className={`w-5 h-5 ${renderColor(0) ? 'opacity-100' : 'opacity-90'}`}
                       style={{ filter: renderColor(0) ? 'none' : 'brightness(0.8)' }}
                     />
                   </div>
                   <div className="hidden group-hover:block">
-                    <img
-                      src={FourBox}
-                      alt="Home"
+                    <img 
+                      src={FourBox} 
+                      alt="Home" 
                       className="w-5 h-5 opacity-100"
                     />
                   </div>
@@ -239,7 +239,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                 >
                   {/* Default state */}
                   <div className="group-hover:hidden">
-                    <img
+                    <img 
                       src={renderColor(1) ? BrainAIActive : Brain}
                       alt="Brain AI"
                       className={`w-5 h-5 ${renderColor(1) ? 'opacity-100' : 'opacity-90'}`}
@@ -248,7 +248,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                   </div>
                   {/* Hover state */}
                   <div className="hidden group-hover:block">
-                    <img
+                    <img 
                       src={BrainAIActive}
                       alt="Brain AI"
                       className="w-5 h-5 opacity-100"

@@ -638,7 +638,7 @@ export default function CallCampaign() {
               <div className="flex flex-col gap-1">
                 <h1 className="text-xl md:text-2xl font-semibold text-[#1E1E1E]">{t("phone.call_campaigns")}</h1>
                 <p className="text-sm md:text-base text-[#5A687C] font-[400]">
-                  Manage and track your outbound and inbound calling campaigns.
+                  {t("phone.manage_and_track_your_outbound_and_inbound_calling_campaigns") || "Manage and track your outbound and inbound calling campaigns."}
                 </p>
               </div>
               <button
@@ -867,7 +867,7 @@ export default function CallCampaign() {
                                 <td className="px-6 py-4 text-center whitespace-nowrap">
                                   <div className='flex items-center justify-center'>
                                     <button className="p-2 rounded-lg relative">
-                                      <div className='bg-white cursor-pointer border border-[#D6D6D6] shadow-sm p-1.5 rounded-xl'><Ellipsis /></div>
+                                      <div className='bg-white cursor-pointer border border-[#D6D6D6] shadow-sm p-2 rounded-lg'><Ellipsis className="text-black"/></div>
                                     </button>
                                   </div>
                                 </td>
@@ -884,8 +884,8 @@ export default function CallCampaign() {
                                 <td className="px-6 py-4 text-center whitespace-nowrap">
                                   <div className='flex items-center justify-center'>
                                     <button className="p-2 rounded-lg relative">
-                                      <div className='bg-white cursor-pointer border border-[#D6D6D6] shadow-sm p-1.5 rounded-xl'><Ellipsis /></div>
-                                    </button>
+                                      <div className='bg-white cursor-pointer border border-[#D6D6D6] shadow-sm p-2 rounded-lg'><Ellipsis className="text-black"/></div>
+                                    </button> 
                                   </div>
                                 </td>
                               </tr>
@@ -1297,7 +1297,7 @@ export default function CallCampaign() {
                             <td className="px-4 py-4 text-center whitespace-nowrap">
                               <div className='flex items-center justify-center'>
                                 <button onClick={(e) => handleDropdownClick(index, agent, e)} className="p-2 rounded-lg relative">
-                                  <div className='bg-white cursor-pointer border border-[#D6D6D6] shadow-sm p-1.5 rounded-xl'><Ellipsis /></div>
+                                  <div className='bg-white cursor-pointer border border-[#D6D6D6] shadow-sm p-2 rounded-lg'><Ellipsis className="text-black"/></div>
                                 </button>
                               </div>
                             </td>

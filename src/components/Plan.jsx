@@ -816,7 +816,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
 
 
   return (
-    <div className="py-2 pr-4 w-full h-full p-8">
+    <div className="w-full h-full">
       {/* Header */}
       <div className="flex flex-col gap-2 mb-6">
         <h1 className="text-md md:text-2xl font-[600] text-[#1E1E1E]">
