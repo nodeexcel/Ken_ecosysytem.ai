@@ -217,6 +217,23 @@ export default function CreatePost({ onClose, editData }) {
     });
   }
 
+  const getSelectedAccountLabel = () => {
+    const options = renderOptions();
+    const match = options.find(opt => opt.key === selectedAccount);
+    return match ? match.label : "";
+  }
+
+  const renderCaptionWithHashtags = (value) => {
+    if (!value) return null;
+    const parts = value.split(/(\#[\w\u00C0-\u024F\u1E00-\u1EFF]+)/g);
+    return parts.map((part, idx) => {
+      if (/^\#[\w\u00C0-\u024F\u1E00-\u1EFF]+$/.test(part)) {
+        return <span key={idx} className="text-[#3B82F6]">{part}</span>;
+      }
+      return <span key={idx}>{part}</span>;
+    });
+  }
+
   // Handle file upload and convert to base64
   const handleFileChange = async (e) => {
     const files = Array.from(e.target.files || []);
@@ -376,6 +393,8 @@ export default function CreatePost({ onClose, editData }) {
           setText("");
           setDocument(null);
           setFileName("");
+          setPreview(null);
+          setPreviewMediaType(null);
           setSelectedAccount("");
           setPlatform("");
           if (fileInputRef.current) fileInputRef.current.value = '';
@@ -399,6 +418,8 @@ export default function CreatePost({ onClose, editData }) {
         setText("");
         setDocument(null);
         setFileName("");
+        setPreview(null);
+        setPreviewMediaType(null);
         setSelectedAccount("");
         setPlatform("");
         fileInputRef.current.value = '';
@@ -439,6 +460,8 @@ export default function CreatePost({ onClose, editData }) {
         setText("");
         setDocument(null);
         setFileName("");
+        setPreview(null);
+        setPreviewMediaType(null);
         setSelectedAccount("");
         setPlatform("");
         fileInputRef.current.value = '';
@@ -529,6 +552,8 @@ export default function CreatePost({ onClose, editData }) {
           setText("");
           setDocument(null);
           setFileName("");
+          setPreview(null);
+          setPreviewMediaType(null);
           setSelectedAccount("");
           setPlatform("");
           if (fileInputRef.current) fileInputRef.current.value = '';
@@ -554,6 +579,8 @@ export default function CreatePost({ onClose, editData }) {
         setText("");
         setDocument(null);
         setFileName("");
+        setPreview(null);
+        setPreviewMediaType(null);
         setSelectedAccount("");
         setPlatform("");
         fileInputRef.current.value = '';
