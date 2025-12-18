@@ -233,7 +233,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
     }
 
     return (
-        <div className="w-full flex flex-col gap-5 p-10">
+        <div className="w-full flex flex-col gap-5 p-12">
             <div className="flex flex-col w-full items-start gap-6 md:max-w-full lg:px-0 mx-auto">
                 <div className="flex items-center justify-between w-full">
                     <div className="flex flex-col gap-1">

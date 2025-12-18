@@ -18,8 +18,8 @@ const BrainAI = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const { t } = useTranslation();
   
-  // Get tab from URL or default to "contacts"
-  const tabFromUrl = searchParams.get('tab') || 'contacts'
+  // Get tab from URL or default to "knowledge"
+  const tabFromUrl = searchParams.get('tab') || 'knowledge'
   const [activePath, setActivePath] = useState(tabFromUrl)
   const [showModal, setShowModal] = useState(true)
   const [sidebarStatus, setSideBarStatus] = useState(false)
@@ -28,7 +28,7 @@ const BrainAI = () => {
 
   // Sync activePath with URL param
   useEffect(() => {
-    const tabFromUrl = searchParams.get('tab') || 'contacts'
+    const tabFromUrl = searchParams.get('tab') || 'knowledge'
     if (tabFromUrl && ['contacts', 'knowledge', 'integration'].includes(tabFromUrl)) {
       const prevTab = prevTabRef.current
       setActivePath(tabFromUrl)
@@ -98,9 +98,9 @@ const BrainAI = () => {
   }
 
   const sideMenuItems = [
-    { label: `${t("contacts")}`, icon: <ContactsIcon isActive={activePath == "contacts"} />, hoverIcon: <ContactsIcon isHover={true} />, path: "contacts" },
     { label: `${t("knowledge")}`, icon: <KnowledgeIconLocal isActive={activePath == "knowledge"} />, hoverIcon: <KnowledgeIconLocal isHover={true} />, path: "knowledge" },
     { label: `${t("integration")}`, icon: <IntegrationIcon isActive={activePath == "integration"} />, hoverIcon: <IntegrationIcon isHover={true} />, path: "integration" },
+    { label: `${t("contacts")}`, icon: <ContactsIcon isActive={activePath == "contacts"} />, hoverIcon: <ContactsIcon isHover={true} />, path: "contacts" },
   ]
 
   const renderMainContent = () => {

@@ -43,7 +43,7 @@ const NoData = ({ icon, title, description, onAction }) => (
 
 const Knowledge = () => {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("snippets")
+  const [activeTab, setActiveTab] = useState("website")
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
@@ -61,9 +61,9 @@ const Knowledge = () => {
   const { t } = useTranslation();
 
   const tabs = [
-    { label: `${t("brain_ai.knowledge.snippets")}`, key: "snippets", header: "Snippet" },
     { label: `${t("brain_ai.knowledge.websites")}`, key: "website", header: "Website" },
     { label: `${t("brain_ai.knowledge.files")}`, key: "files", header: "File" },
+    { label: `${t("brain_ai.knowledge.snippets")}`, key: "snippets", header: "Snippet" },
   ]
 
   const modelData = {
@@ -186,12 +186,19 @@ const Knowledge = () => {
           setErrors((prev) => ({ ...prev, website: `${t("brain_ai.knowledge.website_required")}` }))
           return
         }
-        if (!/^https?:\/\/\S+$/.test(formData.website)) {
+        let websiteUrl = formData.website.trim();
+        // If URL doesn't start with http:// or https://, prepend http://
+        const urlLower = websiteUrl.toLowerCase();
+        if (!urlLower.startsWith('http://') && !urlLower.startsWith('https://')) {
+          websiteUrl = `http://${websiteUrl}`;
+        }
+        // Validate the final URL format
+        if (!/^https?:\/\/\S+$/.test(websiteUrl)) {
           setErrors((prev) => ({ ...prev, website: `${t("brain_ai.knowledge.valid_website")}` }))
           return
         }
         const payload = {
-          data: formData.website,
+          data: websiteUrl,
           data_type: activeTab
         }
         handleKnowledge(payload)
@@ -484,7 +491,7 @@ const renderEmptyState = (tabKey, onAction) => {
 
 
   return (
-    <div className="flex p-8 flex-col w-full items-start gap-4 ">
+    <div className="flex p-12 flex-col w-full items-start gap-4 ">
       <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8 mt-1">
         {t("brain_ai.knowledge.sub_heading")}
       </h1>

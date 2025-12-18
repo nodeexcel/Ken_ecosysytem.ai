@@ -289,7 +289,7 @@ const Integration = ({ firstRender, setFirstRender }) => {
   const shouldShowList = firstRender || !integartionData || Object.keys(integartionData).length === 0
 
   return (
-    <div className={`flex flex-col  ${shouldShowList ? 'p-6' : 'pb-4 pr-0'} w-full items-start gap-6 `}>
+    <div className={`flex flex-col  ${shouldShowList ? 'py-13 px-7' : 'pb-4 pr-0'} w-full items-start gap-6 `}>
       {shouldShowList ? <>
         {/* Header */}
         <header className="flex items-center justify-between w-full ">
