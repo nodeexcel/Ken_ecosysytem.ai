@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { CalenderIcon, ConversationIcon, CreationStudioIcon, LeftArrow, LinkedInIcon, XIcon, YoutubeIcon } from '../../icons/icons'
-import constanceImg from "../../assets/svg/constance_logo.svg"
+import constanceImg from "../../assets/svg/ConstanceSidebar.svg"
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import constanceMsgLogo from '../../assets/svg/ConstanceChat.svg'
 import { v4 as uuidv4 } from 'uuid';
-import { deleteContentCreationChat, getContentCreationChatById, getContentCreationChats, updateContentCreationChatName, contentGenerationStatus } from '../../api/contentCreationAgent'
+import { deleteContentCreationChat, getContentCreationChatById, getContentCreationChats, updateContentCreationChatName, contentGenerationStatus, getContents, deleteContent } from '../../api/contentCreationAgent'
 import AgentChatBox from '../../components/AgentChatBox'
 import { formatTimeAgo } from '../../utils/TimeFormat'
 import CreationStudio from '../../components/CreationStudio'
@@ -16,8 +16,6 @@ import LinkedInNukeContent from '../../components/LinkedInNukeContent'
 import XPostContent from '../../components/XPostContent'
 import TutorialPlay from '../../assets/svg/WatchTutorialGrey.svg'
 import { X, Plus, MoreVertical, Edit, Trash2, Play } from 'lucide-react'
-import dummy1 from '../../assets/images/dummy1.png'
-import dummy2 from '../../assets/images/dummy2.png'
 import chatInstance from '../../api/chatInstance'
 import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
@@ -69,6 +67,10 @@ function ContentCreation() {
     const [loadingSteps, setLoadingSteps] = useState(0)
     const [showLoader, setShowLoader] = useState(false)
     const [toast, setToast] = useState({ open: false, type: 'success', title: '', description: '', highlightText: '' })
+    const [recentContents, setRecentContents] = useState([])
+    const [loadingContents, setLoadingContents] = useState(false)
+    const [playingVideoId, setPlayingVideoId] = useState(null)
+    const videoRefs = useRef({})
     const socketRef = useRef(null)
     const socket2Ref = useRef(null)
     const newwebsocketurl = `${chatInstance}/new-content-creation-agent-chat`
@@ -432,7 +434,9 @@ function ContentCreation() {
                             id: 1,
                             title: `Generated Content`,
                             content: response.caption || "",
-                            images: response.media_urls?.map(media => media.url) || []
+                            media_type: response.media_type || response.type || 'text',
+                            images: response.media_urls?.map(media => typeof media === 'string' ? media : media.url) || [],
+                            videos: response.video_urls || []
                         }]
                     };
                     
@@ -443,7 +447,9 @@ function ContentCreation() {
                                 id: index + 2,
                                 title: `Variation ${index + 1}`,
                                 content: variation.caption || "",
-                                images: variation.media_urls?.map(media => media.url) || []
+                                media_type: variation.media_type || variation.type || response.media_type || 'text',
+                                images: variation.media_urls?.map(media => typeof media === 'string' ? media : media.url) || [],
+                                videos: variation.video_urls || []
                             });
                         });
                     }
@@ -461,7 +467,39 @@ function ContentCreation() {
 
     const handleContentCreated = (id) => {
         setContentId(id);
+        // Refresh contents list after content creation
+        if (activeSidebarItem === "creation_studio") {
+            fetchRecentContents();
+        }
     };
+
+    // Fetch recent contents
+    const fetchRecentContents = async () => {
+        setLoadingContents(true);
+        try {
+            const response = await getContents();
+            // Handle response structure - API returns { contents: [...] } in response.data
+            const contents = response?.data?.contents || 
+                           response?.data?.data?.contents || 
+                           response?.data?.success || 
+                           response?.data?.data || 
+                           [];
+            setRecentContents(Array.isArray(contents) ? contents : []);
+        } catch (error) {
+            console.error("Error fetching contents:", error);
+            setRecentContents([]);
+        } finally {
+            setLoadingContents(false);
+        }
+    };
+
+    // Fetch contents when creation_studio tab is active
+    useEffect(() => {
+        if (activeSidebarItem === "creation_studio") {
+            fetchRecentContents();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeSidebarItem]);
 
     const renderMainContent = () => {
         // Show Loader if content is being generated
@@ -528,85 +566,273 @@ function ContentCreation() {
                             <h2 className="text-[#1E1E1E] text-[18px] sm:text-[19px] lg:text-[20px] font-[600]">{t("constance.recent_creations") || "Recent Creations"}</h2>
 
                             {/* Grid of Creation Cards */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full">
-                                {[1, 2, 3, 4, 5, 6].map((item, index) => {
-                                    const isEven = index % 2 === 0;
-                                    const cardImage = isEven ? dummy1 : dummy2;
-                                    const dropdownId = `dropdown-${index}`;
+                            {loadingContents ? (
+                                <div className="flex justify-center items-center py-12">
+                                    <span className="loader" />
+                                </div>
+                            ) : recentContents.length === 0 ? (
+                                <div className="text-center py-12 text-[#5A687C] text-sm">
+                                    {t("constance.no_creations") || "No recent creations found"}
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full">
+                                    {recentContents
+                                        .filter((content) => {
+                                            // Only show completed content with media data from API
+                                            return content.post_status === 'completed' && 
+                                                   content.media_urls && (
+                                                (Array.isArray(content.media_urls) && content.media_urls.length > 0) ||
+                                                (typeof content.media_urls === 'string' && content.media_urls.trim() !== '')
+                                            );
+                                        })
+                                        .map((content, index) => {
+                                        const contentId = content.id || content.content_id;
+                                        const dropdownId = `dropdown-${contentId || index}`;
+                                        const mediaType = content.media_type || content.type || 'single_image';
+                                        
+                                        // Get media URLs based on type - only from API data
+                                        let mediaUrls = [];
+                                        let videoUrl = null;
+                                        let thumbnailUrl = null;
+                                        
+                                        if (content.media_urls && Array.isArray(content.media_urls)) {
+                                            // Check if it's a video - videos have url property, images might be strings or objects
+                                            if (mediaType === 'video' || mediaType === 'reel') {
+                                                // For videos, get the first video URL
+                                                const firstMedia = content.media_urls[0];
+                                                if (firstMedia) {
+                                                    videoUrl = firstMedia.url || firstMedia.url_hq || (typeof firstMedia === 'string' ? firstMedia : null);
+                                                    thumbnailUrl = firstMedia.thumb_url || firstMedia.thumbnail_url || null;
+                                                }
+                                            } else {
+                                                // For images, extract all URLs
+                                                mediaUrls = content.media_urls.map(media => 
+                                                    typeof media === 'string' ? media : (media.url || media.url_hq)
+                                                ).filter(Boolean);
+                                            }
+                                        } else if (content.media_urls && typeof content.media_urls === 'string') {
+                                            if (mediaType === 'video' || mediaType === 'reel') {
+                                                videoUrl = content.media_urls;
+                                            } else {
+                                                mediaUrls = [content.media_urls];
+                                            }
+                                        }
+                                        
+                                        // Fallback: check video_urls if videoUrl is still null (from API)
+                                        if (!videoUrl && (mediaType === 'video' || mediaType === 'reel')) {
+                                            if (content.video_urls && Array.isArray(content.video_urls) && content.video_urls.length > 0) {
+                                                videoUrl = content.video_urls[0];
+                                            } else if (content.video_url && typeof content.video_url === 'string') {
+                                                videoUrl = content.video_url;
+                                            }
+                                        }
+                                        
+                                        // Get thumbnail from API only
+                                        const apiThumbnail = content.thumbnail_url || thumbnailUrl;
+                                        
+                                        // Get title/name - only from API data
+                                        const title = content.caption || content.title || content.name || 
+                                                     (content.post_type && content.media_type 
+                                                        ? `${content.post_type.charAt(0).toUpperCase() + content.post_type.slice(1)} - ${content.media_type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}`
+                                                        : `Content ${contentId || index + 1}`
+                                                     );
+                                        
+                                        // Get platform and media type - format media_type for display
+                                        const formatMediaType = (type) => {
+                                            if (!type) return "Content";
+                                            return type.split('_').map(word => 
+                                                word.charAt(0).toUpperCase() + word.slice(1)
+                                            ).join(' ');
+                                        };
+                                        
+                                        const formattedMediaType = formatMediaType(mediaType);
+                                        const platformDisplay = `${content.post_type ? content.post_type.charAt(0).toUpperCase() + content.post_type.slice(1) : 'Unknown'} • ${formattedMediaType}`;
 
-                                    return (
-                                        <div
-                                            key={index}
-                                            className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
-                                        >
-                                            {/* Thumbnail Image with rounded top corners */}
-                                            <div className="w-full min-h-[80px] sm:min-h-[100px] overflow-hidden bg-gray-100 rounded-xl sm:rounded-2xl">
-                                                <img
-                                                    src={cardImage}
-                                                    alt="Creation thumbnail"
-                                                    className="w-full h-full object-cover rounded-xl sm:rounded-2xl p-1.5 sm:p-2 bg-white"
-                                                />
-                                            </div>
-
-
-                                            {/* Card Content - White background */}
-                                            <div className="bg-white p-3 sm:p-4 rounded-b-lg sm:rounded-b-xl relative">
-                                                <div className="flex items-start justify-between gap-2 sm:gap-3">
-                                                    <div className="flex-1 min-w-0 ">
-                                                        <h3 className="text-[#1E1E1E] text-base sm:text-lg font-[500] mb-1 sm:mb-1.5 leading-tight py-1 sm:py-2">
-                                                            Summer Promo Video
-                                                        </h3>
-                                                        <p className="text-[#5A687C] text-[12px] sm:text-[13px] lg:text-[14px] font-[400]">
-                                                            Reels • Video
-                                                        </p>
-                                                    </div>
-
-                                                    {/* Three Dots Menu - Bottom Right */}
-                                                    <div className="relative dropdown-container flex-shrink-0 border border-gray-200 rounded-lg sm:rounded-xl">
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
+                                        return (
+                                            <div
+                                                key={contentId || index}
+                                                className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow flex flex-col"
+                                            >
+                                                {/* Media Display - Fixed height for consistency */}
+                                                <div className="w-full h-[200px] sm:h-[380px] overflow-hidden bg-gray-100 rounded-xl sm:rounded-2xl relative">
+                                                    {/* Video */}
+                                                    {(mediaType === 'video' || mediaType === 'reel') && videoUrl ? (
+                                                        <div 
+                                                            className="w-full h-full relative cursor-pointer"
+                                                            onClick={() => {
+                                                                const video = videoRefs.current[contentId];
+                                                                if (video) {
+                                                                    if (playingVideoId === contentId) {
+                                                                        video.pause();
+                                                                        setPlayingVideoId(null);
+                                                                    } else {
+                                                                        // Pause any other playing video
+                                                                        if (playingVideoId && videoRefs.current[playingVideoId]) {
+                                                                            videoRefs.current[playingVideoId].pause();
+                                                                        }
+                                                                        video.play();
+                                                                        setPlayingVideoId(contentId);
+                                                                    }
+                                                                }
                                                             }}
-                                                            className="p-1 sm:p-1.5 hover:bg-gray-100 rounded-lg sm:rounded-xl transition-colors cursor-pointer"
                                                         >
-                                                            <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
-                                                        </button>
+                                                            <video
+                                                                ref={(el) => {
+                                                                    if (el) videoRefs.current[contentId] = el;
+                                                                }}
+                                                                src={videoUrl}
+                                                                className="w-full h-full object-cover rounded-xl sm:rounded-2xl"
+                                                                controls={false}
+                                                                muted
+                                                                playsInline
+                                                                loop
+                                                                onPause={() => {
+                                                                    if (playingVideoId === contentId) {
+                                                                        setPlayingVideoId(null);
+                                                                    }
+                                                                }}
+                                                                onEnded={() => {
+                                                                    if (playingVideoId === contentId) {
+                                                                        setPlayingVideoId(null);
+                                                                    }
+                                                                }}
+                                                            />
+                                                            {/* Play overlay indicator - only show when not playing */}
+                                                            {playingVideoId !== contentId && (
+                                                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                                                    <div className="w-12 h-12 bg-black/50 rounded-full flex items-center justify-center hover:bg-black/70 transition-colors">
+                                                                        <svg className="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                                                            <path d="M8 5v14l11-7z"/>
+                                                                        </svg>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    ) : (mediaType === 'video' || mediaType === 'reel') && !videoUrl && apiThumbnail ? (
+                                                        // Show thumbnail for video when URL not available but thumbnail is (from API)
+                                                        <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-xl sm:rounded-2xl">
+                                                            <img
+                                                                src={apiThumbnail}
+                                                                alt={title}
+                                                                className="w-full h-full object-cover rounded-xl sm:rounded-2xl"
+                                                            />
+                                                        </div>
+                                                    ) : mediaType === 'carousel' && mediaUrls.length > 0 ? (
+                                                        // Carousel - show images from API
+                                                        <div className="w-full h-full flex gap-1 p-1 bg-white rounded-xl sm:rounded-2xl">
+                                                            {mediaUrls.slice(0, 4).map((url, imgIdx) => (
+                                                                <div key={imgIdx} className="flex-1 h-full rounded overflow-hidden">
+                                                                    <img
+                                                                        src={url}
+                                                                        alt={`${title} - ${imgIdx + 1}`}
+                                                                        className="w-full h-full object-cover"
+                                                                    />
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    ) : mediaUrls.length > 0 ? (
+                                                        // Single or multiple images from API
+                                                        <div className="w-full h-full bg-white rounded-xl sm:rounded-2xl p-1.5 sm:p-2">
+                                                            <img
+                                                                src={mediaUrls[0]}
+                                                                alt={title}
+                                                                className="w-full h-full object-cover rounded-lg"
+                                                            />
+                                                        </div>
+                                                    ) : null
+                                                    }
+                                                </div>
 
-                                                        {/* Dropdown Menu */}
-                                                        {activeDropdown === dropdownId && (
-                                                            <div className="absolute right-0 bottom-full mb-2 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[100px] sm:min-w-[120px] z-50">
-                                                                <button
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        console.log("Edit clicked for item", index);
-                                                                        setActiveDropdown(null);
-                                                                    }}
-                                                                    className="w-full flex cursor-pointer items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-[#F2F2F7] transition-colors text-left"
-                                                                >
-                                                                    <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-700" />
-                                                                    <span className="text-xs sm:text-sm text-gray-700">Edit</span>
-                                                                </button>
-                                                                <button
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        console.log("Delete clicked for item", index);
-                                                                        setActiveDropdown(null);
-                                                                    }}
-                                                                    className="w-full flex cursor-pointer items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-[#F2F2F7] transition-colors text-left"
-                                                                >
-                                                                    <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600" />
-                                                                    <span className="text-xs sm:text-sm text-red-600">Delete</span>
-                                                                </button>
-                                                            </div>
-                                                        )}
+                                                {/* Card Content - White background */}
+                                                <div className="bg-white p-3 sm:p-4 rounded-b-lg sm:rounded-b-xl relative">
+                                                    <div className="flex items-start justify-between gap-2 sm:gap-3">
+                                                        <div className="flex-1 min-w-0 ">
+                                                            <h3 className="text-[#1E1E1E] text-base sm:text-lg font-[500] mb-1 sm:mb-1.5 leading-tight py-1 sm:py-2">
+                                                                {title}
+                                                            </h3>
+                                                            <p className="text-[#5A687C] text-[12px] sm:text-[13px] lg:text-[14px] font-[400]">
+                                                                {platformDisplay}
+                                                            </p>
+                                                        </div>
+
+                                                        {/* Three Dots Menu - Bottom Right */}
+                                                        <div className="relative dropdown-container flex-shrink-0 border border-gray-200 rounded-lg sm:rounded-xl">
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
+                                                                }}
+                                                                className="p-1 sm:p-1.5 hover:bg-gray-100 rounded-lg sm:rounded-xl transition-colors cursor-pointer"
+                                                            >
+                                                                <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
+                                                            </button>
+
+                                                            {/* Dropdown Menu */}
+                                                            {activeDropdown === dropdownId && (
+                                                                <div className="absolute right-0 bottom-full mb-2 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[100px] sm:min-w-[120px] z-50">
+                                                                    <button
+                                                                        onClick={async (e) => {
+                                                                            e.stopPropagation();
+                                                                            // Handle edit - you may want to open a modal or navigate
+                                                                            console.log("Edit clicked for content", contentId);
+                                                                            setActiveDropdown(null);
+                                                                        }}
+                                                                        className="w-full flex cursor-pointer items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-[#F2F2F7] transition-colors text-left"
+                                                                    >
+                                                                        <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-700" />
+                                                                        <span className="text-xs sm:text-sm text-gray-700">Edit</span>
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={async (e) => {
+                                                                            e.stopPropagation();
+                                                                            try {
+                                                                                if (contentId) {
+                                                                                    const response = await deleteContent(contentId);
+                                                                                    if (response?.status === 200) {
+                                                                                        // Refresh the list
+                                                                                        fetchRecentContents();
+                                                                                        setToast({
+                                                                                            open: true,
+                                                                                            type: 'success',
+                                                                                            title: 'Content Deleted',
+                                                                                            description: 'The content has been deleted successfully.',
+                                                                                        });
+                                                                                    } else {
+                                                                                        setToast({
+                                                                                            open: true,
+                                                                                            type: 'error',
+                                                                                            title: 'Delete Failed',
+                                                                                            description: 'Failed to delete the content. Please try again.',
+                                                                                        });
+                                                                                    }
+                                                                                }
+                                                                                setActiveDropdown(null);
+                                                                            } catch (error) {
+                                                                                console.error("Error deleting content:", error);
+                                                                                setToast({
+                                                                                    open: true,
+                                                                                    type: 'error',
+                                                                                    title: 'Delete Failed',
+                                                                                    description: 'Failed to delete the content. Please try again.',
+                                                                                });
+                                                                                setActiveDropdown(null);
+                                                                            }
+                                                                        }}
+                                                                        className="w-full flex cursor-pointer items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-[#F2F2F7] transition-colors text-left"
+                                                                    >
+                                                                        <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600" />
+                                                                        <span className="text-xs sm:text-sm text-red-600">Delete</span>
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
                     </div>
                 )

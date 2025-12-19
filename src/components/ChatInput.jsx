@@ -293,7 +293,7 @@ const ChatInput = ({
                     className="w-full flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] transition-colors text-left"
                   >
                     <Image className="w-5 h-5 text-gray-800" />
-                    <span className="text-sm font-normal text-gray-800">Add Photo or Video</span>
+                    <span className="text-sm font-normal text-gray-800">Add Photo</span>
                   </button>
                   <button
                     type="button"
@@ -302,14 +302,6 @@ const ChatInput = ({
                   >
                     <FileText className="w-5 h-5 text-gray-800" />
                     <span className="text-sm font-normal text-gray-800">Add Files</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleTakePhoto}
-                    className="w-full flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-[#F2F2F7] hover:rounded-[11px] transition-colors text-left"
-                  >
-                    <Camera className="w-5 h-5 text-gray-800" />
-                    <span className="text-sm font-normal text-gray-800">Take a Photo</span>
                   </button>
                 </div>
               )}

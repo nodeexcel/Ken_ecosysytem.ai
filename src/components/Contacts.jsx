@@ -751,7 +751,7 @@ const ContactsPage = () => {
       <div className="flex flex-col items-start gap-2.5 w-full">
         <div className="flex items-center justify-between w-full">
           <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
-            {t("brain_ai.contacts")}
+            {t("brain_ai.contact")}
           </h1>
 
           <div className="flex gap-2.5 items-center">

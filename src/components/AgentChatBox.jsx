@@ -822,9 +822,9 @@ const AgentChatBox = ({ listedProps }) => {
                         </div>
                       ))
                     ) : (
-                    <div className="flex flex-col items-center justify-center h-full gap-4 sm:gap-6 lg:gap-8 px-2 sm:px-4">
+                    <div className="flex flex-col items-center justify-center h-full gap-4 sm:gap-6 lg:gap-6 px-2 sm:px-4">
                         <div className="flex justify-center">
-                          <div className="flex items-center justify-center mt-4">
+                          <div className="flex items-center justify-center lg:mt-8">
                             <img
                               src={agentLogo || "/placeholder.svg"}
                               alt={agentName}

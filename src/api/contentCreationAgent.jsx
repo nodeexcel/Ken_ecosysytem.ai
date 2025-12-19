@@ -49,6 +49,15 @@ export const createContent = async (payload) => {
         return error;
     }
 };
+export const getContents = async () => {
+    try {
+        const response = await agentInstance.get(`/get-contents`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
 
 export const contentGenerationStatus = async (id) => {
     try {

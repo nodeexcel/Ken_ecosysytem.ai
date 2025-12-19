@@ -100,7 +100,7 @@ const BrainAI = () => {
   const sideMenuItems = [
     { label: `${t("knowledge")}`, icon: <KnowledgeIconLocal isActive={activePath == "knowledge"} />, hoverIcon: <KnowledgeIconLocal isHover={true} />, path: "knowledge" },
     { label: `${t("integration")}`, icon: <IntegrationIcon isActive={activePath == "integration"} />, hoverIcon: <IntegrationIcon isHover={true} />, path: "integration" },
-    { label: `${t("contacts")}`, icon: <ContactsIcon isActive={activePath == "contacts"} />, hoverIcon: <ContactsIcon isHover={true} />, path: "contacts" },
+    { label: `${t("contact")}`, icon: <ContactsIcon isActive={activePath == "contacts"} />, hoverIcon: <ContactsIcon isHover={true} />, path: "contacts" },
   ]
 
   const renderMainContent = () => {

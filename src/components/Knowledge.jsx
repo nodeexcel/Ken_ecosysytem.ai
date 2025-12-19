@@ -260,16 +260,16 @@ const renderEmptyState = (tabKey, onAction) => {
   const config = {
     snippets: {
       icon: (
-        <div className="relative w-20 h-20 flex items-center justify-center">
+        <div className="relative w-18 h-18 flex items-center justify-center">
           <img
             src={snippetsTop}
             alt="No snippets"
-            className="absolute top-5 left-1/2 -translate-x-1/2 w-40 h-20 object-contain z-10"
+            className="absolute top-5 left-1/2 -translate-x-1/2 w-60 h-20 object-contain z-10"
           />
           <img
             src={snippetsBottom}
             alt="No snippets"
-            className="absolute bottom-3 left-1/2 -translate-x-1/2 w-30 h-16 object-contain "
+            className="absolute bottom-3 left-1/2 -translate-x-1/2 w-20 h-18 object-contain "
           />
         </div>
       ),

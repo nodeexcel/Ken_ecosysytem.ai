@@ -166,8 +166,7 @@ const Agents = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-start px-40">
           {employees.map((employee, index) => {
             const isDisabled =
-              employee.name === "Ken" ||
-              employee.name === "Tara";
+              employee.name === "Ken" ;
 
             return (
               <div
@@ -204,10 +203,10 @@ const Agents = () => {
                 </p>
 
                 {/* Tooltip for disabled cards */}
-                {isDisabled && (
+                {isDisabled && employee.name === "Ken" && (
                   <div className="absolute inset-0">
                     <div className="absolute top-5 font-[500] right-1/20 -translate-x-1/20 text-grey-200 text-[14px] py-1 px-3 whitespace-nowrap opacity-100">
-                      {employee.name === "Tara" ? "Update in progress!" : "Coming soon!"}
+                      Coming soon!
                     </div>
                   </div>
                 )}

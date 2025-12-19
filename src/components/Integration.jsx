@@ -181,51 +181,7 @@ const Integration = ({ firstRender, setFirstRender }) => {
       description: "It works with only professional and creator account.",
       connectedAccounts: instagramData?.length,
       path: import.meta.env.VITE_INSTA_URL + `&state=${userDetails.id}`,
-    },
-    {
-      icon: google,
-      name: "Google",
-      description: "Using regular google account.",
-      connectedAccounts: 0,
-    },
-    {
-      icon: linkedin,
-      name: "LinkedIn",
-      description: "Using regular linkedin account.",
-      connectedAccounts: linkedInData?.length,
-      path: import.meta.env.VITE_LINKEDIN_URL + `&state=${userDetails.id}`,
-    },
-    {
-      icon: facebook,
-      name: "Facebook",
-      description: "Using regular facebook account.",
-      connectedAccounts: 0,
-    },
-        {
-      icon: tiktok,
-      name: "TikTok",
-      description: "Using regular TikTok account.",
-      connectedAccounts: tikTokData?.length,
-      path:  import.meta.env.VITE_TIK_TOK_URL + `&state=${userDetails.id}`,
-    },
-    {
-      icon: systemio,
-      name: "Systeme.io",
-      description: "Using regular systeme account.",
-      connectedAccounts: 0,
-    },
-    {
-      icon: calendly,
-      name: "Calendly",
-      description: "Using regular Calendly account.",
-      connectedAccounts: 0,
-    },
-    {
-      icon: google_calender,
-      name: "Google Calendar",
-      description: "Using regular Google Calendar account.",
-      connectedAccounts: googleCalendarData?.length,
-      path: import.meta.env.VITE_GOOGLE_CALENDAR_URL + `&state=${userDetails.id}`,
+      isActive: true,
     },
     {
       icon: whatsapp,
@@ -233,24 +189,80 @@ const Integration = ({ firstRender, setFirstRender }) => {
       description: "Only possible with a WhatsApp Business Account.",
       connectedAccounts: whatsappData?.length,
       path: import.meta.env.VITE_WHATS_APP_URL + `&state=${userDetails.id}`,
+      isActive: true,
+    },
+    {
+      icon: tiktok,
+      name: "TikTok",
+      description: "Using regular TikTok account.",
+      connectedAccounts: tikTokData?.length,
+      path:  import.meta.env.VITE_TIK_TOK_URL + `&state=${userDetails.id}`,
+      isActive: true,
+    },
+    {
+      icon: linkedin,
+      name: "LinkedIn",
+      description: "Using regular linkedin account.",
+      connectedAccounts: linkedInData?.length,
+      path: import.meta.env.VITE_LINKEDIN_URL + `&state=${userDetails.id}`,
+      isActive: true,
+    },
+    {
+      icon: google_calender,
+      name: "Google Calendar",
+      description: "Using regular Google Calendar account.",
+      connectedAccounts: googleCalendarData?.length,
+      path: import.meta.env.VITE_GOOGLE_CALENDAR_URL + `&state=${userDetails.id}`,
+      isActive: true,
+    },
+    {
+      icon: google,
+      name: "Google",
+      description: "Using regular google account.",
+      connectedAccounts: 0,
+      isActive: false,
+    },
+    {
+      icon: facebook,
+      name: "Facebook",
+      description: "Using regular facebook account.",
+      connectedAccounts: 0,
+      isActive: false,
+    },
+    {
+      icon: systemio,
+      name: "Systeme.io",
+      description: "Using regular systeme account.",
+      connectedAccounts: 0,
+      isActive: false,
+    },
+    {
+      icon: calendly,
+      name: "Calendly",
+      description: "Using regular Calendly account.",
+      connectedAccounts: 0,
+      isActive: false,
     },
     {
       icon: active_campaign,
       name: "Active Campaign",
       description: "Using regular ActiveCampaign account.",
       connectedAccounts: 0,
+      isActive: false,
     },
     {
       icon: hubspot,
       name: "Hubspot",
       description: "Using regular Hubspot account.",
       connectedAccounts: 0,
+      isActive: false,
     },
     {
       icon: mailchimp,
       name: "Mailchimp",
       description: "Using regular Mailchimp account.",
       connectedAccounts: 0,
+      isActive: false,
     },
 
   ];
@@ -294,7 +306,7 @@ const Integration = ({ firstRender, setFirstRender }) => {
         {/* Header */}
         <header className="flex items-center justify-between w-full ">
           <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8 px-5">
-            Integrations
+            Integration
           </h1>
         </header>
 
@@ -303,8 +315,12 @@ const Integration = ({ firstRender, setFirstRender }) => {
           {integrations.map((integration, index) => (
             <div
               key={index}
-              onClick={() => handleClick(integration)}
-              className="cursor-pointer hover:opacity-70 bg-white border-[0.5px] border-solid border-[#e1e4ea] rounded-2xl"
+              onClick={() => integration.isActive && handleClick(integration)}
+              className={`relative bg-white border-[0.5px] border-solid border-[#e1e4ea] rounded-2xl ${
+                integration.isActive 
+                  ? 'cursor-pointer hover:opacity-80' 
+                  : 'cursor-not-allowed opacity-70'
+              }`}
             >
               <div className="flex items-center justify-between p-5">
                 <div className="flex items-start gap-3 flex-1 min-w-0">
@@ -319,23 +335,38 @@ const Integration = ({ firstRender, setFirstRender }) => {
                     <div className="w-10 h-10 bg-[url(${integration.iconBg})] bg-[100%_100%] flex-shrink-0 rounded-lg" />
                   )}
                   <div className="flex flex-col gap-1 flex-1 min-w-0">
-                    <span className="font-semibold text-[#1E1E1E] text-base leading-tight">
+                    <span className={`font-semibold text-base leading-tight ${
+                      integration.isActive ? 'text-[#1E1E1E]' : 'text-[#9CA3AF]'
+                    }`}>
                     {integration.name}
                   </span>
-                    <span className="text-sm text-[#5A687C] leading-tight">
+                    <span className={`text-sm leading-tight ${
+                      integration.isActive ? 'text-[#5A687C]' : 'text-[#9CA3AF]'
+                    }`}>
                       {integration.description}
                     </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0 ml-3">
-                  <div className="w-6 h-6 rounded-full bg-[#F3F4F6] flex items-center justify-center">
-                    <span className="font-medium text-[#1E1E1E] text-sm">
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                    integration.isActive ? 'bg-[#F3F4F6]' : 'bg-[#E5E7EB]'
+                  }`}>
+                    <span className={`font-medium text-sm ${
+                      integration.isActive ? 'text-[#1E1E1E]' : 'text-[#9CA3AF]'
+                    }`}>
                       {integration.connectedAccounts}
                   </span>
                   </div>
-                  <ChevronRight className="w-5 h-5 flex-shrink-0" color='#5A687C' />
+                  <ChevronRight className="w-5 h-5 flex-shrink-0" color={integration.isActive ? '#5A687C' : '#9CA3AF'} />
                 </div>
               </div>
+              {!integration.isActive && (
+                <div className="absolute inset-0 flex items-center justify-end pr-25 rounded-2xl">
+                  <span className="font-semibold text-[#9CA3AF] text-base">
+                    Coming soon
+                  </span>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -358,3 +389,4 @@ const Integration = ({ firstRender, setFirstRender }) => {
 }
 
 export default Integration
+

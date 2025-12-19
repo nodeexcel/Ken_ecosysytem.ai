@@ -74,9 +74,9 @@ function CooPresentations() {
     );
 
     return (
-        <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full">
+        <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full items-center justify-start pt-12">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
                 <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{t("tara.presentation")} </h1>
                 <button
                     className="bg-[#675FFF] cursor-pointer border border-[#5F58E8] text-white font-medium rounded-lg px-5 py-2 flex items-center gap-2"
@@ -91,9 +91,9 @@ function CooPresentations() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
-            </div>
+            </div> */}
             {/* Table */}
-            <div className="w-full">
+            {/* <div className="w-full">
                 <table className="w-full">
                     <div className="px-5 w-full">
                         <thead>
@@ -171,7 +171,14 @@ function CooPresentations() {
                                 </tbody> : <p className="flex justify-center items-center h-34 text-[#1E1E1E]">{t("tara.no_article_listed")}</p>}
                     </div>
                 </table>
-            </div>
+            </div> */}
+            <div className="text-4xl">🚧</div>
+            <h2 className="text-3xl font-semibold text-gray-800">
+                Coming Soon
+            </h2>
+            <p className="text-md text-gray-500 font-medium max-w-full text-center">
+                This feature is currently under development. Please check back soon for updates.
+            </p>
         </div>
     )
 }

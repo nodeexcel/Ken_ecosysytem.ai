@@ -1137,6 +1137,7 @@ const frenchTranslation = {
     income_efficiently_key:
       "Comment organiser efficacement mes dépenses et mes revenus.",
     content_creation: "Création de contenu",
+    no_creations: "Aucune création récente trouvée",
     creation_studio_descrp: "Créez, gérez et programmez du contenu sans effort grâce à la créativité alimentée par l'IA.",
     constance: "Constance",
     scheduler: "Planificateur",
