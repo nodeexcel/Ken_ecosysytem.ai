@@ -136,14 +136,27 @@ const Agents = () => {
         {/* Card Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-start px-40">
           {employees.map((employee, index) => {
+            const isDisabled = employee.name === "Ken";
             return (
               <div
                 key={index}
                 onClick={() => {
-                  handleNavigate(employee.path, employee.label);
+                  if (!isDisabled) {
+                    handleNavigate(employee.path, employee.label);
+                  }
                 }}
-                className="relative h-[210px] px-4 rounded-2xl shadow-sm transition-all duration-300 flex flex-col items-start pt-6 w-full bg-white hover:shadow-md border border-[#D6D6D6] cursor-pointer hover:bg-[#f8fafa]"
+                className={`relative h-[210px] px-4 rounded-2xl shadow-sm transition-all duration-300 flex flex-col items-start pt-6 w-full bg-white border border-[#D6D6D6] ${
+                  isDisabled 
+                    ? "opacity-50 cursor-not-allowed" 
+                    : "hover:shadow-md cursor-pointer hover:bg-[#f8fafa]"
+                }`}
               >
+                {/* Coming Soon Badge */}
+                {isDisabled && (
+                  <div className="absolute top-3 right-3 text-grey-400 text-md font-[500] px-2.5 py-1 rounded-md z-10">
+                    Coming Soon!
+                  </div>
+                )}
                 {/* Avatar */}
                 <div
                   className={`w-[80px] h-[80px] rounded-full flex items-center justify-center mb-6 ml-2 border-1 ${employee.gradient} ${employee.borderColor}`}
