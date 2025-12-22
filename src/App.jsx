@@ -30,6 +30,7 @@ import Coo from './pages/Dashboard/Coo'
 import Seo from './pages/Dashboard/Seo'
 import ContentCreation from './pages/Dashboard/ContentCreation'
 import CustomerSupport from './pages/Dashboard/CustomerSupport'
+import Ken from './pages/Dashboard/Ken'
 // import Skills from './pages/Dashboard/Skills'
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -95,6 +96,7 @@ import EmbededChatbot from './pages/embededChatbot/embededChatbot'
           <Route path="content-creation" element={<ContentCreation />} />
           <Route path="customer-support/:id" element={<CustomerSupport />} />
           <Route path="customer-support" element={<CustomerSupport />} />
+          <Route path="ken" element={<Ken />} />
           {/* <Route path="skills" element={<Skills />} /> */}
         </Route>
       </Routes>

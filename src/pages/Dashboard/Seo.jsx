@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArticleIcon, AuditIcon, AutomationIcon, ConversationIcon, LeftArrow } from '../../icons/icons'
 import emileImg from "../../assets/svg/emile_logo.svg"
-
+import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import sandroMsgLogo from '../../assets/svg/sandro_msg_logo.svg'
 import HomeGrid from "../../assets/svg/DashboardGrey.svg"
@@ -15,7 +15,6 @@ import CitationAnalytics from '../../components/CitationAnalytics'
 import ContentAnalytics from '../../components/ContentAnalytics'
 import PromptAnalytics from '../../components/PromptAnalytics'
 import { formatTimeAgo } from '../../utils/TimeFormat'
-import { useTranslation } from "react-i18next";
 import { Archive, X, BarChart3, AtSign, FileText, PieChart, ChevronUp, BarChartIcon, ChartColumnBig, ArrowUp, FolderDown, Upload, Search, EllipsisVertical } from 'lucide-react'
 import ChatgptLogo from '../../assets/svg/Chatgpt.svg'
 import GeminiLogo from '../../assets/svg/Gemini.svg'
@@ -374,35 +373,35 @@ function Seo() {
                     <div className="p-12 flex flex-col gap-4">
                         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                             <div className="flex flex-col gap-1">
-                                <h2 className="text-2xl font-[600] text-[#1E1E1E]">Prompts</h2>
+                                <h2 className="text-2xl font-[600] text-[#1E1E1E]">{t("geo.prompts")}</h2>
                                 <p className="text-sm text-[#5A687C]">
-                                    Simulate conversations with AI models across different platforms.
+                                    {t("geo.simulate_conversations_with_ai_models_across_different_platforms")}
                                 </p>
                             </div>
                             <div className="flex items-center gap-2">
                                 <button className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-sm font-[500] text-[#1E1E1E] hover:bg-[#F8F9FB] transition-colors cursor-pointer">
                                     <Upload className="w-4 h-4" />
-                                    Export All
+                                    {t("geo.export_all")}
                                 </button>
                                 <button className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-sm font-[500] text-[#1E1E1E] hover:bg-[#F8F9FB] transition-colors cursor-pointer">
                                     <FolderDown className="w-4 h-4" />
-                                    Import
+                                    {t("geo.import")}
                                 </button>
                                 <button className="inline-flex items-center gap-2 px-4 py-2 bg-[#675FFF] text-white rounded-lg text-sm font-[400] hover:bg-[#594edb] transition-colors cursor-pointer">
                                     <span className="text-lg leading-none">+</span>
-                                    Add prompt
+                                    {t("geo.add_prompt")}
                                 </button>
                             </div>
                         </div>
                         
                         {/* Search and Sort Section */}
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#F7F7F8] px-4 pt-4 rounded-lg">
-                            <p className="text-sm text-[#5A687C]">Sorted by created date (newest first)</p>
+                            <p className="text-sm text-[#5A687C]">{t("geo.sorted_by_created_date_newest_first")}</p>
                             <div className="relative w-full sm:w-auto sm:min-w-[270px]">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
                                 <input
                                     type="text"
-                                    placeholder="Search name or phone number"
+                                    placeholder={t("geo.search_name_or_phone_number")}
                                     value={promptSearchQuery}
                                     onChange={(e) => setPromptSearchQuery(e.target.value)}
                                     className="w-full pl-10 pr-4 py-2 border border-[#E1E4EA] rounded-lg bg-white focus:outline-none focus:border-[#675FFF] text-sm text-[#1E1E1E] placeholder:text-[#5A687C]"
@@ -424,11 +423,11 @@ function Seo() {
                                                         onChange={handleSelectAllPrompts}
                                                         className="w-4 h-4 border border-[#D6D6D6] rounded cursor-pointer"
                                                     />
-                                                    <span>Cited sources</span>
+                                                    <span>{t("geo.cited_sources")}</span>
                                                 </div>
                                             </th>
-                                            <th className="px-3 text-start py-2 text-[16px] font-[400]">Models</th>
-                                            <th className="px-3 text-start py-2 text-[16px] font-[400]">Created</th>
+                                            <th className="px-3 text-start py-2 text-[16px] font-[400]">{t("geo.models")}</th>
+                                            <th className="px-3 text-start py-2 text-[16px] font-[400]">{t("geo.created")}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
@@ -468,7 +467,7 @@ function Seo() {
                             <div className="flex items-center justify-between bg-[#F7F7F8] px-4 py-3">
                                 <div className="flex items-center gap-2">
                                     <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white opacity-50 cursor-not-allowed">
-                                        ‹ Prev
+                                        ‹ {t("geo.prev")}
                                     </button>
                                     <button className="bg-[#675FFF] text-white rounded-lg px-3 py-1 text-sm cursor-pointer">
                                         1
@@ -484,11 +483,11 @@ function Seo() {
                                         10
                                     </button>
                                     <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
-                                        Next ›
+                                        {t("geo.next")} ›
                                     </button>
                                 </div>
                                 <div className="flex items-center gap-2 text-sm text-[#5A687C]">
-                                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 rows</button>
+                                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 {t("geo.rows")}</button>
                                     <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">10</button>
                                     <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">20</button>
                                 </div>
@@ -690,7 +689,7 @@ function Seo() {
                                 </div>
                             )}
                             <span className={`font-[400] text-[16px] ${activeSidebarItem === 'prompts' ? "text-[#000000]" : "text-[#000000] group-hover:text-[#1E1E1E]"}`}>
-                                {t("Prompts") || "Prompts"}
+                                {t("seo.prompts")}
                             </span>
                         </div>
                     </div>
@@ -897,7 +896,7 @@ function Seo() {
                                     <img src={Prompts} alt="Prompts" className="w-5 h-5" />
                                 )}
                                 <span className={`font-[400] text-[16px] ${activeSidebarItem === 'prompts' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`}>
-                                    {t("Prompts") || "Prompts"}
+                                    {t("seo.prompts")}
                                 </span>
                             </div>
                         </div>

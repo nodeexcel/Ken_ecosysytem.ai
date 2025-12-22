@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useMemo } from "react"
 import { DateFormat } from "../utils/TimeFormat"
 import { Delete, Edit } from "../icons/icons"
 import { Search, ChevronDown, Ellipsis } from "lucide-react"
@@ -7,12 +7,15 @@ import CustomerSupportChatBotForm from "./CustomerSupportChatBotForm"
 import { useTranslation } from "react-i18next";
 import CustomerSupportChat from "./CustomerSupportChat";
 import { deleteSmartChatBotById, getSmartBotById, getSmartBots } from "../api/customerSupport";
+import { SelectDropdown } from "./Dropdown";
 
 
 function SmartChatbot() {
     const [chatbotData, setChatbotData] = useState([])
     const [filteredChatbotData, setFilteredChatbotData] = useState([])
     const [searchQuery, setSearchQuery] = useState("")
+    const [sortBy, setSortBy] = useState("")
+    const [statusFilter, setStatusFilter] = useState("")
     const [loading, setLoading] = useState(true)
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
@@ -26,6 +29,23 @@ function SmartChatbot() {
     const [agentId, setAgentId] = useState();
     const [selectedBotData, setSelectedBotData] = useState(null);
     const { t } = useTranslation()
+
+    // Sort options
+    const sortOptions = [
+        { key: "name_az", label: t("calina.sort_name_az") },
+        { key: "name_za", label: t("calina.sort_name_za") },
+        { key: "date_newest", label: t("calina.sort_date_newest") },
+        { key: "date_oldest", label: t("calina.sort_date_oldest") },
+        { key: "chats_most", label: t("calina.sort_chats_most") },
+        { key: "chats_least", label: t("calina.sort_chats_least") },
+    ]
+
+    // Status options
+    const statusOptions = [
+        { key: "all", label: t("calina.status_all") },
+        { key: "active", label: t("calina.status_active") },
+        { key: "inactive", label: t("calina.status_inactive") },
+    ]
 
     useEffect(() => {
         if (chatbotData?.length > 0) {
@@ -48,17 +68,58 @@ function SmartChatbot() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [activeDropdown]);
 
-    // Filter chatbots based on search query
+    // Filter and sort chatbots based on search query, status, and sort option
     useEffect(() => {
-        if (searchQuery.trim() === "") {
-            setFilteredChatbotData(chatbotData)
-        } else {
-            const filtered = chatbotData.filter(chatbot =>
+        let filtered = [...chatbotData]
+
+        // Search filter
+        if (searchQuery.trim() !== "") {
+            filtered = filtered.filter(chatbot =>
                 chatbot.bot_name.toLowerCase().includes(searchQuery.toLowerCase())
             )
-            setFilteredChatbotData(filtered)
         }
-    }, [searchQuery, chatbotData])
+
+        // Status filter (consider active if has chats, inactive if no chats)
+        if (statusFilter && statusFilter !== "all") {
+            filtered = filtered.filter(chatbot => {
+                const hasChats = chatbot.chats && chatbot.chats > 0
+                if (statusFilter === "active") {
+                    return hasChats
+                } else if (statusFilter === "inactive") {
+                    return !hasChats
+                }
+                return true
+            })
+        }
+
+        // Sort
+        if (sortBy) {
+            filtered.sort((a, b) => {
+                switch (sortBy) {
+                    case "name_az":
+                        return (a.bot_name || "").localeCompare(b.bot_name || "")
+                    case "name_za":
+                        return (b.bot_name || "").localeCompare(a.bot_name || "")
+                    case "date_newest":
+                        const dateA = a.created_at ? new Date(a.created_at.replace(' ', 'T')) : new Date(0)
+                        const dateB = b.created_at ? new Date(b.created_at.replace(' ', 'T')) : new Date(0)
+                        return dateB - dateA
+                    case "date_oldest":
+                        const dateAOld = a.created_at ? new Date(a.created_at.replace(' ', 'T')) : new Date(0)
+                        const dateBOld = b.created_at ? new Date(b.created_at.replace(' ', 'T')) : new Date(0)
+                        return dateAOld - dateBOld
+                    case "chats_most":
+                        return (b.chats || 0) - (a.chats || 0)
+                    case "chats_least":
+                        return (a.chats || 0) - (b.chats || 0)
+                    default:
+                        return 0
+                }
+            })
+        }
+
+        setFilteredChatbotData(filtered)
+    }, [searchQuery, chatbotData, sortBy, statusFilter])
 
 
     const handleDropdownClick = (index, event) => {
@@ -144,7 +205,7 @@ function SmartChatbot() {
                     <div className="flex items-start justify-between">
                         <div className="flex flex-col gap-1">
                             <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{t("calina.smart_chatbot")}</h1>
-                            <p className="text-[#5A687C] text-sm font-[400]">Manage all agents in one place</p>
+                            <p className="text-[#5A687C] text-sm font-[400]">{t("calina.manage_all_agents_in_one_place")}</p>
                         </div>
                         <button
                             onClick={() => setChatBotFormStatus(true)}
@@ -168,12 +229,24 @@ function SmartChatbot() {
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
-                            <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E1E4EA] bg-white text-[#1E1E1E] text-sm font-medium">
-                                Sort By <ChevronDown className="w-4 h-4 text-[#9CA3AF]" />
-                            </button>
-                            <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E1E4EA] bg-white text-[#1E1E1E] text-sm font-medium">
-                                Status <ChevronDown className="w-4 h-4 text-[#9CA3AF]" />
-                            </button>
+                            <div className="w-30 text-[13px] font-[500]">
+                                <SelectDropdown
+                                    name="sortBy"
+                                    options={sortOptions}
+                                    placeholder={t("calina.sort_by")}
+                                    value={sortBy}
+                                    onChange={(value) => setSortBy(value)}
+                                />
+                            </div>
+                            <div className="w-30 text-[13px] font-[500]">
+                                <SelectDropdown
+                                    name="status"
+                                    options={statusOptions}
+                                    placeholder={t("calina.status")}
+                                    value={statusFilter}
+                                    onChange={(value) => setStatusFilter(value)}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Search, Plus, Download, RefreshCw, Ellipsis, ArrowRight, ArrowUpRight, ArrowDownRight, Info, ChevronDown, X, Globe, FileText, Filter, Users, Building2, Sparkles, Upload, Cloud, Trash2, Pencil, ArrowRight as ArrowRightIcon } from 'lucide-react';
 import SuccessIcon from '../assets/svg/SuccessIcon.svg';
 import ChatgptLogoWhite from '../assets/svg/ChatgptLogoWhite.svg';
@@ -37,6 +38,7 @@ ChartJS.register(
 );
 
 const Product = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPeriod, setSelectedPeriod] = useState('Last 30 days');
@@ -135,7 +137,7 @@ const Product = () => {
     labels: ['1/3', '2/3', '3/3', '4/3', '5/3', '6/3', '7/3', '8/3', '9/3'],
     datasets: [
       {
-        label: 'Share of Voice',
+        label: t("geo.share_of_voice"),
         data: [8, 12, 15, 10, 18, 14, 16, 20, 10],
         borderColor: '#675FFF',
         backgroundColor: 'rgba(103, 95, 255, 0.1)',
@@ -206,12 +208,12 @@ const Product = () => {
 
   // Progress steps configuration
   const progressSteps = [
-    { id: 0, label: "Scraping website", icon: GlobeIcon },
-    { id: 1, label: "Detecting Language", icon: GlobeIcon },
-    { id: 2, label: "Analyzing Your Product", icon: AnalysisIcon },
-    { id: 3, label: "Generating Differentiators", icon: DifferentiatorIcon },
-    { id: 4, label: "Finding Competitors", icon: CompetitorIcon },
-    { id: 5, label: "Creating Company Profile", icon: CompanyIcon },
+    { id: 0, label: t("geo.scraping_website"), icon: GlobeIcon },
+    { id: 1, label: t("geo.detecting_language"), icon: GlobeIcon },
+    { id: 2, label: t("geo.analyzing_product"), icon: AnalysisIcon },
+    { id: 3, label: t("geo.generating_differentiators"), icon: DifferentiatorIcon },
+    { id: 4, label: t("geo.finding_competitors"), icon: CompetitorIcon },
+    { id: 5, label: t("geo.creating_company_profile"), icon: CompanyIcon },
   ];
 
 
@@ -398,7 +400,7 @@ const Product = () => {
 
           {/* Step 2: Detecting Language */}
           {step.id === 1 && isCompleted && detectedLanguage && (
-            <p className="text-[#6B7280] text-xs mt-0.5">Detected: {detectedLanguage}</p>
+            <p className="text-[#6B7280] text-xs mt-0.5">{t("geo.detected")} {detectedLanguage}</p>
           )}
 
           {/* Step 3: Analyzing Your Product */}
@@ -427,7 +429,7 @@ const Product = () => {
           {/* Step 5: Finding Competitors */}
           {step.id === 4 && isCompleted && (
             <div className="mt-2">
-              <p className="text-[#6B7280] text-xs mb-2">Found {competitors.length} competitors</p>
+              <p className="text-[#6B7280] text-xs mb-2">{t("geo.found_competitors", { count: competitors.length })}</p>
               <div className="flex flex-wrap gap-2">
                 {competitors.map((competitor, idx) => (
                   <span
@@ -455,7 +457,7 @@ const Product = () => {
           <div className=" rounded-2xl w-full max-w-full p-8">
             {/* Title */}
             <h2 className="text-2xl font-[600] text-[#1E1E1E] mb-8 text-center">
-              We're collecting information for your product...
+              {t("geo.collecting_information")}
             </h2>
 
             {/* Progress Steps */}
@@ -469,12 +471,12 @@ const Product = () => {
         <div className="w-full h-full">
           {/* Header Section */}
           <div className="px-6 py-4 mb-2">
-            <h1 className="text-2xl font-[600] text-[#1E1E1E]">Add Product</h1>
+            <h1 className="text-2xl font-[600] text-[#1E1E1E]">{t("geo.add_product")}</h1>
           </div>
           <div className="bg-white rounded-2xl border border-[#E1E4EA]">
             <div className='px-6 py-4 border-b border-[#E1E4EA]'>
-              <h2 className="text-lg font-[600] text-[#1E1E1E] mb-1">Company Details</h2>
-              <p className="text-md text-[#6B7280]">Review and make edits before continuing.</p>
+              <h2 className="text-lg font-[600] text-[#1E1E1E] mb-1">{t("geo.company_details")}</h2>
+              <p className="text-md text-[#6B7280]">{t("geo.review_and_edit")}</p>
             </div>
 
             {/* Content Section */}
@@ -495,8 +497,8 @@ const Product = () => {
 
                       {/* Text Info */}
                       <div>
-                        <p className="text-md font-[600] text-[#1E1E1E]">Company Profile</p>
-                        <p className="text-xs font-[400] text-[#6B7280]">400×400 resolution, up to 5mb</p>
+                        <p className="text-md font-[600] text-[#1E1E1E]">{t("geo.company_profile")}</p>
+                        <p className="text-xs font-[400] text-[#6B7280]">{t("geo.resolution_info")}</p>
                       </div>
                     </div>
 
@@ -504,12 +506,12 @@ const Product = () => {
                     <div className="flex items-center gap-3">
                       <button className="flex items-center gap-2 px-4 py-2 bg-[#675FFF] text-white rounded-lg text-sm font-[500] hover:bg-[#5A4FE6] transition-colors">
                         <Upload className="w-4 h-4" />
-                        Upload New
+                        {t("geo.upload_new")}
                       </button>
 
                       <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] text-[#1E1E1E] rounded-lg text-sm font-[500] hover:bg-[#F8F9FB] transition-colors">
                         <Trash2 className="w-4 h-4" />
-                        Delete
+                        {t("geo.delete")}
                       </button>
                     </div>
                   </div>
@@ -517,7 +519,7 @@ const Product = () => {
 
                   {/* Company Name */}
                   <div className="space-y-2">
-                    <label className="text-sm font-[500] text-[#4B5563]">Company Name</label>
+                    <label className="text-sm font-[500] text-[#4B5563]">{t("geo.company_name")}</label>
                     <input
                       type="text"
                       value={companyName}
@@ -529,14 +531,14 @@ const Product = () => {
                   {/* Import File */}
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <label className="text-sm font-[500] text-[#4B5563]">Import File</label>
+                      <label className="text-sm font-[500] text-[#4B5563]">{t("geo.import_file")}</label>
 
                     </div>
                     <div className="border-2 border-dashed border-[#E1E4EA] rounded-lg p-8 flex flex-col items-center justify-center gap-2 min-h-[260px]">
                       <div className="w-16 h-16 rounded-full bg-[#F6F8FA] flex items-center justify-center">
                         <img src={Preview} className='w-10 h-10' />
                       </div>
-                      <p className="text-sm text-[#6B7280]">Preview</p>
+                      <p className="text-sm text-[#6B7280]">{t("geo.preview")}</p>
                     </div>
                   </div>
                 </div>
@@ -545,7 +547,7 @@ const Product = () => {
                 <div className="space-y-6">
                   {/* Overview */}
                   <div className="space-y-2">
-                    <label className="text-sm font-[500] text-[#4B5563]">Overview</label>
+                    <label className="text-sm font-[500] text-[#4B5563]">{t("geo.overview")}</label>
                     <textarea
                       value={overview}
                       onChange={(e) => setOverview(e.target.value)}
@@ -556,7 +558,7 @@ const Product = () => {
 
                   {/* Keywords Set 1 */}
                   <div className="space-y-3">
-                    <label className="text-sm font-[500] text-[#4B5563]">Keywords (Generated Tags)</label>
+                    <label className="text-sm font-[500] text-[#4B5563]">{t("geo.keywords_generated_tags")}</label>
                     <div className="flex flex-wrap gap-2">
                       {keywords1.map((keyword, index) => (
                         <span
@@ -578,13 +580,13 @@ const Product = () => {
                       className="flex items-center gap-2 text-sm text-[#675FFF] font-[500] hover:text-[#5A4FE6] cursor-pointer"
                     >
                       <Plus className="w-4 h-4" />
-                      Add New
+                      {t("geo.add_new")}
                     </button>
                   </div>
 
                   {/* Keywords Set 2 */}
                   <div className="space-y-3">
-                    <label className="text-sm font-[500] text-[#4B5563]">Keywords (Generated Tags)</label>
+                    <label className="text-sm font-[500] text-[#4B5563]">{t("geo.keywords_generated_tags")}</label>
                     <div className="flex flex-wrap gap-2">
                       {keywords2.map((keyword, index) => (
                         <span
@@ -606,7 +608,7 @@ const Product = () => {
                       className="flex items-center gap-2 text-sm text-[#675FFF] font-[500] hover:text-[#5A4FE6] cursor-pointer"
                     >
                       <Plus className="w-4 h-4" />
-                      Add New
+                      {t("geo.add_new")}
                     </button>
                   </div>
                 </div>
@@ -621,7 +623,7 @@ const Product = () => {
                   }}
                   className="px-5 py-2.5 bg-white border border-[#E1E4EA] text-[#1E1E1E] rounded-lg text-sm font-[500] hover:bg-[#F8F9FB] transition-colors cursor-pointer"
                 >
-                  Back
+                  {t("geo.back")}
                 </button>
                 <button
                   onClick={() => {
@@ -630,7 +632,7 @@ const Product = () => {
                   }}
                   className="px-5 py-2.5 bg-[#675FFF] text-white rounded-lg text-sm font-[500] hover:bg-[#5A4FE6] transition-colors cursor-pointer"
                 >
-                  Generate Prompt
+                  {t("geo.generate_prompt")}
                 </button>
               </div>
             </div>
@@ -641,14 +643,14 @@ const Product = () => {
         <div className="w-full h-full flex gap-6">
           {/* Left Section - Prompt Suggestions */}
           <div className="flex-1">
-            <h1 className="text-2xl font-[600] text-[#1E1E1E] mb-6">Add Product</h1>
+            <h1 className="text-2xl font-[600] text-[#1E1E1E] mb-6">{t("geo.add_product")}</h1>
 
             <div className="bg-white rounded-2xl border border-[#E1E4EA] overflow-hidden">
               {/* Header Section */}
               <div className="px-6 py-4 border-b border-[#E1E4EA]">
-                <h2 className="text-lg font-[600] text-[#1E1E1E] mb-2">Prompt Suggestions</h2>
+                <h2 className="text-lg font-[600] text-[#1E1E1E] mb-2">{t("geo.prompt_suggestions")}</h2>
                 <p className="text-sm text-[#6B7280]">
-                  We run thousands of simulations to find prompts that best match your product.
+                  {t("geo.prompt_suggestions_description")}
                 </p>
               </div>
 
@@ -679,7 +681,7 @@ const Product = () => {
                     className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] text-[#1E1E1E] rounded-lg text-sm font-[500] hover:bg-[#F8F9FB] transition-colors cursor-pointer"
                   >
                     <RefreshCw className="w-4 h-4" />
-                    Regenerate
+                    {t("geo.regenerate")}
                   </button>
                   <button
                     onClick={() => {
@@ -687,7 +689,7 @@ const Product = () => {
                     }}
                     className="flex items-center gap-2 px-5 py-2 bg-[#675FFF] text-white rounded-lg text-sm font-[500] hover:bg-[#5A4FE6] transition-colors cursor-pointer"
                   >
-                    Show Results
+                    {t("geo.show_results")}
                     <ArrowRightIcon className="w-4 h-4" />
                   </button>
                 </div>
@@ -712,7 +714,7 @@ const Product = () => {
                 <div className="bg-white rounded-xl shadow-xl overflow-hidden">
                   {/* Header Section */}
                   <div className="px-6 py-4 border-b border-[#E1E4EA]">
-                    <h2 className="text-lg font-[600] text-[#1E1E1E]">ChatGPT</h2>
+                    <h2 className="text-lg font-[600] text-[#1E1E1E]">{t("geo.chatgpt")}</h2>
                   </div>
 
                   {/* Content Section */}
@@ -724,7 +726,7 @@ const Product = () => {
                       </div>
 
                       <div className='flex flex-col flex-1'>
-                        <p className="text-sm font-[600] text-[#1E1E1E]">User (Sami)</p>
+                        <p className="text-sm font-[600] text-[#1E1E1E]">{t("geo.user_sami")}</p>
                         <p className="text-sm text-[#1E1E1E] mb-6">
                           Which platform offers AI-powered ticket triage and automated customer support workflows?
                         </p>
@@ -740,7 +742,7 @@ const Product = () => {
 
                       {/* Right: ChatGPT label + paragraph */}
                       <div className="flex flex-col flex-1">
-                        <p className="text-sm font-[600] text-[#1E1E1E] mb-1">ChatGPT</p>
+                        <p className="text-sm font-[600] text-[#1E1E1E] mb-1">{t("geo.chatgpt")}</p>
 
                         <p className="text-sm text-[#1E1E1E]">
                           <span className="font-[600]">NovaDesk</span> appears to be an ideal solution.
@@ -770,10 +772,10 @@ const Product = () => {
               {/* Title and Subtitle */}
               <div>
                 <h1 className="text-2xl sm:text-3xl font-[600] text-[#1E1E1E] mb-1">
-                  Product
+                  {t("geo.product")}
                 </h1>
                 <p className="text-[14px] text-[#5A687C]">
-                  Manage all products under your organization.
+                  {t("geo.manage_products")}
                 </p>
               </div>
 
@@ -782,7 +784,7 @@ const Product = () => {
                 {/* Download CSV Button */}
                 <button className="flex items-center cursor-pointer gap-2 px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors">
                   <Download className="w-4 h-4" />
-                  <span>Download CSV</span>
+                  <span>{t("geo.download_csv")}</span>
                 </button>
 
                 {/* Add New Product Button */}
@@ -792,7 +794,7 @@ const Product = () => {
                   className="flex items-center cursor-pointer gap-2 px-4 py-2 bg-[#675FFF] rounded-lg text-white font-[500] text-sm hover:bg-[#5A4FE6] transition-colors relative"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Add New Product</span>
+                  <span>{t("geo.add_new_product")}</span>
                 </button>
               </div>
             </div>
@@ -804,7 +806,7 @@ const Product = () => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
                 <input
                   type="text"
-                  placeholder="Search name or phone number"
+                  placeholder={t("geo.search_name_or_phone")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-[#E1E4EA] rounded-lg bg-white focus:outline-none focus:border-[#675FFF] text-sm text-[#1E1E1E]"
@@ -814,7 +816,7 @@ const Product = () => {
               {/* Refresh Button */}
               <button className="flex items-center gap-2 cursor-pointer px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors">
                 <RefreshCw className="w-4 h-4" />
-                <span>Refresh</span>
+                <span>{t("geo.refresh")}</span>
               </button>
             </div>
           </div>
@@ -826,12 +828,12 @@ const Product = () => {
               <table className="min-w-full border-separate border-spacing-0">
                 <thead className="bg-[#F7F7F8]">
                   <tr className="text-[#5A687C]">
-                    <th className="px-6 text-start py-2 text-[16px] font-[400]">Product Name</th>
-                    <th className="px-3 text-start py-2 text-[16px] font-[400]">Slug</th>
-                    <th className="px-3 text-start py-2 text-[16px] font-[400]">Last Month's SOV</th>
-                    <th className="px-3 text-start py-2 text-[16px] font-[400]">Month to Date</th>
-                    <th className="px-3 text-start py-2 text-[16px] font-[400]">Growth</th>
-                    <th className="px-6 text-center py-2 text-[16px] font-[400]">Action</th>
+                    <th className="px-6 text-start py-2 text-[16px] font-[400]">{t("geo.product_name")}</th>
+                    <th className="px-3 text-start py-2 text-[16px] font-[400]">{t("geo.slug")}</th>
+                    <th className="px-3 text-start py-2 text-[16px] font-[400]">{t("geo.last_month_sov")}</th>
+                    <th className="px-3 text-start py-2 text-[16px] font-[400]">{t("geo.month_to_date")}</th>
+                    <th className="px-3 text-start py-2 text-[16px] font-[400]">{t("geo.growth")}</th>
+                    <th className="px-6 text-center py-2 text-[16px] font-[400]">{t("geo.action")}</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
@@ -862,7 +864,7 @@ const Product = () => {
               {/* pagination + row controls */}
               <div className="flex items-center gap-2">
                 <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white opacity-50 cursor-not-allowed">
-                  ‹ Prev
+                  ‹ {t("geo.prev")}
                 </button>
                 <button className="bg-[#675FFF] text-white rounded-lg px-3 py-1 text-sm cursor-pointer">
                   1
@@ -878,13 +880,13 @@ const Product = () => {
                   10
                 </button>
                 <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
-                  Next ›
+                  {t("geo.next")} ›
                 </button>
               </div>
 
               {/* Right side – rows per page */}
               <div className="flex items-center gap-2 text-sm text-[#5A687C]">
-                <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 rows</button>
+                <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 {t("geo.rows")}</button>
                 <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">10</button>
                 <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">20</button>
               </div>
@@ -896,7 +898,7 @@ const Product = () => {
               <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden relative">
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-[#E1E4EA]">
-                  <h2 className="text-lg font-[600] text-[#1E1E1E]">Add New Product</h2>
+                  <h2 className="text-lg font-[600] text-[#1E1E1E]">{t("geo.add_new_product")}</h2>
                   <button
                     type="button"
                     onClick={() => {
@@ -914,20 +916,20 @@ const Product = () => {
                 <div className="px-6 py-4 space-y-4">
                   <div className="flex flex-col gap-1">
                     <label className="text-sm font-[500] text-[#4B5563]">
-                      Product Name
+                      {t("geo.product_name")}
                     </label>
                     <input
                       type="text"
                       value={newProductName}
                       onChange={(e) => setNewProductName(e.target.value)}
-                      placeholder="Enter product name"
+                      placeholder={t("geo.enter_product_name")}
                       className="w-full px-3 py-2 border border-[#E1E4EA] rounded-lg text-sm text-[#1E1E1E] focus:outline-none focus:border-[#675FFF]"
                     />
                   </div>
 
                   <div className="flex flex-col gap-1">
                     <label className="text-sm font-[500] text-[#4B5563]">
-                      Website
+                      {t("geo.website")}
                     </label>
                     <input
                       type="text"
@@ -950,7 +952,7 @@ const Product = () => {
                     }}
                     className="px-4 py-2 text-sm font-[500] text-[#4B5563] bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F3F4F6] cursor-pointer"
                   >
-                    Cancel
+                    {t("geo.cancel")}
                   </button>
                   <button
                     type="button"
@@ -958,7 +960,7 @@ const Product = () => {
                     className="px-4 py-2 text-sm font-[500] text-white bg-[#675FFF] rounded-lg hover:bg-[#5A4FE6] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                     disabled={!newProductName || !newProductWebsite}
                   >
-                    Add Product
+                    {t("geo.add_product")}
                   </button>
                 </div>
               </div>

@@ -559,7 +559,7 @@ const renderEmptyState = (tabKey, onAction) => {
                   {modelData[activeTab].label}
                 </p>
                 
-                <label className="block text-[14px] font-medium text-[#868C98] mb-2">Reupload Your File</label>
+                <label className="block text-[14px] font-medium text-[#868C98] mb-2">{t("brain_ai.knowledge.reupload_your_file")}</label>
                 <div
                   onClick={handleClick}
                   onDragOver={handleDragOver}
@@ -570,7 +570,7 @@ const renderEmptyState = (tabKey, onAction) => {
                 >
                   <Upload className="w-8 h-8 text-[#675FFF] mb-3" />
                   <p className="text-[14px] font-[400] text-[#1E1E1E] mb-3">
-                    Choose a file or drag & drop it here.
+                    {t("brain_ai.knowledge.choose_a_file_or_drag_and_drop_it_here")}
                   </p>
                   <button
                     type="button"
@@ -580,7 +580,7 @@ const renderEmptyState = (tabKey, onAction) => {
                     }}
                     className="px-4 py-2 cursor-pointer bg-white border border-[#E1E4EA] rounded-lg text-[14px] font-medium text-[#1E1E1E] hover:bg-[#F9FAFB] transition-colors"
                   >
-                    Browse File
+                    {t("brain_ai.knowledge.browse_file")}
                   </button>
                   <input
                     type="file"
@@ -629,7 +629,7 @@ const renderEmptyState = (tabKey, onAction) => {
                 <p className="text-[14px] mb-2">
                   {modelData[activeTab].label}
                 </p>
-                <label className="block text-[14px] font-medium text-[#868C98] mb-1 mt-2">Webpage Link</label>
+                <label className="block text-[14px] font-medium text-[#868C98] mb-1 mt-2">{t("brain_ai.knowledge.webpage_link")}</label>
                 <div className={`flex items-center border focus-within:border-[#675FFF] ${errors.website ? 'border-[#FF3B30]' : 'border-[#E1E4EA]'} rounded-[8px] px-4 py-3`}>
                   <div className="flex items-center h-full mr-2 pr-2 border-r border-[#E1E4EA] self-stretch">
                     <span className="text-[#9CA3AF] text-[14px]">http://</span>

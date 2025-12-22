@@ -234,9 +234,6 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
             if (formData.business_description.trim().length > 1 && formData.business_description.length < 50) newErrors.business_description = t("appointment.min_char_validation");
             // if (!formData.your_business_offer.trim()) newErrors.your_business_offer = t("appointment.business_offer_validation");
             // if (formData.your_business_offer.trim().length > 1 && formData.your_business_offer.length < 50) newErrors.your_business_offer = t("appointment.min_char_validation");
-            if (!formData.objective_of_the_agent || formData.objective_of_the_agent === '') {
-                newErrors.objective_of_the_agent = t("appointment.object_of_agent_validation");
-            }
             if (formData.objective_of_the_agent && formData.objective_of_the_agent === "book_call") {
                 if (!formData.calendar_choosed) {
                     newErrors.calendar_choosed = t("appointment.choose_calendar_validation");
@@ -1206,7 +1203,6 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             </div>
                                             ))}
                                         </div>
-                                        {errors.objective_of_the_agent && <p className="text-red-500 text-sm mt-1">{errors.objective_of_the_agent}</p>}
                                         {renderObjectiveAgent()}
                                     </div>
 
@@ -1363,7 +1359,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     <div className="flex flex-col md:flex-row gap-4 w-full">
                                         {/* Guidelines/Prompt */}
                                         <div className="flex flex-col gap-1.5 flex-1">
-                                            <label className="text-[11px] text-[#868C98]">
+                                            <label className="text-sm text-[#868C98]">
                                                 {t("appointment.prompt_guild") || "Guidelines, instructions, or context to shape your AI agent's behavior."}
                                             </label>
                                             <textarea
@@ -1377,20 +1373,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
                                         </div>
                                         
-                                        {/* More Information For Setter */}
-                                        <div className="flex flex-col gap-1.5 flex-1">
-                                            <label className="text-[11px] font-medium text-[#868C98]">
-                                                {t("appointment.more_information") || "More Information For Setter"}
-                                            </label>
-                                            <textarea
-                                                name='first_message'
-                                                onChange={handleChange}
-                                                value={formData?.first_message}
-                                                rows={6}
-                                                className="w-full bg-white p-2 rounded-lg border border-[#e1e4ea] resize-none focus:outline-none focus:border-[#675FFF]"
-                                                placeholder={t("appointment.enter_info_setter_placeholder") || "Enter your information for setter..."}
-                                            />
-                                        </div>
+                                        
                                     </div>
                                 </div>
 

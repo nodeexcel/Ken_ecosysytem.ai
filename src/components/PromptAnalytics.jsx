@@ -4,7 +4,7 @@ import ChatgptLogo from '../assets/svg/Chatgpt.svg'
 import GeminiLogo from '../assets/svg/Gemini.svg'
 import DeepseekLogo from '../assets/svg/Deepseek.svg'
 import PerplexityLogo from '../assets/svg/Perplexity.svg'
-
+import { useTranslation } from 'react-i18next'
 const modelLogos = {
   ChatGPT: ChatgptLogo,
   Gemini: GeminiLogo,
@@ -15,6 +15,7 @@ const modelLogos = {
 const modelFilters = ['All Models', 'Chatgpt', 'Gemini', 'Perplexity', 'Deepseek']
 
 function PromptAnalytics() {
+  const { t } = useTranslation()
   const [activeModel, setActiveModel] = useState('All Models')
   const [searchQuery, setSearchQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
@@ -84,9 +85,9 @@ function PromptAnalytics() {
     <div className="p-12 h-full overflow-auto flex flex-col gap-5 w-full">
       {/* Header */}
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-[600] text-[#1E1E1E]">Prompt Analytics</h1>
+        <h1 className="text-2xl font-[600] text-[#1E1E1E]">{t("geo.prompt_analytics")}</h1>
         <p className="text-sm text-[#5A687C]">
-          See which prompts AI mentions your product in.
+          {t("geo.see_which_prompts_ai_mentions_your_product_in")}
         </p>
       </div>
 
@@ -136,7 +137,7 @@ function PromptAnalytics() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
           <input
             type="text"
-            placeholder="Search name or phone number"
+            placeholder={t("geo.search_name_or_phone_number")}
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value)
@@ -151,7 +152,7 @@ function PromptAnalytics() {
           className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F8F9FB] transition-colors cursor-pointer whitespace-nowrap"
         >
           <ArrowUp className="w-4 h-4 " />
-          <span className="text-sm font-[500] text-black">Export All</span>
+          <span className="text-sm font-[500] text-black">{t("geo.export_all")}</span>
         </button>
       </div>
 
@@ -169,14 +170,14 @@ function PromptAnalytics() {
                       onChange={handleSelectAll}
                       className="w-4 h-4 border border-[#D6D6D6] rounded cursor-pointer"
                     />
-                    <span>Cited sources</span>
+                    <span>{t("geo.cited_sources")}</span>
                   </div>
                 </th>
                 <th className="px-6 py-3 text-left text-[14px] font-[500] text-[#5A687C]">
-                  Models
+                  {t("geo.models")}
                 </th>
                 <th className="px-6 py-3 text-left text-[14px] font-[500] text-[#5A687C]">
-                  Categories
+                  {t("geo.categories")}
                 </th>
               </tr>
             </thead>
@@ -207,7 +208,7 @@ function PromptAnalytics() {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-[15px] text-[#1E1E1E]">
-                    {row.mentions} Mentions
+                    {row.mentions} {t("geo.mentions")}
                   </td>
                 </tr>
               ))}
@@ -223,7 +224,7 @@ function PromptAnalytics() {
               disabled={currentPage === 1}
               className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
-              ‹ Prev
+              ‹ {t("geo.prev")}
             </button>
             {[currentPage - 1, currentPage, currentPage + 1]
               .filter((p) => p >= 1 && p <= totalPages)
@@ -254,12 +255,12 @@ function PromptAnalytics() {
               disabled={currentPage === totalPages}
               className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
-              Next ›
+              {t("geo.next")} ›
             </button>
           </div>
 
           <div className="flex items-center gap-2 text-sm text-[#5A687C]">
-            <span>{rowsPerPage} rows</span>
+            <span>{rowsPerPage} {t("geo.rows")}</span>
             <button
               onClick={() => handleRowsPerPageChange(10)}
               className={`border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] ${

@@ -22,7 +22,7 @@ import SlackIcon from "../assets/svg/Slack.svg"
 import NotionIcon from "../assets/svg/Notion.svg"
 import TrelloIcon from "../assets/svg/Trello.svg"
 import ClickupIcon from "../assets/svg/Clickup.svg"
-
+  
 const renderColor = (text) => {
   switch (text) {
     case "Issue Detected":
@@ -65,6 +65,7 @@ export default function CallCampaign() {
       value: "00:00:00"
     }
   ]
+  
   const [showModal, setShowModal] = useState(false); // edit/view modal
   const [showNewCampaignForm, setShowNewCampaignForm] = useState(false); // inline create form
   const [stepCampaignOpen, setStepCampaignOpen] = useState(true);
@@ -89,25 +90,27 @@ export default function CallCampaign() {
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef(null);
 
+  const { t } = useTranslation();
+
   const agentLanguageOptions = [
-    { key: "english", label: "English" },
-    { key: "french", label: "French" },
+    { key: "english", label: t("phone.english") },
+    { key: "french", label: t("phone.french") },
   ];
 
   const agentVoiceOptions = [
-    { key: "english", label: "English" },
-    { key: "french", label: "French" },
+    { key: "male", label: t("phone.male") },
+    { key: "female", label: t("phone.female") },
   ];
 
   const knowledgeBaseOptions = [
-    { key: "none", label: "None" },
-    { key: "sales_playbook", label: "Sales Playbook" },
-    { key: "product_docs", label: "Product Docs" },
+    { key: "none", label: t("phone.none") },
+    { key: "sales_playbook", label: t("phone.sales_playbook") },
+    { key: "product_docs", label: t("phone.product_docs") },
   ];
 
   const behaviorOptions = [
-    { key: "wait_to_speak", label: "Wait for the person to speak" },
-    { key: "start_pitch", label: "Start the pitch immediately" },
+    { key: "wait_to_speak", label: t("phone.wait_for_the_person_to_speak") },
+    { key: "start_pitch", label: t("phone.start_the_pitch_immediately") },
   ];
 
   const toolOptions = [
@@ -196,7 +199,6 @@ export default function CallCampaign() {
   const [showListTargetSelector, setShowListTargetSelector] = useState(false);
   const [apiMessage, setApiMessage] = useState({ type: '', message: '' });
   const targetListRef = useRef()
-  const { t } = useTranslation();
   const navigator = useNavigate()
 
   const [filters, setFilters] = useState({
@@ -207,20 +209,19 @@ export default function CallCampaign() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const countryOptions = [
-    { key: "US", label: "United States" },
-    { key: "GB", label: "United Kingdom" },
-    { key: "FR", label: "France" }
+    { key: "US", label: t("phone.united_states") },
+    { key: "GB", label: t("phone.united_kingdom") },
+    { key: "FR", label: t("phone.france") }
   ];
 
   const languageOptions = [
-    { key: "english", label: "English" },
-    { key: "french", label: "French" },
-    { key: "spanish", label: "Spanish" }
+    { key: "english", label: t("phone.english") },
+    { key: "french", label: t("phone.french") },
+    { key: "spanish", label: t("phone.spanish") }
   ];
   const voiceOptions = [
     { key: "male", label: `${t("male")}` },
-    { key: "female", label: `${t("female")}` },
-    { key: "neutral", label: `${t("neutral")}` }
+    { key: "female", label: `${t("female")}` }, 
   ];
 
   const tagsOptions = [{ label: `${t("interested")}`, key: "interested" }, { label: `${t("not_interested")}`, key: "not_interested" },
@@ -636,7 +637,7 @@ export default function CallCampaign() {
           {!showNewCampaignForm ? (
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
               <div className="flex flex-col gap-1">
-                <h1 className="text-xl md:text-2xl font-semibold text-[#1E1E1E]">{t("phone.call_campaigns")}</h1>
+                <h1 className="text-[24px] font-[500] text-[#1E1E1E]">{t("phone.call_campaigns")}</h1>
                 <p className="text-sm md:text-base text-[#5A687C] font-[400]">
                   {t("phone.manage_and_track_your_outbound_and_inbound_calling_campaigns") || "Manage and track your outbound and inbound calling campaigns."}
                 </p>
@@ -738,7 +739,7 @@ export default function CallCampaign() {
                           { key: "outbound", label: t("phone.outbound_call") },
                           { key: "inbound", label: t("phone.inbound_call") }
                         ]}
-                        placeholder="Select Campaign Type"
+                        placeholder= {t("phone.select_campaign_type") || "Select Campaign Type"}
                         value={campaign.campaign_type || ''}
                         onChange={(value) => handleCampaignForm({ target: { name: 'campaign_type', value } })}
                         errors={errors}
@@ -751,7 +752,7 @@ export default function CallCampaign() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Number linked to the campaign */}
                     <div>
-                      <label className="block text-[14px] font-[500] text-[#868C98] mb-1">Number linked to the campaign</label>
+                      <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.number_linked_to_the_campaign")}</label>
                       <div className="flex group items-center focus-within:border-[#675FFF] gap-2 border border-[#E1E4EA] rounded-lg px-4 py-2.5">
                         <div className="relative country-selector">
                           <button
@@ -799,7 +800,7 @@ export default function CallCampaign() {
                         }}
                         className="text-[#675FFF] text-[14px] font-[500] mt-2 cursor-pointer hover:underline"
                       >
-                        + Add New Phone Number
+                        + {t("phone.add_new_phone_number")}
                       </button>
                       {errors.phone_number && <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>}
                     </div>
@@ -842,26 +843,26 @@ export default function CallCampaign() {
                   {/* Create a custom tag table */}
                   <div className="space-y-4">
                     <div>
-                      <p className="text-[14px] font-[500] text-[#868C98] mb-3">Create a custom tag (Optional)</p>
+                      <p className="text-[14px] font-[500] text-[#868C98] mb-3">{t("phone.create_a_custom_tag")} ({t("phone.optional")})</p>
                       <div className="rounded-2xl border border-[#D6D6D6] overflow-auto w-full">
                         <div className="overflow-x-auto">
                           <table className="min-w-full border-separate border-spacing-0">
                             <thead className="bg-[#F7F7F8]">
                               <tr className="text-[#5A687C]">
-                                <th className="px-6 text-start py-3 text-[16px] font-[400]">Tag Name</th>
-                                <th className="px-3 text-start py-3 text-[16px] font-[400]">Action Description</th>
-                                <th className="px-3 text-start py-3 text-[16px] font-[400]">Tag color</th>
-                                <th className="px-6 text-center py-3 text-[16px] font-[400]">Action</th>
+                                <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("phone.tag_name")}</th>
+                                <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.action_description")}</th>
+                                <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.tag_color")}</th>
+                                <th className="px-6 text-center py-3 text-[16px] font-[400]">{t("phone.action")}</th>
                               </tr>
                             </thead>
                             <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
                               <tr className="text-[16px] text-[#1E1E1E]">
-                                <td className="px-6 py-2 text-[16px] text-[#1E1E1E] font-medium text-start">Interested</td>
-                                <td className="px-3 py-2 text-[16px] text-start">Lead showed interest and requested follow-up.</td>
+                                <td className="px-6 py-2 text-[16px] text-[#1E1E1E] font-medium text-start">{t("phone.interested")}</td>
+                                <td className="px-3 py-2 text-[16px] text-start">{t("phone.lead_showed_interest_and_requested_follow_up")}</td>
                                 <td className="px-3 py-2 text-[16px] text-start">
                                   <div className="flex items-center gap-2">
                                     <div className="w-4 h-4 rounded bg-[#15B462]"></div>
-                                    <span className="text-[#1E1E1E]">Green (15B462)</span>
+                                    <span className="text-[#1E1E1E]">{t("phone.green")} (15B462)</span>
                                   </div>
                                 </td>
                                 <td className="px-6 py-4 text-center whitespace-nowrap">
@@ -873,12 +874,12 @@ export default function CallCampaign() {
                                 </td>
                               </tr>
                               <tr className="text-[16px] text-[#1E1E1E]">
-                                <td className="px-6 py-2 text-[16px] text-[#1E1E1E] font-medium text-start">No Answer</td>
-                                <td className="px-3 py-2 text-[16px] text-start">Call not picked up after 3 attempts.</td>
+                                <td className="px-6 py-2 text-[16px] text-[#1E1E1E] font-medium text-start">{t("phone.no_answer")}</td>
+                                <td className="px-3 py-2 text-[16px] text-start">{t("phone.call_not_picked_up_after_3_attempts")}</td>
                                 <td className="px-3 py-2 text-[16px] text-start">
                                   <div className="flex items-center gap-2">
                                     <div className="w-4 h-4 rounded bg-[#FF9500]"></div>
-                                    <span className="text-[#1E1E1E]">Orange (FF9500)</span>
+                                    <span className="text-[#1E1E1E]">{t("phone.orange")} (FF9500)</span>
                                   </div>
                                 </td>
                                 <td className="px-6 py-4 text-center whitespace-nowrap">
@@ -893,23 +894,6 @@ export default function CallCampaign() {
                           </table>
                         </div>
                       </div>
-                    </div>
-
-                    {/* Advanced qualification (Optional) */}
-                    <div className="">
-                      <button
-                        type="button"
-                        className="w-full flex items-center justify-between px-4 sm:px-5 py-3 cursor-pointer"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-md font-[500] text-[#1E1E1E]">
-                            Advanced qualification
-                          </span>
-                          <span className="text-[15px] text-[#868C98]">(Optional)</span>
-                          <ChevronDown className="w-4 h-4 text-[#5A687C]" />
-                        </div>
-
-                      </button>
                     </div>
                   </div>
 
@@ -946,12 +930,12 @@ export default function CallCampaign() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div className="flex flex-col gap-1">
                       <label className="text-[14px] font-[500] text-[#868C98] mb-1">
-                        Agent Name
+                        {t("phone.agent_name")}
                       </label>
                       <SelectDropdown
                         name="agent"
                         options={agents.map(agent => ({ key: agent.id.toString(), label: agent.agent_name }))}
-                        placeholder="Select Agent"
+                        placeholder={t("phone.select_agent")}
                         value={newAgentForm.agent_id ? newAgentForm.agent_id.toString() : ''}
                         onChange={(value) => {
                           const selectedAgent = agents.find(agent => agent.id.toString() === value);
@@ -965,7 +949,7 @@ export default function CallCampaign() {
                     </div>
                     <div className="flex flex-col gap-1">
                       <label className="text-[14px] font-[500] text-[#868C98] mb-1">
-                        Maximum Call Time in Minutes
+                        {t("phone.maximum_call_time_in_minutes")}
                       </label>
                       <input
                         type="number"
@@ -976,7 +960,7 @@ export default function CallCampaign() {
                             setNewAgentForm((prev) => ({ ...prev, max_call_time: value }));
                           }
                         }}
-                        placeholder="Enter number"
+                        placeholder={t("phone.enter_number")}
                         className="w-full px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg focus:outline-none focus:border-[#675FFF] text-[14px] appearance-none [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
@@ -986,7 +970,7 @@ export default function CallCampaign() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div className="flex flex-col gap-1">
                       <label className="text-[14px] font-[500] text-[#868C98] mb-1">
-                        Language
+                        {t("phone.language")}
                       </label>
                       <SelectDropdown
                         name="agent_language"
@@ -995,12 +979,12 @@ export default function CallCampaign() {
                         onChange={(value) =>
                           setNewAgentForm((prev) => ({ ...prev, language: value }))
                         }
-                        placeholder="Select language"
+                        placeholder={t("phone.select_language")}
                       />
                     </div>
                     <div className="flex flex-col gap-1">
                       <label className="text-[14px] font-[500] text-[#868C98] mb-1">
-                        Voice
+                        {t("phone.voice")}
                       </label>
                       <SelectDropdown
                         name="agent_voice"
@@ -1009,7 +993,7 @@ export default function CallCampaign() {
                         onChange={(value) =>
                           setNewAgentForm((prev) => ({ ...prev, voice: value }))
                         }
-                        placeholder="Select voice"
+                        placeholder={t("phone.select_voice")}
                       />
                     </div>
                   </div>
@@ -1018,7 +1002,7 @@ export default function CallCampaign() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div className="flex flex-col gap-1">
                       <label className="text-[14px] font-[500] text-[#868C98] mb-1">
-                        Knowledge base <span className="text-[#9CA3AF]">(Optional)</span>
+                        {t("phone.knowledge_base")} <span className="text-[#9CA3AF]">({t("phone.optional")})</span>
                       </label>
                       <SelectDropdown
                         name="knowledge_base"
@@ -1027,12 +1011,12 @@ export default function CallCampaign() {
                         onChange={(value) =>
                           setNewAgentForm((prev) => ({ ...prev, knowledge_base: value }))
                         }
-                        placeholder="Select"
+                        placeholder={t("phone.select")}
                       />
                     </div>
                     <div className="flex flex-col gap-1">
                       <label className="text-[14px] font-[500] text-[#868C98] mb-1">
-                        Behavior
+                        {t("phone.behavior")}
                       </label>
                       <SelectDropdown
                         name="behavior"
@@ -1041,7 +1025,7 @@ export default function CallCampaign() {
                         onChange={(value) =>
                           setNewAgentForm((prev) => ({ ...prev, behavior: value }))
                         }
-                        placeholder="Wait for the person to speak"
+                        placeholder={t("phone.wait_for_the_person_to_speak")}
                       />
                     </div>
                   </div>
@@ -1067,7 +1051,7 @@ export default function CallCampaign() {
                     <div className="flex flex-col">
 
                       <span className="text-sm px-3 font-[500] text-[#1E1E1E]">
-                        The agent pulls information directly from the AI Brain.
+                        {t("phone.the_agent_pulls_information_directly_from_the_ai_brain")}
                       </span>
                     </div>
 
@@ -1075,7 +1059,7 @@ export default function CallCampaign() {
 
                   {/* Select tools */}
                   <div className="mb-4">
-                    <p className="text-[12px] font-[500] text-[#868C98] mb-2">Select Tools</p>
+                    <p className="text-[12px] font-[500] text-[#868C98] mb-2">{t("phone.select_tools")}</p>
                     <div className="flex flex-wrap gap-2">
                       {toolOptions.map((tool) => {
                         const active = newAgentForm.tools.includes(tool.key);
@@ -1107,7 +1091,7 @@ export default function CallCampaign() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex flex-col gap-1">
                       <p className="text-[12px] font-[500] text-[#868C98] mb-1">
-                        Import File
+                        {t("phone.import_file")}
                       </p>
                       <input
                         type="file"
@@ -1144,14 +1128,14 @@ export default function CallCampaign() {
                               </button>
                             </div>
                             <p className="text-[12px] text-[#868C98] mt-2">
-                              Click to change file
+                              {t("phone.click_to_change_file")}
                             </p>
                           </div>
                         ) : (
                           <>
                             <Upload className="mb-2 text-[#9CA3AF] w-6 h-6" />
                             <p className="text-[13px] text-[#5A687C]">
-                              <span className="text-[#675FFF] font-[500]">Choose a file</span> or drag & drop it here.
+                              <span className="text-[#675FFF] font-[500]">{t("phone.choose_a_file")}</span> {t("phone.or_drag_and_drop_it_here")}
                             </p>
                           </>
                         )}
@@ -1159,7 +1143,7 @@ export default function CallCampaign() {
                     </div>
                     <div className="flex flex-col gap-1 ">
                       <p className="text-[12px] font-[500] text-[#868C98] mb-1 ">
-                        Agent Prompt
+                        {t("phone.agent_prompt")}
                       </p>
                       <textarea
                         rows={5}
@@ -1167,7 +1151,7 @@ export default function CallCampaign() {
                         onChange={(e) =>
                           setNewAgentForm((prev) => ({ ...prev, agentPrompt: e.target.value }))
                         }
-                        placeholder="Enter Agent Prompt"
+                        placeholder={t("phone.enter_agent_prompt")}
                         className="w-full px-4 py-3 border min-h-[200px] border-[#E1E4EA] rounded-2xl resize-none focus:outline-none focus:border-[#675FFF] text-[13px] text-[#1E1E1E]"
                       />
                     </div>
@@ -1185,7 +1169,7 @@ export default function CallCampaign() {
                 <Search className="absolute left-3 top-1/2 transform  -translate-y-1/2 text-[#5A687C] w-4 h-4" />
                 <input
                   type="text"
-                  placeholder="Search name or phone number"
+                  placeholder={t("phone.search_name_or_phone_number")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-[#E1E4EA] rounded-lg bg-white focus:outline-none focus:border-[#675FFF] text-sm"
@@ -1240,7 +1224,7 @@ export default function CallCampaign() {
                       <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.language")}</th>
                       <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.total_call")}</th>
                       <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.status")}</th>
-                      <th className="px-6 text-center py-3 text-[16px] font-[400]">{t("phone.active")}</th>
+                      <th className="px-6 text-center py-3 text-[16px] font-[400]">{t("phone.action")}</th>
                     </tr>
                   </thead>
 
@@ -1284,17 +1268,17 @@ export default function CallCampaign() {
                       return filteredCampaigns.length !== 0 ? (
                         filteredCampaigns.map((agent, index) => (
                           <tr key={agent.id} className="text-[16px] text-[#1E1E1E]">
-                            <td className="px-4 py-4 text-[16px] text-[#1E1E1E] font-medium text-start">{agent.campaign_name}</td>
-                            <td className="px-4 py-4 text-[16px] text-start">{agent.agent_name}</td>
-                            <td className="px-4 py-4 text-[16px] text-start whitespace-nowrap">{DateFormat(agent.creation_date)}</td>
-                            <td className="px-4 py-4 text-[16px] text-start">{agent.language}</td>
-                            <td className="px-4 py-4 text-[16px] text-start">{agent.total_calls}</td>
+                            <td className="px-4 py-4 text-[13px] font-[400] text-[#1E1E1E] font-medium text-start">{agent.campaign_name}</td>
+                            <td className="px-4 py-4 text-[13px] font-[400] text-start">{agent.agent_name}</td>
+                            <td className="px-4 py-4 text-[13px] font-[400] text-start whitespace-nowrap">{DateFormat(agent.creation_date)}</td>
+                            <td className="px-4 py-4 text-[13px] font-[400] text-start">{agent.language}</td>
+                            <td className="px-4 py-4 text-[13px] font-[400] text-start">{agent.total_calls}</td>
                             <td className="px-4 py-4 text-start">
                               <span className={`inline-block border ${renderColor(agent.status)} text-sm font-medium px-3 py-1 rounded-full`}>
                                 {agent.status}
                               </span>
                             </td>
-                            <td className="px-4 py-4 text-center whitespace-nowrap">
+                            <td className="px-4 py-2 text-center whitespace-nowrap">
                               <div className='flex items-center justify-center'>
                                 <button onClick={(e) => handleDropdownClick(index, agent, e)} className="p-2 rounded-lg relative">
                                   <div className='bg-white cursor-pointer border border-[#D6D6D6] shadow-sm p-2 rounded-lg'><Ellipsis className="text-black"/></div>
@@ -1318,7 +1302,7 @@ export default function CallCampaign() {
                   {/* pagination + row controls */}
                   <div className="flex items-center gap-2">
                     <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
-                      ‹ Prev
+                      ‹ {t("phone.prev")}
                     </button>
                     <button className="bg-[#675FFF] text-white rounded-lg px-3 py-1 text-sm cursor-pointer">
                       1
@@ -1334,13 +1318,13 @@ export default function CallCampaign() {
                       10
                     </button>
                     <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
-                      Next ›
+                      {t("phone.next")} ›
                     </button>
                   </div>
 
                   {/* Right side – rows per page */}
                   <div className="flex items-center gap-2 text-sm text-[#5A687C]">
-                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 rows</button>
+                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 {t("phone.rows")}</button>
                     <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">10</button>
                     <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">20</button>
                   </div>

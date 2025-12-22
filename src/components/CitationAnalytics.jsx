@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ArrowUp, Search, ChevronDown } from 'lucide-react'
 import ChatgptLogo from '../assets/svg/Chatgpt.svg'
 import GeminiLogo from '../assets/svg/Gemini.svg'
+import { useTranslation } from 'react-i18next'
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -24,8 +25,9 @@ ChartJS.register(
 )
 
 function CitationAnalytics() {
-    const [selectedCategory, setSelectedCategory] = useState('Categories')
-    const [selectedContentType, setSelectedContentType] = useState('Content Type')
+    const { t } = useTranslation()
+    const [selectedCategory, setSelectedCategory] = useState(t("geo.categories"))
+    const [selectedContentType, setSelectedContentType] = useState(t("geo.content_type"))
     const [searchQuery, setSearchQuery] = useState('')
     const [currentPage, setCurrentPage] = useState(1)
     const [rowsPerPage, setRowsPerPage] = useState(5)
@@ -344,10 +346,10 @@ function CitationAnalytics() {
             <div className="flex items-start justify-between w-full">
                 <div className="flex flex-col gap-1">
                     <h1 className="text-2xl font-[600] text-[#1E1E1E]">
-                        Citation Analytics
+                    {t("geo.citation_analytics")}
                     </h1>
                     <p className="text-sm text-[#5A687C]">
-                        See URLs used in AI answer
+                        {t("geo.see_urls_used_in_ai_answer")}
                     </p>
                 </div>
                 
@@ -358,7 +360,7 @@ function CitationAnalytics() {
                 >
                     <ArrowUp className="w-4 h-4 text-[#5A687C]" />
                     <span className="text-sm font-[500] text-[#5A687C]">
-                        Export All
+                        {t("geo.export_all")}
                     </span>
                 </button>
             </div>
@@ -368,7 +370,7 @@ function CitationAnalytics() {
                 {/* Cited Categories Chart */}
                 <div className="bg-white border border-[#D6D6D6] rounded-2xl p-6">
                     <h2 className="text-lg font-[600] text-[#1E1E1E] mb-4">
-                        Cited Categories
+                        {t("geo.cited_categories")}
                     </h2>
                     <div className="h-[80px] mb-4 px-2">
                         <Bar data={categoriesChartData} options={categoriesChartOptions} />
@@ -378,7 +380,7 @@ function CitationAnalytics() {
                 {/* Citied Content Types Chart */}
                 <div className="bg-white border border-[#D6D6D6] rounded-2xl p-6">
                     <h2 className="text-lg font-[600] text-[#1E1E1E] mb-4">
-                        Citied Content Types
+                        {t("geo.cited_content_types")}
                     </h2>
                     <div className="h-[90px] mb-4 w-full px-2">
                         <Bar data={contentTypesChartData} options={contentTypesChartOptions} />
@@ -413,7 +415,7 @@ function CitationAnalytics() {
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
                         <input
                             type="text"
-                            placeholder="Search name or phone number"
+                            placeholder={t("geo.search_name_or_phone_number")}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full pl-10 pr-4 py-2 border border-[#E1E4EA] rounded-lg bg-white focus:outline-none focus:border-[#675FFF] text-sm text-[#1E1E1E]"
@@ -424,7 +426,7 @@ function CitationAnalytics() {
                         type="button"
                         className="px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-sm font-[500] text-[#1E1E1E] hover:bg-[#F8F9FB] transition-colors cursor-pointer whitespace-nowrap"
                     >
-                        View All
+                        {t("geo.view_all")}
                     </button>
                 </div>
             </div>
@@ -445,13 +447,13 @@ function CitationAnalytics() {
                                         />
                                     </div>
                                 </th>
-                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">Cited sources</th>
-                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">Cited Models</th>
-                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">Categories</th>
-                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">Content Type</th>
-                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">Prompts</th>
-                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">Citations</th>
-                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">Creation Date</th>
+                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">{t("geo.cited_sources")}</th>
+                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">{t("geo.cited_models")}</th>
+                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">{t("geo.categories")}</th>
+                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">{t("geo.content_type")}</th>
+                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">{t("geo.prompts")}</th>
+                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">{t("geo.citations")}</th>
+                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">{t("geo.creation_date")}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-[#E1E4EA]">
@@ -492,8 +494,8 @@ function CitationAnalytics() {
                                             </span>
                                         )}
                                     </td>
-                                    <td className="px-6 py-4 text-[16px] text-[#1E1E1E]">{row.prompts} Prompts</td>
-                                    <td className="px-6 py-4 text-[16px] text-[#1E1E1E]">{row.citations} Citations</td>
+                                    <td className="px-6 py-4 text-[16px] text-[#1E1E1E]">{row.prompts} {t("geo.prompts")}</td>
+                                    <td className="px-6 py-4 text-[16px] text-[#1E1E1E]">{row.citations} {t("geo.citations")}</td>
                                     <td className="px-6 py-4 text-[16px] text-[#1E1E1E]">{row.creationDate}</td>
                                 </tr>
                             ))}
@@ -510,7 +512,7 @@ function CitationAnalytics() {
                         disabled={currentPage === 1}
                         className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                     >
-                        ‹ Prev
+                        ‹ {t("geo.prev")}
                     </button>
                     {/* Page Numbers */}
                     {totalPages > 0 && (
@@ -569,13 +571,13 @@ function CitationAnalytics() {
                         disabled={currentPage === totalPages}
                         className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                     >
-                        Next ›
+                        {t("geo.next")} ›
                     </button>
                 </div>
 
                 {/* Rows per page */}
                 <div className="flex items-center gap-2 text-sm text-[#5A687C]">
-                    <span>{rowsPerPage} rows</span>
+                    <span>{rowsPerPage} {t("geo.rows")}</span>
                     <button
                         onClick={() => handleRowsPerPageChange(10)}
                         className={`border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] ${

@@ -1,15 +1,20 @@
 import { useState, useRef, useEffect } from 'react'
 import { Search } from 'lucide-react'
 import { Edit, Delete, Ellipsis } from '../icons/icons'
-
+import { useTranslation } from 'react-i18next'
 function ContentAnalytics() {
-    const [activeTab, setActiveTab] = useState('Cited Content')
+    const { t } = useTranslation()
+    const [activeTab, setActiveTab] = useState('cited_content')
     const [searchQuery, setSearchQuery] = useState('')
     const [activeDropdown, setActiveDropdown] = useState(null)
     const [dropdownPosition, setDropdownPosition] = useState('bottom')
     const dropdownRef = useRef(null)
 
-    const tabs = ['Cited Content', 'Tracked URLs', 'AI Traffic']
+    const tabs = [
+        { key: 'cited_content', label: t("geo.cited_content") },
+        { key: 'tracked_urls', label: t("geo.tracked_urls") },
+        { key: 'ai_traffic', label: t("geo.ai_traffic") }
+    ]
 
     // Summary cards data
     const summaryCards = [
@@ -98,28 +103,28 @@ function ContentAnalytics() {
             {/* Header Section */}
             <div className="flex flex-col gap-1">
                 <h1 className="text-2xl font-[600] text-[#1E1E1E]">
-                    Content Analytics
+                    {t("geo.content_analytics")}
                 </h1>
                 <p className="text-sm text-[#5A687C]">
-                    Monitor your content citations, tracked URLs, and AI traffic.
+                    {t("geo.monitor_your_content_citations_tracked_urls_and_ai_traffic")}
                 </p>
             </div>
 
             {/* Navigation Tabs - slider style */}
             <div className="inline-flex items-center gap-1 bg-[#F3F4F6] rounded-lg p-0.5 w-fit border border-[#E1E4EA]">
                 {tabs.map((tab) => {
-                    const isActive = activeTab === tab
+                    const isActive = activeTab === tab.key
                     return (
                         <button
-                            key={tab}
-                            onClick={() => setActiveTab(tab)}
+                            key={tab.key}
+                            onClick={() => setActiveTab(tab.key)}
                             className={`px-4 py-2 rounded-lg text-sm font-[600] transition-all ${
                                 isActive
                                     ? 'bg-white text-[#111827] shadow-sm border border-[#D6D6D6]'
                                     : 'bg-transparent text-[#5A687C]'
                             }`}
                         >
-                            {tab}
+                            {tab.label}
                         </button>
                     )
                 })}
@@ -162,19 +167,19 @@ function ContentAnalytics() {
                         <thead className="bg-[#F7F7F8]">
                             <tr>
                                 <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">
-                                    Source URLs
+                                    {t("geo.source_urls")}
                                 </th>
                                 <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">
-                                    Categories
+                                    {t("geo.categories")}
                                 </th>
                                 <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">
-                                    Created
+                                    {t("geo.created")}
                                 </th>
                                 <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">
-                                    Citations
+                                    {t("geo.citations")}
                                 </th>
                                 <th className="px-6 py-3 text-center text-[16px] font-[400] text-[#5A687C]">
-                                    Action
+                                    {t("geo.action")}
                                 </th>
                             </tr>
                         </thead>

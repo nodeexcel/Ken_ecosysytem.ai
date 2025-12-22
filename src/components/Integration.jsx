@@ -17,9 +17,11 @@ import AdditionalIntegration from './AdditionalIntegrations';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNavbarData } from '../store/navbarSlice'
 import { getGoogleCalendarAccounts, getInstaAccounts, getLinkedInAccounts, getWhatsappAccounts, getTikTokAccounts } from '../api/brainai';
+import { useTranslation } from "react-i18next";
 
 
 const Integration = ({ firstRender, setFirstRender }) => {
+  const { t } = useTranslation();
   const navbarDetails = useSelector((state) => state.navbar)
   const [integartionData, setIntegrationData] = useState({})
   const [instagramData, setInstagramData] = useState([])
@@ -178,7 +180,7 @@ const Integration = ({ firstRender, setFirstRender }) => {
     {
       icon: instagram,
       name: "Instagram",
-      description: "It works with only professional and creator account.",
+      description: t("brain_ai.integrations.instagram_description"),
       connectedAccounts: instagramData?.length,
       path: import.meta.env.VITE_INSTA_URL + `&state=${userDetails.id}`,
       isActive: true,
@@ -186,7 +188,7 @@ const Integration = ({ firstRender, setFirstRender }) => {
     {
       icon: whatsapp,
       name: "WhatsApp",
-      description: "Only possible with a WhatsApp Business Account.",
+      description: t("brain_ai.integrations.whatsapp_description"),
       connectedAccounts: whatsappData?.length,
       path: import.meta.env.VITE_WHATS_APP_URL + `&state=${userDetails.id}`,
       isActive: true,
@@ -194,7 +196,7 @@ const Integration = ({ firstRender, setFirstRender }) => {
     {
       icon: tiktok,
       name: "TikTok",
-      description: "Using regular TikTok account.",
+      description: t("brain_ai.integrations.tiktok_description"),
       connectedAccounts: tikTokData?.length,
       path:  import.meta.env.VITE_TIK_TOK_URL + `&state=${userDetails.id}`,
       isActive: true,
@@ -202,7 +204,7 @@ const Integration = ({ firstRender, setFirstRender }) => {
     {
       icon: linkedin,
       name: "LinkedIn",
-      description: "Using regular linkedin account.",
+      description: t("brain_ai.integrations.linkedin_description"),
       connectedAccounts: linkedInData?.length,
       path: import.meta.env.VITE_LINKEDIN_URL + `&state=${userDetails.id}`,
       isActive: true,
@@ -210,7 +212,7 @@ const Integration = ({ firstRender, setFirstRender }) => {
     {
       icon: google_calender,
       name: "Google Calendar",
-      description: "Using regular Google Calendar account.",
+      description: t("brain_ai.integrations.google_calendar_description"),
       connectedAccounts: googleCalendarData?.length,
       path: import.meta.env.VITE_GOOGLE_CALENDAR_URL + `&state=${userDetails.id}`,
       isActive: true,
@@ -218,49 +220,49 @@ const Integration = ({ firstRender, setFirstRender }) => {
     {
       icon: google,
       name: "Google",
-      description: "Using regular google account.",
+      description: t("brain_ai.integrations.google_description"),
       connectedAccounts: 0,
       isActive: false,
     },
     {
       icon: facebook,
       name: "Facebook",
-      description: "Using regular facebook account.",
+      description: t("brain_ai.integrations.facebook_description"),
       connectedAccounts: 0,
       isActive: false,
     },
     {
       icon: systemio,
       name: "Systeme.io",
-      description: "Using regular systeme account.",
+      description: t("brain_ai.integrations.systeme_io_description"),
       connectedAccounts: 0,
       isActive: false,
     },
     {
       icon: calendly,
       name: "Calendly",
-      description: "Using regular Calendly account.",
+      description: t("brain_ai.integrations.calendly_description"),
       connectedAccounts: 0,
       isActive: false,
     },
     {
       icon: active_campaign,
       name: "Active Campaign",
-      description: "Using regular ActiveCampaign account.",
+      description: t("brain_ai.integrations.active_campaign_description"),
       connectedAccounts: 0,
       isActive: false,
     },
     {
       icon: hubspot,
       name: "Hubspot",
-      description: "Using regular Hubspot account.",
+      description: t("brain_ai.integrations.hubspot_description"),
       connectedAccounts: 0,
       isActive: false,
     },
     {
       icon: mailchimp,
       name: "Mailchimp",
-      description: "Using regular Mailchimp account.",
+      description: t("brain_ai.integrations.mailchimp_description"),
       connectedAccounts: 0,
       isActive: false,
     },

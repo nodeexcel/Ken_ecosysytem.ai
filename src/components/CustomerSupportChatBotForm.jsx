@@ -50,10 +50,10 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
     const validateForm = () => {
         const newErrors = {};
 
-        if (!formData.bot_name.trim()) newErrors.bot_name = "Bot name is required";
-        if (!formData.prompt.trim()) newErrors.prompt = "Prompt is required";
-        if (!formData.role) newErrors.role = "Role is required";
-        if (!formData.personality) newErrors.personality = "Personality is required";
+        if (!formData.bot_name.trim()) newErrors.bot_name = `${t("calina.bot_name_required")}`;
+        if (!formData.prompt.trim()) newErrors.prompt = `${t("calina.prompt_required")}`;
+        if (!formData.role) newErrors.role = `${t("calina.role_required")}`;
+        if (!formData.personality) newErrors.personality = `${t("calina.personality_required")}`;
         setErrors(newErrors);
 
         return Object.keys(newErrors).length === 0;
@@ -160,10 +160,10 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
     ]
 
     const integrationsData = [
-        { label: `${t("calina.whatsapp")}`, icon: <WhatsAppIcon />, content: `${t("calina.whatsapp_content")}`, is_active: true },
-        { label: `${t("calina.website")}`, icon: <WebsiteIcon />, content: `${t("calina.website_content")}`, is_active: true },
-        { label: `${t("calina.messenger")}`, icon: <FacebookIcon />, content: `${t("calina.messenger_content")}`, is_active: false },
-        { label: `${t("calina.slack")}`, icon: <SlackIcon />, content: `${t("calina.slack_content")}`, is_active: false }
+        { key: "whatsapp", label: `${t("calina.whatsapp")}`, icon: <WhatsAppIcon />, content: `${t("calina.whatsapp_content")}`, is_active: true },
+        { key: "website", label: `${t("calina.website")}`, icon: <WebsiteIcon />, content: `${t("calina.website_content")}`, is_active: true },
+        { key: "messenger", label: `${t("calina.messenger")}`, icon: <FacebookIcon />, content: `${t("calina.messenger_content")}`, is_active: false },
+        { key: "slack", label: `${t("calina.slack")}`, icon: <SlackIcon />, content: `${t("calina.slack_content")}`, is_active: false }
     ]
 
     const handleChange = (e) => {
@@ -537,9 +537,9 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                             </div>
                             <div className="flex flex-col gap-1.5 flex-1">
                                 <label className="text-sm font-medium text-[#1e1e1e]">
-                                    Bot Language
+                                    {t("calina.bot_language")}
                                 </label>
-                                <p className="text-[#5A687C] font-[400] text-[14px]">The chatbot automatically detects the language used by customer during the first interaction.</p>
+                                <p className="text-[#5A687C] font-[400] text-[14px]">{t("calina.bot_language_description")}</p>
                             </div>
                             <div className="flex flex-col gap-1.5 flex-1">
                                 <label className="text-sm font-medium text-[#1e1e1e]">
@@ -557,7 +557,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                             ...prev, personality: ""
                                         }))
                                     }}
-                                    placeholder="Select Personality"
+                                    placeholder={t("calina.select_personality")}
                                     className=""
                                     errors={errors}
                                 />
@@ -574,7 +574,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                 value={formData?.prompt}
                                 rows={4}
                                 className={`w-full bg-white p-2 rounded-lg border  ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                placeholder="Enter your prompt here"
+                                placeholder={t("calina.enter_your_prompt_here")}
                             />
                             {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
                         </div>
@@ -658,7 +658,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                     }}>
                         <div className='flex items-center gap-3'>
                             <div className={`${step === 3 ? 'bg-[#675FFF]' : statusSteps.step3 ? 'bg-[#34C759]' : 'bg-[#9CA3AF]'} h-[30px] w-[30px] flex justify-center items-center rounded-lg text-white font-semibold`}>{'3'}</div>
-                            <p className={`text-md font-[600] ${step === 3 ? 'text-[#1E1E1E]' : 'text-[#000000]'}`}>Add Resources</p>
+                            <p className={`text-md font-[600] ${step === 3 ? 'text-[#1E1E1E]' : 'text-[#000000]'}`}>{t("calina.add_resources")}</p>
                         </div>
                         {step === 3 && <ChevronUp className="w-5 h-5 text-[#5A687C]" />}
                         {step !== 3 && <RightArrowIcon />}
@@ -683,7 +683,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                 ></span>
                             </button>
                             <label className="text-sm font-medium text-[#1E1E1E]">
-                                Take ressources form AI Brain
+                                {t("calina.take_ressources_form_ai_brain")}
                             </label>
                         </div>
 
@@ -691,7 +691,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Left Column - Upload File */}
                             <div className="flex flex-col gap-2 h-full">
-                                <label className="text-sm font-medium text-[#5A687C]">Upload File</label>
+                                <label className="text-sm font-medium text-[#5A687C]">{t("calina.upload_file")}</label>
                                 <div
                                     onClick={handleClick}
                                     onDragOver={handleDragOver}
@@ -704,7 +704,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                         <UploadIcon />
                                     </div>
                                     <p className="text-[14px] font-[400] text-[#1E1E1E] mb-4">
-                                        Choose a file or drag & drop it here.
+                                        {t("calina.choose_a_file_or_drag_and_drop_it_here")}
                                     </p>
                                     <button
                                         onClick={(e) => {
@@ -713,7 +713,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                         }}
                                         className="px-4 py-2 bg-white border border-[#E1E4EA] text-[#1E1E1E] rounded-lg text-sm font-medium hover:bg-gray-50"
                                     >
-                                        Browse File
+                                        {t("calina.browse_file")}
                                     </button>
                                     <input
                                         type="file"
@@ -727,7 +727,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                 {!isUploading && selectedFile && (
                                     <div className="mt-2 text-sm text-gray-700">
                                         <strong>{t("brain_ai.selected_file")}</strong> {selectedFile.name}
-                                        <p className="text-green-500">File Uploaded Successfully!</p>
+                                        <p className="text-green-500">{t("calina.file_uploaded_successfully")}</p>
                                     </div>
                                 )}
                                 {showUploadProgress && isUploading && (
@@ -735,21 +735,21 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                         <div className="w-full h-[14px] rounded-[40px] bg-[#D7D4FF]">
                                             <div className={`h-[14px] bg-[#675FFF] ${uploadProgress >= 100 ? 'rounded-[40px]' : 'rounded-l-[40px]'}`} style={{ width: `${uploadProgress}%` }}></div>
                                         </div>
-                                        <p className="text-[#5A687C] text-[12px] mt-1">{uploadProgress}% Uploading...</p>
+                                        <p className="text-[#5A687C] text-[12px] mt-1">{uploadProgress}% {t("calina.uploading")}...</p>
                                     </div>
                                 )}
                             </div>
 
                             {/* Right Column - Description */}
                             <div className="flex flex-col gap-2 h-full">
-                                <label className="text-sm font-medium text-[#5A687C]">Description</label>
+                                <label className="text-sm font-medium text-[#5A687C]">{t("calina.description")}</label>
                                 <textarea
                                     name='reference_text'
                                     onChange={handleChange}
                                     value={formData?.reference_text}
                                     rows={8}
                                     className={`w-full bg-white p-3 rounded-lg border h-full ${errors.reference_text ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                    placeholder="Enter description here"
+                                    placeholder={t("calina.enter_description_here")}
                                 />
                                 {errors.reference_text && <p className="text-red-500 text-sm mt-1">{errors.reference_text}</p>}
                             </div>
@@ -779,7 +779,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                     </div>
                     {step === 4 && <div className="flex flex-col gap-5">
                         <hr style={{ color: "#E1E4EA" }} />
-                        <p className="text-[#5A687C] text-[14px] font-[400]">Connect your chatbot to Instagram and let it respond to your customers messages</p>
+                        <p className="text-[#5A687C] text-[14px] font-[400]">{t("calina.connect_your_chatbot_to_instagram_and_let_it_respond_to_your_customers_messages")}</p>
                         <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
                             {integrationsData.map((each) => {
                                 const isConnected = editDataId && connectedPlatforms?.platforms?.some(
@@ -802,7 +802,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                         setCustomIntegartion(each)
                                         handleGetWebsiteLink()
                                         
-                                        if (each.label.toLowerCase().includes("whatsapp")) {
+                                        if (each.key === "whatsapp") {
                                             if (!connectedPlatforms && editDataId) {
                                                 await handleGetConnectedPlatforms();
                                             }
@@ -823,7 +823,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                                 }
                                             }
                                             SetopenWhatsappModal(true);
-                                        } else if (each.label.toLowerCase().includes("website")) {
+                                        } else if (each.key === "website") {
                                             if (!connectedPlatforms && editDataId) {
                                                 await handleGetConnectedPlatforms();
                                             }
@@ -835,7 +835,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                                 }
                                             }
                                             setCustomStatus(true);
-                                        } else if (each.label.toLowerCase().includes("messenger")) {
+                                        } else if (each.key === "messenger") {
                                             if (!connectedPlatforms && editDataId) {
                                                 await handleGetConnectedPlatforms();
                                             }
@@ -846,7 +846,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                                     console.log("Messenger platform data:", messengerPlatform);
                                                 }
                                             }
-                                        } else if (each.label.toLowerCase().includes("slack")) {
+                                        } else if (each.key === "slack") {
                                             if (!connectedPlatforms && editDataId) {
                                                 await handleGetConnectedPlatforms();
                                             }
@@ -892,7 +892,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                     <div className="text-green-500">
                                         <WhatsAppIcon />
                                     </div>
-                                    <h2 className="text-xl font-semibold text-[#1E1E1E]">Connect Whatsapp</h2>
+                                    <h2 className="text-xl font-semibold text-[#1E1E1E]">{t("calina.connect_whatsapp")}</h2>
                                 </div>
                                 <button
                                     onClick={() => SetopenWhatsappModal(false)}
@@ -906,7 +906,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                             <div className="flex flex-col gap-4 mb-6">
                                 {/* WhatsApp type field */}
                                 <div className="flex flex-col gap-2">
-                                    <label className="text-sm font-medium text-[#5A687C]">WhatsApp type</label>
+                                    <label className="text-sm font-medium text-[#5A687C]">{t("calina.whatsapp_type")}</label>
                                     <div className="w-full bg-gray-200 p-3 rounded-lg border border-[#E1E4EA] text-[#1E1E1E]">
                                         {whatsappFormData.whatsapp_type}
                                     </div>
@@ -914,7 +914,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
 
                                 {/* Account field */}
                                 <div className="flex flex-col gap-2">
-                                    <label className="text-sm font-medium text-[#5A687C]">Account</label>
+                                    <label className="text-sm font-medium text-[#5A687C]">{t("calina.account")}</label>
                                     <SelectDropdown
                                         name="platform_unique_id"
                                         options={Array.isArray(whatsappData) ? whatsappData : []}
@@ -926,7 +926,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                                 platform_unique_id: updated
                                             }));
                                         }}
-                                        placeholder="Select account"
+                                        placeholder={t("calina.select_account")}
                                         className=""
                                         errors={errors}
                                         disabled={false}
@@ -940,7 +940,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                     onClick={() => SetopenWhatsappModal(false)}
                                     className="px-4 py-2 text-[16px] cursor-pointer text-[#1E1E1E] bg-white border border-[#E1E4EA] rounded-lg hover:bg-gray-50 focus:outline-none"
                                 >
-                                    {t("phone.cancel")}
+                                    {t("calina.cancel")}
                                 </button>
                                 <button
                                     onClick={() => {
@@ -948,7 +948,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                     }}
                                     className="px-4 py-2 text-[16px] cursor-pointer text-white bg-[#675FFF] rounded-lg hover:bg-[#5A52E5] focus:outline-none"
                                 >
-                                    Connect
+                                    {t("calina.connect")}
                                 </button>
                             </div>
                         </div>

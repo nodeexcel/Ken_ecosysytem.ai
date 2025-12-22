@@ -58,14 +58,14 @@ export default function CallAgentsPage() {
   });
 
   const countryOptions = [
-    { key: "US", label: "United States" },
-    { key: "GB", label: "United Kingdom" },
-    { key: "FR", label: "France" }
+    { key: "US", label: t("phone.united_states") },
+    { key: "GB", label: t("phone.united_kingdom") },
+    { key: "FR", label: t("phone.france") }
   ];
 
   const languageOptions = [
-    { key: "english", label: "English" },
-    { key: "french", label: "French" },
+    { key: "english", label: t("phone.english") },
+    { key: "french", label: t("phone.french") },
     // { key: "spanish", label: "Spanish" }
   ];
 
@@ -301,7 +301,7 @@ export default function CallAgentsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <div className="flex flex-col gap-1">
-          <h1 className="text-xl md:text-[24px] font-semibold text-[#1E1E1E]">{t("phone.call_agents")}</h1>
+          <h1 className="text-xl md:text-[24px] font-[500] text-[#1E1E1E]">{t("phone.call_agents")}</h1>
           <p className="text-sm md:text-base text-[#5A687C] font-[400]">{t("phone.manage_your_ai_and_human_call_agents") || "Manage your AI and human call agents"}</p>
         </div>
         <button 
@@ -414,10 +414,10 @@ export default function CallAgentsPage() {
                 return filteredAgents.length !== 0 ? (
                   filteredAgents.map((agent, index) => (
                   <tr key={agent.id} className="text-[16px] text-[#1E1E1E]">
-                    <td className="px-4 py-4 text-[16px] text-[#1E1E1E] font-medium text-start">{agent.agent_name}</td>
-                    <td className="px-4 py-4 text-[16px] text-start">{agent.language.charAt(0).toLocaleUpperCase() + agent.language.substring(1, agent.language.length)}</td>
-                    <td className="px-4 py-4 text-[16px] text-start">{agent.voice}</td>
-                    <td className="px-4 py-4 text-[16px] text-start">{agent.phone_numbers}</td>
+                    <td className="px-4 py-4 text-[14px] text-[#1E1E1E] font-[500] text-start">{agent.agent_name}</td>
+                    <td className="px-4 py-4 text-[14px] font-[400] text-start">{agent.language.charAt(0).toLocaleUpperCase() + agent.language.substring(1, agent.language.length)}</td>
+                    <td className="px-4 py-4 text-[14px] font-[400] text-start">{agent.voice}</td>
+                    <td className="px-4 py-4 text-[14px] font-[400] text-start">{agent.phone_numbers}</td>
                     <td className="px-4 py-4 text-center">
                       <div className="flex items-center justify-center">
                         <ToggleSwitch
@@ -427,7 +427,7 @@ export default function CallAgentsPage() {
                         />
                       </div>
                     </td>
-                    <td className="px-4 py-4 text-center whitespace-nowrap relative">
+                    <td className="px-4 py-1 text-center whitespace-nowrap relative">
                       <div className='flex items-center justify-center gap-2'>
                         <button 
                           onClick={(e) => handleDropdownClick(index, e)} 
@@ -536,7 +536,7 @@ export default function CallAgentsPage() {
             {/* pagination + row controls */}
             <div className="flex items-center gap-2">
               <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
-                ‹ Prev
+                ‹ {t("phone.prev") || "Prev"}
               </button>
               <button className="bg-[#675FFF] text-white rounded-lg px-3 py-1 text-sm cursor-pointer">
                 1
@@ -552,13 +552,13 @@ export default function CallAgentsPage() {
                 10
               </button>
               <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
-                Next ›
+                {t("phone.next") || "Next"} ›
               </button>
             </div>
 
             {/* Right side – rows per page */}
             <div className="flex items-center gap-2 text-sm text-[#5A687C]">
-              <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 rows</button>
+              <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 {t("phone.rows")}</button>
               <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">10</button>
               <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">20</button>
             </div>
@@ -610,8 +610,8 @@ export default function CallAgentsPage() {
                   name="language"
                   placeholder={t("select")}
                   options={[
-                    { key: 'english', label: 'English' },
-                    { key: 'french', label: 'French' },
+                    { key: 'english', label: t("phone.english") },
+                    { key: 'french', label: t("phone.french") },
                   ]}
                   value={agent.language}
                   onChange={(selectedLanguage) => {
@@ -632,8 +632,8 @@ export default function CallAgentsPage() {
                  placeholder={t("select")}
                   name="voice"
                   options={[
-                    { key: 'English', label: 'English' },
-                    { key: 'French', label: 'French' },
+                    { key: 'Male', label: t("phone.male") },
+                    { key: 'Female', label: t("phone.female") },
                   ]}
                   value={agent.voice}
                   onChange={(selectedVoice) => {

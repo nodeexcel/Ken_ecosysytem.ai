@@ -1424,7 +1424,7 @@ const SettingsPage = () => {
                   {t("settings.tab_3")}
                 </h1>
                 <p className="text-[14px] sm:text-[16px] text-[#5A687C] font-[400]">
-                  Manage access and collaboration across your workspace.
+                  {t("settings.tab_3_list.manage_access_and_collaboration_across_your_workspace")}
                 </p>
               </div>
               <button
@@ -2106,7 +2106,7 @@ const SettingsPage = () => {
             >
               {activeSidebarItem === "my-profile" ? <CircleUserRound className="text-[#675FFF]" /> : <div className="flex items-center gap-2"><div className='group-hover:hidden'><CircleUserRound className="text-gray-500 dark:text-gray-400" /></div> <div className='hidden group-hover:block'><CircleUserRound className="dark:text-white" /></div></div>}
               <span className={`font-[400] text-[16px] ${activeSidebarItem === "my-profile" ? "text-black dark:text-white" : "text-black dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
-                My Profile
+              {t("settings.my_profile")}
               </span>
             </div>
 

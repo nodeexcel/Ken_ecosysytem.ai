@@ -183,7 +183,7 @@ export default function InBoundCalls() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
             <div className="flex flex-col gap-1">
-              <h1 className="text-xl md:text-[24px] font-semibold text-[#1E1E1E]">{t("phone.inbound_calls")}</h1>
+              <h1 className="text-[24px] font-[500] text-[#1E1E1E]">{t("phone.inbound_calls")}</h1>
               <p className="text-sm md:text-base text-[#5A687C] font-[400]">{t("phone.monitor_all_inbound_calls_received_through_your_campaigns") || "Monitor all inbound calls received through your campaigns"}</p>
             </div>
             {/* <button
@@ -345,7 +345,7 @@ export default function InBoundCalls() {
                     ) : (
                       <tr>
                         <td colSpan="9" className="text-center py-8 text-[#1E1E1E]">
-                          No Inbound Calls Listed
+                             {t("phone.no_inbound_calls_listed")}
                         </td>
                       </tr>
                     )}
@@ -356,7 +356,7 @@ export default function InBoundCalls() {
                   {/* pagination + row controls */}
                   <div className="flex items-center gap-2">
                     <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
-                      ‹ Prev
+                      ‹ {t("phone.prev")}
                     </button>
                     <button className="bg-[#675FFF] text-white rounded-lg px-3 py-1 text-sm cursor-pointer">
                       1
@@ -372,13 +372,13 @@ export default function InBoundCalls() {
                       10
                     </button>
                     <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
-                      Next ›
+                      {t("phone.next")} ›
                     </button>
                   </div>
 
                   {/* Right side – rows per page */}
                   <div className="flex items-center gap-2 text-sm text-[#5A687C]">
-                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 rows</button>
+                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 {t("phone.rows")}</button>
                     <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">10</button>
                     <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">20</button>
                   </div>

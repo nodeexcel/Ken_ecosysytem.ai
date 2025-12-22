@@ -141,9 +141,9 @@ export default function OutBoundCalls() {
     // Define campaign options
     const campaignOptions = [
         // { key: "", label: "Campaign" },
-        { key: "xyz-campaign", label: "XYZ Campaign" },
-        { key: "abc-campaign", label: "ABC Campaign" },
-        { key: "def-campaign", label: "DEF Campaign" }
+        { key: "xyz-campaign", label: t("phone.xyz_campaign") || "XYZ Campaign" },
+        { key: "abc-campaign", label: t("phone.abc_campaign") || "ABC Campaign" },
+        { key: "def-campaign", label: t("phone.def_campaign") || "DEF Campaign" }
     ];
 
     // Function to fetch outbound call data
@@ -309,7 +309,7 @@ export default function OutBoundCalls() {
                 {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
             <div className="flex flex-col gap-1">
-              <h1 className="text-xl md:text-[24px] font-semibold text-[#1E1E1E]">{t("phone.outbound_calls")}</h1>
+              <h1 className="text-[24px] font-[500] text-[#1E1E1E]">{t("phone.outbound_calls")}</h1>
               <p className="text-sm md:text-base text-[#5A687C] font-[400]">{t("phone.track_all_outbound_call_activities_across_your_campaigns") || "Track all outbound call activities across your campaigns."}</p>
             </div>
             {/* <button
@@ -380,15 +380,15 @@ export default function OutBoundCalls() {
                 <table className="min-w-full border-separate border-spacing-0">
                   <thead className="bg-[#F7F7F8]">
                     <tr className="text-[#5A687C]">
-                      <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("emailings.campaign_name")}</th>
-                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("appointment.agent_name")}</th>
-                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("brain_ai.date")}</th>
-                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.language")}</th>
-                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.voice")}</th>
-                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.receipient_no")}</th>
-                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.status")}</th>
-                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.duration")}</th>
-                      <th className="px-6 text-center py-3 text-[16px] font-[400]">{t("phone.actions")}</th>
+                      <th className="px-6 text-start py-3 text-[14  px] font-[400]">{t("emailings.campaign_name")}</th>
+                      <th className="px-3 text-start py-3 text-[14px] font-[400]">{t("appointment.agent_name")}</th>
+                      <th className="px-3 text-start py-3 text-[14px] font-[400]">{t("brain_ai.date")}</th>
+                      <th className="px-3 text-start py-3 text-[14px] font-[400]">{t("phone.language")}</th>
+                      <th className="px-3 text-start py-3 text-[14px] font-[400]">{t("phone.voice")}</th>
+                      <th className="px-3 text-start py-3 text-[14px] font-[400]">{t("phone.receipient_no")}</th>
+                      <th className="px-3 text-start py-3 text-[14px] font-[400]">{t("phone.status")}</th>
+                      <th className="px-3 text-start py-3 text-[14px] font-[400]">{t("phone.duration")}</th>
+                      <th className="px-6 text-center py-3 text-[14px] font-[400]">{t("phone.actions")}</th>
                     </tr>
                   </thead>
 
@@ -416,23 +416,23 @@ export default function OutBoundCalls() {
                     ) : Array.isArray(filteredAgents) && filteredAgents.length !== 0 ? (
                       filteredAgents.map((agent, index) => (
                         <tr key={agent.id} className="text-[16px] text-[#1E1E1E]">
-                          <td className="px-4 py-4 text-[16px] font-[600] text-[#1E1E1E] text-start">{agent.campaign_name}</td>
-                          <td className="px-4 py-4 text-[16px] text-start">
-                            <div className="flex flex-col text-[16px] text-[#1E1E1E] font-[400]">
+                          <td className="px-4 py-4 text-[13px] font-[400] text-[#1E1E1E] text-start">{agent.campaign_name}</td>
+                          <td className="px-4 py-4 text-[13px] text-start">
+                            <div className="flex flex-col text-[13px] text-[#1E1E1E] font-[400]">
                               {agent.agent_name}
                               <span className="text-[#5A687C]">{agent.choosen}</span>
                             </div>
                           </td>
-                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.date}</td>
-                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.language}</td>
-                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.voice}</td>
-                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.recipient_no}</td>
+                          <td className="px-4 py-4 text-[14px] text-[#5A687C] text-start">{agent.date}</td>
+                          <td className="px-4 py-4 text-[14px] text-[#5A687C] text-start">{agent.language}</td>
+                          <td className="px-4 py-4 text-[14px] text-[#5A687C] text-start">{agent.voice}</td>
+                          <td className="px-4 py-4 text-[14px] text-[#5A687C] text-start">{agent.recipient_no}</td>
                           <td className="px-4 py-4 text-start">
                             <span className={`inline-block ${agent.status.toLowerCase() === "replied" ? "text-[#34C759]" : "text-[#FF3B30]"} text-[16px] font-[400] px-3 py-1 rounded-full`}>
                               {agent.status}
                             </span>
                           </td>
-                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.duration}</td>
+                          <td className="px-4 py-4 text-[14px] text-[#5A687C] text-start">{agent.duration}</td>
                           <td className="px-4 py-4 text-center">
                             <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative cursor-pointer">
                               <div className='bg-[#F4F5F6] p-2 rounded-lg'><Ellipsis /></div>
@@ -490,7 +490,7 @@ export default function OutBoundCalls() {
                   {/* pagination + row controls */}
                   <div className="flex items-center gap-2">
                     <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
-                      ‹ Prev
+                      ‹ {t("phone.prev")}
                     </button>
                     <button className="bg-[#675FFF] text-white rounded-lg px-3 py-1 text-sm cursor-pointer">
                       1
@@ -506,13 +506,13 @@ export default function OutBoundCalls() {
                       10
                     </button>
                     <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
-                      Next ›
+                      {t("phone.next")} ›
                     </button>
                   </div>
 
                   {/* Right side – rows per page */}
                   <div className="flex items-center gap-2 text-sm text-[#5A687C]">
-                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 rows</button>
+                    <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 {t("phone.rows")}</button>
                     <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">10</button>
                     <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">20</button>
                   </div>

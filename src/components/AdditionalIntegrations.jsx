@@ -133,7 +133,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             </div>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                            
+
                             <button
                                 onClick={() => handleDelete(e[id])}
                                 className="flex items-center cursor-pointer gap-1 px-3 py-1 font-[500] text-sm text-[#FF3B30] bg-white border border-[#FF3B30] rounded-lg hover:bg-[#FFF1EF]"
@@ -241,7 +241,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             {integartionData.name}
                         </h1>
                         <p className="text-sm text-[#5A687C]">
-                            {renderNumberOfAccounts()} Account Connected
+                            {renderNumberOfAccounts()} {t("brain_ai.integrations.account_connected")}
                         </p>
                     </div>
                     <button onClick={() => setOpen(true)} className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#d6d6d6] rounded-lg text-white">
@@ -258,13 +258,33 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                 {integartionData.name === "WhatsApp" && (
                     <div className="flex items-center gap-2 text-[#5A687C] text-sm">
                         <AlertTriangle size={16} className="text-[#FF9500] flex-shrink-0" />
-                        <span>Only possible with a WhatsApp business account. <span className="text-[#675FFF] cursor-pointer hover:underline">See tutorial.</span></span>
+                        <span>
+                            {t("brain_ai.integrations.whatsapp_tutorial")} {" "}
+                            <a
+                                href="https://samisammari.notion.site/whatsappbusiness"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[#675FFF] cursor-pointer hover:underline"
+                            >
+                                {t("brain_ai.integrations.see_tutorial")}
+                            </a>
+                        </span>
                     </div>
                 )}
+
                 {integartionData.name === "Instagram" && (
                     <div className="flex items-center gap-2 text-[#5A687C] text-sm">
                         <AlertTriangle size={16} className="text-[#FF9500] flex-shrink-0" />
-                        <span>You can only connect professional and creator account. <span className="text-[#675FFF] cursor-pointer hover:underline">See tutorial.</span></span>
+                        <span>{t("brain_ai.integrations.instagram_description")} {" "}
+                            <a
+                                href="https://samisammari.notion.site/instagrambusiness"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[#675FFF] cursor-pointer hover:underline"
+                            >
+                                {t("brain_ai.integrations.see_tutorial")}
+                            </a>
+                        </span>
                     </div>
                 )}
 
@@ -297,9 +317,9 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             <p className="text-[16px] font-[400] text-[#5A687C]">
                                 {activeTab === "insta" ? (
                                     integartionData.name === "WhatsApp" ? (
-                                        <>Only possible with a WhatsApp business account. <span className="text-[#675FFF] cursor-pointer hover:underline">See tutorial.</span></>
+                                        <>{t("brain_ai.integrations.whatsapp_description")} <span className="text-[#675FFF] cursor-pointer hover:underline">{t("brain_ai.integrations.see_tutorial")}</span></>
                                     ) : integartionData.name === "Instagram" ? (
-                                        <>You can only connect professional and creator account. <span className="text-[#675FFF] cursor-pointer hover:underline">See tutorial.</span></>
+                                        <>{t("brain_ai.integrations.instagram_tutorial")} <span className="text-[#675FFF] cursor-pointer hover:underline">{t("brain_ai.integrations.see_tutorial")}</span></>
                                     ) : (
                                         ` ${t("brain_ai.integrations.use_your")} ${integartionData.name} ${t("brain_ai.integrations.account_to_ecosystem")}`
                                     )
@@ -321,7 +341,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                                         <p className="text-[16px] font-[400] text-[#5A687C]">
                                             {t("brain_ai.integrations.log_in_with")} {integartionData.name} {t("brain_ai.integrations.your_permissions")}
                                         </p>
-                                        
+
                                     </div>
                                     <div className="flex flex-col gap-3 w-full mt-4">
                                         <a href={integartionData.path} target="_blank">
@@ -357,7 +377,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                                             onClick={() => setActiveTab("insta")}
                                             className="flex-1 flex cursor-pointer items-center justify-center gap-2 text-[16px] text-[#1E1E1E] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px] font-medium"
                                         >
-                                            
+
                                             {t("brain_ai.integrations.back")}
                                         </button>
                                         <button

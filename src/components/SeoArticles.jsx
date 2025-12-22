@@ -49,7 +49,7 @@ function SeoArticles() {
     const [selectedLanguage] = useState("English")
     const [selectedPeriod, setSelectedPeriod] = useState("Last 30 days")
     const [selectedView, setSelectedView] = useState("Overall")
-    const [activeTab, setActiveTab] = useState("Prompts")
+    const [activeTab, setActiveTab] = useState("prompts")
     const [showAddPromptModal, setShowAddPromptModal] = useState(false)
     const [promptText, setPromptText] = useState("")
     const [selectedPersona, setSelectedPersona] = useState("Default User")
@@ -186,7 +186,7 @@ function SeoArticles() {
         labels: ['1/3', '2/3', '3/3', '4/3', '5/3', '6/3', '7/3', '8/3', '9/3'],
         datasets: [
             {
-                label: 'Share of Voice',
+                label: t("geo.share_of_voice"),
                 data: [18, 12, 20, 12, 28, 14, 24, 12, 22],
                 borderColor: '#675FFF',
                 backgroundColor: 'rgba(103, 95, 255, 0.1)',
@@ -205,7 +205,7 @@ function SeoArticles() {
         labels: ['1/3', '2/3', '3/3', '4/3', '5/3', '6/3', '7/3', '8/3', '9/3'],
         datasets: [
             {
-                label: 'ChatGPT',
+                label: t("geo.chatgpt"),
                 data: [12, 18, 15, 10, 20, 22, 18, 16, 14],
                 borderColor: '#22C55E', // Green
                 backgroundColor: 'rgba(34, 197, 94, 0.1)',
@@ -217,7 +217,7 @@ function SeoArticles() {
                 pointBorderWidth: 2,
             },
             {
-                label: 'DeepSeek',
+                label: t("geo.deepseek"),
                 data: [28, 26, 24, 26, 30, 32, 30, 28, 26],
                 borderColor: '#3B82F6', // Blue
                 backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -229,7 +229,7 @@ function SeoArticles() {
                 pointBorderWidth: 2,
             },
             {
-                label: 'Gemini',
+                label: t("geo.gemini"),
                 data: [14, 10, 12, 18, 16, 14, 18, 20, 18],
                 borderColor: '#06B6D4', // Cyan/Light blue
                 backgroundColor: 'rgba(6, 182, 212, 0.1)',
@@ -241,7 +241,7 @@ function SeoArticles() {
                 pointBorderWidth: 2,
             },
             {
-                label: 'Perplexity',
+                label: t("geo.perplexity"),
                 data: [6, 5, 4, 5, 6, 7, 6, 5, 5],
                 borderColor: '#F97316', // Orange
                 backgroundColor: 'rgba(249, 115, 22, 0.1)',
@@ -256,14 +256,14 @@ function SeoArticles() {
     };
 
     // Use appropriate chart data based on selected view
-    const chartData = selectedView === "Per engine" ? perEngineChartData : overallChartData;
+    const chartData = selectedView === t("geo.per_engine") ? perEngineChartData : overallChartData;
 
     const chartOptions = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
             legend: {
-                display: selectedView === "Per engine",
+                display: selectedView === t("geo.per_engine"),
                 position: 'bottom',
                 labels: {
                     usePointStyle: true,
@@ -282,7 +282,7 @@ function SeoArticles() {
                 borderColor: '#E1E4EA',
                 borderWidth: 1,
                 padding: 12,
-                displayColors: selectedView === "Per engine",
+                displayColors: selectedView === t("geo.per_engine"),
             },
         },
         scales: {
@@ -345,15 +345,15 @@ function SeoArticles() {
                             <div className="flex flex-col gap-2">
                                 <div>
                                     <h1 className="text-base md:text-xl font-[600] text-[#1E1E1E]">
-                                        Daily prompt generation
+                                        {t("geo.daily_prompt_generation")}
                                     </h1>
                                     <p className="mt-1 text-sm sm:text-[16px] text-[#5A687C]">
-                                        We&apos;ll automatically generate personalized prompts every day. Set your preferred language below to get started.
+                                        {t("geo.daily_prompt_description")}
                                     </p>
                                 </div>
                                 <div className="mt-3 flex items-center gap-3">
                                     <span className="text-sm font-medium text-[#808591]">
-                                        Language
+                                        {t("geo.language")}
                                     </span>
                                     <button
                                         type="button"
@@ -381,13 +381,13 @@ function SeoArticles() {
                 {/* Greeting below banner */}
                 <div className="flex flex-col text-start gap-1 pt-2 px-4">
                     <h2 className="font-[600] text-lg sm:text-2xl text-[#1E1E1E]">
-                        Hi,{" "}
+                        {t("geo.hi")}{" "}
                         <span className="text-[#020202]">
                             {userDetails?.user?.firstName}
                         </span>
                     </h2>
                     <p className="font-[400] text-[13px] sm:text-[16px] text-[#5A687C]">
-                        See how ecosystem.ai platform in AI conversations
+                        {t("geo.see_how_ecosystem")}
                     </p>
                 </div>
 
@@ -404,7 +404,7 @@ function SeoArticles() {
                                         <Info className="w-4 h-4 text-[#5A687C]" />
                                     </div>
                                     <p className="text-[14px] text-[#5A687C]">
-                                        Showing share of voice overtime
+                                        {t("geo.showing_share_of_voice")}
                                     </p>
                                 </div>
 
@@ -416,9 +416,9 @@ function SeoArticles() {
                                             onChange={(e) => setSelectedPeriod(e.target.value)}
                                             className="appearance-none bg-white border border-[#E1E4EA] rounded-lg px-4 py-2 pr-8 text-sm text-[#1E1E1E] cursor-pointer focus:outline-none focus:border-[#675FFF]"
                                         >
-                                            <option>Last 30 days</option>
-                                            <option>Last 7 days</option>
-                                            <option>Last 90 days</option>
+                                            <option>{t("geo.last_30_days")}</option>
+                                            <option>{t("geo.last_7_days")}</option>
+                                            <option>{t("geo.last_90_days")}</option>
                                         </select>
                                         <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#5A687C] pointer-events-none" />
                                     </div>
@@ -426,23 +426,23 @@ function SeoArticles() {
                                     <div className="inline-flex items-center bg-[#F3F4F6] rounded-lg p-1 ">
                                         <button
                                             type="button"
-                                            onClick={() => setSelectedView("Overall")}
-                                            className={`px-4 py-1.5 rounded-lg text-sm font-[600] cursor-pointer transition-all ${selectedView === "Overall"
+                                            onClick={() => setSelectedView(t("geo.overall"))}
+                                            className={`px-4 py-1.5 rounded-lg text-sm font-[600] cursor-pointer transition-all ${selectedView === t("geo.overall")
                                                 ? "bg-white text-[#111827] shadow-sm"
                                                 : "bg-transparent text-[#9CA3AF]"
                                                 }`}
                                         >
-                                            Overall
+                                            {t("geo.overall")}
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={() => setSelectedView("Per engine")}
-                                            className={`px-4 py-1.5 rounded-lg text-sm font-[500] cursor-pointer transition-all ${selectedView === "Per engine"
+                                            onClick={() => setSelectedView(t("geo.per_engine"))}
+                                            className={`px-4 py-1.5 rounded-lg text-sm font-[500] cursor-pointer transition-all ${selectedView === t("geo.per_engine")
                                                 ? "bg-white text-[#111827] shadow-sm"
                                                 : "bg-transparent text-[#9CA3AF]"
                                                 }`}
                                         >
-                                            Per engine
+                                            {t("geo.per_engine")}
                                         </button>
                                     </div>
                                 </div>
@@ -458,9 +458,9 @@ function SeoArticles() {
                     {/* Industry Ranking */}
                     <div className="bg-white border border-[#D6D6D6] rounded-2xl p-6 h-[420px]">
                         <div className="mb-4">
-                            <h2 className="text-xl font-[600] text-[#1E1E1E] mb-1">Industry Ranking</h2>
+                            <h2 className="text-xl font-[600] text-[#1E1E1E] mb-1">{t("geo.industry_ranking")}</h2>
                             <p className="text-[14px] text-[#5A687C] mb-4">
-                                Top Mentioned brands in your tracked conversations
+                                {t("geo.top_mentioned_brands")}
                             </p>
                         </div>
 
@@ -495,7 +495,7 @@ function SeoArticles() {
                                     className="border border-[#D6D6D6] text-[#000000] rounded-lg bg-white opacity-50 cursor-not-allowed flex items-center gap-1 px-2 py-1 text-sm"
                                 >
                                     <span className="text-sm">‹</span>
-                                    <span className="text-sm">Prev</span>
+                                    <span className="text-sm">{t("geo.prev")}</span>
                                 </button>
 
                                 <button
@@ -523,7 +523,7 @@ function SeoArticles() {
                                     className="border border-[#D6D6D6] text-[#000000] rounded-lg bg-white opacity-50 cursor-not-allowed flex items-center gap-1 px-2 py-1 text-sm"
                                 >
 
-                                    <span className="text-sm">Next</span>
+                                    <span className="text-sm">{t("geo.next")}</span>
                                     <span className="text-sm">›</span>
                                 </button>
 
@@ -539,50 +539,50 @@ function SeoArticles() {
                         <div className="inline-flex items-center  bg-[#F2F2F3]  border border-[#E6E6E7] rounded-lg p-0.5">
                             <button
                                 type="button"
-                                onClick={() => setActiveTab("Prompts")}
-                                className={`px-4 py-1.5 rounded-lg text-sm font-[600] transition-all cursor-pointer ${activeTab === "Prompts"
+                                onClick={() => setActiveTab("prompts")}
+                                className={`px-4 py-1.5 rounded-lg text-sm font-[600] transition-all cursor-pointer ${activeTab === "prompts"
                                         ? "bg-white text-[#111827] shadow-sm border cursor-pointer border-[#D6D6D6]"
                                         : "bg-transparent text-[#9CA3AF]"
                                     }`}
                             >
-                                Prompts
+                                {t("geo.prompts")}
                             </button>
                             <button
                                 type="button"
-                                onClick={() => setActiveTab("Citations")}
-                                className={`px-4 py-1.5 rounded-lg text-sm font-[500] transition-all cursor-pointer ${activeTab === "Citations"
+                                onClick={() => setActiveTab("citations")}
+                                className={`px-4 py-1.5 rounded-lg text-sm font-[500] transition-all cursor-pointer ${activeTab === "citations"
                                         ? "bg-white text-[#111827] shadow-sm border  border-[#D6D6D6]"
                                         : "bg-transparent text-[#9CA3AF]"
                                     }`}
                             >
-                                Citations
+                                {t("geo.citations")}
                             </button>
                         </div>
                     </div>
 
                     {/* Content based on active tab */}
-                    {activeTab === "Prompts" ? (
+                    {activeTab === "prompts" ? (
                         /* Prompts Table Section */
                         <div className="">
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                                 <div>
                                     <h2 className="text-xl font-[600] text-[#1E1E1E] mb-1">
-                                        Industry Ranking
+                                        {t("geo.industry_ranking")}
                                     </h2>
                                     <p className="text-sm text-[#5A687C]">
-                                        Prompts to run in conversations three times a week.
+                                        {t("geo.prompts_description")}
                                     </p>
                                 </div>
                                 <div className="flex gap-3">
                                     <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer">
-                                        View All
+                                        {t("geo.view_all")}
                                     </button>
                                     <button
                                         onClick={() => setShowAddPromptModal(true)}
                                         className="flex items-center gap-2 px-4 py-2 bg-[#675FFF] rounded-lg text-white font-[500] text-sm hover:bg-[#5A4FE6] transition-colors cursor-pointer"
                                     >
                                         <Plus className="w-4 h-4" />
-                                        <span>Add prompt</span>
+                                        <span>{t("geo.add_prompt")}</span>
                                     </button>
                                 </div>
                             </div>
@@ -593,10 +593,10 @@ function SeoArticles() {
                                     <table className="min-w-full border-separate border-spacing-0">
                                         <thead className="bg-[#F7F7F8]">
                                             <tr className="text-[#5A687C]">
-                                                <th className="px-6 text-start py-2 text-[16px] font-[400]">Prompts</th>
-                                                <th className="px-3 text-start py-2 text-[16px] font-[400]">Model</th>
-                                                <th className="px-3 text-start py-2 text-[16px] font-[400]">Creation Date</th>
-                                                <th className="px-6 text-center py-2 text-[16px] font-[400]">Action</th>
+                                                <th className="px-6 text-start py-2 text-[16px] font-[400]">{t("geo.prompts")}</th>
+                                                <th className="px-3 text-start py-2 text-[16px] font-[400]">{t("geo.model")}</th>
+                                                <th className="px-3 text-start py-2 text-[16px] font-[400]">{t("geo.creation_date")}</th>
+                                                <th className="px-6 text-center py-2 text-[16px] font-[400]">{t("geo.action")}</th>
                                             </tr>
                                         </thead>
                                         <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
@@ -638,7 +638,7 @@ function SeoArticles() {
                                 <div className="flex items-center justify-between bg-[#F7F7F8] px-4 py-3">
                                     <div className="flex items-center gap-2">
                                         <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white opacity-50 cursor-not-allowed">
-                                            ‹ Prev
+                                            ‹ {t("geo.prev")}
                                         </button>
                                         <button className="bg-[#675FFF] text-white rounded-lg px-3 py-1 text-sm cursor-pointer">
                                             1
@@ -654,11 +654,11 @@ function SeoArticles() {
                                             10
                                         </button>
                                         <button className="border border-[#D6D6D6] text-[#000000] rounded-lg px-3 py-1 text-sm bg-white cursor-pointer">
-                                            Next ›
+                                            {t("geo.next")} ›
                                         </button>
                                     </div>
                                     <div className="flex items-center gap-2 text-sm text-[#5A687C]">
-                                        <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 rows</button>
+                                        <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] bg-white cursor-pointer">5 {t("geo.rows")}</button>
                                         <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">10</button>
                                         <button className="border border-[#D6D6D6] rounded-lg px-2 py-1 text-[#000000] hover:bg-white cursor-pointer">20</button>
                                     </div>
@@ -673,14 +673,14 @@ function SeoArticles() {
                                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-6 border-b border-[#E1E4EA]">
                                         <div>
                                             <h2 className="text-xl font-[600] text-[#1E1E1E] mb-1">
-                                                New Cited Content
+                                                {t("geo.new_cited_content")}
                                             </h2>
                                             <p className="text-sm text-[#5A687C]">
-                                                Sources newly cited in your conversations.
+                                                {t("geo.new_cited_content_description")}
                                             </p>
                                         </div>
                                         <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer">
-                                            View All
+                                            {t("geo.view_all")}
                                         </button>
                                     </div>
                                     <div className="p-6 space-y-3">
@@ -705,8 +705,8 @@ function SeoArticles() {
 
                                                     {/* Row 2: First Seen + Chat Count */}
                                                     <div className="flex justify-between text-xs text-[#5A687C]">
-                                                        <span className="text-[14px] font-[500]">First Seen {item.firstSeen}</span>
-                                                        <span className="text-[14px] font-[500]">{item.chatCount} Chats</span>
+                                                        <span className="text-[14px] font-[500]">{t("geo.first_seen")} {item.firstSeen}</span>
+                                                        <span className="text-[14px] font-[500]">{item.chatCount} {t("geo.chats")}</span>
                                                     </div>
                                                 </div>
 
@@ -721,14 +721,14 @@ function SeoArticles() {
                                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-6 border-b border-[#E1E4EA]">
                                         <div>
                                             <h2 className="text-xl font-[600] text-[#1E1E1E] mb-1">
-                                                Top Cited Content
+                                                {t("geo.top_cited_content")}
                                             </h2>
                                             <p className="text-sm text-[#5A687C]">
-                                                This is the most cited content across all conversations.
+                                                {t("geo.top_cited_content_description")}
                                             </p>
                                         </div>
                                         <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer">
-                                            View All
+                                            {t("geo.view_all")}
                                         </button>
                                     </div>
 
@@ -770,7 +770,7 @@ function SeoArticles() {
                     <div className="bg-white rounded-2xl w-full max-w-[600px] relative shadow-lg my-auto max-h-[90vh] overflow-y-auto">
                         {/* Header */}
                         <div className="flex items-center justify-between p-6 border-b border-[#E1E4EA]">
-                            <h2 className="text-xl font-[600] text-[#1E1E1E]">Add Creation Studio</h2>
+                            <h2 className="text-xl font-[600] text-[#1E1E1E]">{t("geo.add_creation_studio")}</h2>
                             <button
                                 onClick={() => setShowAddPromptModal(false)}
                                 className="text-[#5A687C] hover:text-[#1E1E1E] cursor-pointer"
@@ -789,24 +789,24 @@ function SeoArticles() {
                                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M3.375 3.75L4.6875 5.0625L3.375 6.375M6 6.375H7.5M0.75 0.75H13.125V13.125H0.75V0.75Z" stroke="#070707" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                         </svg>
-                                        <span>Prompts 1</span>
+                                        <span>{t("geo.prompts_label")} 1</span>
                                     </button>
                                 </div>
                                 <div className="">
                                     <label className="text-sm font-[500] text-[#1E1E1E] mb-2 flex items-center gap-2">
-                                        <span>Prompts</span>
+                                        <span>{t("geo.prompts_label")}</span>
                                     </label>
                                     <div className="relative border border-[#E1E4EA] rounded-lg focus-within:border-[#675FFF]">
                                         <textarea
                                             value={promptText}
                                             onChange={(e) => setPromptText(e.target.value)}
-                                            placeholder="Write an engaging social media post promoting our new AI writing assistant."
+                                            placeholder={t("geo.prompts_placeholder")}
                                             className="w-full px-4 py-3 pb-12 rounded-lg resize-none focus:outline-none text-sm min-h-[80px]"
                                         />
                                         <div className="absolute bottom-3 left-3">
                                             <button className="flex items-center gap-1.5 px-1 text-[#675FFF] font-[500] text-sm hover:bg-[#F1EEFF] rounded-lg transition-colors cursor-pointer">
                                                 <Sparkles className="w-4 h-4" />
-                                                <span>Generate</span>
+                                                <span>{t("geo.generate")}</span>
                                             </button>
                                         </div>
                                     </div>
@@ -817,7 +817,7 @@ function SeoArticles() {
                             {/* Persona Section */}
                             <div className="mb-3">
                                 <label className="block text-sm font-[500] text-[#1E1E1E] mb-2">
-                                    Persona
+                                    {t("geo.persona")}
                                 </label>
                                 <div className="relative">
                                     <select
@@ -825,7 +825,7 @@ function SeoArticles() {
                                         onChange={(e) => setSelectedPersona(e.target.value)}
                                         className="appearance-none w-full px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-sm text-[#1E1E1E] cursor-pointer focus:outline-none focus:border-[#675FFF]"
                                     >
-                                        <option>Default User</option>
+                                        <option>{t("geo.default_user")}</option>
                                     </select>
                                     <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#5A687C] pointer-events-none" />
                                 </div>
@@ -835,7 +835,7 @@ function SeoArticles() {
 
                                 <button className="flex items-center gap-2 px-2 py-1.5 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer">
                                     <Plus className="w-4 h-4" />
-                                    <span>Add Prompt</span>
+                                    <span>{t("geo.add_prompt_button")}</span>
                                 </button>
                             </div>
 
@@ -843,7 +843,7 @@ function SeoArticles() {
                             <div className="mb-6">
                                 <div className="flex items-center gap-2 mb-3 bg-[#F7F7F8] border border-[#D6D6D6] py-1.5 px-2 rounded-md">
                                     <Sparkles className="w-4 h-4 text-[#000000]" />
-                                    <label className="block text-sm font-[500] text-[#1E1E1E]">Model</label>
+                                    <label className="block text-sm font-[500] text-[#1E1E1E]">{t("geo.model")}</label>
 
                                 </div>
                                 <div className="flex flex-wrap gap-2">
@@ -873,10 +873,10 @@ function SeoArticles() {
                                 <div className="flex items-center justify-between border border-[#D6D6D6] rounded-xl p-2">
                                     <div>
                                         <label className="block text-sm font-[500] text-[#1E1E1E] mb-1 ">
-                                            All Conversations
+                                            {t("geo.all_conversations")}
                                         </label>
                                         <p className="text-xs text-[#5A687C]">
-                                            Add this prompt to all conversations.
+                                            {t("geo.all_conversations_description")}
                                         </p>
                                     </div>
                                     <button
@@ -899,7 +899,7 @@ function SeoArticles() {
                                     onClick={() => setShowAddPromptModal(false)}
                                     className="px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
                                 >
-                                    Cancel
+                                    {t("geo.cancel")}
                                 </button>
                                 <button
                                     onClick={() => {
@@ -908,7 +908,7 @@ function SeoArticles() {
                                     }}
                                     className="px-4 py-2 bg-[#675FFF] rounded-lg text-white font-[500] text-sm hover:bg-[#5A4FE6] transition-colors cursor-pointer"
                                 >
-                                    Save Prompts
+                                    {t("geo.save_prompts")}
                                 </button>
                             </div>
                         </div>

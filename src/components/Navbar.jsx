@@ -91,7 +91,7 @@ function Navbar({ sidebarItems }) {
         const tab = searchParams.get('tab')
 
         const routeMap = {
-            'dashboard': 'AI Agents',
+            'dashboard': t("ai_agents"),
             'appointment-setter': 'Seth',
             'phone': 'Rebecca',
             'campaigns': 'Emile',
@@ -101,6 +101,7 @@ function Navbar({ sidebarItems }) {
             'hr': 'HR',
             'seo': 'GEO',
             'customer-support': 'Calina',
+            'ken': 'Ken',
             'brain': 'Brain AI',
             'settings': 'Settings',
             'notification': 'Notification',
@@ -117,7 +118,8 @@ function Navbar({ sidebarItems }) {
             'campaigns': 'Emile',
             'coo': 'Tara',
             'content-creation': 'Constance',
-            'customer-support': 'Calina'
+            'customer-support': 'Calina',
+            'ken': 'Ken'
         }
 
         // Tab name mapping for Constance (matching actual URL params)
@@ -193,11 +195,17 @@ function Navbar({ sidebarItems }) {
             'roi_calculator': 'ROI Calculator',
         }
 
-        if (paths.length === 0 || (paths.length === 1 && paths[0] === 'dashboard')) {
-            return [{ label: 'AI Agents', path: '/dashboard' }]
+        // Tab name mapping for Ken - matches Ken.jsx sideMenuList paths
+        const kenTabMap = {
+            'overview': 'Overview',
+            'search-prospects': 'Search for Prospects',
         }
 
-        breadcrumbs.push({ label: 'AI Agents', path: '/dashboard' })
+        if (paths.length === 0 || (paths.length === 1 && paths[0] === 'dashboard')) {
+            return [{ label: t("ai_agents"), path: '/dashboard' }]
+        }
+
+        breadcrumbs.push({ label: t("ai_agents"), path: '/dashboard' })
         const currentPath = paths[paths.length - 1]
         const previousPath = paths.length > 1 ? paths[paths.length - 2] : null
         
@@ -321,6 +329,16 @@ function Navbar({ sidebarItems }) {
             breadcrumbs.push({ label: 'Finn', path: `/dashboard/accounting?tab=${finnTabKey}` })
             if (finnTabMap[finnTabKey]) {
                 breadcrumbs.push({ label: finnTabMap[finnTabKey], path: null })
+            }
+            return breadcrumbs
+        }
+        
+        // Handle Ken with tab param
+        if (currentPath === 'ken') {
+            const kenTabKey = tab || 'overview'
+            breadcrumbs.push({ label: 'Ken', path: `/dashboard/ken?tab=${kenTabKey}` })
+            if (kenTabMap[kenTabKey]) {
+                breadcrumbs.push({ label: kenTabMap[kenTabKey], path: null })
             }
             return breadcrumbs
         }
