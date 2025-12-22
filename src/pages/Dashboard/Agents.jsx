@@ -2,14 +2,14 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getNavbarData } from "../../store/navbarSlice";
-import taraImg from '../../assets/svg/tara.svg'
-import constanceImg from '../../assets/svg/constance.svg'
-import tomImg from '../../assets/images/Sami_rev.png'
+import taraImg from '../../assets/svg/TaraHome.svg'
+import constanceImg from '../../assets/svg/ConstanceSidebar.svg'
+import tomImg from '../../assets/svg/KenNewLogo.svg'
 import rebeccaImg from '../../assets/svg/rebecca.svg'
-import sethImg from '../../assets/svg/seth.svg'
+import sethImg from '../../assets/svg/SethSidebar.svg'
 import emileImg from '../../assets/svg/emile.svg'
-import calinaImg from '../../assets/svg/calina.svg'
-import finnImg from '../../assets/svg/finn.svg'
+import calinaImg from '../../assets/svg/CalinaSidebar.svg'
+import finnImg from '../../assets/svg/FinnSidebar.svg'
 import { logoutState } from "../../store/authSlice";
 import { discardData } from "../../store/profileSlice";
 import { logout } from "../../api/auth";
@@ -27,6 +27,7 @@ const Agents = () => {
       name: "Tara",
       role: `${t("coo")}`,
       gradient: "bg-[#CEBFFD]",
+      borderColor: "border-[#BB96D9]",
       path: "/dashboard/coo",
       label: "Tara",
       image: taraImg,
@@ -35,6 +36,7 @@ const Agents = () => {
       name: "Constance",
       role: `${t("content_creation")}`,
       gradient: "bg-[#CEBFFD]",
+      borderColor: "border-[#BB96D9]",
       path: "/dashboard/content-creation",
       label: "Content Creation",
       image: constanceImg
@@ -43,6 +45,7 @@ const Agents = () => {
       name: "Rebecca",
       role: `${t("phone_outreach")}`,
       gradient: "bg-[#DBE5FF]",
+      borderColor: "border-[#BDC1DB]",
       path: "/dashboard/phone",
       label: "Rebecca, Phone",
       image: rebeccaImg
@@ -51,6 +54,7 @@ const Agents = () => {
       name: "Seth",
       role: `${t("appointment_setter")}`,
       gradient: "bg-[#FFE4C5]",
+      borderColor: "border-[#DFC6AA]",
       path: "/dashboard/appointment-setter",
       label: "Seth, Appointment Setter",
       image: sethImg
@@ -59,6 +63,7 @@ const Agents = () => {
       name: "Calina",
       role: `${t("customer_support")}`,
       gradient: "bg-[#E3F6ED]",
+      borderColor: "border-[#BED6CC]",
       path: "/dashboard/customer-support",
       label: "Customer Support",
       image: calinaImg
@@ -67,6 +72,7 @@ const Agents = () => {
       name: "Ken",
       role: `${t("receptionist")}`,
       gradient: "bg-[#DBE5FF]",
+      borderColor: "border-[#DEB4DB]",
       path: "/dashboard/ken",
       label: "Ken",
       image: tomImg
@@ -76,6 +82,7 @@ const Agents = () => {
       name: "Finn",
       role: `${t("accouting")}`,
       gradient: "bg-[#E3F6ED]",
+      borderColor: "border-[#BED6CC]",
       path: "/dashboard/accounting",
       label: "Accounting",
       image: finnImg
@@ -84,6 +91,7 @@ const Agents = () => {
       name: "Georgio",
       role: `${t("geo_name")}`,
       gradient: "bg-[#F8DDFF]",
+      borderColor: "border-[#BB96D9]",
       path: "/dashboard/geo",
       label: "Sandro",
       image: emileImg
@@ -138,7 +146,7 @@ const Agents = () => {
               >
                 {/* Avatar */}
                 <div
-                  className={`w-[80px] h-[80px] rounded-full flex items-center justify-center mb-6 ml-2 ${employee.gradient}`}
+                  className={`w-[80px] h-[80px] rounded-full flex items-center justify-center mb-6 ml-2 border-1 ${employee.gradient} ${employee.borderColor}`}
                 >
                   <img
                     src={employee.image}
@@ -149,12 +157,12 @@ const Agents = () => {
                 </div>
 
                 {/* Name */}
-                <h3 className="text-[20px] font-semibold text-[#1E1E1E] mb-1 ml-2">
+                <h3 className="text-[20px] font-[500] text-[#1E1E1E] mb-1 ml-2">
                   {employee.name}
                 </h3>
 
                 {/* Role */}
-                <p className="text-[14px] text-[#5A687C] font-normal ml-2">
+                <p className="text-[14px] text-[#5A687C] font-[400] ml-2">
                   {employee.role}
                 </p>
               </div>

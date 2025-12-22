@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import tomImg from '../../assets/images/Sami_rev.png'
+import tomImg from '../../assets/svg/KenNewLogo.svg'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from "react-i18next";
 import TutorialPlay from '../../assets/svg/WatchTutorialGrey.svg'

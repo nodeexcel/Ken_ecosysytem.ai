@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import React from 'react'
 import linkedinIcon from '../assets/svg/linkedin.svg'
-import KenImage  from '../assets/images/Sami_rev.png'
+import KenImage  from '../assets/svg/KenNewLogo.svg'
 import { Eye, EyeOff } from 'lucide-react'
 import TotalCampaigns from '../assets/svg/TotalCampaigns.svg'
 import ActiveCampaign from '../assets/svg/ActiveCampaign.svg'
