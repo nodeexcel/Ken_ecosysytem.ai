@@ -7,7 +7,7 @@ import { Ellipsis, Edit, Delete, DocIcon } from "../icons/icons";
 import uk_flag from "../assets/images/uk_flag.png"
 import us_flag from "../assets/images/us_flag.png"
 import fr_flag from "../assets/images/fr_flag.png"
-import { getPhoneNumber, createPhoneAgent, getCallAgent, updatePhoneNumberAgentStatus } from "../api/callAgent";
+import { getPhoneNumber, createPhoneAgent, getCallAgent, updatePhoneNumberAgentStatus, deleteCallAgent } from "../api/callAgent";
 import { SelectDropdown } from "./Dropdown";
 import { useTranslation } from "react-i18next";
 import ToastModal from "./ToastModal";
@@ -49,6 +49,7 @@ export default function CallAgentsPage() {
     voice: ""
   });
   const [searchQuery, setSearchQuery] = useState("");
+  const [deleteAgentId, setDeleteAgentId] = useState(null);
   const [toast, setToast] = useState({
     open: false,
     type: "success",
@@ -285,6 +286,39 @@ export default function CallAgentsPage() {
     }
   }
 
+  const removeAgent = async (id) => {
+    try {
+      const response = await deleteCallAgent(id);
+      if (response.status === 200) {
+        console.log("Agent deleted successfully");
+        fetchAgents();
+        setDeleteAgentId(null);
+        setToast({
+          open: true,
+          type: "success",
+          title: t("success") || "Success",
+          description: t("phone.agent_deleted_success") || "Call agent has been deleted successfully.",
+        });
+      } else {
+        console.error("Failed to delete agent:", response);
+        setToast({
+          open: true,
+          type: "error",
+          title: t("error") || "Error",
+          description: t("phone.agent_delete_failed") || "Failed to delete agent. Please try again.",
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting agent:", error);
+      setToast({
+        open: true,
+        type: "error",
+        title: t("error") || "Error",
+        description: t("phone.agent_delete_failed") || "Failed to delete agent. Please try again.",
+      });
+    }
+  }
+
   useEffect(() => {
     if (agents?.length > 0) {
       setLoading(false)
@@ -517,7 +551,7 @@ export default function CallAgentsPage() {
                       className="block w-full cursor-pointer text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
                       onClick={(e) => {
                         e.stopPropagation();
-                        // Handle Delete action
+                        setDeleteAgentId(selectedAgent.id);
                         setActiveDropdown(null);
                       }}
                     >
@@ -754,6 +788,32 @@ export default function CallAgentsPage() {
         highlightText={toast.highlightText}
         onClose={() => setToast((prev) => ({ ...prev, open: false }))}
       />
+
+      {/* Delete Confirmation Modal */}
+      {deleteAgentId && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999]">
+          <div className="bg-white rounded-2xl w-[400px] p-6 relative shadow-lg">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">{t("phone.delete_call_agent")}</h2>
+            <p className="text-gray-500 mb-4">{t("phone.delete_call_agent_msg")}</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setDeleteAgentId(null)}
+                className="w-full text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
+              >
+                {t("phone.cancel")}
+              </button>
+              <button
+                onClick={() => {
+                  removeAgent(deleteAgentId);
+                }}
+                className="w-full text-[16px] cursor-pointer text-white rounded-[8px] bg-red-500 h-[38px] flex justify-center items-center gap-2 relative"
+              >
+                {t("brain_ai.delete") || t("delete")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     );
   }

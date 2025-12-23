@@ -102,14 +102,14 @@ function Navbar({ sidebarItems }) {
             'seo': 'GEO',
             'customer-support': 'Calina',
             'ken': 'Ken',
-            'brain': 'Brain AI',
-            'settings': 'Settings',
-            'notification': 'Notification',
-            'skills': 'Skills',
-            'support': 'Support',
-            'community': 'Community',
-            'documentation': 'Documentation',
-            'manage-plan': 'Manage Plan'
+            'brain': t("brain_ai.brain_ai"),
+            'settings': t("settings.label"),
+            'notification': t("notification"),
+            'skills': t("skills"),
+            'support': t("support"),
+            'community': t("community"),
+            'documentation': t("documentation"),
+            'manage-plan': t("manage-plan")
         }
 
         const agentNameMap = {
@@ -125,37 +125,37 @@ function Navbar({ sidebarItems }) {
         // Tab name mapping for Constance (matching actual URL params)
         const constanceTabMap = {
             'chat': 'Chat',
-            'creation_studio': 'Creation Studio',
-            'scheduler': 'Scheduler',
-            'youtube': 'YouTube Script Writer',
-            'linkedin': 'LinkedIn Nuke',
-            'x_post': 'X Post Generator'
+            'creation_studio': t("creation_studio"),
+            'scheduler': t("scheduler"),
+            'youtube': t("youtube_script_writer"),
+            'linkedin': t("linkedin_nuke"),
+            'x_post': t("x_post_generator")
         }
 
         // Tab name mapping for Rebecca (Phone outreach) - matches Phone.jsx sideMenuList paths
         const phoneTabMap = {
-            'dashboard': 'Dashboard',
-            'phone-numbers': 'Phone Numbers',
-            'call-agents': 'Call Agents',
-            'call-campaigns': 'Call Campaigns',
-            'outbound-calls': 'Outbound Calls',
-            'inbound-calls': 'Inbound Calls',
+            'dashboard': t("dashboard"),
+            'phone-numbers': t("phone_numbers"),
+            'call-agents': t("call_agents"),
+            'call-campaigns': t("call_campaigns"),
+            'outbound-calls': t("outbound_calls"),
+            'inbound-calls': t("inbound_calls"),
         }
 
         // Tab name mapping for Brain AI - matches Brain.jsx sideMenuItems paths
         const brainTabMap = {
-            'contacts': 'Contacts',
-            'knowledge': 'Knowledge',
-            'integration': 'Integration',
+            'contacts': t("contacts"),
+            'knowledge': t("knowledge"),
+            'integration': t("integration"),
         }
 
         // Tab name mapping for Settings - matches Settings.jsx tabs
         const settingsTabMap = {
-            'my-profile': 'My Profile',
-            'general': 'General Settings',
-            'billing': 'Plan & Billing',
-            'team': 'Team Members',
-            'transaction-history': 'Transaction History',
+            'my-profile': t("my_profile"),
+            'general': t("general_settings"),
+            'billing': t("plan_billing"),
+            'team': t("team_members"),
+            'transaction-history': t("transaction_history"),
         }
 
         // Tab name mapping for GEO (SEO) - matches Seo.jsx sideMenuList paths
@@ -247,15 +247,15 @@ function Navbar({ sidebarItems }) {
         if (currentPath === 'settings') {
             // Check for manage-plan view first
             if (view === 'manage-plan') {
-                breadcrumbs.push({ label: 'Settings', path: '/dashboard/settings?tab=billing' })
-                breadcrumbs.push({ label: 'Plan & Billing', path: '/dashboard/settings?tab=billing' })
-            breadcrumbs.push({ label: 'Manage Plan', path: null })
+                breadcrumbs.push({ label: t("settings.label"), path: '/dashboard/settings?tab=billing' })
+                breadcrumbs.push({ label: t("plan_billing"), path: '/dashboard/settings?tab=billing' })
+            breadcrumbs.push({ label: t("manage_plan"), path: null })
                 return breadcrumbs
             }
             
             // Base crumb for Settings
             const settingsTabKey = tab || 'my-profile'
-            breadcrumbs.push({ label: 'Settings', path: `/dashboard/settings?tab=${settingsTabKey}` })
+            breadcrumbs.push({ label: t("settings.label"), path: `/dashboard/settings?tab=${settingsTabKey}` })
             
             if (settingsTabMap[settingsTabKey]) {
                 breadcrumbs.push({ label: settingsTabMap[settingsTabKey], path: null })
@@ -287,9 +287,9 @@ function Navbar({ sidebarItems }) {
         // Handle Brain AI with tab param
         if (currentPath === 'brain') {
             // Base crumb for Brain AI
-            breadcrumbs.push({ label: 'Brain AI', path: '/dashboard/brain?tab=contacts' })
+            breadcrumbs.push({ label: t("brain_ai.brain_ai"), path: '/dashboard/brain?tab=contacts' })
 
-            const brainTabKey = tab || 'contacts'
+            const brainTabKey = tab || 'knowledge'
             if (brainTabMap[brainTabKey]) {
                 breadcrumbs.push({ label: brainTabMap[brainTabKey], path: null })
             }

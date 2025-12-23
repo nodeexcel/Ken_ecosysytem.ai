@@ -38,15 +38,47 @@ function AppointmentSetter() {
             label: t("appointment.conversations"),
             path: "conversations",
             // No explicit active SVG provided; use conversation.svg for active and InactiveConversation for inactive
-            iconActive: <img src={InactiveConversation} alt="Conversations" className="w-5 h-5" style={{ filter: 'invert(23%) sepia(90%) saturate(3435%) hue-rotate(245deg) brightness(99%) contrast(101%)' }} />,
-            iconInactive: <img src={InactiveConversation} alt="Conversations" className="w-5 h-5" />,
+            iconActive: (
+                <img
+                  src={InactiveConversation}
+                  alt="Conversations"
+                  className="w-5 h-5"
+                  style={{
+                    filter:
+                      "invert(35%) sepia(98%) saturate(2580%) hue-rotate(236deg) brightness(99%) contrast(101%)",
+                  }}
+                />
+              ),
+              iconInactive: (
+                <img
+                  src={InactiveConversation}
+                  alt="Conversations"
+                  className="w-5 h-5"
+                />
+              ),
         },
         {
             label: t("appointment.analytics"),
             path: "analytics",
             // No explicit active SVG provided; tint InactiveAnalytics for active
-            iconActive: <img src={InactiveAnalytics} alt="Analytics" className="w-5 h-5" style={{ filter: 'invert(23%) sepia(90%) saturate(3435%) hue-rotate(245deg) brightness(99%) contrast(101%)' }} />,
-            iconInactive: <img src={InactiveAnalytics} alt="Analytics" className="w-5 h-5" />,
+            iconActive: (
+                <img
+                  src={InactiveAnalytics}
+                  alt="Analytics"
+                  className="w-5 h-5"
+                  style={{
+                    filter:
+                      "invert(35%) sepia(98%) saturate(2580%) hue-rotate(236deg) brightness(99%) contrast(101%)",
+                  }}
+                />
+              ),
+              iconInactive: (
+                <img
+                  src={InactiveAnalytics}
+                  alt="Analytics"
+                  className="w-5 h-5"
+                />
+              ),
         },
         // { label: "Demo Chat", path: "demo", iconActive: <ConversationIcon status={true} />, iconInactive: <ConversationIcon status={false} /> },
     ]

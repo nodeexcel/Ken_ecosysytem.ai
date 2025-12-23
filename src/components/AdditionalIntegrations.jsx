@@ -277,7 +277,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                         <AlertTriangle size={16} className="text-[#FF9500] flex-shrink-0" />
                         <span>{t("brain_ai.integrations.instagram_description")} {" "}
                             <a
-                                href="https://samisammari.notion.site/instagrambusiness"
+                                href="https://help.instagram.com/502981923235522"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-[#675FFF] cursor-pointer hover:underline"

@@ -88,6 +88,19 @@ export const updatePhoneNumberStatus=async (id)=>{
       }
 }
 
+export const deleteCallAgent=async(id)=>{
+
+    try{
+    const response = await agentInstance.delete(`/phone-agent/${id}`);
+    return response;
+    }
+    catch(error){
+      console.error(error);
+      return error;
+    }
+
+}
+
 export const updatePhoneNumberAgentStatus=async (id)=>{
 
       try{

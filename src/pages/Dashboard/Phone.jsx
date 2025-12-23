@@ -15,7 +15,7 @@ import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ColdCallingScriptPhone from "../../components/ColdCallingScriptPhone";
-import { X, EllipsisVertical } from "lucide-react";
+import { X, EllipsisVertical, ChevronDown, ChevronRight, ChevronUp } from "lucide-react";
 import { discardSkillsData } from "../../store/agentSkillsSlice";
 import HomeActive from '../../assets/svg/Home Grid.svg'
 import HomeInactive from '../../assets/svg/HomeInactive.svg'
@@ -35,6 +35,7 @@ const PhonePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeSidebarItem, setActiveSidebarItem] = useState("dashboard");
   const [sidebarStatus, setSideBarStatus] = useState(false)
+  const [expandedSubmenus, setExpandedSubmenus] = useState(new Set());
   const dispatch = useDispatch();
   const navbarDetails = useSelector((state) => state.navbar);
   const navigate = useNavigate()
@@ -50,7 +51,7 @@ const PhonePage = () => {
       iconInactive: <img src={HomeInactive} alt="Dashboard" className="w-5 h-5" />,
     },
     {
-      label: t("phone.phone_numbers"),
+      label: t("phone.phone_number"),
       path: "phone-numbers",
       header: `Tom & Rebecca,${t("phone.phone")} `,
       iconActive: <img src={PhoneActive} alt="Phone numbers" className="w-5 h-5" />,
@@ -64,18 +65,27 @@ const PhonePage = () => {
       iconInactive: <img src={CallAgentInactive} alt="Call agents" className="w-5 h-5" />,
     },
     {
-      label: t("phone.call_campaigns"),
-      path: "call-campaigns",
+      label: t("phone.outreach"),
+      path: "outreach",
       header: "Tom",
-      iconActive: <img src={CallCampaignActive} alt="Call campaigns" className="w-5 h-5" />,
-      iconInactive: <img src={CallCampaignInactive} alt="Call campaigns" className="w-5 h-5" />,
-    },
-    {
-      label: t("phone.outbound_calls"),
-      path: "outbound-calls",
-      header: "Tom",
-      iconActive: <img src={OutboundActive} alt="Outbound calls" className="w-5 h-5" />,
-      iconInactive: <img src={OutboundInactive} alt="Outbound calls" className="w-5 h-5" />,
+      iconActive: <img src={CallCampaignActive} alt="Outreach" className="w-5 h-5" />,
+      iconInactive: <img src={CallCampaignInactive} alt="Outreach" className="w-5 h-5" />,
+      subMenu: [
+        {
+          label: t("phone.call_campaigns"),
+          path: "call-campaigns",
+          header: "Tom",
+          iconActive: <img src={CallCampaignActive} alt="Call campaigns" className="w-5 h-5" />,
+          iconInactive: <img src={CallCampaignInactive} alt="Call campaigns" className="w-5 h-5" />,
+        },
+        {
+          label: t("phone.outbound_calls"),
+          path: "outbound-calls",
+          header: "Tom",
+          iconActive: <img src={OutboundActive} alt="Outbound calls" className="w-5 h-5" />,
+          iconInactive: <img src={OutboundInactive} alt="Outbound calls" className="w-5 h-5" />,
+        },
+      ],
     },
     {
       label: t("phone.inbound_calls"),
@@ -93,7 +103,22 @@ const PhonePage = () => {
   };
 
   const handleSectionRedirect = (sectionKey) => {
-    const target = sideMenuList.find((item) => item.path === sectionKey);
+    // Check top-level items first
+    let target = sideMenuList.find((item) => item.path === sectionKey);
+    
+    // If not found, check sub-menus
+    if (!target) {
+      for (const item of sideMenuList) {
+        if (item.subMenu) {
+          const subItem = item.subMenu.find((sub) => sub.path === sectionKey);
+          if (subItem) {
+            target = subItem;
+            break;
+          }
+        }
+      }
+    }
+    
     if (target) {
       dispatch(getNavbarData(target.header));
       handleTabChange(target.path);
@@ -102,8 +127,18 @@ const PhonePage = () => {
 
   // Initialize URL with default tab if not present on mount
   useEffect(() => {
-    if (!searchParams.get("tab")) {
+    const tabFromUrl = searchParams.get("tab");
+    const initialExpanded = new Set();
+    if (!tabFromUrl) {
       setSearchParams({ tab: "dashboard" }, { replace: true });
+    } else {
+      // Auto-expand outreach submenu if one of its children is active on mount
+      if (tabFromUrl === "call-campaigns" || tabFromUrl === "outbound-calls") {
+        initialExpanded.add("outreach");
+      }
+      if (initialExpanded.size > 0) {
+        setExpandedSubmenus(initialExpanded);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -112,6 +147,14 @@ const PhonePage = () => {
   useEffect(() => {
     const tabFromUrl = searchParams.get("tab") || "dashboard";
     setActiveSidebarItem(tabFromUrl);
+    // Auto-expand outreach submenu if one of its children is active
+    setExpandedSubmenus((prev) => {
+      const newSet = new Set(prev);
+      if (tabFromUrl === "call-campaigns" || tabFromUrl === "outbound-calls") {
+        newSet.add("outreach");
+      }
+      return newSet;
+    });
   }, [searchParams]);
 
   const renderMainContent = () => {
@@ -145,13 +188,21 @@ const PhonePage = () => {
     return (
       <div className="bg-[#ffffff] lg:w-[232px] w-full mb-5 flex flex-col gap-3 px-[12px] py-[11px] border-b border-gray-200">
         <div className="flex gap-3">
-        <div className="flex justify-center items-center">
-          <img src={rebeccaImg} alt={"rebecca"} className="object-fit" />
-        </div>
-        <div className="flex flex-col">
-          <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Rebecca</h1>
-          <p className="text-[#5A687C] text-[14px] font-[400]">{t("phone.phone_outreach")}</p>
-        </div>
+  <div className="flex justify-center items-center bg-gray-200 rounded-full w-12 h-12">
+    <img
+      src={rebeccaImg}
+      alt="rebecca"
+      className="w-8 h-8 rounded-full object-contain scale-150"
+    />
+  </div>
+
+  <div className="flex flex-col">
+    <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Rebecca</h1>
+    <p className="text-[#5A687C] text-[14px] font-[400]">
+      {t("phone.phone_outreach")}
+    </p>
+  </div>
+
       </div>
         {/* Watch Tutorial Button */}
         <button
@@ -189,29 +240,84 @@ const PhonePage = () => {
             {renderImg()}
             {sideMenuList.map((item, i) => {
               const isActive = activeSidebarItem === item.path;
+              const hasSubMenu = item.subMenu && item.subMenu.length > 0;
+              const isExpanded = expandedSubmenus.has(item.path);
+              const hasActiveSubItem = hasSubMenu && item.subMenu.some((sub) => sub.path === activeSidebarItem);
+              
               return (
-              <div
-                key={i}
-                onClick={() => {
-                  dispatch(getNavbarData(item.header))
-                  handleTabChange(item.path)
-                }}
-                  className={`flex items-center gap-2 px-3 py-2 group cursor-pointer w-full rounded-2xl ${isActive
-                  ? "bg-[#E9E8F9] text-[#000000]"
-                  : "text-[#000000] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
-                  }`}
-              >
-                  {isActive ? (
-                    item.iconActive
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <div className='group-hover:hidden'>{item.iconInactive}</div>
-                      <div className='hidden group-hover:block'>{item.iconActive}</div>
+                <div key={i} className="w-full">
+                  <div
+                    onClick={() => {
+                      if (hasSubMenu) {
+                        setExpandedSubmenus((prev) => {
+                          const newSet = new Set(prev);
+                          if (isExpanded) {
+                            newSet.delete(item.path);
+                          } else {
+                            newSet.add(item.path);
+                          }
+                          return newSet;
+                        });
+                      } else {
+                        dispatch(getNavbarData(item.header));
+                        handleTabChange(item.path);
+                      }
+                    }}
+                    className={`flex items-center gap-2 px-3 py-2 group cursor-pointer w-full rounded-2xl ${isActive || hasActiveSubItem
+                      ? "bg-[#E9E8F9] text-[#000000]"
+                      : "text-[#000000] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
+                      }`}
+                  >
+                    {isActive || hasActiveSubItem ? (
+                      item.iconActive
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <div className='group-hover:hidden'>{item.iconInactive}</div>
+                        <div className='hidden group-hover:block'>{item.iconActive}</div>
+                      </div>
+                    )}
+                    <span className="text-[16px] font-[400] flex-1">{item.label}</span>
+                    {hasSubMenu && (
+                      isExpanded ? (
+                        <ChevronUp size={18} className="text-[#5A687C]" />
+                      ) : (
+                        <ChevronDown size={18} className="text-[#5A687C]" />
+                      )
+                    )}
+                  </div>
+                  {hasSubMenu && isExpanded && (
+                    <div className="ml-4 mt-1 flex flex-col gap-1">
+                      {item.subMenu.map((subItem, subIndex) => {
+                        const isSubActive = activeSidebarItem === subItem.path;
+                        return (
+                          <div
+                            key={subIndex}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              dispatch(getNavbarData(subItem.header));
+                              handleTabChange(subItem.path);
+                            }}
+                            className={`flex items-center gap-2 px-3 py-2 group cursor-pointer w-full rounded-2xl ${isSubActive
+                              ? "bg-[#E9E8F9] text-[#000000]"
+                              : "text-[#000000] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
+                              }`}
+                          >
+                            {isSubActive ? (
+                              subItem.iconActive
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <div className='group-hover:hidden'>{subItem.iconInactive}</div>
+                                <div className='hidden group-hover:block'>{subItem.iconActive}</div>
+                              </div>
+                            )}
+                            <span className="text-[16px] font-[400]">{subItem.label}</span>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
-                <span className="text-[16px] font-[400]">{item.label}</span>
-              </div>
-              )
+                </div>
+              );
             })}
           </div>
         </div>
@@ -245,30 +351,86 @@ const PhonePage = () => {
               {renderImg()}
               {sideMenuList.map((item, i) => {
                 const isActive = activeSidebarItem === item.path;
+                const hasSubMenu = item.subMenu && item.subMenu.length > 0;
+                const isExpanded = expandedSubmenus.has(item.path);
+                const hasActiveSubItem = hasSubMenu && item.subMenu.some((sub) => sub.path === activeSidebarItem);
+                
                 return (
-                <div
-                  key={i}
-                  onClick={() => {
-                    dispatch(getNavbarData(item.header))
-                    handleTabChange(item.path)
-                    setSideBarStatus(false)
-                  }}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-md group cursor-pointer w-full ${isActive
-                    ? "bg-[#F0EFFF] text-[#675FFF]"
-                    : "text-[#5A687C] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
-                    }`}
-                >
-                    {isActive ? (
-                      item.iconActive
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <div className='group-hover:hidden'>{item.iconInactive}</div>
-                        <div className='hidden group-hover:block'>{item.iconActive}</div>
+                  <div key={i} className="w-full">
+                    <div
+                      onClick={() => {
+                        if (hasSubMenu) {
+                          setExpandedSubmenus((prev) => {
+                            const newSet = new Set(prev);
+                            if (isExpanded) {
+                              newSet.delete(item.path);
+                            } else {
+                              newSet.add(item.path);
+                            }
+                            return newSet;
+                          });
+                        } else {
+                          dispatch(getNavbarData(item.header));
+                          handleTabChange(item.path);
+                          setSideBarStatus(false);
+                        }
+                      }}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-md group cursor-pointer w-full ${isActive || hasActiveSubItem
+                        ? "bg-[#F0EFFF] text-[#675FFF]"
+                        : "text-[#5A687C] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
+                        }`}
+                    >
+                      {isActive || hasActiveSubItem ? (
+                        item.iconActive
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <div className='group-hover:hidden'>{item.iconInactive}</div>
+                          <div className='hidden group-hover:block'>{item.iconActive}</div>
+                        </div>
+                      )}
+                      <span className="text-[16px] font-[400] flex-1">{item.label}</span>
+                      {hasSubMenu && (
+                        isExpanded ? (
+                          <ChevronUp size={18} className="text-[#5A687C]" />
+                        ) : (
+                          <ChevronDown size={18} className="text-[#5A687C]" />
+                        )
+                      )}
+                    </div>
+                    {hasSubMenu && isExpanded && (
+                      <div className="ml-4 mt-1 flex flex-col gap-1">
+                        {item.subMenu.map((subItem, subIndex) => {
+                          const isSubActive = activeSidebarItem === subItem.path;
+                          return (
+                            <div
+                              key={subIndex}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                dispatch(getNavbarData(subItem.header));
+                                handleTabChange(subItem.path);
+                                setSideBarStatus(false);
+                              }}
+                              className={`flex items-center gap-2 px-3 py-2 rounded-md group cursor-pointer w-full ${isSubActive
+                                ? "bg-[#F0EFFF] text-[#675FFF]"
+                                : "text-[#5A687C] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
+                                }`}
+                            >
+                              {isSubActive ? (
+                                subItem.iconActive
+                              ) : (
+                                <div className="flex items-center gap-2">
+                                  <div className='group-hover:hidden'>{subItem.iconInactive}</div>
+                                  <div className='hidden group-hover:block'>{subItem.iconActive}</div>
+                                </div>
+                              )}
+                              <span className="text-[16px] font-[400]">{subItem.label}</span>
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
-                  <span className="text-[16px] font-[400]">{item.label}</span>
-                </div>
-                )
+                  </div>
+                );
               })}
             </div>
           </div>

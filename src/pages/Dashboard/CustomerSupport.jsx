@@ -57,8 +57,25 @@ function CustomerSupport() {
         {
             label: t("calina.smart_chartbot"),
             path: "smart_bot",
-            iconActive: <img src={SethBot} alt="Smart Chatbot" className="w-5 h-5" />,
-            iconInactive: <img src={SethBot} alt="Smart Chatbot" className="w-5 h-5" style={{ filter: 'brightness(0.5)' }} />,
+            iconActive: (
+                <img
+                  src={SethBot}
+                  alt="Smart Chatbot"
+                  className="w-5 h-5"
+                  style={{
+                    filter:
+                      "invert(35%) sepia(98%) saturate(2580%) hue-rotate(236deg) brightness(99%) contrast(101%)",
+                  }}
+                />
+              ),
+              iconInactive: (
+                <img
+                  src={SethBot}
+                  alt="Smart Chatbot"
+                  className="w-5 h-5"
+                  style={{ filter: "brightness(0.5)" }}
+                />
+              ),
         },
     ]
 

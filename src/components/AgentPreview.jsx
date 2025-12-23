@@ -136,20 +136,14 @@ export default function AgentPreviewModal({ setPreviewAgent, previewAgent, formD
                 </div>
                 <div className="px-6 pb-6 flex gap-6">
                     <div className="w-2/5 h-[466px] relative border border-[#E1E4EA] rounded-lg">
-                        <div className="bg-[#F5F7FF] rounded-y-lg rounded-t-lg p-2 mb-4 flex items-center gap-3">
-                            <div className="w-[45px] h-[45px] rounded-full bg-[#fff] flex items-center justify-center">
-                                <img src={sethImg} alt="seth" className="w-[26.18px] h-[33.53px] object-contain" />
-                            </div>
-                            <div className="font-[600] text-[18px] text-[#1E1E1E]">{formData?.agent_name || "Seth"} (AI Agent)</div>
-                        </div>
                         <div className="flex flex-col justify-between h-full">
                             <div ref={agentChatRef} className="px-4 overflow-auto max-h-[300px] mb-2">
                                 {messages.map((msg,) => (
                                     <div key={msg.id} className="flex flex-col">
                                         {!msg.isUser && (
-                                            <div className="flex items-center gap-2 mb-1 mr-auto w-fit max-w-[80%]">
-                                                <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[11px] font-[600] text-[#675FFF]">E</div>
-                                                <span className="text-sm font-medium">Ecosystem.ai</span>
+                                            <div className="flex items-center gap-2 mb-1 mr-auto w-fit max-w-[80%] mt-4">
+                                                <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-[12px] font-[600] text-[#675FFF]">S</div>
+                                                <span className="text-md font-[500]">Seth</span>
                                             </div>
                                         )}
                                         {msg.isUser && (

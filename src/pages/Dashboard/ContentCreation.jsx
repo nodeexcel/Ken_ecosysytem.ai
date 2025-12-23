@@ -15,7 +15,7 @@ import YoutubeScriptContent from '../../components/YoutubeScriptContent'
 import LinkedInNukeContent from '../../components/LinkedInNukeContent'
 import XPostContent from '../../components/XPostContent'
 import TutorialPlay from '../../assets/svg/WatchTutorialGrey.svg'
-import { X, Plus, MoreVertical, Edit, Trash2, Play } from 'lucide-react'
+import { X, Plus, MoreVertical, Edit, Trash2, Play, Download } from 'lucide-react'
 import chatInstance from '../../api/chatInstance'
 import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
@@ -70,7 +70,10 @@ function ContentCreation() {
     const [recentContents, setRecentContents] = useState([])
     const [loadingContents, setLoadingContents] = useState(false)
     const [playingVideoId, setPlayingVideoId] = useState(null)
+    const [selectedContent, setSelectedContent] = useState(null)
+    const [modalVideoPlaying, setModalVideoPlaying] = useState(false)
     const videoRefs = useRef({})
+    const modalVideoRef = useRef(null)
     const socketRef = useRef(null)
     const socket2Ref = useRef(null)
     const newwebsocketurl = `${chatInstance}/new-content-creation-agent-chat`
@@ -474,6 +477,129 @@ function ContentCreation() {
     };
 
     // Fetch recent contents
+    // Download media function
+    const downloadMedia = async (url, filename) => {
+        try {
+            // Try fetch with blob first (handles CORS better)
+            const response = await fetch(url, {
+                mode: 'cors',
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = filename;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            
+            // Clean up
+            setTimeout(() => {
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(blobUrl);
+            }, 100);
+        } catch (error) {
+            console.error('Error downloading media:', error);
+            // Fallback: try direct link download
+            try {
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                }, 100);
+            } catch (fallbackError) {
+                console.error('Fallback download also failed:', fallbackError);
+                setToast({
+                    open: true,
+                    type: 'error',
+                    title: 'Download Failed',
+                    description: 'Failed to download the media. Please try again.',
+                });
+            }
+        }
+    };
+
+    const handleDownloadContent = (content) => {
+        const mediaType = content.media_type || content.type || 'single_image';
+        const contentId = content.id || content.content_id;
+        
+        // Get media URLs
+        let mediaUrls = [];
+        let videoUrl = null;
+        
+        if (content.media_urls && Array.isArray(content.media_urls)) {
+            if (mediaType === 'video' || mediaType === 'reel') {
+                const firstMedia = content.media_urls[0];
+                if (firstMedia) {
+                    videoUrl = firstMedia.url || firstMedia.url_hq || (typeof firstMedia === 'string' ? firstMedia : null);
+                }
+            } else {
+                mediaUrls = content.media_urls.map(media => 
+                    typeof media === 'string' ? media : (media.url || media.url_hq)
+                ).filter(Boolean);
+            }
+        } else if (content.media_urls && typeof content.media_urls === 'string') {
+            if (mediaType === 'video' || mediaType === 'reel') {
+                videoUrl = content.media_urls;
+            } else {
+                mediaUrls = [content.media_urls];
+            }
+        }
+        
+        // Fallback for video_urls
+        if (!videoUrl && (mediaType === 'video' || mediaType === 'reel')) {
+            if (content.video_urls && Array.isArray(content.video_urls) && content.video_urls.length > 0) {
+                videoUrl = content.video_urls[0];
+            } else if (content.video_url && typeof content.video_url === 'string') {
+                videoUrl = content.video_url;
+            }
+        }
+        
+        // Download video
+        if ((mediaType === 'video' || mediaType === 'reel') && videoUrl) {
+            const extension = videoUrl.split('.').pop().split('?')[0] || 'mp4';
+            const filename = `content-${contentId || 'video'}.${extension}`;
+            downloadMedia(videoUrl, filename);
+        } 
+        // Download images (single or carousel)
+        else if (mediaUrls.length > 0) {
+            if (mediaUrls.length === 1) {
+                // Single image
+                const url = mediaUrls[0];
+                const extension = url.split('.').pop().split('?')[0] || 'jpg';
+                const filename = `content-${contentId || 'image'}.${extension}`;
+                downloadMedia(url, filename);
+            } else {
+                // Multiple images (carousel) - download all
+                mediaUrls.forEach((url, index) => {
+                    setTimeout(() => {
+                        const extension = url.split('.').pop().split('?')[0] || 'jpg';
+                        const filename = `content-${contentId || 'carousel'}-${index + 1}.${extension}`;
+                        downloadMedia(url, filename);
+                    }, index * 300); // Stagger downloads by 300ms
+                });
+            }
+        } else {
+            setToast({
+                open: true,
+                type: 'error',
+                title: 'Download Failed',
+                description: 'No media available to download.',
+            });
+        }
+    };
+
     const fetchRecentContents = async () => {
         setLoadingContents(true);
         try {
@@ -575,7 +701,7 @@ function ContentCreation() {
                                     {t("constance.no_creations") || "No recent creations found"}
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full">
                                     {recentContents
                                         .filter((content) => {
                                             // Only show completed content with media data from API
@@ -648,11 +774,12 @@ function ContentCreation() {
                                         const formattedMediaType = formatMediaType(mediaType);
                                         const platformDisplay = `${content.post_type ? content.post_type.charAt(0).toUpperCase() + content.post_type.slice(1) : 'Unknown'} • ${formattedMediaType}`;
 
-                                        return (
-                                            <div
+                                    return (
+                                        <div
                                                 key={contentId || index}
-                                                className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow flex flex-col"
-                                            >
+                                                className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow flex flex-col cursor-pointer"
+                                                onClick={() => setSelectedContent(content)}
+                                        >
                                                 {/* Media Display - Fixed height for consistency */}
                                                 <div className="w-full h-[200px] sm:h-[380px] overflow-hidden bg-gray-100 rounded-xl sm:rounded-2xl relative">
                                                     {/* Video */}
@@ -711,7 +838,7 @@ function ContentCreation() {
                                                     ) : (mediaType === 'video' || mediaType === 'reel') && !videoUrl && apiThumbnail ? (
                                                         // Show thumbnail for video when URL not available but thumbnail is (from API)
                                                         <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-xl sm:rounded-2xl">
-                                                            <img
+                                                <img
                                                                 src={apiThumbnail}
                                                                 alt={title}
                                                                 className="w-full h-full object-cover rounded-xl sm:rounded-2xl"
@@ -737,54 +864,71 @@ function ContentCreation() {
                                                                 src={mediaUrls[0]}
                                                                 alt={title}
                                                                 className="w-full h-full object-cover rounded-lg"
-                                                            />
-                                                        </div>
+                                                />
+                                            </div>
                                                     ) : null
                                                     }
                                                 </div>
 
-                                                {/* Card Content - White background */}
-                                                <div className="bg-white p-3 sm:p-4 rounded-b-lg sm:rounded-b-xl relative">
-                                                    <div className="flex items-start justify-between gap-2 sm:gap-3">
-                                                        <div className="flex-1 min-w-0 ">
-                                                            <h3 className="text-[#1E1E1E] text-base sm:text-lg font-[500] mb-1 sm:mb-1.5 leading-tight py-1 sm:py-2">
+                                            {/* Card Content - White background */}
+                                            <div className="bg-white p-3 sm:p-4 rounded-b-lg sm:rounded-b-xl relative">
+                                                <div className="flex items-start justify-between gap-2 sm:gap-3">
+                                                    <div className="flex-1 min-w-0 ">
+                                                        <h3 className="text-[#1E1E1E] text-base sm:text-lg font-[500] mb-1 sm:mb-1.5 leading-tight py-1 sm:py-2">
                                                                 {title}
-                                                            </h3>
-                                                            <p className="text-[#5A687C] text-[12px] sm:text-[13px] lg:text-[14px] font-[400]">
+                                                        </h3>
+                                                        <p className="text-[#5A687C] text-[12px] sm:text-[13px] lg:text-[14px] font-[400]">
                                                                 {platformDisplay}
-                                                            </p>
-                                                        </div>
+                                                        </p>
+                                                    </div>
 
-                                                        {/* Three Dots Menu - Bottom Right */}
-                                                        <div className="relative dropdown-container flex-shrink-0 border border-gray-200 rounded-lg sm:rounded-xl">
-                                                            <button
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
-                                                                }}
-                                                                className="p-1 sm:p-1.5 hover:bg-gray-100 rounded-lg sm:rounded-xl transition-colors cursor-pointer"
+                                                    {/* Three Dots Menu - Bottom Right */}
+                                                    <div 
+                                                        className="relative dropdown-container flex-shrink-0 border border-gray-200 rounded-lg sm:rounded-xl"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
+                                                            }}
+                                                            className="p-1 sm:p-1.5 hover:bg-gray-100 rounded-lg sm:rounded-xl transition-colors cursor-pointer"
+                                                        >
+                                                            <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
+                                                        </button>
+
+                                                        {/* Dropdown Menu */}
+                                                        {activeDropdown === dropdownId && (
+                                                            <div 
+                                                                className="absolute right-0 bottom-full mb-2 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[100px] sm:min-w-[120px] z-50"
+                                                                onClick={(e) => e.stopPropagation()}
                                                             >
-                                                                <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
-                                                            </button>
-
-                                                            {/* Dropdown Menu */}
-                                                            {activeDropdown === dropdownId && (
-                                                                <div className="absolute right-0 bottom-full mb-2 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[100px] sm:min-w-[120px] z-50">
-                                                                    <button
+                                                                <button
                                                                         onClick={async (e) => {
-                                                                            e.stopPropagation();
+                                                                        e.stopPropagation();
                                                                             // Handle edit - you may want to open a modal or navigate
                                                                             console.log("Edit clicked for content", contentId);
+                                                                        setActiveDropdown(null);
+                                                                    }}
+                                                                    className="w-full flex cursor-pointer items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-[#F2F2F7] transition-colors text-left"
+                                                                >
+                                                                    <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-700" />
+                                                                    <span className="text-xs sm:text-sm text-gray-700">Edit</span>
+                                                                </button>
+                                                                <button
+                                                                        onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                            handleDownloadContent(content);
                                                                             setActiveDropdown(null);
-                                                                        }}
-                                                                        className="w-full flex cursor-pointer items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-[#F2F2F7] transition-colors text-left"
-                                                                    >
-                                                                        <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-700" />
-                                                                        <span className="text-xs sm:text-sm text-gray-700">Edit</span>
-                                                                    </button>
-                                                                    <button
+                                                                    }}
+                                                                    className="w-full flex cursor-pointer items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-[#F2F2F7] transition-colors text-left"
+                                                                >
+                                                                    <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-700" />
+                                                                    <span className="text-xs sm:text-sm text-gray-700">Download</span>
+                                                                </button>
+                                                                <button
                                                                         onClick={async (e) => {
-                                                                            e.stopPropagation();
+                                                                        e.stopPropagation();
                                                                             try {
                                                                                 if (contentId) {
                                                                                     const response = await deleteContent(contentId);
@@ -815,23 +959,23 @@ function ContentCreation() {
                                                                                     title: 'Delete Failed',
                                                                                     description: 'Failed to delete the content. Please try again.',
                                                                                 });
-                                                                                setActiveDropdown(null);
+                                                                        setActiveDropdown(null);
                                                                             }
-                                                                        }}
-                                                                        className="w-full flex cursor-pointer items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-[#F2F2F7] transition-colors text-left"
-                                                                    >
-                                                                        <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600" />
-                                                                        <span className="text-xs sm:text-sm text-red-600">Delete</span>
-                                                                    </button>
-                                                                </div>
-                                                            )}
-                                                        </div>
+                                                                    }}
+                                                                    className="w-full flex cursor-pointer items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-[#F2F2F7] transition-colors text-left"
+                                                                >
+                                                                    <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600" />
+                                                                    <span className="text-xs sm:text-sm text-red-600">Delete</span>
+                                                                </button>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
-                                        );
-                                    })}
-                                </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
                             )}
                         </div>
                     </div>
@@ -908,13 +1052,13 @@ function ContentCreation() {
                             const isActive = activeSidebarItem === e.path;
                             return (
                                 <div
-                                    key={i}
-                                    onClick={() => {
-                                        handleTabChange(e.path);
-                                    }}
+                            key={i}
+                            onClick={() => {
+                                handleTabChange(e.path);
+                            }}
                                     className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
-                                        }`}
-                                >
+                                }`}
+                        >
                                     {isActive ? (
                                         e.iconActive
                                     ) : (
@@ -924,8 +1068,8 @@ function ContentCreation() {
                                         </div>
                                     )}
                                     <span className={`font-[400] text-[16px] ${isActive ? "text-[#000000]" : "text-[#000000] group-hover:text-[#1E1E1E]"}`}>
-                                        {e.label}
-                                    </span>
+                                {e.label}
+                            </span>
                                 </div>
                             )
                         })}
@@ -982,14 +1126,14 @@ function ContentCreation() {
                                 const isActive = activeSidebarItem === e.path;
                                 return (
                                     <div
-                                        key={i}
-                                        onClick={() => {
-                                            handleTabChange(e.path);
-                                            setSideBarStatus(false);
-                                        }}
+                                key={i}
+                                onClick={() => {
+                                    handleTabChange(e.path);
+                                    setSideBarStatus(false);
+                                }}
                                         className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${isActive ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
-                                            }`}
-                                    >
+                                    }`}
+                            >
                                         {isActive ? (
                                             e.iconActive
                                         ) : (
@@ -999,8 +1143,8 @@ function ContentCreation() {
                                             </div>
                                         )}
                                         <span className={`font-[400] text-[16px] ${isActive ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
-                                            {e.label}
-                                        </span>
+                                    {e.label}
+                                </span>
                                     </div>
                                 )
                             })}
@@ -1017,6 +1161,197 @@ function ContentCreation() {
                 highlightText={toast.highlightText}
                 onClose={() => setToast({ ...toast, open: false })}
             />
+
+            {/* Content View Modal */}
+            {selectedContent && (
+                <div 
+                    className="fixed inset-0 bg-black/60 flex items-center justify-center z-[9999] p-4"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            setSelectedContent(null)
+                            setModalVideoPlaying(false)
+                        }
+                    }}
+                >
+                    <div 
+                        className="bg-white rounded-2xl w-full max-w-4xl max-h-[80vh] overflow-auto shadow-xl relative"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Modal Header */}
+                        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+                            <h2 className="text-xl font-semibold text-gray-800">Preview Content</h2>
+                            <button
+                                onClick={() => {
+                                    setSelectedContent(null)
+                                    setModalVideoPlaying(false)
+                                }}
+                                className="text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        {/* Modal Content */}
+                        <div className="p-6">
+                            {/* Media Display */}
+                            <div className="mb-6">
+                                {(() => {
+                                    const contentId = selectedContent.id || selectedContent.content_id
+                                    const mediaType = selectedContent.media_type || selectedContent.type || 'single_image'
+                                    
+                                    // Get media URLs
+                                    let mediaUrls = []
+                                    let videoUrl = null
+                                    let thumbnailUrl = null
+                                    
+                                    if (selectedContent.media_urls && Array.isArray(selectedContent.media_urls)) {
+                                        if (mediaType === 'video' || mediaType === 'reel') {
+                                            const firstMedia = selectedContent.media_urls[0]
+                                            if (firstMedia) {
+                                                videoUrl = firstMedia.url || firstMedia.url_hq || (typeof firstMedia === 'string' ? firstMedia : null)
+                                                thumbnailUrl = firstMedia.thumb_url || firstMedia.thumbnail_url || null
+                                            }
+                                        } else {
+                                            mediaUrls = selectedContent.media_urls.map(media => 
+                                                typeof media === 'string' ? media : (media.url || media.url_hq)
+                                            ).filter(Boolean)
+                                        }
+                                    } else if (selectedContent.media_urls && typeof selectedContent.media_urls === 'string') {
+                                        if (mediaType === 'video' || mediaType === 'reel') {
+                                            videoUrl = selectedContent.media_urls
+                                        } else {
+                                            mediaUrls = [selectedContent.media_urls]
+                                        }
+                                    }
+                                    
+                                    // Fallback for video_urls
+                                    if (!videoUrl && (mediaType === 'video' || mediaType === 'reel')) {
+                                        if (selectedContent.video_urls && Array.isArray(selectedContent.video_urls) && selectedContent.video_urls.length > 0) {
+                                            videoUrl = selectedContent.video_urls[0]
+                                        } else if (selectedContent.video_url && typeof selectedContent.video_url === 'string') {
+                                            videoUrl = selectedContent.video_url
+                                        }
+                                    }
+                                    
+                                    const apiThumbnail = selectedContent.thumbnail_url || thumbnailUrl
+                                    
+                                    // Video Display
+                                    if ((mediaType === 'video' || mediaType === 'reel') && videoUrl) {
+                                        return (
+                                            <div className="w-full bg-black rounded-xl overflow-hidden">
+                                                <video
+                                                    ref={modalVideoRef}
+                                                    src={videoUrl}
+                                                    className="w-full h-auto max-h-[68vh] object-contain"
+                                                    controls
+                                                    autoPlay={modalVideoPlaying}
+                                                    onPlay={() => setModalVideoPlaying(true)}
+                                                    onPause={() => setModalVideoPlaying(false)}
+                                                />
+                                            </div>
+                                        )
+                                    } else if ((mediaType === 'video' || mediaType === 'reel') && !videoUrl && apiThumbnail) {
+                                        return (
+                                            <div className="w-full bg-gray-200 rounded-xl overflow-hidden">
+                                                <img
+                                                    src={apiThumbnail}
+                                                    alt={selectedContent.caption || 'Video thumbnail'}
+                                                    className="w-full h-auto max-h-[70vh] object-contain mx-auto"
+                                                />
+                                            </div>
+                                        )
+                                    } 
+                                    // Carousel Display
+                                    else if (mediaType === 'carousel' && mediaUrls.length > 0) {
+                                        return (
+                                            <div className="grid grid-cols-2 gap-4">
+                                                {mediaUrls.map((url, idx) => (
+                                                    <div key={idx} className="bg-gray-100 rounded-xl overflow-hidden">
+                                                        <img
+                                                            src={url}
+                                                            alt={`${selectedContent.caption || 'Carousel'} - ${idx + 1}`}
+                                                            className="w-full h-auto object-contain"
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )
+                                    } 
+                                    // Single/Multiple Images
+                                    else if (mediaUrls.length > 0) {
+                                        return (
+                                            <div className={mediaUrls.length > 1 ? "grid grid-cols-2 gap-4" : ""}>
+                                                {mediaUrls.map((url, idx) => (
+                                                    <div key={idx} className="bg-gray-100 rounded-xl overflow-hidden">
+                                                        <img
+                                                            src={url}
+                                                            alt={selectedContent.caption || `Image ${idx + 1}`}
+                                                            className="w-full h-auto max-h-[70vh] object-contain mx-auto"
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )
+                                    } else {
+                                        return (
+                                            <div className="w-full h-64 bg-gray-100 rounded-xl flex items-center justify-center">
+                                                <p className="text-gray-400">No media available</p>
+                                            </div>
+                                        )
+                                    }
+                                })()}
+                            </div>
+
+                            {/* Content Details */}
+                            <div className="space-y-4">
+                                {/* Caption */}
+                                {selectedContent.caption && (
+                                    <div>
+                                        <h3 className="text-sm font-semibold text-gray-700 mb-2">Caption</h3>
+                                        <p className="text-gray-800 whitespace-pre-wrap">{selectedContent.caption}</p>
+                                    </div>
+                                )}
+
+                                {/* Metadata */}
+                                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                                    <div>
+                                        <h4 className="text-sm font-semibold text-gray-700 mb-1">Platform</h4>
+                                        <p className="text-gray-600 capitalize">{selectedContent.post_type || 'N/A'}</p>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-sm font-semibold text-gray-700 mb-1">Media Type</h4>
+                                        <p className="text-gray-600">
+                                            {(selectedContent.media_type || 'N/A').split('_').map(word => 
+                                                word.charAt(0).toUpperCase() + word.slice(1)
+                                            ).join(' ')}
+                                        </p>
+                                    </div>
+                                    {selectedContent.language && (
+                                        <div>
+                                            <h4 className="text-sm font-semibold text-gray-700 mb-1">Language</h4>
+                                            <p className="text-gray-600 capitalize">{selectedContent.language}</p>
+                                        </div>
+                                    )}
+                                    {selectedContent.post_status && (
+                                        <div>
+                                            <h4 className="text-sm font-semibold text-gray-700 mb-1">Status</h4>
+                                            <p className="text-gray-600 capitalize">{selectedContent.post_status.replace('_', ' ')}</p>
+                                        </div>
+                                    )}
+                                    {selectedContent.created_at && (
+                                        <div className="col-span-2">
+                                            <h4 className="text-sm font-semibold text-gray-700 mb-1">Created At</h4>
+                                            <p className="text-gray-600">
+                                                {new Date(selectedContent.created_at).toLocaleString()}
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

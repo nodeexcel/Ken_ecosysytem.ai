@@ -174,10 +174,10 @@ function CooPresentations() {
             </div> */}
             <div className="text-4xl">🚧</div>
             <h2 className="text-3xl font-semibold text-gray-800">
-                Coming Soon
+                {t("coming_soon")}
             </h2>
             <p className="text-md text-gray-500 font-medium max-w-full text-center">
-                This feature is currently under development. Please check back soon for updates.
+                {t("tara.this_feature_is_currently_under_development")}
             </p>
         </div>
     )

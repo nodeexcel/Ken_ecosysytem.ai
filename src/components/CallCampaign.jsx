@@ -18,10 +18,7 @@ import { DateFormat } from "../utils/TimeFormat";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import googleCalendarIcon from "../assets/svg/google_calender.svg"
-import SlackIcon from "../assets/svg/Slack.svg"
-import NotionIcon from "../assets/svg/Notion.svg"
-import TrelloIcon from "../assets/svg/Trello.svg"
-import ClickupIcon from "../assets/svg/Clickup.svg"
+import CalendlyIcon from "../assets/svg/calendly.svg"
   
 const renderColor = (text) => {
   switch (text) {
@@ -115,10 +112,7 @@ export default function CallCampaign() {
 
   const toolOptions = [
     { key: "google_calendar", label: "Google Calendar", icon: googleCalendarIcon },
-    { key: "slack", label: "Slack", icon: SlackIcon },
-    { key: "notion", label: "Notion", icon: NotionIcon },
-    { key: "trello", label: "Trello", icon: TrelloIcon },
-    { key: "clickup", label: "Clickup", icon: ClickupIcon },
+    { key: "calendly", label: "Calendly", icon: CalendlyIcon },
   ];
 
   const toggleToolSelection = (toolKey) => {
@@ -239,11 +233,12 @@ export default function CallCampaign() {
       tag: "",
       target_lists: "",
       agent: "",
-      country: "",
+      country: countries[0]?.code || "", // Initialize with default country (France)
       phone_number: "",
       catch_phrase: "",
       call_script: "",
-      tom_engages: true
+      status: "",
+      tom_engages: false
     }
 
   );
@@ -266,7 +261,8 @@ export default function CallCampaign() {
     country: "",
     phone_number: "",
     catch_phrase: "",
-    call_script: ""
+    call_script: "",
+    status: ""
   });
 
 
@@ -274,21 +270,27 @@ export default function CallCampaign() {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!campaign.campaign_name.trim()) newErrors.campaign_name = t("phone.campaign_name_required");
-    if (!campaign.campaign_type.trim()) newErrors.campaign_type = t("phone.campaign_type_required");
+    // Required fields based on DB schema (nullable=False)
+    if (!campaign.campaign_name || !campaign.campaign_name.trim()) newErrors.campaign_name = t("phone.campaign_name_required");
     if (!campaign.language) newErrors.language = "Language is required.";
     if (!campaign.voice) newErrors.voice = "Voice selection is required.";
-    if (!campaign.choose_calendar) newErrors.choose_calendar = "Calendar selection is required.";
-    if (!campaign.max_call_time || campaign.max_call_time <= 0) newErrors.max_call_time = t("phone.campaign_call_time_validation");
-    if (!campaign.tag) newErrors.tag = t("phone.tag_required");
-    if (!campaign.target_lists || campaign.target_lists.length === 0) newErrors.target_lists = t("phone.atleast_one_target_required");
+    if (!campaign.target_lists) newErrors.target_lists = t("phone.atleast_one_target_required");
     if (!campaign.agent) newErrors.agent = t("phone.agent_validation");
-    // if (!campaign.country) newErrors.country = "Country is required.";
-    if (!campaign.phone_number) newErrors.phone_number = t("phone.phone_number_validation");
-    if (!campaign.catch_phrase.trim()) newErrors.catch_phrase = t("phone.catch_phase");
-    if (!campaign.call_script.trim()) newErrors.call_script = t("phone.call_script_validation");
-    if (campaign.catch_phrase.trim().length < 20) newErrors.catch_phrase = t("phone.min_20_char_required_validation");
-    if (campaign.call_script.trim().length < 50) newErrors.call_script = t("phone.max_50_char_required_validation");
+    if (!campaign.country) newErrors.country = "Country is required.";
+    if (!campaign.phone_number || !campaign.phone_number.trim()) newErrors.phone_number = t("phone.phone_number_validation");
+    if (!campaign.catch_phrase || !campaign.catch_phrase.trim()) newErrors.catch_phrase = t("phone.catch_phase");
+    if (!campaign.call_script || !campaign.call_script.trim()) newErrors.call_script = t("phone.call_script_validation");
+    
+    // Optional fields with validation rules (nullable=True)
+    // campaign_type is optional (nullable=True) - no validation needed
+    // choose_calendar is optional (nullable=True) - no validation needed
+    // max_call_time is optional (nullable=True) - no validation needed
+    // tag is not in DB schema, so we can ignore it
+    // status has default="pending" - no validation needed
+    
+    // Min length validations
+    if (campaign.catch_phrase && campaign.catch_phrase.trim().length < 20) newErrors.catch_phrase = t("phone.min_20_char_required_validation");
+    if (campaign.call_script && campaign.call_script.trim().length < 50) newErrors.call_script = t("phone.max_50_char_required_validation");
 
     setErrors(newErrors);
 
@@ -364,6 +366,8 @@ export default function CallCampaign() {
   }
 
   const resetForm = () => {
+    const defaultCountry = countries[0]; // France (+33)
+    setSelectedCountry(defaultCountry);
     setCampaign({
       campaign_name: "",
       campaign_type: "",
@@ -374,11 +378,12 @@ export default function CallCampaign() {
       tag: '',
       target_lists: "",
       agent: "",
-      country: "",
+      country: defaultCountry.code,
       phone_number: "",
       catch_phrase: "",
       call_script: "",
-      tom_engages: true
+      status: "",
+      tom_engages: false
     })
   }
 
@@ -415,11 +420,35 @@ export default function CallCampaign() {
 
     if (validateForm()) {
       try {
-        // Convert target_lists to strings as required by API
+        // Prepare campaign data matching DB schema
         const campaignData = {
-          ...campaign,
-          target_lists: parseInt(campaign.target_lists)
+          campaign_name: campaign.campaign_name,
+          language: campaign.language,
+          voice: campaign.voice,
+          target_lists: parseInt(campaign.target_lists), // Integer, required
+          country: campaign.country,
+          phone_number: campaign.phone_number,
+          status: campaign.status || "pending", // default="pending"
+          catch_phrase: campaign.catch_phrase,
+          call_script: campaign.call_script,
+          tom_engages: campaign.tom_engages || false, // Boolean, default=False
+          agent: parseInt(campaign.agent) // Integer, ForeignKey
         };
+        
+        // Only include optional fields if they have values
+        if (campaign.campaign_type) {
+          campaignData.campaign_type = campaign.campaign_type;
+        }
+        if (campaign.choose_calendar) {
+          campaignData.choose_calendar = campaign.choose_calendar;
+        }
+        if (newAgentForm.max_call_time && newAgentForm.max_call_time !== '' && newAgentForm.max_call_time !== null) {
+          const maxCallTimeValue = parseInt(newAgentForm.max_call_time);
+          if (!isNaN(maxCallTimeValue)) {
+            campaignData.max_call_time = maxCallTimeValue;
+          }
+        }
+        
         console.log("Submitting campaign data:", campaignData);
         const response = await createPhoneCampaign(campaignData);
         console.log("API Response:", response);
@@ -446,7 +475,21 @@ export default function CallCampaign() {
       }
     } else {
       console.log("Validation failed");
-      console.log("Errors:", errors);
+      // Re-run validation to see current errors (since setState is async)
+      const newErrors = {};
+      if (!campaign.campaign_name || !campaign.campaign_name.trim()) newErrors.campaign_name = t("phone.campaign_name_required");
+      if (!campaign.language) newErrors.language = "Language is required.";
+      if (!campaign.voice) newErrors.voice = "Voice selection is required.";
+      if (!campaign.target_lists) newErrors.target_lists = t("phone.atleast_one_target_required");
+      if (!campaign.agent) newErrors.agent = t("phone.agent_validation");
+      if (!campaign.country) newErrors.country = "Country is required.";
+      if (!campaign.phone_number || !campaign.phone_number.trim()) newErrors.phone_number = t("phone.phone_number_validation");
+      if (!campaign.catch_phrase || !campaign.catch_phrase.trim()) newErrors.catch_phrase = t("phone.catch_phase");
+      if (!campaign.call_script || !campaign.call_script.trim()) newErrors.call_script = t("phone.call_script_validation");
+      if (campaign.catch_phrase && campaign.catch_phrase.trim().length < 20) newErrors.catch_phrase = t("phone.min_20_char_required_validation");
+      if (campaign.call_script && campaign.call_script.trim().length < 50) newErrors.call_script = t("phone.max_50_char_required_validation");
+      console.log("Validation Errors:", newErrors);
+      console.log("Campaign Data:", campaign);
     }
     setLoader(false);
   };
@@ -469,11 +512,41 @@ export default function CallCampaign() {
   }
 
   const handleEditCampaign = async () => {
-    try { if (!validateForm()) {
+    try { 
+      if (!validateForm()) {
         console.log("Validation failed");
         return;
       }
-      const response = await updatePhoneCampaign(campaign);
+      // Prepare campaign data matching DB schema
+      const campaignData = {
+        campaign_name: campaign.campaign_name,
+        language: campaign.language,
+        voice: campaign.voice,
+        target_lists: parseInt(campaign.target_lists),
+        country: campaign.country,
+        phone_number: campaign.phone_number,
+        status: campaign.status || "pending",
+        catch_phrase: campaign.catch_phrase,
+        call_script: campaign.call_script,
+        tom_engages: campaign.tom_engages || false,
+        agent: parseInt(campaign.agent)
+      };
+      
+      // Only include optional fields if they have values
+      if (campaign.campaign_type) {
+        campaignData.campaign_type = campaign.campaign_type;
+      }
+      if (campaign.choose_calendar) {
+        campaignData.choose_calendar = campaign.choose_calendar;
+      }
+      if (newAgentForm.max_call_time && newAgentForm.max_call_time !== '' && newAgentForm.max_call_time !== null) {
+        const maxCallTimeValue = parseInt(newAgentForm.max_call_time);
+        if (!isNaN(maxCallTimeValue)) {
+          campaignData.max_call_time = maxCallTimeValue;
+        }
+      }
+      
+      const response = await updatePhoneCampaign(campaignData);
       if (response.status === 200) {
         console.log("Campaign details:", response.data);
         setShowModal(false);
@@ -670,12 +743,12 @@ export default function CallCampaign() {
                     setShowNewCampaignForm(false);
                     resetForm();
                   }}
-                  className="px-5 py-1.5 cursor-pointer text-md text-[#1E1E1E] bg-white border border-[#E1E4EA] rounded-xl hover:bg-gray-50 transition-colors"
+                  className="px-5 py-1.5 cursor-pointer text-md text-[#1E1E1E] bg-white border border-[#E1E4EA] rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   {t("phone.cancel") || "Cancel"}
                 </button>
                 <button
-                  className="px-5 py-1.5 cursor-pointer text-md text-white rounded-xl bg-[#5E54FF] hover:bg-[#5a4aff] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-5 py-1.5 cursor-pointer text-md text-white rounded-lg bg-[#5E54FF] hover:bg-[#5a4aff] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={loader}
                   onClick={handleSubmit}
                 >
@@ -716,9 +789,10 @@ export default function CallCampaign() {
 
               {stepCampaignOpen && (
                 <div className="px-4 sm:px-6 pb-6 space-y-6 mt-4">
-                  {/* Grid with campaign name and type */}
+                  {/* Grid with campaign name and agent name */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
+                    {/* Campaign Name */}
+                    <div className="flex flex-col gap-1">
                       <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("emailings.campaign_name")}</label>
                       <input
                         type="text"
@@ -731,7 +805,57 @@ export default function CallCampaign() {
                       {errors.campaign_name && <p className="text-red-500 text-sm mt-1">{errors.campaign_name}</p>}
                     </div>
 
-                    <div>
+                    {/* Agent Name */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[14px] font-[500] text-[#868C98] mb-1">
+                        {t("phone.agent_name")}
+                      </label>
+                      <SelectDropdown
+                        name="agent"
+                        options={agents.map(agent => ({ key: agent.id.toString(), label: agent.agent_name }))}
+                        placeholder={t("phone.select_agent")}
+                        value={campaign.agent ? campaign.agent.toString() : ''}
+                        onChange={(value) => {
+                          const selectedAgent = agents.find(agent => agent.id.toString() === value);
+                          const agentId = value ? parseInt(value) : '';
+                          
+                          // Set agent ID in campaign state (Integer)
+                          setCampaign((prev) => ({
+                            ...prev,
+                            agent: agentId
+                          }));
+                          
+                          // Auto-fill campaign_type and phone_number based on agent's phone number
+                          if (selectedAgent && selectedAgent.phone_numbers) {
+                            // Find matching phone number in phoneNumbers array
+                            const matchingPhone = phoneNumbers.find(
+                              phone => phone.phone_number === selectedAgent.phone_numbers
+                            );
+                            
+                            if (matchingPhone) {
+                              // Set campaign_type to the direction (inbound/outbound)
+                              setCampaign((prev) => ({
+                                ...prev,
+                                campaign_type: matchingPhone.direction || '',
+                                phone_number: matchingPhone.phone_number || ''
+                              }));
+                            } else {
+                              // If no matching phone found, just set the phone_number from agent
+                              setCampaign((prev) => ({
+                                ...prev,
+                                phone_number: selectedAgent.phone_numbers || ''
+                              }));
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Grid with campaign type and phone number - Now in the same row */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Campaign Type */}
+                    <div className="gap-1">
                       <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.campaign_type")}</label>
                       <SelectDropdown
                         name="campaign_type"
@@ -746,10 +870,7 @@ export default function CallCampaign() {
                       />
                       {errors.campaign_type && <p className="text-red-500 text-sm mt-1">{errors.campaign_type}</p>}
                     </div>
-                  </div>
 
-                  {/* Grid with phone number and tags - Now in the same row */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Number linked to the campaign */}
                     <div>
                       <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.number_linked_to_the_campaign")}</label>
@@ -772,6 +893,7 @@ export default function CallCampaign() {
                                   key={country.code}
                                   onClick={() => {
                                     setSelectedCountry(country);
+                                    setCampaign((prev) => ({ ...prev, country: country.code }));
                                     setIsCountryOpen(false);
                                   }}
                                   className={`flex items-center gap-2 px-3 py-2 hover:bg-[#F4F5F6] cursor-pointer ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6]'}`}
@@ -803,6 +925,34 @@ export default function CallCampaign() {
                         + {t("phone.add_new_phone_number")}
                       </button>
                       {errors.phone_number && <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>}
+                    </div>
+
+                    {/* Language and Voice */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.language")}</label>
+                        <SelectDropdown
+                          name="language"
+                          options={languageOptions}
+                          placeholder={t("phone.select_language")}
+                          value={campaign.language || ''}
+                          onChange={(value) => handleCampaignForm({ target: { name: 'language', value } })}
+                          errors={errors}
+                        />
+                        {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
+                      </div>
+                      <div>
+                        <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.voice")}</label>
+                        <SelectDropdown
+                          name="voice"
+                          options={voiceOptions}
+                          placeholder={t("phone.select_voice")}
+                          value={campaign.voice || ''}
+                          onChange={(value) => handleCampaignForm({ target: { name: 'voice', value } })}
+                          errors={errors}
+                        />
+                        {errors.voice && <p className="text-red-500 text-sm mt-1">{errors.voice}</p>}
+                      </div>
                     </div>
 
                     {/* Tags selection */}
@@ -841,7 +991,7 @@ export default function CallCampaign() {
                   </div>
 
                   {/* Create a custom tag table */}
-                  <div className="space-y-4">
+                  {/* <div className="space-y-4">
                     <div>
                       <p className="text-[14px] font-[500] text-[#868C98] mb-3">{t("phone.create_a_custom_tag")} ({t("phone.optional")})</p>
                       <div className="rounded-2xl border border-[#D6D6D6] overflow-auto w-full">
@@ -895,7 +1045,7 @@ export default function CallCampaign() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Action buttons moved to header (Cancel / Save Campaign) */}
                 </div>
@@ -928,24 +1078,20 @@ export default function CallCampaign() {
                 <div className="px-4 sm:px-6 pb-6 pt-2">
                   {/* Row 1: Agent Name + Max Call Time */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div className="flex flex-col gap-1">
+                    
+                  <div className="flex flex-col gap-1">
                       <label className="text-[14px] font-[500] text-[#868C98] mb-1">
-                        {t("phone.agent_name")}
+                        {t("phone.target_list") || "Target List"}
                       </label>
                       <SelectDropdown
-                        name="agent"
-                        options={agents.map(agent => ({ key: agent.id.toString(), label: agent.agent_name }))}
-                        placeholder={t("phone.select_agent")}
-                        value={newAgentForm.agent_id ? newAgentForm.agent_id.toString() : ''}
-                        onChange={(value) => {
-                          const selectedAgent = agents.find(agent => agent.id.toString() === value);
-                          setNewAgentForm((prev) => ({ 
-                            ...prev, 
-                            agent_id: value ? parseInt(value) : '',
-                            agent_name: selectedAgent ? selectedAgent.agent_name : ''
-                          }));
-                        }}
+                        name="target_lists"
+                        options={contactLists}
+                        placeholder={t("phone.select_target_list") || "Select Target List"}
+                        value={campaign.target_lists || ''}
+                        onChange={(value) => handleCampaignForm({ target: { name: 'target_lists', value } })}
+                        errors={errors}
                       />
+                      {errors.target_lists && <p className="text-red-500 text-sm mt-1">{errors.target_lists}</p>}
                     </div>
                     <div className="flex flex-col gap-1">
                       <label className="text-[14px] font-[500] text-[#868C98] mb-1">
@@ -964,10 +1110,7 @@ export default function CallCampaign() {
                         className="w-full px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg focus:outline-none focus:border-[#675FFF] text-[14px] appearance-none [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
-                  </div>
 
-                  {/* Row 2: Language + Voice */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div className="flex flex-col gap-1">
                       <label className="text-[14px] font-[500] text-[#868C98] mb-1">
                         {t("phone.language")}
@@ -998,8 +1141,59 @@ export default function CallCampaign() {
                     </div>
                   </div>
 
-                  {/* Row 3: Knowledge base + Behavior */}
+                  {/* Row 2: Language + Voice */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    
+                  <div className="flex flex-col gap-1">
+                      <label className="text-[14px] font-[500] text-[#868C98] mb-1">
+                        {t("phone.status") || "Status"}
+                      </label>
+                      <SelectDropdown
+                        name="status"
+                        options={[
+                          { key: "active", label: t("phone.active") || "Active" },
+                          { key: "inactive", label: t("phone.inactive") || "Inactive" }
+                        ]}
+                        placeholder={t("phone.select_status") || "Select Status"}
+                        value={campaign.status || ''}
+                        onChange={(value) => handleCampaignForm({ target: { name: 'status', value } })}
+                        errors={errors}
+                      />
+                      {errors.status && <p className="text-red-500 text-sm mt-1">{errors.status}</p>}
+                    </div>
+
+                    <div className="mb-4">
+                    <p className="text-[14px] font-[500] text-[#868C98] mb-2">{t("phone.select_tools")}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {toolOptions.map((tool) => {
+                        const active = newAgentForm.tools.includes(tool.key);
+                        return (
+                          <button
+                            key={tool.key}
+                            type="button"
+                            onClick={() => toggleToolSelection(tool.key)}
+                            className={`px-3 py-2.5 rounded-md border shadow-sm text-sm font-[500] cursor-pointer transition-colors flex items-center gap-2 ${active
+                              ? "bg-white border-[#675FFF] text-[#1E1E1E]"
+                              : "bg-white border-[#E1E4EA] text-[#5A687C] hover:border-[#675FFF]"
+                              }`}
+                          >
+                            {tool.icon && (
+                              <img
+                                src={tool.icon}
+                                alt={`${tool.label} icon`}
+                                className="w-4 h-4"
+                              />
+                            )}
+                            {tool.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  </div>
+
+                  {/* Row 3: Knowledge base + Behavior */}
+                  {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div className="flex flex-col gap-1">
                       <label className="text-[14px] font-[500] text-[#868C98] mb-1">
                         {t("phone.knowledge_base")} <span className="text-[#9CA3AF]">({t("phone.optional")})</span>
@@ -1028,7 +1222,7 @@ export default function CallCampaign() {
                         placeholder={t("phone.wait_for_the_person_to_speak")}
                       />
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* AI Brain toggle */}
                   <div className="flex items-center justify-start px-2 py-3 mb-4">
@@ -1058,37 +1252,51 @@ export default function CallCampaign() {
                   </div>
 
                   {/* Select tools */}
-                  <div className="mb-4">
-                    <p className="text-[12px] font-[500] text-[#868C98] mb-2">{t("phone.select_tools")}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {toolOptions.map((tool) => {
-                        const active = newAgentForm.tools.includes(tool.key);
-                        return (
-                          <button
-                            key={tool.key}
-                            type="button"
-                            onClick={() => toggleToolSelection(tool.key)}
-                            className={`px-3 py-1.5 rounded-md border shadow-sm text-sm font-[500] cursor-pointer transition-colors flex items-center gap-2 ${active
-                              ? "bg-white border-[#675FFF] text-[#1E1E1E]"
-                              : "bg-white border-[#E1E4EA] text-[#5A687C] hover:border-[#675FFF]"
-                              }`}
-                          >
-                            {tool.icon && (
-                              <img
-                                src={tool.icon}
-                                alt={`${tool.label} icon`}
-                                className="w-4 h-4"
-                              />
-                            )}
-                            {tool.label}
-                          </button>
-                        );
-                      })}
-                    </div>
+                  
+
+                  {/* Target List, Status, and Catch Phrase */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    {/* Target List */}
+                    
+
+                    {/* Status */}
+                    
+                  </div>
+
+                  {/* Catch Phrase - Textarea */}
+                  <div className="flex flex-col gap-1 mb-4">
+                    <label className="text-[14px] font-[500] text-[#868C98] mb-1">
+                      {t("phone.catch_phrase") || "Catch Phrase"}
+                    </label>
+                    <textarea
+                      rows={4}
+                      name="catch_phrase"
+                      value={campaign.catch_phrase || ''}
+                      onChange={handleCampaignForm}
+                      placeholder={t("phone.enter_catch_phrase") || "Enter catch phrase"}
+                      className={`w-full px-4 py-3 border rounded-lg resize-none focus:outline-none focus:border-[#675FFF] text-[14px] text-[#1E1E1E] ${errors.catch_phrase ? 'border-red-500' : 'border-[#E1E4EA]'}`}
+                    />
+                    {errors.catch_phrase && <p className="text-red-500 text-sm mt-1">{errors.catch_phrase}</p>}
+                  </div>
+
+                  {/* Call Script - Textarea */}
+                  <div className="flex flex-col gap-1 mb-4">
+                    <label className="text-[14px] font-[500] text-[#868C98] mb-1">
+                      {t("phone.call_script") || "Call Script"}
+                    </label>
+                    <textarea
+                      rows={6}
+                      name="call_script"
+                      value={campaign.call_script || ''}
+                      onChange={handleCampaignForm}
+                      placeholder={t("phone.enter_call_script") || "Enter call script"}
+                      className={`w-full px-4 py-3 border rounded-lg resize-none focus:outline-none focus:border-[#675FFF] text-[14px] text-[#1E1E1E] ${errors.call_script ? 'border-red-500' : 'border-[#E1E4EA]'}`}
+                    />
+                    {errors.call_script && <p className="text-red-500 text-sm mt-1">{errors.call_script}</p>}
                   </div>
 
                   {/* Import file + Agent prompt */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex flex-col gap-1">
                       <p className="text-[12px] font-[500] text-[#868C98] mb-1">
                         {t("phone.import_file")}
@@ -1155,7 +1363,7 @@ export default function CallCampaign() {
                         className="w-full px-4 py-3 border min-h-[200px] border-[#E1E4EA] rounded-2xl resize-none focus:outline-none focus:border-[#675FFF] text-[13px] text-[#1E1E1E]"
                       />
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               )}
             </div>
@@ -1685,6 +1893,7 @@ export default function CallCampaign() {
                                   key={country.code}
                                   onClick={() => {
                                     setSelectedCountry(country);
+                                    setCampaign((prev) => ({ ...prev, country: country.code }));
                                     setIsCountryOpen(false);
                                   }}
                                   className={`flex items-center gap-2 px-3 py-2 hover:bg-[#F4F5F6] cursor-pointer ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6]'}`}
@@ -1712,12 +1921,13 @@ export default function CallCampaign() {
                   {/* Tom Engages Conversation Toggle - Bottom Left */}
                   <div className="flex items-center gap-3">
                     <button
-                      onClick={() => setToggleTom(!toggleTom)}
-                      className={`w-11 h-6 cursor-pointer rounded-full relative transition-colors duration-300 ${toggleTom ? "bg-[#675FFF]" : "bg-gray-300"
+                      type="button"
+                      onClick={() => setCampaign((prev) => ({ ...prev, tom_engages: !prev.tom_engages }))}
+                      className={`w-11 h-6 cursor-pointer rounded-full relative transition-colors duration-300 ${campaign.tom_engages ? "bg-[#675FFF]" : "bg-gray-300"
                         }`}
                     >
                       <span
-                        className={`block w-6 h-6 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${toggleTom ? "translate-x-5" : "translate-x-0.5"
+                        className={`block w-6 h-6 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${campaign.tom_engages ? "translate-x-5" : "translate-x-0.5"
                           }`}
                       ></span>
                     </button>

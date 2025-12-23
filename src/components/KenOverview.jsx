@@ -1,14 +1,17 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import linkedinIcon from '../assets/svg/linkedin.svg'
 import KenImage  from '../assets/svg/KenNewLogo.svg'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, ChevronDown } from 'lucide-react'
 import TotalCampaigns from '../assets/svg/TotalCampaigns.svg'
 import ActiveCampaign from '../assets/svg/ActiveCampaign.svg'
 import InvitationsAccepted from '../assets/svg/InvitationsAccepted.svg'
 import AcceptanceRate from '../assets/svg/AcceptanceRate.svg'
 import AnsweredMessage from '../assets/svg/AnsweredMessage.svg'
 import ResponseRate from '../assets/svg/ResponseRate.svg'
+import { getLinkedInAccounts } from '../api/brainai'
+import { SelectDropdown } from './Dropdown'
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -35,6 +38,7 @@ ChartJS.register(
 )
 
 function KenOverview() {
+    const navigate = useNavigate()
     const [step, setStep] = useState("login") // "login", "otp", or "dashboard"
     const [activityView, setActivityView] = useState("invitations") // "invitations" or "messages"
     const [email, setEmail] = useState("")
@@ -42,6 +46,36 @@ function KenOverview() {
     const [showPassword, setShowPassword] = useState(false)
     const [otp, setOtp] = useState(["", "", "", ""])
     const otpRefs = [useRef(null), useRef(null), useRef(null), useRef(null)]
+    const [linkedInAccounts, setLinkedInAccounts] = useState([])
+    const [selectedAccount, setSelectedAccount] = useState("")
+    const [loadingAccounts, setLoadingAccounts] = useState(true)
+
+    const handleGetLinkedInAccounts = async () => {
+        setLoadingAccounts(true)
+        try {
+            const response = await getLinkedInAccounts();
+            if (response?.status === 200) {
+                const accounts = response?.data?.linkedin_account_info || response?.data?.linkedin_accounts || response?.data?.data || []
+                setLinkedInAccounts(Array.isArray(accounts) ? accounts : [])
+                
+                // If only one account, select it by default
+                if (accounts.length === 1) {
+                    setSelectedAccount(accounts[0].linkedin_id?.toString() || accounts[0].id?.toString() || "")
+                }
+            } else {
+                setLinkedInAccounts([])
+            }
+        } catch (error) {
+            console.error("Error fetching LinkedIn accounts:", error)
+            setLinkedInAccounts([])
+        } finally {
+            setLoadingAccounts(false)
+        }
+    }
+
+    useEffect(() => {
+        handleGetLinkedInAccounts()
+    }, [])
 
     const handleLoginSubmit = (e) => {
         e.preventDefault()
@@ -161,7 +195,7 @@ function KenOverview() {
     // Dashboard view
     if (step === "dashboard") {
         return (
-            <div className="w-full h-full flex flex-col p-10 bg-[#F7F7F8]">
+            <div className="w-full h-full flex flex-col p-10">
                 {/* Header */}
                 <div className="flex justify-between items-start mb-8">
                     <div>
@@ -327,61 +361,72 @@ function KenOverview() {
 
                         {step === "login" ? (
                             <>
-                                {/* Heading */}
-                                <h2 className="text-[24px] font-[500] text-[#1E1E1E] text-center mb-2">
-                                    Sync your LinkedIn account
-                                </h2>
-                                <p className="text-md text-[#5A687C] text-center mb-6  ">
-                                    Please enter your login details to activate<br /> the features.
-                                </p>
-
-                                {/* Form */}
-                                <form onSubmit={handleLoginSubmit} className="space-y-4">
-                                    {/* Email Field */}
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-normal text-[#868C98]">
-                                            Email Address
-                                        </label>
-                                        <input
-                                            type="email"
-                                            placeholder="yourname@gmail.com"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            className="w-full px-4 py-3 border border-[#D6D6D6] rounded-xl focus:outline-none focus:border-[#675FFF] text-[#1E1E1E] placeholder:text-[#B0B7C3]"
-                                        />
+                                {loadingAccounts ? (
+                                    <div className="text-center py-8">
+                                        <div className="loader mx-auto mb-4"></div>
+                                        <p className="text-[#5A687C]">Loading accounts...</p>
                                     </div>
+                                ) : linkedInAccounts.length === 0 ? (
+                                    <>
+                                        {/* No Account Connected */}
+                                        <h2 className="text-[24px] font-[500] text-[#1E1E1E] text-center mb-2">
+                                            No LinkedIn account connected
+                                        </h2>
+                                        <p className="text-md text-[#5A687C] text-center mb-6">
+                                            Go to Brain AI to connect your LinkedIn account.
+                                        </p>
+                                        <button
+                                            onClick={() => navigate('/dashboard/brain?tab=integration')}
+                                            className="w-full bg-[#675FFF] cursor-pointer text-white font-semibold py-2.5 px-3 rounded-xl hover:bg-[#5a4fe6] transition-colors"
+                                        >
+                                            Go to Brain AI
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        {/* Heading */}
+                                        <h2 className="text-[24px] font-[500] text-[#1E1E1E] text-center mb-2">
+                                            {linkedInAccounts.length === 1 ? 'LinkedIn Account' : 'Select your LinkedIn account'}
+                                        </h2>
+                                        <p className="text-md text-[#5A687C] text-center mb-6">
+                                            {linkedInAccounts.length === 1 
+                                                ? 'Your connected LinkedIn account' 
+                                                : 'Please select an account to continue'}
+                                        </p>
 
-                                    {/* Password Field */}
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-normal text-[#868C98]">
-                                            Password
-                                        </label>
-                                        <div className="relative">
-                                            <input
-                                                type={showPassword ? "text" : "password"}
-                                                placeholder="Enter your password"
-                                                value={password}
-                                                onChange={(e) => setPassword(e.target.value)}
-                                                className="w-full px-4 py-3 pr-10 border border-[#D6D6D6] rounded-xl focus:outline-none focus:border-[#675FFF] text-[#1E1E1E] placeholder:text-[#B0B7C3]"
-                                            />
+                                        {/* Account Selection */}
+                                        <div className="space-y-4">
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-normal text-[#868C98]">
+                                                    LinkedIn Account
+                                                </label>
+                                                <SelectDropdown
+                                                    name="linkedin_account"
+                                                    options={linkedInAccounts.map(account => ({
+                                                        key: (account.linkedin_id || account.id || account.account_id)?.toString() || '',
+                                                        label: account.name || account.email || account.username || `Account ${account.linkedin_id || account.id || ''}`
+                                                    }))}
+                                                    placeholder={linkedInAccounts.length === 1 ? "Select your account" : "Select your account"}
+                                                    value={selectedAccount}
+                                                    onChange={(value) => setSelectedAccount(value)}
+                                                />
+                                            </div>
+
+                                            {/* Continue Button */}
                                             <button
-                                                type="button"
-                                                onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5A687C] hover:text-[#1E1E1E]"
+                                                onClick={() => {
+                                                    if (selectedAccount || linkedInAccounts.length === 1) {
+                                                        setStep("otp")
+                                                    }
+                                                }}
+                                                disabled={!selectedAccount && linkedInAccounts.length > 1}
+                                                className="w-full bg-[#675FFF] cursor-pointer text-white font-semibold py-2.5 px-3 rounded-xl hover:bg-[#5a4fe6] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
-                                                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                                Continue
                                             </button>
                                         </div>
-                                    </div>
-
-                                    {/* Continue Button */}
-                                    <button
-                                        type="submit"
-                                        className="w-full bg-[#675FFF] cursor-pointer text-white font-semibold py-2.5 px-3 rounded-xl hover:bg-[#5a4fe6] transition-colors"
-                                    >
-                                        Continue
-                                    </button>
-                                </form>
+                                    </>
+                                )}
                             </>
                         ) : (
                             <>

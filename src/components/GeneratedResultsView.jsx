@@ -302,9 +302,9 @@ const GeneratedResultsView = ({ generatedContent, onCancel }) => {
                                                             </div>
                                                         )}
                                                     </div>
-                                                </div>
-                                            )}
-                                        </div>
+                                            </div>
+                                        )}
+                                    </div>
                                     )}
                                 </div>
                             </div>
