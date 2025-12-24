@@ -19,6 +19,12 @@ const countries = [
   // Add more countries as needed
 ];
 
+// Helper function to capitalize first letter
+const capitalizeFirst = (str) => {
+  if (!str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
+
 export default function CallAgentsPage() {
   const [agents, setAgents] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -77,16 +83,40 @@ export default function CallAgentsPage() {
 
   const toggleActive = async (id) => {
     try {
+      // Find the agent before updating to get the agent name
+      const agentToUpdate = agents.find(a => a.id === id);
+      const agentName = agentToUpdate?.agent_name || 'agent';
+
       const response = await updatePhoneNumberAgentStatus(id);
       if (response.status === 200) {
         fetchAgents();
+        
+        // Show success toast
+        setToast({
+          open: true,
+          type: 'success',
+          title: 'Agent Status Updated',
+          description: `Agent "${agentName}" status has been updated successfully.`,
+          highlightText: agentName
+        });
       }
       else {
         console.error("Failed to update agent status");
+        setToast({
+          open: true,
+          type: 'error',
+          title: 'Failed to Update Status',
+          description: 'We couldn\'t update the agent status. Please try again.',
+        });
       }
     } catch (error) {
       console.error("Error toggling agent status:", error);
-      return error;
+      setToast({
+        open: true,
+        type: 'error',
+        title: 'Failed to Update Status',
+        description: 'We couldn\'t update the agent status. Please try again.',
+      });
     }
   };
 
@@ -200,7 +230,8 @@ export default function CallAgentsPage() {
         if (response.data.phone_numbers?.length > 0) {
           const data = response.data.phone_numbers.map((e) => ({
             label: e.phone_number,
-            key: e.phone_number
+            key: e.phone_number,
+            direction: e.direction // Store direction for auto-detection
           }))
           setPhoneNumbers(data)
         }
@@ -448,10 +479,10 @@ export default function CallAgentsPage() {
                 return filteredAgents.length !== 0 ? (
                   filteredAgents.map((agent, index) => (
                   <tr key={agent.id} className="text-[16px] text-[#1E1E1E]">
-                    <td className="px-4 py-4 text-[14px] text-[#1E1E1E] font-[500] text-start">{agent.agent_name}</td>
-                    <td className="px-4 py-4 text-[14px] font-[400] text-start">{agent.language.charAt(0).toLocaleUpperCase() + agent.language.substring(1, agent.language.length)}</td>
-                    <td className="px-4 py-4 text-[14px] font-[400] text-start">{agent.voice}</td>
-                    <td className="px-4 py-4 text-[14px] font-[400] text-start">{agent.phone_numbers}</td>
+                    <td className="px-4 py-4 text-[14px] text-[14px] text-black  font-[500] text-start">{agent.agent_name}</td>
+                    <td className="px-4 py-4 text-[14px] font-[500] text-black text-start">{capitalizeFirst(agent.language)}</td>
+                    <td className="px-4 py-4 text-[14px] font-[500] text-black text-start">{capitalizeFirst(agent.voice)}</td>
+                    <td className="px-4 py-4 text-[14px] font-[500] text-black text-start">{agent.phone_numbers}</td>
                     <td className="px-4 py-4 text-center">
                       <div className="flex items-center justify-center">
                         <ToggleSwitch
@@ -680,28 +711,7 @@ export default function CallAgentsPage() {
                 {error.voice && <p className="text-red-500 text-sm mt-1">{error.voice}</p>}
               </div>
 
-              <div>
-                <label className="text-sm font-medium block mb-1">
-                 {t("phone.type")}
-                </label>
-                <SelectDropdown
-                  placeholder={t("select")}
-                  name="type"
-                  options={[
-                    { key: 'inbound', label: t("phone.inbound") },
-                    { key: 'outbound', label: t("phone.outbound") },
-                  ]}
-                  value={agent.type}
-                  onChange={(selectedType) => {
-                    // Changed from array reset to string reset
-                    setAgent({ ...agent, type: selectedType, phone_number: "" });
-                    setError({ ...error, type: '' });
-                  }}
-                  className="mt-2"
-                  errors={error}
-                />
-                {error.type && <p className="text-red-500 text-sm mt-1">{error.type}</p>}
-              </div>
+              
 
               <div>
                 <div className="flex items-center gap-2 ">
@@ -737,8 +747,16 @@ export default function CallAgentsPage() {
                         setShowSelector={setShowPhoneNumberList}
                         value={agent.phone_number}
                         onChange={(selectedPhone) => {
-                          setAgent({ ...agent, phone_number: selectedPhone });
-                          setError({ ...error, phone_number: '' });
+                          // Find the selected phone number to get its direction
+                          const selectedPhoneData = phoneNumbers.find(p => p.key === selectedPhone);
+                          const detectedType = selectedPhoneData?.direction || "";
+                          
+                          setAgent({ 
+                            ...agent, 
+                            phone_number: selectedPhone,
+                            type: detectedType // Auto-set type based on direction
+                          });
+                          setError({ ...error, phone_number: '', type: '' });
                           setShowPhoneNumberList(false);
                         }}
                         ref={phoneNumberRef}
@@ -749,7 +767,20 @@ export default function CallAgentsPage() {
                 </div>
 
               </div>
-
+              
+              <div>
+                <label className="text-sm font-medium block mb-1">
+                 {t("phone.type")}
+                </label>
+                <input
+                  type="text"
+                  readOnly
+                  className="w-full px-4 py-2 border border-[#E1E4EA] rounded-lg bg-[#F5F5F5] text-[#5A687C] cursor-not-allowed mt-2"
+                  value={agent.type === 'inbound' ? t("phone.inbound") : agent.type === 'outbound' ? t("phone.outbound") : ""}
+                  placeholder={t("type")}
+                />
+                {error.type && <p className="text-red-500 text-sm mt-1">{error.type}</p>}
+              </div>
             </div>
               {error.response && <p className="text-red-500 text-sm mt-1">{error.response}</p>}
 

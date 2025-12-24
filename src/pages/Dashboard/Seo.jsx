@@ -164,7 +164,7 @@ function Seo() {
             label: t("dashboard") || "Dashboard",
             path: "articles",
             iconActive: <img src={DashboardActive} alt="Dashboard" className="w-5 h-5" />,
-            iconInactive: <img src={DashboardInactive} alt="Dashboard" className="w-5 h-5" style={{ filter: 'brightness(0.5)' }} />,
+            iconInactive: <img src={DashboardInactive} alt="Dashboard" className="w-5 h-5"/>,
         },
     ]
 
@@ -599,7 +599,7 @@ function Seo() {
                                         className="w-5 h-5"
                                     />
                                     <span className="font-[400] text-[16px] text-[#000000]">
-                                        Analytics
+                                        {t("seo.analytics")}
                                     </span>
                                 </div>
                                 <ChevronUp 
@@ -625,7 +625,7 @@ function Seo() {
                                             <img src={CitationInactive} alt="Citation Analytics" className="w-5 h-5" />
                                         )}
                                         <span className={`font-[400] text-[16px] ${activeSidebarItem === 'citation-analytics' ? 'text-[#000000]' : 'text-[#000000]'}`}>
-                                            Citation Analytics
+                                            {t("seo.citation_analytics")}
                                         </span>
                                     </div>
 
@@ -644,7 +644,7 @@ function Seo() {
                                             <img src={PromptInactive} alt="Prompt Analytics" className="w-5 h-5" />
                                         )}
                                         <span className={`font-[400] text-[16px] ${activeSidebarItem === 'prompt-analytics' ? 'text-[#000000]' : 'text-[#000000]'}`}>
-                                            Prompt Analytics
+                                            {t("seo.prompt_analytics")}
                                         </span>
                                     </div>
 
@@ -663,7 +663,7 @@ function Seo() {
                                             <img src={ContentInactive} alt="Content Analytics" className="w-5 h-5" />
                                         )}
                                         <span className={`font-[400] text-[16px] ${activeSidebarItem === 'content-analytics' ? 'text-[#000000]' : 'text-[#000000]'}`}>
-                                            Content Analytics
+                                            {t("seo.content_analytics")}
                                         </span>
                                     </div>
                                 </div>

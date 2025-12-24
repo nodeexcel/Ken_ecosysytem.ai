@@ -124,9 +124,9 @@ function AgentsSeth() {
                 <div className="flex flex-col gap-3 mb-2">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                         <div>
-                            <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">Agents</h1>
+                            <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">{t("appointment.agents")}</h1>
                             <p className="text-[#5A687C] text-sm md:text-base mt-1">
-                                Manage all agents in one place
+                                {t("appointment.manage_all_agents_in_one_place")}
                             </p>
                         </div>
                         <button
@@ -143,18 +143,18 @@ function AgentsSeth() {
                                 <Search className="w-4 h-4 text-[#5A687C]" />
                                 <input
                                     type="text"
-                                    placeholder="Search name or phone number"
+                                    placeholder={t("appointment.search_name_or_phone_number")}
                                     className="w-full text-sm focus:outline-none text-[#1E1E1E] placeholder:text-[#5A687C]"
                                 />
                             </div>
                         </div>
                         <div className="flex items-center gap-3 justify-end">
                             <button className="flex items-center gap-2 border border-[#D6D6D6] rounded-xl px-3 py-2 text-sm text-[#1E1E1E] bg-white cursor-pointer">
-                                Short By
+                                {t("appointment.sort_by")}
                                 <ChevronDown className="w-4 h-4 text-[#5A687C]" />
                             </button>
                             <button className="flex items-center gap-2 border border-[#D6D6D6] rounded-xl px-3 py-2 text-sm text-[#1E1E1E] bg-white cursor-pointer">
-                                Status
+                                {t("appointment.status")}
                                 <ChevronDown className="w-4 h-4 text-[#5A687C]" />
                             </button>
                         </div>

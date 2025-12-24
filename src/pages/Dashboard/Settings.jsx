@@ -18,6 +18,7 @@ import { discardData } from "../../store/profileSlice";
 import { SelectDropdown } from "../../components/Dropdown";
 import { FaChevronDown } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+import i18n from "../../i18n";
 import default_avatar from '../../assets/images/default_avatar.png';
 
 import { parsePhoneNumberFromString } from "libphonenumber-js";
@@ -69,7 +70,8 @@ const TIMEZONE_OPTIONS = [
   "GMT +3 (Riyadh, Moscow)",
   "GMT +10 (Sydney, Melbourne)",
 ];
-const DATE_FORMAT_OPTIONS = ["DD/MM/YYYY", "MM/DD/YYYY", "YYYY/MM/DD"];
+// Base date format codes (used for storage/backend)
+const DATE_FORMAT_CODES = ["DD/MM/YYYY", "MM/DD/YYYY", "YYYY/MM/DD"];
 
 
 
@@ -95,6 +97,15 @@ const SettingsPage = () => {
   });
   const [selectedCountry, setSelectedCountry] = useState(countryData && countryData.length > 0 ? countryData[240] : { name: "United States", code: "US", dial_code: "+1", flag: "us" });
   const { t } = useTranslation()
+
+  // Get translated date format options based on current language
+  const getDateFormatOptions = () => {
+    return [
+      { value: "DD/MM/YYYY", label: t("settings.tab_1_list.date_format_dd_mm_yyyy") },
+      { value: "MM/DD/YYYY", label: t("settings.tab_1_list.date_format_mm_dd_yyyy") },
+      { value: "YYYY/MM/DD", label: t("settings.tab_1_list.date_format_yyyy_mm_dd") },
+    ];
+  };
 
   const [profileFormData, setProfileFormData] = useState({
     firstName: "",
@@ -1992,8 +2003,8 @@ const SettingsPage = () => {
                               onChange={(e) => handleGeneralSettingChange("dateFormat", e.target.value)}
                               className="w-full appearance-none rounded-xl cursor-pointer border border-[#E1E4EA] dark:border-[#2D3151] bg-white dark:bg-[#2D3151] px-4 py-2 text-sm text-[#1E1E1E] dark:text-white focus:border-[#675FFF] focus:outline-none"
                             >
-                              {DATE_FORMAT_OPTIONS.map((format) => (
-                                <option key={format} value={format}>{format}</option>
+                              {getDateFormatOptions().map((format) => (
+                                <option key={format.value} value={format.value}>{format.label}</option>
                               ))}
                             </select>
                             <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9EA8BC] pointer-events-none" />

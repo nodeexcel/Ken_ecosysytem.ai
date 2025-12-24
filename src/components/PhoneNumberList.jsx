@@ -6,11 +6,16 @@ import { addPhoneNumber, getPhoneNumber, updatePhoneNumberStatus, deletePhoneNum
 
 import { DateFormat } from "../utils/TimeFormat";
 import { t } from "i18next";
+import ToastModal from "./ToastModal";
 
 // Import flag images
 import uk_flag from "../assets/images/uk_flag.png"
 import us_flag from "../assets/images/us_flag.png"
 import fr_flag from "../assets/images/fr_flag.png"
+
+// Import direction icons
+import InboundDirection from "../assets/svg/InboundDirection.svg";
+import OutboundDirection from "../assets/svg/OutboundDirection.svg";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 // Import flag-icons CSS
@@ -98,12 +103,12 @@ export default function PhoneNumbers() {
   const [phoneName, setPhoneName] = useState("");
   const [loader, setLoader] = useState(false);
   const [error, setError] = useState({});
-  const [responseError, setResponseError] = useState();
   const [deleteRow, setDeleteRow] = useState(null);
   const [loading, setLoading] = useState(true)
   const [otpModal, setOtpModal] = useState(false)
   const [filterStatus, setFilterStatus] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [toast, setToast] = useState({ open: false, type: 'success', title: '', description: '', highlightText: '' });
   const countryRef = useRef()
 
   const tabs = [
@@ -166,43 +171,92 @@ export default function PhoneNumbers() {
       return;
     }
     setLoader(true);
-    const response = await addPhoneNumber({ name: phoneName, phone_number: number, country: selectedCountry.name, number_type: activeTab });
+    try {
+      const response = await addPhoneNumber({ name: phoneName, phone_number: number, country: selectedCountry.name, number_type: activeTab });
 
-    if (response.status === 201) {
-      console.log("Phone number added successfully");
-      fetchPhoneNumbers();
-      setShowModal(false);
+      if (response.status === 201) {
+        console.log("Phone number added successfully");
+        fetchPhoneNumbers();
+        setShowModal(false);
+        setLoader(false);
+        setNumber("")
+        setPhoneName("")
+        setSelectedCountry(countries[0])
+        setError({})
+        
+        // Show success toast
+        const phoneNumberDisplay = phoneName || `${selectedCountry.dial_code}${number}`;
+        setToast({
+          open: true,
+          type: 'success',
+          title: 'Phone Number Added Successfully',
+          description: `Your phone number "${phoneNumberDisplay}" has been added.`,
+          highlightText: phoneNumberDisplay
+        });
+      } else {
+        setLoader(false);
+        const errorMessage = response?.response?.data?.error || t("phone.phone_number_failed");
+        setToast({
+          open: true,
+          type: 'error',
+          title: 'Failed to Add Phone Number',
+          description: errorMessage,
+        });
+      }
+    } catch (error) {
+      console.error("Error adding phone number:", error);
       setLoader(false);
-      // setOtpModal(true)
-      setNumber("")
-      setPhoneName("")
-      setSelectedCountry(countries[0])
-
-    } else {
-      setLoader(false);
-      setResponseError(response.response.data.error || t("phone.phone_number_failed"));
+      setToast({
+        open: true,
+        type: 'error',
+        title: 'Failed to Add Phone Number',
+        description: t("phone.phone_number_failed") || 'We couldn\'t add the phone number. Please try again.',
+      });
     }
   }
 
   const removeRow = async (id) => {
     try {
+      // Find the phone number before deleting to show in toast
+      const phoneToDelete = rows.find(row => row.id === id);
+      const phoneNumberDisplay = phoneToDelete?.name || phoneToDelete?.phone_number || 'phone number';
 
       const response = await deletePhoneNumber(id);
       console.log("RESPONSE:", response);
       if (response.status === 200) {
         console.log("Phone number removed successfully");
         fetchPhoneNumbers();
+        setDeleteRow(null);
+        
+        // Show success toast
+        setToast({
+          open: true,
+          type: 'success',
+          title: 'Phone Number Deleted Successfully',
+          description: `Your phone number "${phoneNumberDisplay}" has been deleted.`,
+          highlightText: phoneNumberDisplay
+        });
       } else {
         console.error("Failed to remove phone number");
+        setDeleteRow(null);
+        setToast({
+          open: true,
+          type: 'error',
+          title: 'Delete Failed',
+          description: 'We couldn\'t delete the phone number. Please try again.',
+        });
       }
 
     } catch (error) {
       console.error("Error removing phone number:", error);
+      setDeleteRow(null);
+      setToast({
+        open: true,
+        type: 'error',
+        title: 'Delete Failed',
+        description: 'We couldn\'t delete the phone number. Please try again.',
+      });
     }
-
-    setDeleteRow(null);
-
-
   };
 
   const fetchPhoneNumbers = async () => {
@@ -342,7 +396,7 @@ export default function PhoneNumbers() {
                 <th className="px-2 sm:px-3 md:px-6 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.country")}</th>
                 <th className="px-2 sm:px-3 md:px-6 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.status")}</th>
                 <th className="px-2 sm:px-3 md:px-6 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.total_call")}</th>
-                <th className="px-2 sm:px-3 md:px-6 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.direction")}</th>
+                <th className="px-2 sm:px-3 md:px-6 text-center py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.direction")}</th>
                 <th className="px-2 sm:px-3 md:px-6 text-start py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.creation_date")}</th>
                 <th className="px-3 sm:px-4 md:px-12 text-center py-3 text-xs sm:text-sm md:text-[16px] font-[400] whitespace-nowrap">{t("phone.actions")}</th>
               </tr>
@@ -359,10 +413,10 @@ export default function PhoneNumbers() {
                 filteredRows.map((row, index) => {
                   return (
                     <tr key={row.id} className="text-sm sm:text-base md:text-[16px] text-[#1E1E1E]">
-                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-[#1E1E1E] font-[400] text-start break-words">
+                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-black font-[400] text-start break-words">
                         {row.phone_number}
                       </td>
-                      <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-[#5A687C] font-[400] text-start whitespace-nowrap">
+                      <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-black font-[400] text-start whitespace-nowrap">
                         <div className="flex items-center gap-2">
                           <div className="w-5 h-5 overflow-hidden flex">
                             <span
@@ -377,13 +431,23 @@ export default function PhoneNumbers() {
                       <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px]">
                         <div className="flex items-center">
                           <span
-                            className={`text-[10px] sm:text-xs md:text-[14px] font-[500] px-2 sm:px-3 py-1 rounded-full border whitespace-nowrap ${row.status === true
-                              ? "border-[#34C759] text-[#34C759] bg-[#EBF9EE]"
-                              : row.status === false && row.pending === true
-                                ? "border-[#FF9500] text-[#FF9500] bg-[#FFF4E6]"
-                                : "border-[#FF3B30] text-[#FF3B30] bg-[#FFEBEE]"
-                              } inline-flex items-center justify-center`}
+                            className={`text-[10px] sm:text-xs md:text-[14px] font-[500] px-2 sm:px-3 py-1 rounded-full border whitespace-nowrap inline-flex items-center justify-center gap-2 ${row.status === true
+                                ? "border-[#34C759] text-[#34C759] bg-[#EBF9EE]"
+                                : row.status === false && row.pending === true
+                                  ? "border-[#FF9500] text-[#FF9500] bg-[#FFF4E6]"
+                                  : "border-[#FF3B30] text-[#FF3B30] bg-[#FFEBEE]"
+                              }`}
                           >
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${row.status === true
+                                  ? "bg-[#34C759]"
+                                  : row.status === false && row.pending === true
+                                    ? "bg-[#FF9500]"
+                                    : "bg-[#FF3B30]"
+                                }`}
+                            />
+
+                            {/* Status Text */}
                             {row.status === true
                               ? "Active"
                               : row.status === false && row.pending === true
@@ -392,13 +456,23 @@ export default function PhoneNumbers() {
                           </span>
                         </div>
                       </td>
-                      <td className="px-4 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-[#5A687C] font-[400] text-center whitespace-nowrap">
+
+                      <td className="px-4 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-black font-[400] text-center whitespace-nowrap">
                         {row.total_calls}
                       </td>
-                      <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-start">
-                        {row.direction === "inbound" ? <InboundCall active={true} /> : <OutboundCall active={true} />}
+                      <td className="px-2 sm:px-3 md:px-2 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-start">
+                        <div className="flex items-center justify-center gap-2">
+                          <img 
+                            src={row.direction === "inbound" ? InboundDirection : OutboundDirection} 
+                            alt={row.direction === "inbound" ? "Inbound" : "Outbound"}
+                            className="w-3 h-3"
+                          />
+                          <span className="text-[#1E1E1E]">
+                            {row.direction === "inbound" ? t("phone.inbound") : t("phone.outbound")}
+                          </span>
+                        </div>
                       </td>
-                      <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-[#5A687C] font-[400] text-start whitespace-nowrap">
+                      <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-black font-[400] text-start whitespace-nowrap">
                         {DateFormat(row.creation_date)}
                       </td>
                       <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-4 text-center">
@@ -610,12 +684,6 @@ export default function PhoneNumbers() {
               </div>
             </div>
 
-            {responseError && (
-              <div className="mt-4 text-red-500 text-sm">
-                {responseError}
-              </div>
-            )}
-
             {/* Footer */}
             <div className="flex gap-2 mt-4">
               <button
@@ -709,6 +777,16 @@ export default function PhoneNumbers() {
           </div>
         )
       }
+
+      {/* Toast Modal */}
+      <ToastModal
+        open={toast.open}
+        type={toast.type}
+        title={toast.title}
+        description={toast.description}
+        highlightText={toast.highlightText}
+        onClose={() => setToast({ ...toast, open: false })}
+      />
     </div>
   );
 }

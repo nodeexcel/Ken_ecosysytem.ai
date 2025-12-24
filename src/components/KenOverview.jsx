@@ -230,7 +230,7 @@ function KenOverview() {
                                         <img src={KenImage} alt="Ken" className="w-16 h-16 rounded-full" />
                                     </div>
                                     <h3 className="text-lg font-semibold text-[#1E1E1E] mb-1">Sami Sammari</h3>
-                                    <p className="text-sm text-[#5A687C]">CEO of LinkedIn</p>
+                                    <p className="text-sm text-[#5A687C]">CEO of Ecosysteme.ai</p>
                                 </div>
                                 
                                 {/* Metrics */}
@@ -350,8 +350,8 @@ function KenOverview() {
 
             {/* Login Card - Centered */}
             <div className="flex-1 flex items-center justify-center ">
-                <div className="w-full max-w-full bg-white min-h-[640px] rounded-2xl shadow-sm border border-[#E1E4EA] p-8">
-                    <div className="max-w-md mx-auto mt-10">
+                <div className="w-full max-w-full bg-white min-h-auto rounded-2xl shadow-sm border border-[#E1E4EA] p-8 py-20">
+                    <div className="max-w-md mx-auto mt-10 mb-10">
                         {/* LinkedIn Logo */}
                         <div className="flex justify-center mb-3">
                             <div className="w-16 h-16 rounded-lg flex items-center justify-center">
@@ -369,7 +369,7 @@ function KenOverview() {
                                 ) : linkedInAccounts.length === 0 ? (
                                     <>
                                         {/* No Account Connected */}
-                                        <h2 className="text-[24px] font-[500] text-[#1E1E1E] text-center mb-2">
+                                        <h2 className="text-[24px] font-[500] text-[#1E1E1E] text-center mb-2 ">
                                             No LinkedIn account connected
                                         </h2>
                                         <p className="text-md text-[#5A687C] text-center mb-6">

@@ -80,7 +80,7 @@ function Dashboard() {
 
             const response = await getProfile()
             if (response?.status === 200) {
-                console.log(response?.data)
+                // console.log(response?.data)
                 // if (!response?.data?.isProfileComplete) {
                 //     navigate("settings")
                 // }

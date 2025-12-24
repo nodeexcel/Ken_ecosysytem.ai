@@ -107,7 +107,7 @@ const GeneratedResultsView = ({ generatedContent, onCancel }) => {
             {/* Header Section */}
             <div className="flex items-start justify-between w-full">
                 <h1 className="text-[#1E1E1E] text-3xl font-[500]">
-                    Generated Results
+                    {t("geo.generated_results")}
                 </h1>
 
                 {/* Action Buttons */}
@@ -116,19 +116,7 @@ const GeneratedResultsView = ({ generatedContent, onCancel }) => {
                         onClick={onCancel}
                         className="px-4 py-2.5 rounded-lg cursor-pointer text-center bg-white border border-gray-300 text-[#1E1E1E] font-[500] text-sm hover:bg-gray-50 transition-colors shadow-sm"
                     >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleSaveDraft}
-                        className="px-4 py-2.5 rounded-lg cursor-pointer text-center bg-white border border-gray-300 text-[#1E1E1E] font-[500] text-sm hover:bg-gray-50 transition-colors shadow-sm"
-                    >
-                        Save as Draft
-                    </button>
-                    <button
-                        onClick={handleSchedule}
-                        className="px-4 py-2.5 rounded-lg cursor-pointer text-center bg-[#675FFF] text-white font-[500] text-sm hover:bg-[#5a4fe6] transition-colors shadow-sm"
-                    >
-                        Schedule
+                        {t("geo.cancel")}
                     </button>
                 </div>
             </div>
@@ -136,9 +124,9 @@ const GeneratedResultsView = ({ generatedContent, onCancel }) => {
             {/* Results Section */}
             <div className="flex flex-col gap-4 w-full bg-white rounded-2xl p-6">
                 <div className="flex items-center justify-between w-full border-b border-[#dcd6d6] pb-2">
-                    <h2 className="text-[#1E1E1E] text-[20px] font-[600]">Results</h2>
+                    <h2 className="text-[#1E1E1E] text-[20px] font-[600]">{t("geo.results")}</h2>
                     <span className="text-[#5A687C] text-[16px] font-[400]">
-                        {resultsCount} {resultsCount === 1 ? "Result" : "Results"} Generated
+                        {resultsCount} {resultsCount === 1 ? t("geo.result") : t("geo.results")} {t("geo.generated")}
                     </span>
                 </div>
 
@@ -187,7 +175,7 @@ const GeneratedResultsView = ({ generatedContent, onCancel }) => {
                                                         }}
                                                         className="w-full flex cursor-pointer items-center gap-2 px-4 py-2 hover:bg-[#F2F2F7]"
                                                     >
-                                                        <span className="text-sm text-gray-700">Edit</span>
+                                                        <span className="text-sm text-gray-700">{t("geo.edit")}</span>
                                                     </button>
                                                     <button
                                                         onClick={(e) => {
@@ -197,7 +185,7 @@ const GeneratedResultsView = ({ generatedContent, onCancel }) => {
                                                         }}
                                                         className="w-full flex cursor-pointer items-center gap-2 px-4 py-2 hover:bg-[#F2F2F7]"
                                                     >
-                                                        <span className="text-sm text-gray-700">Copy</span>
+                                                        <span className="text-sm text-gray-700">{t("geo.copy")}</span>
                                                     </button>
                                                     <button
                                                         onClick={(e) => {
@@ -207,7 +195,7 @@ const GeneratedResultsView = ({ generatedContent, onCancel }) => {
                                                         }}
                                                         className="w-full flex cursor-pointer items-center gap-2 px-4 py-2 hover:bg-[#F2F2F7]"
                                                     >
-                                                        <span className="text-sm text-gray-700">Share</span>
+                                                        <span className="text-sm text-gray-700">{t("geo.share")}</span>
                                                     </button>
                                                 </div>
                                             )}

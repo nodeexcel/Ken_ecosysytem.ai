@@ -643,7 +643,7 @@ function ContentCreation() {
                             <div className="w-full max-w-[500px] h-[14px] rounded-[40px] bg-[#D7D4FF]">
                                 <div style={{ width: `${loadingSteps}%` }} className={`${loadingSteps === 100 ? 'rounded-[40px]' : 'rounded-l-[40px]'}  h-[14px] leading-none bg-[#675FFF]`} ></div>
                             </div>
-                            <p className="text-[#5A687C] text-[12px] sm:text-[14px] font-[400]">{loadingSteps}% Completed </p>
+                            <p className="text-[#5A687C] text-[12px] sm:text-[14px] font-[500]">{loadingSteps}% Completed </p>
                         </div>
                     </div>
                 </div>

@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
 import { useTranslation } from 'react-i18next'
 import AgentChatBox from '../../components/AgentChatBox'
-import calinaMsgLogo from '../../assets/svg/CalinaSidebar.svg'
+import calinaMsgLogo from '../../assets/svg/CalinaChat.svg'
 import chatInstance from '../../api/chatInstance'
 import { deleteCustomerSupportChat, getCustomerSupportChatById, getCustomerSupportChats, updateCustomerSupportChatName } from '../../api/customerSupport'
 import { v4 as uuidv4 } from 'uuid';

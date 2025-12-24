@@ -15,7 +15,7 @@ import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ColdCallingScriptPhone from "../../components/ColdCallingScriptPhone";
-import { X, EllipsisVertical, ChevronDown, ChevronRight, ChevronUp } from "lucide-react";
+import { X, EllipsisVertical } from "lucide-react";
 import { discardSkillsData } from "../../store/agentSkillsSlice";
 import HomeActive from '../../assets/svg/Home Grid.svg'
 import HomeInactive from '../../assets/svg/HomeInactive.svg'
@@ -65,27 +65,18 @@ const PhonePage = () => {
       iconInactive: <img src={CallAgentInactive} alt="Call agents" className="w-5 h-5" />,
     },
     {
-      label: t("phone.outreach"),
-      path: "outreach",
+      label: t("phone.call_campaigns"),
+      path: "call-campaigns",
       header: "Tom",
-      iconActive: <img src={CallCampaignActive} alt="Outreach" className="w-5 h-5" />,
-      iconInactive: <img src={CallCampaignInactive} alt="Outreach" className="w-5 h-5" />,
-      subMenu: [
-        {
-          label: t("phone.call_campaigns"),
-          path: "call-campaigns",
-          header: "Tom",
-          iconActive: <img src={CallCampaignActive} alt="Call campaigns" className="w-5 h-5" />,
-          iconInactive: <img src={CallCampaignInactive} alt="Call campaigns" className="w-5 h-5" />,
-        },
-        {
-          label: t("phone.outbound_calls"),
-          path: "outbound-calls",
-          header: "Tom",
-          iconActive: <img src={OutboundActive} alt="Outbound calls" className="w-5 h-5" />,
-          iconInactive: <img src={OutboundInactive} alt="Outbound calls" className="w-5 h-5" />,
-        },
-      ],
+      iconActive: <img src={CallCampaignActive} alt="Call campaigns" className="w-5 h-5" />,
+      iconInactive: <img src={CallCampaignInactive} alt="Call campaigns" className="w-5 h-5" />,
+    },
+    {
+      label: t("phone.outbound_calls"),
+      path: "outbound-calls",
+      header: "Tom",
+      iconActive: <img src={OutboundActive} alt="Outbound calls" className="w-5 h-5" />,
+      iconInactive: <img src={OutboundInactive} alt="Outbound calls" className="w-5 h-5" />,
     },
     {
       label: t("phone.inbound_calls"),
@@ -105,7 +96,7 @@ const PhonePage = () => {
   const handleSectionRedirect = (sectionKey) => {
     // Check top-level items first
     let target = sideMenuList.find((item) => item.path === sectionKey);
-    
+
     // If not found, check sub-menus
     if (!target) {
       for (const item of sideMenuList) {
@@ -118,7 +109,7 @@ const PhonePage = () => {
         }
       }
     }
-    
+
     if (target) {
       dispatch(getNavbarData(target.header));
       handleTabChange(target.path);
@@ -188,22 +179,22 @@ const PhonePage = () => {
     return (
       <div className="bg-[#ffffff] lg:w-[232px] w-full mb-5 flex flex-col gap-3 px-[12px] py-[11px] border-b border-gray-200">
         <div className="flex gap-3">
-  <div className="flex justify-center items-center bg-gray-200 rounded-full w-12 h-12">
-    <img
-      src={rebeccaImg}
-      alt="rebecca"
-      className="w-8 h-8 rounded-full object-contain scale-150"
-    />
-  </div>
+          <div className="flex justify-center items-center bg-gray-200 rounded-full w-12 h-12">
+            <img
+              src={rebeccaImg}
+              alt="rebecca"
+              className="w-8 h-8 rounded-full object-contain scale-150"
+            />
+          </div>
 
-  <div className="flex flex-col">
-    <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Rebecca</h1>
-    <p className="text-[#5A687C] text-[14px] font-[400]">
-      {t("phone.phone_outreach")}
-    </p>
-  </div>
+          <div className="flex flex-col">
+            <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Rebecca</h1>
+            <p className="text-[#5A687C] text-[14px] font-[400]">
+              {t("phone.phone_outreach")}
+            </p>
+          </div>
 
-      </div>
+        </div>
         {/* Watch Tutorial Button */}
         <button
           onClick={() => {
@@ -231,8 +222,8 @@ const PhonePage = () => {
               dispatch(discardSkillsData())
             }}>
               {/* <div className="flex gap-4 pl-3 items-center h-[57px]"> */}
-                {/* <LeftArrow /> */}
-                {/* <h1 className="text-[20px] font-[600]">{t("phone.phone")}</h1>
+              {/* <LeftArrow /> */}
+              {/* <h1 className="text-[20px] font-[600]">{t("phone.phone")}</h1>
               </div> */}
             </div>
           </div>
@@ -243,7 +234,7 @@ const PhonePage = () => {
               const hasSubMenu = item.subMenu && item.subMenu.length > 0;
               const isExpanded = expandedSubmenus.has(item.path);
               const hasActiveSubItem = hasSubMenu && item.subMenu.some((sub) => sub.path === activeSidebarItem);
-              
+
               return (
                 <div key={i} className="w-full">
                   <div
@@ -277,13 +268,6 @@ const PhonePage = () => {
                       </div>
                     )}
                     <span className="text-[16px] font-[400] flex-1">{item.label}</span>
-                    {hasSubMenu && (
-                      isExpanded ? (
-                        <ChevronUp size={18} className="text-[#5A687C]" />
-                      ) : (
-                        <ChevronDown size={18} className="text-[#5A687C]" />
-                      )
-                    )}
                   </div>
                   {hasSubMenu && isExpanded && (
                     <div className="ml-4 mt-1 flex flex-col gap-1">
@@ -354,7 +338,7 @@ const PhonePage = () => {
                 const hasSubMenu = item.subMenu && item.subMenu.length > 0;
                 const isExpanded = expandedSubmenus.has(item.path);
                 const hasActiveSubItem = hasSubMenu && item.subMenu.some((sub) => sub.path === activeSidebarItem);
-                
+
                 return (
                   <div key={i} className="w-full">
                     <div
@@ -389,13 +373,6 @@ const PhonePage = () => {
                         </div>
                       )}
                       <span className="text-[16px] font-[400] flex-1">{item.label}</span>
-                      {hasSubMenu && (
-                        isExpanded ? (
-                          <ChevronUp size={18} className="text-[#5A687C]" />
-                        ) : (
-                          <ChevronDown size={18} className="text-[#5A687C]" />
-                        )
-                      )}
                     </div>
                     {hasSubMenu && isExpanded && (
                       <div className="ml-4 mt-1 flex flex-col gap-1">

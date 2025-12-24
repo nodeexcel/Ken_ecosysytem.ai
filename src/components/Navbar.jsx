@@ -160,24 +160,24 @@ function Navbar({ sidebarItems }) {
 
         // Tab name mapping for GEO (SEO) - matches Seo.jsx sideMenuList paths
         const geoTabMap = {
-            'product': 'Product',
-            'articles': 'Dashboard',
-            'audit': 'SEO Audit',
-            'automation': 'SEO Automation',
+            'product': t("product"),
+            'articles': t("dashboard"),
+            'audit': t("seo.seo_audit"),
+            'automation': t("seo.start_seo_automation"),
         }
 
         // Analytics tab map under GEO
         const geoAnalyticsTabMap = {
-            'citation-analytics': 'Citation Analytics',
-            'prompt-analytics': 'Prompt Analytics',
-            'content-analytics': 'Content Analytics',
+            'citation-analytics': t("seo.citation_analytics"),
+            'prompt-analytics': t("seo.prompt_analytics"),
+            'content-analytics': t("seo.content_analytics"),
         }
 
         // Tab name mapping for Seth (Appointment Setter) - matches AppointmentSetter.jsx sideMenuList paths
         const sethTabMap = {
-            'agents': 'Agents',
-            'conversations': 'Conversations',
-            'analytics': 'Analytics',
+            'agents': t("agents"),
+            'conversations': t("conversation"),
+            'analytics': t("analytics"),
         }
 
         // Tab name mapping for Calina (Customer Support) - matches CustomerSupport.jsx sideMenuList paths
@@ -197,8 +197,8 @@ function Navbar({ sidebarItems }) {
 
         // Tab name mapping for Ken - matches Ken.jsx sideMenuList paths
         const kenTabMap = {
-            'overview': 'Overview',
-            'search-prospects': 'Search for Prospects',
+            'overview': t("overview"),
+            'search-prospects': t("search_for_prospects"),
         }
 
         if (paths.length === 0 || (paths.length === 1 && paths[0] === 'dashboard')) {
@@ -278,8 +278,20 @@ function Navbar({ sidebarItems }) {
             breadcrumbs.push({ label: 'Rebecca', path: '/dashboard/phone?tab=dashboard' })
 
             const phoneTabKey = tab || 'dashboard'
-            if (phoneTabMap[phoneTabKey]) {
-                breadcrumbs.push({ label: phoneTabMap[phoneTabKey], path: null })
+            
+            // Check if this is an Outreach submenu item (call-campaigns or outbound-calls)
+            if (phoneTabKey === 'call-campaigns' || phoneTabKey === 'outbound-calls') {
+                // Add Outreach as middle breadcrumb
+                
+                // Then add the specific tab
+                if (phoneTabMap[phoneTabKey]) {
+                    breadcrumbs.push({ label: phoneTabMap[phoneTabKey], path: null })
+                }
+            } else {
+                // For other tabs, just add the tab name directly
+                if (phoneTabMap[phoneTabKey]) {
+                    breadcrumbs.push({ label: phoneTabMap[phoneTabKey], path: null })
+                }
             }
             return breadcrumbs
         }
@@ -299,20 +311,20 @@ function Navbar({ sidebarItems }) {
         // Handle GEO (SEO) with tab param
         if (currentPath === 'geo') {
             // Base crumb for GEO
-            breadcrumbs.push({ label: 'GEO', path: '/dashboard/geo?tab=product' })
+            breadcrumbs.push({ label: t("geo_name"), path: '/dashboard/geo?tab=product' })
 
             const geoTabKey = tab || 'product'
 
             // Analytics nested tabs
             if (geoAnalyticsTabMap[geoTabKey]) {
-                breadcrumbs.push({ label: 'Analytics', path: null })
+                breadcrumbs.push({ label: t("analytics"), path: null })
                 breadcrumbs.push({ label: geoAnalyticsTabMap[geoTabKey], path: null })
                 return breadcrumbs
             }
 
             // Prompts standalone
             if (geoTabKey === 'prompts') {
-                breadcrumbs.push({ label: 'Prompts', path: null })
+                breadcrumbs.push({ label: t("seo.prompts"), path: null })
                 return breadcrumbs
             }
 

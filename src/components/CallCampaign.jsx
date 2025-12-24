@@ -19,16 +19,25 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import googleCalendarIcon from "../assets/svg/google_calender.svg"
 import CalendlyIcon from "../assets/svg/calendly.svg"
+import ToastModal from "./ToastModal";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
   
+// Helper function to capitalize first letter
+const capitalizeFirst = (str) => {
+  if (!str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
+
 const renderColor = (text) => {
-  switch (text) {
-    case "Issue Detected":
+  const normalizedText = text ? text.toLowerCase() : '';
+  switch (normalizedText) {
+    case "issue detected":
       return `text-[#FF9500] bg-[#FFF4E6] border-[#FF9500]`;
-    case "Running":
+    case "running":
       return `text-[#675FFF] bg-[#F0EFFF] border-[#675FFF]`;
-    case "Pending":
+    case "pending":
       return `text-[#5A687C] bg-[#E9E9E9] border-[#5A687C]`;
-    case "Terminated":
+    case "terminated":
       return `text-[#FF2D55] bg-[#FFEAEE] border-[#FF2D55]`;
     default:
       return `text-[#34C759] bg-[#EBF9EE] border-[#34C759]`;
@@ -37,8 +46,8 @@ const renderColor = (text) => {
 
 const countries = [
   { name: "United States", code: "US", dial_code: "+1", flag: us_flag },
-  { name: "United Kingdom", code: "GB", dial_code: "+44", flag: uk_flag }, ,
-  { name: "France", code: "FR", dial_code: "+33", flag: fr_flag }, ,
+  { name: "United Kingdom", code: "GB", dial_code: "+44", flag: uk_flag },
+  { name: "France", code: "FR", dial_code: "+33", flag: fr_flag },
   // Add more countries as needed
 ];
 
@@ -90,8 +99,8 @@ export default function CallCampaign() {
   const { t } = useTranslation();
 
   const agentLanguageOptions = [
-    { key: "english", label: t("phone.english") },
-    { key: "french", label: t("phone.french") },
+    { key: "English", label: t("phone.english") },
+    { key: "French", label: t("phone.french") },
   ];
 
   const agentVoiceOptions = [
@@ -191,7 +200,7 @@ export default function CallCampaign() {
   const [deleteRow, setDeleteRow] = useState(null);
   const [contactLists, setContactLists] = useState([]);
   const [showListTargetSelector, setShowListTargetSelector] = useState(false);
-  const [apiMessage, setApiMessage] = useState({ type: '', message: '' });
+  const [toast, setToast] = useState({ open: false, type: 'success', title: '', description: '', highlightText: '' });
   const targetListRef = useRef()
   const navigator = useNavigate()
 
@@ -320,18 +329,44 @@ export default function CallCampaign() {
 
   const removeRow = async (id) => {
     try {
+      // Find the campaign before deleting to show in toast
+      const campaignToDelete = campaigns.find(c => c.id === id);
+      const campaignName = campaignToDelete?.campaign_name || 'campaign';
+
       const response = await deletePhoneCampaign(id);
       if (response.status === 200) {
-        console.log("Phone number status updated successfully");
-
+        console.log("Campaign deleted successfully");
         handleGetPhoneCampaign();
         setDeleteRow(null);
+        
+        // Show success toast
+        setToast({
+          open: true,
+          type: 'success',
+          title: 'Campaign Deleted Successfully',
+          description: `Your campaign "${campaignName}" has been deleted.`,
+          highlightText: campaignName
+        });
       } else {
-        console.error("Failed to update phone number status:", response);
+        console.error("Failed to delete campaign:", response);
+        setDeleteRow(null);
+        setToast({
+          open: true,
+          type: 'error',
+          title: 'Delete Failed',
+          description: 'We couldn\'t delete the campaign. Please try again.',
+        });
       }
 
     } catch (error) {
       console.error("Error removing row:", error);
+      setDeleteRow(null);
+      setToast({
+        open: true,
+        type: 'error',
+        title: 'Delete Failed',
+        description: 'We couldn\'t delete the campaign. Please try again.',
+      });
     }
   }
 
@@ -416,7 +451,6 @@ export default function CallCampaign() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoader(true);
-    setApiMessage({ type: '', message: '' });
 
     if (validateForm()) {
       try {
@@ -455,23 +489,37 @@ export default function CallCampaign() {
 
         if (response && response.status === 201) {
           console.log("Campaign created successfully:", response.data)
-          setApiMessage({ type: 'success', message: 'Campaign created successfully!' });
-          setTimeout(() => {
-            // Close inline form if open
-            setShowNewCampaignForm(false);
-            // Also close modal if it was used (edit flow)
-            setShowModal(false);
-            resetForm();
-            handleGetPhoneCampaign();
-            setApiMessage({ type: '', message: '' });
-          }, 1500);
+          const campaignName = campaign.campaign_name || 'campaign';
+          setToast({
+            open: true,
+            type: 'success',
+            title: 'Campaign Created Successfully',
+            description: `Your campaign "${campaignName}" has been created.`,
+            highlightText: campaignName
+          });
+          // Close inline form if open
+          setShowNewCampaignForm(false);
+          // Also close modal if it was used (edit flow)
+          setShowModal(false);
+          resetForm();
+          handleGetPhoneCampaign();
         } else {
           console.error("Failed to create campaign:", response);
-
+          setToast({
+            open: true,
+            type: 'error',
+            title: 'Failed to Create Campaign',
+            description: 'We couldn\'t create the campaign. Please try again.',
+          });
         }
       } catch (error) {
         console.error("Error creating campaign:", error);
-        setApiMessage({ type: 'error', message: '' });
+        setToast({
+          open: true,
+          type: 'error',
+          title: 'Failed to Create Campaign',
+          description: 'We couldn\'t create the campaign. Please try again.',
+        });
       }
     } else {
       console.log("Validation failed");
@@ -549,15 +597,35 @@ export default function CallCampaign() {
       const response = await updatePhoneCampaign(campaignData);
       if (response.status === 200) {
         console.log("Campaign details:", response.data);
+        const campaignName = campaign.campaign_name || 'campaign';
+        setToast({
+          open: true,
+          type: 'success',
+          title: 'Campaign Updated Successfully',
+          description: `Your campaign "${campaignName}" has been updated.`,
+          highlightText: campaignName
+        });
         setShowModal(false);
         setEditData();
         resetForm();
         handleGetPhoneCampaign();
       } else {
-        console.error("Failed to fetch campaign details:", response);
+        console.error("Failed to update campaign:", response);
+        setToast({
+          open: true,
+          type: 'error',
+          title: 'Failed to Update Campaign',
+          description: 'We couldn\'t update the campaign. Please try again.',
+        });
       }
     } catch (error) {
-      console.error("Error fetching campaign details:", error);
+      console.error("Error updating campaign:", error);
+      setToast({
+        open: true,
+        type: 'error',
+        title: 'Failed to Update Campaign',
+        description: 'We couldn\'t update the campaign. Please try again.',
+      });
     } finally {
       setActiveDropdown(null);
     }
@@ -579,17 +647,44 @@ export default function CallCampaign() {
 
   const handleDuplicate = async (id) => {
     try {
+      // Find the campaign before duplicating to show in toast
+      const campaignToDuplicate = campaigns.find(c => c.id === id);
+      const campaignName = campaignToDuplicate?.campaign_name || 'campaign';
+
       const response = await duplicateCampaign(id);
 
       if (response.status === 201) {
         console.log("Campaign duplicated successfully:", response.data);
         handleGetPhoneCampaign();
+        setActiveDropdown(null);
+        
+        // Show success toast
+        setToast({
+          open: true,
+          type: 'success',
+          title: 'Campaign Duplicated Successfully',
+          description: `Your campaign "${campaignName}" has been duplicated.`,
+          highlightText: campaignName
+        });
       } else {
         console.error("Failed to duplicate campaign:", response);
+        setActiveDropdown(null);
+        setToast({
+          open: true,
+          type: 'error',
+          title: 'Duplicate Failed',
+          description: 'We couldn\'t duplicate the campaign. Please try again.',
+        });
       }
-      setActiveDropdown(null);
     } catch (error) {
       console.error("Error duplicating campaign:", error);
+      setActiveDropdown(null);
+      setToast({
+        open: true,
+        type: 'error',
+        title: 'Duplicate Failed',
+        description: 'We couldn\'t duplicate the campaign. Please try again.',
+      });
     }
 
   }
@@ -819,33 +914,98 @@ export default function CallCampaign() {
                           const selectedAgent = agents.find(agent => agent.id.toString() === value);
                           const agentId = value ? parseInt(value) : '';
                           
-                          // Set agent ID in campaign state (Integer)
-                          setCampaign((prev) => ({
-                            ...prev,
-                            agent: agentId
-                          }));
-                          
                           // Auto-fill campaign_type and phone_number based on agent's phone number
                           if (selectedAgent && selectedAgent.phone_numbers) {
-                            // Find matching phone number in phoneNumbers array
+                            const agentPhoneNumber = selectedAgent.phone_numbers; // e.g., "+17019976600"
+                            
+                            // Find matching phone number in phoneNumbers array using agent's phone_numbers
                             const matchingPhone = phoneNumbers.find(
-                              phone => phone.phone_number === selectedAgent.phone_numbers
+                              phone => phone.phone_number === agentPhoneNumber
                             );
                             
                             if (matchingPhone) {
-                              // Set campaign_type to the direction (inbound/outbound)
-                              setCampaign((prev) => ({
-                                ...prev,
-                                campaign_type: matchingPhone.direction || '',
-                                phone_number: matchingPhone.phone_number || ''
-                              }));
+                              // Get direction from matching phone number and use it as campaign_type
+                              const direction = matchingPhone.direction; // "inbound" or "outbound"
+                              const phoneNumberStr = matchingPhone.phone_number;
+                              
+                              // Parse phone number to extract country code and format
+                              const parsedPhone = parsePhoneNumberFromString(phoneNumberStr);
+                              
+                              // Find country based on dial code
+                              if (parsedPhone) {
+                                const countryCode = parsedPhone.countryCode;
+                                const dialCode = `+${countryCode}`;
+                                const matchedCountry = countries && countries.length > 0 ? countries.find(
+                                  country => country && country.dial_code === dialCode
+                                ) : null;
+                                
+                                const formattedPhoneNumber = parsedPhone.nationalNumber || phoneNumberStr;
+                                
+                                if (matchedCountry) {
+                                  setSelectedCountry(matchedCountry);
+                                }
+                                
+                                // Update all values in a single state update
+                                setCampaign((prev) => ({
+                                  ...prev,
+                                  agent: agentId,
+                                  country: matchedCountry?.code || prev.country,
+                                  campaign_type: direction, // Use direction from getPhoneNumber response
+                                  phone_number: formattedPhoneNumber
+                                }));
+                              } else {
+                                // If parsing fails, use the original values
+                                setCampaign((prev) => ({
+                                  ...prev,
+                                  agent: agentId,
+                                  campaign_type: direction, // Use direction from getPhoneNumber response
+                                  phone_number: phoneNumberStr
+                                }));
+                              }
                             } else {
-                              // If no matching phone found, just set the phone_number from agent
-                              setCampaign((prev) => ({
-                                ...prev,
-                                phone_number: selectedAgent.phone_numbers || ''
-                              }));
+                              // If no matching phone found in phoneNumbers array, try to parse from agent's phone_numbers
+                              const phoneNumberStr = agentPhoneNumber;
+                              const parsedPhone = parsePhoneNumberFromString(phoneNumberStr);
+                              
+                              if (parsedPhone) {
+                                const countryCode = parsedPhone.countryCode;
+                                const dialCode = `+${countryCode}`;
+                                const matchedCountry = countries && countries.length > 0 ? countries.find(
+                                  country => country && country.dial_code === dialCode
+                                ) : null;
+                                
+                                if (matchedCountry) {
+                                  setSelectedCountry(matchedCountry);
+                                  setCampaign((prev) => ({
+                                    ...prev,
+                                    agent: agentId,
+                                    country: matchedCountry.code,
+                                    phone_number: parsedPhone.nationalNumber || phoneNumberStr
+                                  }));
+                                } else {
+                                  setCampaign((prev) => ({
+                                    ...prev,
+                                    agent: agentId,
+                                    phone_number: parsedPhone.nationalNumber || phoneNumberStr
+                                  }));
+                                }
+                              } else {
+                                // If parsing fails completely, just set agent and phone number as-is
+                                setCampaign((prev) => ({
+                                  ...prev,
+                                  agent: agentId,
+                                  phone_number: phoneNumberStr
+                                }));
+                              }
                             }
+                          } else {
+                            // Reset if no agent selected
+                            setCampaign((prev) => ({
+                              ...prev,
+                              agent: agentId || '',
+                              campaign_type: '',
+                              phone_number: ''
+                            }));
                           }
                         }}
                       />
@@ -857,16 +1017,12 @@ export default function CallCampaign() {
                     {/* Campaign Type */}
                     <div className="gap-1">
                       <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.campaign_type")}</label>
-                      <SelectDropdown
-                        name="campaign_type"
-                        options={[
-                          { key: "outbound", label: t("phone.outbound_call") },
-                          { key: "inbound", label: t("phone.inbound_call") }
-                        ]}
-                        placeholder= {t("phone.select_campaign_type") || "Select Campaign Type"}
-                        value={campaign.campaign_type || ''}
-                        onChange={(value) => handleCampaignForm({ target: { name: 'campaign_type', value } })}
-                        errors={errors}
+                      <input
+                        type="text"
+                        readOnly
+                        className="w-full px-4 py-2 border border-[#E1E4EA] rounded-lg bg-[#F5F5F5] text-[#5A687C] cursor-not-allowed"
+                        value={campaign.campaign_type === 'inbound' ? t("phone.inbound_call") : campaign.campaign_type === 'outbound' ? t("phone.outbound_call") : ""}
+                        placeholder={t("phone.select_campaign_type") || "Select Campaign Type"}
                       />
                       {errors.campaign_type && <p className="text-red-500 text-sm mt-1">{errors.campaign_type}</p>}
                     </div>
@@ -874,86 +1030,73 @@ export default function CallCampaign() {
                     {/* Number linked to the campaign */}
                     <div>
                       <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.number_linked_to_the_campaign")}</label>
-                      <div className="flex group items-center focus-within:border-[#675FFF] gap-2 border border-[#E1E4EA] rounded-lg px-4 py-2.5">
+                      <div className={`flex group items-center gap-2 border border-[#E1E4EA] rounded-lg px-4 py-2.5 ${campaign.agent ? 'bg-[#F5F5F5]' : 'focus-within:border-[#675FFF]'}`}>
                         <div className="relative country-selector">
-                          <button
-                            type="button"
-                            onClick={() => setIsCountryOpen(!isCountryOpen)}
-                            className="w-fit flex hover:cursor-pointer border-none justify-between gap-2 items-center"
-                          >
-                            <img src={selectedCountry?.flag} alt={selectedCountry?.name} width={20} />
-                            <span className="text-[14px] text-[#1E1E1E]">{selectedCountry?.dial_code}</span>
-                            <FaChevronDown color="#5A687C" className={`w-[10px] transition-transform duration-200 ${isCountryOpen ? 'transform rotate-180' : ''}`} />
-                            <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)", margin: "0 8px" }} />
-                          </button>
-                          {isCountryOpen && (
-                            <div className="absolute z-10 rounded-md shadow-lg border border-gray-200 max-h-40 overflow-auto top-8 left-0 bg-white mt-1 min-w-[120px]">
-                              {countries.map((country) => (
-                                <div
-                                  key={country.code}
-                                  onClick={() => {
-                                    setSelectedCountry(country);
-                                    setCampaign((prev) => ({ ...prev, country: country.code }));
-                                    setIsCountryOpen(false);
-                                  }}
-                                  className={`flex items-center gap-2 px-3 py-2 hover:bg-[#F4F5F6] cursor-pointer ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6]'}`}
-                                >
-                                  <img src={country.flag} alt={country.name} width={16} />
-                                  <span className="text-[14px] text-[#1E1E1E]">{country.dial_code}</span>
-                                </div>
-                              ))}
+                          {campaign.agent ? (
+                            <div className="w-fit flex justify-between gap-2 items-center cursor-not-allowed opacity-75">
+                              <img src={selectedCountry?.flag} alt={selectedCountry?.name} width={20} />
+                              <span className="text-[14px] text-[#1E1E1E]">{selectedCountry?.dial_code}</span>
                             </div>
+                          ) : (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => setIsCountryOpen(!isCountryOpen)}
+                                className="w-fit flex hover:cursor-pointer border-none justify-between gap-2 items-center"
+                              >
+                                <img src={selectedCountry?.flag} alt={selectedCountry?.name} width={20} />
+                                <span className="text-[14px] text-[#1E1E1E]">{selectedCountry?.dial_code}</span>
+                                <FaChevronDown color="#5A687C" className={`w-[10px] transition-transform duration-200 ${isCountryOpen ? 'transform rotate-180' : ''}`} />
+                                <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)", margin: "0 8px" }} />
+                              </button>
+                              {isCountryOpen && (
+                                <div className="absolute z-10 rounded-md shadow-lg border border-gray-200 max-h-40 overflow-auto top-8 left-0 bg-white mt-1 min-w-[120px]">
+                                  {countries.map((country) => (
+                                    <div
+                                      key={country.code}
+                                      onClick={() => {
+                                        setSelectedCountry(country);
+                                        setCampaign((prev) => ({ ...prev, country: country.code }));
+                                        setIsCountryOpen(false);
+                                      }}
+                                      className={`flex items-center gap-2 px-3 py-2 hover:bg-[#F4F5F6] cursor-pointer ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6]'}`}
+                                    >
+                                      <img src={country.flag} alt={country.name} width={16} />
+                                      <span className="text-[14px] text-[#1E1E1E]">{country.dial_code}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </>
                           )}
                         </div>
                         <input
                           type="tel"
                           name="phone_number"
+                          readOnly={!!campaign.agent}
                           value={campaign.phone_number || ''}
                           onChange={handleCampaignForm}
                           placeholder="(555) 000-0000"
-                          className="w-full outline-none bg-transparent text-[#1E1E1E] text-[14px]"
+                          className={`w-full outline-none text-[14px] ${campaign.agent ? 'bg-[#F5F5F5] text-[#5A687C] cursor-not-allowed' : 'bg-transparent text-[#1E1E1E]'}`}
                         />
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          // Redirect to Phone Numbers tab in Rebecca (Phone) section
-                          navigator("/dashboard/phone?tab=phone-numbers");
-                        }}
-                        className="text-[#675FFF] text-[14px] font-[500] mt-2 cursor-pointer hover:underline"
-                      >
-                        + {t("phone.add_new_phone_number")}
-                      </button>
+                      {!campaign.agent && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            // Redirect to Phone Numbers tab in Rebecca (Phone) section
+                            navigator("/dashboard/phone?tab=phone-numbers");
+                          }}
+                          className="text-[#675FFF] text-[14px] font-[500] mt-2 cursor-pointer hover:underline"
+                        >
+                          + {t("phone.add_new_phone_number")}
+                        </button>
+                      )}
                       {errors.phone_number && <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>}
                     </div>
 
                     {/* Language and Voice */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.language")}</label>
-                        <SelectDropdown
-                          name="language"
-                          options={languageOptions}
-                          placeholder={t("phone.select_language")}
-                          value={campaign.language || ''}
-                          onChange={(value) => handleCampaignForm({ target: { name: 'language', value } })}
-                          errors={errors}
-                        />
-                        {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
-                      </div>
-                      <div>
-                        <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.voice")}</label>
-                        <SelectDropdown
-                          name="voice"
-                          options={voiceOptions}
-                          placeholder={t("phone.select_voice")}
-                          value={campaign.voice || ''}
-                          onChange={(value) => handleCampaignForm({ target: { name: 'voice', value } })}
-                          errors={errors}
-                        />
-                        {errors.voice && <p className="text-red-500 text-sm mt-1">{errors.voice}</p>}
-                      </div>
-                    </div>
+                    
 
                     {/* Tags selection */}
                     <div>
@@ -989,65 +1132,6 @@ export default function CallCampaign() {
                       {errors.tag && <p className="text-red-500 text-sm mt-1">{errors.tag}</p>}
                     </div>
                   </div>
-
-                  {/* Create a custom tag table */}
-                  {/* <div className="space-y-4">
-                    <div>
-                      <p className="text-[14px] font-[500] text-[#868C98] mb-3">{t("phone.create_a_custom_tag")} ({t("phone.optional")})</p>
-                      <div className="rounded-2xl border border-[#D6D6D6] overflow-auto w-full">
-                        <div className="overflow-x-auto">
-                          <table className="min-w-full border-separate border-spacing-0">
-                            <thead className="bg-[#F7F7F8]">
-                              <tr className="text-[#5A687C]">
-                                <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("phone.tag_name")}</th>
-                                <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.action_description")}</th>
-                                <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.tag_color")}</th>
-                                <th className="px-6 text-center py-3 text-[16px] font-[400]">{t("phone.action")}</th>
-                              </tr>
-                            </thead>
-                            <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
-                              <tr className="text-[16px] text-[#1E1E1E]">
-                                <td className="px-6 py-2 text-[16px] text-[#1E1E1E] font-medium text-start">{t("phone.interested")}</td>
-                                <td className="px-3 py-2 text-[16px] text-start">{t("phone.lead_showed_interest_and_requested_follow_up")}</td>
-                                <td className="px-3 py-2 text-[16px] text-start">
-                                  <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4 rounded bg-[#15B462]"></div>
-                                    <span className="text-[#1E1E1E]">{t("phone.green")} (15B462)</span>
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4 text-center whitespace-nowrap">
-                                  <div className='flex items-center justify-center'>
-                                    <button className="p-2 rounded-lg relative">
-                                      <div className='bg-white cursor-pointer border border-[#D6D6D6] shadow-sm p-2 rounded-lg'><Ellipsis className="text-black"/></div>
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                              <tr className="text-[16px] text-[#1E1E1E]">
-                                <td className="px-6 py-2 text-[16px] text-[#1E1E1E] font-medium text-start">{t("phone.no_answer")}</td>
-                                <td className="px-3 py-2 text-[16px] text-start">{t("phone.call_not_picked_up_after_3_attempts")}</td>
-                                <td className="px-3 py-2 text-[16px] text-start">
-                                  <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4 rounded bg-[#FF9500]"></div>
-                                    <span className="text-[#1E1E1E]">{t("phone.orange")} (FF9500)</span>
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4 text-center whitespace-nowrap">
-                                  <div className='flex items-center justify-center'>
-                                    <button className="p-2 rounded-lg relative">
-                                      <div className='bg-white cursor-pointer border border-[#D6D6D6] shadow-sm p-2 rounded-lg'><Ellipsis className="text-black"/></div>
-                                    </button> 
-                                  </div>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  </div> */}
-
-                  {/* Action buttons moved to header (Cancel / Save Campaign) */}
                 </div>
               )}
 
@@ -1076,7 +1160,36 @@ export default function CallCampaign() {
 
               {stepAgentOpen && (
                 <div className="px-4 sm:px-6 pb-6 pt-2">
-                  {/* Row 1: Agent Name + Max Call Time */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  
+                  <div>
+                    <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.language")}</label>
+                    <SelectDropdown
+                      name="language"
+                      options={languageOptions}
+                      placeholder={t("phone.select_language")}
+                      value={campaign.language || ''}
+                      onChange={(value) => handleCampaignForm({ target: { name: 'language', value } })}
+                      errors={errors}
+                    />
+                    {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.voice")}</label>
+                    <SelectDropdown
+                      name="voice"
+                      options={voiceOptions}
+                      placeholder={t("phone.select_voice")}
+                      value={campaign.voice || ''}
+                      onChange={(value) => handleCampaignForm({ target: { name: 'voice', value } })}
+                      errors={errors}
+                    />
+                    {errors.voice && <p className="text-red-500 text-sm mt-1">{errors.voice}</p>}
+                  </div>
+                
+              </div>
+
+              
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     
                   <div className="flex flex-col gap-1">
@@ -1110,36 +1223,9 @@ export default function CallCampaign() {
                         className="w-full px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg focus:outline-none focus:border-[#675FFF] text-[14px] appearance-none [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
-
-                    <div className="flex flex-col gap-1">
-                      <label className="text-[14px] font-[500] text-[#868C98] mb-1">
-                        {t("phone.language")}
-                      </label>
-                      <SelectDropdown
-                        name="agent_language"
-                        options={agentLanguageOptions}
-                        value={newAgentForm.language}
-                        onChange={(value) =>
-                          setNewAgentForm((prev) => ({ ...prev, language: value }))
-                        }
-                        placeholder={t("phone.select_language")}
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <label className="text-[14px] font-[500] text-[#868C98] mb-1">
-                        {t("phone.voice")}
-                      </label>
-                      <SelectDropdown
-                        name="agent_voice"
-                        options={agentVoiceOptions}
-                        value={newAgentForm.voice}
-                        onChange={(value) =>
-                          setNewAgentForm((prev) => ({ ...prev, voice: value }))
-                        }
-                        placeholder={t("phone.select_voice")}
-                      />
-                    </div>
                   </div>
+
+                  
 
                   {/* Row 2: Language + Voice */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -1192,38 +1278,7 @@ export default function CallCampaign() {
                   </div>
                   </div>
 
-                  {/* Row 3: Knowledge base + Behavior */}
-                  {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div className="flex flex-col gap-1">
-                      <label className="text-[14px] font-[500] text-[#868C98] mb-1">
-                        {t("phone.knowledge_base")} <span className="text-[#9CA3AF]">({t("phone.optional")})</span>
-                      </label>
-                      <SelectDropdown
-                        name="knowledge_base"
-                        options={knowledgeBaseOptions}
-                        value={newAgentForm.knowledge_base}
-                        onChange={(value) =>
-                          setNewAgentForm((prev) => ({ ...prev, knowledge_base: value }))
-                        }
-                        placeholder={t("phone.select")}
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <label className="text-[14px] font-[500] text-[#868C98] mb-1">
-                        {t("phone.behavior")}
-                      </label>
-                      <SelectDropdown
-                        name="behavior"
-                        options={behaviorOptions}
-                        value={newAgentForm.behavior}
-                        onChange={(value) =>
-                          setNewAgentForm((prev) => ({ ...prev, behavior: value }))
-                        }
-                        placeholder={t("phone.wait_for_the_person_to_speak")}
-                      />
-                    </div>
-                  </div> */}
-
+        
                   {/* AI Brain toggle */}
                   <div className="flex items-center justify-start px-2 py-3 mb-4">
                     <button
@@ -1248,19 +1303,6 @@ export default function CallCampaign() {
                         {t("phone.the_agent_pulls_information_directly_from_the_ai_brain")}
                       </span>
                     </div>
-
-                  </div>
-
-                  {/* Select tools */}
-                  
-
-                  {/* Target List, Status, and Catch Phrase */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    {/* Target List */}
-                    
-
-                    {/* Status */}
-                    
                   </div>
 
                   {/* Catch Phrase - Textarea */}
@@ -1476,14 +1518,14 @@ export default function CallCampaign() {
                       return filteredCampaigns.length !== 0 ? (
                         filteredCampaigns.map((agent, index) => (
                           <tr key={agent.id} className="text-[16px] text-[#1E1E1E]">
-                            <td className="px-4 py-4 text-[13px] font-[400] text-[#1E1E1E] font-medium text-start">{agent.campaign_name}</td>
-                            <td className="px-4 py-4 text-[13px] font-[400] text-start">{agent.agent_name}</td>
-                            <td className="px-4 py-4 text-[13px] font-[400] text-start whitespace-nowrap">{DateFormat(agent.creation_date)}</td>
-                            <td className="px-4 py-4 text-[13px] font-[400] text-start">{agent.language}</td>
-                            <td className="px-4 py-4 text-[13px] font-[400] text-start">{agent.total_calls}</td>
+                            <td className="px-4 py-4 text-[14px] font-[500] text-black text-start">{agent.campaign_name}</td>
+                            <td className="px-4 py-4 text-[14px] font-[500] text-black text-start">{agent.agent_name}</td>
+                            <td className="px-4 py-4 text-[14px] font-[500] text-black text-start whitespace-nowrap">{DateFormat(agent.creation_date)}</td>
+                            <td className="px-4 py-4 text-[14px] font-[500] text-black text-start">{capitalizeFirst(agent.language)}</td>
+                            <td className="px-10 py-4 text-[14px] font-[500] text-black text-start ">{agent.total_calls}</td>
                             <td className="px-4 py-4 text-start">
                               <span className={`inline-block border ${renderColor(agent.status)} text-sm font-medium px-3 py-1 rounded-full`}>
-                                {agent.status}
+                                {capitalizeFirst(agent.status)}
                               </span>
                             </td>
                             <td className="px-4 py-2 text-center whitespace-nowrap">
@@ -1987,15 +2029,6 @@ export default function CallCampaign() {
                     </div>
                   ) :
                     <div>
-                      {/* API Message Display */}
-                      {apiMessage.message && (
-                        <div className={`mt-4 p-3 rounded-lg ${apiMessage.type === 'success'
-                          ? 'bg-green-100 text-green-800 border border-green-200'
-                          : 'bg-red-100 text-red-800 border border-red-200'
-                          }`}>
-                          {apiMessage.message}
-                        </div>
-                      )}
 
                       <div className="flex gap-4 mt-6">
                         <button onClick={() => {
@@ -2143,6 +2176,16 @@ export default function CallCampaign() {
           </div>
         )
       }
+
+      {/* Toast Modal */}
+      <ToastModal
+        open={toast.open}
+        type={toast.type}
+        title={toast.title}
+        description={toast.description}
+        highlightText={toast.highlightText}
+        onClose={() => setToast({ ...toast, open: false })}
+      />
     </div>
   );
 }

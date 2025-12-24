@@ -98,7 +98,7 @@ function Coo() {
                         }
                     }
                     setChatList(formatData)
-                    console.log(response?.data)
+                    // console.log(response?.data)
 
                 }
             }

@@ -576,7 +576,7 @@ function CreationStudio({ onClose, onGenerateContent, onContentCreated }) {
                                 {errors.video_duration && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.video_duration}</p>}
                             </div>}
                             {/* Date Field */}
-                            <div className="flex flex-col gap-1 sm:gap-1.5 flex-1">
+                            {/* <div className="flex flex-col gap-1 sm:gap-1.5 flex-1">
                                 <label className="text-xs sm:text-sm font-medium text-[#808591]">
                                     {t("constance.date")}
                                 </label>
@@ -612,9 +612,9 @@ function CreationStudio({ onClose, onGenerateContent, onContentCreated }) {
                                     )}
 
                                 </div>
-                            </div>
+                            </div> */}
                             {/* Time Field */}
-                            <div className="flex flex-col gap-1 sm:gap-1.5 flex-1">
+                            {/* <div className="flex flex-col gap-1 sm:gap-1.5 flex-1">
                                 <label className="text-xs sm:text-sm font-medium text-[#808591]">
                                     {t("constance.time")}
                                 </label>
@@ -639,7 +639,7 @@ function CreationStudio({ onClose, onGenerateContent, onContentCreated }) {
                                         </div>
                                     )}
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                         {formData.post_type === "quotes" && <div className="flex flex-col gap-1 sm:gap-1.5 w-full">
                             <label className="text-xs sm:text-sm font-medium text-[#1e1e1e]">
