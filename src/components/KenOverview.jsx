@@ -199,8 +199,8 @@ function KenOverview() {
                 {/* Header */}
                 <div className="flex justify-between items-start mb-8">
                     <div>
-                        <h1 className="text-2xl font-[500] text-[#1E1E1E] mb-2">Linkedin Prospection</h1>
-                        <p className="text-[#5A687C] text-base">
+                        <h1 className="text-[22px] font-[500] text-[#1E1E1E] mb-2">Linkedin Prospection</h1>
+                        <p className="text-[#5A687C] text-[14px] font-[400]">
                             Track your outreach performance, manage campaigns, and measure engagement across LinkedIn.
                         </p>
                     </div>
@@ -369,10 +369,10 @@ function KenOverview() {
                                 ) : linkedInAccounts.length === 0 ? (
                                     <>
                                         {/* No Account Connected */}
-                                        <h2 className="text-[24px] font-[500] text-[#1E1E1E] text-center mb-2 ">
+                                        <h2 className="text-[22px] font-[500] text-[#1E1E1E] text-center mb-2 ">
                                             No LinkedIn account connected
                                         </h2>
-                                        <p className="text-md text-[#5A687C] text-center mb-6">
+                                        <p className="text-[14px] font-[400] text-[#5A687C] text-center mb-6">
                                             Go to Brain AI to connect your LinkedIn account.
                                         </p>
                                         <button

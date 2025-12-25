@@ -805,8 +805,8 @@ export default function CallCampaign() {
           {!showNewCampaignForm ? (
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
               <div className="flex flex-col gap-1">
-                <h1 className="text-[24px] font-[500] text-[#1E1E1E]">{t("phone.call_campaigns")}</h1>
-                <p className="text-sm md:text-base text-[#5A687C] font-[400]">
+                <h1 className="text-[22px] font-[500] text-[#1E1E1E]">{t("phone.call_campaigns")}</h1>
+                <p className="text-sm md:text-[14px] text-[#5A687C] font-[400] mt-2">
                   {t("phone.manage_and_track_your_outbound_and_inbound_calling_campaigns") || "Manage and track your outbound and inbound calling campaigns."}
                 </p>
               </div>
@@ -828,7 +828,7 @@ export default function CallCampaign() {
           ) : (
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
               <div className="flex flex-col gap-1">
-                <h1 className="text-xl md:text-2xl font-semibold text-[#1E1E1E]">
+                <h1 className="text-[22px] font-[500] text-[#1E1E1E]">
                   {t("phone.new_campaign") || "New Campaign"}
                 </h1>
               </div>
@@ -867,7 +867,7 @@ export default function CallCampaign() {
                     <div className="w-7 h-7 flex items-center justify-center rounded-md bg-[#675FFF] text-white text-sm">
                       1
                     </div>
-                    <span className="text-sm sm:text-base font-[600] text-[#1E1E1E]">
+                    <span className="text-sm sm:text-md font-normal text-[#1E1E1E]">
                       {t("phone.new_campaign") || "New Campaign"}
                     </span>
                   </div>
@@ -888,7 +888,7 @@ export default function CallCampaign() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Campaign Name */}
                     <div className="flex flex-col gap-1">
-                      <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("emailings.campaign_name")}</label>
+                      <label className="block text-[14px] font-[400] text-[#868C98] mb-1">{t("emailings.campaign_name")}</label>
                       <input
                         type="text"
                         placeholder={t("phone.enter_campaign_name")}
@@ -902,7 +902,7 @@ export default function CallCampaign() {
 
                     {/* Agent Name */}
                     <div className="flex flex-col gap-1">
-                      <label className="text-[14px] font-[500] text-[#868C98] mb-1">
+                      <label className="text-[14px] font-[400] text-[#868C98] mb-1">
                         {t("phone.agent_name")}
                       </label>
                       <SelectDropdown
@@ -914,7 +914,13 @@ export default function CallCampaign() {
                           const selectedAgent = agents.find(agent => agent.id.toString() === value);
                           const agentId = value ? parseInt(value) : '';
                           
-                          // Auto-fill campaign_type and phone_number based on agent's phone number
+                          // Helper function to capitalize first letter
+                          const capitalizeFirst = (str) => {
+                            if (!str) return '';
+                            return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+                          };
+                          
+                          // Auto-fill campaign_type, phone_number, language, and voice based on agent's data
                           if (selectedAgent && selectedAgent.phone_numbers) {
                             const agentPhoneNumber = selectedAgent.phone_numbers; // e.g., "+17019976600"
                             
@@ -951,7 +957,9 @@ export default function CallCampaign() {
                                   agent: agentId,
                                   country: matchedCountry?.code || prev.country,
                                   campaign_type: direction, // Use direction from getPhoneNumber response
-                                  phone_number: formattedPhoneNumber
+                                  phone_number: formattedPhoneNumber,
+                                  language: selectedAgent.language ? capitalizeFirst(selectedAgent.language) : '',
+                                  voice: selectedAgent.voice || ''
                                 }));
                               } else {
                                 // If parsing fails, use the original values
@@ -959,7 +967,9 @@ export default function CallCampaign() {
                                   ...prev,
                                   agent: agentId,
                                   campaign_type: direction, // Use direction from getPhoneNumber response
-                                  phone_number: phoneNumberStr
+                                  phone_number: phoneNumberStr,
+                                  language: selectedAgent.language ? capitalizeFirst(selectedAgent.language) : '',
+                                  voice: selectedAgent.voice || ''
                                 }));
                               }
                             } else {
@@ -980,13 +990,17 @@ export default function CallCampaign() {
                                     ...prev,
                                     agent: agentId,
                                     country: matchedCountry.code,
-                                    phone_number: parsedPhone.nationalNumber || phoneNumberStr
+                                    phone_number: parsedPhone.nationalNumber || phoneNumberStr,
+                                    language: selectedAgent.language ? capitalizeFirst(selectedAgent.language) : '',
+                                    voice: selectedAgent.voice || ''
                                   }));
                                 } else {
                                   setCampaign((prev) => ({
                                     ...prev,
                                     agent: agentId,
-                                    phone_number: parsedPhone.nationalNumber || phoneNumberStr
+                                    phone_number: parsedPhone.nationalNumber || phoneNumberStr,
+                                    language: selectedAgent.language ? capitalizeFirst(selectedAgent.language) : '',
+                                    voice: selectedAgent.voice || ''
                                   }));
                                 }
                               } else {
@@ -994,7 +1008,9 @@ export default function CallCampaign() {
                                 setCampaign((prev) => ({
                                   ...prev,
                                   agent: agentId,
-                                  phone_number: phoneNumberStr
+                                  phone_number: phoneNumberStr,
+                                  language: selectedAgent.language ? capitalizeFirst(selectedAgent.language) : '',
+                                  voice: selectedAgent.voice || ''
                                 }));
                               }
                             }
@@ -1004,7 +1020,9 @@ export default function CallCampaign() {
                               ...prev,
                               agent: agentId || '',
                               campaign_type: '',
-                              phone_number: ''
+                              phone_number: '',
+                              language: '',
+                              voice: ''
                             }));
                           }
                         }}
@@ -1016,7 +1034,7 @@ export default function CallCampaign() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Campaign Type */}
                     <div className="gap-1">
-                      <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.campaign_type")}</label>
+                      <label className="block text-[14px] font-[400] text-[#868C98] mb-1">{t("phone.campaign_type")}</label>
                       <input
                         type="text"
                         readOnly
@@ -1029,78 +1047,58 @@ export default function CallCampaign() {
 
                     {/* Number linked to the campaign */}
                     <div>
-                      <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.number_linked_to_the_campaign")}</label>
-                      <div className={`flex group items-center gap-2 border border-[#E1E4EA] rounded-lg px-4 py-2.5 ${campaign.agent ? 'bg-[#F5F5F5]' : 'focus-within:border-[#675FFF]'}`}>
+                      <label className="block text-[14px] font-[400] text-[#868C98] mb-1">{t("phone.number_linked_to_the_campaign")}</label>
+                      <div className="flex group items-center gap-2 border border-[#E1E4EA] rounded-lg px-4 py-2.5 bg-[#F5F5F5]">
                         <div className="relative country-selector">
-                          {campaign.agent ? (
                             <div className="w-fit flex justify-between gap-2 items-center cursor-not-allowed opacity-75">
                               <img src={selectedCountry?.flag} alt={selectedCountry?.name} width={20} />
                               <span className="text-[14px] text-[#1E1E1E]">{selectedCountry?.dial_code}</span>
                             </div>
-                          ) : (
-                            <>
-                              <button
-                                type="button"
-                                onClick={() => setIsCountryOpen(!isCountryOpen)}
-                                className="w-fit flex hover:cursor-pointer border-none justify-between gap-2 items-center"
-                              >
-                                <img src={selectedCountry?.flag} alt={selectedCountry?.name} width={20} />
-                                <span className="text-[14px] text-[#1E1E1E]">{selectedCountry?.dial_code}</span>
-                                <FaChevronDown color="#5A687C" className={`w-[10px] transition-transform duration-200 ${isCountryOpen ? 'transform rotate-180' : ''}`} />
-                                <hr style={{ color: "#E1E4EA", width: "22px", transform: "rotate(-90deg)", margin: "0 8px" }} />
-                              </button>
-                              {isCountryOpen && (
-                                <div className="absolute z-10 rounded-md shadow-lg border border-gray-200 max-h-40 overflow-auto top-8 left-0 bg-white mt-1 min-w-[120px]">
-                                  {countries.map((country) => (
-                                    <div
-                                      key={country.code}
-                                      onClick={() => {
-                                        setSelectedCountry(country);
-                                        setCampaign((prev) => ({ ...prev, country: country.code }));
-                                        setIsCountryOpen(false);
-                                      }}
-                                      className={`flex items-center gap-2 px-3 py-2 hover:bg-[#F4F5F6] cursor-pointer ${selectedCountry?.code === country?.code && 'bg-[#F4F5F6]'}`}
-                                    >
-                                      <img src={country.flag} alt={country.name} width={16} />
-                                      <span className="text-[14px] text-[#1E1E1E]">{country.dial_code}</span>
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-                            </>
-                          )}
                         </div>
                         <input
                           type="tel"
                           name="phone_number"
-                          readOnly={!!campaign.agent}
+                          readOnly={true}
                           value={campaign.phone_number || ''}
                           onChange={handleCampaignForm}
                           placeholder="(555) 000-0000"
-                          className={`w-full outline-none text-[14px] ${campaign.agent ? 'bg-[#F5F5F5] text-[#5A687C] cursor-not-allowed' : 'bg-transparent text-[#1E1E1E]'}`}
+                          className="w-full outline-none text-[14px] bg-[#F5F5F5] text-[#5A687C] cursor-not-allowed"
                         />
                       </div>
-                      {!campaign.agent && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            // Redirect to Phone Numbers tab in Rebecca (Phone) section
-                            navigator("/dashboard/phone?tab=phone-numbers");
-                          }}
-                          className="text-[#675FFF] text-[14px] font-[500] mt-2 cursor-pointer hover:underline"
-                        >
-                          + {t("phone.add_new_phone_number")}
-                        </button>
-                      )}
                       {errors.phone_number && <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>}
                     </div>
 
                     {/* Language and Voice */}
-                    
+                    {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      
+                      <div>
+                        <label className="block text-[14px] font-[400] text-[#868C98] mb-1">{t("phone.language")}</label>
+                        <input
+                          type="text"
+                          readOnly
+                          className="w-full px-4 py-2 border border-[#E1E4EA] rounded-lg bg-[#F5F5F5] text-[#5A687C] cursor-not-allowed"
+                          value={campaign.language || ''}
+                          placeholder={t("phone.select_language")}
+                        />
+                        {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
+                      </div>
+                      
+                      <div>
+                        <label className="block text-[14px] font-[400] text-[#868C98] mb-1">{t("phone.voice")}</label>
+                        <input
+                          type="text"
+                          readOnly
+                          className="w-full px-4 py-2 border border-[#E1E4EA] rounded-lg bg-[#F5F5F5] text-[#5A687C] cursor-not-allowed"
+                          value={campaign.voice || ''}
+                          placeholder={t("phone.select_voice")}
+                        />
+                        {errors.voice && <p className="text-red-500 text-sm mt-1">{errors.voice}</p>}
+                      </div>
+                    </div> */}
 
                     {/* Tags selection */}
                     <div>
-                      <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.select_your_tag")}</label>
+                      <label className="block text-[14px] font-[400] text-[#868C98] mb-1">{t("phone.select_your_tag")}</label>
                       <div className="flex flex-wrap gap-2">
                         {tagsOptions.map((e) => {
                           const isSelected = campaign.tag === e.key;
@@ -1145,7 +1143,7 @@ export default function CallCampaign() {
                   <div className="w-7 h-7 flex items-center justify-center rounded-md bg-[#2d7e12] text-[#fafbfc] text-md">
                     2
                   </div>
-                  <span className="text-sm sm:text-base font-[600] text-[#1E1E1E]">
+                  <span className="text-sm sm:text-md font-normal text-[#1E1E1E]">
                     {t("phone.create_new_agent") || "Create a new agent"}
                   </span>
                 </div>
@@ -1163,7 +1161,7 @@ export default function CallCampaign() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   
                   <div>
-                    <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.language")}</label>
+                    <label className="block text-[14px] font-[400] text-[#868C98] mb-1">{t("phone.language")}</label>
                     <SelectDropdown
                       name="language"
                       options={languageOptions}
@@ -1175,7 +1173,7 @@ export default function CallCampaign() {
                     {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
                   </div>
                   <div>
-                    <label className="block text-[14px] font-[500] text-[#868C98] mb-1">{t("phone.voice")}</label>
+                    <label className="block text-[14px] font-[400] text-[#868C98] mb-1">{t("phone.voice")}</label>
                     <SelectDropdown
                       name="voice"
                       options={voiceOptions}
@@ -1193,7 +1191,7 @@ export default function CallCampaign() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     
                   <div className="flex flex-col gap-1">
-                      <label className="text-[14px] font-[500] text-[#868C98] mb-1">
+                      <label className="text-[14px] font-[400] text-[#868C98] mb-1">
                         {t("phone.target_list") || "Target List"}
                       </label>
                       <SelectDropdown
@@ -1207,7 +1205,7 @@ export default function CallCampaign() {
                       {errors.target_lists && <p className="text-red-500 text-sm mt-1">{errors.target_lists}</p>}
                     </div>
                     <div className="flex flex-col gap-1">
-                      <label className="text-[14px] font-[500] text-[#868C98] mb-1">
+                      <label className="text-[14px] font-[400] text-[#868C98] mb-1">
                         {t("phone.maximum_call_time_in_minutes")}
                       </label>
                       <input
@@ -1231,7 +1229,7 @@ export default function CallCampaign() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     
                   <div className="flex flex-col gap-1">
-                      <label className="text-[14px] font-[500] text-[#868C98] mb-1">
+                      <label className="text-[14px] font-[400] text-[#868C98] mb-1">
                         {t("phone.status") || "Status"}
                       </label>
                       <SelectDropdown
@@ -1249,7 +1247,7 @@ export default function CallCampaign() {
                     </div>
 
                     <div className="mb-4">
-                    <p className="text-[14px] font-[500] text-[#868C98] mb-2">{t("phone.select_tools")}</p>
+                    <p className="text-[14px] font-[400] text-[#868C98] mb-2">{t("phone.select_tools")}</p>
                     <div className="flex flex-wrap gap-2">
                       {toolOptions.map((tool) => {
                         const active = newAgentForm.tools.includes(tool.key);
@@ -1299,7 +1297,7 @@ export default function CallCampaign() {
                     </button>
                     <div className="flex flex-col">
 
-                      <span className="text-sm px-3 font-[500] text-[#1E1E1E]">
+                      <span className="text-sm px-3 font-[400] text-[#1E1E1E]">
                         {t("phone.the_agent_pulls_information_directly_from_the_ai_brain")}
                       </span>
                     </div>
@@ -1307,7 +1305,7 @@ export default function CallCampaign() {
 
                   {/* Catch Phrase - Textarea */}
                   <div className="flex flex-col gap-1 mb-4">
-                    <label className="text-[14px] font-[500] text-[#868C98] mb-1">
+                    <label className="text-[14px] font-[400] text-[#868C98] mb-1">
                       {t("phone.catch_phrase") || "Catch Phrase"}
                     </label>
                     <textarea
@@ -1323,7 +1321,7 @@ export default function CallCampaign() {
 
                   {/* Call Script - Textarea */}
                   <div className="flex flex-col gap-1 mb-4">
-                    <label className="text-[14px] font-[500] text-[#868C98] mb-1">
+                    <label className="text-[14px] font-[400] text-[#868C98] mb-1">
                       {t("phone.call_script") || "Call Script"}
                     </label>
                     <textarea
@@ -1518,10 +1516,10 @@ export default function CallCampaign() {
                       return filteredCampaigns.length !== 0 ? (
                         filteredCampaigns.map((agent, index) => (
                           <tr key={agent.id} className="text-[16px] text-[#1E1E1E]">
-                            <td className="px-4 py-4 text-[14px] font-[500] text-black text-start">{agent.campaign_name}</td>
-                            <td className="px-4 py-4 text-[14px] font-[500] text-black text-start">{agent.agent_name}</td>
-                            <td className="px-4 py-4 text-[14px] font-[500] text-black text-start whitespace-nowrap">{DateFormat(agent.creation_date)}</td>
-                            <td className="px-4 py-4 text-[14px] font-[500] text-black text-start">{capitalizeFirst(agent.language)}</td>
+                            <td className="px-4 py-4 text-[14px] text-black font-[400] text-start">{agent.campaign_name}</td>
+                            <td className="px-4 py-4 text-[14px] text-black font-[400] text-start">{agent.agent_name}</td>
+                            <td className="px-4 py-4 text-[14px] text-black font-[400] text-start whitespace-nowrap">{DateFormat(agent.creation_date)}</td>
+                            <td className="px-4 py-4 text-[14px] text-black font-[400] text-start">{capitalizeFirst(agent.language)}</td>
                             <td className="px-10 py-4 text-[14px] font-[500] text-black text-start ">{agent.total_calls}</td>
                             <td className="px-4 py-4 text-start">
                               <span className={`inline-block border ${renderColor(agent.status)} text-sm font-medium px-3 py-1 rounded-full`}>

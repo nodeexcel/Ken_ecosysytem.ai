@@ -74,7 +74,7 @@ function CooPresentations() {
     );
 
     return (
-        <div className="py-4 pr-2 h-screen overflow-auto flex flex-col gap-4 w-full items-center justify-start pt-12">
+        <div className="p-12 h-screen overflow-auto flex flex-col gap-4 w-full items-center justify-start mt-20">
             {/* Header */}
             {/* <div className="flex items-center justify-between">
                 <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{t("tara.presentation")} </h1>
@@ -173,10 +173,10 @@ function CooPresentations() {
                 </table>
             </div> */}
             <div className="text-4xl">🚧</div>
-            <h2 className="text-3xl font-semibold text-gray-800">
+            <h2 className="text-[22px] font-[500] text-[#1E1E1E]">
                 {t("coming_soon")}
             </h2>
-            <p className="text-md text-gray-500 font-medium max-w-full text-center">
+            <p className="text-[14px] font-[400] text-[#5A687C] max-w-full text-center">
                 {t("tara.this_feature_is_currently_under_development")}
             </p>
         </div>

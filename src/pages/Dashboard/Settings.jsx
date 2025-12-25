@@ -979,10 +979,10 @@ const SettingsPage = () => {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center sm:justify-between w-full mb-4 gap-4 px-5.5 py-6">
             <div className="flex flex-col gap-2">
-              <h1 className="text-[#1e1e1e] dark:text-white text-2xl  font-[600] leading-tight">
+              <h1 className="text-[#1e1e1e] dark:text-white text-[22px] font-[500] leading-tight">
                 {t("settings.tab_1_list.my_profile_settings")}
               </h1>
-              <p className="text-[#5A687C] dark:text-gray-400 text-[14px] sm:text-[16px] font-[400]">
+              <p className="text-[#5A687C] dark:text-gray-400 text-[14px] font-[400]">
                 {t("settings.tab_1_list.my_profile_paragraph")}
               </p>
             </div>
@@ -1043,9 +1043,9 @@ const SettingsPage = () => {
             {/* Profile Avatar */}
 
 
-            <div className=" grid md:grid-cols-[40%_60%] gap-4 md:items-center justify-left px-4 py-2">
+            <div className=" grid md:grid-cols-[40%_60%] gap-4 md:items-center justify-left px-5 py-2">
               <div>
-                <h3 className="text-[#1E1E1E] text-[16px] font-[600]">{t("settings.tab_1_list.profile_picture")}</h3>
+                <h3 className="text-[#1E1E1E] text-[16px] font-[500]">{t("settings.tab_1_list.profile_picture")}</h3>
                 <p className="text-[#5A687C] text-[14px] font-[400]">
                   {t("settings.tab_1_list.profile_picture_description")}
                 </p>
@@ -1126,7 +1126,7 @@ const SettingsPage = () => {
             <div className="w-full p-5">
               <div className="grid md:grid-cols-[40%_60%] gap-4 pb-2">
                 <div>
-                  <h3 className="text-[#1E1E1E] text-[16px] font-[600]">
+                  <h3 className="text-[#1E1E1E] text-[16px] font-[500]">
                     {t("settings.tab_1_list.personal_information")}
                   </h3>
                   <p className="text-[#5A687C] text-sm">
@@ -1291,10 +1291,10 @@ const SettingsPage = () => {
               </div>
               <hr className="border border-gray-200 w-full mx-2" />
               {/* Security */}
-              <div className="w-full p-5 mt-6">
+              <div className="w-full py-5 mt-6">
                 <div className="grid md:grid-cols-[40%_60%] gap-4">
                   <div>
-                    <h3 className="text-[#1E1E1E] text-[16px] font-[600]">{t("settings.tab_1_list.security")}</h3>
+                    <h3 className="text-[#1E1E1E] text-[16px] font-[500]">{t("settings.tab_1_list.security")}</h3>
                     <p className="text-[#5A687C] text-sm">
                       {t("settings.tab_1_list.security_description")}
                     </p>
@@ -1431,10 +1431,10 @@ const SettingsPage = () => {
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div className="flex flex-col gap-1">
-                <h1 className="text-md text-2xl font-[600] text-[#1E1E1E]">
+                <h1 className="text-[22px] font-[500] text-[#1E1E1E]">
                   {t("settings.tab_3")}
                 </h1>
-                <p className="text-[14px] sm:text-[16px] text-[#5A687C] font-[400]">
+                <p className="text-[14px] text-[#5A687C] font-[400]">
                   {t("settings.tab_3_list.manage_access_and_collaboration_across_your_workspace")}
                 </p>
               </div>
@@ -1853,8 +1853,8 @@ const SettingsPage = () => {
         <div className="overflow-hidden">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 px-5.5 py-6 ">
             <div className="space-y-2">
-              <h2 className="text-2xl font-semibold text-[#1E1E1E] dark:text-white">{t("settings.tab_1_list.general_settings")}</h2>
-              <p className="text-md text-[#5A687C] dark:text-gray-400 max-w-2xl">
+              <h2 className="text-[22px] font-[500] text-[#1E1E1E] dark:text-white">{t("settings.tab_1_list.general_settings")}</h2>
+              <p className="text-[14px] text-[#5A687C] dark:text-gray-400 max-w-2xl">
                 {t("settings.tab_1_list.general_settings_description")}
               </p>
               {success.general && (
@@ -1887,8 +1887,8 @@ const SettingsPage = () => {
               <section className="flex flex-col gap-4">
                 <div className="w-full flex flex-col lg:flex-row lg:justify-between gap-6 border-b border-[#d1d3db] dark:border-[#2D3151] pb-2">
                   <div className="min-w-[260px] max-w-sm">
-                    <h3 className="text-lg font-semibold text-[#1E1E1E] dark:text-white">{t("settings.tab_1_list.theme_appearance")}</h3>
-                    <p className="text-sm text-[#7A8298] dark:text-gray-400">{t("settings.tab_1_list.theme_appearance_description")}</p>
+                    <h3 className="text-[16px] font-[500] text-[#1E1E1E] dark:text-white">{t("settings.tab_1_list.theme_appearance")}</h3>
+                    <p className="text-[14px] text-[#5A687C] dark:text-gray-400">{t("settings.tab_1_list.theme_appearance_description")}</p>
                   </div>
 
                   <div className="flex flex-wrap gap-4 lg:gap-6">
@@ -1934,7 +1934,7 @@ const SettingsPage = () => {
                             </div>
                           </button>
 
-                          <span className={`text-sm font-semibold transition-colors duration-300 ${selected ? "text-[#1E1E1E] dark:text-white" : "text-[#6C7489] dark:text-gray-400"}`}>
+                          <span className={`text-[14px] font-[500] transition-colors duration-300 ${selected ? "text-[#1E1E1E] dark:text-white" : "text-[#6C7489] dark:text-gray-400"}`}>
                             {getThemeLabel(option.key)}
                           </span>
                         </div>
@@ -1950,8 +1950,8 @@ const SettingsPage = () => {
               <section className="flex flex-col gap-6">
                 <div className="w-full flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 border-b border-[#d1d3db] dark:border-[#2D3151] pb-2">
                   <div className="min-w-[240px] max-w-sm">
-                    <h3 className="text-lg font-semibold text-[#1E1E1E] dark:text-white">{t("settings.tab_1_list.account_preferences")}</h3>
-                    <p className="text-sm text-[#7A8298] dark:text-gray-400">
+                    <h3 className="text-[16px] font-[500] text-[#1E1E1E] dark:text-white">{t("settings.tab_1_list.account_preferences")}</h3>
+                    <p className="text-[14px] text-[#5A687C] dark:text-gray-400">
                       {t("settings.tab_1_list.account_preferences_description")}
                     </p>
                   </div>
@@ -2023,8 +2023,8 @@ const SettingsPage = () => {
               <section className="flex flex-col gap-4">
                 <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
                   <div className="min-w-[240px] max-w-sm">
-                    <h3 className="text-lg font-semibold text-[#1E1E1E] dark:text-white">{t("settings.tab_1_list.notifications_alerts")}</h3>
-                    <p className="text-sm text-[#7A8298] dark:text-gray-400">
+                    <h3 className="text-[16px] font-[500] text-[#1E1E1E] dark:text-white">{t("settings.tab_1_list.notifications_alerts")}</h3>
+                    <p className="text-[14px] text-[#5A687C] dark:text-gray-400">
                       {t("settings.tab_1_list.notifications_alerts_description")}
                     </p>
                   </div>
@@ -2049,8 +2049,8 @@ const SettingsPage = () => {
                           className="flex items-center justify-between p-5"
                         >
                           <div>
-                            <p className="text-sm font-semibold text-[#1E1E1E] dark:text-white">{item.title}</p>
-                            <p className="text-sm text-[#7A8298] dark:text-gray-400">{item.description}</p>
+                            <p className="text-[14px] font-[500] text-[#1E1E1E] dark:text-white">{item.title}</p>
+                            <p className="text-[14px] text-[#5A687C] dark:text-gray-400">{item.description}</p>
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-xs font-semibold text-[#675FFF]">
@@ -2096,15 +2096,15 @@ const SettingsPage = () => {
         <hr className='text-[#E1E4EA]' />
       </div> */}
       <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><Ellipsis size={24} className="text-[#1e1e1e] dark:text-white" /></div>
-      <div className="flex flex-col md:flex-row items-start lg:gap-8 relative w-full">
+      <div className="flex flex-col md:flex-row items-start lg:gap-8 relative w-full mt-2">
         {/* Sidebar Navigation */}
-        <div className="lg:flex hidden flex-col bg-white dark:bg-[#1A1C23] gap-4 border border-[#D6D6D6] dark:border-[#2D3151] min-w-[272px] rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-89px)] mt-2 mb-8 overflow-y-auto">
+        <div className="lg:flex hidden flex-col bg-white dark:bg-[#1A1C23] gap-4 border border-[#D6D6D6] dark:border-[#2D3151] min-w-[272px] ml-2 rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-105px)] mt-2 mb-8 overflow-y-auto">
           <div className=''>
             <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
               {/* <MdOutlineKeyboardArrowLeft size={25} /> */}
-              <div className="flex gap-4 pl-4 items-center h-[57px]">
+              <div className="flex gap-4 pl-6 items-center h-[57px]">
                 {/* <LeftArrow /> */}
-                <h1 className="text-[20px] font-[600] dark:text-white">{t("settings.label")}</h1>
+                <h1 className="text-[22px] font-[500] dark:text-white">{t("settings.label")}</h1>
               </div>
             </div>
             <hr className='text-[#E1E4EA] dark:border-[#2D3151]' />
@@ -2116,7 +2116,7 @@ const SettingsPage = () => {
                 }`}
             >
               {activeSidebarItem === "my-profile" ? <CircleUserRound className="text-[#675FFF]" /> : <div className="flex items-center gap-2"><div className='group-hover:hidden'><CircleUserRound className="text-gray-500 dark:text-gray-400" /></div> <div className='hidden group-hover:block'><CircleUserRound className="dark:text-white" /></div></div>}
-              <span className={`font-[400] text-[16px] ${activeSidebarItem === "my-profile" ? "text-black dark:text-white" : "text-black dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
+              <span className={`font-[400] text-[14px] ${activeSidebarItem === "my-profile" ? "text-black dark:text-white" : "text-black dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
               {t("settings.my_profile")}
               </span>
             </div>
@@ -2128,7 +2128,7 @@ const SettingsPage = () => {
             >
               {activeSidebarItem === "general" ? <House className="text-[#675FFF]" status={activeSidebarItem === "general"} /> :
                 <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<House className="text-gray-500 dark:text-gray-400" status={activeSidebarItem === "general"} />}</div> <div className='hidden group-hover:block'>{<House hover={true} className="dark:text-white" />}</div></div>}
-              <span className={`font-[400] text-[16px] ${activeSidebarItem === "general" ? "text-black dark:text-white" : "text-black dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
+              <span className={`font-[400] text-[14px] ${activeSidebarItem === "general" ? "text-black dark:text-white" : "text-black dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
                 {t("settings.tab_1")}
               </span>
             </div>
@@ -2140,7 +2140,7 @@ const SettingsPage = () => {
             >
               {activeSidebarItem === "billing" ? <Wallet className="text-[#675FFF]" status={activeSidebarItem === "billing"} /> :
                 <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<Wallet className="text-gray-500 dark:text-gray-400" status={activeSidebarItem === "billing"} />}</div> <div className='hidden group-hover:block'>{<Wallet hover={true} className="dark:text-white" />}</div></div>}
-              <span className={`font-[400] text-[16px] ${activeSidebarItem === "billing" ? "text-black dark:text-white" : "text-black dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
+              <span className={`font-[400] text-[14px] ${activeSidebarItem === "billing" ? "text-black dark:text-white" : "text-black dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
                 {t("settings.tab_2")}
               </span>
             </div>
@@ -2152,7 +2152,7 @@ const SettingsPage = () => {
             >
               {activeSidebarItem === "team" ? <UsersRound className="text-[#675FFF]" status={activeSidebarItem === "team"} /> :
                 <div className="flex items-center gap-2"><div className='group-hover:hidden'><UsersRound className="text-gray-500 dark:text-gray-400" status={activeSidebarItem === "team"} /></div> <div className='hidden group-hover:block'><UsersRound hover={true} className="dark:text-white" /></div></div>}
-              <span className={`font-[400] text-[16px] ${activeSidebarItem === "team" ? "text-black dark:text-white" : "text-black dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
+              <span className={`font-[400] text-[14px] ${activeSidebarItem === "team" ? "text-black dark:text-white" : "text-black dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
                 {t("settings.tab_3")}
               </span>
             </div>

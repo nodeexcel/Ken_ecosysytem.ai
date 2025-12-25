@@ -17,18 +17,6 @@ import { useTranslation } from "react-i18next";
 import ColdCallingScriptPhone from "../../components/ColdCallingScriptPhone";
 import { X, EllipsisVertical } from "lucide-react";
 import { discardSkillsData } from "../../store/agentSkillsSlice";
-import HomeActive from '../../assets/svg/Home Grid.svg'
-import HomeInactive from '../../assets/svg/HomeInactive.svg'
-import PhoneActive from '../../assets/svg/PhoneActive.svg'
-import PhoneInactive from '../../assets/svg/PhoneInactive.svg'
-import CallAgentActive from '../../assets/svg/CallAgentActive.svg'
-import CallAgentInactive from '../../assets/svg/CallAgentInactive.svg'
-import CallCampaignActive from '../../assets/svg/CallCampaignActive.svg'
-import CallCampaignInactive from '../../assets/svg/CallCampaignInactive.svg'
-import OutboundActive from '../../assets/svg/OutboundActive.svg'
-import OutboundInactive from '../../assets/svg/OutboundInactive.svg'
-import InboundActive from '../../assets/svg/InboundActive.svg'
-import InboundInactive from '../../assets/svg/InboundInactive.svg'
 
 
 const PhonePage = () => {
@@ -47,45 +35,32 @@ const PhonePage = () => {
       label: t("phone.dashboard"),
       path: "dashboard",
       header: `Tom & Rebecca,${t("phone.phone")} `,
-      iconActive: <img src={HomeActive} alt="Dashboard" className="w-5 h-5" />,
-      iconInactive: <img src={HomeInactive} alt="Dashboard" className="w-5 h-5" />,
     },
     {
       label: t("phone.phone_number"),
       path: "phone-numbers",
       header: `Tom & Rebecca,${t("phone.phone")} `,
-      iconActive: <img src={PhoneActive} alt="Phone numbers" className="w-5 h-5" />,
-      iconInactive: <img src={PhoneInactive} alt="Phone numbers" className="w-5 h-5" />,
     },
     {
       label: t("phone.call_agents"),
       path: "call-agents",
       header: `Tom & Rebecca,${t("phone.phone")} `,
-      iconActive: <img src={CallAgentActive} alt="Call agents" className="w-5 h-5" />,
-      iconInactive: <img src={CallAgentInactive} alt="Call agents" className="w-5 h-5" />,
     },
     {
       label: t("phone.call_campaigns"),
       path: "call-campaigns",
       header: "Tom",
-      iconActive: <img src={CallCampaignActive} alt="Call campaigns" className="w-5 h-5" />,
-      iconInactive: <img src={CallCampaignInactive} alt="Call campaigns" className="w-5 h-5" />,
     },
     {
       label: t("phone.outbound_calls"),
       path: "outbound-calls",
       header: "Tom",
-      iconActive: <img src={OutboundActive} alt="Outbound calls" className="w-5 h-5" />,
-      iconInactive: <img src={OutboundInactive} alt="Outbound calls" className="w-5 h-5" />,
     },
     {
       label: t("phone.inbound_calls"),
       path: "inbound-calls",
       header: "Rebecca",
-      iconActive: <img src={InboundActive} alt="Inbound calls" className="w-5 h-5" />,
-      iconInactive: <img src={InboundInactive} alt="Inbound calls" className="w-5 h-5" />,
     },
-    // { label: t("phone.cold_calling"), path: "cold_calling", header: `Tom & Rebecca,${t("phone.phone")} `, iconActive: <HeadPhonesIcon status={true} />, iconInactive: <HeadPhonesIcon status={false} /> },
   ];
 
   // Helper to update URL param for active tab (state follows URL)
@@ -188,8 +163,8 @@ const PhonePage = () => {
           </div>
 
           <div className="flex flex-col">
-            <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Rebecca</h1>
-            <p className="text-[#5A687C] text-[14px] font-[400]">
+            <h1 className="text-[#1E1E1E] text-[15px] font-[400]">Rebecca</h1>
+            <p className="text-[#5A687C] text-[13px] font-[300]">
               {t("phone.phone_outreach")}
             </p>
           </div>
@@ -203,7 +178,7 @@ const PhonePage = () => {
           className="w-full flex items-center justify-center gap-2 px-2 py-2 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
         >
           <img src={TutorialPlay} className="w-4 h-4" />
-          <span className="text-md font-md">{t("watch_tutorial") || "Watch Tutorial"}</span>
+          <span className="text-[13px] font-[300]">{t("watch_tutorial") || "Watch Tutorial"}</span>
         </button>
         <hr className="border border-transparent w-full" />
       </div>
@@ -213,9 +188,9 @@ const PhonePage = () => {
   return (
     <div className="h-full w-full relative">
       <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><EllipsisVertical size={24} color='#1e1e1e' /></div>
-      <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
+      <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full mt-2">
         {/* Sidebar */}
-        <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-89px)] mt-2 mb-8 overflow-y-auto">
+        <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] ml-2 rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-105px)] mt-2 mb-8 overflow-y-auto">
           <div className=''>
             <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
               navigate("/dashboard")
@@ -254,20 +229,14 @@ const PhonePage = () => {
                         handleTabChange(item.path);
                       }
                     }}
-                    className={`flex items-center gap-2 px-3 py-2 group cursor-pointer w-full rounded-2xl ${isActive || hasActiveSubItem
-                      ? "bg-[#E9E8F9] text-[#000000]"
-                      : "text-[#000000] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
+                    className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive || hasActiveSubItem
+                      ? "bg-[#E9E8F9]"
+                      : "text-[#5A687C] hover:bg-[#F9F8FF]"
                       }`}
                   >
-                    {isActive || hasActiveSubItem ? (
-                      item.iconActive
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <div className='group-hover:hidden'>{item.iconInactive}</div>
-                        <div className='hidden group-hover:block'>{item.iconActive}</div>
-                      </div>
-                    )}
-                    <span className="text-[16px] font-[400] flex-1">{item.label}</span>
+                    <span className={`font-[400] text-[14px] ml-3 ${isActive || hasActiveSubItem ? "text-[#000000]" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
+                      {item.label}
+                    </span>
                   </div>
                   {hasSubMenu && isExpanded && (
                     <div className="ml-4 mt-1 flex flex-col gap-1">
@@ -281,20 +250,14 @@ const PhonePage = () => {
                               dispatch(getNavbarData(subItem.header));
                               handleTabChange(subItem.path);
                             }}
-                            className={`flex items-center gap-2 px-3 py-2 group cursor-pointer w-full rounded-2xl ${isSubActive
-                              ? "bg-[#E9E8F9] text-[#000000]"
-                              : "text-[#000000] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
+                            className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isSubActive
+                              ? "bg-[#E9E8F9]"
+                              : "text-[#5A687C] hover:bg-[#F9F8FF]"
                               }`}
                           >
-                            {isSubActive ? (
-                              subItem.iconActive
-                            ) : (
-                              <div className="flex items-center gap-2">
-                                <div className='group-hover:hidden'>{subItem.iconInactive}</div>
-                                <div className='hidden group-hover:block'>{subItem.iconActive}</div>
-                              </div>
-                            )}
-                            <span className="text-[16px] font-[400]">{subItem.label}</span>
+                            <span className={`font-[400] text-[14px] ml-3 ${isSubActive ? "text-[#000000]" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
+                              {subItem.label}
+                            </span>
                           </div>
                         );
                       })}
@@ -359,20 +322,14 @@ const PhonePage = () => {
                           setSideBarStatus(false);
                         }
                       }}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-md group cursor-pointer w-full ${isActive || hasActiveSubItem
-                        ? "bg-[#F0EFFF] text-[#675FFF]"
-                        : "text-[#5A687C] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
+                      className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive || hasActiveSubItem
+                        ? "bg-[#E9E8F9]"
+                        : "text-[#5A687C] hover:bg-[#F9F8FF]"
                         }`}
                     >
-                      {isActive || hasActiveSubItem ? (
-                        item.iconActive
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          <div className='group-hover:hidden'>{item.iconInactive}</div>
-                          <div className='hidden group-hover:block'>{item.iconActive}</div>
-                        </div>
-                      )}
-                      <span className="text-[16px] font-[400] flex-1">{item.label}</span>
+                      <span className={`font-[400] text-[14px] ml-3 ${isActive || hasActiveSubItem ? "text-[#000000]" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
+                        {item.label}
+                      </span>
                     </div>
                     {hasSubMenu && isExpanded && (
                       <div className="ml-4 mt-1 flex flex-col gap-1">
@@ -387,21 +344,15 @@ const PhonePage = () => {
                                 handleTabChange(subItem.path);
                                 setSideBarStatus(false);
                               }}
-                              className={`flex items-center gap-2 px-3 py-2 rounded-md group cursor-pointer w-full ${isSubActive
-                                ? "bg-[#F0EFFF] text-[#675FFF]"
-                                : "text-[#5A687C] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
-                                }`}
-                            >
-                              {isSubActive ? (
-                                subItem.iconActive
-                              ) : (
-                                <div className="flex items-center gap-2">
-                                  <div className='group-hover:hidden'>{subItem.iconInactive}</div>
-                                  <div className='hidden group-hover:block'>{subItem.iconActive}</div>
-                                </div>
-                              )}
-                              <span className="text-[16px] font-[400]">{subItem.label}</span>
-                            </div>
+                            className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isSubActive
+                              ? "bg-[#E9E8F9]"
+                              : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                              }`}
+                          >
+                            <span className={`font-[400] text-[14px] ml-3 ${isSubActive ? "text-[#000000]" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
+                              {subItem.label}
+                            </span>
+                          </div>
                           );
                         })}
                       </div>

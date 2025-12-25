@@ -104,7 +104,7 @@ function CustomerSupportChat({ agentId }) {
     <div className="p-12 h-screen overflow-auto flex flex-col gap-4 w-full">
       {/* Header */}
       <div className="flex flex-col gap-1">
-        <h1 className="text-[24px] font-[600] text-[#1E1E1E]">Chatbot Alpha</h1>
+        <h1 className="text-[22px] font-[500] text-[#1E1E1E]">Chatbot Alpha</h1>
         <p className="text-[14px] font-[400] text-[#5A687C]">
           {t("calina.chats_descrp")}
         </p>

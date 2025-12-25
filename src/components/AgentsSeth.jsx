@@ -124,8 +124,8 @@ function AgentsSeth() {
                 <div className="flex flex-col gap-3 mb-2">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                         <div>
-                            <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">{t("appointment.agents")}</h1>
-                            <p className="text-[#5A687C] text-sm md:text-base mt-1">
+                            <h1 className="text-gray-900 font-[500] text-md md:text-[22px] font-[500]">{t("appointment.agents")}</h1>
+                            <p className="text-[#5A687C] font-[400] text-sm md:text-[14px] mt-1">
                                 {t("appointment.manage_all_agents_in_one_place")}
                             </p>
                         </div>
@@ -180,8 +180,8 @@ function AgentsSeth() {
                                     return (
                                         <tr key={index} className="text-center">
                                             <td className="px-4 py-4 text-[16px] text-[#1E1E1E] font-semibold  ">
-                                                <div className='flex items-center gap-2 text-[16px] font-[600]'>
-                                                    <p className='flex justify-center items-center rounded-[12px] h-[40px] w-[40px] text-[16px] font-[600] bg-[#EBEFFF] text-[#675FFF]'>{item.agent_name[0]}</p>
+                                                <div className='flex items-center gap-2 text-[16px] font-[400]'>
+                                                    <p className='flex justify-center items-center rounded-[12px] h-[40px] w-[40px] text-[16px] font-[400] bg-[#EBEFFF] text-[#675FFF]'>{item.agent_name[0]}</p>
                                                     {item.agent_name}
                                                 </div>
                                             </td>

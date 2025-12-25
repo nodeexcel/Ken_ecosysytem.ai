@@ -457,11 +457,11 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
         }
     }
 
-    return (
-        <div className="p-6 h-screen overflow-auto flex flex-col gap-4 w-full">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-                <h1 className="text-[#1E1E1E] font-[600] text-[24px]">{editData ? t("calina.edit_new_chatbot") : t("calina.create_new_chatbot")}</h1>
+        return (
+            <div className="p-12 h-screen overflow-auto flex flex-col gap-4 w-full">
+                {/* Header */}
+                <div className="flex justify-between items-center">
+                <h1 className="text-[#1E1E1E] font-[500] text-[22px]">{editData ? t("calina.edit_new_chatbot") : t("calina.create_new_chatbot")}</h1>
                 <div className="flex items-center gap-2">
                     <button 
                         onClick={handleCancel}
@@ -491,7 +491,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                             <div className={`${step === 1 ? 'bg-[#675FFF]' : statusSteps.step1 ? 'bg-[#34C759]' : 'bg-[#9CA3AF]'} h-[30px] w-[30px] flex justify-center items-center rounded-lg text-white font-semibold`}>
                                 {'1'}
                             </div>
-                            <p className={`text-md font-[600] ${step === 1 ? 'text-[#1E1E1E]' : 'text-[#000000]'}`}>{t("calina.bot_details")}</p>
+                            <p className={`text-md font-normal ${step === 1 ? 'text-[#1E1E1E]' : 'text-[#000000]'}`}>{t("calina.bot_details")}</p>
                         </div>
                         {step === 1 && <ChevronUp className="w-5 h-5 text-[#5A687C]" />}
                         {step !== 1 && <RightArrowIcon />}
@@ -500,8 +500,8 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                         <hr style={{ color: "#E1E4EA" }} />
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                             <div className="flex flex-col gap-1.5 w-full">
-                                <label className="text-sm font-medium text-[#1e1e1e]">
-                                    {t("calina.bot_name")}<span className="text-[#675fff]">*</span>
+                                <label className="text-sm font-[400] text-[#868C98]">
+                                    {t("calina.bot_name")}
                                 </label>
                                 <input
                                     type="text"
@@ -514,7 +514,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                 {errors.bot_name && <p className="text-red-500 text-sm mt-1">{errors.bot_name}</p>}
                             </div>
                             <div className="flex flex-col gap-1.5 flex-1">
-                                <label className="text-sm font-medium text-[#1e1e1e]">
+                                <label className="text-sm font-[400] text-[#868C98]">
                                     {t("calina.role")}
                                 </label>
                                 <SelectDropdown
@@ -536,13 +536,13 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                 {errors.role && <p className="text-red-500 text-sm mt-1">{errors.role}</p>}
                             </div>
                             <div className="flex flex-col gap-1.5 flex-1">
-                                <label className="text-sm font-medium text-[#1e1e1e]">
+                                <label className="text-sm font-[400] text-[#868C98]">
                                     {t("calina.bot_language")}
                                 </label>
                                 <p className="text-[#5A687C] font-[400] text-[14px]">{t("calina.bot_language_description")}</p>
                             </div>
                             <div className="flex flex-col gap-1.5 flex-1">
-                                <label className="text-sm font-medium text-[#1e1e1e]">
+                                <label className="text-sm font-[400] text-[#868C98]">
                                     {t("calina.personality")}
                                 </label>
                                 <SelectDropdown
@@ -565,7 +565,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                             </div>
                         </div>
                         <div className="flex flex-col gap-1.5 w-full">
-                            <label className="text-sm font-medium text-[#1e1e1e]">
+                            <label className="text-sm font-[400] text-[#868C98]">
                                 {t("calina.prompt")}
                             </label>
                             <textarea
@@ -596,17 +596,17 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                     }}>
                         <div className='flex items-center gap-2'>
                             <div className={`${step === 2 ? 'bg-[#675FFF]' : statusSteps.step2 ? 'bg-[#34C759]' : 'bg-[#9CA3AF]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white font-semibold`}>{'2'}</div>
-                            <p className={`text-md font-[600] ${step === 2 ? 'text-[#000000]' : 'text-[#000000]'}`}>{t("calina.transfer_details")}</p>
+                            <p className={`text-md font-normal ${step === 2 ? 'text-[#000000]' : 'text-[#000000]'}`}>{t("calina.transfer_details")}</p>
                         </div>
                         {step !== 2 && <RightArrowIcon />}
                     </div>
                     {step === 2 && <div className="flex flex-col gap-5">
                         <hr style={{ color: "#E1E4EA" }} />
                         <div className="flex flex-col gap-1 w-full">
-                            <p className="text-sm font-medium text-[#1e1e1e] pb-4">
+                            <p className="text-sm font-[400] text-[#868C98] pb-4">
                                 {t("calina.transfer_optional")}<span className="text-[#5A687C] text-xs font-[400]">{t("calina.optional")}</span>
                             </p>
-                            <label className="text-sm font-medium text-[#1e1e1e] pb-2">
+                            <label className="text-sm font-[400] text-[#868C98] pb-2">
                                 {t("calina.end_the_conversation")}<span className="text-[#5A687C] text-xs font-[400]">{t("calina.main_condition")}</span>
                             </label>
                             <ul className="flex flex-col gap-2.5">
@@ -658,7 +658,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                     }}>
                         <div className='flex items-center gap-3'>
                             <div className={`${step === 3 ? 'bg-[#675FFF]' : statusSteps.step3 ? 'bg-[#34C759]' : 'bg-[#9CA3AF]'} h-[30px] w-[30px] flex justify-center items-center rounded-lg text-white font-semibold`}>{'3'}</div>
-                            <p className={`text-md font-[600] ${step === 3 ? 'text-[#1E1E1E]' : 'text-[#000000]'}`}>{t("calina.add_resources")}</p>
+                            <p className={`text-md font-normal ${step === 3 ? 'text-[#1E1E1E]' : 'text-[#000000]'}`}>{t("calina.add_resources")}</p>
                         </div>
                         {step === 3 && <ChevronUp className="w-5 h-5 text-[#5A687C]" />}
                         {step !== 3 && <RightArrowIcon />}
@@ -682,7 +682,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                     className={`block w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ${formData.include_brainai ? "translate-x-5" : "translate-x-0.5"}`}
                                 ></span>
                             </button>
-                            <label className="text-sm font-medium text-[#1E1E1E]">
+                            <label className="text-sm font-[400] text-[#868C98]">
                                 {t("calina.take_ressources_form_ai_brain")}
                             </label>
                         </div>
@@ -691,7 +691,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Left Column - Upload File */}
                             <div className="flex flex-col gap-2 h-full">
-                                <label className="text-sm font-medium text-[#5A687C]">{t("calina.upload_file")}</label>
+                                <label className="text-sm font-[400] text-[#868C98]">{t("calina.upload_file")}</label>
                                 <div
                                     onClick={handleClick}
                                     onDragOver={handleDragOver}
@@ -742,7 +742,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
 
                             {/* Right Column - Description */}
                             <div className="flex flex-col gap-2 h-full">
-                                <label className="text-sm font-medium text-[#5A687C]">{t("calina.description")}</label>
+                                <label className="text-sm font-[400] text-[#868C98]">{t("calina.description")}</label>
                                 <textarea
                                     name='reference_text'
                                     onChange={handleChange}
@@ -772,7 +772,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                     }}>
                         <div className='flex items-center gap-3'>
                             <div className={`${step === 4 ? 'bg-[#675FFF]' : statusSteps.step4 ? 'bg-[#34C759]' : 'bg-[#9CA3AF]'} h-[30px] w-[30px] flex justify-center items-center rounded-lg text-white font-semibold`}>{'4'}</div>
-                            <p className={`text-md font-[600] ${step === 4 ? 'text-[#1E1E1E]' : 'text-[#000000]'}`}>{t("brain_ai.integrations.integrations")}</p>
+                            <p className={`text-md font-normal ${step === 4 ? 'text-[#1E1E1E]' : 'text-[#000000]'}`}>{t("brain_ai.integrations.integrations")}</p>
                         </div>
                         {step === 4 && <ChevronDown className="w-5 h-5 text-[#5A687C]" />}
                         {step !== 4 && <RightArrowIcon />}
@@ -796,7 +796,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                 <div key={each.label} className="flex items-center justify-between gap-4 border-[0.5px] rounded-[8px] border-[#E1E4EA] p-4">
                                     <div className="flex items-center gap-3">
                                         <div>{each.icon}</div>
-                                        <h1 className="text-[#1E1E1E] text-[16px] font-[600]">{each.label}</h1>
+                                        <h1 className="text-[#1E1E1E] text-[16px] font-[500]">{each.label}</h1>
                                     </div>
                                     <button onClick={async () => {
                                         setCustomIntegartion(each)

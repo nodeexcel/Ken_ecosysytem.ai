@@ -221,7 +221,7 @@ const DemoChat = () => {
 
     return (
         <div className="w-full p-12 h-screen pr-2 flex flex-col gap-3">
-            <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{t('appointment.conversations')}</h1>
+            <h1 className="text-[22px] font-[500] text-[#1E1E1E]">{t('appointment.conversations')}</h1>
             <div className="h-full overflow-auto flex pb-2 flex-col">
                 {message ? <p>{message}</p> : <div className="flex bg-white h-full rounded-2xl border-[#E1E4EA] border">
                     {/* Sidebar */}
@@ -273,7 +273,7 @@ const DemoChat = () => {
                                         <span className="text-[16px] text-[#675FFF] font-[600]">U</span>
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="font-[600] text-[14px] text-[#1E1E1E]">User {conversation}</p>
+                                        <p className="font-[500] text-[14px] text-[#1E1E1E]">User {conversation}</p>
                                         {/* <p className="text-sm text-gray-500 truncate">{conversation.message}</p> */}
                                     </div>
                                 </div>

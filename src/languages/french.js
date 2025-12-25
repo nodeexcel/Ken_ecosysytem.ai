@@ -1278,7 +1278,7 @@ const frenchTranslation = {
     here_seo_report: "Voici votre rapport SEO :",
     andro_generated_report: "Sandro génère votre rapport...",
     generate_an_seo_audit: "Générer un audit SEO",
-    prompts: "Prompts",
+    prompts: "Prompt",
     simulate_conversations_with_ai_models_across_different_platforms: "Simuler des conversations avec des modèles IA sur différentes plateformes",
     export_all: "Tout exporter",
     import: "Importer",
@@ -1721,11 +1721,11 @@ const frenchTranslation = {
     top_mentioned_brands:
       "Marques les plus mentionnées dans vos conversations suivies",
   
-    prompts: "Invites",
+    prompts: "Prompt",
     prompts_description:
       "Invites à exécuter dans les conversations trois fois par semaine.",
     view_all: "Tout afficher",
-    add_prompt: "Ajouter une invite",
+    add_prompt: "Ajouter une prompt",
   
     model: "Modèle",
     creation_date: "Date de création",

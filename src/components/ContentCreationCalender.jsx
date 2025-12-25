@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import CreatePost from "./CreatePost";
 import CalendarPost from "./CalendarPost";
 import CalendarPostListView from "./CalenderPostListView";
@@ -10,10 +11,27 @@ import { getCalenderScheduledContent, getContentDetails } from "../api/contentCr
 
 function ContentCreationCalender() {
   const { t } = useTranslation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [showCreatePost, setShowCreatePost] = useState(false);
-  const [activeTab, setActiveTab] = useState("calendar");
+  // Get view from URL or default to "calendar"
+  const viewFromUrl = searchParams.get('view') || 'calendar';
+  const [activeTab, setActiveTab] = useState(viewFromUrl);
   const [calenderData, setCalenderData] = useState([]);
   const [editData, setEditData] = useState(null);
+
+  // Sync activeTab with URL view parameter
+  useEffect(() => {
+    const viewFromUrl = searchParams.get('view') || 'calendar';
+    if ((viewFromUrl === 'calendar' || viewFromUrl === 'list') && viewFromUrl !== activeTab) {
+      setActiveTab(viewFromUrl);
+    }
+  }, [searchParams, activeTab]);
+
+  // Update URL when view changes
+  const handleViewChange = (view) => {
+    setActiveTab(view);
+    setSearchParams({ tab: 'scheduler', view: view }, { replace: true });
+  };
 
 
   const fetchScduledContent = async () => {
@@ -44,6 +62,13 @@ function ContentCreationCalender() {
     }
   };
 
+  // Initialize view parameter in URL if not present
+  useEffect(() => {
+    if (!searchParams.get('view')) {
+      setSearchParams({ tab: 'scheduler', view: 'calendar' }, { replace: true });
+    }
+  }, []);
+
   useEffect(() => {
     fetchScduledContent();
   }, []);
@@ -56,10 +81,10 @@ function ContentCreationCalender() {
           <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between w-full gap-3 xl:gap-0 mb-3 sm:mb-4 lg:mb-5">
             {/* Left Side - Title and Description */}
             <div className="flex flex-col gap-1.5 sm:gap-2">
-              <h1 className="text-[#1E1E1E] text-[20px] sm:text-[24px] lg:text-[24px] font-[600]">
+              <h1 className="text-[#1E1E1E] text-[16px] sm:text-[18px] lg:text-[22px] font-[500] mt-0.5">
                 {t("constance.scheduler") || "Scheduler"}
               </h1>
-              <p className="text-[#5A687C] text-[14px] sm:text-[15px] lg:text-[16px] font-[400]">
+              <p className="text-[#5A687C] text-[14px] lg:text-[14px] font-[400]">
                 {t("constance.scheduler_descrp") || "Plan, organize, and manage all your scheduled posts in a visual calendar."}
               </p>
             </div>
@@ -69,7 +94,7 @@ function ContentCreationCalender() {
               {/* View Controls */}
               <div className="flex bg-[#F2F2F3] border border-[#E0E0E0] rounded-lg h-[36px] p-0.5 w-auto">
                 <button
-                  onClick={() => setActiveTab("calendar")}
+                  onClick={() => handleViewChange("calendar")}
                   className={`flex items-center justify-center gap-2 px-2.5 cursor-pointer rounded-lg text-sm font-medium transition-colors ${
                     activeTab === "calendar"
                       ? "bg-white text-[#1E1E1E] shadow-sm"
@@ -79,7 +104,7 @@ function ContentCreationCalender() {
                   {t("constance.calendar") || "Calendar"}
                 </button>
                 <button
-                  onClick={() => setActiveTab("list")}
+                  onClick={() => handleViewChange("list")}
                   className={`flex items-center justify-center gap-2 px-2.5 cursor-pointer rounded-lg text-sm font-medium transition-colors ${
                     activeTab === "list"
                       ? "bg-white text-[#1E1E1E] shadow-sm"
@@ -109,21 +134,21 @@ function ContentCreationCalender() {
             {/* View Controls */}
             <div className="flex bg-[#F2F2F3] border border-[#E0E0E0] rounded-lg h-[32px] sm:h-[36px] p-0.5 w-full sm:w-auto">
               <button
-                onClick={() => setActiveTab("calendar")}
+                onClick={() => handleViewChange("calendar")}
                 className={`flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 cursor-pointer rounded-lg text-xs sm:text-sm font-medium transition-colors flex-1 sm:flex-none ${
                   activeTab === "calendar"
-                    ? "bg-white text-[#1E1E1E] shadow-sm"
-                    : "text-[#5A687C] hover:text-[#1E1E1E]"
+                      ? "bg-white text-[#1E1E1E] shadow-sm"
+                      : "text-[#5A687C] hover:text-[#1E1E1E]"
                 }`}
               >
                 Calendar
               </button>
               <button
-                onClick={() => setActiveTab("list")}
+                onClick={() => handleViewChange("list")}
                 className={`flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 cursor-pointer rounded-lg text-xs sm:text-sm font-medium transition-colors flex-1 sm:flex-none ${
                   activeTab === "list"
-                    ? "bg-white text-[#1E1E1E] shadow-sm"
-                    : "text-[#5A687C] hover:text-[#1E1E1E]"
+                      ? "bg-white text-[#1E1E1E] shadow-sm"
+                      : "text-[#5A687C] hover:text-[#1E1E1E]"
                 }`}
               >
                 List View

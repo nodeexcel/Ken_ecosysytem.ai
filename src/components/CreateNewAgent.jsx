@@ -851,9 +851,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
     return (
         <>
-            <div className="w-full p-6 flex flex-col gap-4 overflow-auto ">
+            <div className="w-full px-12 py-11 flex flex-col gap-4 overflow-auto ">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-gray-900 font-semibold text-xl md:text-2xl">{t("appointment.create_new_agent")}</h1>
+                    <h1 className="text-gray-900 font-[500] text-md md:text-[22px] font-[500]">{t("appointment.create_new_agent")}</h1>
                     <div className='flex gap-2'>
                         <button
                             onClick={() => setPreviewAgent(true)}
@@ -885,7 +885,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 1 ? 'bg-[#675FFF]' : statusSteps.step1 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step1 ? <CheckIcon /> : '1'}</p>
-                                    <p className={`text-md font-[600] ${step === 1 ? 'text-[#000000]' : 'text-[#000000]'}`}>{t("appointment.identify")}</p>
+                                    <p className={`text-md font-normal ${step === 1 ? 'text-[#000000]' : 'text-[#000000]'}`}>{t("appointment.identify")}</p>
                                 </div>
                                 {step !== 1 && <RightArrowIcon />}
                             </div>
@@ -893,7 +893,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 {/* Agent Name */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                                     <div className="flex flex-col gap-1.5 w-full">
-                                        <label className="text-sm font-medium text-[#868C98]">
+                                        <label className="text-sm font-[400] text-[#868C98]">
                                             {t("appointment.agent_name")}
                                         </label>
                                         <input
@@ -939,7 +939,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
                                         </div>
                                         <div className="flex flex-col gap-1.5 w-full md:w-1/2">
-                                            <label className="text-sm font-medium text-[#868C98]">
+                                            <label className="text-sm font-[400] text-[#868C98]">
                                                 {t("appointment.age")}
                                             </label>
                                             <input
@@ -969,7 +969,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <div className="flex flex-col md:flex-row  gap-4 w-full">
                                     <div className="flex flex-col gap-1.5 flex-1">
                                         <div className='flex justify-between items-center'>
-                                            <label className="text-sm font-medium text-[#868C98]">
+                                            <label className="text-sm font-[400] text-[#868C98]">
                                                 {t("appointment.agent_personality")}
                                             </label>
 
@@ -1023,7 +1023,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     </div>
                                     <div className='flex flex-col gap-1.5 flex-1'>
                                         <div className="relative" ref={dropdownRef}>
-                                            <label className="text-sm font-medium text-[#868C98]">
+                                            <label className="text-sm font-[400] text-[#868C98]">
                                                 {t("appointment.agent_language")}
                                             </label>
                                             <button
@@ -1059,7 +1059,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 </div>
 
                                 {/* Emoji Frequency */}
-                                <div className="flex justify-between gap-3 p-2 bg-[#fff] w-full">
+                                <div className="flex justify-between gap-3 p-2 w-full">
                                     <div className='flex gap-1'>
                                         <button
                                             onClick={() => setFormData((prev) => ({
@@ -1074,10 +1074,10 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                     }`}
                                             />
                                         </button>
-                                        <div className="pl-2 text-sm font-medium ">
+                                        <div className="pl-2 text-sm font-[400] ">
                                             {t("appointment.emoji_freq")}
                                         </div>
-                                        <div className="text-sm">
+                                        <div className="text-sm font-[400]">
                                             {t("appointment.pow_msg")}
                                         </div>
                                     </div>
@@ -1104,7 +1104,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 2 ? 'bg-[#675FFF]' : statusSteps.step2 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step2 ? <CheckIcon /> : '2'}</p>
-                                    <p className={`text-md font-[600] ${step === 2 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("appointment.objective")}</p>
+                                    <p className={`text-md font-normal ${step === 2 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("appointment.objective")}</p>
                                 </div>
                                 {step !== 2 && <RightArrowIcon />}
                             </div>
@@ -1114,7 +1114,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 {/* Business Description and Offer */}
                                 <div className="flex flex-col md:flex-row gap-4 w-full">
                                     <div className="flex flex-col gap-1.5 flex-1">
-                                        <label className="text-sm font-medium text-[#868C98] flex items-center gap-1">
+                                        <label className="text-sm font-[400] text-[#868C98] flex items-center gap-1">
                                             {t("appointment.business_description")}
 
                                             <div
@@ -1165,7 +1165,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     <div className="flex flex-col items-start gap-3 p-3.5 w-full md:w-1/2 bg-[#fff] border border-[#E1E4EA] rounded-[10px]">
                                         <div className="flex items-center gap-2.5 w-full">
                                             <div className="flex-1">
-                                                <div className="font-medium text-[#1e1e1e] text-base">{t("appointment.business_offer")}</div>
+                                                <div className="font-[400] text-[#1e1e1e] text-base">{t("appointment.business_offer")}</div>
                                             </div>
                                         </div>
 
@@ -1210,7 +1210,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     <div className="flex flex-col gap-3 p-3.5 w-full md:w-1/2 bg-[#fff] border border-[#E1E4EA] rounded-[10px]">
                                     <div className="flex items-center justify-between w-full">
                                         <div className="flex flex-col gap-1">
-                                            <span className="font-medium text-base text-black">
+                                            <span className="font-[400] text-base text-black">
                                                 {t("appointment.enable_followup")}
                                             </span>
                                             <span className="text-sm text-[#868C98]">
@@ -1345,7 +1345,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                             }}>
                                 <div className='flex items-center gap-2'>
                                     <p className={`${step === 3 ? 'bg-[#675FFF]' : statusSteps.step3 ? 'bg-[#34C759]' : 'bg-[#000000]'} h-[30px] w-[30px] flex justify-center items-center rounded-[10px] text-white`}>{statusSteps.step3 ? <CheckIcon /> : '3'}</p>
-                                    <p className={`text-md font-[600] ${step === 3 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("appointment.behavior")}</p>
+                                    <p className={`text-md font-normal ${step === 3 ? 'text-[#675FFF]' : 'text-[#000000]'}`}>{t("appointment.behavior")}</p>
                                 </div>
                                 {step !== 3 && <RightArrowIcon />}
                             </div>
@@ -1354,12 +1354,12 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                                 {/* Prompt Section */}
                                 <div className="flex flex-col gap-4">
-                                    <h3 className="text-base font-medium text-[#1e1e1e]">{t("appointment.prompt") || "Prompt"}</h3>
+                                    <h3 className="text-base font-[400] text-[#1e1e1e]">{t("appointment.prompt") || "Prompt"}</h3>
                                     
                                     <div className="flex flex-col md:flex-row gap-4 w-full">
                                         {/* Guidelines/Prompt */}
                                         <div className="flex flex-col gap-1.5 flex-1">
-                                            <label className="text-sm text-[#868C98]">
+                                            <label className="text-sm font-[400] text-[#868C98]">
                                                 {t("appointment.prompt_guild") || "Guidelines, instructions, or context to shape your AI agent's behavior."}
                                             </label>
                                             <textarea

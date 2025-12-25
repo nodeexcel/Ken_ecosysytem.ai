@@ -2,20 +2,13 @@ import React, { useEffect, useState } from 'react'
 import AgentsSeth from '../../components/AgentsSeth'
 import Analytics from '../../components/Analytics'
 import DemoChat from '../../components/DemoChat'
-import dashboardProfile from '../../assets/svg/dashboard_profile.svg'
-import { AnalyticsIcon, ConversationIcon, LeftArrow, TeamMemberIcon } from '../../icons/icons'
 import sethImg from "../../assets/svg/SethSidebar.svg"
-import { MdOutlineKeyboardArrowLeft } from 'react-icons/md'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next';
 import { X, EllipsisVertical } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
 import TutorialPlay from '../../assets/svg/WatchTutorialGrey.svg'
-import ActiveAgent from '../../assets/svg/ActiveAgent.svg'
-import InactiveAgent from '../../assets/svg/InactiveAgent.svg'
-import InactiveConversation from '../../assets/svg/InactiveConversation.svg'
-import InactiveAnalytics from '../../assets/svg/InactiveAnalytics.svg'
 
 function AppointmentSetter() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -31,56 +24,15 @@ function AppointmentSetter() {
         {
             label: t("appointment.agents"),
             path: "agents",
-            iconActive: <img src={ActiveAgent} alt="Agents" className="w-5 h-5" />,
-            iconInactive: <img src={InactiveAgent} alt="Agents" className="w-5 h-5" />,
         },
         {
             label: t("appointment.conversations"),
             path: "conversations",
-            // No explicit active SVG provided; use conversation.svg for active and InactiveConversation for inactive
-            iconActive: (
-                <img
-                  src={InactiveConversation}
-                  alt="Conversations"
-                  className="w-5 h-5"
-                  style={{
-                    filter:
-                      "invert(35%) sepia(98%) saturate(2580%) hue-rotate(236deg) brightness(99%) contrast(101%)",
-                  }}
-                />
-              ),
-              iconInactive: (
-                <img
-                  src={InactiveConversation}
-                  alt="Conversations"
-                  className="w-5 h-5"
-                />
-              ),
         },
         {
             label: t("appointment.analytics"),
             path: "analytics",
-            // No explicit active SVG provided; tint InactiveAnalytics for active
-            iconActive: (
-                <img
-                  src={InactiveAnalytics}
-                  alt="Analytics"
-                  className="w-5 h-5"
-                  style={{
-                    filter:
-                      "invert(35%) sepia(98%) saturate(2580%) hue-rotate(236deg) brightness(99%) contrast(101%)",
-                  }}
-                />
-              ),
-              iconInactive: (
-                <img
-                  src={InactiveAnalytics}
-                  alt="Analytics"
-                  className="w-5 h-5"
-                />
-              ),
         },
-        // { label: "Demo Chat", path: "demo", iconActive: <ConversationIcon status={true} />, iconInactive: <ConversationIcon status={false} /> },
     ]
 
     // Initialize URL with default tab if not present on mount
@@ -126,9 +78,9 @@ function AppointmentSetter() {
     return (
         <div className="h-400px w-full relative">
             <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><EllipsisVertical size={24} color='#1e1e1e' /></div>
-            <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
+            <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full mt-2">
                 {/* Sidebar */}
-                <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-89px)] mt-2 mb-8 overflow-y-auto">
+                <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] ml-2 rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-105px)] mt-2 mb-8 overflow-y-auto">
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
@@ -150,8 +102,8 @@ function AppointmentSetter() {
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
-                                    <h1 className="text-[#1E1E1E] text-[16px] font-[600]">Seth</h1>
-                                    <p className="text-[#5A687C] text-[14px] font-[400]">{t("appointment.appointment_setter")}</p>
+                                    <h1 className="text-[#1E1E1E] text-[15px] font-[400]">Seth</h1>
+                                    <p className="text-[#5A687C] text-[13px] font-[300]">{t("appointment.appointment_setter")}</p>
                                 </div>
                             </div>
                             {/* Watch Tutorial Button */}
@@ -162,7 +114,7 @@ function AppointmentSetter() {
                                 className="w-full flex items-center justify-center gap-2 px-2 py-2 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
                             >
                                 <img src={TutorialPlay} className="w-5 h-5" />
-                                <span className='text-md font-md'>{t("watch_tutorial") || "Watch Tutorial"}</span>
+                                <span className='text-13 font-[300]'>{t("watch_tutorial") || "Watch Tutorial"}</span>
                             </button>
                             <hr className='border border-transparent w-full' />
                         </div>
@@ -172,18 +124,10 @@ function AppointmentSetter() {
                                 <div
                                     key={i}
                                     onClick={() => handleTabChange(e.path)}
-                                    className={`flex justify-center group md:justify-start items-center gap-2 px-2 py-2 mb-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                                    className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 mb-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                         }`}
                                 >
-                                    {isActive ? (
-                                        e.iconActive
-                                    ) : (
-                                        <div className="flex items-center gap-2">
-                                            <div className='group-hover:hidden'>{e.iconInactive}</div>
-                                            <div className='hidden group-hover:block'>{e.iconActive}</div>
-                                        </div>
-                                    )}
-                                    <span className={`font-[400] text-[16px] ${isActive ? "text-[#000000]" : "text-[#0c0c0c] group-hover:text-[#1E1E1E]"}`}>
+                                    <span className={`font-[400] text-[14px] ml-3 ${isActive ? "text-[#000000]" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
                                         {e.label}
                                     </span>
                                 </div>
@@ -249,18 +193,10 @@ function AppointmentSetter() {
                                             handleTabChange(e.path)
                                             setSideBarStatus(false)
                                         }}
-                                        className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${isActive ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                                        className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                             }`}
                                     >
-                                        {isActive ? (
-                                            e.iconActive
-                                        ) : (
-                                            <div className="flex items-center gap-2">
-                                                <div className='group-hover:hidden'>{e.iconInactive}</div>
-                                                <div className='hidden group-hover:block'>{e.iconActive}</div>
-                                            </div>
-                                        )}
-                                        <span className={`font-[400] text-[16px] ${isActive ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                                        <span className={`font-[400] text-[14px] ml-3 ${isActive ? "text-[#000000]" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
                                             {e.label}
                                         </span>
                                     </div>

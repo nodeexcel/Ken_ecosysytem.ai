@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { AutomationIcon, ConversationIcon, LeftArrow, MeetingNotesIcon, WhatsappIcon } from '../../icons/icons'
 import taraImg from "../../assets/svg/TaraSidebar.svg"
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import taraMsgLogo from '../../assets/svg/TaraChat.svg'
 import { v4 as uuidv4 } from 'uuid';
 import { deleteCooChat, getCooChatById, getCooChats, updateCooChatName } from '../../api/cooAgent'
@@ -16,13 +16,16 @@ import chatInstance from '../../api/chatInstance'
 import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
 import TutorialPlay from '../../assets/svg/WatchTutorialGrey.svg'
-import ChatActive from '../../assets/svg/ChatActive.svg'
-import ChatInactive from '../../assets/svg/ChatInactive.svg'
-import PresentationActive from '../../assets/svg/PresentationActive.svg'
-import PresentationInactive from '../../assets/svg/PresentationInactive.svg'
 
 function Coo() {
-    const [activeSidebarItem, setActiveSidebarItem] = useState("chat")
+    const [searchParams, setSearchParams] = useSearchParams()
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const { t } = useTranslation();
+
+    // Get tab from URL query param, default to "chat"
+    const tabFromUrl = searchParams.get('tab') || 'chat'
+    const [activeSidebarItem, setActiveSidebarItem] = useState(tabFromUrl)
     const [activeConversation, setActiveConversation] = useState()
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
@@ -38,36 +41,52 @@ function Coo() {
     const [sidebarStatus, setSideBarStatus] = useState(false)
     const socketRef = useRef(null)
     const socket2Ref = useRef(null)
-    const { t } = useTranslation();
     const newwebsocketurl = `${chatInstance}/new-coo-agent-chat`
     const websocketurl = `${chatInstance}/coo-agent`
     const initialMessage = `${t("tara_coo.coo_auto_generated")}`
-    const dispatch = useDispatch()
 
-    const navigate = useNavigate()
+    // Initialize URL with default tab if not present
+    useEffect(() => {
+        if (!searchParams.get('tab')) {
+            setSearchParams({ tab: 'chat' }, { replace: true })
+        }
+    }, [])
+
+    // Sync active tab with URL query param when URL changes
+    useEffect(() => {
+        const tabFromUrl = searchParams.get('tab') || 'chat'
+        if (tabFromUrl !== activeSidebarItem) {
+            setActiveSidebarItem(tabFromUrl)
+        }
+    }, [searchParams])
+
+    // Update URL when tab changes
+    const handleTabChange = (tabPath) => {
+        setActiveSidebarItem(tabPath)
+        // Update URL query param
+        if (tabPath === 'chat') {
+            setSearchParams({ tab: 'chat' }, { replace: true })
+        } else {
+            setSearchParams({ tab: tabPath }, { replace: true })
+        }
+    }
 
     const sideMenuList = [
         {
             label: `${t("tara.chat1")}`,
             path: "chat",
-            iconActive: <img src={ChatActive} alt="Chat" className="w-5 h-5" />,
-            iconInactive: <img src={ChatInactive} alt="Chat" className="w-5 h-5" />,
         },
         {
             label: `${t("tara.presentation")}`,
             path: "presentations",
-            iconActive: <img src={PresentationActive} alt="Presentation" className="w-5 h-5" />,
-            iconInactive: <img src={PresentationInactive} alt="Presentation" className="w-5 h-5" />,
         },
-        // { label: `${t("tara.meeting_notes")}`, icon: <MeetingNotesIcon status={activeSidebarItem == "meeting_notes"} />, hoverIcon: <MeetingNotesIcon hover={true} />, path: "meeting_notes" },
-        // { label: `${t("tara.connect_whatsapp")}`, icon: <WhatsappIcon status={activeSidebarItem == "connect_whatsApp"} />, hoverIcon: <WhatsappIcon hover={true} />, path: "connect_whatsApp" },
     ]
 
     const activeTab = useSelector((state) => state.skills)
 
     useEffect(() => {
         if (activeTab.label !== null) {
-            setActiveSidebarItem(activeTab.label)
+            handleTabChange(activeTab.label)
         }
     }, [activeTab.loading])
 
@@ -245,9 +264,9 @@ function Coo() {
     return (
         <div className="h-full w-full relative">
             <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><EllipsisVertical size={24} color='#1e1e1e' /></div>
-            <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full mt-2">
+            <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full mt-4">
                 {/* Sidebar */}
-                <div className="lg:flex hidden flex-col bg-white gap-4 border-t border-r border-b border-l border-[#D6D6D6] min-w-[272px] rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-89px)] mb-8 overflow-y-auto">
+                <div className="lg:flex hidden flex-col bg-white gap-4 border-t border-r border-b ml-2 border-l border-[#D6D6D6] min-w-[272px] rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-105px)] mb-8 overflow-y-auto">
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
@@ -273,10 +292,10 @@ function Coo() {
                                 </div>
                             </div>
                             <div className="flex flex-col">
-                                <h1 className="text-[#1E1E1E] text-[16px] font-[600]">
+                                <h1 className="text-[#1E1E1E] text-[15px] font-[400]">
                                     Tara
                                 </h1>
-                                <p className="text-[#5A687C] text-[14px] font-[400]">
+                                <p className="text-[#5A687C] text-[13px] font-[300]">
                                     COO
                                 </p>
                             </div>
@@ -290,7 +309,7 @@ function Coo() {
                                 className="w-full flex items-center justify-center gap-2 px-2 py-2 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
                         >
                             <img src={TutorialPlay} className="w-4 h-4" />
-                            <span className='text-md font-md'>{t("watch_tutorial") || "Watch Tutorial"}</span>
+                            <span className='text-md font-md text-[13px] font-[300]'>{t("watch_tutorial") || "Watch Tutorial"}</span>
                         </button>
 
                             <hr className='border border-transparent w-full' />
@@ -301,19 +320,11 @@ function Coo() {
                             return (
                                 <div
                                     key={i}
-                                    onClick={() => setActiveSidebarItem(e.path)}
+                                    onClick={() => handleTabChange(e.path)}
                                     className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                         }`}
                                 >
-                                    {isActive ? (
-                                        e.iconActive
-                                    ) : (
-                                        <div className="flex items-center gap-2">
-                                            <div className='group-hover:hidden'>{e.iconInactive}</div>
-                                            <div className='hidden group-hover:block'>{e.iconActive}</div>
-                                        </div>
-                                    )}
-                                    <span className={`font-[400] text-[16px] ${isActive ? "text-[#000000]" : "text-[#000000] group-hover:text-[#1E1E1E]"}`}>
+                                    <span className={`font-[400] text-[14px] ml-3 ${isActive ? "text-[#000000]" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
                                         {e.label}
                                     </span>
                                 </div>
@@ -366,20 +377,12 @@ function Coo() {
                                     <div
                                         key={i}
                                         onClick={() => {
-                                            setActiveSidebarItem(e.path)
+                                            handleTabChange(e.path)
                                             setSideBarStatus(false)
                                         }}
                                         className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${isActive ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                             }`}
                                     >
-                                        {isActive ? (
-                                            e.iconActive
-                                        ) : (
-                                            <div className="flex items-center gap-2">
-                                                <div className='group-hover:hidden'>{e.iconInactive}</div>
-                                                <div className='hidden group-hover:block'>{e.iconActive}</div>
-                                            </div>
-                                        )}
                                         <span className={`font-[400] text-[16px] ${isActive ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
                                             {e.label}
                                         </span>

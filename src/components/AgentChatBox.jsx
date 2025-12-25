@@ -675,7 +675,7 @@ const AgentChatBox = ({ listedProps }) => {
   return (
     <div className="w-full h-[calc(100vh-80px)] p-12 flex flex-col gap-2 sm:gap-3">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 ">
-        <h1 className="text-[18px] sm:text-[20px] lg:text-[24px] font-[600] text-[#1E1E1E]">{t("seo.chat")}</h1>
+        <h1 className="text-[16px] sm:text-[18px] lg:text-[22px] font-[500] text-[#1E1E1E]">{t("seo.chat")}</h1>
         <div className="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
           <button
             onClick={handleSelectNewChat}
@@ -834,10 +834,10 @@ const AgentChatBox = ({ listedProps }) => {
                         </div>
 
                         <div className="flex flex-col items-center gap-2 sm:gap-3 text-center">
-                          <h1 className="text-[#1E1E1E] text-[20px] sm:text-[24px] lg:text-[28px] font-[600] px-2">
+                          <h1 className="text-[#1E1E1E] text-[16px] sm:text-[18px] lg:text-[22px] font-[400] px-2">
                             {t("tara.how_can_i_help") || "How can I help you today?"}
                           </h1>
-                          <p className="text-[#5A687C] text-[14px] sm:text-[15px] lg:text-[16px] font-[400] max-w-2xl px-2">
+                          <p className="text-[#5A687C] text-[14px] sm:text-[15px] lg:text-[14px] font-[400] max-w-2xl px-2">
                             {t("tara.start_typing") || "Start typing your question or choose a suggested topic below."}
                           </p>
                         </div>

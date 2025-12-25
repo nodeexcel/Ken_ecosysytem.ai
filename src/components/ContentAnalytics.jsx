@@ -102,10 +102,10 @@ function ContentAnalytics() {
         <div className="p-12 h-full overflow-auto flex flex-col gap-6 w-full">
             {/* Header Section */}
             <div className="flex flex-col gap-1">
-                <h1 className="text-2xl font-[600] text-[#1E1E1E]">
+                <h1 className="text-[22px] font-[500] text-[#1E1E1E]">
                     {t("geo.content_analytics")}
                 </h1>
-                <p className="text-sm text-[#5A687C]">
+                <p className="text-[14px] font-[400] text-[#5A687C]">
                     {t("geo.monitor_your_content_citations_tracked_urls_and_ai_traffic")}
                 </p>
             </div>
@@ -118,7 +118,7 @@ function ContentAnalytics() {
                         <button
                             key={tab.key}
                             onClick={() => setActiveTab(tab.key)}
-                            className={`px-4 py-2 rounded-lg text-sm font-[600] transition-all ${
+                            className={`px-4 py-2 rounded-lg text-[14px] font-[500] transition-all ${
                                 isActive
                                     ? 'bg-white text-[#111827] shadow-sm border border-[#D6D6D6]'
                                     : 'bg-transparent text-[#5A687C]'
@@ -137,7 +137,7 @@ function ContentAnalytics() {
                         key={index}
                         className="bg-white border border-[#D6D6D6] rounded-xl p-4"
                     >
-                        <p className="text-sm text-[#5A687C] mb-1">{card.title}</p>
+                        <p className="text-[14px] font-[400] text-[#5A687C] mb-1">{card.title}</p>
                         <p className="text-2xl font-[600] text-[#1E1E1E] mb-1">
                             {card.value}
                         </p>

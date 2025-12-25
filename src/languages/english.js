@@ -1799,14 +1799,13 @@ const englishTranslation = {
     prev: "Prev",
     next: "Next",
     search_name_or_phone_number: "Search name or phone number",
-    prompts: "Prompts",
     cited_sources: "Cited sources",
     models: "Models",
     created: "Created",
     prev: "Prev",
     next: "Next",
     search_name_or_phone_number: "Search name or phone number",
-    prompts: "Prompts",
+    prompts: "Prompt",
     cited_sources: "Cited sources",
   }
 

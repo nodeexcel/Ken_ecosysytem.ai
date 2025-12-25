@@ -4,7 +4,7 @@ import constanceImg from "../../assets/svg/ConstanceSidebar.svg"
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import constanceMsgLogo from '../../assets/svg/ConstanceChat.svg'
 import { v4 as uuidv4 } from 'uuid';
-import { deleteContentCreationChat, getContentCreationChatById, getContentCreationChats, updateContentCreationChatName, contentGenerationStatus, getContents, deleteContent } from '../../api/contentCreationAgent'
+import { deleteContentCreationChat, getContentCreationChatById, getContentCreationChats, updateContentCreationChatName, contentGenerationStatus, getContents, deleteContent, updateContent, editGeneratedContent, deleteGeneratedContent } from '../../api/contentCreationAgent'
 import AgentChatBox from '../../components/AgentChatBox'
 import { formatTimeAgo } from '../../utils/TimeFormat'
 import CreationStudio from '../../components/CreationStudio'
@@ -21,12 +21,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
 import ContentCreationCalender from '../../components/ContentCreationCalender'
 import ToastModal from '../../components/ToastModal'
-import ChatActive from '../../assets/svg/ChatActive.svg'
-import ChatInactive from '../../assets/svg/ChatInactive.svg'
-import CreationStudioActive from '../../assets/svg/CreationStudioActive.svg'
-import CreationStudioInactive from '../../assets/svg/CreationStudioInactive.svg'
-import StudioActive from '../../assets/svg/StudioActive.svg'
-import StudioInactive from '../../assets/svg/StudioInactive.svg'
 
 function ContentCreation() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -72,6 +66,9 @@ function ContentCreation() {
     const [playingVideoId, setPlayingVideoId] = useState(null)
     const [selectedContent, setSelectedContent] = useState(null)
     const [modalVideoPlaying, setModalVideoPlaying] = useState(false)
+    const [editingContentId, setEditingContentId] = useState(null)
+    const [editingTitle, setEditingTitle] = useState('')
+    const [updatingContent, setUpdatingContent] = useState(false)
     const videoRefs = useRef({})
     const modalVideoRef = useRef(null)
     const socketRef = useRef(null)
@@ -97,24 +94,15 @@ function ContentCreation() {
         {
             label: `${t("seo.chat")}`,
             path: "chat",
-            iconActive: <img src={ChatActive} alt="Chat" className="w-5 h-5" />,
-            iconInactive: <img src={ChatInactive} alt="Chat" className="w-5 h-5" />,
         },
         {
             label: `${t("constance.creation_studio")}`,
             path: "creation_studio",
-            iconActive: <img src={CreationStudioActive} alt="Creation Studio" className="w-5 h-5" />,
-            iconInactive: <img src={CreationStudioInactive} alt="Creation Studio" className="w-5 h-5" />,
         },
         {
             label: t("constance.scheduler"),
             path: "scheduler",
-            iconActive: <img src={StudioActive} alt="Scheduler" className="w-5 h-5" />,
-            iconInactive: <img src={StudioInactive} alt="Scheduler" className="w-5 h-5" />,
         },
-        // { label: t("skills.constance_content1_header"), icon: <YoutubeIcon status={activeSidebarItem == "youtube"} />, hoverIcon: <YoutubeIcon hover={true} />, path: "youtube" },
-        // { label: t("skills.constance_content2_header"), icon: <LinkedInIcon status={activeSidebarItem == "linkedin"} />, hoverIcon: <LinkedInIcon hover={true} />, path: "linkedin" },
-        // { label: t("skills.constance_content3_header"), icon: <XIcon status={activeSidebarItem == "x_post"} />, hoverIcon: <XIcon hover={true} />, path: "x_post" },
     ]
 
     const activeTab = useSelector((state) => state.skills)
@@ -619,6 +607,51 @@ function ContentCreation() {
         }
     };
 
+    const handleSaveContentTitle = async (contentId, newTitle) => {
+        if (!newTitle || !newTitle.trim()) {
+            setToast({
+                open: true,
+                type: 'error',
+                title: 'Update Failed',
+                description: 'Title cannot be empty.',
+            });
+            return;
+        }
+
+        setUpdatingContent(true);
+        try {
+            const response = await editGeneratedContent(contentId, { caption: newTitle.trim() });
+            if (response?.status === 200 || response?.status === 201) {
+                setEditingContentId(null);
+                setEditingTitle('');
+                fetchRecentContents();
+                setToast({
+                    open: true,
+                    type: 'success',
+                    title: 'Content Updated',
+                    description: 'The content title has been updated successfully.',
+                });
+            } else {
+                setToast({
+                    open: true,
+                    type: 'error',
+                    title: 'Update Failed',
+                    description: 'Failed to update the content. Please try again.',
+                });
+            }
+        } catch (error) {
+            console.error("Error updating content:", error);
+            setToast({
+                open: true,
+                type: 'error',
+                title: 'Update Failed',
+                description: 'Failed to update the content. Please try again.',
+            });
+        } finally {
+            setUpdatingContent(false);
+        }
+    };
+
     // Fetch contents when creation_studio tab is active
     useEffect(() => {
         if (activeSidebarItem === "creation_studio") {
@@ -671,10 +704,10 @@ function ContentCreation() {
                         {/* Header Section */}
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-3 sm:gap-0">
                             <div className="flex flex-col gap-1.5 sm:gap-2">
-                                <h1 className="text-[#1E1E1E] text-[20px] sm:text-[24px] lg:text-[24px] font-[600]">
+                                <h1 className="text-[#1E1E1E] text-[20px] sm:text-[20px] lg:text-[22px] font-[500] mt-0.5">
                                     {t("constance.creation_studio") || "Creation Studio"}
                                 </h1>
-                                <p className="text-[#5A687C] text-[14px] sm:text-[15px] lg:text-[16px] font-[400]">
+                                <p className="text-[#5A687C] text-[14px] lg:text-[14px] font-[400]">
                                 {t("constance.creation_studio_descrp") || "Create, manage, and schedule content effortlessly using AI-powered creativity."}
                                 </p>
                             </div>
@@ -689,7 +722,7 @@ function ContentCreation() {
 
                         {/* Recent Creations Section */}
                         <div className="flex flex-col gap-3 sm:gap-4 w-full">
-                            <h2 className="text-[#1E1E1E] text-[18px] sm:text-[19px] lg:text-[20px] font-[600]">{t("constance.recent_creations") || "Recent Creations"}</h2>
+                           
 
                             {/* Grid of Creation Cards */}
                             {loadingContents ? (
@@ -874,9 +907,35 @@ function ContentCreation() {
                                             <div className="bg-white p-3 sm:p-4 rounded-b-lg sm:rounded-b-xl relative">
                                                 <div className="flex items-start justify-between gap-2 sm:gap-3">
                                                     <div className="flex-1 min-w-0 ">
-                                                        <h3 className="text-[#1E1E1E] text-base sm:text-lg font-[500] mb-1 sm:mb-1.5 leading-tight py-1 sm:py-2">
+                                                        {editingContentId === contentId ? (
+                                                            <input
+                                                                type="text"
+                                                                value={editingTitle}
+                                                                onChange={(e) => setEditingTitle(e.target.value)}
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter') {
+                                                                        e.preventDefault();
+                                                                        handleSaveContentTitle(contentId, editingTitle);
+                                                                    } else if (e.key === 'Escape') {
+                                                                        setEditingContentId(null);
+                                                                        setEditingTitle('');
+                                                                    }
+                                                                }}
+                                                                onBlur={() => {
+                                                                    // Cancel edit on blur (clicking outside)
+                                                                    // Only save on Enter key press
+                                                                    setEditingContentId(null);
+                                                                    setEditingTitle('');
+                                                                }}
+                                                                className="w-full text-[#1E1E1E] text-base sm:text-lg font-[500] mb-1 sm:mb-1.5 leading-tight py-1 sm:py-2 outline-none border-b-2 border-[#675FFF] bg-transparent"
+                                                                autoFocus
+                                                                disabled={updatingContent}
+                                                            />
+                                                        ) : (
+                                                            <h3 className="text-[#1E1E1E] text-base sm:text-lg font-[500] mb-1 sm:mb-1.5 leading-tight py-1 sm:py-2">
                                                                 {title}
-                                                        </h3>
+                                                            </h3>
+                                                        )}
                                                         <p className="text-[#5A687C] text-[12px] sm:text-[13px] lg:text-[14px] font-[400]">
                                                                 {platformDisplay}
                                                         </p>
@@ -906,9 +965,10 @@ function ContentCreation() {
                                                                 <button
                                                                         onClick={async (e) => {
                                                                         e.stopPropagation();
-                                                                            // Handle edit - you may want to open a modal or navigate
-                                                                            console.log("Edit clicked for content", contentId);
-                                                                        setActiveDropdown(null);
+                                                                            // Enable edit mode for this content
+                                                                            setEditingContentId(contentId);
+                                                                            setEditingTitle(title);
+                                                                            setActiveDropdown(null);
                                                                     }}
                                                                     className="w-full flex cursor-pointer items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-[#F2F2F7] transition-colors text-left"
                                                                 >
@@ -931,7 +991,7 @@ function ContentCreation() {
                                                                         e.stopPropagation();
                                                                             try {
                                                                                 if (contentId) {
-                                                                                    const response = await deleteContent(contentId);
+                                                                                    const response = await deleteGeneratedContent(contentId);
                                                                                     if (response?.status === 200) {
                                                                                         // Refresh the list
                                                                                         fetchRecentContents();
@@ -997,9 +1057,9 @@ function ContentCreation() {
     return (
         <div className="h-full w-full relative">
             <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><MoreVertical size={24} color='#1e1e1e' /></div>
-            <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full mt-2">
+            <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full mt-4">
                 {/* Sidebar */}
-                <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-89px)] mb-8 overflow-y-auto">
+                <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] ml-2 rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-105px)] mb-8 overflow-y-auto">
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
@@ -1013,7 +1073,7 @@ function ContentCreation() {
                         </div>
                     </div>
                     <div className="flex flex-col w-full items-start gap-2 relative px-3">
-                        <div className="bg-[#ffffff] lg:w-[232px] w-full mb-2 flex flex-col gap-3 px-[12px] py-[10px] border-b border-gray-200">
+                        <div className="bg-[#ffffff] lg:w-[232px] w-full mb-2 flex flex-col gap-3 px-[12px] py-[11px] border-b border-gray-200">
                         <div className="flex gap-3">
                             <div className="flex justify-center items-center">
                                 <div className="w-12 h-12 rounded-full bg-[#FFE4C5] flex items-center justify-center">
@@ -1025,10 +1085,10 @@ function ContentCreation() {
                                 </div>
                             </div>
                             <div className="flex flex-col">
-                                <h1 className="text-[#1E1E1E] text-[16px] font-[600]">
+                                <h1 className="text-[#1E1E1E] text-[15px] font-[400]">
                                     {t("constance.constance")}
                                 </h1>
-                                <p className="text-[#5A687C] text-[14px] font-[400]">
+                                <p className="text-[#5A687C] text-[13px] font-[300]">
                                     {t("constance.content_creation")}
                                 </p>
                             </div>
@@ -1042,7 +1102,7 @@ function ContentCreation() {
                                 className="w-full flex items-center justify-center gap-2 px-2 py-2 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
                         >
                             <img src={TutorialPlay} className="w-4 h-4" />
-                            <span className='text-md font-md'>{t("watch_tutorial") || "Watch Tutorial"}</span>
+                            <span className='text-[13px] font-[300]'>{t("watch_tutorial") || "Watch Tutorial"}</span>
                         </button>
 
                             <hr className='border border-transparent w-full' />
@@ -1059,15 +1119,7 @@ function ContentCreation() {
                                     className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                 }`}
                         >
-                                    {isActive ? (
-                                        e.iconActive
-                                    ) : (
-                                        <div className="flex items-center gap-2">
-                                            <div className="group-hover:hidden">{e.iconInactive}</div>
-                                            <div className="hidden group-hover:block">{e.iconActive}</div>
-                                        </div>
-                                    )}
-                                    <span className={`font-[400] text-[16px] ${isActive ? "text-[#000000]" : "text-[#000000] group-hover:text-[#1E1E1E]"}`}>
+                                    <span className={`font-[400] text-[14px] ml-3 ${isActive ? "text-[#000000]" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
                                 {e.label}
                             </span>
                                 </div>
@@ -1134,14 +1186,6 @@ function ContentCreation() {
                                         className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${isActive ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                     }`}
                             >
-                                        {isActive ? (
-                                            e.iconActive
-                                        ) : (
-                                            <div className="flex items-center gap-2">
-                                                <div className="group-hover:hidden">{e.iconInactive}</div>
-                                                <div className="hidden group-hover:block">{e.iconActive}</div>
-                                            </div>
-                                        )}
                                         <span className={`font-[400] text-[16px] ${isActive ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
                                     {e.label}
                                 </span>

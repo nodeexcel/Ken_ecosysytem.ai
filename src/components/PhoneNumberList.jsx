@@ -341,8 +341,8 @@ export default function PhoneNumbers() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
         <div>
-          <h1 className="text-[24px] font-[500] text-[#1E1E1E]">{t("phone.phone_numbers")}</h1>
-          <p className="text-[16px] font-[400] text-[#5A687C] mt-1">
+          <h1 className="text-[22px] font-[500] text-[#1E1E1E]">{t("phone.phone_numbers")}</h1>
+          <p className="text-[14px] font-[400] text-[#5A687C] mt-2">
             {t("phone.manage_and_monitor_active_business_numbers") || "Manage and monitor active business numbers across your organization."}
           </p>
         </div>
@@ -358,13 +358,13 @@ export default function PhoneNumbers() {
       {/* Filter and Search */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         {/* Filter Tabs */}
-        <div className="flex items-center gap-1 bg-[#F3F4F6] border border-[#D6D6D6] rounded-lg p-0.5 ">
+        <div className="flex items-center gap-1 bg-[#F3F4F6] border border-[#D6D6D6] rounded-lg p-0.25 ">
           {filterTabs.map((tab) => (
             <button
               key={tab.value}
               onClick={() => setFilterStatus(tab.value)}
               className={`px-4 py-1.5 text-sm font-medium rounded-lg transition cursor-pointer ${filterStatus === tab.value
-                ? "bg-white text-[#1E1E1E] font-semibold border border-[#D6D6D6] "
+                ? "bg-white text-[#1E1E1E] font-[400] border border-[#D6D6D6] "
                 : "text-[#5A687C] hover:text-[#1E1E1E]"
                 }`}
             >
@@ -431,7 +431,7 @@ export default function PhoneNumbers() {
                       <td className="px-2 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px]">
                         <div className="flex items-center">
                           <span
-                            className={`text-[10px] sm:text-xs md:text-[14px] font-[500] px-2 sm:px-3 py-1 rounded-full border whitespace-nowrap inline-flex items-center justify-center gap-2 ${row.status === true
+                            className={`text-[10px] sm:text-xs md:text-[14px] font-[400] px-2 sm:px-3 py-1 rounded-full border whitespace-nowrap inline-flex items-center justify-center gap-2 ${row.status === true
                                 ? "border-[#34C759] text-[#34C759] bg-[#EBF9EE]"
                                 : row.status === false && row.pending === true
                                   ? "border-[#FF9500] text-[#FF9500] bg-[#FFF4E6]"
@@ -460,7 +460,7 @@ export default function PhoneNumbers() {
                       <td className="px-4 sm:px-3 md:px-6 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-black font-[400] text-center whitespace-nowrap">
                         {row.total_calls}
                       </td>
-                      <td className="px-2 sm:px-3 md:px-2 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-start">
+                      <td className="px-2 sm:px-3 md:px-2 py-3 sm:py-4 md:py-4 text-xs sm:text-sm md:text-[14px] text-black font-[400] text-start">
                         <div className="flex items-center justify-center gap-2">
                           <img 
                             src={row.direction === "inbound" ? InboundDirection : OutboundDirection} 
@@ -569,7 +569,7 @@ export default function PhoneNumbers() {
               <X size={20} />
             </button>
 
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            <h2 className="text-[20px] font-[500] text-[#1E1E1E] mb-4">
               {
                 t("phone.add_new_number")
               }
@@ -579,7 +579,7 @@ export default function PhoneNumbers() {
             {/* Tabs */}
             <div className="flex border bg-[#F3F4F6] border-[#E1E4EA] rounded-lg overflow-hidden my-4">
               {tabs.map((tab) => (
-                <div key={tab.key} className="w-full p-0.5 " onClick={() => setActiveTab(tab.key)}>
+                <div key={tab.key} className="w-full p-0.25 " onClick={() => setActiveTab(tab.key)}>
                   <button
 
                     className={`w-full py-1.5 cursor-pointer text-sm font-medium transition  ${activeTab === tab.key
@@ -597,7 +597,7 @@ export default function PhoneNumbers() {
             {/* Form */}
             <div className="space-y-4">
               <div>
-                <label className="text-sm text-gray-600 font-medium block mb-1">
+                <label className="text-sm text-[#868C98] font-medium block mb-1">
                   {
                     t("phone.name_number")
                   }
@@ -620,7 +620,7 @@ export default function PhoneNumbers() {
               </div>
 
               <div>
-                <label className="text-sm text-gray-600 font-medium block mb-1">
+                <label className="text-sm text-[#868C98] font-[400] block mb-1">
                   {
                     t("phone.number")
                   }
@@ -795,7 +795,7 @@ function ToggleSwitch({ checked, onChange }) {
   return (
     <button
       onClick={onChange}
-      className={`w-10 h-6 rounded-full flex items-center px-1 transition-colors duration-300 ${checked ? "bg-indigo-500" : "bg-gray-300"
+      className={`w-10 h-6 rounded-full flex items-center px-1 transition-colors duration-400 ${checked ? "bg-indigo-500" : "bg-gray-300"
         }`}
     >
       <span

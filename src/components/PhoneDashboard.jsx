@@ -309,8 +309,8 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
         <div>
-          <h1 className="text-[24px] font-[500] text-[#1E1E1E]">{t("phone.overview") || "Overview"}</h1>
-          <p className="text-[16px] font-[400] text-[#5A687C] mt-2">{t("phone.overview_descrp") || "Monitor your call activity, credits, and agent performance."}</p>
+          <h1 className="text-[22px] font-[500] text-[#1E1E1E]">{t("phone.overview") || "Overview"}</h1>
+          <p className="text-[14px] font-[400] text-[#5A687C] mt-2">{t("phone.overview_descrp") || "Monitor your call activity, credits, and agent performance."}</p>
         </div>
         <div className="flex items-center gap-3">
           <SelectDropdown
@@ -474,7 +474,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
             {/* Header with Close button */}
             <div className="mb-6 flex items-start justify-between">
               <div>
-                <h2 className="text-[20px] font-[600] text-[#1E1E1E]">{t("phone.my_call_credits") || "My Call Credits"}</h2>
+                <h2 className="text-[20px] font-[500] text-[#1E1E1E]">{t("phone.my_call_credits") || "My Call Credits"}</h2>
                 <p className="text-sm text-[#5A687C] mt-2">{t("phone.top_up_your_account") || "Top up your account to keep calls and campaigns running smoothly."}</p>
               </div>
               <button
@@ -490,7 +490,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
             {/* Choose an amount section */}
             <div className="p-1 mb-2">
               <div className="flex items-start justify-between mb-2">
-                <h2 className="text-md font-[600] text-[#1E1E1E]">{t("phone.choose_an_amount") || "Choose an amount"}</h2>
+                <h2 className="text-md font-[500] text-[#1E1E1E]">{t("phone.choose_an_amount") || "Choose an amount"}</h2>
                 <p className="text-sm text-[#5A687C]">{t("phone.price") || "Price"} <span className="font-[500] text-black">€0.20/minute</span></p>
               </div>
 
@@ -581,7 +581,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
               <div className=''>
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <h2 className="text-md font-[600] text-[#1E1E1E] mb-2">{t("phone.automatic_recharge") || "Automatic Recharge"}</h2>
+                    <h2 className="text-md font-[500] text-[#1E1E1E] mb-2">{t("phone.automatic_recharge") || "Automatic Recharge"}</h2>
                     <p className="text-sm text-[#5A687C]">
                       {t("phone.automatically_refill_your_balance") || "Automatically refill your balance when it drops below your chosen threshold."}
                     </p>
@@ -625,7 +625,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
                   {/* Recharge Threshold */}
                   <div className="flex items-start justify-between gap-4">
                     <div className="w-1/2">
-                      <label className="block text-sm font-semibold text-[#1E1E1E] mb-1">
+                      <label className="block text-sm font-[500] text-[#1E1E1E] mb-1">
                         {t("phone.recharge_threshold") || "Recharge Threshold"}
                       </label>
                       <p className="text-xs text-[#5A687C]">{t("phone.when_balance_falls_below") || "When balance falls below"}</p>
@@ -655,7 +655,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
                   {/* Top-up Amount */}
                   <div className="flex items-start justify-between gap-4">
                     <div className="w-1/2">
-                      <label className="block text-sm font-semibold text-[#1E1E1E] mb-1">
+                      <label className="block text-sm font-[500] text-[#1E1E1E] mb-1">
                         {t("phone.top_up_amount") || "Top-up Amount"}
                       </label>
                       <p className="text-xs text-[#5A687C]">

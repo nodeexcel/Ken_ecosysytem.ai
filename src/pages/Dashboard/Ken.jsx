@@ -3,10 +3,6 @@ import tomImg from '../../assets/svg/KenNewLogo.svg'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from "react-i18next";
 import TutorialPlay from '../../assets/svg/WatchTutorialGrey.svg'
-import OverviewActive from '../../assets/svg/OverviewActive.svg'
-import OverviewInactive from '../../assets/svg/OverviewInactive.svg'
-import ProspectsActive from '../../assets/svg/ProspectsActive.svg'
-import ProspectsInactive from '../../assets/svg/ProspectsInactive.svg'
 import { X, MoreVertical } from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
@@ -47,21 +43,11 @@ function Ken() {
         {
             label: "Overview",
             path: "overview",
-            iconActive: <img src={OverviewActive} alt="Overview" className="w-5 h-5" />,
-            iconInactive: <img src={OverviewInactive} alt="Overview" className="w-5 h-5" />,
         },
         {
             label: "Search for Prospects",
             path: "search-prospects",
-            iconActive: <img src={ProspectsActive} alt="Search for Prospects" className="w-5 h-5" />,
-            iconInactive: <img src={ProspectsInactive} alt="Search for Prospects" className="w-5 h-5" />,
         },
-        // {
-        //     label: "Your Campaigns",
-        //     path: "campaigns",
-        //     iconActive: <Megaphone className="w-5 h-5 text-[#675FFF]" />,
-        //     iconInactive: <Megaphone className="w-5 h-5 text-[#5A687C]" />,
-        // },
     ]
 
     const renderMainContent = () => {
@@ -94,9 +80,9 @@ function Ken() {
             <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} >
                 <MoreVertical size={24} color='#1e1e1e' />
             </div>
-            <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full mt-2">
+            <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full mt-4">
                 {/* Sidebar */}
-                <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-89px)] mb-8 overflow-y-auto">
+                <div className="lg:flex hidden flex-col bg-white gap-4 border border-[#D6D6D6] min-w-[272px] ml-2 rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-105px)] mb-8 overflow-y-auto">
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
@@ -117,10 +103,10 @@ function Ken() {
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
-                                    <h1 className="text-[#1E1E1E] text-[16px] font-[600]">
+                                    <h1 className="text-[#1E1E1E] text-[15px] font-[400]">
                                         Ken
                                     </h1>
-                                    <p className="text-[#5A687C] text-[14px] font-[400]">
+                                    <p className="text-[#5A687C] text-[13px] font-[300]">
                                         {t("receptionist")}
                                     </p>
                                 </div>
@@ -134,7 +120,7 @@ function Ken() {
                                 className="w-full flex items-center justify-center gap-2 px-2 py-2 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
                             >
                                 <img src={TutorialPlay} className="w-4 h-4" />
-                                <span className='text-md font-md'>{t("watch_tutorial") || "Watch Tutorial"}</span>
+                                <span className='text-13 font-[300]'>{t("watch_tutorial") || "Watch Tutorial"}</span>
                             </button>
 
                             <hr className='border border-transparent w-full' />
@@ -151,15 +137,7 @@ function Ken() {
                                     className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                         }`}
                                 >
-                                    {isActive ? (
-                                        e.iconActive
-                                    ) : (
-                                        <div className="flex items-center gap-2">
-                                            <div className="group-hover:hidden">{e.iconInactive}</div>
-                                            <div className="hidden group-hover:block">{e.iconActive}</div>
-                                        </div>
-                                    )}
-                                    <span className={`font-[400] text-[16px] ${isActive ? "text-[#000000]" : "text-[#000000] group-hover:text-[#1E1E1E]"}`}>
+                                    <span className={`font-[400] text-[14px] ml-3 ${isActive ? "text-[#000000]" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
                                         {e.label}
                                     </span>
                                 </div>
@@ -216,18 +194,10 @@ function Ken() {
                                             handleTabChange(e.path);
                                             setSideBarStatus(false);
                                         }}
-                                        className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${isActive ? "bg-[#F0EFFF]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                                        className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                             }`}
                                     >
-                                        {isActive ? (
-                                            e.iconActive
-                                        ) : (
-                                            <div className="flex items-center gap-2">
-                                                <div className="group-hover:hidden">{e.iconInactive}</div>
-                                                <div className="hidden group-hover:block">{e.iconActive}</div>
-                                            </div>
-                                        )}
-                                        <span className={`font-[400] text-[16px] ${isActive ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                                        <span className={`font-[400] text-[14px] ml-3 ${isActive ? "text-[#000000]" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
                                             {e.label}
                                         </span>
                                     </div>

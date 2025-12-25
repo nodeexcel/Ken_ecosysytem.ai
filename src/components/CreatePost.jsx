@@ -13,7 +13,7 @@ import twitter from '../assets/svg/tiktok.png'
 import ImageFile from '../assets/svg/ImageFile.svg'
 import VideoFile from '../assets/svg/VideoFile.svg'
 import VideoPlayIcon from '../assets/svg/VideoPlay.svg'
-import constanceImg from "../assets/svg/constance_logo.svg"
+import constanceImg from "../assets/svg/ConstanceSidebar.svg"
 import ShareIcon from '../assets/svg/Share.svg'
 import StatusModal from './StatusModal'
 import { useNavigate } from 'react-router-dom'
@@ -597,7 +597,7 @@ export default function CreatePost({ onClose, editData }) {
     <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8 h-screen">
       {/* Header */}
       <div className="flex flex-row items-center justify-between min-h-[38px] sm:h-[38px]">
-        <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 pr-2">{t("constance.create_scheduler") || "Create Scheduler"}</h1>
+        <h1 className="text-lg sm:text-xl lg:text-[22px] font-[500] text-gray-900 pr-2">{t("constance.create_scheduler") || "Create Scheduler"}</h1>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowPreview(!showPreview)}
@@ -634,8 +634,8 @@ export default function CreatePost({ onClose, editData }) {
           {/* Left Sidebar */}
           <div className="w-[230px] h-[726px] bg-white border-r border-r-[#E1E4EA] border-t border-t-[#ffffff] border-b border-b-[#ffffff] border-l border-l-[#ffffff] rounded-l-[16px] flex flex-col relative min-h-[600px]">
             {/* Header */}
-            <div className="px-4 pt-6 pb-4">
-              <h2 className="text-base font-semibold text-[#1E1E1E] text-center">
+            <div className="px-4 pt-6 pb-4 border-b border-b-[#E1E4EA]">
+              <h2 className="text-base font-[400] text-[#1E1E1E] text-center">
                 {t("select") + " " + t("constance.account") || "Select Account"}
               </h2>
             </div>
@@ -653,7 +653,7 @@ export default function CreatePost({ onClose, editData }) {
                   {t("no_accounts_found") || "No accounts found"}
                 </div>
               ) : (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 mt-2">
                   {allAccounts.map((account) => {
                     const isSelected = selectedAccount === account.id;
                     return (
@@ -676,7 +676,7 @@ export default function CreatePost({ onClose, editData }) {
                         </div>
                         {/* Username */}
                         <div className="flex-1 min-w-0">
-                          <span className={`text-sm font-medium ${
+                          <span className={`text-sm font-[400] ${
                             isSelected ? "text-[#675FFF]" : "text-[#1E1E1E]"
                           }`}>
                             {account.username.startsWith("@") ? account.username : `@${account.username}`}
@@ -711,7 +711,7 @@ export default function CreatePost({ onClose, editData }) {
           {/* Center Post Creation - Post Details */}
           <div className="flex flex-col gap-4 bg-white border-[#E1E4EA] rounded-lg p-6 flex-1 h-full relative overflow-y-auto">
             {/* Post Details Title */}
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t("constance.post_details") || "Post Details"}</h2>
+            <h2 className="text-[18px] font-[400] text-gray-900 mb-4">{t("constance.post_details") || "Post Details"}</h2>
 
             <div className="border border-[#D6D6D6] rounded-xl p-2 " >
 
@@ -923,10 +923,10 @@ export default function CreatePost({ onClose, editData }) {
           <div className="bg-white rounded-2xl w-full max-w-[770px] max-h-[90vh] flex flex-col shadow-xl">
             {/* Modal Header */}
             <div className="flex items-center justify-between px-6 py-2 border-b border-[#E1E4EA]">
-              <h2 className="text-lg font-semibold text-gray-900">{t("constance.post_preview") || "Preview Post "}</h2>
+              <h2 className="text-[16px] font-[500] text-gray-900">{t("constance.post_preview") || "Preview Post "}</h2>
               <button
                 onClick={() => setShowPreview(false)}
-                className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5 text-gray-500" />
               </button>
@@ -945,10 +945,10 @@ export default function CreatePost({ onClose, editData }) {
                 </div>
 
                 <div className="flex flex-col">
-                  <h1 className="text-[#1E1E1E] text-[16px] font-[600]">
+                  <h1 className="text-[#1E1E1E] text-[16px] font-[400]">
                     {t("constance.constance")}
                   </h1>
-                  <p className="text-[#5A687C] text-[14px] font-[400]">
+                  <p className="text-[#5A687C] text-[14px] font-[300]">
                     {t("constance.content_creation")}
                   </p>
                 </div>
@@ -1096,7 +1096,7 @@ export default function CreatePost({ onClose, editData }) {
                   setShowPreview(false);
                   setShowDateTimePicker(true);
                 }}
-                className="px-4 py-2 text-sm font-medium text-[#5A687C] bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F4F5F6] transition-colors"
+                className="px-4 py-2 text-sm cursor-pointer font-medium text-[#5A687C] bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F4F5F6] transition-colors"
               >
                 {t("schedule") || "Schedule"}
               </button>

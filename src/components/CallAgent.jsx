@@ -366,8 +366,8 @@ export default function CallAgentsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <div className="flex flex-col gap-1">
-          <h1 className="text-xl md:text-[24px] font-[500] text-[#1E1E1E]">{t("phone.call_agents")}</h1>
-          <p className="text-sm md:text-base text-[#5A687C] font-[400]">{t("phone.manage_your_ai_and_human_call_agents") || "Manage your AI and human call agents"}</p>
+          <h1 className="text-xl md:text-[22px] font-[500] text-[#1E1E1E]">{t("phone.call_agents")}</h1>
+          <p className="text-sm md:text-[14px] text-[#5A687C] font-[400] mt-2">{t("phone.manage_your_ai_and_human_call_agents") || "Manage your AI and human call agents"}</p>
         </div>
         <button 
           className="bg-[#675FFF] cursor-pointer text-white font-medium px-4 py-1.5 rounded-lg shadow-sm hover:bg-[#5E54FF] transition-colors flex items-center gap-2 w-fit"
@@ -479,10 +479,10 @@ export default function CallAgentsPage() {
                 return filteredAgents.length !== 0 ? (
                   filteredAgents.map((agent, index) => (
                   <tr key={agent.id} className="text-[16px] text-[#1E1E1E]">
-                    <td className="px-4 py-4 text-[14px] text-[14px] text-black  font-[500] text-start">{agent.agent_name}</td>
-                    <td className="px-4 py-4 text-[14px] font-[500] text-black text-start">{capitalizeFirst(agent.language)}</td>
-                    <td className="px-4 py-4 text-[14px] font-[500] text-black text-start">{capitalizeFirst(agent.voice)}</td>
-                    <td className="px-4 py-4 text-[14px] font-[500] text-black text-start">{agent.phone_numbers}</td>
+                    <td className="px-4 py-4 text-[14px] text-black font-[400] text-start">{agent.agent_name}</td>
+                    <td className="px-4 py-4 text-[14px] text-black font-[400] text-start">{capitalizeFirst(agent.language)}</td>
+                    <td className="px-4 py-4 text-[14px] text-black font-[400] text-start">{capitalizeFirst(agent.voice)}</td>
+                    <td className="px-4 py-4 text-[14px] text-black font-[400] text-start">{agent.phone_numbers}</td>
                     <td className="px-4 py-4 text-center">
                       <div className="flex items-center justify-center">
                         <ToggleSwitch
@@ -633,7 +633,12 @@ export default function CallAgentsPage() {
 
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl max-h-[80vh] overflow-auto w-full max-w-[400px] p-6 relative shadow-lg">
+          <div className="bg-white rounded-2xl max-h-[80vh] overflow-auto w-full max-w-[400px] p-6 relative shadow-lg border-b border-[#D6D6D6]">
+            
+
+            <h2 className="text-[20px] font-[500] text-[#1E1E1E] mb-4 border-b border-b-[#D6D6D6] pb-2">
+             {t("phone.add_new_call_agent")}
+            </h2>
             <button
               className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-700"
               onClick={() => {
@@ -645,14 +650,10 @@ export default function CallAgentsPage() {
               <X size={20} />
             </button>
 
-            <h2 className="text-xl font-semibold text-gray-800 mb-8">
-             {t("phone.add_new_call_agent")}
-            </h2>
-
             {/* Form */}
             <div className="space-y-4">
               <div>
-                <label className="text-sm  font-medium block mb-1">
+                <label className="text-sm text-[#868C98] font-[400] block mb-1">
                 {t("appointment.agent_name")}
                 </label>
                 <input
@@ -668,7 +669,7 @@ export default function CallAgentsPage() {
               </div>
 
               <div>
-                <label className="text-sm font-medium block mb-1">
+                <label className="text-sm text-[#868C98] font-[400] block mb-1">
                   {t("phone.language")}
                 </label>
                 <SelectDropdown
@@ -690,7 +691,7 @@ export default function CallAgentsPage() {
               </div>
 
               <div>
-                <label className="text-sm font-medium block mb-1">
+                <label className="text-sm text-[#868C98] font-[400] block mb-1">
                   {t("phone.voice")}
                 </label>
                 <SelectDropdown
@@ -715,7 +716,7 @@ export default function CallAgentsPage() {
 
               <div>
                 <div className="flex items-center gap-2 ">
-                  <label className="text-sm font-medium block mb-1">
+                  <label className="text-sm text-[#868C98] font-[400] block mb-1">
                 {t("phone.phone_number")}
                   </label>
 
@@ -769,7 +770,7 @@ export default function CallAgentsPage() {
               </div>
               
               <div>
-                <label className="text-sm font-medium block mb-1">
+                <label className="text-sm text-[#868C98] font-[400] block mb-1">
                  {t("phone.type")}
                 </label>
                 <input

@@ -345,10 +345,10 @@ function CitationAnalytics() {
             {/* Header Section */}
             <div className="flex items-start justify-between w-full">
                 <div className="flex flex-col gap-1">
-                    <h1 className="text-2xl font-[600] text-[#1E1E1E]">
+                    <h1 className="text-[22px] font-[500] text-[#1E1E1E]">
                     {t("geo.citation_analytics")}
                     </h1>
-                    <p className="text-sm text-[#5A687C]">
+                    <p className="text-[14px] font-[400] text-[#5A687C]">
                         {t("geo.see_urls_used_in_ai_answer")}
                     </p>
                 </div>
@@ -369,7 +369,7 @@ function CitationAnalytics() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Cited Categories Chart */}
                 <div className="bg-white border border-[#D6D6D6] rounded-2xl p-6">
-                    <h2 className="text-lg font-[600] text-[#1E1E1E] mb-4">
+                    <h2 className="text-[20px] font-[500] text-[#1E1E1E] mb-4">
                         {t("geo.cited_categories")}
                     </h2>
                     <div className="h-[80px] mb-4 px-2">
@@ -379,7 +379,7 @@ function CitationAnalytics() {
 
                 {/* Citied Content Types Chart */}
                 <div className="bg-white border border-[#D6D6D6] rounded-2xl p-6">
-                    <h2 className="text-lg font-[600] text-[#1E1E1E] mb-4">
+                    <h2 className="text-[20px] font-[500] text-[#1E1E1E] mb-4">
                         {t("geo.cited_content_types")}
                     </h2>
                     <div className="h-[90px] mb-4 w-full px-2">

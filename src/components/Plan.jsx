@@ -819,10 +819,10 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
     <div className="w-full h-full">
       {/* Header */}
       <div className="flex flex-col gap-2 mb-6">
-        <h1 className="text-md md:text-2xl font-[600] text-[#1E1E1E]">
+        <h1 className="text-[22px] font-[500] text-[#1E1E1E]">
           {t("settings.tab_2_list.plan_billing")}
         </h1>
-        <p className="text-[14px] sm:text-[16px] text-[#5A687C] font-[400]">
+        <p className="text-[14px] text-[#5A687C] font-[400]">
           {t("settings.tab_2_list.plan_billing_description")}
         </p>
       </div>

@@ -269,19 +269,19 @@ const BrainAI = () => {
   return (
     <div className="h-full w-full relative">
       <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><EllipsisVertical size={24} color='#1e1e1e' /></div>
-      <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full">
+      <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full mt-4">
         {/* Sidebar */}
           <div className="lg:flex hidden flex-col bg-white gap-8 border border-[#D6D6D6]
-    min-w-[272px] h-[calc(100vh-89px)] mt-2 rounded-r-2xl rounded-tl-none rounded-bl-none fixed overflow-y-auto">
+    min-w-[272px] h-[calc(100vh-105px)] ml-2 rounded-r-2xl rounded-tl-none rounded-bl-none fixed overflow-y-auto">
 
             <div className="">
               <div
                 className="flex justify-between items-center cursor-pointer w-fit"
                 onClick={() => navigate("/dashboard")}
               >
-                <div className="flex gap-4 pl-4 items-center h-[57px]">
+                <div className="flex gap-4 pl-6 items-center h-[57px]">
                   {/* <LeftArrow /> */}
-                  <h1 className="text-[20px] font-[600]">{t("brain_ai.brain_ai")}</h1>
+                  <h1 className="text-[22px] font-[500]">{t("brain_ai.brain_ai")}</h1>
                 </div>
               </div>
               <hr className="text-[#E1E4EA] px-6"  />
@@ -304,13 +304,17 @@ const BrainAI = () => {
                         localStorage.removeItem('selectedIntegration');
                       }
                     }}
-                    className={`cursor-pointer group flex items-center justify-start gap-1.5 px-2 py-2 w-full h-auto rounded-2xl ${isActive ? "bg-[#F0EFFF] text-blue-600" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                    className={`cursor-pointer group flex items-center justify-start gap-1.5 px-2 py-2 w-full h-auto rounded-2xl
+                      ${isActive
+                        ? "bg-[#F0EFFF] text-blue-600"
+                        : "text-[#5A687C] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
                       }`}
+                    
                   >
                     {isActive ? Icon
                       : <div className="flex items-center gap-2"><div className='group-hover:hidden'>{Icon}</div> <div className='hidden group-hover:block'>{hoverIcon}</div></div>
                     }
-                    <span className={`font-[400] text-[16px] ${isActive ? "text-blue-600" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                    <span className={`font-[400] text-[16px] ${isActive ? "text-black" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
                       {item.label}
                     </span>
                   </button>

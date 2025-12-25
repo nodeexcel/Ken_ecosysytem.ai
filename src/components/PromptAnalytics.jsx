@@ -85,8 +85,8 @@ function PromptAnalytics() {
     <div className="p-12 h-full overflow-auto flex flex-col gap-5 w-full">
       {/* Header */}
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-[600] text-[#1E1E1E]">{t("geo.prompt_analytics")}</h1>
-        <p className="text-sm text-[#5A687C]">
+        <h1 className="text-[22px] font-[500] text-[#1E1E1E]">{t("geo.prompt_analytics")}</h1>
+        <p className="text-[14px] font-[400] text-[#5A687C]">
           {t("geo.see_which_prompts_ai_mentions_your_product_in")}
         </p>
       </div>
@@ -103,7 +103,7 @@ function PromptAnalytics() {
                 setActiveModel(label)
                 setCurrentPage(1)
               }}
-              className={`inline-flex items-center gap-2 px-3.5 py-2 cursor-pointer rounded-lg text-sm font-[600] transition-all ${
+              className={`inline-flex items-center gap-2 px-3.5 py-2 cursor-pointer rounded-lg text-[14px] font-[500] transition-all ${
                 isActive
                   ? 'bg-white text-[#111827] shadow-sm border border-[#D6D6D6]'
                   : 'bg-transparent text-[#6B7280]'

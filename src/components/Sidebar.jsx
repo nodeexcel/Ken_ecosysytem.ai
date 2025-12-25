@@ -23,10 +23,10 @@ import lifeTimeImg from "../assets/svg/eco_systeme_lifetime_commission.svg"
 import { useTranslation } from "react-i18next";
 import textLogo from '../assets/images/ecosysteme.ai_logo.png'
 import { discardSkillsData } from '../store/agentSkillsSlice';
-import FourBox from '../assets/svg/Home Grid.svg';
-import Brain from '../assets/svg/Brain.svg'
-import BrainAIActive from '../assets/svg/BrainAIActive.svg'
-import HomeInactive from '../assets/svg/HomeInactive.svg'
+import FourBox from '../assets/svg/assistants.svg';
+import Brain from '../assets/svg/folders.svg'
+import BrainAIActive from '../assets/svg/folders.svg'
+import HomeInactive from '../assets/svg/assistants.svg'
 
 const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
   const navigate = useNavigate()
@@ -165,8 +165,8 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
       >
         {isOpen ? <IoClose size={24} /> : <RxHamburgerMenu size={24} color='#1e1e1e' />}
       </button>
-      <aside className={`bg-[#F7F7F8] ${isOpen && 'rounded-r-[8px] px-8 pt-3'} pl-2 overflow-auto w-full  h-full transition-all duration-300 ${isOpen ? 'w-[120px]' : 'w-0 overflow-auto'}  flex flex-col justify-between`}>
-        <div className={`flex flex-col bg-white h-full justify-between py-3 my-2 px-2 ${(location.pathname.includes('/settings') || location.pathname.includes('/brain') || location.pathname.includes('/content-creation') || location.pathname.includes('/phone') || location.pathname.includes('/appointment-setter') || location.pathname.includes('/customer-support') || location.pathname.includes('/accounting') || location.pathname.includes('/geo') || location.pathname.includes('/coo') || location.pathname.includes('/ken')) ? 'border-t border-l border-b border-r-0 border-[#D6D6D6] rounded-l-2xl rounded-tr-none rounded-br-none' : 'border border-[#D6D6D6] rounded-2xl'}`}>
+      <aside className={`bg-[#F7F7F8] ${isOpen && 'rounded-r-[8px] px-8 pt-3'} pl-2 ml-2 overflow-auto w-full  h-full transition-all duration-300 ${isOpen ? 'w-[120px]' : 'w-0 overflow-auto'}  flex flex-col justify-between`}>
+        <div className={`flex flex-col bg-white h-full justify-between py-3 my-4 px-2 ${(location.pathname.includes('/settings') || location.pathname.includes('/brain') || location.pathname.includes('/content-creation') || location.pathname.includes('/phone') || location.pathname.includes('/appointment-setter') || location.pathname.includes('/customer-support') || location.pathname.includes('/accounting') || location.pathname.includes('/geo') || location.pathname.includes('/coo') || location.pathname.includes('/ken')) ? 'border-t border-l border-b border-r-0 border-[#D6D6D6] rounded-l-2xl rounded-tr-none rounded-br-none' : 'border border-[#D6D6D6] rounded-2xl'}`}>
           {/* Top Section */}
           <div className="flex flex-col mt-2 gap-1">
             {/* Logo */}
@@ -199,7 +199,11 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                       src={renderColor(0) ? FourBox : HomeInactive}
                       alt="Home" 
                       className={`w-5 h-5 ${renderColor(0) ? 'opacity-100' : 'opacity-90'}`}
-                      style={{ filter: renderColor(0) ? 'none' : 'brightness(0.8)' }}
+                      style={{ 
+                        filter: renderColor(0) 
+                          ? 'brightness(0)' 
+                          : 'brightness(0.8)' 
+                      }}
                     />
                   </div>
                   <div className="hidden group-hover:block">
@@ -207,6 +211,9 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                       src={FourBox} 
                       alt="Home" 
                       className="w-5 h-5 opacity-100"
+                      style={{ 
+                        filter: 'brightness(0)' 
+                      }}
                     />
                   </div>
                 </div>
@@ -243,7 +250,11 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                       src={renderColor(1) ? BrainAIActive : Brain}
                       alt="Brain AI"
                       className={`w-5 h-5 ${renderColor(1) ? 'opacity-100' : 'opacity-90'}`}
-                      style={{ filter: renderColor(1) ? 'none' : 'brightness(0.8)' }}
+                      style={{ 
+                        filter: renderColor(1) 
+                          ? 'brightness(0)' 
+                          : 'brightness(0.8)' 
+                      }}
                     />
                   </div>
                   {/* Hover state */}
@@ -252,6 +263,9 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                       src={BrainAIActive}
                       alt="Brain AI"
                       className="w-5 h-5 opacity-100"
+                      style={{ 
+                        filter: 'brightness(0)' 
+                      }}
                     />
                   </div>
                 </div>

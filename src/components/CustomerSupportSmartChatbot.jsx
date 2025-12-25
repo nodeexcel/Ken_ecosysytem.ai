@@ -204,8 +204,8 @@ function SmartChatbot() {
                     {/* Row 1: Title + New Chatbot */}
                     <div className="flex items-start justify-between">
                         <div className="flex flex-col gap-1">
-                            <h1 className="text-[24px] font-[600] text-[#1E1E1E]">{t("calina.smart_chatbot")}</h1>
-                            <p className="text-[#5A687C] text-sm font-[400]">{t("calina.manage_all_agents_in_one_place")}</p>
+                            <h1 className="text-[22px] font-[500] text-[#1E1E1E]">{t("calina.smart_chatbot")}</h1>
+                            <p className="text-[#5A687C] text-[14px] font-[400]">{t("calina.manage_all_agents_in_one_place")}</p>
                         </div>
                         <button
                             onClick={() => setChatBotFormStatus(true)}
@@ -275,7 +275,7 @@ function SmartChatbot() {
                                             key={row.id}
                                             className={`text-[15px] text-[#1E1E1E] ${index !== filteredChatbotData?.length - 1 ? 'border-b border-[#E1E4EA]' : ''}`}
                                         >
-                                            <td className="px-4 py-5 font-[600] text-[#1E1E1E] whitespace-nowrap flex items-center gap-3">
+                                            <td className="px-4 py-5 font-[400] text-[#1E1E1E] whitespace-nowrap flex items-center gap-3">
                                                 <span className="w-8 h-8 rounded-full bg-[#F2EBFF] flex items-center justify-center text-[#7C3AED] text-sm font-semibold">
                                                     <img src={SethBot} alt="bot" className="w-5 h-5" />
                                                 </span>
@@ -295,7 +295,7 @@ function SmartChatbot() {
                                                             setOpenChats(true)
                                                             setAgentId(row.id)
                                                         }}
-                                                        className="border border-[#D6D6D6] cursor-pointer shadow-sm font-[500] text-[14px] py-[7px] px-[8px] rounded-lg hover:bg-[#F5F4FF] transition"
+                                                        className="border border-[#D6D6D6] cursor-pointer shadow-sm font-[400] text-[14px] py-[7px] px-[8px] rounded-lg hover:bg-[#F5F4FF] transition"
                                                     >
                                                         {t("open")}
                                                     </button>
@@ -333,7 +333,7 @@ function SmartChatbot() {
                                                                     <hr style={{ color: "#E6EAEE", marginTop: "5px" }} />
                                                                     <div className='py-2'>
                                                                         <button
-                                                                            className="block w-full cursor-pointer text-left px-4 hover:rounded-lg py-2 text-sm text-red-600 hover:bg-[#F4F5F6] font-[500]"
+                                                                            className="block w-full cursor-pointer text-left px-4 hover:rounded-lg py-2 text-sm text-red-600 hover:bg-[#F4F5F6] font-[400]"
                                                                             onClick={() => {
                                                                                 setActiveDropdown(null);
                                                                                 setDeleteRow(row.id);

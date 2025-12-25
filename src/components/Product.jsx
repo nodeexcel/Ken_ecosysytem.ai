@@ -456,7 +456,7 @@ const Product = () => {
         <div className="w-full h-full flex items-center justify-center">
           <div className=" rounded-2xl w-full max-w-full p-8">
             {/* Title */}
-            <h2 className="text-2xl font-[600] text-[#1E1E1E] mb-8 text-center">
+            <h2 className="text-[22px] font-[500] text-[#1E1E1E] mb-8 text-center">
               {t("geo.collecting_information")}
             </h2>
 
@@ -771,10 +771,10 @@ const Product = () => {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               {/* Title and Subtitle */}
               <div>
-                <h1 className="text-2xl sm:text-3xl font-[600] text-[#1E1E1E] mb-1">
+                <h1 className="text-[22px] sm:text-[24px] font-[500] text-[#1E1E1E] mb-1">
                   {t("geo.product")}
                 </h1>
-                <p className="text-[14px] text-[#5A687C]">
+                <p className="text-[14px] font-[400] text-[#5A687C]">
                   {t("geo.manage_products")}
                 </p>
               </div>
@@ -839,11 +839,11 @@ const Product = () => {
                 <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
                   {products.map((product) => (
                     <tr key={product.id} className="text-[16px] text-[#1E1E1E]">
-                      <td className="px-6 py-2 text-[16px] text-[#1E1E1E] font-medium text-start">{product.productName}</td>
-                      <td className="px-3 py-2 text-[16px] text-start">{product.slug}</td>
-                      <td className="px-3 py-2 text-[16px] text-start">{product.lastMonthSOV.toFixed(1)}%</td>
-                      <td className="px-3 py-2 text-[16px] text-start">{product.monthToDate.toFixed(1)}%</td>
-                      <td className="px-3 py-2 text-[16px] text-start">
+                      <td className="px-6 py-2 text-[16px] text-[#1E1E1E] font-[400] text-start">{product.productName}</td>
+                      <td className="px-3 py-2 text-[16px] text-[#1E1E1E] font-[400] text-start">{product.slug}</td>
+                      <td className="px-3 py-2 text-[16px] text-[#1E1E1E] font-[400] text-start">{product.lastMonthSOV.toFixed(1)}%</td>
+                      <td className="px-3 py-2 text-[16px] text-[#1E1E1E] font-[400] text-start">{product.monthToDate.toFixed(1)}%</td>
+                      <td className="px-3 py-2 text-[16px] text-[#1E1E1E] font-[400] text-start">
                         {renderGrowth(product.growth, product.growthType)}
                       </td>
                       <td className="px-6 py-2 text-center whitespace-nowrap">
@@ -898,7 +898,7 @@ const Product = () => {
               <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden relative">
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-[#E1E4EA]">
-                  <h2 className="text-lg font-[600] text-[#1E1E1E]">{t("geo.add_new_product")}</h2>
+                  <h2 className="text-[18px] font-[500] text-[#1E1E1E]">{t("geo.add_new_product")}</h2>
                   <button
                     type="button"
                     onClick={() => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { logoutState } from '../store/authSlice';
 import { discardData } from '../store/profileSlice';
 import { getNavbarData } from '../store/navbarSlice';
@@ -16,6 +16,7 @@ function Navbar({ sidebarItems }) {
     const { t } = useTranslation()
     const location = useLocation()
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams()
     const dispatch = useDispatch()
     const [showUserMenu, setShowUserMenu] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
@@ -125,11 +126,11 @@ function Navbar({ sidebarItems }) {
         // Tab name mapping for Constance (matching actual URL params)
         const constanceTabMap = {
             'chat': 'Chat',
-            'creation_studio': t("creation_studio"),
-            'scheduler': t("scheduler"),
-            'youtube': t("youtube_script_writer"),
-            'linkedin': t("linkedin_nuke"),
-            'x_post': t("x_post_generator")
+            'creation_studio': t("creation_studio") || 'Creation Studio',
+            'scheduler': 'Scheduler',
+            'youtube': t("youtube_script_writer") || 'YouTube Script Writer',
+            'linkedin': t("linkedin_nuke") || 'LinkedIn Nuke',
+            'x_post': t("x_post_generator") || 'X Post Generator'
         }
 
         // Tab name mapping for Rebecca (Phone outreach) - matches Phone.jsx sideMenuList paths
@@ -201,6 +202,12 @@ function Navbar({ sidebarItems }) {
             'search-prospects': t("search_for_prospects"),
         }
 
+        // Tab name mapping for Tara (COO) - matches Coo.jsx sideMenuList paths
+        const taraTabMap = {
+            'chat': t("tara.chat1"),
+            'presentations': t("tara.presentation"),
+        }
+
         if (paths.length === 0 || (paths.length === 1 && paths[0] === 'dashboard')) {
             return [{ label: t("ai_agents"), path: '/dashboard' }]
         }
@@ -265,10 +272,22 @@ function Navbar({ sidebarItems }) {
         
         // Handle Constance with tab param
         if (currentPath === 'content-creation') {
-            breadcrumbs.push({ label: 'Constance', path: '/dashboard/content-creation?tab=chat' })
+            const constanceTabKey = tab || 'chat'
+        
+            breadcrumbs.push({
+                label: 'Constance',
+                path: `/dashboard/content-creation?tab=${constanceTabKey}`
+            })
+        
+            // Only add tab name if tab exists and is in the map, ignore view parameter for scheduler
             if (tab && constanceTabMap[tab]) {
-                breadcrumbs.push({ label: constanceTabMap[tab], path: null })
+                breadcrumbs.push({
+                    label: constanceTabMap[tab],
+                    path: null
+                })
             }
+        
+            // Explicitly return early to prevent any view parameter, finalPage logic, or other code from adding "Create" or other breadcrumbs
             return breadcrumbs
         }
 
@@ -355,6 +374,16 @@ function Navbar({ sidebarItems }) {
             return breadcrumbs
         }
         
+        // Handle Tara (COO) with tab param
+        if (currentPath === 'coo') {
+            const taraTabKey = tab || 'chat'
+            breadcrumbs.push({ label: 'Tara', path: `/dashboard/coo?tab=${taraTabKey}` })
+            if (taraTabMap[taraTabKey]) {
+                breadcrumbs.push({ label: taraTabMap[taraTabKey], path: null })
+            }
+            return breadcrumbs
+        }
+        
         if (agentNameMap[currentPath]) {
             breadcrumbs.push({ label: agentNameMap[currentPath], path: `/dashboard/${currentPath}` })
         } else if (routeMap[currentPath]) {
@@ -370,7 +399,16 @@ function Navbar({ sidebarItems }) {
         return breadcrumbs
     }
 
-    const breadcrumbs = buildBreadcrumbs()
+    let breadcrumbs = buildBreadcrumbs()
+
+    // Filter out "Create" breadcrumb for Constance scheduler tab
+    if (location.pathname.includes('content-creation') && searchParams.get('tab') === 'scheduler') {
+        breadcrumbs = breadcrumbs.filter(crumb => 
+            crumb.label !== 'Create' && 
+            crumb.label !== 'Create Scheduler' &&
+            !crumb.label.toLowerCase().includes('create')
+        )
+    }
 
     const handleBreadcrumbClick = (path) => {
         if (path) {
@@ -394,7 +432,7 @@ function Navbar({ sidebarItems }) {
                         />
                     </div>
 
-                    <span className="bg-[#EFF0F2] border border-[#E7E9EC] text-[#5A687C] text-xs px-2 py-0.5 rounded-full font-medium tracking-wide">
+                    <span className="bg-[#EFF0F2] border border-[#E7E9EC] text-[#5A687C] text-xs px-2 py-0.5 rounded-full font-normal tracking-wide">
                         V.1.2
                     </span>
 
@@ -408,14 +446,14 @@ function Navbar({ sidebarItems }) {
                                         onClick={() => handleBreadcrumbClick(crumb.path)}
                                         className={`cursor-pointer hover:text-[#675FFF] transition-colors ${
                                             index === breadcrumbs.length - 1 
-                                                ? 'text-[#1E1E1E] dark:text-white font-medium' 
+                                                ? 'text-[#1E1E1E] dark:text-white font-[400]' 
                                                 : 'text-[#5A687C] dark:text-gray-300'
                                         }`}
                                     >
                                         {crumb.label}
                                     </span>
                                 ) : (
-                                    <span className={index === breadcrumbs.length - 1 ? 'text-[#1E1E1E] dark:text-white font-medium' : 'text-[#5A687C] dark:text-gray-300'}>
+                                    <span className={index === breadcrumbs.length - 1 ? 'text-[#1E1E1E] dark:text-white font-[400]' : 'text-[#5A687C] dark:text-gray-300'}>
                                         {crumb.label}
                                     </span>
                                 )}

@@ -59,6 +59,33 @@ export const getContents = async () => {
     }
 };
 
+export const editGeneratedContent = async (contentId, payload) => {
+    try {
+        const response = await agentInstance.patch(
+            `/edit-generated-content/${contentId}`,
+            payload
+        );
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+
+export const deleteGeneratedContent = async (contentId) => {
+    try {
+        const response = await agentInstance.delete(
+            `/delete-generated-content/${contentId}`
+        );
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+
+
+
 export const contentGenerationStatus = async (id) => {
     try {
         const response = await agentInstance.get(`/content-generation-status?content_id=${id}`,);
@@ -284,6 +311,16 @@ export const editScheduledContent = async (contentId, payload) => {
                 "Content-Type": "multipart/form-data"
             }
         });
+        return response;
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+};
+
+export const updateContent = async (contentId, payload) => {
+    try {
+        const response = await agentInstance.patch(`/update-content/${contentId}`, payload);
         return response;
     } catch (error) {
         console.error(error);

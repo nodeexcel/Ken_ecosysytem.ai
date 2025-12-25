@@ -126,7 +126,7 @@ function Dashboard() {
                         <Sidebar sidebarItems={SidebarItems} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
                     </div>
                 )}
-                <div className='lg:w-[calc(100%-72px)] w-full h-full overflow-auto'>
+                <div className='lg:w-[calc(100%-90px)] w-full h-full overflow-auto'>
                     <Outlet />
                 </div>
                 {isSidebarOpen && (

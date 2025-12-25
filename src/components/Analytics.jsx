@@ -141,9 +141,9 @@ const staticData2 = [
     return (
         <div className="w-full p-12 h-screen overflow-auto flex flex-col gap-4 ">
             <div className="flex justify-between items-center">
-                <div className='flex flex-col gap-2'>
-                    <h1 className="text-[#1E1E1E] font-[600] text-xl md:text-[24px]">{t('appointment.analytics')}</h1>
-                    <p className="text-[#1E1E1E] font-[400] text-[14px]">{t('appointment.recently_happen')}</p>
+                <div className='flex flex-col'>
+                    <h1 className="text-[#1E1E1E] font-[500] text-xl md:text-[22px]">{t('appointment.analytics')}</h1>
+                    <p className="font-[400] text-sm md:text-[14px] text-[#5A687C] mt-1">{t('appointment.recently_happen')}</p>
                 </div>
                 <div className='flex w-fit gap-2'>
                     <div className="relative w-fit">
@@ -215,7 +215,7 @@ const staticData2 = [
                                 <h1 className="text-[#5A687C] text-[14px] font-[400]">
                                     {each.label}
                                 </h1>
-                                <p className="font-[600] text-[#1E1E1E] text-[24px]">
+                                <p className="font-[400] text-[#1E1E1E] text-[18px]">
                                     {leadAnalytics[each.key] ?? 0} {t('appointment.leads')}
                                 </p>
                             </div>
@@ -237,7 +237,7 @@ const staticData2 = [
                                 <div>
                                     <img src={each.icon} alt={each.label} />
                                 </div>
-                                <p className="font-[600] text-[#1E1E1E] text-[24px]">
+                                <p className="font-[400] text-[#1E1E1E] text-[18px]">
                                     {leadAnalytics[each.key] ?? "0.0"} %
                                 </p>
                             </div>

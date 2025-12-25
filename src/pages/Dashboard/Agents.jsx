@@ -123,12 +123,12 @@ const Agents = () => {
       {/* Main Content */}
       <div className="max-w-full mx-auto pl-10 pr-20">
         {/* Welcome Message */}
-        <div className="flex flex-col text-start gap-2 pb-5 px-40 ">
-          <h1 className="font-[500] text-[30px]">
+        <div className="flex flex-col text-start gap-2 pb-10 px-40 ">
+          <h1 className="font-[400] text-[24px]">
             {t("welcome")},{" "}
             <span className="text-[#675FFF] ">{userDetails?.user?.firstName}</span>{" !"}
           </h1>
-          <p className="font-[400] text-[16px] text-[#5A687C]">
+          <p className="font-[400] text-[14px] text-[#5A687C]">
             {t("ai_agents_heading")}
           </p>
         </div>
@@ -170,12 +170,12 @@ const Agents = () => {
                 </div>
 
                 {/* Name */}
-                <h3 className="text-[20px] font-[500] text-[#1E1E1E] mb-1 ml-2">
+                <h3 className="text-[16px] font-[400] text-[#1E1E1E] mb-1 ml-2">
                   {employee.name}
                 </h3>
 
                 {/* Role */}
-                <p className="text-[14px] text-[#5A687C] font-[400] ml-2">
+                <p className="text-[15px] text-[#5A687C] font-[300] ml-2">
                   {employee.role}
                 </p>
               </div>

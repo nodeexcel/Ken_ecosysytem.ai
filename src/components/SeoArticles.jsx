@@ -344,10 +344,10 @@ function SeoArticles() {
                             </div>
                             <div className="flex flex-col gap-2">
                                 <div>
-                                    <h1 className="text-base md:text-xl font-[600] text-[#1E1E1E]">
+                                    <h1 className="text-[22px] font-[500] text-[#1E1E1E]">
                                         {t("geo.daily_prompt_generation")}
                                     </h1>
-                                    <p className="mt-1 text-sm sm:text-[16px] text-[#5A687C]">
+                                    <p className="mt-1 text-[14px] font-[400] text-[#5A687C]">
                                         {t("geo.daily_prompt_description")}
                                     </p>
                                 </div>
@@ -380,13 +380,13 @@ function SeoArticles() {
 
                 {/* Greeting below banner */}
                 <div className="flex flex-col text-start gap-1 pt-2 px-4">
-                    <h2 className="font-[600] text-lg sm:text-2xl text-[#1E1E1E]">
+                    <h2 className="text-[22px] font-[500] text-[#1E1E1E]">
                         {t("geo.hi")}{" "}
                         <span className="text-[#020202]">
                             {userDetails?.user?.firstName}
                         </span>
                     </h2>
-                    <p className="font-[400] text-[13px] sm:text-[16px] text-[#5A687C]">
+                    <p className="text-[14px] font-[400] text-[#5A687C]">
                         {t("geo.see_how_ecosystem")}
                     </p>
                 </div>
@@ -400,7 +400,7 @@ function SeoArticles() {
                                 {/* Left: value + subtitle */}
                                 <div>
                                     <div className="flex items-baseline gap-2 mb-1">
-                                        <h2 className="text-3xl font-[600] text-[#1E1E1E]">10%</h2>
+                                        <h2 className="text-[20px] font-[500] text-[#1E1E1E]">10%</h2>
                                         <Info className="w-4 h-4 text-[#5A687C]" />
                                     </div>
                                     <p className="text-[14px] text-[#5A687C]">
@@ -458,8 +458,8 @@ function SeoArticles() {
                     {/* Industry Ranking */}
                     <div className="bg-white border border-[#D6D6D6] rounded-2xl p-6 h-[420px]">
                         <div className="mb-4">
-                            <h2 className="text-xl font-[600] text-[#1E1E1E] mb-1">{t("geo.industry_ranking")}</h2>
-                            <p className="text-[14px] text-[#5A687C] mb-4">
+                            <h2 className="text-[20px] font-[500] text-[#1E1E1E] mb-1">{t("geo.industry_ranking")}</h2>
+                            <p className="text-[14px] font-[400] text-[#5A687C] mb-4">
                                 {t("geo.top_mentioned_brands")}
                             </p>
                         </div>
@@ -566,10 +566,10 @@ function SeoArticles() {
                         <div className="">
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                                 <div>
-                                    <h2 className="text-xl font-[600] text-[#1E1E1E] mb-1">
+                                    <h2 className="text-[20px] font-[500] text-[#1E1E1E] mb-1">
                                         {t("geo.industry_ranking")}
                                     </h2>
-                                    <p className="text-sm text-[#5A687C]">
+                                    <p className="text-[14px] font-[400] text-[#5A687C]">
                                         {t("geo.prompts_description")}
                                     </p>
                                 </div>
@@ -603,7 +603,7 @@ function SeoArticles() {
 
                                             {promptsData.map((prompt) => (
                                                 <tr key={prompt.id} className="text-[16px] text-[#1E1E1E]">
-                                                    <td className="px-6 py-2 text-[16px] text-[#1E1E1E] font-medium text-start">
+                                                    <td className="px-6 py-2 text-[16px] text-[#1E1E1E] font-[400] text-start">
                                                         {prompt.prompt}
                                                     </td>
                                                     <td className="px-3 py-2 text-[16px] text-start">
@@ -618,7 +618,7 @@ function SeoArticles() {
                                                             ))}
                                                         </div>
                                                     </td>
-                                                    <td className="px-3 py-2 text-[16px] text-start">
+                                                    <td className="px-3 py-2 text-[16px] text-start font-[400]">
                                                         {prompt.creationDate}
                                                     </td>
                                                     <td className="px-6 py-2 text-center whitespace-nowrap">
@@ -770,7 +770,7 @@ function SeoArticles() {
                     <div className="bg-white rounded-2xl w-full max-w-[600px] relative shadow-lg my-auto max-h-[90vh] overflow-y-auto">
                         {/* Header */}
                         <div className="flex items-center justify-between p-6 border-b border-[#E1E4EA]">
-                            <h2 className="text-xl font-[600] text-[#1E1E1E]">{t("geo.add_creation_studio")}</h2>
+                            <h2 className="text-[20px] font-[500] text-[#1E1E1E]">{t("geo.add_creation_studio")}</h2>
                             <button
                                 onClick={() => setShowAddPromptModal(false)}
                                 className="text-[#5A687C] hover:text-[#1E1E1E] cursor-pointer"

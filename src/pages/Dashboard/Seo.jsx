@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArticleIcon, AuditIcon, AutomationIcon, ConversationIcon, LeftArrow } from '../../icons/icons'
 import emileImg from "../../assets/svg/emile_logo.svg"
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -24,18 +23,6 @@ import chatInstance from '../../api/chatInstance'
 import { useDispatch, useSelector } from 'react-redux'
 import { discardSkillsData } from '../../store/agentSkillsSlice'
 import TutorialPlay from '../../assets/svg/WatchTutorialGrey.svg'
-import ProductActive from '../../assets/svg/ProductActive.svg'
-import DashboardActive from '../../assets/svg/Home Grid.svg'
-import DashboardInactive from '../../assets/svg/DashboardGrey.svg'
-import CitationActive from '../../assets/svg/CitationActive.svg'
-import CitationInactive from '../../assets/svg/CitationInactive.svg'
-import PromptActive from '../../assets/svg/PromptActive.svg'
-import PromptInactive from '../../assets/svg/PromptInactive.svg'
-import ContentActive from '../../assets/svg/ContentActive.svg'
-import ContentInactive from '../../assets/svg/ContentInactive.svg'
-import PromptsActive from '../../assets/svg/PromptsActive.svg'
-import Prompts from '../../assets/svg/Prompts.svg'
-import GeoAnalytics from '../../assets/svg/GeoAnalytics.svg'
 
 function Seo() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -156,15 +143,11 @@ function Seo() {
         {
             label: t("product") || "Product",
             path: "product",
-            iconActive: <img src={ProductActive} alt="Product" className="w-5 h-5" />,
-            iconInactive: <img src={ProductActive} alt="Product" className="w-5 h-5" />,
         },
         // Second tab Dashboard
         {
             label: t("dashboard") || "Dashboard",
             path: "articles",
-            iconActive: <img src={DashboardActive} alt="Dashboard" className="w-5 h-5" />,
-            iconInactive: <img src={DashboardInactive} alt="Dashboard" className="w-5 h-5"/>,
         },
     ]
 
@@ -373,8 +356,8 @@ function Seo() {
                     <div className="p-12 flex flex-col gap-4">
                         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                             <div className="flex flex-col gap-1">
-                                <h2 className="text-2xl font-[600] text-[#1E1E1E]">{t("geo.prompts")}</h2>
-                                <p className="text-sm text-[#5A687C]">
+                                <h2 className="text-[22px] font-[500] text-[#1E1E1E]">{t("geo.prompts")}</h2>
+                                <p className="text-[14px] font-[400] text-[#5A687C]">
                                     {t("geo.simulate_conversations_with_ai_models_across_different_platforms")}
                                 </p>
                             </div>
@@ -512,9 +495,9 @@ function Seo() {
     return (
         <div className="h-full w-full relative">
             <div className="lg:hidden flex absolute top-4 right-4 z-[9999] cursor-pointer" onClick={() => setSideBarStatus(true)} ><EllipsisVertical size={24} color='#1e1e1e' /></div>
-            <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full mt-2">
+            <div className="flex h-screen flex-col md:flex-row items-start gap-8 relative w-full mt-4">
                 {/* Sidebar */}
-                <div className="lg:flex hidden flex-col bg-white gap-4 border-t border-r border-b border-l border-[#D6D6D6] min-w-[272px] rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-89px)] mb-8 overflow-y-auto">
+                <div className="lg:flex hidden flex-col bg-white gap-4 border-t border-r border-b border-l border-[#D6D6D6] min-w-[272px] ml-2 rounded-r-2xl rounded-tl-none rounded-bl-none fixed h-[calc(100vh-105px)] mb-8 overflow-y-auto">
                     <div className=''>
                         <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => {
                             navigate("/dashboard")
@@ -540,10 +523,10 @@ function Seo() {
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
-                                    <h1 className="text-[#1E1E1E] text-[16px] font-[600]">
+                                    <h1 className="text-[#1E1E1E] text-[15px] font-[400]">
                                         {t("seo.georgio")}
                                     </h1>
-                                    <p className="text-[#5A687C] text-[14px] font-[400]">
+                                    <p className="text-[#5A687C] text-[13px] font-[300]">
                                         GEO
                                     </p>
                                 </div>
@@ -556,7 +539,7 @@ function Seo() {
                                 className="w-full flex items-center justify-center gap-2 px-2 py-2 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[600] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
                             >
                                 <img src={TutorialPlay} className="w-4 h-4" />
-                                <span className='text-md font-md'>{t("watch_tutorial") || "Watch Tutorial"}</span>
+                                <span className='text-13 font-[300]'>{t("watch_tutorial") || "Watch Tutorial"}</span>
                             </button>
                             <hr className='border border-transparent w-full' />
                         </div>
@@ -570,15 +553,7 @@ function Seo() {
                                     className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                         }`}
                                 >
-                                    {isActive ? (
-                                        e.iconActive
-                                    ) : (
-                                        <div className="flex items-center gap-2">
-                                            <div className='group-hover:hidden'>{e.iconInactive}</div>
-                                            <div className='hidden group-hover:block'>{e.iconActive}</div>
-                                        </div>
-                                    )}
-                                    <span className={`font-[400] text-[16px] ${isActive ? "text-[#000000]" : "text-[#000000] group-hover:text-[#1E1E1E]"}`}>
+                                    <span className={`font-[400] text-[14px] ml-3 ${isActive ? "text-[#000000]" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
                                         {e.label}
                                     </span>
                                 </div>
@@ -587,87 +562,80 @@ function Seo() {
 
                         {/* Analytics Section */}
                         <div className="w-full">
-                            {/* Analytics Header */}
-                            <div
-                                onClick={() => setIsAnalyticsExpanded(!isAnalyticsExpanded)}
-                                className="flex justify-between items-center px-2 py-2 cursor-pointer hover:bg-[#F9F8FF] rounded-2xl transition-colors"
-                            >
-                                <div className="flex items-center gap-1.5">
-                                    <img 
-                                        src={GeoAnalytics} 
-                                        alt="Analytics" 
-                                        className="w-5 h-5"
-                                    />
-                                    <span className="font-[400] text-[16px] text-[#000000]">
-                                        {t("seo.analytics")}
-                                    </span>
-                                </div>
-                                <ChevronUp 
-                                    className={`w-4 h-4 text-[#5A687C] transition-transform duration-200 ${isAnalyticsExpanded ? '' : 'rotate-180'}`} 
-                                />
-                            </div>
+                            {/* Compute analytics active state */}
+                            {(() => {
+                                const isAnalyticsActive = [
+                                    'citation-analytics',
+                                    'prompt-analytics',
+                                    'content-analytics'
+                                ].includes(activeSidebarItem);
 
-                            {/* Analytics Sub-tabs */}
-                            {isAnalyticsExpanded && (
-                                <div className="ml-6 mt-1 space-y-1">
-                                    {/* Citation Analytics */}
-                                    <div
-                                        onClick={() => handleTabChange('citation-analytics')}
-                                        className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
-                                            activeSidebarItem === 'citation-analytics'
-                                                ? 'bg-[#E9E8F9]'
-                                                : 'hover:bg-[#F9F8FF]'
-                                        }`}
-                                    >
-                                        {activeSidebarItem === 'citation-analytics' ? (
-                                            <img src={CitationActive} alt="Citation Analytics" className="w-5 h-5" />
-                                        ) : (
-                                            <img src={CitationInactive} alt="Citation Analytics" className="w-5 h-5" />
-                                        )}
-                                        <span className={`font-[400] text-[16px] ${activeSidebarItem === 'citation-analytics' ? 'text-[#000000]' : 'text-[#000000]'}`}>
-                                            {t("seo.citation_analytics")}
-                                        </span>
-                                    </div>
+                                return (
+                                    <>
+                                        {/* Analytics Header */}
+                                        <div
+                                            onClick={() => setIsAnalyticsExpanded(!isAnalyticsExpanded)}
+                                            className="flex justify-between items-center px-2 py-2 cursor-pointer hover:bg-[#F9F8FF] rounded-2xl transition-colors"
+                                        >
+                                            <div className="flex items-center gap-1.5">
+                                                <span className={`font-[400] text-[14px] ml-3 ${isAnalyticsActive ? 'text-black' : 'text-grey-200'}`}>
+                                                    {t("seo.analytics")}
+                                                </span>
+                                            </div>
+                                            <ChevronUp 
+                                                className={`w-4 h-4 transition-transform duration-200 ${isAnalyticsExpanded ? '' : 'rotate-180'} ${isAnalyticsActive ? 'text-black' : 'text-[#5A687C]'}`} 
+                                            />
+                                        </div>
 
-                                    {/* Prompt Analytics */}
-                                    <div
-                                        onClick={() => handleTabChange('prompt-analytics')}
-                                        className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
-                                            activeSidebarItem === 'prompt-analytics'
-                                                ? 'bg-[#E9E8F9]'
-                                                : 'hover:bg-[#F9F8FF]'
-                                        }`}
-                                    >
-                                        {activeSidebarItem === 'prompt-analytics' ? (
-                                            <img src={PromptActive} alt="Prompt Analytics" className="w-5 h-5" />
-                                        ) : (
-                                            <img src={PromptInactive} alt="Prompt Analytics" className="w-5 h-5" />
-                                        )}
-                                        <span className={`font-[400] text-[16px] ${activeSidebarItem === 'prompt-analytics' ? 'text-[#000000]' : 'text-[#000000]'}`}>
-                                            {t("seo.prompt_analytics")}
-                                        </span>
-                                    </div>
+                                        {/* Analytics Sub-tabs */}
+                                        {isAnalyticsExpanded && (
+                                            <div className="ml-6 mt-1 space-y-1">
+                                                {/* Citation Analytics */}
+                                                <div
+                                                    onClick={() => handleTabChange('citation-analytics')}
+                                                    className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
+                                                        activeSidebarItem === 'citation-analytics'
+                                                            ? 'bg-[#E9E8F9]'
+                                                            : 'hover:bg-[#F9F8FF]'
+                                                    }`}
+                                                >
+                                                    <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'citation-analytics' ? 'text-black' : 'text-grey-200'}`}>
+                                                        {t("seo.citation_analytics")}
+                                                    </span>
+                                                </div>
 
-                                    {/* Content Analytics */}
-                                    <div
-                                        onClick={() => handleTabChange('content-analytics')}
-                                        className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
-                                            activeSidebarItem === 'content-analytics'
-                                                ? 'bg-[#E9E8F9]'
-                                                : 'hover:bg-[#F9F8FF]'
-                                        }`}
-                                    >
-                                        {activeSidebarItem === 'content-analytics' ? (
-                                            <img src={ContentActive} alt="Content Analytics" className="w-5 h-5" />
-                                        ) : (
-                                            <img src={ContentInactive} alt="Content Analytics" className="w-5 h-5" />
+                                                {/* Prompt Analytics */}
+                                                <div
+                                                    onClick={() => handleTabChange('prompt-analytics')}
+                                                    className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
+                                                        activeSidebarItem === 'prompt-analytics'
+                                                            ? 'bg-[#E9E8F9]'
+                                                            : 'hover:bg-[#F9F8FF]'
+                                                    }`}
+                                                >
+                                                    <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'prompt-analytics' ? 'text-black' : 'text-grey-200'}`}>
+                                                        {t("seo.prompt_analytics")}
+                                                    </span>
+                                                </div>
+
+                                                {/* Content Analytics */}
+                                                <div
+                                                    onClick={() => handleTabChange('content-analytics')}
+                                                    className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
+                                                        activeSidebarItem === 'content-analytics'
+                                                            ? 'bg-[#E9E8F9]'
+                                                            : 'hover:bg-[#F9F8FF]'
+                                                    }`}
+                                                >
+                                                    <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'content-analytics' ? 'text-black' : 'text-grey-200'}`}>
+                                                        {t("seo.content_analytics")}
+                                                    </span>
+                                                </div>
+                                            </div>
                                         )}
-                                        <span className={`font-[400] text-[16px] ${activeSidebarItem === 'content-analytics' ? 'text-[#000000]' : 'text-[#000000]'}`}>
-                                            {t("seo.content_analytics")}
-                                        </span>
-                                    </div>
-                                </div>
-                            )}
+                                    </>
+                                );
+                            })()}
                         </div>
 
                         {/* Prompts Tab */}
@@ -676,19 +644,7 @@ function Seo() {
                             className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === 'prompts' ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                 }`}
                         >
-                            {activeSidebarItem === 'prompts' ? (
-                                <img src={PromptsActive} alt="Prompts" className="w-5 h-5" />
-                            ) : (
-                                <div className="flex items-center gap-2">
-                                    <div className='group-hover:hidden'>
-                                        <img src={Prompts} alt="Prompts" className="w-5 h-5" />
-                                    </div>
-                                    <div className='hidden group-hover:block'>
-                                        <img src={PromptsActive} alt="Prompts" className="w-5 h-5" />
-                                    </div>
-                                </div>
-                            )}
-                            <span className={`font-[400] text-[16px] ${activeSidebarItem === 'prompts' ? "text-[#000000]" : "text-[#000000] group-hover:text-[#1E1E1E]"}`}>
+                            <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'prompts' ? "text-[#000000]" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
                                 {t("seo.prompts")}
                             </span>
                         </div>
@@ -769,15 +725,7 @@ function Seo() {
                                         className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                             }`}
                                     >
-                                        {isActive ? (
-                                            e.iconActive
-                                        ) : (
-                                            <div className="flex items-center gap-2">
-                                                <div className='group-hover:hidden'>{e.iconInactive}</div>
-                                                <div className='hidden group-hover:block'>{e.iconActive}</div>
-                                            </div>
-                                        )}
-                                        <span className={`font-[400] text-[16px] ${isActive ? "text-[#675FFF]" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                                        <span className={`font-[400] text-[14px] ml-3 ${isActive ? "text-[#000000]" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
                                             {e.label}
                                         </span>
                                     </div>
@@ -786,96 +734,88 @@ function Seo() {
 
                             {/* Analytics Section - Mobile */}
                             <div className="w-full mt-2">
-                                {/* Analytics Header */}
-                                <div
-                                    onClick={() => setIsAnalyticsExpanded(!isAnalyticsExpanded)}
-                                    className="flex justify-between items-center px-2 py-2 cursor-pointer hover:bg-[#F9F8FF] rounded-2xl transition-colors"
-                                >
-                                    <div className="flex items-center gap-1.5">
-                                        <img 
-                                            src={GeoAnalytics} 
-                                            alt="Analytics" 
-                                            className="w-5 h-5"
-                                        />
-                                        <span className="font-[400] text-[16px] text-[#000000]">
-                                            Analytics
-                                        </span>
-                                    </div>
-                                    <ChevronUp 
-                                        className={`w-4 h-4 text-[#5A687C] transition-transform duration-200 ${isAnalyticsExpanded ? '' : 'rotate-180'}`} 
-                                    />
-                                </div>
+                                {(() => {
+                                    const isAnalyticsActive = [
+                                        'citation-analytics',
+                                        'prompt-analytics',
+                                        'content-analytics'
+                                    ].includes(activeSidebarItem);
 
-                                {/* Analytics Sub-tabs */}
-                                {isAnalyticsExpanded && (
-                                    <div className="ml-6 mt-1 space-y-1">
-                                        {/* Citation Analytics */}
-                                        <div
-                                            onClick={() => {
-                                                handleTabChange('citation-analytics')
-                                                setSideBarStatus(false)
-                                            }}
-                                            className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
-                                                activeSidebarItem === 'citation-analytics'
-                                                    ? 'bg-[#E9E8F9]'
-                                                    : 'hover:bg-[#F9F8FF]'
-                                            }`}
-                                        >
-                                            {activeSidebarItem === 'citation-analytics' ? (
-                                                <img src={CitationActive} alt="Citation Analytics" className="w-5 h-5" />
-                                            ) : (
-                                                <img src={CitationInactive} alt="Citation Analytics" className="w-5 h-5" />
-                                            )}
-                                            <span className={`font-[400] text-[16px] ${activeSidebarItem === 'citation-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`}>
-                                                Citation Analytics
-                                            </span>
-                                        </div>
+                                    return (
+                                        <>
+                                            {/* Analytics Header */}
+                                            <div
+                                                onClick={() => setIsAnalyticsExpanded(!isAnalyticsExpanded)}
+                                                className="flex justify-between items-center px-2 py-2 cursor-pointer hover:bg-[#F9F8FF] rounded-2xl transition-colors"
+                                            >
+                                                <div className="flex items-center gap-1.5">
+                                                    <span className={`font-[400] text-[14px] ml-3 ${isAnalyticsActive ? 'text-black' : 'text-grey-200'}`}>
+                                                        Analytics
+                                                    </span>
+                                                </div>
+                                                <ChevronUp 
+                                                    className={`w-4 h-4 transition-transform duration-200 ${isAnalyticsExpanded ? '' : 'rotate-180'} ${isAnalyticsActive ? 'text-black' : 'text-[#5A687C]'}`} 
+                                                />
+                                            </div>
 
-                                        {/* Prompt Analytics */}
-                                        <div
-                                            onClick={() => {
-                                                handleTabChange('prompt-analytics')
-                                                setSideBarStatus(false)
-                                            }}
-                                            className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
-                                                activeSidebarItem === 'prompt-analytics'
-                                                    ? 'bg-[#E9E8F9]'
-                                                    : 'hover:bg-[#F9F8FF]'
-                                            }`}
-                                        >
-                                            {activeSidebarItem === 'prompt-analytics' ? (
-                                                <img src={PromptActive} alt="Prompt Analytics" className="w-5 h-5" />
-                                            ) : (
-                                                <img src={PromptInactive} alt="Prompt Analytics" className="w-5 h-5" />
-                                            )}
-                                            <span className={`font-[400] text-[16px] ${activeSidebarItem === 'prompt-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`}>
-                                                Prompt Analytics
-                                            </span>
-                                        </div>
+                                            {/* Analytics Sub-tabs */}
+                                            {isAnalyticsExpanded && (
+                                                <div className="ml-6 mt-1 space-y-1">
+                                                    {/* Citation Analytics */}
+                                                    <div
+                                                        onClick={() => {
+                                                            handleTabChange('citation-analytics')
+                                                            setSideBarStatus(false)
+                                                        }}
+                                                        className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
+                                                            activeSidebarItem === 'citation-analytics'
+                                                                ? 'bg-[#E9E8F9]'
+                                                                : 'hover:bg-[#F9F8FF]'
+                                                        }`}
+                                                    >
+                                                        <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'citation-analytics' ? 'text-black' : 'text-grey-200'}`}>
+                                                            Citation Analytics
+                                                        </span>
+                                                    </div>
 
-                                        {/* Content Analytics */}
-                                        <div
-                                            onClick={() => {
-                                                handleTabChange('content-analytics')
-                                                setSideBarStatus(false)
-                                            }}
-                                            className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
-                                                activeSidebarItem === 'content-analytics'
-                                                    ? 'bg-[#E9E8F9]'
-                                                    : 'hover:bg-[#F9F8FF]'
-                                            }`}
-                                        >
-                                            {activeSidebarItem === 'content-analytics' ? (
-                                                <img src={ContentActive} alt="Content Analytics" className="w-5 h-5" />
-                                            ) : (
-                                                <img src={ContentInactive} alt="Content Analytics" className="w-5 h-5" />
+                                                    {/* Prompt Analytics */}
+                                                    <div
+                                                        onClick={() => {
+                                                            handleTabChange('prompt-analytics')
+                                                            setSideBarStatus(false)
+                                                        }}
+                                                        className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
+                                                            activeSidebarItem === 'prompt-analytics'
+                                                                ? 'bg-[#E9E8F9]'
+                                                                : 'hover:bg-[#F9F8FF]'
+                                                        }`}
+                                                    >
+                                                        <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'prompt-analytics' ? 'text-black' : 'text-grey-200'}`}>
+                                                            Prompt Analytics
+                                                        </span>
+                                                    </div>
+
+                                                    {/* Content Analytics */}
+                                                    <div
+                                                        onClick={() => {
+                                                            handleTabChange('content-analytics')
+                                                            setSideBarStatus(false)
+                                                        }}
+                                                        className={`flex items-center gap-1.5 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
+                                                            activeSidebarItem === 'content-analytics'
+                                                                ? 'bg-[#E9E8F9]'
+                                                                : 'hover:bg-[#F9F8FF]'
+                                                        }`}
+                                                    >
+                                                        <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'content-analytics' ? 'text-black' : 'text-grey-200'}`}>
+                                                            Content Analytics
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             )}
-                                            <span className={`font-[400] text-[16px] ${activeSidebarItem === 'content-analytics' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`}>
-                                                Content Analytics
-                                            </span>
-                                        </div>
-                                    </div>
-                                )}
+                                        </>
+                                    );
+                                })()}
                             </div>
 
                             {/* Prompts Tab - Mobile */}
@@ -890,12 +830,7 @@ function Seo() {
                                         : 'hover:bg-[#F9F8FF]'
                                 }`}
                             >
-                                {activeSidebarItem === 'prompts' ? (
-                                    <img src={PromptsActive} alt="Prompts" className="w-5 h-5" />
-                                ) : (
-                                    <img src={Prompts} alt="Prompts" className="w-5 h-5" />
-                                )}
-                                <span className={`font-[400] text-[16px] ${activeSidebarItem === 'prompts' ? 'text-[#675FFF]' : 'text-[#5A687C]'}`}>
+                                <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'prompts' ? 'text-[#000000]' : 'text-grey-200 group-hover:text-[#1E1E1E]'}`}>
                                     {t("seo.prompts")}
                                 </span>
                             </div>
