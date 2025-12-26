@@ -492,7 +492,7 @@ const renderEmptyState = (tabKey, onAction) => {
 
   return (
     <div className="flex p-12 flex-col w-full items-start gap-4 ">
-      <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8 mt-1">
+      <h1 className="font-[500] text-[#1e1e1e] text-[22px] leading-8 mt-1">
         {t("brain_ai.knowledge.sub_heading")}
       </h1>
       <div className="flex w-full items-center justify-between gap-4 mt-4">
@@ -521,7 +521,7 @@ const renderEmptyState = (tabKey, onAction) => {
             setOpen(true);
             setActiveDropdown(null);
           }}
-          className="flex items-center cursor-pointer gap-2 px-4 py-2 bg-[#675FFF] border border-[#5f58e8] rounded-xl text-white text-sm font-medium"
+          className="flex items-center cursor-pointer gap-2 px-4 py-2 bg-[#675FFF] border border-[#5f58e8] rounded-lg text-white text-sm font-medium"
         >
           + {t("brain_ai.knowledge.add")} {renderHeader()}
         </button>

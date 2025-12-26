@@ -1,4 +1,12 @@
-import { CheckCircle2, CircleUserRound, CreditCardIcon, EllipsisVertical, Wallet, EyeIcon, EyeOffIcon, House, Pencil, SettingsIcon, Upload, UsersIcon, X, XCircle, UsersRound, Search, Plus, EllipsisIcon } from "lucide-react";
+import { CheckCircle2, CreditCardIcon, EllipsisVertical, EyeIcon, EyeOffIcon, Pencil, SettingsIcon, Upload, UsersIcon, X, XCircle, Search, Plus, EllipsisIcon } from "lucide-react";
+import MyProfileActive from '../../assets/svg/MyProfileActive.svg';
+import MyProfileInactive from '../../assets/svg/MyProfileInactive.svg';
+import GeneralActive from '../../assets/svg/GeneralActive.svg';
+import GeneralInactive from '../../assets/svg/GeneralInaactive.svg';
+import PlanActive from '../../assets/svg/PlanActive.svg';
+import PlanInactive from '../../assets/svg/PlanInactive.svg';
+import TeamActive from '../../assets/svg/TeamActive.svg';
+import TeamMembersInactive from '../../assets/svg/TeamMembersInactive.svg';
 import React, { useEffect, useRef, useState } from "react";
 import { MdOutlineKeyboardArrowLeft } from 'react-icons/md';
 import profile_pic from '../../assets/images/profile.png';
@@ -13,7 +21,7 @@ import { updatePassword } from "../../api/auth";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getTeamMembers, removeTeamMember, sendInviteEmail, updateTeamMember, updateGeneralSettings } from "../../api/teamMember";
 import TransactionHistory from "../../components/TransactionHistory";
-import { Delete, Edit, LeftArrow, PasswordLock, PlanIcon, ProfileEditIcon, RefreshIcon, Settings, SuccessIcon, TeamMemberIcon, Ellipsis } from "../../icons/icons";
+import { Delete, Edit, LeftArrow, PasswordLock, RefreshIcon, SuccessIcon, Ellipsis } from "../../icons/icons";
 import { discardData } from "../../store/profileSlice";
 import { SelectDropdown } from "../../components/Dropdown";
 import { FaChevronDown } from "react-icons/fa";
@@ -1719,7 +1727,7 @@ const SettingsPage = () => {
               <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl relative">
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-[#E1E4EA]">
-                  <h2 className="text-[#1E1E1E] font-semibold text-xl leading-6">
+                  <h2 className="text-[#1E1E1E] font-[500] text-[20px] leading-6">
                     {t("settings.tab_3_list.invite_team_member")}
                   </h2>
                   <button
@@ -2112,47 +2120,60 @@ const SettingsPage = () => {
           <div className="flex inter flex-col w-full px-3 items-start gap-2 relative">
             <div
               onClick={() => handleSelect("my-profile")}
-              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "my-profile" ? "bg-[#F0EFFF] dark:bg-[#2D1F5F]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
+              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "my-profile" ? "bg-[#E9E8F9] dark:bg-[#2D1F5F]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                 }`}
             >
-              {activeSidebarItem === "my-profile" ? <CircleUserRound className="text-[#675FFF]" /> : <div className="flex items-center gap-2"><div className='group-hover:hidden'><CircleUserRound className="text-gray-500 dark:text-gray-400" /></div> <div className='hidden group-hover:block'><CircleUserRound className="dark:text-white" /></div></div>}
-              <span className={`font-[400] text-[14px] ${activeSidebarItem === "my-profile" ? "text-black dark:text-white" : "text-black dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
+              <img 
+                src={activeSidebarItem === "my-profile" ? MyProfileActive : MyProfileInactive} 
+                alt="My Profile" 
+                className="w-5 h-5" 
+              />
+              <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "my-profile" ? "text-black dark:text-white" : "text-grey-200 dark:text-gray-300"}`}>
               {t("settings.my_profile")}
               </span>
             </div>
 
             <div
               onClick={() => handleSelect("general")}
-              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "general" ? "bg-[#F0EFFF] dark:bg-[#2D1F5F]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
+              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "general" ? "bg-[#E9E8F9] dark:bg-[#2D1F5F]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                 }`}
             >
-              {activeSidebarItem === "general" ? <House className="text-[#675FFF]" status={activeSidebarItem === "general"} /> :
-                <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<House className="text-gray-500 dark:text-gray-400" status={activeSidebarItem === "general"} />}</div> <div className='hidden group-hover:block'>{<House hover={true} className="dark:text-white" />}</div></div>}
-              <span className={`font-[400] text-[14px] ${activeSidebarItem === "general" ? "text-black dark:text-white" : "text-black dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
+              <img 
+                src={activeSidebarItem === "general" ? GeneralActive : GeneralInactive} 
+                alt="General" 
+                className="w-5 h-5" 
+              />
+              <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "general" ? "text-black dark:text-white" : "text-grey-200 dark:text-gray-300"}`}>
                 {t("settings.tab_1")}
               </span>
             </div>
 
             <div
               onClick={() => handleSelect("billing")}
-              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#EDF3FF] dark:bg-[#1E2A4A]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
+              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#E9E8F9] dark:bg-[#1E2A4A]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                 }`}
             >
-              {activeSidebarItem === "billing" ? <Wallet className="text-[#675FFF]" status={activeSidebarItem === "billing"} /> :
-                <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<Wallet className="text-gray-500 dark:text-gray-400" status={activeSidebarItem === "billing"} />}</div> <div className='hidden group-hover:block'>{<Wallet hover={true} className="dark:text-white" />}</div></div>}
-              <span className={`font-[400] text-[14px] ${activeSidebarItem === "billing" ? "text-black dark:text-white" : "text-black dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
+              <img 
+                src={activeSidebarItem === "billing" ? PlanActive : PlanInactive} 
+                alt="Billing" 
+                className="w-5 h-5" 
+              />
+              <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "billing" ? "text-black dark:text-white" : "text-grey-200 dark:text-gray-300"}`}>
                 {t("settings.tab_2")}
               </span>
             </div>
 
             <div
               onClick={() => handleSelect("team")}
-              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "team" ? "bg-[#EDF3FF] dark:bg-[#1E2A4A]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
+              className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "team" ? "bg-[#E9E8F9] dark:bg-[#1E2A4A]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                 }`}
             >
-              {activeSidebarItem === "team" ? <UsersRound className="text-[#675FFF]" status={activeSidebarItem === "team"} /> :
-                <div className="flex items-center gap-2"><div className='group-hover:hidden'><UsersRound className="text-gray-500 dark:text-gray-400" status={activeSidebarItem === "team"} /></div> <div className='hidden group-hover:block'><UsersRound hover={true} className="dark:text-white" /></div></div>}
-              <span className={`font-[400] text-[14px] ${activeSidebarItem === "team" ? "text-black dark:text-white" : "text-black dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
+              <img 
+                src={activeSidebarItem === "team" ? TeamActive : TeamMembersInactive} 
+                alt="Team" 
+                className="w-5 h-5" 
+              />
+              <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "team" ? "text-black dark:text-white" : "text-grey-200 dark:text-gray-300"}`}>
                 {t("settings.tab_3")}
               </span>
             </div>
@@ -2249,11 +2270,15 @@ const SettingsPage = () => {
                   handleSelect("my-profile")
                   setSideBarStatus(false)
                 }}
-                className={`flex group justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "my-profile" ? "bg-[#F0EFFF] dark:bg-[#2D1F5F]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
+                className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "my-profile" ? "bg-[#E9E8F9] dark:bg-[#2D1F5F]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                   }`}
               >
-                {activeSidebarItem === "my-profile" ? <ProfileEditIcon /> : <div className="flex items-center gap-2"><div className='group-hover:hidden'><ProfileEditIcon /></div> <div className='hidden group-hover:block'><ProfileEditIcon /></div></div>}
-                <span className={`font-[400] text-[16px] ${activeSidebarItem === "my-profile" ? "text-[#675FFF] dark:text-[#675FFF]" : "text-[#5A687C] dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
+                <img 
+                  src={activeSidebarItem === "my-profile" ? MyProfileActive : MyProfileInactive} 
+                  alt="My Profile" 
+                  className="w-5 h-5" 
+                />
+                <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "my-profile" ? "text-black dark:text-white" : "text-grey-200 dark:text-gray-300"}`}>
                   My Profile
                 </span>
               </div>
@@ -2263,11 +2288,15 @@ const SettingsPage = () => {
                   handleSelect("general")
                   setSideBarStatus(false)
                 }}
-                className={`flex group justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "general" ? "bg-[#F0EFFF] dark:bg-[#2D1F5F]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
+                className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "general" ? "bg-[#E9E8F9] dark:bg-[#2D1F5F]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                   }`}
               >
-                {activeSidebarItem === "general" ? <Settings status={activeSidebarItem === "general"} /> : <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<Settings status={activeSidebarItem === "general"} />}</div> <div className='hidden group-hover:block'>{<Settings hover={true} />}</div></div>}
-                <span className={`font-[400] text-[16px] ${activeSidebarItem === "general" ? "text-[#675FFF] dark:text-[#675FFF]" : "text-[#5A687C] dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
+                <img 
+                  src={activeSidebarItem === "general" ? GeneralActive : GeneralInactive} 
+                  alt="General" 
+                  className="w-5 h-5" 
+                />
+                <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "general" ? "text-black dark:text-white" : "text-grey-200 dark:text-gray-300"}`}>
                   {t("settings.tab_1")}
                 </span>
               </div>
@@ -2277,12 +2306,15 @@ const SettingsPage = () => {
                   handleSelect("billing")
                   setSideBarStatus(false)
                 }}
-                className={`flex group justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#EDF3FF] dark:bg-[#1E2A4A]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
+                className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#E9E8F9] dark:bg-[#1E2A4A]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                   }`}
               >
-                {activeSidebarItem === "billing" ? <PlanIcon status={activeSidebarItem === "billing"} /> :
-                  <div className="flex items-center gap-2"><div className='group-hover:hidden'>{<PlanIcon status={activeSidebarItem === "billing"} />}</div> <div className='hidden group-hover:block'>{<PlanIcon hover={true} />}</div></div>}
-                <span className={`font-[400] text-[16px] ${activeSidebarItem === "billing" ? "text-[#675FFF] dark:text-[#675FFF]" : "text-[#5A687C] dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
+                <img 
+                  src={activeSidebarItem === "billing" ? PlanActive : PlanInactive} 
+                  alt="Billing" 
+                  className="w-5 h-5" 
+                />
+                <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "billing" ? "text-black dark:text-white" : "text-grey-200 dark:text-gray-300"}`}>
                   {t("settings.tab_2")}
                 </span>
               </div>
@@ -2292,12 +2324,15 @@ const SettingsPage = () => {
                   handleSelect("team")
                   setSideBarStatus(false)
                 }}
-                className={`flex group justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded cursor-pointer ${activeSidebarItem === "team" ? "bg-[#EDF3FF] dark:bg-[#1E2A4A]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
+                className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "team" ? "bg-[#E9E8F9] dark:bg-[#1E2A4A]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                   }`}
               >
-                {activeSidebarItem === "team" ? <TeamMemberIcon status={activeSidebarItem === "team"} /> :
-                  <div className="flex items-center gap-2"><div className='group-hover:hidden'><TeamMemberIcon status={activeSidebarItem === "team"} /></div> <div className='hidden group-hover:block'><TeamMemberIcon hover={true} /></div></div>}
-                <span className={`font-[400] text-[16px] ${activeSidebarItem === "team" ? "text-[#675FFF] dark:text-[#675FFF]" : "text-[#5A687C] dark:text-gray-300 group-hover:text-[#1E1E1E] dark:group-hover:text-white"}`}>
+                <img 
+                  src={activeSidebarItem === "team" ? TeamActive : TeamMembersInactive} 
+                  alt="Team" 
+                  className="w-5 h-5" 
+                />
+                <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "team" ? "text-black dark:text-white" : "text-grey-200 dark:text-gray-300"}`}>
                   {t("settings.tab_3")}
                 </span>
               </div>

@@ -494,10 +494,10 @@ const ManagePlan = ({ onClose }) => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 relative">
           <div className="flex flex-col gap-1">
-            <h1 className="text-[24px] sm:text-2xl font-[600] text-[#1E1E1E]">
+            <h1 className="text-[22px] font-[500] text-[#1E1E1E]">
               {t("settings.tab_2_list.manage_plan")}
             </h1>
-            <p className="text-[14px] sm:text-[16px] text-[#5A687C] font-[400]">
+            <p className="text-[14px] text-[#5A687C] font-[400]">
               {t("settings.tab_2_list.manage_plan_description")}
             </p>
           </div>

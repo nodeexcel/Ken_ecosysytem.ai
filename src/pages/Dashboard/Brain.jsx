@@ -4,9 +4,12 @@ import Contacts from "../../components/Contacts"
 import Knowledge from "../../components/Knowledge"
 import Integration from "../../components/Integration"
 import { LeftArrow } from "../../icons/icons"
-import integrationSvg from "../../assets/svg/Integration.svg"
-import userBrainSvg from "../../assets/svg/UserBrain.svg"
-import knowledgeBookSvg from "../../assets/svg/KnowledgeBook.svg"
+import IntegrationActive from "../../assets/svg/IntegrationActive.svg"
+import IntegrationInactive from "../../assets/svg/Integration.svg"
+import KnowledgeActive from "../../assets/svg/KnowledgeActive.svg"
+import KnowledgeBook from "../../assets/svg/KnowledgeBook.svg"
+import MyProfileActive from "../../assets/svg/MyProfileActive.svg"
+import MyProfileInactive from "../../assets/svg/MyProfileInactive.svg"
 import { useSelector } from "react-redux"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { CheckCircle, XCircle, Instagram, ArrowRight, RefreshCw, X, EllipsisVertical } from "lucide-react"
@@ -45,62 +48,10 @@ const BrainAI = () => {
   }, [searchParams])
 
 
-  const IntegrationIcon = ({ isActive, isHover }) => {
-    const color = isActive ? "#2563eb" : isHover ? "#1E1E1E" : "#5A687C"
-    return (
-      <img 
-        src={integrationSvg} 
-        alt="Integration" 
-        className="w-4 h-4" 
-        style={{ 
-          filter: isActive 
-            ? "brightness(0) saturate(100%) invert(27%) sepia(96%) saturate(7482%) hue-rotate(245deg) brightness(98%) contrast(96%)" 
-            : isHover 
-            ? "brightness(0) saturate(100%) invert(8%) sepia(4%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)"
-            : "brightness(0) saturate(100%) invert(38%) sepia(6%) saturate(1000%) hue-rotate(180deg) brightness(95%) contrast(88%)"
-        }} 
-      />
-    )
-  }
-
-  const ContactsIcon = ({ isActive, isHover }) => {
-    return (
-      <img
-        src={userBrainSvg}
-        alt="Contacts"
-        className="w-4 h-4"
-        style={{
-          filter: isActive
-            ? "brightness(0) saturate(100%) invert(30%) sepia(96%) saturate(2291%) hue-rotate(221deg) brightness(92%) contrast(99%)"
-            : isHover
-            ? "brightness(0) saturate(100%) invert(8%) sepia(4%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)"
-            : "brightness(0) saturate(100%) invert(38%) sepia(6%) saturate(1000%) hue-rotate(180deg) brightness(95%) contrast(88%)"
-        }}
-      />
-    )
-  }
-
-  const KnowledgeIconLocal = ({ isActive, isHover }) => {
-    return (
-      <img
-        src={knowledgeBookSvg}
-        alt="Knowledge"
-        className="w-4 h-4"
-        style={{
-          filter: isActive
-            ? "brightness(0) saturate(100%) invert(30%) sepia(96%) saturate(2291%) hue-rotate(221deg) brightness(92%) contrast(99%)"
-            : isHover
-            ? "brightness(0) saturate(100%) invert(8%) sepia(4%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)"
-            : "brightness(0) saturate(100%) invert(38%) sepia(6%) saturate(1000%) hue-rotate(180deg) brightness(95%) contrast(88%)"
-        }}
-      />
-    )
-  }
-
   const sideMenuItems = [
-    { label: `${t("knowledge")}`, icon: <KnowledgeIconLocal isActive={activePath == "knowledge"} />, hoverIcon: <KnowledgeIconLocal isHover={true} />, path: "knowledge" },
-    { label: `${t("integration")}`, icon: <IntegrationIcon isActive={activePath == "integration"} />, hoverIcon: <IntegrationIcon isHover={true} />, path: "integration" },
-    { label: `${t("contact")}`, icon: <ContactsIcon isActive={activePath == "contacts"} />, hoverIcon: <ContactsIcon isHover={true} />, path: "contacts" },
+    { label: `${t("knowledge")}`, path: "knowledge" },
+    { label: `${t("integration")}`, path: "integration" },
+    { label: `${t("contact")}`, path: "contacts" },
   ]
 
   const renderMainContent = () => {
@@ -288,9 +239,19 @@ const BrainAI = () => {
             </div>
             <div className="flex flex-col w-full items-start gap-2 px-3">
               {sideMenuItems.map((item, i) => {
-                const Icon = item.icon
-                const hoverIcon = item.hoverIcon
                 const isActive = activePath === item.path
+                
+                // Get the appropriate icon for each item
+                const getIcon = () => {
+                  if (item.path === 'knowledge') {
+                    return isActive ? KnowledgeActive : KnowledgeBook
+                  } else if (item.path === 'integration') {
+                    return isActive ? IntegrationActive : IntegrationInactive
+                  } else if (item.path === 'contacts') {
+                    return isActive ? MyProfileActive : MyProfileInactive
+                  }
+                  return null
+                }
 
                 return (
                   <button
@@ -304,17 +265,19 @@ const BrainAI = () => {
                         localStorage.removeItem('selectedIntegration');
                       }
                     }}
-                    className={`cursor-pointer group flex items-center justify-start gap-1.5 px-2 py-2 w-full h-auto rounded-2xl
+                    className={`cursor-pointer group flex justify-center md:justify-start items-center gap-1 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl
                       ${isActive
-                        ? "bg-[#F0EFFF] text-blue-600"
-                        : "text-[#5A687C] hover:bg-[#F9F8FF] hover:text-[#1E1E1E]"
+                        ? "bg-[#E9E8F9]"
+                        : "text-[#5A687C] hover:bg-[#F9F8FF]"
                       }`}
                     
                   >
-                    {isActive ? Icon
-                      : <div className="flex items-center gap-2"><div className='group-hover:hidden'>{Icon}</div> <div className='hidden group-hover:block'>{hoverIcon}</div></div>
-                    }
-                    <span className={`font-[400] text-[16px] ${isActive ? "text-black" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
+                    <img 
+                      src={getIcon()} 
+                      alt={item.label} 
+                      className="w-5 h-5" 
+                    />
+                    <span className={`font-[400] text-[14px] ml-1 ${isActive ? "text-black" : "text-grey-200"}`}>
                       {item.label}
                     </span>
                   </button>
@@ -357,9 +320,19 @@ const BrainAI = () => {
             </div>
             <div className="flex flex-col w-full items-start gap-2 px-5">
               {sideMenuItems.map((item, i) => {
-                const Icon = item.icon
-                const hoverIcon = item.hoverIcon
                 const isActive = activePath === item.path
+                
+                // Get the appropriate icon for each item
+                const getIcon = () => {
+                  if (item.path === 'knowledge') {
+                    return isActive ? KnowledgeActive : KnowledgeBook
+                  } else if (item.path === 'integration') {
+                    return isActive ? IntegrationActive : IntegrationInactive
+                  } else if (item.path === 'contacts') {
+                    return isActive ? MyProfileActive : MyProfileInactive
+                  }
+                  return null
+                }
 
                 return (
                   <button
@@ -374,13 +347,15 @@ const BrainAI = () => {
                         localStorage.removeItem('selectedIntegration');
                       }
                     }}
-                    className={`cursor-pointer group flex items-center justify-start gap-1.5 px-2 py-2 w-full h-auto rounded ${isActive ? "bg-[#F0EFFF] text-blue-600" : "text-[#5A687C] hover:bg-[#F9F8FF]"
+                    className={`cursor-pointer group flex justify-center md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl ${isActive ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                       }`}
                   >
-                    {isActive ? Icon
-                      : <div className="flex items-center gap-2"><div className='group-hover:hidden'>{Icon}</div> <div className='hidden group-hover:block'>{hoverIcon}</div></div>
-                    }
-                    <span className={`font-[400] text-[16px] ${isActive ? "text-blue-600" : "text-[#5A687C] group-hover:text-[#1E1E1E]"}`}>
+                    <img 
+                      src={getIcon()} 
+                      alt={item.label} 
+                      className="w-5 h-5" 
+                    />
+                    <span className={`font-[400] text-[14px] ml-1 ${isActive ? "text-black" : "text-grey-200"}`}>
                       {item.label}
                     </span>
                   </button>

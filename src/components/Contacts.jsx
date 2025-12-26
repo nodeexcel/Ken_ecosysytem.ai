@@ -750,7 +750,7 @@ const ContactsPage = () => {
     <div className="flex h-full overflow-auto p-12 flex-col w-full items-start gap-6 ">
       <div className="flex flex-col items-start gap-2.5 w-full">
         <div className="flex items-center justify-between w-full">
-          <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
+          <h1 className="font-[500] text-[#1e1e1e] text-[22px] leading-8">
             {t("brain_ai.contact")}
           </h1>
 
@@ -1077,7 +1077,7 @@ const ContactsPage = () => {
                     <tbody className="w-full">
                       {contactLists.map((list, index) => (
                         <tr key={list.name} className={`${contactLists.length - 1 !== index && 'border-b border-[#E1E4EA] text-[16px]'}`}>
-                          <td className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[600] whitespace-nowrap">{list.listName}</td>
+                          <td className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">{list.listName}</td>
                           <td className="py-[14px] pl-[25px] pr-[14px] min-w-[200px] max-w-[25%] w-full font-[400] text-[#5A687C] whitespace-nowrap">{list.activeContacts.toLocaleString()}</td>
                           <td className="py-[14px] pl-[10px] pr-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">
                             {list.channel.toLowerCase() === "email" ? (

@@ -935,7 +935,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
       {/* Billing History Section */}
       <div className="mt-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-          <h2 className="text-[20px] sm:text-[24px] font-[600] text-[#1E1E1E]">{t("settings.tab_2_list.billing_history")}</h2>
+          <h2 className="text-[22px] font-[500] text-[#1E1E1E]">{t("settings.tab_2_list.billing_history")}</h2>
           <div className="relative w-full sm:w-auto">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5A687C] w-4 h-4" />
             <input

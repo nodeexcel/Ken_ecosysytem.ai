@@ -9,7 +9,25 @@ import { getWhatsappAccounts } from "../api/brainai";
 import StatusModal from "./StatusModal";
 
 function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
-    const [formData, setFormData] = useState({ bot_name: "", role: "", personality: "", prompt: "", transfer: "", file: [], reference_text: "", transfer_case: {}, include_brainai: false })
+    const [formData, setFormData] = useState({ 
+        bot_name: "", 
+        role: "", 
+        personality: "", 
+        prompt: "", 
+        transfer: "", 
+        file: [], 
+        reference_text: "", 
+        transfer_case: {}, 
+        transfer_conditions: {
+            user_requested: false,
+            x_attempts: false,
+            x_attempts_value: "",
+            keyword_detection: false,
+            keywords: []
+        },
+        include_brainai: false 
+    })
+    const [keywordInput, setKeywordInput] = useState("")
     // const [errors, setErrors] = useState({})
     const [whatsappFormData, SetWhatsappFormData] = useState({
         platform_unique_id: "",
@@ -51,7 +69,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
         const newErrors = {};
 
         if (!formData.bot_name.trim()) newErrors.bot_name = `${t("calina.bot_name_required")}`;
-        if (!formData.prompt.trim()) newErrors.prompt = `${t("calina.prompt_required")}`;
+        // if (!formData.prompt.trim()) newErrors.prompt = `${t("calina.prompt_required")}`;
         if (!formData.role) newErrors.role = `${t("calina.role_required")}`;
         if (!formData.personality) newErrors.personality = `${t("calina.personality_required")}`;
         setErrors(newErrors);
@@ -192,7 +210,24 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
 
     const handleCancel = (value) => {
         // Reset all form state
-        setFormData({ bot_name: "", role: "", personality: "", prompt: "", transfer_case: {}, file: [], reference_text: "", include_brainai: false });
+        setFormData({ 
+            bot_name: "", 
+            role: "", 
+            personality: "", 
+            prompt: "", 
+            transfer_case: {}, 
+            transfer_conditions: {
+                user_requested: false,
+                x_attempts: false,
+                x_attempts_value: "",
+                keyword_detection: false,
+                keywords: []
+            },
+            file: [], 
+            reference_text: "", 
+            include_brainai: false 
+        });
+        setKeywordInput("");
         setErrors({});
         setStep(1);
         setStatusSteps({ step1: false, step2: false, step3: false, step4: false });
@@ -308,6 +343,13 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                 file: editData.file || [],
                 reference_text: editData.reference_text || "",
                 transfer_case: editData.transfer_case || {},
+                transfer_conditions: editData.transfer_conditions || {
+                    user_requested: false,
+                    x_attempts: false,
+                    x_attempts_value: "",
+                    keyword_detection: false,
+                    keywords: []
+                },
                 include_brainai: editData.include_brainai || false
             });
 
@@ -564,7 +606,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                 {errors.personality && <p className="text-red-500 text-sm mt-1">{errors.personality}</p>}
                             </div>
                         </div>
-                        <div className="flex flex-col gap-1.5 w-full">
+                        {/* <div className="flex flex-col gap-1.5 w-full">
                             <label className="text-sm font-[400] text-[#868C98]">
                                 {t("calina.prompt")}
                             </label>
@@ -577,7 +619,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                 placeholder={t("calina.enter_your_prompt_here")}
                             />
                             {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
-                        </div>
+                        </div> */}
 
                         <hr style={{ color: "#E1E4EA" }} />
 
@@ -603,41 +645,173 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                     {step === 2 && <div className="flex flex-col gap-5">
                         <hr style={{ color: "#E1E4EA" }} />
                         <div className="flex flex-col gap-1 w-full">
-                            <p className="text-sm font-[400] text-[#868C98] pb-4">
-                                {t("calina.transfer_optional")}<span className="text-[#5A687C] text-xs font-[400]">{t("calina.optional")}</span>
-                            </p>
-                            <label className="text-sm font-[400] text-[#868C98] pb-2">
-                                {t("calina.end_the_conversation")}<span className="text-[#5A687C] text-xs font-[400]">{t("calina.main_condition")}</span>
+                            <label className="text-[14px] font-[400] text-[#000000] pb-2">
+                                {t("calina.end_the_conversation")}<br/><span className="text-[#5A687C] text-[12px   ] font-[400]">{t("calina.main_condition")}</span>
                             </label>
-                            <ul className="flex flex-col gap-2.5">
-                                {transferOptions.map((each) => (
-                                    <li
-                                        key={each.key}
+                            <div className="flex flex-col gap-2.5">
+                                {/* Condition 1: User requests to be contacted */}
+                                <div className="flex flex-col gap-2">
+                                    <div
                                         onClick={() =>
                                             setFormData((prev) => ({
                                                 ...prev,
-                                                transfer_case: { key: each.key, label: each.label },
+                                                transfer_conditions: {
+                                                    ...prev.transfer_conditions,
+                                                    user_requested: !prev.transfer_conditions.user_requested
+                                                }
                                             }))
                                         }
-                                        className={`border border-[#E1E4EA] rounded-[6px] p-[12px] cursor-pointer flex items-center hover:bg-[#F4F5F6] hover:rounded-lg text-[#1e1e1e] gap-2 ${formData?.transfer_case?.key === each.key &&
-                                            "bg-[#F4F5F6] rounded-lg text-[#675FFF]"
-                                            }`}
+                                        className="border border-[#E1E4EA] rounded-lg p-[12px] cursor-pointer flex items-center hover:bg-[#F4F5F6] hover:rounded-lg text-[#1e1e1e] gap-2 text-[14px]"
                                     >
                                         <div
-                                            className={`w-4 h-4 rounded border flex items-center justify-center ${formData?.transfer_case?.key === each.key
+                                            className={`w-4 h-4 border flex items-center justify-center ${formData?.transfer_conditions?.user_requested
                                                 ? "border-[#675FFF] bg-[#675FFF]"
                                                 : "border-[#E1E4EA]"
                                                 }`}
                                         >
-                                            {formData?.transfer_case?.key === each.key && (
+                                            {formData?.transfer_conditions?.user_requested && (
                                                 <span className="text-white text-xs">✓</span>
                                             )}
                                         </div>
-                                        <span>{each.label}</span>
-                                    </li>
+                                        <span className={formData?.transfer_conditions?.user_requested ? "text-black" : "text-[#1e1e1e]"}>
+                                            {transferOptions[0].label}
+                                        </span>
+                                    </div>
+                                </div>
 
-                                ))}
-                            </ul>
+                                {/* Condition 2: AI doesn't understand after X attempts */}
+                                <div className="flex flex-col gap-2">
+                                    <div
+                                        onClick={() =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                transfer_conditions: {
+                                                    ...prev.transfer_conditions,
+                                                    x_attempts: !prev.transfer_conditions.x_attempts,
+                                                    x_attempts_value: !prev.transfer_conditions.x_attempts ? prev.transfer_conditions.x_attempts_value : ""
+                                                }
+                                            }))
+                                        }
+                                        className="border border-[#E1E4EA] rounded-lg p-[12px] cursor-pointer flex items-center hover:bg-[#F4F5F6] hover:rounded-lg text-[#1e1e1e] gap-2 text-[14px]"
+                                    >
+                                        <div
+                                            className={`w-4 h-4 border flex items-center justify-center ${formData?.transfer_conditions?.x_attempts
+                                                ? "border-[#675FFF] bg-[#675FFF]"
+                                                : "border-[#E1E4EA]"
+                                                }`}
+                                        >
+                                            {formData?.transfer_conditions?.x_attempts && (
+                                                <span className="text-white text-xs">✓</span>
+                                            )}
+                                        </div>
+                                        <span className={formData?.transfer_conditions?.x_attempts ? "text-black" : "text-[#1e1e1e]"}>
+                                            {transferOptions[1].label}
+                                        </span>
+                                    </div>
+                                    {formData?.transfer_conditions?.x_attempts && (
+                                        <div className="ml-6">
+                                            <input
+                                                type="number"
+                                                placeholder="Input number"
+                                                value={formData.transfer_conditions.x_attempts_value}
+                                                onChange={(e) =>
+                                                    setFormData((prev) => ({
+                                                        ...prev,
+                                                        transfer_conditions: {
+                                                            ...prev.transfer_conditions,
+                                                            x_attempts_value: e.target.value
+                                                        }
+                                                    }))
+                                                }
+                                                onClick={(e) => e.stopPropagation()}
+                                                className="w-full px-3 py-2 border border-[#E1E4EA] rounded-lg text-sm text-[#1e1e1e] placeholder:text-[#868C98] focus:outline-none focus:border-[#675FFF]"
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Condition 3: AI detects a keyword */}
+                                <div className="flex flex-col gap-2">
+                                    <div
+                                        onClick={() =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                transfer_conditions: {
+                                                    ...prev.transfer_conditions,
+                                                    keyword_detection: !prev.transfer_conditions.keyword_detection
+                                                }
+                                            }))
+                                        }
+                                        className="border border-[#E1E4EA] rounded-[6px] p-[12px] cursor-pointer flex items-center hover:bg-[#F4F5F6] hover:rounded-lg text-[#1e1e1e] gap-2 text-[14px]"
+                                    >
+                                        <div
+                                            className={`w-4 h-4 border flex items-center justify-center ${formData?.transfer_conditions?.keyword_detection
+                                                ? "border-[#675FFF] bg-[#675FFF]"
+                                                : "border-[#E1E4EA]"
+                                                }`}
+                                        >
+                                            {formData?.transfer_conditions?.keyword_detection && (
+                                                <span className="text-white text-xs">✓</span>
+                                            )}
+                                        </div>
+                                        <span className={formData?.transfer_conditions?.keyword_detection ? "text-black" : "text-[#1e1e1e]"}>
+                                            {transferOptions[2].label}
+                                        </span>
+                                    </div>
+                                    {formData?.transfer_conditions?.keyword_detection && (
+                                        <div className="ml-6 flex flex-col gap-2">
+                                            <input
+                                                type="text"
+                                                placeholder="Add Keyword"
+                                                value={keywordInput}
+                                                onChange={(e) => setKeywordInput(e.target.value)}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' && keywordInput.trim()) {
+                                                        e.preventDefault();
+                                                        setFormData((prev) => ({
+                                                            ...prev,
+                                                            transfer_conditions: {
+                                                                ...prev.transfer_conditions,
+                                                                keywords: [...prev.transfer_conditions.keywords, keywordInput.trim()]
+                                                            }
+                                                        }));
+                                                        setKeywordInput("");
+                                                    }
+                                                }}
+                                                onClick={(e) => e.stopPropagation()}
+                                                className="w-full px-3 py-2 border border-[#E1E4EA] rounded-lg text-sm text-[#1e1e1e] placeholder:text-[#868C98] focus:outline-none focus:border-[#675FFF]"
+                                            />
+                                            {formData.transfer_conditions.keywords.length > 0 && (
+                                                <div className="flex flex-wrap gap-2">
+                                                    {formData.transfer_conditions.keywords.map((keyword, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className="flex items-center gap-1.5 px-2 py-1 bg-[#F4F5F6] rounded-[4px] text-sm text-black"
+                                                        >
+                                                            <span>{keyword}</span>
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setFormData((prev) => ({
+                                                                        ...prev,
+                                                                        transfer_conditions: {
+                                                                            ...prev.transfer_conditions,
+                                                                            keywords: prev.transfer_conditions.keywords.filter((_, i) => i !== index)
+                                                                        }
+                                                                    }));
+                                                                }}
+                                                                className="text-[#868C98] hover:text-[#1e1e1e] cursor-pointer"
+                                                            >
+                                                                <X className="w-3 h-3" />
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                             {/* {errors.transfer_case && <p className="text-red-500 text-sm mt-1">{errors.transfer_case}</p>} */}
                         </div>
 
@@ -744,13 +918,16 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                             <div className="flex flex-col gap-2 h-full">
                                 <label className="text-sm font-[400] text-[#868C98]">{t("calina.description")}</label>
                                 <textarea
-                                    name='reference_text'
+                                    name="reference_text"
                                     onChange={handleChange}
                                     value={formData?.reference_text}
                                     rows={8}
-                                    className={`w-full bg-white p-3 rounded-lg border h-full ${errors.reference_text ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
+                                    className={`w-full bg-white p-3 rounded-lg border h-full 
+                                    ${errors.reference_text ? 'border-red-500' : 'border-[#e1e4ea]'} 
+                                    resize-none focus:outline-none focus:border-[#675FFF]
+                                    placeholder:font-[300] text-[14px] placeholder:text-gray-600`}
                                     placeholder={t("calina.enter_description_here")}
-                                />
+                                    />
                                 {errors.reference_text && <p className="text-red-500 text-sm mt-1">{errors.reference_text}</p>}
                             </div>
                         </div>

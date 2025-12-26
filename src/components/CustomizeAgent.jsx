@@ -15,6 +15,7 @@ import agentImage6 from "../assets/svg/finn_logo.svg"
 import agentImage7 from "../assets/svg/rima_logo.svg"
 import agentImage8 from "../assets/svg/seth_logo.svg"
 import agentImage9 from "../assets/svg/tom_logo.svg"
+import agentImage10 from "../assets/svg/KenNewLogo.svg"
 
 function CustomizeAgent({ customIntegartion, setCustomStatus, agentId, editDataId, websiteData }) {
     const [activeTab, setActiveTab] = useState("customize")
@@ -72,6 +73,7 @@ function CustomizeAgent({ customIntegartion, setCustomStatus, agentId, editDataI
         { id: 'fixed-7', name: 'Avatar 7', url: agentImage7 },
         { id: 'fixed-8', name: 'Avatar 8', url: agentImage8 },
         { id: 'fixed-9', name: 'Avatar 9', url: agentImage9 },
+        { id: 'fixed-10', name: 'Avatar 10', url: agentImage10 },
     ];
 
     const agentChatRef = useRef()
@@ -414,7 +416,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                         ))}
 
                                         {/* User Uploaded Avatars */}
-                                        {avatarList.map((each) => (
+                                        {/* {avatarList.map((each) => (
                                             <div
                                                 key={each.id}
                                                 onClick={() => setFormData((prev) => ({ ...prev, selected_avatar_url: each.url }))}
@@ -429,10 +431,10 @@ document.addEventListener("DOMContentLoaded", () => {
                                                     className="object-cover h-[55px] w-[55px] rounded-full"
                                                 />
                                             </div>
-                                        ))}
+                                        ))} */}
 
                                         {/* Upload Icon */}
-                                        <input
+                                        {/* <input
                                             type="file"
                                             accept="image/*"
                                             id="avatar-upload"
@@ -443,7 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                             <div className="rounded-full h-[63px] w-[63px] flex justify-center items-center bg-[#F0EFFF] cursor-pointer border-2 border-transparent hover:border-[#E1E4EA] transition-all">
                                                 <UploadIcon />
                                             </div>
-                                        </label>
+                                        </label> */}
                                     </div>
                                 </div>
                                 <h1 className="py-2 font-[600] text-[16px]">General Details</h1>
@@ -604,7 +606,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                         )}
                                     </div>
                                     <div className="font-[600] text-[18px] text-[#1E1E1E]">
-                                        {formData.agent_name ? `${formData.agent_name} Calina(AI Agent)` : "Calina(AI Agent)"}
+                                        {formData.agent_name ? `${formData.agent_name}` : "Calina (AI Agent)"}
                                     </div>
                                 </div>
 

@@ -237,7 +237,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
             <div className="flex flex-col w-full items-start gap-6 md:max-w-full lg:px-0 mx-auto">
                 <div className="flex items-center justify-between w-full">
                     <div className="flex flex-col gap-1">
-                        <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8">
+                        <h1 className="font-[500] text-[#1e1e1e] text-[22px] leading-8">
                             {integartionData.name}
                         </h1>
                         <p className="text-sm text-[#5A687C]">
@@ -311,7 +311,7 @@ const AdditionalIntegration = ({ setInstagramData, instagramData, integartionDat
                             </div>
                         </div>
                         <div className="text-center">
-                            <h2 className="text-[#1E1E1E] font-[600] text-[20px] mb-1">
+                            <h2 className="text-[#1E1E1E] font-[500] text-[20px] mb-1">
                                 {t("brain_ai.integrations.connect")} {integartionData.name}
                             </h2>
                             <p className="text-[16px] font-[400] text-[#5A687C]">

@@ -21,7 +21,7 @@ import googleCalendarIcon from "../assets/svg/google_calender.svg"
 import CalendlyIcon from "../assets/svg/calendly.svg"
 import ToastModal from "./ToastModal";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
-  
+
 // Helper function to capitalize first letter
 const capitalizeFirst = (str) => {
   if (!str) return str;
@@ -71,7 +71,7 @@ export default function CallCampaign() {
       value: "00:00:00"
     }
   ]
-  
+
   const [showModal, setShowModal] = useState(false); // edit/view modal
   const [showNewCampaignForm, setShowNewCampaignForm] = useState(false); // inline create form
   const [stepCampaignOpen, setStepCampaignOpen] = useState(true);
@@ -224,7 +224,7 @@ export default function CallCampaign() {
   ];
   const voiceOptions = [
     { key: "male", label: `${t("male")}` },
-    { key: "female", label: `${t("female")}` }, 
+    { key: "female", label: `${t("female")}` },
   ];
 
   const tagsOptions = [{ label: `${t("interested")}`, key: "interested" }, { label: `${t("not_interested")}`, key: "not_interested" },
@@ -289,14 +289,14 @@ export default function CallCampaign() {
     if (!campaign.phone_number || !campaign.phone_number.trim()) newErrors.phone_number = t("phone.phone_number_validation");
     if (!campaign.catch_phrase || !campaign.catch_phrase.trim()) newErrors.catch_phrase = t("phone.catch_phase");
     if (!campaign.call_script || !campaign.call_script.trim()) newErrors.call_script = t("phone.call_script_validation");
-    
+
     // Optional fields with validation rules (nullable=True)
     // campaign_type is optional (nullable=True) - no validation needed
     // choose_calendar is optional (nullable=True) - no validation needed
     // max_call_time is optional (nullable=True) - no validation needed
     // tag is not in DB schema, so we can ignore it
     // status has default="pending" - no validation needed
-    
+
     // Min length validations
     if (campaign.catch_phrase && campaign.catch_phrase.trim().length < 20) newErrors.catch_phrase = t("phone.min_20_char_required_validation");
     if (campaign.call_script && campaign.call_script.trim().length < 50) newErrors.call_script = t("phone.max_50_char_required_validation");
@@ -338,7 +338,7 @@ export default function CallCampaign() {
         console.log("Campaign deleted successfully");
         handleGetPhoneCampaign();
         setDeleteRow(null);
-        
+
         // Show success toast
         setToast({
           open: true,
@@ -468,7 +468,7 @@ export default function CallCampaign() {
           tom_engages: campaign.tom_engages || false, // Boolean, default=False
           agent: parseInt(campaign.agent) // Integer, ForeignKey
         };
-        
+
         // Only include optional fields if they have values
         if (campaign.campaign_type) {
           campaignData.campaign_type = campaign.campaign_type;
@@ -482,7 +482,7 @@ export default function CallCampaign() {
             campaignData.max_call_time = maxCallTimeValue;
           }
         }
-        
+
         console.log("Submitting campaign data:", campaignData);
         const response = await createPhoneCampaign(campaignData);
         console.log("API Response:", response);
@@ -560,7 +560,7 @@ export default function CallCampaign() {
   }
 
   const handleEditCampaign = async () => {
-    try { 
+    try {
       if (!validateForm()) {
         console.log("Validation failed");
         return;
@@ -579,7 +579,7 @@ export default function CallCampaign() {
         tom_engages: campaign.tom_engages || false,
         agent: parseInt(campaign.agent)
       };
-      
+
       // Only include optional fields if they have values
       if (campaign.campaign_type) {
         campaignData.campaign_type = campaign.campaign_type;
@@ -593,7 +593,7 @@ export default function CallCampaign() {
           campaignData.max_call_time = maxCallTimeValue;
         }
       }
-      
+
       const response = await updatePhoneCampaign(campaignData);
       if (response.status === 200) {
         console.log("Campaign details:", response.data);
@@ -657,7 +657,7 @@ export default function CallCampaign() {
         console.log("Campaign duplicated successfully:", response.data);
         handleGetPhoneCampaign();
         setActiveDropdown(null);
-        
+
         // Show success toast
         setToast({
           open: true,
@@ -913,30 +913,30 @@ export default function CallCampaign() {
                         onChange={(value) => {
                           const selectedAgent = agents.find(agent => agent.id.toString() === value);
                           const agentId = value ? parseInt(value) : '';
-                          
+
                           // Helper function to capitalize first letter
                           const capitalizeFirst = (str) => {
                             if (!str) return '';
                             return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
                           };
-                          
+
                           // Auto-fill campaign_type, phone_number, language, and voice based on agent's data
                           if (selectedAgent && selectedAgent.phone_numbers) {
                             const agentPhoneNumber = selectedAgent.phone_numbers; // e.g., "+17019976600"
-                            
+
                             // Find matching phone number in phoneNumbers array using agent's phone_numbers
                             const matchingPhone = phoneNumbers.find(
                               phone => phone.phone_number === agentPhoneNumber
                             );
-                            
+
                             if (matchingPhone) {
                               // Get direction from matching phone number and use it as campaign_type
                               const direction = matchingPhone.direction; // "inbound" or "outbound"
                               const phoneNumberStr = matchingPhone.phone_number;
-                              
+
                               // Parse phone number to extract country code and format
                               const parsedPhone = parsePhoneNumberFromString(phoneNumberStr);
-                              
+
                               // Find country based on dial code
                               if (parsedPhone) {
                                 const countryCode = parsedPhone.countryCode;
@@ -944,13 +944,13 @@ export default function CallCampaign() {
                                 const matchedCountry = countries && countries.length > 0 ? countries.find(
                                   country => country && country.dial_code === dialCode
                                 ) : null;
-                                
+
                                 const formattedPhoneNumber = parsedPhone.nationalNumber || phoneNumberStr;
-                                
+
                                 if (matchedCountry) {
                                   setSelectedCountry(matchedCountry);
                                 }
-                                
+
                                 // Update all values in a single state update
                                 setCampaign((prev) => ({
                                   ...prev,
@@ -976,14 +976,14 @@ export default function CallCampaign() {
                               // If no matching phone found in phoneNumbers array, try to parse from agent's phone_numbers
                               const phoneNumberStr = agentPhoneNumber;
                               const parsedPhone = parsePhoneNumberFromString(phoneNumberStr);
-                              
+
                               if (parsedPhone) {
                                 const countryCode = parsedPhone.countryCode;
                                 const dialCode = `+${countryCode}`;
                                 const matchedCountry = countries && countries.length > 0 ? countries.find(
                                   country => country && country.dial_code === dialCode
                                 ) : null;
-                                
+
                                 if (matchedCountry) {
                                   setSelectedCountry(matchedCountry);
                                   setCampaign((prev) => ({
@@ -1050,10 +1050,10 @@ export default function CallCampaign() {
                       <label className="block text-[14px] font-[400] text-[#868C98] mb-1">{t("phone.number_linked_to_the_campaign")}</label>
                       <div className="flex group items-center gap-2 border border-[#E1E4EA] rounded-lg px-4 py-2.5 bg-[#F5F5F5]">
                         <div className="relative country-selector">
-                            <div className="w-fit flex justify-between gap-2 items-center cursor-not-allowed opacity-75">
-                              <img src={selectedCountry?.flag} alt={selectedCountry?.name} width={20} />
-                              <span className="text-[14px] text-[#1E1E1E]">{selectedCountry?.dial_code}</span>
-                            </div>
+                          <div className="w-fit flex justify-between gap-2 items-center cursor-not-allowed opacity-75">
+                            <img src={selectedCountry?.flag} alt={selectedCountry?.name} width={20} />
+                            <span className="text-[14px] text-[#1E1E1E]">{selectedCountry?.dial_code}</span>
+                          </div>
                         </div>
                         <input
                           type="tel"
@@ -1067,34 +1067,6 @@ export default function CallCampaign() {
                       </div>
                       {errors.phone_number && <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>}
                     </div>
-
-                    {/* Language and Voice */}
-                    {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      
-                      <div>
-                        <label className="block text-[14px] font-[400] text-[#868C98] mb-1">{t("phone.language")}</label>
-                        <input
-                          type="text"
-                          readOnly
-                          className="w-full px-4 py-2 border border-[#E1E4EA] rounded-lg bg-[#F5F5F5] text-[#5A687C] cursor-not-allowed"
-                          value={campaign.language || ''}
-                          placeholder={t("phone.select_language")}
-                        />
-                        {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
-                      </div>
-                      
-                      <div>
-                        <label className="block text-[14px] font-[400] text-[#868C98] mb-1">{t("phone.voice")}</label>
-                        <input
-                          type="text"
-                          readOnly
-                          className="w-full px-4 py-2 border border-[#E1E4EA] rounded-lg bg-[#F5F5F5] text-[#5A687C] cursor-not-allowed"
-                          value={campaign.voice || ''}
-                          placeholder={t("phone.select_voice")}
-                        />
-                        {errors.voice && <p className="text-red-500 text-sm mt-1">{errors.voice}</p>}
-                      </div>
-                    </div> */}
 
                     {/* Tags selection */}
                     <div>
@@ -1158,39 +1130,37 @@ export default function CallCampaign() {
 
               {stepAgentOpen && (
                 <div className="px-4 sm:px-6 pb-6 pt-2">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  
-                  <div>
-                    <label className="block text-[14px] font-[400] text-[#868C98] mb-1">{t("phone.language")}</label>
-                    <SelectDropdown
-                      name="language"
-                      options={languageOptions}
-                      placeholder={t("phone.select_language")}
-                      value={campaign.language || ''}
-                      onChange={(value) => handleCampaignForm({ target: { name: 'language', value } })}
-                      errors={errors}
-                    />
-                    {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
-                  </div>
-                  <div>
-                    <label className="block text-[14px] font-[400] text-[#868C98] mb-1">{t("phone.voice")}</label>
-                    <SelectDropdown
-                      name="voice"
-                      options={voiceOptions}
-                      placeholder={t("phone.select_voice")}
-                      value={campaign.voice || ''}
-                      onChange={(value) => handleCampaignForm({ target: { name: 'voice', value } })}
-                      errors={errors}
-                    />
-                    {errors.voice && <p className="text-red-500 text-sm mt-1">{errors.voice}</p>}
-                  </div>
-                
-              </div>
 
-              
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    
-                  <div className="flex flex-col gap-1">
+
+                    <div>
+                      <label className="block text-[14px] font-[400] text-[#868C98] mb-1">{t("phone.language")}</label>
+                      <input
+                        type="text"
+                        readOnly
+                        className="w-full px-4 py-2 border border-[#E1E4EA] rounded-lg bg-[#F5F5F5] text-[#5A687C] cursor-not-allowed"
+                        value={campaign.language || ''}
+                        placeholder={t("phone.select_language")}
+                      />
+                      {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
+                    </div>
+
+                    <div>
+                      <label className="block text-[14px] font-[400] text-[#868C98] mb-1">{t("phone.voice")}</label>
+                      <input
+                        type="text"
+                        readOnly
+                        className="w-full px-4 py-2 border border-[#E1E4EA] rounded-lg bg-[#F5F5F5] text-[#5A687C] cursor-not-allowed"
+                        value={campaign.voice || ''}
+                        placeholder={t("phone.select_voice")}
+                      />
+                      {errors.voice && <p className="text-red-500 text-sm mt-1">{errors.voice}</p>}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+
+                    <div className="flex flex-col gap-1">
                       <label className="text-[14px] font-[400] text-[#868C98] mb-1">
                         {t("phone.target_list") || "Target List"}
                       </label>
@@ -1223,12 +1193,12 @@ export default function CallCampaign() {
                     </div>
                   </div>
 
-                  
+
 
                   {/* Row 2: Language + Voice */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    
-                  <div className="flex flex-col gap-1">
+
+                    <div className="flex flex-col gap-1">
                       <label className="text-[14px] font-[400] text-[#868C98] mb-1">
                         {t("phone.status") || "Status"}
                       </label>
@@ -1247,36 +1217,36 @@ export default function CallCampaign() {
                     </div>
 
                     <div className="mb-4">
-                    <p className="text-[14px] font-[400] text-[#868C98] mb-2">{t("phone.select_tools")}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {toolOptions.map((tool) => {
-                        const active = newAgentForm.tools.includes(tool.key);
-                        return (
-                          <button
-                            key={tool.key}
-                            type="button"
-                            onClick={() => toggleToolSelection(tool.key)}
-                            className={`px-3 py-2.5 rounded-md border shadow-sm text-sm font-[500] cursor-pointer transition-colors flex items-center gap-2 ${active
-                              ? "bg-white border-[#675FFF] text-[#1E1E1E]"
-                              : "bg-white border-[#E1E4EA] text-[#5A687C] hover:border-[#675FFF]"
-                              }`}
-                          >
-                            {tool.icon && (
-                              <img
-                                src={tool.icon}
-                                alt={`${tool.label} icon`}
-                                className="w-4 h-4"
-                              />
-                            )}
-                            {tool.label}
-                          </button>
-                        );
-                      })}
+                      <p className="text-[14px] font-[400] text-[#868C98] mb-2">{t("phone.select_tools")}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {toolOptions.map((tool) => {
+                          const active = newAgentForm.tools.includes(tool.key);
+                          return (
+                            <button
+                              key={tool.key}
+                              type="button"
+                              onClick={() => toggleToolSelection(tool.key)}
+                              className={`px-3 py-2.5 rounded-md border shadow-sm text-sm font-[500] cursor-pointer transition-colors flex items-center gap-2 ${active
+                                ? "bg-white border-[#675FFF] text-[#1E1E1E]"
+                                : "bg-white border-[#E1E4EA] text-[#5A687C] hover:border-[#675FFF]"
+                                }`}
+                            >
+                              {tool.icon && (
+                                <img
+                                  src={tool.icon}
+                                  alt={`${tool.label} icon`}
+                                  className="w-4 h-4"
+                                />
+                              )}
+                              {tool.label}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
-                  </div>
 
-        
+
                   {/* AI Brain toggle */}
                   <div className="flex items-center justify-start px-2 py-3 mb-4">
                     <button
@@ -1529,7 +1499,7 @@ export default function CallCampaign() {
                             <td className="px-4 py-2 text-center whitespace-nowrap">
                               <div className='flex items-center justify-center'>
                                 <button onClick={(e) => handleDropdownClick(index, agent, e)} className="p-2 rounded-lg relative">
-                                  <div className='bg-white cursor-pointer border border-[#D6D6D6] shadow-sm p-2 rounded-lg'><Ellipsis className="text-black"/></div>
+                                  <div className='bg-white cursor-pointer border border-[#D6D6D6] shadow-sm p-2 rounded-lg'><Ellipsis className="text-black" /></div>
                                 </button>
                               </div>
                             </td>

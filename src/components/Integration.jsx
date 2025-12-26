@@ -307,8 +307,8 @@ const Integration = ({ firstRender, setFirstRender }) => {
       {shouldShowList ? <>
         {/* Header */}
         <header className="flex items-center justify-between w-full ">
-          <h1 className="font-semibold text-[#1e1e1e] text-2xl leading-8 px-5">
-            Integration
+          <h1 className="font-[500] text-[#1e1e1e] text-[22px] leading-8 px-5">
+            {t("brain_ai.integrations.integrations")}
           </h1>
         </header>
 
@@ -365,7 +365,7 @@ const Integration = ({ firstRender, setFirstRender }) => {
               {!integration.isActive && (
                 <div className="absolute inset-0 flex items-center justify-end pr-25 rounded-2xl">
                   <span className="font-semibold text-[#9CA3AF] text-base">
-                    Coming soon
+                    {t("brain_ai.integrations.coming_soon")}
                   </span>
                 </div>
               )}

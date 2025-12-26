@@ -553,7 +553,7 @@ function Seo() {
                                     className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                         }`}
                                 >
-                                    <span className={`font-[400] text-[14px] ml-3 ${isActive ? "text-[#000000]" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
+                                    <span className={`font-[400] text-[14px] ml-3 ${isActive ? "text-black" : "text-gray-500"}`}>
                                         {e.label}
                                     </span>
                                 </div>
@@ -578,7 +578,7 @@ function Seo() {
                                             className="flex justify-between items-center px-2 py-2 cursor-pointer hover:bg-[#F9F8FF] rounded-2xl transition-colors"
                                         >
                                             <div className="flex items-center gap-1.5">
-                                                <span className={`font-[400] text-[14px] ml-3 ${isAnalyticsActive ? 'text-black' : 'text-grey-200'}`}>
+                                                <span className={`font-[400] text-[14px] ml-3 ${isAnalyticsActive ? 'text-black' : 'text-gray-500'}`}>
                                                     {t("seo.analytics")}
                                                 </span>
                                             </div>
@@ -599,7 +599,7 @@ function Seo() {
                                                             : 'hover:bg-[#F9F8FF]'
                                                     }`}
                                                 >
-                                                    <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'citation-analytics' ? 'text-black' : 'text-grey-200'}`}>
+                                                    <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'citation-analytics' ? 'text-black' : 'text-gray-500'}`}>
                                                         {t("seo.citation_analytics")}
                                                     </span>
                                                 </div>
@@ -613,7 +613,7 @@ function Seo() {
                                                             : 'hover:bg-[#F9F8FF]'
                                                     }`}
                                                 >
-                                                    <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'prompt-analytics' ? 'text-black' : 'text-grey-200'}`}>
+                                                    <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'prompt-analytics' ? 'text-black' : 'text-gray-500'}`}>
                                                         {t("seo.prompt_analytics")}
                                                     </span>
                                                 </div>
@@ -627,7 +627,7 @@ function Seo() {
                                                             : 'hover:bg-[#F9F8FF]'
                                                     }`}
                                                 >
-                                                    <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'content-analytics' ? 'text-black' : 'text-grey-200'}`}>
+                                                    <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'content-analytics' ? 'text-black' : 'text-gray-500'}`}>
                                                         {t("seo.content_analytics")}
                                                     </span>
                                                 </div>
@@ -644,7 +644,7 @@ function Seo() {
                             className={`flex justify-center group md:justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === 'prompts' ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                 }`}
                         >
-                            <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'prompts' ? "text-[#000000]" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
+                            <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'prompts' ? "text-black" : "text-grey-200"}`}>
                                 {t("seo.prompts")}
                             </span>
                         </div>
@@ -725,7 +725,7 @@ function Seo() {
                                         className={`flex group justify-start items-center gap-1.5 px-2 py-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${isActive ? "bg-[#E9E8F9]" : "text-[#5A687C] hover:bg-[#F9F8FF]"
                                             }`}
                                     >
-                                        <span className={`font-[400] text-[14px] ml-3 ${isActive ? "text-[#000000]" : "text-grey-200 group-hover:text-[#1E1E1E]"}`}>
+                                        <span className={`font-[400] text-[14px] ml-3 ${isActive ? "text-black" : "text-grey-200"}`}>
                                             {e.label}
                                         </span>
                                     </div>
@@ -830,7 +830,7 @@ function Seo() {
                                         : 'hover:bg-[#F9F8FF]'
                                 }`}
                             >
-                                <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'prompts' ? 'text-[#000000]' : 'text-grey-200 group-hover:text-[#1E1E1E]'}`}>
+                                <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === 'prompts' ? 'text-black' : 'text-grey-200'}`}>
                                     {t("seo.prompts")}
                                 </span>
                             </div>
