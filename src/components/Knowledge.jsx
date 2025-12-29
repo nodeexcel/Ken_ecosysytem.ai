@@ -264,12 +264,12 @@ const renderEmptyState = (tabKey, onAction) => {
           <img
             src={snippetsTop}
             alt="No snippets"
-            className="absolute top-5 left-1/2 -translate-x-1/2 w-60 h-20 object-contain z-10"
+            className="absolute top-4 left-1/2 -translate-x-1/2 w-70 h-20 object-contain z-10"
           />
           <img
             src={snippetsBottom}
             alt="No snippets"
-            className="absolute bottom-3 left-1/2 -translate-x-1/2 w-20 h-18 object-contain "
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-18 object-contain "
           />
         </div>
       ),

@@ -65,14 +65,16 @@ export const getOTPVerify = async (payload) => {
  * @param {Object} payload - New password details.
  * @returns {Promise<Object>} Axios response or error object.
  */
-export const setPassword = async (payload) => {
-    try {
-        const response = await axiosInstance.post("/api/auth/set-password", payload);
-        return response;
-    } catch (error) {
-        console.error(error);
-        return error;
-    }
+export const setUserPassword = async (payload) => {
+    console.log("setPassword called with:", payload);
+
+    const response = await axiosInstance.post(
+        "/api/auth/set-password",
+        payload
+    );
+
+    // Axios guarantees response exists on success
+    return response.data;
 };
 
 /**

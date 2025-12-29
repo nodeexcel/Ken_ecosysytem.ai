@@ -1120,7 +1120,7 @@ const SettingsPage = () => {
 
             </div>
 
-            {profileErrors.imageFile && <p className="text-[#FF3B30]">{profileErrors.imageFile}</p>}
+            {profileErrors.imageFile && <p className="text-[#FF3B30] justify-end items-end pl-4">{profileErrors.imageFile}</p>}
             <input
               type="file"
               accept="image/*"
@@ -1155,7 +1155,7 @@ const SettingsPage = () => {
                       className={`w-full px-3.5 py-2.5 bg-white rounded-lg border border-solid ${(profileErrors.firstName || profileErrors.lastName) ? 'border-[#FF3B30]' : 'border-[#e1e4ea]'} text-[16px] text-[#1E1E1E] focus:border-[#675FFF] focus:outline-none`}
                     />
                     {(profileErrors.firstName || profileErrors.lastName) && (
-                      <p className="text-[#FF3B30] text-sm">
+                      <p className="text-[#FF3B30] text-sm ">
                         {profileErrors.firstName || profileErrors.lastName}
                       </p>
                     )}

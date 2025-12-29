@@ -19,7 +19,7 @@ function AgentsSeth() {
     const moreActionsRef = useRef(null);
 
     const [open, setOpen] = useState(true)
-    
+
     // Filter states
     const [sortBy, setSortBy] = useState(null);
     const [statusFilter, setStatusFilter] = useState(null);
@@ -168,7 +168,7 @@ function AgentsSeth() {
                 const itemIndex = updated.findIndex(item => item.agent_id === id);
                 if (itemIndex !== -1) {
                     updated[itemIndex][key] = !updated[itemIndex][key];
-                    setCampaignData(updated);
+                setCampaignData(updated);
                 }
                 setActiveDropdown(null);
             }
@@ -214,7 +214,7 @@ function AgentsSeth() {
                 const itemIndex = updated.findIndex(item => item.agent_id === id);
                 if (itemIndex !== -1) {
                     updated.splice(itemIndex, 1);
-                    setCampaignData(updated);
+                setCampaignData(updated);
                 }
             }
         } catch (error) {
@@ -263,7 +263,7 @@ function AgentsSeth() {
                                 >
                                     {sortBy ? sortOptions.find(opt => opt.key === sortBy)?.label : t("appointment.sort_by")}
                                     <ChevronDown className={`w-4 h-4 text-[#5A687C] transition-transform ${sortDropdownOpen ? 'rotate-180' : ''}`} />
-                                </button>
+                            </button>
                                 {sortDropdownOpen && (
                                     <div
                                         ref={sortDropdownRef}
@@ -311,7 +311,7 @@ function AgentsSeth() {
                                         ? statusOptions.find(opt => opt.key === statusFilter)?.label
                                         : t("appointment.status")}
                                     <ChevronDown className={`w-4 h-4 text-[#5A687C] transition-transform ${statusDropdownOpen ? 'rotate-180' : ''}`} />
-                                </button>
+                            </button>
                                 {statusDropdownOpen && (
                                     <div
                                         ref={statusDropdownRef}

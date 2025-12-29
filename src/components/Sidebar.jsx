@@ -401,7 +401,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
 
                 {/* Ecosystem / Gift */}
               <div
-                className={`bg-white text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'}`}
+                className={`bg-white text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`}
                 onClick={() => setCommissionStatus(true)}
               >
                 <div className='flex items-center'>
@@ -418,7 +418,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
                 )}
               </div>
           </div>
-          
+  
           {/* Bottom Section */}
           <div className='flex flex-col justify-between'>
             {/* Settings */}
