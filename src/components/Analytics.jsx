@@ -187,7 +187,7 @@ const staticData2 = [
                             setAgentSelect(updated)
                         }}
                         placeholder={t("brain_ai.select")}
-                        className="w-[187px]"
+                        className="w-[120px]"
                         extraName="Agent"
                     />
 

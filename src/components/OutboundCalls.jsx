@@ -416,17 +416,17 @@ export default function OutBoundCalls() {
                     ) : Array.isArray(filteredAgents) && filteredAgents.length !== 0 ? (
                       filteredAgents.map((agent, index) => (
                         <tr key={agent.id} className="text-[16px] text-[#1E1E1E]">
-                          <td className="px-4 py-4 text-[13px] font-[400] text-[#1E1E1E] text-start">{agent.campaign_name}</td>
-                          <td className="px-4 py-4 text-[13px] text-start">
-                            <div className="flex flex-col text-[13px] text-[#1E1E1E] font-[400]">
+                          <td className="px-4 py-4 text-[14px] font-[400] text-[#1E1E1E] text-start">{agent.campaign_name}</td>
+                          <td className="px-4 py-4 text-[13px] font-[400] text-start">
+                            <div className="flex flex-col text-[14px] text-[#1E1E1E] font-[400]">
                               {agent.agent_name}
                               <span className="text-[#5A687C]">{agent.choosen}</span>
                             </div>
                           </td>
-                          <td className="px-4 py-4 text-[14px] text-[#5A687C] text-start">{agent.date}</td>
-                          <td className="px-4 py-4 text-[14px] text-[#5A687C] text-start">{agent.language}</td>
-                          <td className="px-4 py-4 text-[14px] text-[#5A687C] text-start">{agent.voice}</td>
-                          <td className="px-4 py-4 text-[14px] text-[#5A687C] text-start">{agent.recipient_no}</td>
+                          <td className="px-4 py-4 text-[14px] font-[400] text-[#5A687C] text-start">{agent.date}</td>
+                          <td className="px-4 py-4 text-[14px] font-[400] text-[#5A687C] text-start">{agent.language}</td>
+                          <td className="px-4 py-4 text-[14px] font-[400] text-[#5A687C] text-start">{agent.voice}</td>
+                          <td className="px-4 py-4 text-[14px] font-[400] text-[#5A687C] text-start">{agent.recipient_no}</td>
                           <td className="px-4 py-4 text-start">
                             <span className={`inline-block ${agent.status.toLowerCase() === "replied" ? "text-[#34C759]" : "text-[#FF3B30]"} text-[16px] font-[400] px-3 py-1 rounded-full`}>
                               {agent.status}

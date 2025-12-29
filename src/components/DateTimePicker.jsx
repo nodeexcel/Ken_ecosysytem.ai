@@ -526,13 +526,13 @@ export default function DateTimePicker({ onClose, onSchedule, isSaving }) {
           {/* Footer with Buttons */}
           <div className="sticky bottom-0 bg-white border-t border-gray-200 px-2 py-4 flex items-center justify-end gap-3 z-10 rounded-b-xl">
             <button 
-              className="px-5 py-2.5 rounded-lg cursor-pointer bg-white border border-gray-300 text-[#1E1E1E] font-[500] text-sm hover:bg-gray-50 transition-colors shadow-sm"
+              className="px-5 py-1.5 rounded-lg cursor-pointer bg-white border border-gray-300 text-[#1E1E1E] font-[500] text-[14px] hover:bg-gray-50 transition-colors shadow-sm"
               onClick={onClose}
             >
               {t("cancel")}
             </button>
             <button
-              className={`px-5 py-2.5 rounded-lg ${isSaving ? 'cursor-not-allowed' : 'cursor-pointer'} bg-[#675FFF] text-white font-[500] text-sm hover:bg-[#5a4fe6] transition-colors shadow-sm`}
+              className={`px-5 py-1.5 rounded-lg ${isSaving ? 'cursor-not-allowed' : 'cursor-pointer'} bg-[#675FFF] text-white font-[500] text-[14px] hover:bg-[#5a4fe6] transition-colors shadow-sm`}
               onClick={() => {
                 const dateUTC = UtcFormat(selectedDate);
                 // Parse time string and format as HH:mm in UTC

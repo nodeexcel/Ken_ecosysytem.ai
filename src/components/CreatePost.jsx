@@ -601,14 +601,14 @@ export default function CreatePost({ onClose, editData }) {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowPreview(!showPreview)}
-            className="px-4 py-2 text-sm font-medium text-[#5A687C] cursor-pointer bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F4F5F6] transition-colors"
+            className="px-4 py-1.5 text-[14px] font-[500] text-[#5A687C] cursor-pointer bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F4F5F6] transition-colors"
           >
             {t("constance.preview") || "Preview"}
           </button>
           <button
             onClick={handleSaveDraft}
             disabled={isSaving?.draft}
-            className={`px-4 py-2 text-sm font-medium text-[#5A687C] cursor-pointer bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F4F5F6] transition-colors ${isSaving?.draft ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+            className={`px-4 py-1.5 text-[14px] font-[500] text-[#5A687C] cursor-pointer bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F4F5F6] transition-colors ${isSaving?.draft ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
           >
             {isSaving?.draft ? (
               <div className="flex items-center justify-center gap-2">
@@ -621,7 +621,7 @@ export default function CreatePost({ onClose, editData }) {
           </button>
           <button
             onClick={() => setShowDateTimePicker(true)}
-            className="px-4 py-2 text-sm font-medium text-white cursor-pointer bg-[#675FFF] border border-[#675FFF] rounded-lg hover:bg-[#5a4fe6] transition-colors"
+            className="px-4 py-1.5 text-[14px] font-[500] text-white cursor-pointer bg-[#675FFF] border border-[#675FFF] rounded-lg hover:bg-[#5a4fe6] transition-colors"
           >
             {t("constance.schedule") || "Schedule"}
           </button>
@@ -695,7 +695,7 @@ export default function CreatePost({ onClose, editData }) {
                   {/* Add Account button - positioned right after the last account */}
                   <button 
                     onClick={() => navigate('/dashboard/brain?tab=integration')}
-                    className="w-full flex items-center justify-center gap-2 text-sm text-[#1E1E1E] font-medium border border-[#E1E4EA] rounded-[12px] py-2.5 bg-white hover:bg-[#F8F9FB] transition-colors shadow-[0_2px_6px_rgba(15,23,42,0.06)] mt-2 cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 text-[14px] font-[500] text-[#1E1E1E] border border-[#E1E4EA] rounded-lg py-1.5 bg-white hover:bg-[#F8F9FB] transition-colors shadow-[0_2px_6px_rgba(15,23,42,0.06)] mt-2 cursor-pointer"
                   >
                     <span className="text-lg leading-none">+</span>
                     <span>{t("constance.add") + " " + t("constance.account") || "Add Account"}</span>
@@ -883,7 +883,7 @@ export default function CreatePost({ onClose, editData }) {
                   <button
                     onClick={handlePublish}
                     disabled={isSaving?.publish}
-                    className={`px-4 py-2 text-sm font-medium text-white bg-[#675FFF] 
+                    className={`px-4 py-1.5 text-[14px] font-[500] text-white bg-[#675FFF] 
         rounded-lg hover:bg-[#5a4fe6] transition-colors 
         ${isSaving?.publish ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                   >

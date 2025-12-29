@@ -337,12 +337,12 @@ const Integration = ({ firstRender, setFirstRender }) => {
                     <div className="w-10 h-10 bg-[url(${integration.iconBg})] bg-[100%_100%] flex-shrink-0 rounded-lg" />
                   )}
                   <div className="flex flex-col gap-1 flex-1 min-w-0">
-                    <span className={`font-semibold text-base leading-tight ${
+                    <span className={`font-[400] text-[16px] leading-tight ${
                       integration.isActive ? 'text-[#1E1E1E]' : 'text-[#9CA3AF]'
                     }`}>
                     {integration.name}
                   </span>
-                    <span className={`text-sm leading-tight ${
+                    <span className={`text-[13px] leading-tight ${
                       integration.isActive ? 'text-[#5A687C]' : 'text-[#9CA3AF]'
                     }`}>
                       {integration.description}
@@ -364,7 +364,7 @@ const Integration = ({ firstRender, setFirstRender }) => {
               </div>
               {!integration.isActive && (
                 <div className="absolute inset-0 flex items-center justify-end pr-25 rounded-2xl">
-                  <span className="font-semibold text-[#9CA3AF] text-base">
+                  <span className="font-[500] text-gray-500 text-base">
                     {t("brain_ai.integrations.coming_soon")}
                   </span>
                 </div>

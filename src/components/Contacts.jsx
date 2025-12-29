@@ -756,9 +756,9 @@ const ContactsPage = () => {
 
           <div className="flex gap-2.5 items-center">
             {activeTab !== "lists" && (
-              <button className="flex items-center gap-2.5 cursor-pointer px-5 py-[7px] border-[1.5px] border-[#E1E4EA] rounded-[7px] bg-white hover:bg-[#F5F7FA] hover:border-[#CBD2E0]">
-                <Download color="#5A687C" />
-                <span className="font-[500] text-[16px] leading-6 text-[#5A687C] cursor-pointer">
+              <button className="flex items-center gap-2.5 cursor-pointer px-3 py-1.5 border-[1.5px] border-[#E1E4EA] rounded-lg bg-white font-[500] text-[14px] hover:bg-[#F5F7FA] hover:border-[#CBD2E0]">
+                <Download color="#5A687C" className="w-4 h-4"/>
+                <span className="font-[500] text-[14px] text-[#5A687C] cursor-pointer">
                   {t("brain_ai.export")}
                 </span>
               </button>
@@ -771,10 +771,10 @@ const ContactsPage = () => {
                   setActiveDropdown(null);
                   setFileUploadError(""); // Clear any previous errors when opening modal
                 }}
-                className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] border-[1.5px] border-[#5F58E8] rounded-[7px] bg-white hover:bg-[#F4F3FF] hover:border-[#4E46D4]"
+                className="flex cursor-pointer items-center gap-2.5 px-3 py-1.5 border-[1.5px] font-[500] text-[14px] border-[#5F58E8] rounded-lg bg-white hover:bg-[#F4F3FF] hover:border-[#4E46D4]"
               >
-                <Upload color="#675FFF" />
-                <span className="font-[500] text-[16px] leading-6 text-[#675FFF]">{t("brain_ai.import")}</span>
+                <Upload color="#675FFF" className="w-4 h-4"/>
+                <span className="font-[500] text-[14px] text-[#675FFF]">{t("brain_ai.import")}</span>
               </button>
             )}
 
@@ -786,9 +786,9 @@ const ContactsPage = () => {
                 setAddContactModal(true);
                 setActiveDropdown(null);
               }}
-              className="flex cursor-pointer items-center gap-2.5 px-5 py-[7px] bg-[#675FFF] border-[1.5px] border-[#5f58e8] rounded-[7px] text-white hover:bg-[#5f58e8]"
+              className="flex cursor-pointer items-center gap-2.5 px-3 py-1.5 bg-[#675FFF] font-[500] text-[14px] border-[1.5px] border-[#5f58e8] rounded-lg text-white hover:bg-[#5f58e8]"
             >
-              <span className="font-medium text-base leading-6">
+              <span className="font-[500] text-[14px] leading-6">
                 {activeTab === `${t("brain_ai.lists")}` ? `${t("brain_ai.create_list")}` : `${t("brain_ai.add_contact")}`}
               </span>
             </button>
@@ -895,13 +895,13 @@ const ContactsPage = () => {
                   </tr>
                 </thead>
               </div>
-              <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
+              <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl px-3">
                 {loadingStatus ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
                   allContacts.length !== 0 ?
                     <tbody className="w-full">
                       {allContacts.map((contact, index) => (
                         <tr key={index} className={`${allContacts.length - 1 !== index && 'border-b border-[#E1E4EA]'}`}>
-                          <td className="p-[14px] min-w-[200px] max-w-[25%] w-full text-sm text-gray-800 font-semibold whitespace-nowrap">
+                          <td className="p-[14px] min-w-[200px] max-w-[25%] w-full text-sm text-gray-800 font-[500] whitespace-nowrap">
                             <div className="flex items-center gap-2">
                               <label className="checkbox-container">
                                 <input
@@ -914,7 +914,7 @@ const ContactsPage = () => {
                               {contact?.firstName}{" "}{contact?.lastName}
                             </div>
                           </td>
-                          <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[25%] w-full text-sm text-[#5A687C] whitespace-nowrap">
+                          <td className="py-[10px] pr-[14px] min-w-[200px] max-w-[25%] w-full text-sm text-[#5A687C] whitespace-nowrap">
                             {contact?.email}
                           </td>
                           <td className="py-[14px] pr-[14px] min-w-[200px] max-w-[25%] w-full text-sm text-[#5A687C] whitespace-nowrap">
@@ -1071,13 +1071,13 @@ const ContactsPage = () => {
                   </tr>
                 </thead>
               </div>
-              <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl p-3">
+              <div className="border border-[#E1E4EA] w-full bg-white rounded-2xl px-3">
                 {listLoading ? <p className="flex justify-center items-center h-34"><span className="loader" /></p> :
                   contactLists.length !== 0 ?
                     <tbody className="w-full">
                       {contactLists.map((list, index) => (
                         <tr key={list.name} className={`${contactLists.length - 1 !== index && 'border-b border-[#E1E4EA] text-[16px]'}`}>
-                          <td className="p-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">{list.listName}</td>
+                          <td className="px-[14px] py-[6px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap text-sm">{list.listName}</td>
                           <td className="py-[14px] pl-[25px] pr-[14px] min-w-[200px] max-w-[25%] w-full font-[400] text-[#5A687C] whitespace-nowrap">{list.activeContacts.toLocaleString()}</td>
                           <td className="py-[14px] pl-[10px] pr-[14px] min-w-[200px] max-w-[25%] w-full font-[400] whitespace-nowrap">
                             {list.channel.toLowerCase() === "email" ? (

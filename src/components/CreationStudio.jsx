@@ -662,13 +662,13 @@ function CreationStudio({ onClose, onGenerateContent, onContentCreated }) {
                 <div className="sticky bottom-0 bg-white border-t border-gray-200 px-3 sm:px-4 lg:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 z-10">
                         <button
                             onClick={handleCancel}
-                            className="w-full sm:w-auto px-4 sm:px-5 rounded-lg cursor-pointer py-2 sm:py-2.5 text-center bg-white border border-gray-300 text-[#1E1E1E] font-[500] text-xs sm:text-sm hover:bg-gray-50 transition-colors shadow-sm"
+                            className="w-full sm:w-auto px-3 py-2 rounded-lg cursor-pointer text-center bg-white border border-gray-300 text-[#1E1E1E] font-[500] text-[14px] hover:bg-gray-50 transition-colors shadow-sm"
                         >
                             {t("cancel")}
                         </button>
                         <button
                             onClick={handleSubmit}
-                            className="w-full sm:w-auto px-4 sm:px-5 rounded-lg cursor-pointer py-2 sm:py-2.5 text-center bg-[#675FFF] text-white font-[500] text-xs sm:text-sm hover:bg-[#5a4fe6] transition-colors shadow-sm"
+                            className="w-full sm:w-auto px-3 py-2 rounded-lg cursor-pointer text-center bg-[#675FFF] text-white font-[500] text-[14px] hover:bg-[#5a4fe6] transition-colors shadow-sm"
                         >
                             {loading ? (
                                 <div className="flex items-center justify-center gap-2">

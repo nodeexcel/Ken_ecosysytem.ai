@@ -1022,7 +1022,7 @@ const SettingsPage = () => {
                   setErrorMessage({});
                   setSuccess({});
                 }}
-                className="px-2.5 py-1.5 bg-white dark:bg-[#2D3151] border border-[#E1E4EA] dark:border-[#2D3151] rounded-lg text-[#000000] dark:text-gray-300 text-[14px] sm:text-[16px] font-[500] cursor-pointer hover:bg-[#F9F8FF] dark:hover:bg-[#1E2A4A] transition-colors whitespace-nowrap"
+                className="px-2.5 py-1.5 bg-white dark:bg-[#2D3151] border border-[#E1E4EA] dark:border-[#2D3151] rounded-lg text-[#000000] dark:text-gray-300 text-[14px] font-[500] cursor-pointer hover:bg-[#F9F8FF] dark:hover:bg-[#1E2A4A] transition-colors whitespace-nowrap"
               >
                 {t("settings.tab_1_list.discard")}
               </button>
@@ -1030,7 +1030,7 @@ const SettingsPage = () => {
                 type="button"
                 disabled={updateLoading}
                 onClick={handleProfileSubmit}
-                className={`px-2.5 py-1.5 rounded-lg text-white text-[14px] sm:text-[16px] font-[500] cursor-pointer transition-colors whitespace-nowrap ${updateLoading ? "bg-[#5f54ff87] cursor-not-allowed" : "bg-[#675FFF] hover:bg-[#5E54FF]"
+                className={`px-2.5 py-1.5 rounded-lg text-white text-[14px] font-[500] cursor-pointer transition-colors whitespace-nowrap ${updateLoading ? "bg-[#5f54ff87] cursor-not-allowed" : "bg-[#675FFF] hover:bg-[#5E54FF]"
                   }`}
               >
                 {updateLoading ? (
@@ -1080,7 +1080,7 @@ const SettingsPage = () => {
                       <button
                         type="button"
                         onClick={() => document.getElementById('profileImageInput')?.click()}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#675FFF] text-white text-sm font-[500] cursor-pointer hover:bg-[#5E54FF] transition-colors"
+                        className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[#675FFF] text-white text-[14px] font-[500] cursor-pointer hover:bg-[#5E54FF] transition-colors"
                       >
                         <Upload className="w-4 h-4" />
                         {t("settings.tab_1_list.upload_new")}
@@ -1098,7 +1098,7 @@ const SettingsPage = () => {
                           const fileInput = document.getElementById('profileImageInput');
                           if (fileInput) fileInput.value = "";
                         }}
-                        className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-[#E1E4EA] text-black text-sm font-[500] cursor-pointer hover:bg-[#F5F7FF] transition-colors"
+                        className="flex items-center gap-2 px-2.5 py-1.5 bg-white rounded-lg border border-[#E1E4EA] text-black text-[14px] font-[500] cursor-pointer hover:bg-[#F5F7FF] transition-colors"
                       >
                         <Delete className="w-4 h-4 text-black" />
                         {t("settings.tab_1_list.delete")}
@@ -1323,7 +1323,7 @@ const SettingsPage = () => {
                           setPasswordStrength(evaluatePasswordStrength(formData.newPassword || ""));
                           setShowPasswordModal(true);
                         }}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E1E1] rounded-lg text-[#1E1E1E] text-sm font-[500] cursor-pointer hover:bg-[#F9F8FF]"
+                        className="inline-flex items-center gap-2 px-2.5 py-1.5 shadow-sm bg-white border border-[#E1E1E1] rounded-lg text-[#1E1E1E] text-[14px] font-[500] cursor-pointer hover:bg-[#F9F8FF]"
                       >
                         <Pencil className="w-4 h-4 text-[#1E1E1E]" />
                         {t("settings.tab_1_list.change_password")}
@@ -1447,10 +1447,10 @@ const SettingsPage = () => {
                 </p>
               </div>
               <button
-                className="flex items-center gap-2 cursor-pointer bg-[#675FFF] hover:bg-[#5E54FF] text-white rounded-lg px-4 py-2 text-[14px] font-[500] transition-colors"
+                className="flex items-center gap-2 cursor-pointer bg-[#675FFF] hover:bg-[#5E54FF] text-white rounded-lg px-2.5 py-1.5 text-[14px] font-[500] transition-colors"
                 onClick={handleInviteTeam}
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-4 h-4 text-[#FFFFFF]" />
                 {t("settings.tab_3_list.invite_team_member")}
               </button>
             </div>
@@ -1463,8 +1463,8 @@ const SettingsPage = () => {
                   <button
                     key={option.key}
                     onClick={() => handleChangeRole(option.key)}
-                    className={`px-4 py-2 rounded-lg text-sm cursor-pointer font-medium transition-colors ${role === option.key
-                      ? "bg-white text-[#1E1E1E] shadow-sm"
+                    className={`px-2.5 py-1.5 rounded-lg text-[14px] font-[500] cursor-pointer transition-colors ${role === option.key
+                      ? "bg-white text-[#1E1E1E]"
                       : "bg-transparent text-[#5A687C]"
                       }`}
                   >
@@ -1487,12 +1487,12 @@ const SettingsPage = () => {
                       setTeamSearchQuery(e.target.value);
                       setTeamCurrentPage(1);
                     }}
-                    className="pl-10 pr-4 py-2 border bg-white border-[#E1E4EA] rounded-lg text-[14px] text-black focus:outline-none focus:border-[#675FFF] w-full sm:w-[200px]"
+                    className="pl-10 px-2.5 py-1.5 border bg-white border-[#E1E4EA] rounded-lg text-[14px] font-[500] text-black focus:outline-none focus:border-[#675FFF] w-full sm:w-[200px]"
                   />
                 </div>
                 <button
                   onClick={() => renderTeamMembers(role)}
-                  className="flex items-center cursor-pointer gap-2 px-3 py-2 bg-white border border-[#E1E4EA] rounded-lg text-black text-sm font-semibold hover:bg-gray-50 transition-colors"
+                  className="flex items-center cursor-pointer gap-2 px-2.5 py-1.5 bg-white border border-[#E1E4EA] rounded-lg text-black text-[14px] font-[500] hover:bg-gray-50 transition-colors"
                 >
                   <RefreshIcon />
                   {t("refresh")}
@@ -1506,11 +1506,11 @@ const SettingsPage = () => {
                 <table className="min-w-full border-separate border-spacing-0">
                   <thead className="bg-[#F7F7F8]">
                     <tr>
-                      <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">{t("settings.tab_3_list.name")}</th>
-                      <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">{t("settings.tab_3_list.email")}</th>
-                      <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">{t("settings.tab_3_list.role")}</th>
-                      <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">{t("settings.tab_3_list.agents")}</th>
-                      <th className="px-6 text-start py-3 text-[16px] font-[400] text-[#5A687C]">Action</th>
+                      <th className="px-6 text-start py-3 text-[14px] font-[400] text-[#5A687C]">{t("settings.tab_3_list.name")}</th>
+                      <th className="px-6 text-start py-3 text-[14px] font-[400] text-[#5A687C]">{t("settings.tab_3_list.email")}</th>
+                      <th className="px-6 text-start py-3 text-[14px] font-[400] text-[#5A687C]">{t("settings.tab_3_list.role")}</th>
+                      <th className="px-6 text-start py-3 text-[14px] font-[400] text-[#5A687C]">{t("settings.tab_3_list.agents")}</th>
+                      <th className="px-6 text-start py-3 text-[14px] font-[400] text-[#5A687C]">Action</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
@@ -1545,7 +1545,7 @@ const SettingsPage = () => {
                                 <div className={`flex justify-center items-center rounded-full h-[40px] w-[40px] text-[16px] font-[600] ${userAvatarColor}`}>
                                   {userInitials}
                                 </div>
-                                <span className="text-[16px] font-[600] text-[#1E1E1E]">
+                                <span className="text-[14px] font-[400] text-[#1E1E1E]">
                                   {user.firstName || ''} {user.lastName || ''}
                                 </span>
                               </div>
@@ -1724,7 +1724,7 @@ const SettingsPage = () => {
 
           {open && (
             <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-              <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl relative">
+              <div className="bg-white w-full max-w-lg rounded-xl shadow-xl relative">
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-[#E1E4EA]">
                   <h2 className="text-[#1E1E1E] font-[500] text-[20px] leading-6">
@@ -1776,7 +1776,7 @@ const SettingsPage = () => {
                           setEmailInviteRole("")
                           setInviteErrors({})
                         }}
-                        className="flex items-center gap-1 cursor-pointer text-[#675FFF] text-sm font-medium mt-6 hover:text-[#5E54FF] transition-colors"
+                        className="flex items-center gap-1 cursor-pointer text-[#675FFF] text-[14px] font-[500] mt-6 hover:text-[#5E54FF] transition-colors"
                       >
                         <Plus className="w-4 h-4" />
                         Add New Member
@@ -1823,14 +1823,14 @@ const SettingsPage = () => {
                       setOpen(false)
                       setInviteErrors({})
                     }}
-                    className="px-4 py-2.5 text-base font-medium text-[#5A687C] cursor-pointer bg-white border border-[#E1E4EA] rounded-lg hover:bg-gray-50 transition-colors"
+                    className="px-4 py-1.5 text-[14px] font-[500] text-[#5A687C] cursor-pointer bg-white border border-[#E1E4EA] rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     {t("settings.tab_1_list.cancel")}
                   </button>
                   <button
                     onClick={handleInvite}
                     disabled={inviteEmailLoading}
-                    className={`px-4 py-2.5 text-base cursor-pointer font-medium text-white rounded-lg transition-all ${inviteEmailLoading
+                    className={`px-4 py-1.5 text-[14px] font-[500] cursor-pointer text-white rounded-lg transition-all ${inviteEmailLoading
                       ? "bg-[#5f54ff98] cursor-not-allowed"
                       : "bg-[#5E54FF] hover:bg-[#4d44e6] active:scale-[0.98]"
                       }`}
@@ -1859,7 +1859,7 @@ const SettingsPage = () => {
     return (
       <div className="flex flex-col gap-6 w-full p-6">
         <div className="overflow-hidden">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 px-5.5 py-6 ">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 px-5.5 py-6 mb-4">
             <div className="space-y-2">
               <h2 className="text-[22px] font-[500] text-[#1E1E1E] dark:text-white">{t("settings.tab_1_list.general_settings")}</h2>
               <p className="text-[14px] text-[#5A687C] dark:text-gray-400 max-w-2xl">
@@ -1873,14 +1873,14 @@ const SettingsPage = () => {
               <button
                 type="button"
                 onClick={handleResetGeneralSettings}
-                className="px-2.5 py-1.5 bg-white dark:bg-[#2D3151] border border-[#E1E4EA] dark:border-[#2D3151] rounded-lg text-[#000000] dark:text-gray-300 text-[14px] sm:text-[16px] font-[500] cursor-pointer hover:bg-[#F9F8FF] dark:hover:bg-[#1E2A4A] transition-colors whitespace-nowrap"
+                className="px-2.5 py-1.5 bg-white dark:bg-[#2D3151] border border-[#E1E4EA] dark:border-[#2D3151] rounded-lg text-[#000000] dark:text-gray-300 text-[14px] font-[500] cursor-pointer hover:bg-[#F9F8FF] dark:hover:bg-[#1E2A4A] transition-colors whitespace-nowrap"
               >
                 {t("settings.tab_1_list.discard")}
               </button>
               <button
                 type="button"
                 onClick={handleSaveGeneralSettings}
-                className={`px-2.5 py-1.5 rounded-lg text-white text-[14px] sm:text-[16px] font-[500] cursor-pointer transition-colors whitespace-nowrap ${updateLoading ? "bg-[#5f54ff87] cursor-not-allowed" : "bg-[#675FFF] hover:bg-[#5E54FF]"}`}
+                className={`px-2.5 py-1.5 rounded-lg text-white text-[14px] font-[500] cursor-pointer transition-colors whitespace-nowrap ${updateLoading ? "bg-[#5f54ff87] cursor-not-allowed" : "bg-[#675FFF] hover:bg-[#5E54FF]"}`}
               >
                 {t("settings.tab_1_list.save_changes")}
               </button>
@@ -1889,7 +1889,7 @@ const SettingsPage = () => {
 
           <hr className="border border-gray-200 dark:border-[#2D3151] w-full mx-4"></hr>
 
-          <div className="px-6 py-6 space-y-8">
+          <div className="px-6 py-6 space-y-8 my-4">
 
             <div className="w-full">
               <section className="flex flex-col gap-4">
@@ -2112,7 +2112,7 @@ const SettingsPage = () => {
               {/* <MdOutlineKeyboardArrowLeft size={25} /> */}
               <div className="flex gap-4 pl-6 items-center h-[57px]">
                 {/* <LeftArrow /> */}
-                <h1 className="text-[22px] font-[500] dark:text-white">{t("settings.label")}</h1>
+                <h1 className="text-[#1E1E1E] text-[15px] font-[400] dark:text-white">{t("settings.label")}</h1>
               </div>
             </div>
             <hr className='text-[#E1E4EA] dark:border-[#2D3151]' />
@@ -2123,12 +2123,8 @@ const SettingsPage = () => {
               className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "my-profile" ? "bg-[#E9E8F9] dark:bg-[#2D1F5F]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                 }`}
             >
-              <img 
-                src={activeSidebarItem === "my-profile" ? MyProfileActive : MyProfileInactive} 
-                alt="My Profile" 
-                className="w-5 h-5" 
-              />
-              <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "my-profile" ? "text-black dark:text-white" : "text-grey-200 dark:text-gray-300"}`}>
+              
+              <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === "my-profile" ? "text-black dark:text-white" : "text-gray-600 dark:text-gray-300"}`}>
               {t("settings.my_profile")}
               </span>
             </div>
@@ -2138,12 +2134,8 @@ const SettingsPage = () => {
               className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "general" ? "bg-[#E9E8F9] dark:bg-[#2D1F5F]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                 }`}
             >
-              <img 
-                src={activeSidebarItem === "general" ? GeneralActive : GeneralInactive} 
-                alt="General" 
-                className="w-5 h-5" 
-              />
-              <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "general" ? "text-black dark:text-white" : "text-grey-200 dark:text-gray-300"}`}>
+              
+              <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === "general" ? "text-black dark:text-white" : "text-gray-600 dark:text-gray-300"}`}>
                 {t("settings.tab_1")}
               </span>
             </div>
@@ -2153,12 +2145,8 @@ const SettingsPage = () => {
               className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "billing" ? "bg-[#E9E8F9] dark:bg-[#1E2A4A]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                 }`}
             >
-              <img 
-                src={activeSidebarItem === "billing" ? PlanActive : PlanInactive} 
-                alt="Billing" 
-                className="w-5 h-5" 
-              />
-              <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "billing" ? "text-black dark:text-white" : "text-grey-200 dark:text-gray-300"}`}>
+              
+              <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === "billing" ? "text-black dark:text-white" : "text-gray-600 dark:text-gray-300"}`}>
                 {t("settings.tab_2")}
               </span>
             </div>
@@ -2168,12 +2156,8 @@ const SettingsPage = () => {
               className={`flex group justify-center md:justify-start items-center gap-1.5 p-2 relative self-stretch w-full flex-[0_0_auto] rounded-2xl cursor-pointer ${activeSidebarItem === "team" ? "bg-[#E9E8F9] dark:bg-[#1E2A4A]" : "hover:bg-[#F9F8FF] dark:hover:bg-[#2D3151]"
                 }`}
             >
-              <img 
-                src={activeSidebarItem === "team" ? TeamActive : TeamMembersInactive} 
-                alt="Team" 
-                className="w-5 h-5" 
-              />
-              <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "team" ? "text-black dark:text-white" : "text-grey-200 dark:text-gray-300"}`}>
+              
+              <span className={`font-[400] text-[14px] ml-3 ${activeSidebarItem === "team" ? "text-black dark:text-white" : "text-gray-600 dark:text-gray-300"}`}>
                 {t("settings.tab_3")}
               </span>
             </div>
@@ -2278,7 +2262,7 @@ const SettingsPage = () => {
                   alt="My Profile" 
                   className="w-5 h-5" 
                 />
-                <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "my-profile" ? "text-black dark:text-white" : "text-grey-200 dark:text-gray-300"}`}>
+                <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "my-profile" ? "text-black dark:text-white" : "text-gray-500 dark:text-gray-300"}`}>
                   My Profile
                 </span>
               </div>
@@ -2296,7 +2280,7 @@ const SettingsPage = () => {
                   alt="General" 
                   className="w-5 h-5" 
                 />
-                <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "general" ? "text-black dark:text-white" : "text-grey-200 dark:text-gray-300"}`}>
+                <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "general" ? "text-black dark:text-white" : "text-gray-500 dark:text-gray-300"}`}>
                   {t("settings.tab_1")}
                 </span>
               </div>
@@ -2314,7 +2298,7 @@ const SettingsPage = () => {
                   alt="Billing" 
                   className="w-5 h-5" 
                 />
-                <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "billing" ? "text-black dark:text-white" : "text-grey-200 dark:text-gray-300"}`}>
+                <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "billing" ? "text-black dark:text-white" : "text-gray-500 dark:text-gray-300"}`}>
                   {t("settings.tab_2")}
                 </span>
               </div>
@@ -2332,7 +2316,7 @@ const SettingsPage = () => {
                   alt="Team" 
                   className="w-5 h-5" 
                 />
-                <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "team" ? "text-black dark:text-white" : "text-grey-200 dark:text-gray-300"}`}>
+                <span className={`font-[400] text-[14px] ml-1 ${activeSidebarItem === "team" ? "text-black dark:text-white" : "text-gray-500 dark:text-gray-300"}`}>
                   {t("settings.tab_3")}
                 </span>
               </div>

@@ -504,12 +504,12 @@ const Product = () => {
 
                     {/* Right Buttons */}
                     <div className="flex items-center gap-3">
-                      <button className="flex items-center gap-2 px-4 py-2 bg-[#675FFF] text-white rounded-lg text-sm font-[500] hover:bg-[#5A4FE6] transition-colors">
+                      <button className="flex items-center gap-2 px-6 py-1.5 bg-[#675FFF] text-white rounded-lg text-[14px] font-[500] hover:bg-[#5A4FE6] transition-colors">
                         <Upload className="w-4 h-4" />
                         {t("geo.upload_new")}
                       </button>
 
-                      <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] text-[#1E1E1E] rounded-lg text-sm font-[500] hover:bg-[#F8F9FB] transition-colors">
+                      <button className="flex items-center gap-2 px-4 py-1.5 bg-white border border-[#E1E4EA] text-[#1E1E1E] rounded-lg text-[14px] font-[500] hover:bg-[#F8F9FB] transition-colors">
                         <Trash2 className="w-4 h-4" />
                         {t("geo.delete")}
                       </button>
@@ -621,7 +621,7 @@ const Product = () => {
                     setShowProductForm(false);
                     setShowProgressModal(false);
                   }}
-                  className="px-5 py-2.5 bg-white border border-[#E1E4EA] text-[#1E1E1E] rounded-lg text-sm font-[500] hover:bg-[#F8F9FB] transition-colors cursor-pointer"
+                  className="px-5 py-1.5 bg-white border border-[#E1E4EA] text-[#1E1E1E] rounded-lg text-[14px] font-[500] hover:bg-[#F8F9FB] transition-colors cursor-pointer"
                 >
                   {t("geo.back")}
                 </button>
@@ -630,7 +630,7 @@ const Product = () => {
                     setShowProductForm(false);
                     setShowPromptSuggestions(true);
                   }}
-                  className="px-5 py-2.5 bg-[#675FFF] text-white rounded-lg text-sm font-[500] hover:bg-[#5A4FE6] transition-colors cursor-pointer"
+                  className="px-5 py-1.5 bg-[#675FFF] text-white rounded-lg text-[14px] font-[500] hover:bg-[#5A4FE6] transition-colors cursor-pointer"
                 >
                   {t("geo.generate_prompt")}
                 </button>
@@ -678,7 +678,7 @@ const Product = () => {
                       // Regenerate prompts
                       console.log('Regenerate clicked');
                     }}
-                    className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] text-[#1E1E1E] rounded-lg text-sm font-[500] hover:bg-[#F8F9FB] transition-colors cursor-pointer"
+                    className="flex items-center gap-2 px-4 py-1.5 bg-white border border-[#E1E4EA] text-[#1E1E1E] rounded-lg text-[14px] font-[500] hover:bg-[#F8F9FB] transition-colors cursor-pointer"
                   >
                     <RefreshCw className="w-4 h-4" />
                     {t("geo.regenerate")}
@@ -687,7 +687,7 @@ const Product = () => {
                     onClick={() => {
                       navigate('/dashboard/geo?tab=articles');
                     }}
-                    className="flex items-center gap-2 px-5 py-2 bg-[#675FFF] text-white rounded-lg text-sm font-[500] hover:bg-[#5A4FE6] transition-colors cursor-pointer"
+                    className="flex items-center gap-2 px-5 py-1.5 bg-[#675FFF] text-white rounded-lg text-[14px] font-[500] hover:bg-[#5A4FE6] transition-colors cursor-pointer"
                   >
                     {t("geo.show_results")}
                     <ArrowRightIcon className="w-4 h-4" />
@@ -782,7 +782,7 @@ const Product = () => {
               {/* Action Buttons */}
               <div className="flex gap-3">
                 {/* Download CSV Button */}
-                <button className="flex items-center cursor-pointer gap-2 px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors">
+                <button className="flex items-center cursor-pointer gap-2 px-4 py-1.5 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors">
                   <Download className="w-4 h-4" />
                   <span>{t("geo.download_csv")}</span>
                 </button>
@@ -791,7 +791,7 @@ const Product = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddProductModal(true)}
-                  className="flex items-center cursor-pointer gap-2 px-4 py-2 bg-[#675FFF] rounded-lg text-white font-[500] text-sm hover:bg-[#5A4FE6] transition-colors relative"
+                  className="flex items-center cursor-pointer gap-2 px-4 py-1.5 bg-[#675FFF] rounded-lg text-white font-[500] text-sm hover:bg-[#5A4FE6] transition-colors relative"
                 >
                   <Plus className="w-4 h-4" />
                   <span>{t("geo.add_new_product")}</span>
@@ -814,7 +814,7 @@ const Product = () => {
               </div>
 
               {/* Refresh Button */}
-              <button className="flex items-center gap-2 cursor-pointer px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors">
+              <button className="flex items-center gap-2 cursor-pointer px-4 py-1.5 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors">
                 <RefreshCw className="w-4 h-4" />
                 <span>{t("geo.refresh")}</span>
               </button>
@@ -839,11 +839,11 @@ const Product = () => {
                 <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
                   {products.map((product) => (
                     <tr key={product.id} className="text-[16px] text-[#1E1E1E]">
-                      <td className="px-6 py-2 text-[16px] text-[#1E1E1E] font-[400] text-start">{product.productName}</td>
-                      <td className="px-3 py-2 text-[16px] text-[#1E1E1E] font-[400] text-start">{product.slug}</td>
-                      <td className="px-3 py-2 text-[16px] text-[#1E1E1E] font-[400] text-start">{product.lastMonthSOV.toFixed(1)}%</td>
-                      <td className="px-3 py-2 text-[16px] text-[#1E1E1E] font-[400] text-start">{product.monthToDate.toFixed(1)}%</td>
-                      <td className="px-3 py-2 text-[16px] text-[#1E1E1E] font-[400] text-start">
+                      <td className="px-6 py-2 text-[14px] text-[#1E1E1E] font-[400] text-start">{product.productName}</td>
+                      <td className="px-3 py-2 text-[14px] text-[#1E1E1E] font-[400] text-start">{product.slug}</td>
+                      <td className="px-3 py-2 text-[14px] text-[#1E1E1E] font-[400] text-start">{product.lastMonthSOV.toFixed(1)}%</td>
+                      <td className="px-3 py-2 text-[14px] text-[#1E1E1E] font-[400] text-start">{product.monthToDate.toFixed(1)}%</td>
+                      <td className="px-3 py-2 text-[14px] text-[#1E1E1E] font-[400] text-start">
                         {renderGrowth(product.growth, product.growthType)}
                       </td>
                       <td className="px-6 py-2 text-center whitespace-nowrap">
@@ -950,14 +950,14 @@ const Product = () => {
                       setNewProductName('');
                       setNewProductWebsite('');
                     }}
-                    className="px-4 py-2 text-sm font-[500] text-[#4B5563] bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F3F4F6] cursor-pointer"
+                    className="px-4 py-1.5 text-[14px] font-[500] text-[#4B5563] bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F3F4F6] cursor-pointer"
                   >
                     {t("geo.cancel")}
                   </button>
                   <button
                     type="button"
                     onClick={handleAddProduct}
-                    className="px-4 py-2 text-sm font-[500] text-white bg-[#675FFF] rounded-lg hover:bg-[#5A4FE6] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="px-4 py-1.5 text-[14px] font-[500] text-white bg-[#675FFF] rounded-lg hover:bg-[#5A4FE6] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                     disabled={!newProductName || !newProductWebsite}
                   >
                     {t("geo.add_product")}

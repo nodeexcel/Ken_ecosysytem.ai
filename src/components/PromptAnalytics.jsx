@@ -92,7 +92,7 @@ function PromptAnalytics() {
       </div>
 
       {/* Model filters - slider style */}
-      <div className="inline-flex items-center gap-1 bg-[#F3F4F6] rounded-lg p-0.5 w-fit border border-[#E1E4EA]">
+      <div className="inline-flex items-center gap-1 bg-[#F3F4F6] rounded-lg p-0.5 w-fit border border-[#E1E4EA] font-[500] text-[14px]">
         {modelFilters.map((label) => {
           const isActive = activeModel === label
           return (
@@ -143,16 +143,16 @@ function PromptAnalytics() {
               setSearchQuery(e.target.value)
               setCurrentPage(1)
             }}
-            className="w-full pl-10 pr-4 py-2 border border-[#E1E4EA] rounded-lg bg-white focus:outline-none focus:border-[#675FFF] text-sm text-[#1E1E1E]"
+            className="w-full pl-10 pr-4 py-2 border border-[#E1E4EA] rounded-lg bg-white focus:outline-none focus:border-[#675FFF] text-[14px] text-[#1E1E1E]"
           />
         </div>
 
         <button
           type="button"
-          className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F8F9FB] transition-colors cursor-pointer whitespace-nowrap"
+          className="flex items-center gap-2 px-4 py-1.5 bg-white border border-[#E1E4EA] font-[500] text-[14px] rounded-lg hover:bg-[#F8F9FB] transition-colors cursor-pointer whitespace-nowrap"
         >
           <ArrowUp className="w-4 h-4 " />
-          <span className="text-sm font-[500] text-black">{t("geo.export_all")}</span>
+          <span className="text-[14px] font-[500] text-black">{t("geo.export_all")}</span>
         </button>
       </div>
 
@@ -184,7 +184,7 @@ function PromptAnalytics() {
             <tbody className="divide-y divide-[#E1E4EA]">
               {currentData.map((row) => (
                 <tr key={row.id} className="hover:bg-[#F8F9FB] transition-colors">
-                  <td className="px-6 py-4 text-[15px] text-[#1E1E1E] leading-6">
+                  <td className="px-6 py-4 text-[14px] text-[#1E1E1E] leading-6">
                     <div className="flex items-start gap-3">
                       <input
                         type="checkbox"
@@ -207,7 +207,7 @@ function PromptAnalytics() {
                       ))}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-[15px] text-[#1E1E1E]">
+                  <td className="px-6 py-4 text-[14px] text-[#1E1E1E]">
                     {row.mentions} {t("geo.mentions")}
                   </td>
                 </tr>

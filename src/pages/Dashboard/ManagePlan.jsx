@@ -513,9 +513,9 @@ const ManagePlan = ({ onClose }) => {
           )} */}
 
           {/* Billing Cycle Toggle */}
-          <div className="flex gap-2 bg-[#F2F2F7] rounded-lg border border-[#E6E6E7]">
+          <div className="flex gap-2 p-0.5 bg-[#F2F2F7] rounded-lg border border-[#E6E6E7]">
             <button
-              className={`px-4 py-2 rounded-lg cursor-pointer text-sm font-medium transition-colors ${activeTab === "monthly"
+              className={`px-2.5 py-1.5 rounded-lg cursor-pointer text-[14px] font-[500] transition-colors ${activeTab === "monthly"
                 ? "bg-white text-[#1E1E1E] shadow-sm"
                 : "bg-transparent text-[#5A687C]"
                 }`}
@@ -524,7 +524,7 @@ const ManagePlan = ({ onClose }) => {
               {t("settings.tab_2_list.monthly")}
             </button>
             <button
-              className={`px-4 py-2 cursor-pointer rounded-lg text-sm font-medium transition-colors ${activeTab === "yearly"
+              className={`px-2.5 py-1.5 cursor-pointer rounded-lg text-[14px] font-[500] transition-colors ${activeTab === "yearly"
                 ? "bg-white text-[#1E1E1E] shadow-sm"
                 : "bg-transparent text-[#5A687C]"
                 }`}
@@ -655,7 +655,7 @@ const ManagePlan = ({ onClose }) => {
           </div>
           <button
             onClick={() => setShowCancelPopup(true)}
-            className="px-4 py-2 bg-[#F7F7F8] cursor-pointer border border-[#E1E4EA] text-[#1E1E1E] text-[14px] font-[500] rounded-lg hover:bg-[#EFF0F2] transition-colors whitespace-nowrap"
+            className="px-2.5 py-1.5 bg-[#F7F7F8] shadow-sm cursor-pointer border border-[#E1E4EA] text-[#1E1E1E] text-[14px] font-[500] rounded-lg hover:bg-[#EFF0F2] transition-colors whitespace-nowrap"
           >
             {t("settings.tab_2_list.cancel_my_plan")}
           </button>

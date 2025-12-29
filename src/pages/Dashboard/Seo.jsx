@@ -362,15 +362,15 @@ function Seo() {
                                 </p>
                             </div>
                             <div className="flex items-center gap-2">
-                                <button className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-sm font-[500] text-[#1E1E1E] hover:bg-[#F8F9FB] transition-colors cursor-pointer">
+                                <button className="inline-flex items-center gap-2 px-4 py-1.5 font-[500] text-[14px] bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] hover:bg-[#F8F9FB] cursor-pointer">
                                     <Upload className="w-4 h-4" />
                                     {t("geo.export_all")}
                                 </button>
-                                <button className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-sm font-[500] text-[#1E1E1E] hover:bg-[#F8F9FB] transition-colors cursor-pointer">
+                                <button className="inline-flex items-center gap-2 px-4 py-1.5 font-[500] text-[14px] bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] hover:bg-[#F8F9FB] cursor-pointer">
                                     <FolderDown className="w-4 h-4" />
                                     {t("geo.import")}
                                 </button>
-                                <button className="inline-flex items-center gap-2 px-4 py-2 bg-[#675FFF] text-white rounded-lg text-sm font-[400] hover:bg-[#594edb] transition-colors cursor-pointer">
+                                <button className="inline-flex items-center gap-2 px-4 py-1.5 font-[400] text-[14px] bg-[#675FFF] text-white rounded-lg hover:bg-[#594edb] cursor-pointer">
                                     <span className="text-lg leading-none">+</span>
                                     {t("geo.add_prompt")}
                                 </button>
@@ -416,7 +416,7 @@ function Seo() {
                                     <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
                                         {prompts.map((prompt) => (
                                             <tr key={prompt.id} className="text-[16px] text-[#1E1E1E]">
-                                                <td className="px-6 py-2 text-[16px] text-[#1E1E1E] text-start">
+                                                <td className="px-6 py-2 text-[14px] text-[#1E1E1E] text-start">
                                                     <div className="flex items-start gap-3">
                                                         <input
                                                             type="checkbox"
@@ -427,7 +427,7 @@ function Seo() {
                                                         <span className="text-[#1E1E1E]">{prompt.text}</span>
                                                     </div>
                                                 </td>
-                                                <td className="px-3 py-2 text-[16px] text-start">
+                                                <td className="px-3 py-2 text-[14px] text-start">
                                                     <div className="flex items-center gap-1">
                                                         {prompt.models.map((model, idx) => (
                                                             <img
@@ -439,7 +439,7 @@ function Seo() {
                                                         ))}
                                                     </div>
                                                 </td>
-                                                <td className="px-3 py-2 text-[16px] text-start">{prompt.created}</td>
+                                                <td className="px-3 py-2 text-[14px] text-start">{prompt.created}</td>
                                             </tr>
                                         ))}
                                     </tbody>

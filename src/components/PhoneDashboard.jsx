@@ -323,7 +323,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
           />
           <button
             onClick={handleRefresh}
-            className="flex items-center gap-2 px-4 py-2 text-[14px] bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] text-sm font-medium hover:bg-gray-50 cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2 text-[14px] font-[500] bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] hover:bg-gray-50 cursor-pointer"
           >
             <RefreshCw size={16} />
             {t("phone.refresh") || "Refresh"}
@@ -342,9 +342,9 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
         {/* Credit Summary Card */}
         <div className="rounded-3xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between relative">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-[16px] font-[400] text-[#5A687C]">{t("phone.credit_summary") || "Credit Summary"}</h2>
+            <h2 className="text-[14px] font-[400] text-[#5A687C]">{t("phone.credit_summary") || "Credit Summary"}</h2>
             <div className="flex items-center gap-2">
-              <span className="text-[14px] font-[500] text-[#5A687C]">{t("phone.auto_refill") || "Auto Refill"}</span>
+              <span className="text-[14px] font-[400] text-[#5A687C]">{t("phone.auto_refill") || "Auto Refill"}</span>
               <button
                 onClick={() => setAutoRefill(!autoRefill)}
                 className={`w-12 h-6 cursor-pointer rounded-full flex items-center px-1 transition-colors duration-300 ${autoRefill ? "bg-[#675FFF]" : "bg-gray-300"
@@ -359,11 +359,11 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
           </div>
           <div className="flex items-center justify-between mt-4">
             <div>
-              <h3 className="text-[32px] font-[600] text-[#1E1E1E] mb-2">€{balance.toFixed(2)}</h3>
-              <p className="text-[13px] font-[400] text-[#5A687C]">{t("phone.credit_rate") || "Credit rate"} <span className="font-semibold text-black">0.20 € / min </span></p>
+              <h3 className="text-[18px] font-[400] text-[#1E1E1E]">€{balance.toFixed(2)}</h3>
+              <p className="text-[13px] font-[400] text-[#5A687C]">{t("phone.credit_rate") || "Credit rate"} <span className="font-[14px] text-black">0.20 € / min </span></p>
             </div>
             <button
-              className="bg-[#675FFF] text-white px-5 py-2.5 rounded-lg text-sm font-medium flex items-center justify-center gap-2 cursor-pointer hover:bg-[#5E54FF] transition"
+              className="bg-[#675FFF] text-white px-4 py-1.5 rounded-lg text-[14px] font-[500] flex items-center justify-center gap-2 cursor-pointer hover:bg-[#5E54FF] transition"
               onClick={() => setShowModal(true)}
             >
               <Plus size={16} />
@@ -375,11 +375,11 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
         {/* Average Call Duration Card */}
         <div className="rounded-3xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between">
           <div>
-            <h2 className="text-[16px] font-[400] text-[#5A687C] mb-10">{t("phone.average_call_duration") || "Average Call Duration"}</h2>
-            <h3 className="text-[32px] font-[600] mb-2 text-[#1E1E1E]">
+            <h2 className="text-[14px] font-[400] text-[#5A687C] mb-10">{t("phone.average_call_duration") || "Average Call Duration"}</h2>
+            <h3 className="text-[18px] font-[400] mb-2 text-[#1E1E1E]">
               {dashboardData.loading ? '...' : dashboardData.average_call_duration}
             </h3>
-            <p className="text-[13px] font-[400] text-[#5A687C]">
+            <p className="text-[14px] font-[400] text-[#5A687C]">
               {dashboardData.call_duration_trend
                 ? `${dashboardData.call_duration_trend > 0 ? '+' : ''}${dashboardData.call_duration_trend}% ${dashboardData.call_duration_trend > 0 ? 'longer' : 'shorter'} calls this week`
                 : dashboardData.loading ? 'Loading...' : `${t("phone.no_trend_data_available") || "No trend data available"}`}
@@ -395,16 +395,16 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
         {/* Agent Overview Card */}
         <div className="rounded-3xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between">
           <div>
-            <h2 className="text-[16px] font-[400] text-[#5A687C] mb-4">{t("phone.agent_overview") || "Agent Overview"}</h2>
-            <h3 className="text-[32px] font-[600] mb-2 text-[#1E1E1E]">
+            <h2 className="text-[14px] font-[400] text-[#5A687C] mb-4">{t("phone.agent_overview") || "Agent Overview"}</h2>
+            <h3 className="text-[18px] font-[400] mb-2 text-[#1E1E1E]">
               {dashboardData.loading ? '...' : dashboardData.agents}
             </h3>
-            <p className="text-[13px] font-[400] text-[#5A687C]">
+            <p className="text-[14px] font-[400] text-[#5A687C]">
               {dashboardData.loading ? 'Loading...' : `${dashboardData.agents_online} ${t("phone.online") || "online"} ${dashboardData.agents_pending > 0 ? ` · ${dashboardData.agents_pending} pending invitation` : ''}`}
             </p>
           </div>
           <button
-            className="bg-white border border-[#E1E4EA] w-full mt-3 text-[#1E1E1E] text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            className="bg-white border border-[#E1E4EA] w-full mt-3 text-[#1E1E1E] text-[14px] font-[500] px-4 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => handleNavigateSection("call-agents")}
           >
             {t("phone.see_more") || "See more"}
@@ -414,16 +414,16 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
         {/* Campaigns Card */}
         <div className="rounded-3xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between">
           <div>
-            <h2 className="text-[16px] font-[400] text-[#5A687C] mb-4">{t("phone.campaigns") || "Campaigns"}</h2>
-            <h3 className="text-[32px] font-[600] mb-2 text-[#1E1E1E]">
+            <h2 className="text-[14px] font-[400] text-[#5A687C] mb-4">{t("phone.campaigns") || "Campaigns"}</h2>
+            <h3 className="text-normal font-[400] mb-2 text-[#1E1E1E]">
               {dashboardData.loading ? '...' : dashboardData.campaigns}
             </h3>
-            <p className="text-[13px] font-[400] text-[#5A687C]">
+            <p className="text-[14px] font-[400] text-[#5A687C]">
               {dashboardData.loading ? 'Loading...' : `${dashboardData.campaigns_outbound} ${t("phone.outbound") || "outbound"} ${dashboardData.campaigns_inbound > 0 ? ` · ${dashboardData.campaigns_inbound} inbound ${t("phone.inbound") || "inbound"}` : ''}`}
             </p>
           </div>
           <button
-            className="bg-white border border-[#E1E4EA] w-full mt-3 text-[#1E1E1E] text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            className="bg-white border border-[#E1E4EA] w-full mt-3 text-[#1E1E1E] text-[14px] font-[500] px-4 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => handleNavigateSection("call-campaigns")}
           >
             {t("phone.see_more") || "See more"}
@@ -433,16 +433,16 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
         {/* Called Clients Card */}
         <div className="rounded-3xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between">
           <div>
-            <h2 className="text-[16px] font-[400] text-[#5A687C] mb-4">{t("phone.called_clients") || "Called Clients"}</h2>
-            <h3 className="text-[32px] font-[600] mb-2 text-[#1E1E1E]">
+            <h2 className="text-[14px] font-[400] text-[#5A687C] mb-4">{t("phone.called_clients") || "Called Clients"}</h2>
+            <h3 className="text-[18px] font-[400] mb-2 text-[#1E1E1E]">
               {dashboardData.loading ? '...' : dashboardData.outbound_calls}
             </h3>
-            <p className="text-[13px] font-[400] text-[#5A687C]">
+            <p className="text-[14px] font-[400] text-[#5A687C]">
               {dashboardData.loading ? 'Loading...' : `${t("phone.average_connection_rate") || "Average connection rate"} ${dashboardData.connection_rate}%`}
             </p>
           </div>
           <button
-            className="bg-white border border-[#E1E4EA] text-[#1E1E1E] w-full mt-3 text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            className="bg-white border border-[#E1E4EA] text-[#1E1E1E] w-full mt-3 text-[14px] font-[500] px-4 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => handleNavigateSection("outbound-calls")}
           >
             {t("phone.see_more") || "See more"}
@@ -452,16 +452,16 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
         {/* Calls Received Card */}
         <div className="rounded-3xl border border-[#E1E4EA] bg-white p-6 flex flex-col justify-between">
           <div>
-            <h2 className="text-[16px] font-[400] text-[#5A687C] mb-4">{t("phone.calls_received") || "Calls Received"}</h2>
-            <h3 className="text-[32px] font-[600] mb-2 text-[#1E1E1E]">
+            <h2 className="text-[14px] font-[400] text-[#5A687C] mb-4">{t("phone.calls_received") || "Calls Received"}</h2>
+              <h3 className="text-[18px] font-[400] mb-2 text-[#1E1E1E]">
               {dashboardData.loading ? '...' : dashboardData.inbound_calls}
             </h3>
-            <p className="text-[13px] font-[400] text-[#5A687C]">
+            <p className="text-[14px] font-[400] text-[#5A687C]">
               {dashboardData.loading ? 'Loading...' : `${t("phone.response_rate") || "Response rate"} ${dashboardData.response_rate}%`}
             </p>
           </div>
           <button
-            className="bg-white border border-[#E1E4EA] text-[#1E1E1E] w-full mt-3 text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            className="bg-white border border-[#E1E4EA] text-[#1E1E1E] w-full mt-3 text-[14px] font-[500] px-4 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => handleNavigateSection("inbound-calls")}
           >
             {t("phone.see_more") || "See more"}
@@ -558,7 +558,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
                   </div>
 
                   <button
-                    className="w-full mt-1 bg-[#675FFF] text-white px-6 py-1.5 rounded-lg cursor-pointer hover:bg-[#5E54FF] transition font-medium"
+                    className="w-full mt-1 bg-[#675FFF] text-white px-6 py-1.5 rounded-lg cursor-pointer hover:bg-[#5E54FF] transition font-[500] text-[14px]"
                     onClick={handleTopUp}
                   >
                     {t("phone.top_up_credit") || "Top Up Credit"}
@@ -685,7 +685,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
 
                   {/* Save Button */}
                   <button
-                    className="w-full mt-4 bg-[#675FFF] text-white px-6 py-2.5 rounded-lg cursor-pointer hover:bg-[#5E54FF] transition font-medium"
+                    className="w-full mt-4 bg-[#675FFF] text-white px-6 py-2.5 rounded-lg cursor-pointer hover:bg-[#5E54FF] transition font-[500] text-[14px]"
                     onClick={() => {
                       // Handle save logic here
                       console.log('Saving automatic recharge settings:', {

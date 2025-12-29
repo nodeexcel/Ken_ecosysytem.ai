@@ -55,6 +55,8 @@ function SeoArticles() {
     const [selectedPersona, setSelectedPersona] = useState("Default User")
     const [selectedModel, setSelectedModel] = useState("")
     const [allConversations, setAllConversations] = useState(false)
+    const [percentage, setPercentage] =  useState(0)
+    const [shareOfVoiceData, setShareOfVoiceData] = useState([]);
     const moreActionsRef = useRef()
 
     // Model logo mapping
@@ -180,6 +182,24 @@ function SeoArticles() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    useEffect(() => {
+        const START_DATE = new Date("2025-12-10");
+        const now = new Date();
+    
+        const diffInMs = now - START_DATE;
+        const weeksPassed = Math.floor(diffInMs / (1000 * 60 * 60 * 24 * 7));
+    
+        const cappedWeeks = Math.min(weeksPassed, 9);
+    
+        setPercentage(Math.min(weeksPassed, 100));
+    
+        const generatedData = Array.from({ length: 9 }, (_, index) =>
+            index < cappedWeeks ? index + 1 : 0
+        );
+    
+        setShareOfVoiceData(generatedData);
+    }, []);
+
 
     // Dummy data for Share of Voice chart - Overall view
     const overallChartData = {
@@ -187,7 +207,7 @@ function SeoArticles() {
         datasets: [
             {
                 label: t("geo.share_of_voice"),
-                data: [18, 12, 20, 12, 28, 14, 24, 12, 22],
+                data: shareOfVoiceData,
                 borderColor: '#675FFF',
                 backgroundColor: 'rgba(103, 95, 255, 0.1)',
                 fill: true,
@@ -206,7 +226,7 @@ function SeoArticles() {
         datasets: [
             {
                 label: t("geo.chatgpt"),
-                data: [12, 18, 15, 10, 20, 22, 18, 16, 14],
+                data: shareOfVoiceData,
                 borderColor: '#22C55E', // Green
                 backgroundColor: 'rgba(34, 197, 94, 0.1)',
                 fill: false,
@@ -400,7 +420,7 @@ function SeoArticles() {
                                 {/* Left: value + subtitle */}
                                 <div>
                                     <div className="flex items-baseline gap-2 mb-1">
-                                        <h2 className="text-[20px] font-[500] text-[#1E1E1E]">10%</h2>
+                                        <h2 className="text-[20px] font-[500] text-[#1E1E1E]">{percentage}%</h2>
                                         <Info className="w-4 h-4 text-[#5A687C]" />
                                     </div>
                                     <p className="text-[14px] text-[#5A687C]">
@@ -574,12 +594,12 @@ function SeoArticles() {
                                     </p>
                                 </div>
                                 <div className="flex gap-3">
-                                    <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer">
+                                    <button className="flex items-center gap-2 px-4 py-1.5 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer">
                                         {t("geo.view_all")}
                                     </button>
                                     <button
                                         onClick={() => setShowAddPromptModal(true)}
-                                        className="flex items-center gap-2 px-4 py-2 bg-[#675FFF] rounded-lg text-white font-[500] text-sm hover:bg-[#5A4FE6] transition-colors cursor-pointer"
+                                        className="flex items-center gap-2 px-4 py-1.5 bg-[#675FFF] rounded-lg text-white font-[500] text-sm hover:bg-[#5A4FE6] transition-colors cursor-pointer"
                                     >
                                         <Plus className="w-4 h-4" />
                                         <span>{t("geo.add_prompt")}</span>
@@ -593,17 +613,17 @@ function SeoArticles() {
                                     <table className="min-w-full border-separate border-spacing-0">
                                         <thead className="bg-[#F7F7F8]">
                                             <tr className="text-[#5A687C]">
-                                                <th className="px-6 text-start py-2 text-[16px] font-[400]">{t("geo.prompts")}</th>
-                                                <th className="px-3 text-start py-2 text-[16px] font-[400]">{t("geo.model")}</th>
-                                                <th className="px-3 text-start py-2 text-[16px] font-[400]">{t("geo.creation_date")}</th>
-                                                <th className="px-6 text-center py-2 text-[16px] font-[400]">{t("geo.action")}</th>
+                                                <th className="px-6 text-start py-2 text-[14px] font-[400]">{t("geo.prompts")}</th>
+                                                <th className="px-3 text-start py-2 text-[14px] font-[400]">{t("geo.model")}</th>
+                                                <th className="px-3 text-start py-2 text-[14px] font-[400]">{t("geo.creation_date")}</th>
+                                                <th className="px-6 text-center py-2 text-[14px] font-[400]">{t("geo.action")}</th>
                                             </tr>
                                         </thead>
                                         <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
 
                                             {promptsData.map((prompt) => (
                                                 <tr key={prompt.id} className="text-[16px] text-[#1E1E1E]">
-                                                    <td className="px-6 py-2 text-[16px] text-[#1E1E1E] font-[400] text-start">
+                                                    <td className="px-6 py-2 text-[14px] text-[#1E1E1E] font-[400] text-start">
                                                         {prompt.prompt}
                                                     </td>
                                                     <td className="px-3 py-2 text-[16px] text-start">
@@ -618,7 +638,7 @@ function SeoArticles() {
                                                             ))}
                                                         </div>
                                                     </td>
-                                                    <td className="px-3 py-2 text-[16px] text-start font-[400]">
+                                                    <td className="px-3 py-2 text-[14px] text-start font-[400]">
                                                         {prompt.creationDate}
                                                     </td>
                                                     <td className="px-6 py-2 text-center whitespace-nowrap">
@@ -672,14 +692,14 @@ function SeoArticles() {
                                 <div className="bg-white border border-[#D6D6D6] rounded-2xl overflow-hidden">
                                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-6 border-b border-[#E1E4EA]">
                                         <div>
-                                            <h2 className="text-xl font-[600] text-[#1E1E1E] mb-1">
+                                            <h2 className="text-xl font-[500] text-[#1E1E1E] mb-1">
                                                 {t("geo.new_cited_content")}
                                             </h2>
                                             <p className="text-sm text-[#5A687C]">
                                                 {t("geo.new_cited_content_description")}
                                             </p>
                                         </div>
-                                        <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer">
+                                        <button className="flex items-center gap-2 px-4 py-1.5 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer">
                                             {t("geo.view_all")}
                                         </button>
                                     </div>
@@ -697,10 +717,10 @@ function SeoArticles() {
 
                                                     {/* Row 1: Items + Cited Count */}
                                                     <div className="flex justify-between text-xs text-[#5A687C] mb-1">
-                                                        <h3 className="text-lg font-[500] text-[#1E1E1E] mb-1">
+                                                        <h3 className="text-[14px] font-[500] text-[#1E1E1E] mb-1">
                                                             {item.title}
                                                         </h3>
-                                                        <span className="text-lg font-[500] text-black">{item.citedCount}</span>
+                                                        <span className="text-[14px] font-[500] text-black">{item.citedCount}</span>
                                                     </div>
 
                                                     {/* Row 2: First Seen + Chat Count */}
@@ -720,7 +740,7 @@ function SeoArticles() {
                                     {/* Header */}
                                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-6 border-b border-[#E1E4EA]">
                                         <div>
-                                            <h2 className="text-xl font-[600] text-[#1E1E1E] mb-1">
+                                            <h2 className="text-xl font-[500] text-[#1E1E1E] mb-1">
                                                 {t("geo.top_cited_content")}
                                             </h2>
                                             <p className="text-sm text-[#5A687C]">
@@ -744,7 +764,7 @@ function SeoArticles() {
                                                         className="bg-[#22C55E] rounded-lg px-4 py-2 text-white"
                                                         style={{ width: `${percentage}%` }}
                                                     >
-                                                        <span className="text-sm truncate">
+                                                        <span className="text-[14px] truncate">
                                                             {item.url}
                                                         </span>
                                                     </div>
@@ -897,7 +917,7 @@ function SeoArticles() {
                             <div className="flex justify-end gap-3 pt-4 border-t border-[#E1E4EA]">
                                 <button
                                     onClick={() => setShowAddPromptModal(false)}
-                                    className="px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer"
+                                    className="px-4 py-1.5 font-[500] text-[14px] bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] hover:bg-[#F8F9FB] cursor-pointer"
                                 >
                                     {t("geo.cancel")}
                                 </button>
@@ -906,7 +926,7 @@ function SeoArticles() {
                                         // Handle save logic here
                                         setShowAddPromptModal(false);
                                     }}
-                                    className="px-4 py-2 bg-[#675FFF] rounded-lg text-white font-[500] text-sm hover:bg-[#5A4FE6] transition-colors cursor-pointer"
+                                    className="px-4 py-1.5 font-[500] text-[14px] bg-[#675FFF] rounded-lg text-white hover:bg-[#5A4FE6] cursor-pointer"
                                 >
                                     {t("geo.save_prompts")}
                                 </button>

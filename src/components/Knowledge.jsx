@@ -335,11 +335,11 @@ const renderEmptyState = (tabKey, onAction) => {
                       <Ellipsis fill="#1e1e1e" />
                     </button>
                     {activeDropdown === i && (
-                      <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[99999]">
+                      <div className="absolute right-2 top-7 w-26 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[99999]">
                         <div className="py-1">
                           <div className="py-1">
                             <button
-                              className="block cursor-pointer w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
+                              className="block cursor-pointer w-full text-left px-4 py-1 text-[14px] font-[500] text-red-600 hover:rounded-lg"
                               onClick={() => {
                                 handleDelete(i, e.id)
                               }}
@@ -396,7 +396,7 @@ const renderEmptyState = (tabKey, onAction) => {
                       <Ellipsis fill="#1e1e1e" />
                     </button>
                     {activeDropdown === i && (
-                      <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[99999]" data-dropdown-menu onClick={(event) => event.stopPropagation()}>
+                      <div className="absolute right-2 top-7 w-26 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-[99999]" data-dropdown-menu onClick={(event) => event.stopPropagation()}>
                         <div className="py-1">
                           {/* <button
                             className="block cursor-pointer w-full group text-left px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] hover:rounded-lg hover:text-[#675FFF]"
@@ -409,7 +409,7 @@ const renderEmptyState = (tabKey, onAction) => {
                           <hr style={{ color: "#E6EAEE", marginTop: "5px" }} /> */}
                           <div className="py-1">
                             <button
-                              className="block cursor-pointer w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
+                              className="block cursor-pointer w-full text-left px-4 py-1 text-[14px] font-[500] text-red-600 hover:rounded-lg"
                               onClick={(event) => {
                                 event.stopPropagation();
                                 handleDelete(i, e.id)
@@ -443,7 +443,7 @@ const renderEmptyState = (tabKey, onAction) => {
                       <File className="w-5 h-5 text-[#675FFF]" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <a href={e.path} target="_blank" className="block text-[14px] font-[500] text-[#1E1E1E] truncate hover:underline hover:text-[#675FFF]">
+                      <a href={e.path} target="_blank" className="block text-[14px] font-[400] text-[#5A687C] truncate hover:underline hover:text-[#675FFF]">
                         {renderFileName(e.path)}
                       </a>
                       {e?.size && (
@@ -459,11 +459,11 @@ const renderEmptyState = (tabKey, onAction) => {
                       <Ellipsis fill="#1e1e1e" />
                     </button>
                     {activeDropdown === i && (
-                      <div className="absolute px-2 right-2 top-7 w-38 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
+                      <div className="absolute right-2 top-7 w-26 rounded-md shadow-lg bg-white ring-1 ring-gray-300 ring-opacity-5 z-10">
                         <div className="py-1">
                           <div className="py-1">
                             <button
-                              className="block cursor-pointer w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#F4F5F6] hover:rounded-lg"
+                              className="block cursor-pointer w-full text-left px-4 py-1 text-[14px] font-[500] text-red-600 hover:rounded-lg"
                               onClick={() => {
                                 handleDelete(i, e.id)
                               }}
@@ -504,7 +504,7 @@ const renderEmptyState = (tabKey, onAction) => {
                 setActiveTab(e.key);
                 setActiveDropdown(null);
               }}
-              className={`inline-flex cursor-pointer items-center justify-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              className={`inline-flex cursor-pointer items-center justify-center px-2.5 py-1.5 rounded-lg text-[14px] font-[500] transition-all duration-200 ${
                 activeTab === e.key
                   ? "bg-white text-[#1E1E1E] shadow-sm border border-[#E5E7EB]"
                   : "bg-transparent text-[#9CA3AF] border border-transparent hover:text-[#1E1E1E]"
@@ -521,7 +521,7 @@ const renderEmptyState = (tabKey, onAction) => {
             setOpen(true);
             setActiveDropdown(null);
           }}
-          className="flex items-center cursor-pointer gap-2 px-4 py-2 bg-[#675FFF] border border-[#5f58e8] rounded-lg text-white text-sm font-medium"
+          className="flex items-center cursor-pointer gap-2 px-2.5 py-1.5 bg-[#675FFF] border border-[#5f58e8] rounded-lg text-white text-[14px] font-[500]"
         >
           + {t("brain_ai.knowledge.add")} {renderHeader()}
         </button>
@@ -546,7 +546,7 @@ const renderEmptyState = (tabKey, onAction) => {
 
           {/* Header */}
           <div className="px-6 pt-6 pb-4 border-b border-[#E5E7EB]">
-            <h2 className="text-[#1E1E1E] font-semibold text-[20px] mb-1">
+            <h2 className="text-[#1E1E1E] font-[400] text-[20px] mb-1">
               {t("brain_ai.knowledge.add")} {renderHeader()}
             </h2>
           </div>
@@ -657,14 +657,14 @@ const renderEmptyState = (tabKey, onAction) => {
                 setErrors({})
                 setSelectedFile(null)
               }}
-              className="cursor-pointer text-[15px] text-[#111827] bg-white border border-[#E5E7EB] rounded-xl px-4 py-2 shadow-sm hover:bg-[#F9FAFB]"
+              className="cursor-pointer text-[14px] font-[500] text-[#111827] bg-white border border-[#E5E7EB] rounded-lg px-4 py-1.5 shadow-sm hover:bg-[#F9FAFB]"
             >
               {t("brain_ai.cancel")}
             </button>
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="cursor-pointer text-[15px] text-white rounded-xl px-4 py-2 bg-[#675FFF] hover:bg-[#5E54FF] disabled:cursor-not-allowed"
+              className="cursor-pointer text-[14px] font-[500] text-white rounded-lg px-4 py-1.5 bg-[#675FFF] hover:bg-[#5E54FF] disabled:cursor-not-allowed"
             >
               {loading ? <div className="flex items-center justify-center gap-2"><p>{t("brain_ai.processing")}</p><span className="loader" /></div> : `${t("brain_ai.knowledge.add")} ${renderHeader()}`}
             </button>

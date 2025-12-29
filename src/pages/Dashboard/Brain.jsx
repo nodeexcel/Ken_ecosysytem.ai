@@ -232,7 +232,7 @@ const BrainAI = () => {
               >
                 <div className="flex gap-4 pl-6 items-center h-[57px]">
                   {/* <LeftArrow /> */}
-                  <h1 className="text-[22px] font-[500]">{t("brain_ai.brain_ai")}</h1>
+                  <h1 className="text-[#1E1E1E] text-[15px] font-[400]">{t("brain_ai.brain_ai")}</h1>
                 </div>
               </div>
               <hr className="text-[#E1E4EA] px-6"  />

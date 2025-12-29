@@ -111,7 +111,7 @@ function ContentAnalytics() {
             </div>
 
             {/* Navigation Tabs - slider style */}
-            <div className="inline-flex items-center gap-1 bg-[#F3F4F6] rounded-lg p-0.5 w-fit border border-[#E1E4EA]">
+            <div className="inline-flex items-center gap-1 bg-[#F3F4F6] rounded-lg p-0.5 w-fit border border-[#E1E4EA] font-[500] text-[14px]">
                 {tabs.map((tab) => {
                     const isActive = activeTab === tab.key
                     return (

@@ -19,12 +19,93 @@ function AgentsSeth() {
     const moreActionsRef = useRef(null);
 
     const [open, setOpen] = useState(true)
+    
+    // Filter states
+    const [sortBy, setSortBy] = useState(null);
+    const [statusFilter, setStatusFilter] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
+    const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
+    const sortDropdownRef = useRef(null);
+    const statusDropdownRef = useRef(null);
+    const sortButtonRef = useRef(null);
+    const statusButtonRef = useRef(null);
 
     useEffect(() => {
         getAppointementSetterData()
     }, [open])
 
     const languagesOptions = [{ label: 'English (US)', key: "en" }, { label: 'French', key: 'fr' }];
+
+    // Sort and filter options
+    const sortOptions = [
+        { label: `${t("appointment.sort_by")}: ${t("appointment.name")}`, key: "name" },
+        { label: `${t("appointment.sort_by")}: ${t("appointment.channel")}`, key: "channel" },
+        { label: `${t("appointment.sort_by")}: ${t("appointment.languages")}`, key: "language" },
+        { label: `${t("appointment.sort_by")}: ${t("appointment.status")}`, key: "status" },
+    ];
+
+    const statusOptions = [
+        { label: `All ${t("appointment.status")}`, key: "all" },
+        { label: t("appointment.active"), key: "active" },
+        { label: t("appointment.inactive"), key: "inactive" },
+    ];
+
+    // Filter and sort the data
+    const getFilteredAndSortedData = () => {
+        if (!campaignData) return [];
+
+        let filtered = [...campaignData];
+
+        // Apply search filter
+        if (searchQuery.trim()) {
+            filtered = filtered.filter((item) => {
+                const searchLower = searchQuery.toLowerCase();
+                return (
+                    item.agent_name?.toLowerCase().includes(searchLower) ||
+                    item.agent_channel?.toLowerCase().includes(searchLower) ||
+                    item.agent_language?.some(lang => {
+                        const found = languagesOptions.find(d => d.key === lang);
+                        return found?.label?.toLowerCase().includes(searchLower);
+                    })
+                );
+            });
+        }
+
+        // Apply status filter
+        if (statusFilter && statusFilter !== "all") {
+            filtered = filtered.filter((item) => {
+                if (statusFilter === "active") return item.is_active === true;
+                if (statusFilter === "inactive") return item.is_active === false;
+                return true;
+            });
+        }
+
+        // Apply sorting
+        if (sortBy) {
+            filtered.sort((a, b) => {
+                switch (sortBy) {
+                    case "name":
+                        return (a.agent_name || "").localeCompare(b.agent_name || "");
+                    case "channel":
+                        return (a.agent_channel || "").localeCompare(b.agent_channel || "");
+                    case "language":
+                        const aLang = a.agent_language?.[0] || "";
+                        const bLang = b.agent_language?.[0] || "";
+                        return aLang.localeCompare(bLang);
+                    case "status":
+                        if (a.is_active === b.is_active) return 0;
+                        return a.is_active ? -1 : 1;
+                    default:
+                        return 0;
+                }
+            });
+        }
+
+        return filtered;
+    };
+
+    const filteredData = getFilteredAndSortedData();
 
     const handleDropdownClick = (index, e) => {
         e.stopPropagation();
@@ -50,6 +131,23 @@ function AgentsSeth() {
             ) {
                 setActiveDropdown(null);
             }
+            // Close filter dropdowns when clicking outside
+            if (
+                sortDropdownRef.current &&
+                !sortDropdownRef.current.contains(event.target) &&
+                sortButtonRef.current &&
+                !sortButtonRef.current.contains(event.target)
+            ) {
+                setSortDropdownOpen(false);
+            }
+            if (
+                statusDropdownRef.current &&
+                !statusDropdownRef.current.contains(event.target) &&
+                statusButtonRef.current &&
+                !statusButtonRef.current.contains(event.target)
+            ) {
+                setStatusDropdownOpen(false);
+            }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -67,8 +165,11 @@ function AgentsSeth() {
             const response = await updateAppointmentSetterStatus(id)
             if (response.status === 200) {
                 const updated = [...campaignData];
-                updated[index][key] = !updated[index][key];
-                setCampaignData(updated);
+                const itemIndex = updated.findIndex(item => item.agent_id === id);
+                if (itemIndex !== -1) {
+                    updated[itemIndex][key] = !updated[itemIndex][key];
+                    setCampaignData(updated);
+                }
                 setActiveDropdown(null);
             }
         } catch (error) {
@@ -110,8 +211,11 @@ function AgentsSeth() {
             if (response.status === 200) {
                 setActiveDropdown(null);
                 const updated = [...campaignData];
-                updated.splice(index, 1);
-                setCampaignData(updated);
+                const itemIndex = updated.findIndex(item => item.agent_id === id);
+                if (itemIndex !== -1) {
+                    updated.splice(itemIndex, 1);
+                    setCampaignData(updated);
+                }
             }
         } catch (error) {
             console.log(error)
@@ -131,7 +235,7 @@ function AgentsSeth() {
                         </div>
                         <button
                             onClick={() => setOpen(false)}
-                            className="bg-[#675FFF] cursor-pointer text-center justify-center items-center text-white rounded-lg text-sm md:text-base px-3 py-1.5 mt-3 md:mt-0"
+                            className="bg-[#675FFF] cursor-pointer text-center justify-center items-center text-white rounded-lg text-[14px] font-[500] px-3 py-1.5 mt-3 md:mt-0"
                         >
                             <span className="text-xl font-medium px-1">+</span>
                             {t("appointment.new_agent")}
@@ -139,24 +243,101 @@ function AgentsSeth() {
                     </div>
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mt-4">
                         <div className="w-full md:max-w-md">
-                            <div className="flex items-center gap-2 border border-[#D6D6D6] rounded-xl px-3 py-2 bg-white">
+                            <div className="flex items-center gap-2 border border-[#D6D6D6] rounded-lg px-3 py-2 bg-white">
                                 <Search className="w-4 h-4 text-[#5A687C]" />
                                 <input
                                     type="text"
                                     placeholder={t("appointment.search_name_or_phone_number")}
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
                                     className="w-full text-sm focus:outline-none text-[#1E1E1E] placeholder:text-[#5A687C]"
                                 />
                             </div>
                         </div>
                         <div className="flex items-center gap-3 justify-end">
-                            <button className="flex items-center gap-2 border border-[#D6D6D6] rounded-xl px-3 py-2 text-sm text-[#1E1E1E] bg-white cursor-pointer">
-                                {t("appointment.sort_by")}
-                                <ChevronDown className="w-4 h-4 text-[#5A687C]" />
-                            </button>
-                            <button className="flex items-center gap-2 border border-[#D6D6D6] rounded-xl px-3 py-2 text-sm text-[#1E1E1E] bg-white cursor-pointer">
-                                {t("appointment.status")}
-                                <ChevronDown className="w-4 h-4 text-[#5A687C]" />
-                            </button>
+                            <div className="relative">
+                                <button
+                                    ref={sortButtonRef}
+                                    onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
+                                    className="flex items-center gap-2 border border-[#D6D6D6] rounded-lg px-3 py-2 text-[14px] font-[500] text-[#1E1E1E] bg-white cursor-pointer hover:bg-[#F9F8FF] transition-colors"
+                                >
+                                    {sortBy ? sortOptions.find(opt => opt.key === sortBy)?.label : t("appointment.sort_by")}
+                                    <ChevronDown className={`w-4 h-4 text-[#5A687C] transition-transform ${sortDropdownOpen ? 'rotate-180' : ''}`} />
+                                </button>
+                                {sortDropdownOpen && (
+                                    <div
+                                        ref={sortDropdownRef}
+                                        className="absolute right-0 mt-2 w-48 rounded-md bg-white shadow-lg border border-gray-200 z-50"
+                                    >
+                                        <ul className="py-1">
+                                            {sortOptions.map((option) => (
+                                                <li
+                                                    key={option.key}
+                                                    onClick={() => {
+                                                        setSortBy(option.key);
+                                                        setSortDropdownOpen(false);
+                                                    }}
+                                                    className={`cursor-pointer px-4 py-2 text-sm hover:bg-[#F4F5F6] hover:text-[#675FFF] ${
+                                                        sortBy === option.key
+                                                            ? "text-[#675FFF] bg-[#F4F5F6]"
+                                                            : "text-[#5A687C]"
+                                                    }`}
+                                                >
+                                                    {option.label}
+                                                </li>
+                                            ))}
+                                            {sortBy && (
+                                                <li
+                                                    onClick={() => {
+                                                        setSortBy(null);
+                                                        setSortDropdownOpen(false);
+                                                    }}
+                                                    className="cursor-pointer px-4 py-2 text-sm text-[#5A687C] hover:bg-[#F4F5F6] border-t border-gray-200"
+                                                >
+                                                    Clear Sort
+                                                </li>
+                                            )}
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="relative">
+                                <button
+                                    ref={statusButtonRef}
+                                    onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
+                                    className="flex items-center gap-2 border border-[#D6D6D6] rounded-lg px-3 py-2 text-[14px] font-[500] text-[#1E1E1E] bg-white cursor-pointer hover:bg-[#F9F8FF] transition-colors"
+                                >
+                                    {statusFilter && statusFilter !== "all"
+                                        ? statusOptions.find(opt => opt.key === statusFilter)?.label
+                                        : t("appointment.status")}
+                                    <ChevronDown className={`w-4 h-4 text-[#5A687C] transition-transform ${statusDropdownOpen ? 'rotate-180' : ''}`} />
+                                </button>
+                                {statusDropdownOpen && (
+                                    <div
+                                        ref={statusDropdownRef}
+                                        className="absolute right-0 mt-2 w-48 rounded-md bg-white shadow-lg border border-gray-200 z-50"
+                                    >
+                                        <ul className="py-1">
+                                            {statusOptions.map((option) => (
+                                                <li
+                                                    key={option.key}
+                                                    onClick={() => {
+                                                        setStatusFilter(option.key === "all" ? null : option.key);
+                                                        setStatusDropdownOpen(false);
+                                                    }}
+                                                    className={`cursor-pointer px-4 py-2 text-sm hover:bg-[#F4F5F6] hover:text-[#675FFF] ${
+                                                        (statusFilter === option.key || (!statusFilter && option.key === "all"))
+                                                            ? "text-[#675FFF] bg-[#F4F5F6]"
+                                                            : "text-[#5A687C]"
+                                                    }`}
+                                                >
+                                                    {option.label}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -166,32 +347,32 @@ function AgentsSeth() {
                         <table className="min-w-full border-separate border-spacing-0">
                             <thead className="bg-[#F7F7F8]  ">
                                 <tr className="text-[#5A687C] ">
-                                    <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("appointment.agent")}</th>
-                                    <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("appointment.channel")}</th>
-                                    <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("appointment.languages")}</th>
-                                    <th className=" text-center py-3 text-[16px] font-[400]">{t("appointment.status")}</th>
-                                    <th className="px-6 text-center py-3 text-[16px] font-[400]">{t("appointment.action")}</th>
+                                    <th className="px-6 text-start py-3 text-[14px] font-[400]">{t("appointment.agent")}</th>
+                                    <th className="px-3 text-start py-3 text-[14px] font-[400]">{t("appointment.channel")}</th>
+                                    <th className="px-3 text-start py-3 text-[14px] font-[400]">{t("appointment.languages")}</th>
+                                    <th className=" text-center py-3 text-[14px] font-[400]">{t("appointment.status")}</th>
+                                    <th className="px-6 text-center py-3 text-[14px] font-[400]">{t("appointment.action")}</th>
                                     <th></th>
                                 </tr>
                             </thead>
 
                             <tbody className="bg-white [&>tr:first-child>td:first-child]:rounded-tl-2xl [&>tr:first-child>td:first-child]:border-t [&>tr:first-child>td:last-child]:rounded-tr-2xl [&>tr:first-child>td:last-child]:border-t [&>tr:first-child>td]:border-t [&>tr:last-child>td:first-child]:rounded-bl-2xl [&>tr:last-child>td:first-child]:border-b [&>tr:last-child>td:last-child]:rounded-br-2xl [&>tr:last-child>td:last-child]:border-b [&>tr:last-child>td]:border-b [&>tr>td]:border-[#D6D6D6]">
-                                {loading ? <tr className='h-34'><td ></td><td ></td><td ><td ></td><td ></td><span className='loader' /></td><td></td><td></td></tr> : message ? <tr className='h-34'><td></td><td></td><td>{message}</td></tr> : <>{campaignData.map((item, index) => {
+                                {loading ? <tr className='h-34'><td ></td><td ></td><td ><td ></td><td ></td><span className='loader' /></td><td></td><td></td></tr> : (message || filteredData.length === 0) ? <tr className='h-34'><td colSpan="6" className="text-center py-8 text-[#5A687C]">{filteredData.length === 0 && !loading ? t("no_data") : message}</td></tr> : <>{filteredData.map((item, index) => {
                                     return (
                                         <tr key={index} className="text-center">
                                             <td className="px-4 py-4 text-[16px] text-[#1E1E1E] font-semibold  ">
-                                                <div className='flex items-center gap-2 text-[16px] font-[400]'>
+                                                <div className='flex items-center gap-2 text-[14px] font-[400]'>
                                                     <p className='flex justify-center items-center rounded-[12px] h-[40px] w-[40px] text-[16px] font-[400] bg-[#EBEFFF] text-[#675FFF]'>{item.agent_name[0]}</p>
                                                     {item.agent_name}
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-4 text-[16px] text-[#000000] font-[400] text-start ">{item.agent_channel}</td>
-                                            <td className="px-4 py-4 text-[16px] text-[#000000] font-[400] text-start ">{item.agent_language.map(lan => {
+                                            <td className="px-4 py-4 text-[14px] text-[#000000] font-[400] text-start ">{item.agent_channel}</td>
+                                            <td className="px-4 py-4 text-[14px] text-[#000000] font-[400] text-start ">{item.agent_language.map(lan => {
                                                 const found = languagesOptions?.length > 0 && languagesOptions.find(d => d.key === lan);
                                                 return found?.label
                                             }).join(', ')
                                             }</td>
-                                            <td className="py-4 text-[16px] text-center align-middle">
+                                            <td className="py-4 text-[14px] text-center align-middle">
                                                 <div className="flex justify-center items-center">
                                                     <p
                                                         className={`${item.is_active

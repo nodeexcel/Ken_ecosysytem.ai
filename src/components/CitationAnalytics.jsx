@@ -356,7 +356,7 @@ function CitationAnalytics() {
                 {/* Export All Button */}
                 <button
                     type="button"
-                    className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F8F9FB] transition-colors cursor-pointer"
+                    className="flex items-center gap-2 px-4 py-1.5 bg-white border border-[#E1E4EA] rounded-lg hover:bg-[#F8F9FB] transition-colors cursor-pointer"
                 >
                     <ArrowUp className="w-4 h-4 text-[#5A687C]" />
                     <span className="text-sm font-[500] text-[#5A687C]">
@@ -447,13 +447,13 @@ function CitationAnalytics() {
                                         />
                                     </div>
                                 </th>
-                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">{t("geo.cited_sources")}</th>
-                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">{t("geo.cited_models")}</th>
-                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">{t("geo.categories")}</th>
-                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">{t("geo.content_type")}</th>
-                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">{t("geo.prompts")}</th>
-                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">{t("geo.citations")}</th>
-                                <th className="px-6 py-3 text-left text-[16px] font-[400] text-[#5A687C]">{t("geo.creation_date")}</th>
+                                <th className="px-6 py-3 text-left text-[14px] font-[400] text-[#5A687C]">{t("geo.cited_sources")}</th>
+                                <th className="px-6 py-3 text-left text-[14px] font-[400] text-[#5A687C]">{t("geo.cited_models")}</th>
+                                <th className="px-6 py-3 text-left text-[14px] font-[400] text-[#5A687C]">{t("geo.categories")}</th>
+                                <th className="px-6 py-3 text-left text-[14px] font-[400] text-[#5A687C]">{t("geo.content_type")}</th>
+                                <th className="px-6 py-3 text-left text-[14px] font-[400] text-[#5A687C]">{t("geo.prompts")}</th>
+                                <th className="px-6 py-3 text-left text-[14px] font-[400] text-[#5A687C]">{t("geo.citations")}</th>
+                                <th className="px-6 py-3 text-left text-[14px] font-[400] text-[#5A687C]">{t("geo.creation_date")}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-[#E1E4EA]">
@@ -467,7 +467,7 @@ function CitationAnalytics() {
                                             className="w-4 h-4 border border-[#D6D6D6] rounded cursor-pointer"
                                         />
                                     </td>
-                                    <td className="px-6 py-4 text-[16px] text-[#1E1E1E]">{row.citedSource}</td>
+                                    <td className="px-6 py-4 text-[14px] text-[#1E1E1E]">{row.citedSource}</td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2">
                                             {row.citedModels.map((model, idx) => (
@@ -494,9 +494,9 @@ function CitationAnalytics() {
                                             </span>
                                         )}
                                     </td>
-                                    <td className="px-6 py-4 text-[16px] text-[#1E1E1E]">{row.prompts} {t("geo.prompts")}</td>
-                                    <td className="px-6 py-4 text-[16px] text-[#1E1E1E]">{row.citations} {t("geo.citations")}</td>
-                                    <td className="px-6 py-4 text-[16px] text-[#1E1E1E]">{row.creationDate}</td>
+                                    <td className="px-6 py-4 text-[14px] text-[#1E1E1E]">{row.prompts} {t("geo.prompts")}</td>
+                                    <td className="px-6 py-4 text-[14px] text-[#1E1E1E]">{row.citations} {t("geo.citations")}</td>
+                                    <td className="px-6 py-4 text-[14px] text-[#1E1E1E]">{row.creationDate}</td>
                                 </tr>
                             ))}
                         </tbody>

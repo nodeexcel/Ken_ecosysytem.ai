@@ -287,18 +287,18 @@ export default function InBoundCalls() {
                       </tr>
                     ) : filteredAgents.length !== 0 ? (
                       filteredAgents.map((agent, index) => (
-                        <tr key={agent.id} className="text-[16px] text-[#1E1E1E]">
-                          <td className="px-4 py-4 text-[16px] text-[#1E1E1E] font-[600] text-start">{agent.agent_name}</td>
-                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.date}</td>
-                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.language}</td>
-                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.voice}</td>
-                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.caller_no}</td>
+                        <tr key={agent.id} className="text-[14px] font-[400] text-[#1E1E1E]">
+                          <td className="px-4 py-4 text-[14px] font-[400] text-[#1E1E1E] text-start">{agent.agent_name}</td>
+                          <td className="px-4 py-4 text-[14px] font-[400] text-[#5A687C] text-start">{agent.date}</td>
+                          <td className="px-4 py-4 text-[14px] font-[400] text-[#5A687C] text-start">{agent.language}</td>
+                          <td className="px-4 py-4 text-[14px] font-[400] text-[#5A687C] text-start">{agent.voice}</td>
+                          <td className="px-4 py-4 text-[14px] font-[400] text-[#5A687C] text-start">{agent.caller_no}</td>
                           <td className="px-4 py-4 text-start">
                             <span className={`inline-block ${agent.status !== "Replied" ? "text-[#34C759]" : "text-[#FF3B30]"} text-[16px] font-[400] px-3 py-1 rounded-full`}>
                               {agent.status}
                             </span>
                           </td>
-                          <td className="px-4 py-4 text-[16px] text-[#5A687C] text-start">{agent.duration}</td>
+                          <td className="px-4 py-4 text-[14px] font-[400] text-[#5A687C] text-start">{agent.duration}</td>
                           <td className="px-4 py-4 text-center">
                             <button onClick={() => handleDropdownClick(index)} className="p-2 rounded-lg relative cursor-pointer">
                               <div className='bg-[#F4F5F6] p-2 rounded-lg'><Ellipsis /></div>

@@ -580,12 +580,12 @@ export const CancelSubscriptionPopup = ({ t, onClose }) => {
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setInitailTab(false)}
-                className="flex-1 py-2.5 text-sm font-semibold border cursor-pointer border-[#E1E4EA] text-[#1E1E1E] rounded-lg hover:bg-gray-50"
+                className="flex-1 px-2.5 py-1.5 text-[14px] font-[500] border cursor-pointer border-[#E1E4EA] text-[#1E1E1E] rounded-lg hover:bg-gray-50"
               >
                 {t("settings.tab_2_list.no_still_cancel")}
               </button>
 
-              <button className="flex-1 py-2.5 text-sm font-semibold cursor-pointer bg-[#675FFF] text-white rounded-lg hover:bg-[#5E54FF]">
+              <button className="flex-1 px-2.5 py-1.5 text-[14px] font-[500] cursor-pointer bg-[#675FFF] text-white rounded-lg hover:bg-[#5E54FF]">
                 {t("settings.tab_2_list.accept_discount_stay")}
               </button>
             </div>
@@ -667,7 +667,7 @@ export const CancelSubscriptionPopup = ({ t, onClose }) => {
   {/* Left Button */}
   <button
     onClick={onClose}
-    className="flex-1 h-[38px] flex cursor-pointer items-center justify-center border border-[#E1E1E1] 
+    className="flex-1 px-2.5 py-1.5 flex cursor-pointer items-center justify-center border border-[#E1E1E1] 
                bg-white text-[#1E1E1E] rounded-lg hover:bg-gray-50 
                text-[13px] font-medium whitespace-nowrap"
   >
@@ -677,7 +677,7 @@ export const CancelSubscriptionPopup = ({ t, onClose }) => {
   {/* Right Button */}
   <button
     onClick={onClose}
-    className="flex-1 h-[38px] flex cursor-pointer items-center justify-center 
+    className="flex-1 px-2.5 py-1.5 flex cursor-pointer items-center justify-center 
                bg-[#675FFF] text-white rounded-lg hover:bg-[#5E54FF] 
                text-[13px] font-medium whitespace-nowrap"
   >
@@ -843,12 +843,12 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
         <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-xl border border-[#E1E4EA] min-w-0 overflow-hidden flex flex-col">
           <div className="min-w-0 flex-1">
             <h3 className="text-xs sm:text-sm font-[500] text-[#5A687C] mb-2 sm:mb-3">{t("settings.tab_2_list.current_plan")}</h3>
-            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-2xl font-[600] text-[#1E1E1E] mb-2 break-words">
+            <h2 className="text-[22px] font-[500] text-[#1E1E1E] mb-2 break-words">
               {getPlanDisplayName(userDetails?.subscriptionType, t)}
             </h2>
             {userDetails?.subscriptionEndDate && (
               <p className="text-xs sm:text-sm font-[400] text-[#5A687C] break-words">
-                {t("settings.tab_2_list.auto_renew_on")} <span className="text-black font-semibold">{formatRenewalDate(userDetails.subscriptionEndDate)}</span> 
+                {t("settings.tab_2_list.auto_renew_on")} <span className="text-black font-[400]">{formatRenewalDate(userDetails.subscriptionEndDate)}</span> 
               </p>
             )}
           </div>
@@ -861,7 +861,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
                 navigate("/dashboard/manage-plan");
               }
             }}
-            className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] cursor-pointer text-sm sm:text-base font-semibold shadow-sm hover:bg-[#F9F8FF] transition-colors overflow-hidden text-ellipsis mt-4 sm:mt-5"
+            className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] cursor-pointer text-sm sm:text-base font-[400] shadow-sm hover:bg-[#F9F8FF] transition-colors overflow-hidden text-ellipsis mt-4 sm:mt-5"
           >
             {t("settings.tab_2_list.manage_plan")}
           </button>
@@ -871,7 +871,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
         <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-xl border border-[#E1E4EA] min-w-0 overflow-hidden flex flex-col">
           <div className="min-w-0 flex-1">
             <h3 className="text-xs sm:text-sm font-[500] text-[#5A687C] mb-2 sm:mb-3">{t("settings.tab_2_list.payment_method")}</h3>
-            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-2xl font-[600] text-[#1E1E1E] mb-2 break-words">
+            <h2 className="text-[22px] font-[500] text-[#1E1E1E] mb-2 break-words">
               Visa
             </h2>
             <p className="text-xs sm:text-sm font-[400] text-[#5A687C] break-words">
@@ -879,7 +879,7 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
             </p>
           </div>
           <button
-            className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] cursor-pointer text-sm sm:text-base font-semibold shadow-sm hover:bg-[#F9F8FF] transition-colors overflow-hidden text-ellipsis mt-4 sm:mt-5"
+            className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] cursor-pointer text-sm sm:text-base font-[400] shadow-sm hover:bg-[#F9F8FF] transition-colors overflow-hidden text-ellipsis mt-4 sm:mt-5"
           >
             {t("settings.tab_2_list.change_method")}
           </button>
@@ -889,14 +889,14 @@ const Plan = ({ t, teamMembersData, setActiveSidebarItem, showPlanPopup, setShow
         <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-xl border border-[#E1E4EA] font-semibold shadow-sm min-w-0 overflow-hidden flex flex-col">
           <div className="min-w-0 flex-1">
             <h3 className="text-xs sm:text-sm font-[500] text-[#5A687C] mb-2 sm:mb-3">{t("settings.tab_2_list.members_seats")}</h3>
-            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-2xl font-[600] text-[#1E1E1E] mb-1 break-words">
+            <h2 className="text-[22px] font-[500] text-[#1E1E1E] mb-1 break-words">
               {teamMembersData?.teamMembers || 0} / {teamMembersData?.teamSize || 0}
             </h2>
             <p className="text-xs sm:text-sm font-[400] text-[#5A687C] break-words">{t("settings.tab_2_list.total_users")}</p>
           </div>
           <button
             onClick={handleAddSeatsTeam}
-            className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-white border border-[#E1E4EA] font-semibold shadow-sm cursor-pointer rounded-lg text-[#1E1E1E] text-sm sm:text-base hover:bg-[#F9F8FF] transition-colors overflow-hidden text-ellipsis mt-4 sm:mt-5"
+            className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-white border border-[#E1E4EA] font-[400] shadow-sm cursor-pointer rounded-lg text-[#1E1E1E] text-sm sm:text-base hover:bg-[#F9F8FF] transition-colors overflow-hidden text-ellipsis mt-4 sm:mt-5"
           >
             {t("settings.tab_2_list.add_new_seats")}
           </button>

@@ -348,7 +348,7 @@ export default function PhoneNumbers() {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="bg-[#675FFF] cursor-pointer whitespace-nowrap text-white rounded-lg text-sm md:text-base px-3 py-1.5 mt-3 md:mt-0 flex items-center gap-2"
+          className="bg-[#675FFF] cursor-pointer whitespace-nowrap text-white rounded-lg text-[14px] font-[500] px-3 py-1.5 mt-3 md:mt-0 flex items-center gap-2"
         >
           <Plus size={20} />
           {t("phone.new_phone_number")}
@@ -363,7 +363,7 @@ export default function PhoneNumbers() {
             <button
               key={tab.value}
               onClick={() => setFilterStatus(tab.value)}
-              className={`px-4 py-1.5 text-sm font-medium rounded-lg transition cursor-pointer ${filterStatus === tab.value
+              className={`px-4 py-1.5 text-[14px] font-[500] rounded-lg transition cursor-pointer ${filterStatus === tab.value
                 ? "bg-white text-[#1E1E1E] font-[400] border border-[#D6D6D6] "
                 : "text-[#5A687C] hover:text-[#1E1E1E]"
                 }`}
@@ -691,14 +691,14 @@ export default function PhoneNumbers() {
                   setShowModal(false)
                   setError({})
                 }}
-                className="w-full text-[16px] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
+                className="w-full text-[14px] font-[500] cursor-pointer text-[#5A687C] bg-white border border-[#E1E4EA] rounded-[8px] h-[38px]"
               >
                 {
                   t("phone.cancel")
                 }
               </button>
               <button
-                className="w-full text-[16px] cursor-pointer text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
+                className="w-full text-[14px] font-[500] cursor-pointer text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
                 disabled={loader}
                 onClick={handleAddNumber}
               >

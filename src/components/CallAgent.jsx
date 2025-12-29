@@ -370,7 +370,7 @@ export default function CallAgentsPage() {
           <p className="text-sm md:text-[14px] text-[#5A687C] font-[400] mt-2">{t("phone.manage_your_ai_and_human_call_agents") || "Manage your AI and human call agents"}</p>
         </div>
         <button 
-          className="bg-[#675FFF] cursor-pointer text-white font-medium px-4 py-1.5 rounded-lg shadow-sm hover:bg-[#5E54FF] transition-colors flex items-center gap-2 w-fit"
+          className="bg-[#675FFF] cursor-pointer text-white font-[500] text-[14px] px-4 py-1.5 rounded-lg shadow-sm hover:bg-[#5E54FF] transition-colors flex items-center gap-2 w-fit"
           onClick={() => setShowModal(true)}
         >
           <Plus className="w-4 h-4" />
@@ -793,12 +793,12 @@ export default function CallAgentsPage() {
                   setAgent({ agent_name: "", language: "", voice: "", type: "", phone_number: "" })
                   setError({})
                 }}
-                className="w-full cursor-pointer text-[16px] text-[#5A687C] bg-white border-[1.5px] border-[#E1E4EA] rounded-[8px] h-[38px]"
+                className="w-full cursor-pointer text-[14px] font-[500] text-[#5A687C] bg-white border-[1.5px] border-[#E1E4EA] rounded-[8px] h-[38px]"
               >
               {t("cancel")}
               </button>
               <button
-                className="w-full cursor-pointer text-[16px] text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
+                className="w-full cursor-pointer text-[14px] font-[500] text-white rounded-[8px] bg-[#5E54FF]  h-[38px] flex items-center justify-center gap-2 relative"
                 disabled={loader}
                 onClick={submitForm}
               >

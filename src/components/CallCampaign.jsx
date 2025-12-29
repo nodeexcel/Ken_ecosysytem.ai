@@ -811,7 +811,7 @@ export default function CallCampaign() {
                 </p>
               </div>
               <button
-                className="bg-[#675FFF] cursor-pointer text-white font-medium px-4 py-1.5 rounded-lg shadow-sm hover:bg-[#5E54FF] transition-colors flex items-center gap-2 w-fit"
+                className="bg-[#675FFF] cursor-pointer text-white font-[500] text-[14px] px-4 py-1.5 rounded-lg shadow-sm hover:bg-[#5E54FF] transition-colors flex items-center gap-2 w-fit"
                 onClick={() => {
                   dispatch(getNavbarData("Tom, Phone"))
                   setEditData();
@@ -838,12 +838,12 @@ export default function CallCampaign() {
                     setShowNewCampaignForm(false);
                     resetForm();
                   }}
-                  className="px-5 py-1.5 cursor-pointer text-md text-[#1E1E1E] bg-white border border-[#E1E4EA] rounded-lg hover:bg-gray-50 transition-colors"
+                  className="px-5 py-1.5 cursor-pointer text-[14px] font-[500] text-[#1E1E1E] bg-white border border-[#E1E4EA] rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   {t("phone.cancel") || "Cancel"}
                 </button>
                 <button
-                  className="px-5 py-1.5 cursor-pointer text-md text-white rounded-lg bg-[#5E54FF] hover:bg-[#5a4aff] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-5 py-1.5 cursor-pointer text-[14px] font-[500] text-white rounded-lg bg-[#5E54FF] hover:bg-[#5a4aff] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={loader}
                   onClick={handleSubmit}
                 >

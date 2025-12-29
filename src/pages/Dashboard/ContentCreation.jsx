@@ -713,7 +713,7 @@ function ContentCreation() {
                             </div>
                             <button
                                 onClick={() => setShowCreationStudioModal(true)}
-                                className="flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 bg-[#675FFF] cursor-pointer text-white px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 rounded-lg font-[500] text-xs sm:text-sm hover:bg-[#5a4fe6] transition-colors whitespace-nowrap w-full sm:w-auto"
+                                className="flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 bg-[#675FFF] cursor-pointer text-white px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 rounded-lg font-[500] text-[14px] hover:bg-[#5a4fe6] transition-colors whitespace-nowrap w-full sm:w-auto"
                             >
                                 <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
                                 <span>{t("constance.add_creation_studio")}</span>
@@ -908,31 +908,55 @@ function ContentCreation() {
                                                 <div className="flex items-start justify-between gap-2 sm:gap-3">
                                                     <div className="flex-1 min-w-0 ">
                                                         {editingContentId === contentId ? (
-                                                            <input
-                                                                type="text"
-                                                                value={editingTitle}
-                                                                onChange={(e) => setEditingTitle(e.target.value)}
-                                                                onKeyDown={(e) => {
-                                                                    if (e.key === 'Enter') {
-                                                                        e.preventDefault();
-                                                                        handleSaveContentTitle(contentId, editingTitle);
-                                                                    } else if (e.key === 'Escape') {
-                                                                        setEditingContentId(null);
-                                                                        setEditingTitle('');
-                                                                    }
-                                                                }}
-                                                                onBlur={() => {
-                                                                    // Cancel edit on blur (clicking outside)
-                                                                    // Only save on Enter key press
-                                                                    setEditingContentId(null);
-                                                                    setEditingTitle('');
-                                                                }}
-                                                                className="w-full text-[#1E1E1E] text-base sm:text-lg font-[500] mb-1 sm:mb-1.5 leading-tight py-1 sm:py-2 outline-none border-b-2 border-[#675FFF] bg-transparent"
-                                                                autoFocus
-                                                                disabled={updatingContent}
-                                                            />
+                                                            <div className="w-full">
+                                                                <textarea
+                                                                    value={editingTitle}
+                                                                    onChange={(e) => setEditingTitle(e.target.value)}
+                                                                    onKeyDown={(e) => {
+                                                                        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                                                                            e.preventDefault();
+                                                                            handleSaveContentTitle(contentId, editingTitle);
+                                                                        } else if (e.key === 'Escape') {
+                                                                            setEditingContentId(null);
+                                                                            setEditingTitle('');
+                                                                        }
+                                                                    }}
+                                                                    className="w-full text-[#1E1E1E] text-base sm:text-lg font-[400] mb-2 sm:mb-3 leading-relaxed py-2 sm:py-3 outline-none border-2 border-[#675FFF] rounded-lg bg-white px-2 sm:px-3 resize-y min-h-[80px] min-h-[400px]"
+                                                                    autoFocus
+                                                                    disabled={updatingContent}
+                                                                    rows={4}
+                                                                    style={{ 
+                                                                        overflow: 'auto',
+                                                                        wordWrap: 'break-word',
+                                                                        whiteSpace: 'pre-wrap'
+                                                                    }}
+                                                                />
+                                                                <div className="flex items-center gap-2 mt-2">
+                                                                    <button
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            handleSaveContentTitle(contentId, editingTitle);
+                                                                        }}
+                                                                        disabled={updatingContent}
+                                                                        className="px-3 py-1.5 bg-[#675FFF] text-white text-sm font-[500] rounded-lg hover:bg-[#5E54FF] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                                    >
+                                                                        {updatingContent ? 'Saving...' : 'Save'}
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            setEditingContentId(null);
+                                                                            setEditingTitle('');
+                                                                        }}
+                                                                        disabled={updatingContent}
+                                                                        className="px-3 py-1.5 bg-white border border-[#D6D6D6] text-[#5A687C] text-sm font-[500] rounded-lg hover:bg-[#F9F8FF] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                                    >
+                                                                        Cancel
+                                                                    </button>
+                                                                </div>
+                                                            </div>
                                                         ) : (
-                                                            <h3 className="text-[#1E1E1E] text-base sm:text-lg font-[500] mb-1 sm:mb-1.5 leading-tight py-1 sm:py-2">
+                                                            <h3 className="text-[#1E1E1E] text-base sm:text-lg font-[400] mb-1 sm:mb-1.5 leading-tight py-1 sm:py-2 whitespace-pre-wrap break-words">
                                                                 {title}
                                                             </h3>
                                                         )}
@@ -1223,7 +1247,7 @@ function ContentCreation() {
                     >
                         {/* Modal Header */}
                         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
-                            <h2 className="text-xl font-semibold text-gray-800">Preview Content</h2>
+                            <h2 className="text-[18px] font-[600] text-[#1E1E1E]">Preview Content</h2>
                             <button
                                 onClick={() => {
                                     setSelectedContent(null)

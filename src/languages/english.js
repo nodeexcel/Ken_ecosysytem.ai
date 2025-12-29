@@ -150,7 +150,7 @@ const englishTranslation = {
   brain_ai: {
     full_name: "Full Name",
     email: "Email",
-    brain_ai: "Brain AI",
+    brain_ai: "AI Brain",
     phone_no: "Phone No",
     date_created: "Date Created",
     integrations: "Integration",
@@ -296,6 +296,7 @@ const englishTranslation = {
       message: "Message",
       message_placeholder: "Enter message",
       ok: "Ok",
+      coming_soon:"Coming Soon!",
       use_your: "Use your",
       account_to_ecosystem: "account to connect to Ecosysteme.ai",
       use_meta_business:
@@ -1378,8 +1379,8 @@ const englishTranslation = {
   calina: {
     create_new_chatbot: "Create New Smart Chatbot",
     edit_new_chatbot: "Edit Chatbot",
-    bot_details: "Bot Details",
-    bot_name: "Identity",
+    bot_details: "Identity",
+    bot_name: "Agent Name",
     bot_name_placeholder: "Ex. Ecosysteme",
     role: "Role",
     personality: "Personality",

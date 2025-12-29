@@ -65,11 +65,14 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
         bot_name: "", role: "", personality: "", prompt: "", transfer: "", file: [], reference_text: "", transfer_case: {}
     });
 
-    const validateForm = () => {
+    const validateForm = (currentStep = null) => {
         const newErrors = {};
 
         if (!formData.bot_name.trim()) newErrors.bot_name = `${t("calina.bot_name_required")}`;
-        // if (!formData.prompt.trim()) newErrors.prompt = `${t("calina.prompt_required")}`;
+        // Only validate prompt for step 3 (when submitting)
+        if (currentStep === 3 && !formData.prompt.trim()) {
+            newErrors.prompt = `${t("calina.prompt_required")}`;
+        }
         if (!formData.role) newErrors.role = `${t("calina.role_required")}`;
         if (!formData.personality) newErrors.personality = `${t("calina.personality_required")}`;
         setErrors(newErrors);
@@ -278,12 +281,35 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
     }
 
     const handleSubmit = async () => {
-        if (!validateForm()) {
+        if (!validateForm(3)) {
             console.log("Form validation failed", errors);
             return;
         }
+        
+        // Build transfer_case object from transfer_conditions (simple key-value pairs)
+        const transferCase = {};
+        
+        if (formData.transfer_conditions?.user_requested) {
+            transferCase["the_user_requests_to_be_contacted"] = true;
+        }
+        
+        if (formData.transfer_conditions?.x_attempts && formData.transfer_conditions.x_attempts_value) {
+            transferCase["the_AI_doesn't_understand_the_request_after_X_attempts"] = parseInt(formData.transfer_conditions.x_attempts_value) || 0;
+        }
+        
+        if (formData.transfer_conditions?.keyword_detection && formData.transfer_conditions.keywords?.length > 0) {
+            transferCase["the_AI_detects_a_keyword"] = formData.transfer_conditions.keywords;
+        }
+        
+        // Construct payload according to API structure
         const finalPayload = {
-            ...formData
+            bot_name: formData.bot_name,
+            role: formData.role,
+            personality: formData.personality,
+            prompt: formData.prompt,
+            transfer_case: transferCase, // Map transfer_conditions to transfer_case
+            reference_text: formData.reference_text,
+            use_ai_brain: formData.include_brainai || false // Map include_brainai to use_ai_brain
         };
 
         console.log(editData, editDataId, "payload")
@@ -500,21 +526,21 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
     }
 
         return (
-            <div className="p-12 h-screen overflow-auto flex flex-col gap-4 w-full">
+            <div className="p-12 h-full overflow-auto flex flex-col gap-4 w-full">
                 {/* Header */}
                 <div className="flex justify-between items-center">
                 <h1 className="text-[#1E1E1E] font-[500] text-[22px]">{editData ? t("calina.edit_new_chatbot") : t("calina.create_new_chatbot")}</h1>
                 <div className="flex items-center gap-2">
                     <button 
                         onClick={handleCancel}
-                        className="px-4 py-2 bg-white text-[#1E1E1E] border border-[#E1E4EA] rounded-lg text-[16px] font-medium hover:bg-gray-50 focus:outline-none focus:border-[#675FFF]"
+                        className="px-4 py-1.5 bg-white text-[#1E1E1E] border border-[#E1E4EA] rounded-lg text-[14px] font-[500] hover:bg-gray-50 focus:outline-none focus:border-[#675FFF]"
                     >
                         {t("cancel")}
                     </button>
                     <button 
                         onClick={handleSubmit}
                         disabled={loading || step !== 3}
-                        className={`px-4 py-2 rounded-lg text-[16px] font-medium focus:outline-none ${
+                        className={`px-4 py-1.5 rounded-lg text-[14px] font-[500] focus:outline-none ${
                             loading || step !== 3 
                                 ? 'bg-[#E1E4EA] text-[#5A687C] cursor-not-allowed' 
                                 : 'bg-[#E1E4EA] text-[#5A687C] hover:bg-[#D1D5DB] cursor-pointer'
@@ -606,28 +632,15 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                 {errors.personality && <p className="text-red-500 text-sm mt-1">{errors.personality}</p>}
                             </div>
                         </div>
-                        {/* <div className="flex flex-col gap-1.5 w-full">
-                            <label className="text-sm font-[400] text-[#868C98]">
-                                {t("calina.prompt")}
-                            </label>
-                            <textarea
-                                name='prompt'
-                                onChange={handleChange}
-                                value={formData?.prompt}
-                                rows={4}
-                                className={`w-full bg-white p-2 rounded-lg border  ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                placeholder={t("calina.enter_your_prompt_here")}
-                            />
-                            {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
-                        </div> */}
+                        
 
                         <hr style={{ color: "#E1E4EA" }} />
 
                         <div className="flex items-center justify-end gap-2">
-                            <button onClick={() => handleCancel(1)} className="px-5 cursor-pointer rounded-lg py-2 text-center bg-white border border-[#E1E4EA] text-[#1E1E1E] font-medium hover:bg-gray-50 focus:outline-none">{t("cancel")}</button>
+                            <button onClick={() => handleCancel(1)} className="px-5 cursor-pointer rounded-lg py-1.5 text-center bg-white border border-[#E1E4EA] text-[#1E1E1E] font-[500] text-[14px] hover:bg-gray-50 focus:outline-none">{t("cancel")}</button>
                             <button onClick={() => {
                                 handleContinue(2)
-                            }} className="px-5 cursor-pointer rounded-lg py-2 text-center bg-[#675FFF] text-white font-medium hover:bg-[#5A52E5] focus:outline-none">{t("continue")}</button>
+                            }} className="px-5 cursor-pointer rounded-lg py-1.5 text-center bg-[#675FFF] text-white font-[500] text-[14px] hover:bg-[#5A52E5] focus:outline-none">{t("continue")}</button>
                         </div>
 
                     </div>}
@@ -818,10 +831,10 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                         <hr style={{ color: "#E1E4EA" }} />
 
                         <div className="flex items-center justify-end gap-2">
-                            <button onClick={() => handleCancel(2)} className="px-5 cursor-pointer rounded-lg py-2 text-center bg-white border border-[#E1E4EA] text-[#1E1E1E] font-medium hover:bg-gray-50 focus:outline-none">{t("cancel")}</button>
+                            <button onClick={() => handleCancel(2)} className="px-5 cursor-pointer rounded-lg py-1.5 text-center bg-white border border-[#E1E4EA] text-[#1E1E1E] font-[500] text-[14px] hover:bg-gray-50 focus:outline-none">{t("cancel")}</button>
                             <button onClick={() => {
                                 handleContinue(3)
-                            }} className="px-5 cursor-pointer rounded-lg py-2 text-center bg-[#675FFF] text-white font-medium hover:bg-[#5A52E5] focus:outline-none">{t("continue")}</button>
+                            }} className="px-5 cursor-pointer rounded-lg py-1.5 text-center bg-[#675FFF] text-white font-[500] text-[14px] hover:bg-[#5A52E5] focus:outline-none">{t("continue")}</button>
                         </div>
 
                     </div>}
@@ -915,7 +928,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                             </div>
 
                             {/* Right Column - Description */}
-                            <div className="flex flex-col gap-2 h-full">
+                            {/* <div className="flex flex-col gap-2 h-full">
                                 <label className="text-sm font-[400] text-[#868C98]">{t("calina.description")}</label>
                                 <textarea
                                     name="reference_text"
@@ -929,16 +942,31 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                     placeholder={t("calina.enter_description_here")}
                                     />
                                 {errors.reference_text && <p className="text-red-500 text-sm mt-1">{errors.reference_text}</p>}
-                            </div>
+                            </div> */}
+
+                            <div className="flex flex-col gap-2 h-full">
+                            <label className="text-sm font-[400] text-[#868C98]">
+                                {t("calina.prompt")}
+                            </label>
+                            <textarea
+                                name='prompt'
+                                onChange={handleChange}
+                                value={formData?.prompt}
+                                rows={8}
+                                className={`w-full bg-white p-2 rounded-lg border h-full text-sm sm:text-[15px] font-[400] ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF] placeholder:font-[300] placeholder:text-[14px] placeholder:text-gray-600`}
+                                placeholder={t("calina.enter_description_here")}
+                            />
+                            {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
+                        </div>
                         </div>
 
                         <hr style={{ color: "#E1E4EA" }} />
 
                         <div className="flex items-center justify-end gap-2">
-                            <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-lg py-2 text-center bg-white border border-[#E1E4EA] text-[#1E1E1E] font-medium hover:bg-gray-50 focus:outline-none">{t("cancel")}</button>
+                            <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-lg py-1.5 text-center bg-white border border-[#E1E4EA] text-[#1E1E1E] font-[500] text-[14px] hover:bg-gray-50 focus:outline-none">{t("cancel")}</button>
                             <button onClick={
                                 handleSubmit
-                            } className="px-5 cursor-pointer rounded-lg py-2 text-center bg-[#675FFF] text-white font-medium hover:bg-[#5A52E5] focus:outline-none">{editData ? t("brain_ai.update") : t("brain_ai.create")}</button>
+                            } className="px-5 cursor-pointer rounded-lg py-1.5 text-center bg-[#675FFF] text-white font-[500] text-[14px] hover:bg-[#5A52E5] focus:outline-none">{editData ? t("brain_ai.update") : t("brain_ai.create")}</button>
                         </div>
 
                     </div>}
@@ -1037,7 +1065,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                         }
                                     }}
                                         disabled={!each.is_active}
-                                        className={`px-4 py-2 font-[500] text-[14px] rounded-lg whitespace-nowrap ${
+                                        className={`px-4 py-1.5 font-[500] text-[14px] rounded-lg whitespace-nowrap ${
                                             !each.is_active 
                                                 ? 'bg-[#E1E4EA] text-[#5A687C] cursor-not-allowed' 
                                                 : isConnected
