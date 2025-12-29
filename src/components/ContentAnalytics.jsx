@@ -118,7 +118,7 @@ function ContentAnalytics() {
                         <button
                             key={tab.key}
                             onClick={() => setActiveTab(tab.key)}
-                            className={`px-4 py-2 rounded-lg text-[14px] font-[500] transition-all ${
+                            className={`px-3 py-2 rounded-lg text-[14px] font-[500] transition-all ${
                                 isActive
                                     ? 'bg-white text-[#111827] shadow-sm border border-[#D6D6D6]'
                                     : 'bg-transparent text-[#5A687C]'

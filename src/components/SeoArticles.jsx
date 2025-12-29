@@ -594,12 +594,12 @@ function SeoArticles() {
                                     </p>
                                 </div>
                                 <div className="flex gap-3">
-                                    <button className="flex items-center gap-2 px-4 py-1.5 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer">
+                                    <button className="flex items-center gap-2 px-3 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer">
                                         {t("geo.view_all")}
                                     </button>
                                     <button
                                         onClick={() => setShowAddPromptModal(true)}
-                                        className="flex items-center gap-2 px-4 py-1.5 bg-[#675FFF] rounded-lg text-white font-[500] text-sm hover:bg-[#5A4FE6] transition-colors cursor-pointer"
+                                        className="flex items-center gap-2 px-3 py-2 bg-[#675FFF] rounded-lg text-white font-[500] text-sm hover:bg-[#5A4FE6] transition-colors cursor-pointer"
                                     >
                                         <Plus className="w-4 h-4" />
                                         <span>{t("geo.add_prompt")}</span>
@@ -699,7 +699,7 @@ function SeoArticles() {
                                                 {t("geo.new_cited_content_description")}
                                             </p>
                                         </div>
-                                        <button className="flex items-center gap-2 px-4 py-1.5 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer">
+                                        <button className="flex items-center gap-2 px-3 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer">
                                             {t("geo.view_all")}
                                         </button>
                                     </div>
@@ -747,7 +747,7 @@ function SeoArticles() {
                                                 {t("geo.top_cited_content_description")}
                                             </p>
                                         </div>
-                                        <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer">
+                                        <button className="flex items-center gap-2 px-3 py-2 bg-white border border-[#E1E4EA] rounded-xl text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors cursor-pointer">
                                             {t("geo.view_all")}
                                         </button>
                                     </div>

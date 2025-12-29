@@ -655,7 +655,7 @@ const ManagePlan = ({ onClose }) => {
           </div>
           <button
             onClick={() => setShowCancelPopup(true)}
-            className="px-2.5 py-1.5 bg-[#F7F7F8] shadow-sm cursor-pointer border border-[#E1E4EA] text-[#1E1E1E] text-[14px] font-[500] rounded-lg hover:bg-[#EFF0F2] transition-colors whitespace-nowrap"
+            className="px-3 py-2 bg-[#F7F7F8] shadow-sm cursor-pointer border border-[#E1E4EA] text-[#1E1E1E] text-[14px] font-[500] rounded-lg hover:bg-[#EFF0F2] transition-colors whitespace-nowrap"
           >
             {t("settings.tab_2_list.cancel_my_plan")}
           </button>

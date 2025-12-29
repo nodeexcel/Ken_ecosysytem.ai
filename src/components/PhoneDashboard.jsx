@@ -363,7 +363,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
               <p className="text-[13px] font-[400] text-[#5A687C]">{t("phone.credit_rate") || "Credit rate"} <span className="font-[14px] text-black">0.20 € / min </span></p>
             </div>
             <button
-              className="bg-[#675FFF] text-white px-4 py-1.5 rounded-lg text-[14px] font-[500] flex items-center justify-center gap-2 cursor-pointer hover:bg-[#5E54FF] transition"
+              className="bg-[#675FFF] text-white px-4 py-2 rounded-lg text-[14px] font-[500] flex items-center justify-center gap-2 cursor-pointer hover:bg-[#5E54FF] transition"
               onClick={() => setShowModal(true)}
             >
               <Plus size={16} />
@@ -558,7 +558,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
                   </div>
 
                   <button
-                    className="w-full mt-1 bg-[#675FFF] text-white px-6 py-1.5 rounded-lg cursor-pointer hover:bg-[#5E54FF] transition font-[500] text-[14px]"
+                    className="w-full mt-1 bg-[#675FFF] text-white px-6 py-2 rounded-lg cursor-pointer hover:bg-[#5E54FF] transition font-[500] text-[14px]"
                     onClick={handleTopUp}
                   >
                     {t("phone.top_up_credit") || "Top Up Credit"}

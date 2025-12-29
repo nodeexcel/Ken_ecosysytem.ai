@@ -811,7 +811,7 @@ export default function CallCampaign() {
                 </p>
               </div>
               <button
-                className="bg-[#675FFF] cursor-pointer text-white font-[500] text-[14px] px-4 py-1.5 rounded-lg shadow-sm hover:bg-[#5E54FF] transition-colors flex items-center gap-2 w-fit"
+                className="bg-[#675FFF] cursor-pointer text-white font-[500] text-[14px] px-4 py-2 rounded-lg shadow-sm hover:bg-[#5E54FF] transition-colors flex items-center gap-2 w-fit"
                 onClick={() => {
                   dispatch(getNavbarData("Tom, Phone"))
                   setEditData();

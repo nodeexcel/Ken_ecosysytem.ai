@@ -1022,7 +1022,7 @@ const SettingsPage = () => {
                   setErrorMessage({});
                   setSuccess({});
                 }}
-                className="px-2.5 py-1.5 bg-white dark:bg-[#2D3151] border border-[#E1E4EA] dark:border-[#2D3151] rounded-lg text-[#000000] dark:text-gray-300 text-[14px] font-[500] cursor-pointer hover:bg-[#F9F8FF] dark:hover:bg-[#1E2A4A] transition-colors whitespace-nowrap"
+                className="px-3 py-2 bg-white dark:bg-[#2D3151] border border-[#E1E4EA] dark:border-[#2D3151] rounded-lg text-[#000000] dark:text-gray-300 text-[14px] font-[500] cursor-pointer hover:bg-[#F9F8FF] dark:hover:bg-[#1E2A4A] transition-colors whitespace-nowrap"
               >
                 {t("settings.tab_1_list.discard")}
               </button>
@@ -1030,7 +1030,7 @@ const SettingsPage = () => {
                 type="button"
                 disabled={updateLoading}
                 onClick={handleProfileSubmit}
-                className={`px-2.5 py-1.5 rounded-lg text-white text-[14px] font-[500] cursor-pointer transition-colors whitespace-nowrap ${updateLoading ? "bg-[#5f54ff87] cursor-not-allowed" : "bg-[#675FFF] hover:bg-[#5E54FF]"
+                className={`px-3 py-2 rounded-lg text-white text-[14px] font-[500] cursor-pointer transition-colors whitespace-nowrap ${updateLoading ? "bg-[#5f54ff87] cursor-not-allowed" : "bg-[#675FFF] hover:bg-[#5E54FF]"
                   }`}
               >
                 {updateLoading ? (
@@ -1062,7 +1062,7 @@ const SettingsPage = () => {
                 <div className="flex items-center gap-3 justify-left">
 
                   {/* Avatar */}
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border border-[#E6EAEE]">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border border-[#D4D9DE]">
                     <img
                       src={
                         profileFormData.imagePath ||
@@ -1323,7 +1323,7 @@ const SettingsPage = () => {
                           setPasswordStrength(evaluatePasswordStrength(formData.newPassword || ""));
                           setShowPasswordModal(true);
                         }}
-                        className="inline-flex items-center gap-2 px-2.5 py-1.5 shadow-sm bg-white border border-[#E1E1E1] rounded-lg text-[#1E1E1E] text-[14px] font-[500] cursor-pointer hover:bg-[#F9F8FF]"
+                        className="inline-flex items-center gap-2 px-3 py-2 hover:hadow-lg shadow-sm bg-white border border-[#E1E1E1] rounded-lg text-[#1E1E1E] text-[14px] font-[500] cursor-pointer hover:bg-[#F9F8FF]"
                       >
                         <Pencil className="w-4 h-4 text-[#1E1E1E]" />
                         {t("settings.tab_1_list.change_password")}
@@ -1447,7 +1447,7 @@ const SettingsPage = () => {
                 </p>
               </div>
               <button
-                className="flex items-center gap-2 cursor-pointer bg-[#675FFF] hover:bg-[#5E54FF] text-white rounded-lg px-2.5 py-1.5 text-[14px] font-[500] transition-colors"
+                className="flex items-center gap-2 cursor-pointer bg-[#675FFF] hover:bg-[#5E54FF] text-white rounded-lg px-3 py-2 text-[14px] font-[500] transition-colors"
                 onClick={handleInviteTeam}
               >
                 <Plus className="w-4 h-4 text-[#FFFFFF]" />
@@ -1873,14 +1873,14 @@ const SettingsPage = () => {
               <button
                 type="button"
                 onClick={handleResetGeneralSettings}
-                className="px-2.5 py-1.5 bg-white dark:bg-[#2D3151] border border-[#E1E4EA] dark:border-[#2D3151] rounded-lg text-[#000000] dark:text-gray-300 text-[14px] font-[500] cursor-pointer hover:bg-[#F9F8FF] dark:hover:bg-[#1E2A4A] transition-colors whitespace-nowrap"
+                className="px-3 py-2 bg-white dark:bg-[#2D3151] border border-[#E1E4EA] dark:border-[#2D3151] rounded-lg text-[#000000] dark:text-gray-300 text-[14px] font-[500] cursor-pointer hover:bg-[#F9F8FF] dark:hover:bg-[#1E2A4A] transition-colors whitespace-nowrap"
               >
                 {t("settings.tab_1_list.discard")}
               </button>
               <button
                 type="button"
                 onClick={handleSaveGeneralSettings}
-                className={`px-2.5 py-1.5 rounded-lg text-white text-[14px] font-[500] cursor-pointer transition-colors whitespace-nowrap ${updateLoading ? "bg-[#5f54ff87] cursor-not-allowed" : "bg-[#675FFF] hover:bg-[#5E54FF]"}`}
+                className={`px-3 py-2 rounded-lg text-white text-[14px] font-[500] cursor-pointer transition-colors whitespace-nowrap ${updateLoading ? "bg-[#5f54ff87] cursor-not-allowed" : "bg-[#675FFF] hover:bg-[#5E54FF]"}`}
               >
                 {t("settings.tab_1_list.save_changes")}
               </button>
@@ -2110,7 +2110,7 @@ const SettingsPage = () => {
           <div className=''>
             <div className='flex justify-between items-center cursor-pointer w-fit' onClick={() => navigate("/dashboard")}>
               {/* <MdOutlineKeyboardArrowLeft size={25} /> */}
-              <div className="flex gap-4 pl-6 items-center h-[57px]">
+              <div className="flex gap-4 pl-8 items-center h-[57px]">
                 {/* <LeftArrow /> */}
                 <h1 className="text-[#1E1E1E] text-[15px] font-[400] dark:text-white">{t("settings.label")}</h1>
               </div>

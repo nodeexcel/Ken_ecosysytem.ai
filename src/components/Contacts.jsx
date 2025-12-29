@@ -756,7 +756,7 @@ const ContactsPage = () => {
 
           <div className="flex gap-2.5 items-center">
             {activeTab !== "lists" && (
-              <button className="flex items-center gap-2.5 cursor-pointer px-3 py-1.5 border-[1.5px] border-[#E1E4EA] rounded-lg bg-white font-[500] text-[14px] hover:bg-[#F5F7FA] hover:border-[#CBD2E0]">
+              <button className="flex items-center gap-2.5 cursor-pointer px-3 py-2 border-[1.5px] border-[#E1E4EA] rounded-lg bg-white font-[500] text-[14px] hover:bg-[#F5F7FA] hover:border-[#CBD2E0]">
                 <Download color="#5A687C" className="w-4 h-4"/>
                 <span className="font-[500] text-[14px] text-[#5A687C] cursor-pointer">
                   {t("brain_ai.export")}
@@ -771,7 +771,7 @@ const ContactsPage = () => {
                   setActiveDropdown(null);
                   setFileUploadError(""); // Clear any previous errors when opening modal
                 }}
-                className="flex cursor-pointer items-center gap-2.5 px-3 py-1.5 border-[1.5px] font-[500] text-[14px] border-[#5F58E8] rounded-lg bg-white hover:bg-[#F4F3FF] hover:border-[#4E46D4]"
+                className="flex cursor-pointer items-center gap-2.5 px-3 py-2 border-[1.5px] font-[500] text-[14px] border-[#5F58E8] rounded-lg bg-white hover:bg-[#F4F3FF] hover:border-[#4E46D4]"
               >
                 <Upload color="#675FFF" className="w-4 h-4"/>
                 <span className="font-[500] text-[14px] text-[#675FFF]">{t("brain_ai.import")}</span>
@@ -786,7 +786,7 @@ const ContactsPage = () => {
                 setAddContactModal(true);
                 setActiveDropdown(null);
               }}
-              className="flex cursor-pointer items-center gap-2.5 px-3 py-1.5 bg-[#675FFF] font-[500] text-[14px] border-[1.5px] border-[#5f58e8] rounded-lg text-white hover:bg-[#5f58e8]"
+              className="flex cursor-pointer items-center gap-2.5 px-3 py-2 bg-[#675FFF] font-[500] text-[14px] border-[1.5px] border-[#5f58e8] rounded-lg text-white hover:bg-[#5f58e8]"
             >
               <span className="font-[500] text-[14px] leading-6">
                 {activeTab === `${t("brain_ai.lists")}` ? `${t("brain_ai.create_list")}` : `${t("brain_ai.add_contact")}`}

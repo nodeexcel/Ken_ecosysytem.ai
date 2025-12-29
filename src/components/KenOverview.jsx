@@ -377,7 +377,7 @@ function KenOverview() {
                                         </p>
                                         <button
                                             onClick={() => navigate('/dashboard/brain?tab=integration')}
-                                            className="w-full bg-[#675FFF] cursor-pointer text-white font-[500] text-[14px] py-1.5 px-3 rounded-lg hover:bg-[#5a4fe6] transition-colors"
+                                            className="w-full bg-[#675FFF] cursor-pointer text-white font-[500] text-[14px] py-2 px-3 rounded-lg hover:bg-[#5a4fe6] transition-colors"
                                         >
                                             Go to Brain AI
                                         </button>

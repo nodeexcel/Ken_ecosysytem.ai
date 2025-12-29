@@ -782,7 +782,7 @@ const Product = () => {
               {/* Action Buttons */}
               <div className="flex gap-3">
                 {/* Download CSV Button */}
-                <button className="flex items-center cursor-pointer gap-2 px-4 py-1.5 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors">
+                <button className="flex items-center cursor-pointer gap-2 px-3 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors">
                   <Download className="w-4 h-4" />
                   <span>{t("geo.download_csv")}</span>
                 </button>
@@ -791,7 +791,7 @@ const Product = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddProductModal(true)}
-                  className="flex items-center cursor-pointer gap-2 px-4 py-1.5 bg-[#675FFF] rounded-lg text-white font-[500] text-sm hover:bg-[#5A4FE6] transition-colors relative"
+                  className="flex items-center cursor-pointer gap-2 px-3 py-2 bg-[#675FFF] rounded-lg text-white font-[500] text-sm hover:bg-[#5A4FE6] transition-colors relative"
                 >
                   <Plus className="w-4 h-4" />
                   <span>{t("geo.add_new_product")}</span>
@@ -814,7 +814,7 @@ const Product = () => {
               </div>
 
               {/* Refresh Button */}
-              <button className="flex items-center gap-2 cursor-pointer px-4 py-1.5 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors">
+              <button className="flex items-center gap-2 cursor-pointer px-3 py-2 bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] font-[500] text-sm hover:bg-[#F8F9FB] transition-colors">
                 <RefreshCw className="w-4 h-4" />
                 <span>{t("geo.refresh")}</span>
               </button>

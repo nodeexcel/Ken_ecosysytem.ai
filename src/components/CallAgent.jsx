@@ -370,7 +370,7 @@ export default function CallAgentsPage() {
           <p className="text-sm md:text-[14px] text-[#5A687C] font-[400] mt-2">{t("phone.manage_your_ai_and_human_call_agents") || "Manage your AI and human call agents"}</p>
         </div>
         <button 
-          className="bg-[#675FFF] cursor-pointer text-white font-[500] text-[14px] px-4 py-1.5 rounded-lg shadow-sm hover:bg-[#5E54FF] transition-colors flex items-center gap-2 w-fit"
+          className="bg-[#675FFF] cursor-pointer text-white font-[500] text-[14px] px-4 py-2 rounded-lg shadow-sm hover:bg-[#5E54FF] transition-colors flex items-center gap-2 w-fit"
           onClick={() => setShowModal(true)}
         >
           <Plus className="w-4 h-4" />
@@ -698,8 +698,10 @@ export default function CallAgentsPage() {
                  placeholder={t("select")}
                   name="voice"
                   options={[
-                    { key: 'Male', label: t("phone.male") },
-                    { key: 'Female', label: t("phone.female") },
+                    { key: 'sol', label: "Sol (Male)" },
+                    { key: 'ember', label: "Ember (Male)" },
+                    { key: 'aria', label: "Aria (Female)" },
+                    { key: 'juniper', label: "Juniper (Female)" },
                   ]}
                   value={agent.voice}
                   onChange={(selectedVoice) => {

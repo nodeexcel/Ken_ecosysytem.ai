@@ -521,7 +521,7 @@ const renderEmptyState = (tabKey, onAction) => {
             setOpen(true);
             setActiveDropdown(null);
           }}
-          className="flex items-center cursor-pointer gap-2 px-2.5 py-1.5 bg-[#675FFF] border border-[#5f58e8] rounded-lg text-white text-[14px] font-[500]"
+          className="flex items-center cursor-pointer gap-2 px-3 py-2 bg-[#675FFF] border border-[#5f58e8] rounded-lg text-white text-[14px] font-[500]"
         >
           + {t("brain_ai.knowledge.add")} {renderHeader()}
         </button>
@@ -657,7 +657,7 @@ const renderEmptyState = (tabKey, onAction) => {
                 setErrors({})
                 setSelectedFile(null)
               }}
-              className="cursor-pointer text-[14px] font-[500] text-[#111827] bg-white border border-[#E5E7EB] rounded-lg px-4 py-1.5 shadow-sm hover:bg-[#F9FAFB]"
+              className="cursor-pointer text-[14px] font-[500] text-[#111827] bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 shadow-sm hover:bg-[#F9FAFB]"
             >
               {t("brain_ai.cancel")}
             </button>

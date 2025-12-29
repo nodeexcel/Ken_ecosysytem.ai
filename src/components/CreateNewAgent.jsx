@@ -857,14 +857,14 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                     <div className='flex gap-2'>
                         <button
                             onClick={() => setPreviewAgent(true)}
-                            className="px-4 py-1.5 bg-white cursor-pointer border border-[#E1E4EA] rounded-lg text-[14px] font-medium text-[#1E1E1E] hover:bg-[#F9FAFB] transition-colors"
+                            className="px-3 py-2 bg-white cursor-pointer border border-[#E1E4EA] rounded-lg text-[14px] font-medium text-[#1E1E1E] hover:bg-[#F9FAFB] transition-colors"
                         >
                             Preview Agent
                         </button>
                         <button
                             onClick={updateAgentStatus ? () => handleUpdate() : () => handleSubmit()}
                             disabled={loading || step !== 3}
-                            className="px-4 py-1.5 bg-[#675FFF] cursor-pointer border border-[#5F58E8] rounded-lg text-[14px] font-medium text-white hover:bg-[#5F58E8] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                            className="px-3 py-2 bg-[#675FFF] cursor-pointer border border-[#5F58E8] rounded-lg text-[14px] font-medium text-white hover:bg-[#5F58E8] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {loading ? (
                                 <div className="flex items-center justify-center gap-2">
@@ -1088,10 +1088,10 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <hr style={{ color: "#E1E4EA" }} />
 
                                 <div className="flex items-center justify-end gap-2">
-                                    <button onClick={() => handleCancel(1)} className="px-5 cursor-pointer rounded-lg text-[14px] font-[500] py-1.5 text-center bg-white border-[1.5px] border-[#E1E4EA] text-[#1E1E1E]">{t("appointment.cancel")}</button>
+                                    <button onClick={() => handleCancel(1)} className="px-3 py-2 cursor-pointer rounded-lg text-[14px] font-[500] text-center bg-white border-[1.5px] border-[#E1E4EA] text-[#1E1E1E]">{t("appointment.cancel")}</button>
                                     <button onClick={() => {
                                         handleContinue(2)
-                                    }} className="px-5 cursor-pointer rounded-lg  py-1.5 text-[14px] font-[500] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("appointment.continue")}</button>
+                                    }} className="px-3 py-2 cursor-pointer rounded-lg  text-[14px] font-[500] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("appointment.continue")}</button>
                                 </div>
 
                             </div>}
@@ -1330,10 +1330,10 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                 <hr style={{ color: "#E1E4EA" }} />
 
                                 <div className="flex items-center justify-end gap-2">
-                                    <button onClick={() => handleCancel(2)} className="px-5 cursor-pointer rounded-lg text-[14px] font-[500] py-1.5 text-center bg-white border-[1.5px] border-[#E1E4EA] text-[#1E1E1E]">{t("appointment.cancel")}</button>
+                                    <button onClick={() => handleCancel(2)} className="px-3 py-2 cursor-pointer rounded-lg text-[14px] font-[500] text-center bg-white border-[1.5px] border-[#E1E4EA] text-[#1E1E1E]">{t("appointment.cancel")}</button>
                                     <button onClick={() => {
                                         handleContinue(3)
-                                    }} className="px-5 cursor-pointer rounded-lg text-[14px] font-[500] py-1.5 text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("appointment.continue")}</button>
+                                    }} className="px-3 py-2 cursor-pointer rounded-lg text-[14px] font-[500] text-center bg-[#675FFF] border-[1.5px] border-[#5F58E8] text-white">{t("appointment.continue")}</button>
                                 </div>
                             </div>}
                         </div>

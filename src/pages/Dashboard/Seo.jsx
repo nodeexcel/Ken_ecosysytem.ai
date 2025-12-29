@@ -362,15 +362,15 @@ function Seo() {
                                 </p>
                             </div>
                             <div className="flex items-center gap-2">
-                                <button className="inline-flex items-center gap-2 px-4 py-1.5 font-[500] text-[14px] bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] hover:bg-[#F8F9FB] cursor-pointer">
+                                <button className="inline-flex items-center gap-2 px-3 py-2 font-[500] text-[14px] bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] hover:bg-[#F8F9FB] cursor-pointer">
                                     <Upload className="w-4 h-4" />
                                     {t("geo.export_all")}
                                 </button>
-                                <button className="inline-flex items-center gap-2 px-4 py-1.5 font-[500] text-[14px] bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] hover:bg-[#F8F9FB] cursor-pointer">
+                                <button className="inline-flex items-center gap-2 px-3 py-2 font-[500] text-[14px] bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] hover:bg-[#F8F9FB] cursor-pointer">
                                     <FolderDown className="w-4 h-4" />
                                     {t("geo.import")}
                                 </button>
-                                <button className="inline-flex items-center gap-2 px-4 py-1.5 font-[400] text-[14px] bg-[#675FFF] text-white rounded-lg hover:bg-[#594edb] cursor-pointer">
+                                <button className="inline-flex items-center gap-2 px-3 py-2 font-[400] text-[14px] bg-[#675FFF] text-white rounded-lg hover:bg-[#594edb] cursor-pointer">
                                     <span className="text-lg leading-none">+</span>
                                     {t("geo.add_prompt")}
                                 </button>

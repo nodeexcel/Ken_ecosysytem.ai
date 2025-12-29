@@ -455,7 +455,7 @@ function CreationStudio({ onClose, onGenerateContent, onContentCreated }) {
             <div ref={modalRef} className="bg-white rounded-xl sm:rounded-2xl w-full max-w-xl max-h-[95vh] sm:max-h-[90vh] overflow-auto shadow-lg relative">
                 {/* Modal Header */}
                 <div className="sticky top-0 bg-white border-b border-gray-200 px-3 sm:px-4 lg:px-6 py-3 sm:py-4 flex items-center justify-between z-10">
-                    <h1 className="text-[#1E1E1E] font-[600] text-[18px] sm:text-[20px] lg:text-[24px]">{t("constance.add_creation_studio")}</h1>
+                    <h1 className="text-[#1E1E1E] font-[500] text-[18px] sm:text-[20px] lg:text-[24px]">{t("constance.add_creation_studio")}</h1>
                     {onClose && (
                         <button
                             onClick={onClose}
@@ -668,7 +668,7 @@ function CreationStudio({ onClose, onGenerateContent, onContentCreated }) {
                         </button>
                         <button
                             onClick={handleSubmit}
-                            className="w-full sm:w-auto px-3 py-2 rounded-lg cursor-pointer text-center bg-[#675FFF] text-white font-[500] text-[14px] hover:bg-[#5a4fe6] transition-colors shadow-sm"
+                            className="w-full sm:w-auto px-3 py-2 rounded-lg cursor-pointer text-center bg-[#675FFF] text-white font-[500] text-[14px] font-[500] hover:bg-[#5a4fe6] transition-colors shadow-sm"
                         >
                             {loading ? (
                                 <div className="flex items-center justify-center gap-2">

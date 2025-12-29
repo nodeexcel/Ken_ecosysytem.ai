@@ -103,7 +103,7 @@ function PromptAnalytics() {
                 setActiveModel(label)
                 setCurrentPage(1)
               }}
-              className={`inline-flex items-center gap-2 px-3.5 py-2 cursor-pointer rounded-lg text-[14px] font-[500] transition-all ${
+              className={`inline-flex items-center gap-2 px-3 py-2 cursor-pointer rounded-lg text-[14px] font-[500] transition-all ${
                 isActive
                   ? 'bg-white text-[#111827] shadow-sm border border-[#D6D6D6]'
                   : 'bg-transparent text-[#6B7280]'
@@ -149,10 +149,10 @@ function PromptAnalytics() {
 
         <button
           type="button"
-          className="flex items-center gap-2 px-4 py-1.5 bg-white border border-[#E1E4EA] font-[500] text-[14px] rounded-lg hover:bg-[#F8F9FB] transition-colors cursor-pointer whitespace-nowrap"
+          className="flex items-center gap-2 px-3 py-2 bg-white border border-[#E1E4EA] font-[500] text-[14px] rounded-lg hover:bg-[#F8F9FB] transition-colors cursor-pointer whitespace-nowrap"
         >
           <ArrowUp className="w-4 h-4 " />
-          <span className="text-[14px] font-[500] text-black">{t("geo.export_all")}</span>
+          <span className="text-[14px] font-[500] text-[#5A687C] ">{t("geo.export_all")}</span>
         </button>
       </div>
 

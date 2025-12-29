@@ -580,12 +580,12 @@ export const CancelSubscriptionPopup = ({ t, onClose }) => {
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setInitailTab(false)}
-                className="flex-1 px-2.5 py-1.5 text-[14px] font-[500] border cursor-pointer border-[#E1E4EA] text-[#1E1E1E] rounded-lg hover:bg-gray-50"
+                className="flex-1 px-2 py-2 text-[14px] font-[500] border cursor-pointer border-[#E1E4EA] text-[#1E1E1E] rounded-lg hover:bg-gray-50"
               >
                 {t("settings.tab_2_list.no_still_cancel")}
               </button>
 
-              <button className="flex-1 px-2.5 py-1.5 text-[14px] font-[500] cursor-pointer bg-[#675FFF] text-white rounded-lg hover:bg-[#5E54FF]">
+              <button className="flex-1 px-2 py-2 text-[14px] font-[500] cursor-pointer bg-[#675FFF] text-white rounded-lg hover:bg-[#5E54FF]">
                 {t("settings.tab_2_list.accept_discount_stay")}
               </button>
             </div>
@@ -667,7 +667,7 @@ export const CancelSubscriptionPopup = ({ t, onClose }) => {
   {/* Left Button */}
   <button
     onClick={onClose}
-    className="flex-1 px-2.5 py-1.5 flex cursor-pointer items-center justify-center border border-[#E1E1E1] 
+    className="flex-1 px-2 py-2 flex cursor-pointer items-center justify-center border border-[#E1E1E1] 
                bg-white text-[#1E1E1E] rounded-lg hover:bg-gray-50 
                text-[13px] font-medium whitespace-nowrap"
   >
@@ -677,7 +677,7 @@ export const CancelSubscriptionPopup = ({ t, onClose }) => {
   {/* Right Button */}
   <button
     onClick={onClose}
-    className="flex-1 px-2.5 py-1.5 flex cursor-pointer items-center justify-center 
+    className="flex-1 px-2 py-2 flex cursor-pointer items-center justify-center 
                bg-[#675FFF] text-white rounded-lg hover:bg-[#5E54FF] 
                text-[13px] font-medium whitespace-nowrap"
   >

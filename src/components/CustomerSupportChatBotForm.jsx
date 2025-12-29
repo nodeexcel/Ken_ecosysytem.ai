@@ -533,14 +533,14 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                 <div className="flex items-center gap-2">
                     <button 
                         onClick={handleCancel}
-                        className="px-4 py-1.5 bg-white text-[#1E1E1E] border border-[#E1E4EA] rounded-lg text-[14px] font-[500] hover:bg-gray-50 focus:outline-none focus:border-[#675FFF]"
+                        className="px-3 py-2 bg-white text-[#1E1E1E] border border-[#E1E4EA] rounded-lg text-[14px] font-[500] hover:bg-gray-50 focus:outline-none focus:border-[#675FFF]"
                     >
                         {t("cancel")}
                     </button>
                     <button 
                         onClick={handleSubmit}
                         disabled={loading || step !== 3}
-                        className={`px-4 py-1.5 rounded-lg text-[14px] font-[500] focus:outline-none ${
+                        className={`px-3 py-2 rounded-lg text-[14px] font-[500] focus:outline-none ${
                             loading || step !== 3 
                                 ? 'bg-[#E1E4EA] text-[#5A687C] cursor-not-allowed' 
                                 : 'bg-[#E1E4EA] text-[#5A687C] hover:bg-[#D1D5DB] cursor-pointer'
@@ -637,10 +637,10 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                         <hr style={{ color: "#E1E4EA" }} />
 
                         <div className="flex items-center justify-end gap-2">
-                            <button onClick={() => handleCancel(1)} className="px-5 cursor-pointer rounded-lg py-1.5 text-center bg-white border border-[#E1E4EA] text-[#1E1E1E] font-[500] text-[14px] hover:bg-gray-50 focus:outline-none">{t("cancel")}</button>
+                            <button onClick={() => handleCancel(1)} className="px-3 py-2 cursor-pointer rounded-lg text-center bg-white border border-[#E1E4EA] text-[#1E1E1E] font-[500] text-[14px] hover:bg-gray-50 focus:outline-none">{t("cancel")}</button>
                             <button onClick={() => {
                                 handleContinue(2)
-                            }} className="px-5 cursor-pointer rounded-lg py-1.5 text-center bg-[#675FFF] text-white font-[500] text-[14px] hover:bg-[#5A52E5] focus:outline-none">{t("continue")}</button>
+                            }} className="px-3 py-2 cursor-pointer rounded-lg text-center bg-[#675FFF] text-white font-[500] text-[14px] hover:bg-[#5A52E5] focus:outline-none">{t("continue")}</button>
                         </div>
 
                     </div>}
@@ -831,10 +831,10 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                         <hr style={{ color: "#E1E4EA" }} />
 
                         <div className="flex items-center justify-end gap-2">
-                            <button onClick={() => handleCancel(2)} className="px-5 cursor-pointer rounded-lg py-1.5 text-center bg-white border border-[#E1E4EA] text-[#1E1E1E] font-[500] text-[14px] hover:bg-gray-50 focus:outline-none">{t("cancel")}</button>
+                            <button onClick={() => handleCancel(2)} className="px-3 py-2 cursor-pointer rounded-lg text-center bg-white border border-[#E1E4EA] text-[#1E1E1E] font-[500] text-[14px] hover:bg-gray-50 focus:outline-none">{t("cancel")}</button>
                             <button onClick={() => {
                                 handleContinue(3)
-                            }} className="px-5 cursor-pointer rounded-lg py-1.5 text-center bg-[#675FFF] text-white font-[500] text-[14px] hover:bg-[#5A52E5] focus:outline-none">{t("continue")}</button>
+                            }} className="px-3 py-2 cursor-pointer rounded-lg text-center bg-[#675FFF] text-white font-[500] text-[14px] hover:bg-[#5A52E5] focus:outline-none">{t("continue")}</button>
                         </div>
 
                     </div>}
@@ -963,10 +963,10 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                         <hr style={{ color: "#E1E4EA" }} />
 
                         <div className="flex items-center justify-end gap-2">
-                            <button onClick={() => handleCancel(3)} className="px-5 cursor-pointer rounded-lg py-1.5 text-center bg-white border border-[#E1E4EA] text-[#1E1E1E] font-[500] text-[14px] hover:bg-gray-50 focus:outline-none">{t("cancel")}</button>
+                            <button onClick={() => handleCancel(3)} className="px-3 py-2 cursor-pointer rounded-lg text-center bg-white border border-[#E1E4EA] text-[#1E1E1E] font-[500] text-[14px] hover:bg-gray-50 focus:outline-none">{t("cancel")}</button>
                             <button onClick={
                                 handleSubmit
-                            } className="px-5 cursor-pointer rounded-lg py-1.5 text-center bg-[#675FFF] text-white font-[500] text-[14px] hover:bg-[#5A52E5] focus:outline-none">{editData ? t("brain_ai.update") : t("brain_ai.create")}</button>
+                            } className="px-3 py-2 cursor-pointer rounded-lg text-center bg-[#675FFF] text-white font-[500] text-[14px] hover:bg-[#5A52E5] focus:outline-none">{editData ? t("brain_ai.update") : t("brain_ai.create")}</button>
                         </div>
 
                     </div>}
@@ -1065,7 +1065,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                         }
                                     }}
                                         disabled={!each.is_active}
-                                        className={`px-4 py-1.5 font-[500] text-[14px] rounded-lg whitespace-nowrap ${
+                                        className={`px-3 py-2 font-[500] text-[14px] rounded-lg whitespace-nowrap ${
                                             !each.is_active 
                                                 ? 'bg-[#E1E4EA] text-[#5A687C] cursor-not-allowed' 
                                                 : isConnected

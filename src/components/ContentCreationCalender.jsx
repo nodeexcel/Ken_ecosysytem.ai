@@ -95,7 +95,7 @@ function ContentCreationCalender() {
               <div className="flex bg-[#F2F2F3] border border-[#E0E0E0] rounded-lg h-[36px] p-0.5 w-auto">
                 <button
                   onClick={() => handleViewChange("calendar")}
-                  className={`flex items-center justify-center gap-2 px-2.5 cursor-pointer rounded-lg text-[14px] font-[500] transition-colors ${
+                  className={`flex items-center justify-center gap-2 px-3 py-2 cursor-pointer rounded-lg text-[14px] font-[500] transition-colors ${
                     activeTab === "calendar"
                       ? "bg-white text-[#1E1E1E] shadow-sm"
                       : "text-[#5A687C] hover:text-[#1E1E1E]"
@@ -105,7 +105,7 @@ function ContentCreationCalender() {
                 </button>
                 <button
                   onClick={() => handleViewChange("list")}
-                  className={`flex items-center justify-center gap-2 px-2.5 cursor-pointer rounded-lg text-[14px] font-[500] transition-colors ${
+                  className={`flex items-center justify-center gap-2 px-3 py-2 cursor-pointer rounded-lg text-[14px] font-[500] transition-colors ${
                     activeTab === "list"
                       ? "bg-white text-[#1E1E1E] shadow-sm"
                       : "text-[#5A687C] hover:text-[#1E1E1E]"
@@ -121,7 +121,7 @@ function ContentCreationCalender() {
                   setEditData(null);
                   setShowCreatePost(true);
                 }}
-                className="flex items-center justify-center cursor-pointer gap-2 bg-[#675FFF] text-white px-5 py-2 rounded-lg font-[500] text-[14px] hover:bg-[#5a4fe6] transition-colors whitespace-nowrap"
+                className="flex items-center justify-center cursor-pointer gap-2 bg-[#675FFF] text-white px-3 py-2 rounded-lg font-[500] text-[14px] hover:bg-[#5a4fe6] transition-colors whitespace-nowrap"
               >
                 <Plus size={18} />
                 <span>{t("constance.create_schedule") || "Create Schedule"}</span>
