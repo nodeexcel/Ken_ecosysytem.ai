@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import linkedinIcon from '../assets/svg/linkedin.svg'
 import KenImage  from '../assets/svg/KenNewLogo.svg'
 import { Eye, EyeOff, ChevronDown } from 'lucide-react'
@@ -39,6 +40,7 @@ ChartJS.register(
 
 function KenOverview() {
     const navigate = useNavigate()
+    const { t } = useTranslation()
     const [step, setStep] = useState("login") // "login", "otp", or "dashboard"
     const [activityView, setActivityView] = useState("invitations") // "invitations" or "messages"
     const [email, setEmail] = useState("")
@@ -139,7 +141,7 @@ function KenOverview() {
         labels: ['1/3', '2/3', '3/3', '4/3', '5/3', '6/3', '7/3', '8/3', '9/3'],
         datasets: [
             {
-                label: activityView === 'invitations' ? 'Invitations' : 'Messages',
+                label: activityView === 'invitations' ? t("ken_overview.invitations") : t("ken_overview.messages"),
                 data: [20, 35, 28, 45, 38, 52, 48, 60, 55],
                 borderColor: '#675FFF',
                 backgroundColor: 'rgba(103, 95, 255, 0.1)',
@@ -199,13 +201,13 @@ function KenOverview() {
                 {/* Header */}
                 <div className="flex justify-between items-start mb-8">
                     <div>
-                        <h1 className="text-[22px] font-[500] text-[#1E1E1E] mb-2">Linkedin Prospection</h1>
+                        <h1 className="text-[22px] font-[500] text-[#1E1E1E] mb-2">{t("ken_overview.linkedin_prospection")}</h1>
                         <p className="text-[#5A687C] text-[14px] font-[400]">
-                            Track your outreach performance, manage campaigns, and measure engagement across LinkedIn.
+                            {t("ken_overview.track_your_outreach_performance_manage_campaigns_and_measure_engagement_across_linkedin")}
                         </p>
                     </div>
                     <button className="bg-[#675FFF] text-white font-semibold px-4 py-2 rounded-xl hover:bg-[#5a4fe6] transition-colors">
-                        + Search for Prospects
+                        + {t("ken_overview.search_for_prospects")}
                     </button>
                 </div>
 
@@ -217,9 +219,9 @@ function KenOverview() {
                         <div className="bg-white rounded-2xl border border-[#E1E4EA] relative overflow-hidden">
                             {/* Header with border-b - full width */}
                             <div className="flex justify-between items-center px-6 pt-6 pb-4 mb-6 border-b border-[#E1E4EA]">
-                                <h2 className="text-lg font-semibold text-[#1E1E1E]">Your LinkedIn Account</h2>
+                                <h2 className="text-lg font-semibold text-[#1E1E1E]">{t("ken_overview.your_linkedin_account")}</h2>
                                 <button className="bg-[#FFF5F5] cursor-pointer border border-red-500 text-red-500 text-sm font-medium px-3 py-1.5 rounded-lg hover:bg-[#FFE5E5] transition-colors">
-                                    Disconnect
+                                    {t("ken_overview.disconnect")}
                                 </button>
                             </div>
                             
@@ -229,22 +231,22 @@ function KenOverview() {
                                     <div className="w-16 h-16 rounded-full flex items-center justify-center mb-3">
                                         <img src={KenImage} alt="Ken" className="w-16 h-16 rounded-full" />
                                     </div>
-                                    <h3 className="text-lg font-semibold text-[#1E1E1E] mb-1">Sami Sammari</h3>
-                                    <p className="text-sm text-[#5A687C]">CEO of Ecosysteme.ai</p>
+                                    <h3 className="text-lg font-semibold text-[#1E1E1E] mb-1">{t("ken_overview.sami_sammari")}</h3>
+                                    <p className="text-sm text-[#5A687C]">{t("ken_overview.ceo_of_ecosysteme_ai")}</p>
                                 </div>
                                 
                                 {/* Metrics */}
                                 <div className="grid grid-cols-3 gap-4">
                                     <div className="text-center">
-                                        <p className="text-sm text-[#5A687C] mb-1">Connections</p>
+                                        <p className="text-sm text-[#5A687C] mb-1">{t("ken_overview.connections")}</p>
                                         <p className="text-xl font-semibold text-[#1E1E1E]">14,382</p>
                                     </div>
                                     <div className="text-center">
-                                        <p className="text-sm text-[#5A687C] mb-1">In Pending</p>
+                                        <p className="text-sm text-[#5A687C] mb-1">{t("ken_overview.in_pending")}</p>
                                         <p className="text-xl font-semibold text-[#1E1E1E]">126</p>
                                     </div>
                                     <div className="text-center">
-                                        <p className="text-sm text-[#5A687C] mb-1">Profile Views</p>
+                                        <p className="text-sm text-[#5A687C] mb-1">{t("ken_overview.profile_views")}</p>
                                         <p className="text-xl font-semibold text-[#1E1E1E]">214</p>
                                     </div>
                                 </div>
@@ -255,7 +257,7 @@ function KenOverview() {
                         <div className="bg-white rounded-2xl border border-[#E1E4EA] relative overflow-hidden">
                             {/* Header with border-b - full width */}
                             <div className="flex justify-between items-center px-6 pt-6 pb-4 mb-4 border-b border-[#E1E4EA]">
-                                <h2 className="text-lg font-semibold text-[#1E1E1E]">Activity Chart</h2>
+                                <h2 className="text-lg font-semibold text-[#1E1E1E]">{t("ken_overview.activity_chart")}</h2>
                                 <div className="flex bg-[#F7F7F8] border border-[#E1E4EA] rounded-lg p-0.5 gap-1">
                                     <button
                                         onClick={() => setActivityView("invitations")}
@@ -265,7 +267,7 @@ function KenOverview() {
                                                 : "text-[#5A687C]"
                                         }`}
                                     >
-                                        Invitations
+                                        {t("ken_overview.invitations")}
                                     </button>
                                     <button
                                         onClick={() => setActivityView("messages")}
@@ -275,7 +277,7 @@ function KenOverview() {
                                                 : "text-[#5A687C]"
                                         }`}
                                     >
-                                        Messages
+                                        {t("ken_overview.messages")}
                                     </button>
                                 </div>
                             </div>
@@ -283,11 +285,11 @@ function KenOverview() {
                             <div className="px-6 pb-6">
                                 <div className="grid grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <p className="text-sm text-[#5A687C] mb-1">Avg invites/day</p>
+                                        <p className="text-sm text-[#5A687C] mb-1">{t("ken_overview.avg_invites_per_day")}</p>
                                         <p className="text-xl font-semibold text-[#1E1E1E]">45</p>
                                     </div>
                                     <div>
-                                        <p className="text-sm text-[#5A687C] mb-1">Avg acceptances/day</p>
+                                        <p className="text-sm text-[#5A687C] mb-1">{t("ken_overview.avg_acceptances_per_day")}</p>
                                         <p className="text-xl font-semibold text-[#1E1E1E]">16</p>
                                     </div>
                                 </div>
@@ -302,33 +304,33 @@ function KenOverview() {
                     <div className="lg:col-span-2">
                         <div className="grid grid-cols-2 gap-4 ">
                             <div className="bg-white rounded-2xl border border-[#E1E4EA] p-6 min-h-[200px]">
-                                <img src={TotalCampaigns} alt="Campaign Totals" className="w-[62px] h-[62px] mb-4" />
-                                <p className="text-md font-medium text-[#5A687C] mb-1 px-4">Campaign Totals</p>
+                                <img src={TotalCampaigns} alt={t("ken_overview.campaign_totals")} className="w-[62px] h-[62px] mb-4" />
+                                <p className="text-md font-medium text-[#5A687C] mb-1 px-4">{t("ken_overview.campaign_totals")}</p>
                                 <p className="text-3xl font-[600] text-[#1E1E1E] px-4">18</p>
                             </div>
                             <div className="bg-white rounded-2xl border border-[#E1E4EA] p-6 min-h-[200px]">
-                                <img src={ActiveCampaign} alt="Active Campaigns" className="w-[62px] h-[62px] mb-4" />
-                                <p className="text-md font-medium text-[#5A687C] mb-1 px-4">Active Campaigns</p>
+                                <img src={ActiveCampaign} alt={t("ken_overview.active_campaigns")} className="w-[62px] h-[62px] mb-4" />
+                                <p className="text-md font-medium text-[#5A687C] mb-1 px-4">{t("ken_overview.active_campaigns")}</p>
                                 <p className="text-3xl font-[600] text-[#1E1E1E] px-4">12</p>
                             </div>
                             <div className="bg-white rounded-2xl border border-[#E1E4EA] p-6 min-h-[200px]">
-                                <img src={InvitationsAccepted} alt="Invitations Accepted" className="w-[62px] h-[62px] mb-4" />
-                                <p className="text-md font-medium text-[#5A687C] mb-1 px-4">Invitations Accepted</p>
+                                <img src={InvitationsAccepted} alt={t("ken_overview.invitations_accepted")} className="w-[62px] h-[62px] mb-4" />
+                                <p className="text-md font-medium text-[#5A687C] mb-1 px-4">{t("ken_overview.invitations_accepted")}</p>
                                 <p className="text-3xl font-[600] text-[#1E1E1E] px-4">482</p>
                             </div>
                             <div className="bg-white rounded-2xl border border-[#E1E4EA] p-6 min-h-[200px]">
-                                <img src={AcceptanceRate} alt="Acceptance Rate" className="w-[62px] h-[62px] mb-4" />
-                                <p className="text-md font-medium text-[#5A687C] mb-1 px-4">Acceptance Rate</p>
+                                <img src={AcceptanceRate} alt={t("ken_overview.acceptance_rate")} className="w-[62px] h-[62px] mb-4" />
+                                <p className="text-md font-medium text-[#5A687C] mb-1 px-4">{t("ken_overview.acceptance_rate")}</p>
                                 <p className="text-3xl font-[600] text-[#1E1E1E] px-4">36.8%</p>
                             </div>
                             <div className="bg-white rounded-2xl border border-[#E1E4EA] p-6 min-h-[200px]">
-                                <img src={AnsweredMessage} alt="Answered Messages" className="w-[62px] h-[62px] mb-4" />
-                                <p className="text-md font-medium text-[#5A687C] mb-1 px-4">Answered Messages</p>
+                                <img src={AnsweredMessage} alt={t("ken_overview.answered_messages")} className="w-[62px] h-[62px] mb-4" />
+                                <p className="text-md font-medium text-[#5A687C] mb-1 px-4">{t("ken_overview.answered_messages")}</p>
                                 <p className="text-3xl font-[600] text-[#1E1E1E] px-4">219</p>
                             </div>
                             <div className="bg-white rounded-2xl border border-[#E1E4EA] p-6 min-h-[200px]">
-                                <img src={ResponseRate} alt="Response Rate" className="w-[62px] h-[62px] mb-4" />
-                                <p className="text-md font-medium text-[#5A687C] mb-1 px-4">Response Rate</p>
+                                <img src={ResponseRate} alt={t("ken_overview.response_rate")} className="w-[62px] h-[62px] mb-4" />
+                                <p className="text-md font-medium text-[#5A687C] mb-1 px-4">{t("ken_overview.response_rate")}</p>
                                 <p className="text-3xl font-[600] text-[#1E1E1E] px-4">42.1%</p>
                             </div>
                         </div>
@@ -342,9 +344,9 @@ function KenOverview() {
         <div className="w-full h-full flex flex-col p-10">
             {/* Header */}
             <div className="w-full max-w-full mx-auto mb-8">
-                <h1 className="text-2xl font-[500] text-[#1E1E1E] mb-2">Linkedin Prospection</h1>
+                <h1 className="text-2xl font-[500] text-[#1E1E1E] mb-2">{t("ken_overview.linkedin_prospection")}</h1>
                 <p className="text-[#5A687C] text-base">
-                    Track your outreach performance, manage campaigns, and measure engagement across LinkedIn.
+                    {t("ken_overview.track_your_outreach_performance_manage_campaigns_and_measure_engagement_across_linkedin")}
                 </p>
             </div>
 
@@ -364,41 +366,41 @@ function KenOverview() {
                                 {loadingAccounts ? (
                                     <div className="text-center py-8">
                                         <div className="loader mx-auto mb-4"></div>
-                                        <p className="text-[#5A687C]">Loading accounts...</p>
+                                        <p className="text-[#5A687C]">{t("ken_overview.loading_accounts")}</p>
                                     </div>
                                 ) : linkedInAccounts.length === 0 ? (
                                     <>
                                         {/* No Account Connected */}
                                         <h2 className="text-[22px] font-[500] text-[#1E1E1E] text-center mb-2 ">
-                                            No LinkedIn account connected
+                                            {t("ken_overview.no_linkedin_account_connected")}
                                         </h2>
                                         <p className="text-[14px] font-[400] text-[#5A687C] text-center mb-6">
-                                            Go to Brain AI to connect your LinkedIn account.
+                                            {t("ken_overview.go_to_brain_ai_to_connect")}
                                         </p>
                                         <button
                                             onClick={() => navigate('/dashboard/brain?tab=integration')}
                                             className="w-full bg-[#675FFF] cursor-pointer text-white font-[500] text-[14px] py-2 px-3 rounded-lg hover:bg-[#5a4fe6] transition-colors"
                                         >
-                                            Go to Brain AI
+                                            {t("ken_overview.go_to_brain_ai")}
                                         </button>
                                     </>
                                 ) : (
                                     <>
                                         {/* Heading */}
                                         <h2 className="text-[24px] font-[500] text-[#1E1E1E] text-center mb-2">
-                                            {linkedInAccounts.length === 1 ? 'LinkedIn Account' : 'Select your LinkedIn account'}
+                                            {linkedInAccounts.length === 1 ? t("ken_overview.linkedin_account") : t("ken_overview.select_your_linkedin_account")}
                                         </h2>
                                         <p className="text-md text-[#5A687C] text-center mb-6">
                                             {linkedInAccounts.length === 1 
-                                                ? 'Your connected LinkedIn account' 
-                                                : 'Please select an account to continue'}
+                                                ? t("ken_overview.your_connected_linkedin_account") 
+                                                : t("ken_overview.please_select_an_account_to_continue")}
                                         </p>
 
                                         {/* Account Selection */}
                                         <div className="space-y-4">
                                             <div className="space-y-2">
                                                 <label className="text-sm font-normal text-[#868C98]">
-                                                    LinkedIn Account
+                                                    {t("ken_overview.linkedin_account")}
                                                 </label>
                                                 <SelectDropdown
                                                     name="linkedin_account"
@@ -406,7 +408,7 @@ function KenOverview() {
                                                         key: (account.linkedin_id || account.id || account.account_id)?.toString() || '',
                                                         label: account.name || account.email || account.username || `Account ${account.linkedin_id || account.id || ''}`
                                                     }))}
-                                                    placeholder={linkedInAccounts.length === 1 ? "Select your account" : "Select your account"}
+                                                    placeholder={t("ken_overview.select_your_account")}
                                                     value={selectedAccount}
                                                     onChange={(value) => setSelectedAccount(value)}
                                                 />
@@ -422,7 +424,7 @@ function KenOverview() {
                                                 disabled={!selectedAccount && linkedInAccounts.length > 1}
                                                 className="w-full bg-[#675FFF] cursor-pointer text-white font-semibold py-2.5 px-3 rounded-xl hover:bg-[#5a4fe6] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
-                                                Continue
+                                                {t("ken_overview.continue")}
                                             </button>
                                         </div>
                                     </>
@@ -432,10 +434,10 @@ function KenOverview() {
                             <>
                                 {/* OTP Verification Screen */}
                                 <h2 className="text-xl font-bold text-[#1E1E1E] text-center mb-2">
-                                    Confirm Your Login
+                                    {t("ken_overview.confirm_your_login")}
                                 </h2>
                                 <p className="text-sm text-[#5A687C] text-center mb-6">
-                                    Enter the 4-digit verification code we sent to <br /> {" "}
+                                    {t("ken_overview.enter_4_digit_verification_code")} <br /> {" "}
                                     <span className="font-semibold text-[#1E1E1E]">{email || "robert45@gmail.com"}</span>
                                 </p>
 
@@ -468,26 +470,26 @@ function KenOverview() {
                                             type="submit"
                                             className="w-full bg-[#675FFF] cursor-pointer text-white font-semibold py-2.5 px-3 rounded-xl hover:bg-[#5a4fe6] transition-colors"
                                         >
-                                            Verify & Continue
+                                            {t("ken_overview.verify_and_continue")}
                                         </button>
                                         <button
                                             type="button"
                                             onClick={handleCancel}
                                             className="w-full bg-white border border-[#D6D6D6] cursor-pointer text-[#1E1E1E] font-semibold py-2.5 px-3 rounded-xl hover:bg-[#F7F7F8] transition-colors"
                                         >
-                                            Cancel
+                                            {t("ken_overview.cancel")}
                                         </button>
                                     </div>
 
                                     {/* Resend Code */}
                                     <p className="text-center text-sm text-[#5A687C]">
-                                        Didn't get the code?{" "}
+                                        {t("ken_overview.didnt_get_the_code")}{" "}
                                         <button
                                             type="button"
                                             onClick={handleResendCode}
                                             className="text-[#675FFF] font-semibold cursor-pointer hover:underline"
                                         >
-                                            Resend Code
+                                            {t("ken_overview.resend_code")}
                                         </button>
                                     </p>
                                 </form>

@@ -61,9 +61,9 @@ const Knowledge = () => {
   const { t } = useTranslation();
 
   const tabs = [
-    { label: `${t("brain_ai.knowledge.websites")}`, key: "website", header: "Website" },
-    { label: `${t("brain_ai.knowledge.files")}`, key: "files", header: "File" },
-    { label: `${t("brain_ai.knowledge.snippets")}`, key: "snippets", header: "Snippet" },
+    { label: `${t("brain_ai.knowledge.websites")}`, key: "website", headerKey: "brain_ai.knowledge.website" },
+    { label: `${t("brain_ai.knowledge.files")}`, key: "files", headerKey: "brain_ai.knowledge.file" },
+    { label: `${t("brain_ai.knowledge.snippets")}`, key: "snippets", headerKey: "brain_ai.knowledge.snippet" },
   ]
 
   const modelData = {
@@ -232,7 +232,7 @@ const Knowledge = () => {
 
   const renderHeader = () => {
     const tab = tabs.find((e) => e.key === activeTab)
-    return tab.header
+    return tab ? t(tab.headerKey) : ""
   }
 
   const handleDropdownClick = (index) => {
@@ -639,7 +639,7 @@ const renderEmptyState = (tabKey, onAction) => {
                     name="website"
                     value={formData?.website}
                     onChange={handleChange}
-                    placeholder="Objectiveexample.com"
+                    placeholder="ecosysteme.ai"
                     className="flex-1 focus:outline-none text-[#1E1E1E]"
                   />
                 </div>

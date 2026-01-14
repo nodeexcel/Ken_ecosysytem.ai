@@ -635,9 +635,9 @@ export default function CreatePost({ onClose, editData }) {
           <div className="w-[230px] h-[726px] bg-white border-r border-r-[#E1E4EA] border-t border-t-[#ffffff] border-b border-b-[#ffffff] border-l border-l-[#ffffff] rounded-l-[16px] flex flex-col relative min-h-[600px]">
             {/* Header */}
             <div className="px-4 pt-6 pb-4 border-b border-b-[#E1E4EA]">
-              <h2 className="text-base font-[400] text-[#1E1E1E] text-center">
-                {t("select") + " " + t("constance.account") || "Select Account"}
-              </h2>
+            <h2 className="text-base font-[400] text-[#1E1E1E] text-center">
+  {t("constance.select_account") || "Select Account"}
+</h2>
             </div>
 
             {/* Accounts List */}
@@ -698,7 +698,7 @@ export default function CreatePost({ onClose, editData }) {
                     className="w-full flex items-center justify-center gap-2 text-[14px] font-[500] text-[#1E1E1E] border border-[#E1E4EA] rounded-lg py-2 bg-white hover:bg-[#F8F9FB] transition-colors shadow-[0_2px_6px_rgba(15,23,42,0.06)] mt-2 cursor-pointer"
                   >
                     <span className="text-lg leading-none">+</span>
-                    <span>{t("constance.add") + " " + t("constance.account") || "Add Account"}</span>
+                    <span>{t("constance.add_account") || "Add Account"}</span>
                   </button>
                 </div>
               )}

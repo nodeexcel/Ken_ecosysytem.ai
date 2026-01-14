@@ -401,7 +401,7 @@ const Sidebar = ({ isOpen, toggleSidebar, sidebarItems }) => {
 
                 {/* Ecosystem / Gift */}
               <div
-                className={`bg-white text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'} py-3`}
+                className={`bg-white text-xl flex group hover:cursor-pointer relative ${!isOpen && 'justify-center'}`}
                 onClick={() => setCommissionStatus(true)}
               >
                 <div className='flex items-center'>

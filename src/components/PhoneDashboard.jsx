@@ -43,11 +43,11 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
   };
 
   const timePeriodOptions = [
-    { label: 'This Month', key: 'This Month' },
-    { label: 'Last Month', key: 'Last Month' },
-    { label: 'Last 3 Months', key: 'Last 3 Months' },
-    { label: 'Last 6 Months', key: 'Last 6 Months' },
-    { label: 'This Year', key: 'This Year' }
+    { label: t("phone.this_month") || "This Month", key: 'This Month' },
+    { label: t("phone.last_month") || "Last Month", key: 'Last Month' },
+    { label: t("phone.last_3_months") || "Last 3 Months", key: 'Last 3 Months' },
+    { label: t("phone.last_6_months") || "Last 6 Months", key: 'Last 6 Months' },
+    { label: t("phone.this_year") || "This Year", key: 'This Year' }
   ];
 
   // Helper function to format duration from seconds to HH:MM:SS
@@ -323,7 +323,7 @@ const PhoneDashboard = ({ onNavigateSection = () => { } }) => {
           />
           <button
             onClick={handleRefresh}
-            className="flex items-center gap-2 px-4 py-2 text-[14px] font-[500] bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] hover:bg-gray-50 cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2 text-[14px] font-[400] bg-white border border-[#E1E4EA] rounded-lg text-[#1E1E1E] hover:bg-gray-50 cursor-pointer"
           >
             <RefreshCw size={16} />
             {t("phone.refresh") || "Refresh"}

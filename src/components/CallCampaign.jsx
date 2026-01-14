@@ -1173,6 +1173,13 @@ export default function CallCampaign() {
                         errors={errors}
                       />
                       {errors.target_lists && <p className="text-red-500 text-sm mt-1">{errors.target_lists}</p>}
+                      <button
+                        type="button"
+                        onClick={() => navigator('/dashboard/brain?tab=contacts')}
+                        className="text-sm text-[#675FFF] hover:text-[#5548CC] hover:underline cursor-pointer mt-1 self-start"
+                      >
+                        + {t("phone.create_new_list") || "Create new list"}
+                      </button>
                     </div>
                     <div className="flex flex-col gap-1">
                       <label className="text-[14px] font-[400] text-[#868C98] mb-1">

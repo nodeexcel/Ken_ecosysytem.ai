@@ -448,7 +448,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                         </label> */}
                                     </div>
                                 </div>
-                                <h1 className="py-2 font-[600] text-[16px]">General Details</h1>
+                                <h1 className="py-2 font-[600] text-[16px]">Details</h1>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
 
 

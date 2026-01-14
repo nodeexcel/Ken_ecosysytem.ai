@@ -1779,7 +1779,7 @@ const SettingsPage = () => {
                         className="flex items-center gap-1 cursor-pointer text-[#675FFF] text-[14px] font-[500] mt-6 hover:text-[#5E54FF] transition-colors"
                       >
                         <Plus className="w-4 h-4" />
-                        Add New Member
+                        {t("settings.tab_3_list.add_new_member")}
                       </button>
                     </div>
 

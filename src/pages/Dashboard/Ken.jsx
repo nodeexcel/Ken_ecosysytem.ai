@@ -41,11 +41,11 @@ function Ken() {
 
     const sideMenuList = [
         {
-            label: "Overview",
+            label: t("ken_overview.overview") || "Overview",
             path: "overview",
         },
         {
-            label: "Search for Prospects",
+            label: t("ken_overview.search_for_prospects") || "Search for Prospects",
             path: "search-prospects",
         },
     ]

@@ -569,7 +569,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                             <div className="flex flex-col gap-1.5 w-full">
                                 <label className="text-sm font-[400] text-[#868C98]">
-                                    {t("calina.bot_name")}
+                                    {t("calina.identiti")}
                                 </label>
                                 <input
                                     type="text"
@@ -597,7 +597,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                             ...prev, role: ""
                                         }))
                                     }}
-                                    placeholder="Select Role"
+                                    placeholder="Select"
                                     className=""
                                     errors={errors}
                                 />
@@ -725,7 +725,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                         <div className="ml-6">
                                             <input
                                                 type="number"
-                                                placeholder="Input number"
+                                                placeholder={t("calina.input_number")}
                                                 value={formData.transfer_conditions.x_attempts_value}
                                                 onChange={(e) =>
                                                     setFormData((prev) => ({
@@ -775,7 +775,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                         <div className="ml-6 flex flex-col gap-2">
                                             <input
                                                 type="text"
-                                                placeholder="Add Keyword"
+                                                placeholder={t("calina.add_keyword")}
                                                 value={keywordInput}
                                                 onChange={(e) => setKeywordInput(e.target.value)}
                                                 onKeyDown={(e) => {
@@ -995,7 +995,7 @@ function CustomerSupportChatBotForm({ onCancel, editData, editDataId }) {
                                     ? t("coming_soon") 
                                     : isConnected 
                                         ? t("brain_ai.update") 
-                                        : "Connect";
+                                        : t("connect");
                                 
                                 return (
                                 <div key={each.label} className="flex items-center justify-between gap-4 border-[0.5px] rounded-[8px] border-[#E1E4EA] p-4">

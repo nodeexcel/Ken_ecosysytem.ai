@@ -380,15 +380,15 @@ export default function OutBoundCalls() {
                 <table className="min-w-full border-separate border-spacing-0">
                   <thead className="bg-[#F7F7F8]">
                     <tr className="text-[#5A687C]">
-                      <th className="px-6 text-start py-3 text-[14  px] font-[400]">{t("emailings.campaign_name")}</th>
-                      <th className="px-3 text-start py-3 text-[14px] font-[400]">{t("appointment.agent_name")}</th>
-                      <th className="px-3 text-start py-3 text-[14px] font-[400]">{t("brain_ai.date")}</th>
-                      <th className="px-3 text-start py-3 text-[14px] font-[400]">{t("phone.language")}</th>
-                      <th className="px-3 text-start py-3 text-[14px] font-[400]">{t("phone.voice")}</th>
-                      <th className="px-3 text-start py-3 text-[14px] font-[400]">{t("phone.receipient_no")}</th>
-                      <th className="px-3 text-start py-3 text-[14px] font-[400]">{t("phone.status")}</th>
-                      <th className="px-3 text-start py-3 text-[14px] font-[400]">{t("phone.duration")}</th>
-                      <th className="px-6 text-center py-3 text-[14px] font-[400]">{t("phone.actions")}</th>
+                      <th className="px-6 text-start py-3 text-[16px] font-[400]">{t("emailings.campaign_name")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("appointment.agent_name")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("brain_ai.date")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.language")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.voice")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.receipient_no")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.status")}</th>
+                      <th className="px-3 text-start py-3 text-[16px] font-[400]">{t("phone.duration")}</th>
+                      <th className="px-6 text-center py-3 text-[16px] font-[400]">{t("phone.actions")}</th>
                     </tr>
                   </thead>
 

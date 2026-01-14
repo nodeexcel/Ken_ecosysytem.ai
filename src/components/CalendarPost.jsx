@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useMemo } from "react"
 import { ChevronLeft, ChevronRight, X, Search, ChevronDown } from "lucide-react"
 import successImg from "../assets/svg/success.svg"
 // removed API fallback; events now come exclusively from props
@@ -171,11 +171,11 @@ export default function CalendarPost({ status = true, calenderData = [] }) {
     "11PM",
   ]
 
-  const calendarOptions = [
-    { label: "Monthly", key: "month" },
-    { label: "Weekly", key: "week" },
-    { label: "Daily", key: "day" }
-  ]
+  const calendarOptions = useMemo(() => [
+    { label: t("constance.monthly"), key: "month" },
+    { label: t("constance.weekly"), key: "week" },
+    { label: t("constance.daily"), key: "day" }
+  ], [t])
 
   // Get current month/year display text
   const getCurrentDateText = () => {
@@ -696,8 +696,8 @@ export default function CalendarPost({ status = true, calenderData = [] }) {
             onChange={(updated) => {
               setCurrentView(updated)
             }}
-            placeholder="Monthly"
-            className="w-[100px] sm:w-[120px]"
+            placeholder={t("constance.monthly")}
+            className="w-[100px] sm:w-[150px]"
             forceDownward={true}
           />
         </div>

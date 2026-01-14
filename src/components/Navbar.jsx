@@ -467,22 +467,7 @@ function Navbar({ sidebarItems }) {
 
                 {/* Right Side: Search + User Menu */}
                 <div className='flex items-center gap-3'>
-                    <div className="relative w-[300px]">
-                        <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                            <SearchIcon />
-                        </div>
-                        <input
-                            id="navbar-search"
-                            type="text"
-                            placeholder={t("search_everything") || "Search everything"}
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-9 pr-14 py-2 text-sm border border-[#E1E4EA] rounded-lg bg-white focus:outline-none focus:border-[#9f9ea5] text-[#1E1E1E] placeholder:text-[#9CA3AF]"
-                        />
-                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-[#F5F5F5] text-[#5A687C] text-xs px-2 py-[2px] rounded border border-[#E1E4EA] font-medium pointer-events-none">
-                            ⌘ S
-                        </div>
-                    </div>
+                    
 
                     <div className="relative" ref={userMenuRef}>
                         <button
@@ -510,7 +495,7 @@ function Navbar({ sidebarItems }) {
                                         onClick={handleLogout}
                                         className="cursor-pointer w-full text-left px-4 py-2 text-sm text-[#FF3B30]  transition-colors"
                                     >
-                                        Logout
+                                        {t("logout") || "Logout"}
                                     </button>
                                 </div>
                             </div>

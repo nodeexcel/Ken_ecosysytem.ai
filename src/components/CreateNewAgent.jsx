@@ -61,11 +61,17 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     const [statusSteps, setStatusSteps] = useState({ step1: false, step2: false, step3: false })
     const [isPersonalityDropdownOpen, setIsPersonalityDropdownOpen] = useState(false)
     const [personalityDropdownPosition, setPersonalityDropdownPosition] = useState({ top: 0, right: 0 })
-    const [isTooltipVisible, setIsTooltipVisible] = useState(false)
-    const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 })
+    const [isBusinessDescriptionTooltipVisible, setIsBusinessDescriptionTooltipVisible] = useState(false)
+    const [businessDescriptionTooltipPosition, setBusinessDescriptionTooltipPosition] = useState({ top: 0, left: 0 })
+    const [isFollowupTooltipVisible, setIsFollowupTooltipVisible] = useState(false)
+    const [followupTooltipPosition, setFollowupTooltipPosition] = useState({ top: 0, left: 0 })
+    const [isPromptTooltipVisible, setIsPromptTooltipVisible] = useState(false)
+    const [promptTooltipPosition, setPromptTooltipPosition] = useState({ top: 0, left: 0 })
     const personalityDropdownRef = useRef(null)
     const personalityButtonRef = useRef(null)
-    const tooltipIconRef = useRef(null)
+    const businessDescriptionTooltipRef = useRef(null)
+    const followupTooltipRef = useRef(null)
+    const promptTooltipRef = useRef(null)
 
     const handleInstagram = async () => {
         try {
@@ -175,14 +181,34 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
     }, [isPersonalityDropdownOpen]);
 
     useEffect(() => {
-        if (isTooltipVisible && tooltipIconRef.current) {
-            const iconRect = tooltipIconRef.current.getBoundingClientRect();
-            setTooltipPosition({
+        if (isBusinessDescriptionTooltipVisible && businessDescriptionTooltipRef.current) {
+            const iconRect = businessDescriptionTooltipRef.current.getBoundingClientRect();
+            setBusinessDescriptionTooltipPosition({
                 top: iconRect.top - 8,
                 left: iconRect.left + iconRect.width / 2
             });
         }
-    }, [isTooltipVisible]);
+    }, [isBusinessDescriptionTooltipVisible]);
+
+    useEffect(() => {
+        if (isFollowupTooltipVisible && followupTooltipRef.current) {
+            const iconRect = followupTooltipRef.current.getBoundingClientRect();
+            setFollowupTooltipPosition({
+                top: iconRect.top - 8,
+                left: iconRect.left + iconRect.width / 2
+            });
+        }
+    }, [isFollowupTooltipVisible]);
+
+    useEffect(() => {
+        if (isPromptTooltipVisible && promptTooltipRef.current) {
+            const iconRect = promptTooltipRef.current.getBoundingClientRect();
+            setPromptTooltipPosition({
+                top: iconRect.top - 8,
+                left: iconRect.left + iconRect.width / 2
+            });
+        }
+    }, [isPromptTooltipVisible]);
 
     useEffect(() => {
         if (editData) {
@@ -491,9 +517,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 setLoadingStatus(false)
                 const payload = {
                     ...response.data.agent,
-                    objective_of_the_agent: response.data.agent.objective_of_the_agent 
-                        ? (Array.isArray(response.data.agent.objective_of_the_agent) 
-                            ? response.data.agent.objective_of_the_agent 
+                    objective_of_the_agent: response.data.agent.objective_of_the_agent
+                        ? (Array.isArray(response.data.agent.objective_of_the_agent)
+                            ? response.data.agent.objective_of_the_agent
                             : [response.data.agent.objective_of_the_agent])
                         : [],
                     follow_up_details: response.data.agent.is_followups_enabled
@@ -548,7 +574,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
         setErrors((prev) => ({
             ...prev, [name]: ""
         }))
-        
+
         // Limit business_description to 80 words
         if (name === 'business_description') {
             const wordCount = countWords(value);
@@ -562,7 +588,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                 return;
             }
         }
-        
+
         if (name.startsWith("qualification_questions[")) {
             const index = parseInt(name.match(/\[(\d+)\]/)[1]);
             const updatedQuestions = [...formData?.qualification_questions];
@@ -871,9 +897,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     <p>{t("processing")}</p>
                                     <span className="loader" />
                                 </div>
-                        ) : (
-                            updateAgentStatus ? t("appointment.update_agent") : t("appointment.create_agent")
-                        )}
+                            ) : (
+                                updateAgentStatus ? t("appointment.update_agent") : t("appointment.create_agent")
+                            )}
                         </button>
                     </div>
                 </div>
@@ -908,7 +934,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     </div>
                                     <div className="flex flex-col md:flex-row gap-4 w-full">
                                         <div className="flex flex-col gap-1.5 w-full md:w-1/2">
-                                            <label className="text- font-[400] text-[#868C98]">
+                                            <label className="text-sm font-[400] text-[#868C98]">
                                                 {t("appointment.gender")}
                                             </label>
                                             {/* <select
@@ -1118,25 +1144,25 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             {t("appointment.business_description")}
 
                                             <div
-                                                ref={tooltipIconRef}
+                                                ref={businessDescriptionTooltipRef}
                                                 className="relative"
-                                                onMouseEnter={() => setIsTooltipVisible(true)}
-                                                onMouseLeave={() => setIsTooltipVisible(false)}
+                                                onMouseEnter={() => setIsBusinessDescriptionTooltipVisible(true)}
+                                                onMouseLeave={() => setIsBusinessDescriptionTooltipVisible(false)}
                                             >
                                                 <InfoIcon className="w-4 h-4 cursor-pointer" />
 
                                                 {/* Tooltip */}
-                                                {isTooltipVisible && createPortal(
+                                                {isBusinessDescriptionTooltipVisible && createPortal(
                                                     <div
                                                         className="fixed w-[450px] bg-black text-white text-xs rounded-md px-2 py-1 z-[10000] pointer-events-none"
                                                         style={{
-                                                            top: `${tooltipPosition.top}px`,
-                                                            left: `${tooltipPosition.left}px`,
+                                                            top: `${businessDescriptionTooltipPosition.top}px`,
+                                                            left: `${businessDescriptionTooltipPosition.left}px`,
                                                             transform: 'translate(-50%, -100%)',
                                                             marginTop: '-8px'
                                                         }}
                                                     >
-                                                        Example: I’m a therapist specialized in stress management. I help anxious individuals regain calm and clarity through a blend of breathing techniques.
+                                                        Example: I'm a therapist specialized in stress management. I help anxious individuals regain calm and clarity through a blend of breathing techniques.
                                                     </div>,
                                                     document.body
                                                 )}
@@ -1165,42 +1191,42 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                     <div className="flex flex-col items-start gap-3 p-3.5 w-full md:w-1/2 bg-[#fff] border border-[#E1E4EA] rounded-[10px]">
                                         <div className="flex items-center gap-2.5 w-full">
                                             <div className="flex-1">
-                                                <div className="font-[400] text-[#1e1e1e] text-base">{t("appointment.business_offer")}</div>
+                                                <div className="text-sm font-[400] text-[#868C98] text-base">{t("appointment.business_offer")}</div>
                                             </div>
                                         </div>
 
                                         <div className="flex flex-col md:flex-row items-start gap-4">
                                             {objectiveAgent.map((each) => (
-                                            <div key={each.key} className="flex px-2 items-center gap-2 cursor-pointer" onClick={() => {
-                                                setFormData((prev) => {
-                                                    const currentObjective = prev.objective_of_the_agent || '';
-                                                    const isSelected = currentObjective === each.key;
-                                                    
-                                                    // If clicking the same option, deselect it; otherwise select the new one
-                                                    const newObjective = isSelected ? '' : each.key;
-                                                    
-                                                    // Clear related fields when changing or deselecting
-                                                    const updates = { objective_of_the_agent: newObjective };
-                                                    if (newObjective !== "web_page") {
-                                                        updates.webpage_link = "";
-                                                    }
-                                                    if (newObjective !== "book_call") {
-                                                        updates.calendar_choosed = '';
-                                                        updates.calendar_id = '';
-                                                    }
-                                                    if (newObjective !== "whatsapp_number") {
-                                                        updates.whatsapp_number = "";
-                                                    }
-                                                    
-                                                    return { ...prev, ...updates };
-                                                })
-                                                setErrors((prev) => ({ ...prev, objective_of_the_agent: "" }))
-                                            }}
-                                            >
-                                                <div>{formData.objective_of_the_agent && formData.objective_of_the_agent === each.key ? <CheckedCheckbox /> : <EmptyCheckbox />}</div>
+                                                <div key={each.key} className="flex px-2 items-center gap-2 cursor-pointer" onClick={() => {
+                                                    setFormData((prev) => {
+                                                        const currentObjective = prev.objective_of_the_agent || '';
+                                                        const isSelected = currentObjective === each.key;
 
-                                                <span className="text-md text-gray-700">{each.label}</span>
-                                            </div>
+                                                        // If clicking the same option, deselect it; otherwise select the new one
+                                                        const newObjective = isSelected ? '' : each.key;
+
+                                                        // Clear related fields when changing or deselecting
+                                                        const updates = { objective_of_the_agent: newObjective };
+                                                        if (newObjective !== "web_page") {
+                                                            updates.webpage_link = "";
+                                                        }
+                                                        if (newObjective !== "book_call") {
+                                                            updates.calendar_choosed = '';
+                                                            updates.calendar_id = '';
+                                                        }
+                                                        if (newObjective !== "whatsapp_number") {
+                                                            updates.whatsapp_number = "";
+                                                        }
+
+                                                        return { ...prev, ...updates };
+                                                    })
+                                                    setErrors((prev) => ({ ...prev, objective_of_the_agent: "" }))
+                                                }}
+                                                >
+                                                    <div>{formData.objective_of_the_agent && formData.objective_of_the_agent === each.key ? <CheckedCheckbox /> : <EmptyCheckbox />}</div>
+
+                                                    <span className="text-md text-gray-700">{each.label}</span>
+                                                </div>
                                             ))}
                                         </div>
                                         {renderObjectiveAgent()}
@@ -1208,98 +1234,79 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                                     {/* Followup Options */}
                                     <div className="flex flex-col gap-3 p-3.5 w-full md:w-1/2 bg-[#fff] border border-[#E1E4EA] rounded-[10px]">
-                                    <div className="flex items-center justify-between w-full">
-                                        <div className="flex flex-col gap-1">
-                                            <span className="font-[400] text-base text-black">
-                                                {t("appointment.enable_followup")}
-                                            </span>
-                                            <span className="text-sm text-[#868C98]">
-                                                Customize total followup and number of the days.
-                                            </span>
-                                        </div>
-                                        <button
-                                            onClick={() => setFormData((prev) => ({
-                                                ...prev,
-                                                is_followups_enabled: !formData.is_followups_enabled
-                                            }))}
-                                            className={`relative cursor-pointer w-11 h-6 flex items-center rounded-full transition-colors duration-300 ${formData.is_followups_enabled ? "bg-[#675fff]" : "bg-gray-300"
-                                                }`}
-                                        >
-                                            <span
-                                                className={`inline-block w-5 h-5 transform bg-white rounded-full transition-transform duration-300 ${formData.is_followups_enabled ? "translate-x-5" : "translate-x-1"
-                                                    }`}
-                                            />
-                                        </button>
-                                    </div>
+                                        <div className="flex items-center justify-between w-full">
+                                            <div className="flex items-start gap-2">
+                                                <div className="flex flex-col gap-1">
+                                                    <span className="flex items-center gap-1 text-sm font-[400] text-[#868C98]">
+                                                        {t("appointment.enable_followup")}
 
+                                                        <div
+                                                            ref={followupTooltipRef}
+                                                            className="relative"
+                                                            onMouseEnter={() => setIsFollowupTooltipVisible(true)}
+                                                            onMouseLeave={() => setIsFollowupTooltipVisible(false)}
+                                                        >
+                                                            <InfoIcon className="w-4 h-4 cursor-pointer text-[#868C98]" />
+                                                        </div>
+                                                    </span>
+                                                </div>
 
-                                    <div className="flex flex-col gap-1.5 w-full">
-                                        <label className="text-sm font-medium text-[#1e1e1e]">
-                                            {
-                                                t("appointment.number_followup")
-                                            }
-                                        </label>
-                                        <input
-                                            type="number"
-                                            min="1"
-                                            max="10"
-                                            disabled={!formData.is_followups_enabled}
-                                            name="number_of_followups"
-                                            value={formData?.follow_up_details?.number_of_followups ?? ''}
-                                            onChange={(e) => {
-                                                const { name, value } = e.target;
-                                                let parsedValue = parseInt(value);
-
-                                                if (value === '') {
-                                                    parsedValue = '';
-                                                } else if (!isNaN(parsedValue)) {
-                                                    parsedValue = Math.max(1, Math.min(10, parsedValue));
-                                                }
-                                                console.log(parsedValue)
-
-                                                setFormData((prev) => ({
+                                                {isFollowupTooltipVisible &&
+                                                    createPortal(
+                                                        <div
+                                                            className="fixed w-[260px] bg-black text-white text-xs rounded-md px-3 py-2 z-[10000] pointer-events-none"
+                                                            style={{
+                                                                top: `${followupTooltipPosition.top}px`,
+                                                                left: `${followupTooltipPosition.left}px`,
+                                                                transform: "translate(-50%, -100%)",
+                                                                marginTop: "-8px",
+                                                            }}
+                                                        >
+                                                            Customize total followup and number of days.
+                                                        </div>,
+                                                        document.body
+                                                    )}
+                                            </div>
+                                            <button
+                                                onClick={() => setFormData((prev) => ({
                                                     ...prev,
-                                                    follow_up_details: {
-                                                        ...prev.follow_up_details,
-                                                        [name]: parsedValue
-                                                    }
-                                                }));
+                                                    is_followups_enabled: !formData.is_followups_enabled
+                                                }))}
+                                                className={`relative cursor-pointer w-11 h-6 flex items-center rounded-full transition-colors duration-300 ${formData.is_followups_enabled ? "bg-[#675fff]" : "bg-gray-300"
+                                                    }`}
+                                            >
+                                                <span
+                                                    className={`inline-block w-5 h-5 transform bg-white rounded-full transition-transform duration-300 ${formData.is_followups_enabled ? "translate-x-5" : "translate-x-1"
+                                                        }`}
+                                                />
+                                            </button>
+                                        </div>
 
-                                                // Clear error if value is valid (including 0)
-                                                if (value === '' || isNaN(parsedValue)) {
-                                                    setErrors((prev) => ({ ...prev, [name]: t("appointment.field_required") }));
-                                                } else {
-                                                    setErrors((prev) => ({ ...prev, [name]: '' }));
+
+                                        <div className="flex flex-col gap-1.5 w-full">
+                                            <label className="text-sm font-[400] text-[#868C98]">
+                                                {
+                                                    t("appointment.number_followup")
                                                 }
-                                            }}
-                                            style={{ width: '100%' }}
-                                            className={`p-2 bg-white rounded-lg border ${errors.number_of_followups ? 'border-red-500' : 'border-[#e1e4ea]'} no-spinner focus:outline-none focus:border-[#675FFF]`}
-                                            placeholder={t("appointment.enter_number_between")}
-                                        />
-
-                                        {errors.number_of_followups && <p className="text-red-500 text-sm mt-1">{errors.number_of_followups}</p>}
-
-                                    </div>
-
-                                    <div className="flex flex-col gap-1.5 w-full">
-                                        <label className="text-sm font-medium text-[#1e1e1e]">
-                                            {t("appointment.no_of_days_followups")}
-                                        </label>
-                                        <div className="relative flex items-center w-full">
+                                            </label>
                                             <input
                                                 type="number"
-                                                name="wait_time_for_follow_up"
-                                                value={formData?.follow_up_details?.wait_time_for_follow_up ?? ''}
+                                                min="1"
+                                                max="10"
+                                                disabled={!formData.is_followups_enabled}
+                                                name="number_of_followups"
+                                                value={formData?.follow_up_details?.number_of_followups ?? ''}
                                                 onChange={(e) => {
                                                     const { name, value } = e.target;
                                                     let parsedValue = parseInt(value);
-                                                    
+
                                                     if (value === '') {
                                                         parsedValue = '';
                                                     } else if (!isNaN(parsedValue)) {
-                                                        parsedValue = Math.max(0, parsedValue);
+                                                        parsedValue = Math.max(1, Math.min(10, parsedValue));
                                                     }
-                                                    
+                                                    console.log(parsedValue)
+
                                                     setFormData((prev) => ({
                                                         ...prev,
                                                         follow_up_details: {
@@ -1307,24 +1314,67 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                             [name]: parsedValue
                                                         }
                                                     }));
-                                                    
+
+                                                    // Clear error if value is valid (including 0)
                                                     if (value === '' || isNaN(parsedValue)) {
                                                         setErrors((prev) => ({ ...prev, [name]: t("appointment.field_required") }));
                                                     } else {
                                                         setErrors((prev) => ({ ...prev, [name]: '' }));
                                                     }
                                                 }}
-                                                disabled={!formData.is_followups_enabled}
-                                                className={`w-full p-2 pr-16 rounded-lg border ${errors.wait_time_for_follow_up ? 'border-red-500' : 'border-[#e1e4ea]'} bg-white focus:outline-none focus:border-[#675FFF] no-spinner`}
-                                                placeholder="15"
+                                                style={{ width: '100%' }}
+                                                className={`p-2 bg-white rounded-lg border ${errors.number_of_followups ? 'border-red-500' : 'border-[#e1e4ea]'} no-spinner focus:outline-none focus:border-[#675FFF]`}
+                                                placeholder={t("appointment.enter_number_between")}
                                             />
-                                            <span className="absolute right-3 text-[#868C98] text-sm pointer-events-none">
-                                                {t("appointment.days")}
-                                            </span>
+
+                                            {errors.number_of_followups && <p className="text-red-500 text-sm mt-1">{errors.number_of_followups}</p>}
+
                                         </div>
-                                        {errors.wait_time_for_follow_up && <p className="text-red-500 text-sm mt-1">{errors.wait_time_for_follow_up}</p>}
+
+                                        <div className="flex flex-col gap-1.5 w-full">
+                                            <label className="text-sm font-[400] text-[#868C98]">
+                                                {t("appointment.no_of_days_followups")}
+                                            </label>
+                                            <div className="relative flex items-center w-full">
+                                                <input
+                                                    type="number"
+                                                    name="wait_time_for_follow_up"
+                                                    value={formData?.follow_up_details?.wait_time_for_follow_up ?? ''}
+                                                    onChange={(e) => {
+                                                        const { name, value } = e.target;
+                                                        let parsedValue = parseInt(value);
+
+                                                        if (value === '') {
+                                                            parsedValue = '';
+                                                        } else if (!isNaN(parsedValue)) {
+                                                            parsedValue = Math.max(0, parsedValue);
+                                                        }
+
+                                                        setFormData((prev) => ({
+                                                            ...prev,
+                                                            follow_up_details: {
+                                                                ...prev.follow_up_details,
+                                                                [name]: parsedValue
+                                                            }
+                                                        }));
+
+                                                        if (value === '' || isNaN(parsedValue)) {
+                                                            setErrors((prev) => ({ ...prev, [name]: t("appointment.field_required") }));
+                                                        } else {
+                                                            setErrors((prev) => ({ ...prev, [name]: '' }));
+                                                        }
+                                                    }}
+                                                    disabled={!formData.is_followups_enabled}
+                                                    className={`w-full p-2 pr-16 rounded-lg border ${errors.wait_time_for_follow_up ? 'border-red-500' : 'border-[#e1e4ea]'} bg-white focus:outline-none focus:border-[#675FFF] no-spinner`}
+                                                    placeholder="15"
+                                                />
+                                                <span className="absolute right-3 text-[#868C98] text-sm pointer-events-none">
+                                                    {t("appointment.days")}
+                                                </span>
+                                            </div>
+                                            {errors.wait_time_for_follow_up && <p className="text-red-500 text-sm mt-1">{errors.wait_time_for_follow_up}</p>}
+                                        </div>
                                     </div>
-                                </div>
                                 </div>
 
                                 <hr style={{ color: "#E1E4EA" }} />
@@ -1354,35 +1404,61 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                                 {/* Prompt Section */}
                                 <div className="flex flex-col gap-4">
-                                    <h3 className="text-base font-[400] text-[#1e1e1e]">{t("appointment.prompt") || "Prompt"}</h3>
-                                    
+                                    <h3 className="flex items-center gap-1 text-sm font-[400] text-[#868C98]">
+                                        {t("appointment.prompt") || "Prompt"}
+
+                                        <span
+                                            ref={promptTooltipRef}
+                                            className="relative"
+                                            onMouseEnter={() => setIsPromptTooltipVisible(true)}
+                                            onMouseLeave={() => setIsPromptTooltipVisible(false)}
+                                        >
+                                            <InfoIcon className="w-4 h-4 cursor-pointer" />
+                                        </span>
+                                    </h3>
+
+                                    {/* Tooltip */}
+                                    {isPromptTooltipVisible &&
+                                        createPortal(
+                                            <div
+                                                className="fixed w-[450px] bg-black text-white text-xs rounded-md px-2 py-1 z-[10000] pointer-events-none"
+                                                style={{
+                                                    top: `${promptTooltipPosition.top}px`,
+                                                    left: `${promptTooltipPosition.left}px`,
+                                                    transform: "translate(-50%, -100%)",
+                                                    marginTop: "-8px",
+                                                }}
+                                            >
+                                                Provide detailed guidelines, instructions, or context to shape your AI agent's behavior and responses.
+                                            </div>,
+                                            document.body
+                                        )}
+
                                     <div className="flex flex-col md:flex-row gap-4 w-full">
-                                        {/* Guidelines/Prompt */}
                                         <div className="flex flex-col gap-1.5 flex-1">
-                                            <label className="text-sm font-[400] text-[#868C98]">
-                                                {t("appointment.prompt_guild") || "Guidelines, instructions, or context to shape your AI agent's behavior."}
-                                            </label>
                                             <textarea
-                                                name='prompt'
+                                                name="prompt"
                                                 onChange={handleChange}
                                                 value={formData?.prompt}
                                                 rows={6}
-                                                className={`w-full bg-white p-2 rounded-lg border ${errors.prompt ? 'border-red-500' : 'border-[#e1e4ea]'} resize-none focus:outline-none focus:border-[#675FFF]`}
-                                                placeholder="Enter your prompt here"
+                                                className={`w-full bg-white p-2 rounded-lg border ${errors.prompt ? "border-red-500" : "border-[#e1e4ea]"
+                                                    } resize-none focus:outline-none focus:border-[#675FFF]`}
+                                                placeholder={t("appointment.prompt_input") || "Enter your prompt here"}
                                             />
-                                            {errors.prompt && <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>}
+                                            {errors.prompt && (
+                                                <p className="text-red-500 text-sm mt-1">{errors.prompt}</p>
+                                            )}
                                         </div>
-                                        
-                                        
                                     </div>
                                 </div>
 
+
                                 {/* Qualification Questions */}
                                 <div className="flex flex-col gap-4 w-full">
-                                    <h3 className="text-base font-medium text-[#1e1e1e]">
+                                    <h3 className="text-sm font-[400] text-[#868C98]">
                                         {t("appointment.qualification_questions") || "Qualifications questions"}
                                     </h3>
-                                    
+
                                     <div className="flex flex-col gap-3">
                                         {formData.qualification_questions.map((question, index) => (
                                             <div key={index} className="flex items-center gap-3 w-full">
@@ -1414,8 +1490,8 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                     placeholder={t("appointment.enter_question") || "this is example content for my first questions and how the action look likes ?"}
                                                     className={`flex-1 bg-white p-2 rounded-lg border ${errors[`qualification_questions[${index}]`] ? "border-red-500" : "border-[#e1e4ea]"} focus:outline-none focus:border-[#675FFF]`}
                                                 />
-                                                <button 
-                                                    type="button" 
+                                                <button
+                                                    type="button"
                                                     onClick={() => deleteQuestion(index)}
                                                     className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg border border-[#e1e4ea] hover:bg-[#F4F5F6] transition-colors"
                                                 >
@@ -1424,9 +1500,9 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                             </div>
                                         ))}
                                     </div>
-                                    
-                                    <button 
-                                        type="button" 
+
+                                    <button
+                                        type="button"
                                         onClick={addQuestion}
                                         className="flex items-center gap-1 text-[#675FFF] font-medium text-sm hover:text-[#5F58E8] transition-colors self-start"
                                     >
@@ -1437,7 +1513,7 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                                 {/* Sequence Section */}
                                 <div className="p-3 w-full relative bg-white rounded-2xl border border-solid border-[#e1e4ea]" style={{ backgroundImage: `url(${bgback})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                                    <div className="font-medium text-[#1e1e1e] text-base py-2">
+                                    <div className="text-sm font-[400] text-[#868C98] py-2">
                                         {t("appointment.sequence")}
                                     </div>
 
@@ -1563,14 +1639,14 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
 
                                 {/* Silent Hours Section (single, non-removable time range) */}
                                 <div className="flex flex-col gap-1.5 w-full mt-4">
-                                    <label className="text-sm font-medium text-[#1e1e1e]">
+                                    <label className="text-sm font-[400] text-[#868C98]">
                                         {t("appointment.silent_hours")}
                                     </label>
                                     <div className="flex flex-row gap-4 w-full items-end">
                                         {/* Start Time */}
                                         <div className="flex flex-col gap-1.5 w-1/2">
                                             <label className="text-sm font-medium text-[#868C98]">
-                                                {"Time Start"}
+                                                {t("appointment.time_start") || "Time Start"}
                                             </label>
                                             <div className="relative">
                                                 <input
@@ -1588,16 +1664,16 @@ function CreateNewAgent({ editData, setOpen, setUpdateAgentStatus, updateAgentSt
                                                 />
                                             </div>
                                         </div>
-                                        
+
                                         {/* Separator */}
                                         <div className="flex items-center pb-2">
                                             <span className="text-[#1E1E1E] text-lg">-</span>
                                         </div>
-                                        
+
                                         {/* End Time */}
                                         <div className="flex flex-col gap-1.5 w-1/2">
                                             <label className="text-sm font-medium text-[#868C98]">
-                                                {"Time End"}
+                                                {t("appointment.time_end") || "Time End"}
                                             </label>
                                             <div className="relative">
                                                 <input
